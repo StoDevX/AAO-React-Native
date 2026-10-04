@@ -24,6 +24,15 @@ cd ../../
 # with its process.
 export PATH="$(brew --prefix)/bin:$PATH"
 
+export SENTRY_ORG='frog-pond-labs'
+export SENTRY_PROJECT='all-about-olaf'
+
+# Run one sentry-cli step, and turn a failure into a warning, so a Sentry outage
+# cannot hold up a TestFlight build.
+sentry() {
+  mise exec -- sentry-cli "$@" || echo "warning: sentry-cli $1 $2 failed; continuing without it"
+}
+
 # sentry-cli detects git metadata only on the CI systems it knows, and Xcode
 # Cloud is not one of them, so hand it Xcode Cloud's own variables.
 vcs_args=(
@@ -43,14 +52,9 @@ elif [ -n "${CI_BRANCH:-}" ]; then
   vcs_args+=(--head-ref "${CI_BRANCH}")
 fi
 
-# A failed upload warns rather than failing the build, so a Sentry outage
-# cannot hold up a TestFlight build.
-mise exec -- sentry-cli build upload "${CI_ARCHIVE_PATH}" \
-  --org frog-pond-labs \
-  --project all-about-olaf \
+sentry build upload "${CI_ARCHIVE_PATH}" \
   --build-configuration Release \
-  "${vcs_args[@]}" \
-  || echo "warning: Sentry size analysis upload failed"
+  "${vcs_args[@]}"
 
 # A pull request build ships nowhere, so it gets no release.
 if [ -n "${CI_PULL_REQUEST_NUMBER:-}" ]; then
@@ -69,28 +73,9 @@ build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "${plist}")"
 release="${bundle_id}@${version}+${build}"
 echo "Sentry release: ${release}"
 
-# Each step warns rather than failing the build, so a Sentry outage cannot hold
-# up a TestFlight build.
-mise exec -- sentry-cli releases new "${release}" \
-  --org frog-pond-labs \
-  --project all-about-olaf \
-  || echo "warning: Sentry release creation failed"
-
+sentry releases new "${release}"
 # --ignore-missing: Xcode Cloud's clone may not reach back to the previous
 # release's commit, and a partial list beats none.
-mise exec -- sentry-cli releases set-commits "${release}" \
-  --org frog-pond-labs \
-  --auto \
-  --ignore-missing \
-  || echo "warning: Sentry release commits upload failed"
-
-mise exec -- sentry-cli releases finalize "${release}" \
-  --org frog-pond-labs \
-  || echo "warning: Sentry release finalize failed"
-
-mise exec -- sentry-cli deploys new \
-  --org frog-pond-labs \
-  --project all-about-olaf \
-  --release "${release}" \
-  --env testflight \
-  || echo "warning: Sentry deploy failed"
+sentry releases set-commits "${release}" --auto --ignore-missing
+sentry releases finalize "${release}"
+sentry deploys new --release "${release}" --env testflight
