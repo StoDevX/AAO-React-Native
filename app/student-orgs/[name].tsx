@@ -1,24 +1,33 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {Host, LabeledContent, List, Section, Text} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
 	frame,
 	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
 	listStyle,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {DisclosureRow} from '../../source/components/rows'
 import {SelectableText} from '@frogpond/selectable-text'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../source/components/send-email'
-import {showNameOrEmail} from '../../source/features/student-orgs/util'
+import {FittedImageRow} from '../../source/components/inset-image-row'
+import {PhotoViewerModal} from '../../source/features/map/card/photo-viewer-modal'
+import {
+	instagramHandle,
+	meetingRows,
+	showNameOrEmail,
+	withDetail,
+} from '../../source/features/student-orgs/util'
 import {decode} from '@frogpond/html-lib'
-import {orgByNameOptions} from '../../source/features/student-orgs/query'
+import {orgByNameOptions, orgDetailOptions} from '../../source/features/student-orgs/query'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 /**
@@ -49,6 +58,17 @@ const CREDIT_MODIFIERS = [
 	listRowBackground('clear'),
 ]
 
+/// The cover photo fills its row edge to edge, without a card behind it, as an
+/// event's featured image does.
+const IMAGE_ROW = [
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+]
+
+/// The tallest the cover photo is drawn, in points, as for an event's.
+const IMAGE_MAX_HEIGHT = 250
+
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
@@ -58,7 +78,17 @@ const styles = StyleSheet.create({
 
 export default function StudentOrgsDetailPage(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
-	let {data: org, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
+	let router = useRouter()
+	let {data: listed, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
+	// What only the org's own Presence pages hold. The list's record is shown
+	// meanwhile, and stands alone if this never arrives.
+	let {data: detail} = useQuery({
+		...orgDetailOptions(listed?.organizationUri ?? ''),
+		enabled: Boolean(listed?.organizationUri),
+	})
+	let [viewingPhoto, setViewingPhoto] = React.useState(false)
+
+	let org = listed ? withDetail(listed, detail) : undefined
 
 	let screenTitle = <Stack.Title>{org?.name ?? name}</Stack.Title>
 
@@ -93,7 +123,15 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 		)
 	}
 
-	let {name: orgName, category, meetings, website, contacts, advisors, description} = org
+	let {name: orgName, category, website, contacts, advisors, description} = org
+	let meetings = meetingRows(org)
+	let photoLabel = `Photo for ${orgName}`
+	let socialLinks = org.socialLinks ?? []
+	let officeHours = org.officeHours?.trim() ?? ''
+	let officeLocation = org.officeLocation?.trim() ?? ''
+	let additionalInformation = org.additionalInformation?.trim() ?? ''
+	let openCalendar = () =>
+		router.navigate({pathname: '/calendar/organization', params: {name: orgName}})
 
 	return (
 		<>
@@ -104,17 +142,48 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 						<Text modifiers={ORG_NAME_MODIFIERS}>{orgName}</Text>
 					</Section>
 
+					{org.photoUrl ? (
+						<Section>
+							<FittedImageRow
+								beside={
+									<PhotoViewerModal
+										label={photoLabel}
+										onClose={() => setViewingPhoto(false)}
+										uri={org.photoUrl}
+										visible={viewingPhoto}
+									/>
+								}
+								label={photoLabel}
+								maxHeight={IMAGE_MAX_HEIGHT}
+								onPress={() => setViewingPhoto(true)}
+								rowModifiers={IMAGE_ROW}
+								testID="org-cover-photo"
+								uri={org.photoUrl}
+							/>
+						</Section>
+					) : null}
+
 					{category ? (
 						<Section title="Category">
 							<Text>{category}</Text>
 						</Section>
 					) : null}
 
-					{meetings ? (
+					{meetings.length > 0 ? (
 						<Section title="Meetings">
-							<SelectableText text={decode(meetings)} />
+							{meetings.map(({label, value}) => (
+								<LabeledContent key={label} label={label}>
+									<SelectableText text={decode(value)} />
+								</LabeledContent>
+							))}
 						</Section>
 					) : null}
+
+					{/* Always offered: Presence's own "has upcoming events" flag disagrees
+					    with its events feed, so the calendar is the one to say. */}
+					<Section>
+						<DisclosureRow onPress={openCalendar} title="Upcoming Events" />
+					</Section>
 
 					{website ? (
 						<Section title="Website">
@@ -153,9 +222,53 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 						</Section>
 					) : null}
 
+					{socialLinks.length > 0 ? (
+						<Section title="Instagram">
+							{socialLinks.map((link) => (
+								<DisclosureRow
+									key={link}
+									destination="external"
+									onPress={() => openUrl(link)}
+									title={instagramHandle(link)}
+								/>
+							))}
+						</Section>
+					) : null}
+
+					{officeHours || officeLocation ? (
+						<Section title="Office">
+							{officeLocation ? (
+								<LabeledContent label="Location">
+									<SelectableText text={officeLocation} />
+								</LabeledContent>
+							) : null}
+							{officeHours ? (
+								<LabeledContent label="Hours">
+									<SelectableText text={officeHours} />
+								</LabeledContent>
+							) : null}
+						</Section>
+					) : null}
+
 					{description ? (
 						<Section title="Description">
 							<SelectableText text={decode(description)} />
+						</Section>
+					) : null}
+
+					{additionalInformation ? (
+						<Section title="More Information">
+							<SelectableText text={additionalInformation} />
+						</Section>
+					) : null}
+
+					{org.constitutionUrl ? (
+						<Section>
+							<DisclosureRow
+								destination="external"
+								onPress={() => openUrl(org.constitutionUrl ?? '')}
+								title="Constitution"
+							/>
 						</Section>
 					) : null}
 

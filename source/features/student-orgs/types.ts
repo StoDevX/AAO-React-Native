@@ -29,6 +29,24 @@ export type StudentOrgType = {
 	organizationUri: string
 	/** Current member count, as Presence reports it. */
 	memberCount: number
+	/** Where and when the org meets, which `meetings` joins. Optional, like
+	 * the fields after it: a server older than these sends none of them. */
+	meetingLocation?: string
+	meetingTime?: string
+	/** The org's cover image on Presence's CDN, or '' when it has none. */
+	photoUrl?: string
+}
+
+/** What only an org's own Presence pages hold, from ccc-server's
+ * `/orgs/uri/:uri` route, which the detail screen asks for when it opens. */
+export type StudentOrgDetailType = StudentOrgType & {
+	/** Instagram profiles, as URLs. */
+	socialLinks?: string[]
+	constitutionUrl?: string
+	officeHours?: string
+	officeLocation?: string
+	/** Plain text, like `description`. */
+	additionalInformation?: string
 }
 
 /** One curated entry from `data/org-categories.yaml`. */

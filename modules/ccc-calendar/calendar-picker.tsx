@@ -35,6 +35,12 @@ type Props = {
 	filter: CalendarFilter | null
 	onSelectFilter: (filter: CalendarFilter | null) => void
 	onTodayPress?: () => void
+	/**
+	 * Whether the organization and category menus, and Reset Filters, are
+	 * offered. Off where the screen's filter is not the reader's to change --
+	 * the calendar one organization's screen opened.
+	 */
+	showsFilters?: boolean
 }
 
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
@@ -51,6 +57,7 @@ export function CalendarPicker({
 	filter,
 	onSelectFilter,
 	onTodayPress,
+	showsFilters = true,
 }: Props): React.ReactNode {
 	let isActive = filter !== null
 	// Keep the modifier list structurally identical every render -- only the
@@ -74,13 +81,13 @@ export function CalendarPicker({
 				<Host matchContents={true}>
 					<Menu label={<Image systemName="calendar" />} modifiers={menuModifiers}>
 						{/* Rendered first so it sits at the visual bottom, below both axes */}
-						{filter ? (
+						{showsFilters && filter ? (
 							<>
 								<Button label="Reset Filters" onPress={() => onSelectFilter(null)} />
 								<Divider />
 							</>
 						) : null}
-						{organizations.length > 0 ? (
+						{showsFilters && organizations.length > 0 ? (
 							<Menu
 								label={axisLabel('organization', 'Organization', filter)}
 								modifiers={STAYS_OPEN}
@@ -95,16 +102,18 @@ export function CalendarPicker({
 								))}
 							</Menu>
 						) : null}
-						<Menu label={axisLabel('category', 'Category', filter)} modifiers={STAYS_OPEN}>
-							{categories.map((category) => (
-								<Toggle
-									isOn={filter?.axis === 'category' && filter.value === category.value}
-									key={category.value}
-									label={`${category.value} (${category.count})`}
-									onIsOnChange={() => toggleFilter('category', category.value)}
-								/>
-							))}
-						</Menu>
+						{showsFilters ? (
+							<Menu label={axisLabel('category', 'Category', filter)} modifiers={STAYS_OPEN}>
+								{categories.map((category) => (
+									<Toggle
+										isOn={filter?.axis === 'category' && filter.value === category.value}
+										key={category.value}
+										label={`${category.value} (${category.count})`}
+										onIsOnChange={() => toggleFilter('category', category.value)}
+									/>
+								))}
+							</Menu>
+						) : null}
 						<Section modifiers={STAYS_OPEN} title="Calendars">
 							{sources.map((source) => (
 								<Toggle
