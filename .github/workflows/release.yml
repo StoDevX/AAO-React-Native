@@ -11,32 +11,45 @@ name: Release
 
 on:
   push: {branches: [master]}
-  # pull_request_target, not pull_request: changesets/action resets its branch to
-  # github.sha, which for pull_request is a merge commit the checkout never
-  # fetched. Here it is the head of master, which is what the action wants. No PR
-  # code is checked out or run; the job only reads the PR's labels.
-  pull_request_target:
+  # A label change on the Version PR only starts a run on master (the `rerun`
+  # job below), because changesets/action resets its branch to github.sha, and
+  # on pull_request that is a merge commit the checkout never fetched. On master
+  # it is master's head, which is what the action wants.
+  pull_request:
     types: [labeled, unlabeled]
     branches: [master]
   workflow_dispatch:
 
-# The Version PR is rebuilt from master by whichever run is last. Never cancel
-# one halfway: a run that dies between pushing the branch and updating the pull
-# request leaves the two out of step.
-concurrency:
-  group: release
-  cancel-in-progress: false
-
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
 jobs:
+  rerun:
+    name: Rebuild the Version PR for its new label
+    runs-on: ubuntu-slim
+    # A channel label on the Version PR itself; no other label or pull request
+    # changes what the Version PR holds.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.head_ref == 'changeset-release/master' &&
+      startsWith(github.event.label.name, 'prerelease:')
+    steps:
+      - run: gh workflow run release.yml --repo "${GITHUB_REPOSITORY}" --ref master
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+
   release:
     name: Version or release
     runs-on: ubuntu-slim
-    # A label event matters only on the Version PR itself.
-    if: github.event_name != 'pull_request_target' || github.head_ref == 'changeset-release/master'
+    if: github.event_name != 'pull_request'
+    # The Version PR is rebuilt from master by whichever run is last. Never cancel
+    # one halfway: a run that dies between pushing the branch and updating the
+    # pull request leaves the two out of step.
+    concurrency:
+      group: release
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
