@@ -3,45 +3,28 @@ import {join} from 'node:path'
 import {describe, expect, test} from '@jest/globals'
 
 import {
-	AllViews,
-	TiledViews,
+	HomeViews,
 	CUSTOM_SYMBOLS,
-	HOME_GROUPS,
 	iconImage,
-	homeSections,
 	opensInBrowser,
+	visibleViews,
 	type ViewType,
 } from '../views'
 
 describe('the views registry', () => {
-	test('every view has an id of its own', () => {
-		let ids = AllViews().map((view) => view.id)
+	test('no two tiles share a title and a target', () => {
+		let keys = HomeViews().map((view) =>
+			JSON.stringify([view.title, view.type === 'view' ? view.view : view.url]),
+		)
 
-		expect(new Set(ids).size).toBe(ids.length)
-	})
-
-	test('every view belongs to a group home draws', () => {
-		let groups = new Set(HOME_GROUPS.map((group) => group.id))
-
-		for (let view of AllViews()) {
-			expect(groups).toContain(view.group)
-		}
-	})
-
-	test('Help is the only group that cannot collapse', () => {
-		let fixed = HOME_GROUPS.filter((group) => !group.collapsible).map((group) => group.id)
-
-		expect(fixed).toEqual(['help'])
+		expect(new Set(keys).size).toBe(keys.length)
 	})
 })
 
-describe('TiledViews', () => {
-	// The tiled home is today's: one Menus tile and one Streaming Media tile,
-	// which tab between their cafes and stations, and none of the tiles the
-	// grouped home adds. Written out in full so a change to a grouped tile that
-	// the tiled home inherits shows up here.
+describe('HomeViews', () => {
+	// Written out in full so a change to a tile shows up here.
 	test('are the tiles the home screen has always had, in their order', () => {
-		let tiles = TiledViews().map((view) => ({
+		let tiles = HomeViews().map((view) => ({
 			title: view.title,
 			icon: view.icon,
 			target: view.type === 'view' ? view.view : view.url,
@@ -170,58 +153,24 @@ describe('TiledViews', () => {
 	})
 })
 
-describe('homeSections', () => {
-	test('draws the groups in their fixed order', () => {
-		let order = homeSections(AllViews(), {isDev: false}).map((section) => section.id)
+describe('visibleViews', () => {
+	test('leaves out disabled and dev-only views outside dev mode', () => {
+		let titles = visibleViews(HomeViews(), {isDev: false}).map((view) => view.title)
 
-		expect(order).toEqual([
-			'eat',
-			'get-around',
-			'classes-work',
-			'whats-on',
-			'listen-watch',
-			'just-for-fun',
-			'help',
-			'campus-communications',
-		])
+		expect(titles).not.toContain('Athletics')
+		expect(titles).not.toContain('Developer')
+		expect(titles.filter((title) => title === 'Balances')).toHaveLength(1)
 	})
 
-	test('leaves out the Dev group outside dev mode', () => {
-		let ids = homeSections(AllViews(), {isDev: false}).flatMap((section) =>
-			section.views.map((view) => view.id),
-		)
+	test('adds the dev-only views in dev mode, after the rest', () => {
+		let titles = visibleViews(HomeViews(), {isDev: true}).map((view) => view.title)
 
-		expect(ids).not.toContain('carleton-campus')
-		expect(ids).not.toContain('carleton-menus')
-	})
-
-	test('adds the Dev group, last, in dev mode', () => {
-		let sections = homeSections(AllViews(), {isDev: true})
-
-		expect(sections.at(-1)?.id).toBe('dev')
-	})
-
-	test('shows Athletics outside dev mode', () => {
-		let whatsOn = homeSections(AllViews(), {isDev: false}).find(
-			(section) => section.id === 'whats-on',
-		)
-
-		expect(whatsOn?.views.map((view) => view.id)).toContain('athletics')
-	})
-
-	test('drops a disabled view, and a group it leaves empty', () => {
-		let views = AllViews().map((view) =>
-			view.group === 'just-for-fun' ? {...view, disabled: true} : view,
-		)
-
-		let ids = homeSections(views, {isDev: false}).map((section) => section.id)
-
-		expect(ids).not.toContain('just-for-fun')
+		expect(titles.slice(-3)).toEqual(['Athletics', 'Carleton Campus', 'Developer'])
 	})
 })
 
 function onlyView(matches: (view: ViewType) => boolean): ViewType {
-	let found = AllViews().filter(matches)
+	let found = HomeViews().filter(matches)
 	if (found.length !== 1) {
 		throw new Error(`expected one matching view, found ${found.length}`)
 	}

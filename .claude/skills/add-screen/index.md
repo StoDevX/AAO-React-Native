@@ -147,7 +147,7 @@ Any `.navigate(literal)` call site needs
 ### Step 5: Add to Home Screen Menu (if applicable)
 
 **Update `source/features/views.ts`:**
-- Add an entry to the `AllViews()` array whose `view` is the route's path
+- Add an entry to the `HomeViews()` array whose `view` is the route's path
   (e.g. `'/screen-name'`), matching the file/folder name under `app/`.
 
 **Example view addition:**
@@ -267,7 +267,7 @@ Use this checklist to ensure you've completed all necessary steps when adding a 
 - [ ] Route file imports support code by relative path
 
 ## Home Screen Integration (if applicable)
-- [ ] Added an entry to `AllViews()` in `source/features/views.ts`
+- [ ] Added an entry to `HomeViews()` in `source/features/views.ts`
 - [ ] The entry's `view` path matches the route file's path
 - [ ] Chose appropriate SF Symbol for `icon`
 - [ ] Selected appropriate `gradient` from `@frogpond/colors`

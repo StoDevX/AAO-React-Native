@@ -21,15 +21,7 @@ import * as c from '@frogpond/colors'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
-import {
-	AllViews,
-	homeSections,
-	TiledViews,
-	visibleViews,
-	type HomeSection,
-	type ViewType,
-} from '../source/features/views'
-import {HomeGroupHeader} from '../source/features/home/group-header'
+import {HomeViews, visibleViews, type ViewType} from '../source/features/views'
 import {
 	FILL_WIDTH,
 	homeColumnsForFontScale,
@@ -38,8 +30,8 @@ import {
 } from '../source/components/tile-layout'
 import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
-import {HomeListSections} from '../source/features/home/list-sections'
-import {useCollapsedGroupsStore, useHomeLayoutStore} from '../source/features/home/store'
+import {HomeListRows} from '../source/features/home/list-rows'
+import {useHomeLayoutStore} from '../source/features/home/store'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
@@ -153,8 +145,6 @@ function UnofficialAppNotice(): React.ReactNode {
 	)
 }
 
-/// Names a group's tile grid.
-const groupGridId = (group: string): string => `home-group-grid-${group}`
 /// A list row with nothing of a row's own: no fill, margins or divider, so the
 /// banner and the notice sit on the list's background rather than in a cell.
 const BARE_ROW_MODIFIERS = [
@@ -163,12 +153,10 @@ const BARE_ROW_MODIFIERS = [
 	listRowSeparator('hidden'),
 ]
 
-/// Names the tiled home's tile grid.
+/// Names the home's tile grid.
 const HOME_GRID_ID = 'home-tile-grid'
 /// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
 const HOME_MENU_LABEL = 'Home menu'
-/// Names a group's header, for a UI test.
-const groupHeaderId = (group: string): string => `home-group-header-${group}`
 
 /** A tile's destination: a screen in the app, or a page opened outside it. */
 function useOpenView(): (view: ViewType) => void {
@@ -187,61 +175,18 @@ function useOpenView(): (view: ViewType) => void {
 	)
 }
 
-/// One group: its header, then its tiles two abreast unless it is collapsed.
-function HomeGroupView({
-	section,
-	collapsed,
-	onToggle,
-	onOpen,
-}: {
-	section: HomeSection
-	collapsed: boolean
-	onToggle: () => void
-	onOpen: (view: ViewType) => void
-}): React.ReactNode {
-	let {fontScale} = useWindowDimensions()
-
-	return (
-		<VStack
-			alignment="leading"
-			modifiers={[frame({maxWidth: FILL_WIDTH})]}
-			spacing={TILE_SPACING / 2}
-		>
-			<HomeGroupHeader
-				accessibilityId={groupHeaderId(section.id)}
-				collapsed={collapsed}
-				onToggle={section.collapsible ? onToggle : undefined}
-				title={section.title}
-			/>
-			{collapsed ? null : (
-				<TileGrid
-					accessibilityId={groupGridId(section.id)}
-					columns={homeColumnsForFontScale(fontScale)}
-					items={section.views}
-					keyForItem={(view) => view.id}
-					renderItem={(view) => <HomeScreenButton onPress={() => onOpen(view)} view={view} />}
-				/>
-			)}
-		</VStack>
-	)
-}
-
 export default function HomePage(): React.ReactNode {
 	let router = useRouter()
 	let isDev = useIsDevMode()
-	let collapsedGroups = useCollapsedGroupsStore((state) => state.collapsedGroups)
-	let toggleGroup = useCollapsedGroupsStore((state) => state.toggleGroup)
 	let openView = useOpenView()
 	let {fontScale} = useWindowDimensions()
 	let layout = useHomeLayoutStore((state) => state.layout)
-	// The saved layout and collapsed groups load after the first render. Drawing
-	// before then would draw the defaults and jump.
+	// The saved layout loads after the first render. Drawing before then would
+	// draw the default and jump.
 	let hydrated = useHomeLayoutStore((state) => state.hydrated)
-	let groupsHydrated = useCollapsedGroupsStore((state) => state.hydrated)
 	let setLayout = useHomeLayoutStore((state) => state.setLayout)
 	let barVisible = useRadioBarVisible()
-	let sections = homeSections(AllViews(), {isDev})
-	let tiledViews = visibleViews(TiledViews(), {isDev})
+	let views = visibleViews(HomeViews(), {isDev})
 
 	return (
 		<>
@@ -262,13 +207,6 @@ export default function HomePage(): React.ReactNode {
 							onPress={() => setLayout('tiled')}
 						>
 							Tiled
-						</Stack.Toolbar.MenuAction>
-						<Stack.Toolbar.MenuAction
-							icon="rectangle.grid.1x2"
-							isOn={layout === 'grouped'}
-							onPress={() => setLayout('grouped')}
-						>
-							Grouped
 						</Stack.Toolbar.MenuAction>
 						<Stack.Toolbar.MenuAction
 							icon="list.bullet"
@@ -310,7 +248,7 @@ export default function HomePage(): React.ReactNode {
 				modifiers={[accessibilityIdentifier('screen-homescreen')]}
 				style={styles.host}
 			>
-				{!hydrated || !groupsHydrated ? null : layout === 'list' ? (
+				{!hydrated ? null : layout === 'list' ? (
 					<VStack spacing={0}>
 						{/* Above the list rather than a row in it: a row with nothing
 						    in it, as when there is no banner, still takes a row's
@@ -321,7 +259,7 @@ export default function HomePage(): React.ReactNode {
 							target={FAQ_TARGETS.HOME}
 						/>
 						<List modifiers={[listStyle('insetGrouped')]}>
-							<HomeListSections onOpen={openView} sections={sections} />
+							<HomeListRows onOpen={openView} views={views} />
 							<VStack modifiers={BARE_ROW_MODIFIERS}>
 								<UnofficialAppNotice />
 							</VStack>
@@ -353,28 +291,16 @@ export default function HomePage(): React.ReactNode {
 								target={FAQ_TARGETS.HOME}
 							/>
 
-							<VStack spacing={layout === 'tiled' ? TILE_SPACING : TILE_SPACING * 2}>
-								{layout === 'tiled' ? (
-									<TileGrid
-										accessibilityId={HOME_GRID_ID}
-										columns={homeColumnsForFontScale(fontScale)}
-										items={tiledViews}
-										keyForItem={(view) => view.title}
-										renderItem={(view) => (
-											<HomeScreenButton onPress={() => openView(view)} view={view} />
-										)}
-									/>
-								) : (
-									sections.map((section) => (
-										<HomeGroupView
-											collapsed={section.collapsible && collapsedGroups.includes(section.id)}
-											key={section.id}
-											onOpen={openView}
-											onToggle={() => toggleGroup(section.id)}
-											section={section}
-										/>
-									))
-								)}
+							<VStack spacing={TILE_SPACING}>
+								<TileGrid
+									accessibilityId={HOME_GRID_ID}
+									columns={homeColumnsForFontScale(fontScale)}
+									items={views}
+									keyForItem={(view) => view.title}
+									renderItem={(view) => (
+										<HomeScreenButton onPress={() => openView(view)} view={view} />
+									)}
+								/>
 
 								<UnofficialAppNotice />
 							</VStack>
