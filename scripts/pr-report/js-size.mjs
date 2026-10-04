@@ -6,6 +6,8 @@
  * package or feature grew, not only that the bundle did.
  */
 
+import {readFileSync, statSync, writeFileSync} from 'node:fs'
+
 /** Bumped whenever the report's shape changes, so an older baseline is not misread. */
 export const REPORT_VERSION = 1
 
@@ -65,4 +67,26 @@ export function buildReport({sha, minifiedBytes, hermesBytes, explorer}) {
 		sha,
 		js: {minifiedBytes, hermesBytes, byPackage, byFeature},
 	}
+}
+
+/**
+ * Reads the bundle, bytecode and explorer output from `dir`, and writes
+ * `dir/size-report.json`. The commit comes from SIZE_REPORT_SHA, which CI
+ * sets; a run by hand records `local`.
+ */
+function main() {
+	let dir = process.argv[2] ?? 'size-report'
+	let sha = process.env.SIZE_REPORT_SHA || 'local'
+	let report = buildReport({
+		sha,
+		minifiedBytes: statSync(`${dir}/main.jsbundle`).size,
+		hermesBytes: statSync(`${dir}/main.hbc`).size,
+		explorer: JSON.parse(readFileSync(`${dir}/explorer.json`, 'utf8')),
+	})
+	writeFileSync(`${dir}/size-report.json`, `${JSON.stringify(report, null, '\t')}\n`)
+	console.error(`Wrote ${dir}/size-report.json`)
+}
+
+if (import.meta.main) {
+	main()
 }

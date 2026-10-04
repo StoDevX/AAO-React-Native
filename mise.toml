@@ -456,6 +456,33 @@ expo export:embed \
   --assets-dest ./ios
 """
 
+# Measures what ships: no UI-test fixtures and no mocked mode, unlike
+# bundle:ios, and the same hermesc flags as Xcode's Release build.
+[tasks."size-report"]
+description = "Measure the production JS bundle for the PR report"
+depends = ["bundle-data"]
+run = """
+set -euo pipefail
+out=size-report
+rm -rf "$out" && mkdir -p "$out"
+expo export:embed \
+  --reset-cache \
+  --entry-file index.js \
+  --dev false \
+  --platform ios \
+  --bundle-output "$out/main.jsbundle" \
+  --sourcemap-output "$out/main.jsbundle.map" \
+  --assets-dest "$out/assets"
+hermes=$(node -p "require('path').dirname(require.resolve('hermes-compiler/package.json', {paths: [require('path').dirname(require.resolve('react-native/package.json'))]}))")
+case "$(uname -s)" in
+  Darwin) bin="$hermes/hermesc/osx-bin/hermesc" ;;
+  *) bin="$hermes/hermesc/linux64-bin/hermesc" ;;
+esac
+"$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log"
+source-map-explorer "$out/main.jsbundle" "$out/main.jsbundle.map" --json --no-border-checks > "$out/explorer.json"
+node scripts/pr-report/js-size.mjs "$out"
+"""
+
 # --- Agent tasks ---
 
 [tasks."agent:setup"]
