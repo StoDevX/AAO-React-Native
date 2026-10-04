@@ -374,7 +374,13 @@ describe('session profile', () => {
 	}
 
 	beforeEach(() => {
+		// An offline window ends on a timer, which must not outlive the test.
+		jest.useFakeTimers()
 		useChaosNetwork.setState({offline: false})
+	})
+
+	afterEach(() => {
+		jest.useRealTimers()
 	})
 
 	test('takes the network away for a window, failing every request in it', async () => {
