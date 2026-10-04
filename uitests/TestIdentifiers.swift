@@ -16,10 +16,6 @@ struct TestIdentifiers {
 		/// `mise run update-mess-fixtures`. Added when the runner is started with
 		/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1`.
 		static let recordFixtures = "--record-fixtures"
-		/// Adds one posting to the Student Work fixtures, read through
-		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
-		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
-		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -40,16 +36,58 @@ struct TestIdentifiers {
 		}
 	}
 
+	// MARK: - Chaos
+
+	/// Launch arguments and identifiers shared with source/chaos.
+	enum Chaos {
+		static let flag = "--chaos"
+		static let seed = "--chaos-seed"
+		/// Which launch of the run this is; the app keys its tape and seeds its
+		/// faults by it, because `XCUIApplication.open` relaunches the app.
+		static let launch = "--chaos-launch"
+		static let replay = "--chaos-replay"
+		static let faultRate = "--chaos-fault-rate"
+		/// The hidden element whose label is the latest stopping finding.
+		static let beacon = "chaos.findings"
+		/// The beacon's label while there is nothing to report.
+		static let beaconQuiet = "none"
+		/// A route that throws on render, for the canary.
+		static let crashRoute = "chaos-crash"
+		/// What the chaos error boundary draws in place of the tree that threw.
+		static let fatalBoundary = "chaos.fatal-boundary"
+		/// Elements only an error screen draws.
+		static let errorScreenIdentifiers = ["router_error_message", fatalBoundary]
+		/// Texts only an error fallback draws, for fallbacks with no identifier.
+		static let errorScreenLabels = ["A problem occurred while showing places."]
+		/// A route that opens a form sheet with no Back or Close button, for
+		/// the canary that proves the monkey can leave one: the Dictionary's
+		/// preview, which has nothing to show without a draft.
+		static let sheetTrapRoute = "dictionary/entry/preview"
+	}
+
 	// MARK: - testID-based identifiers
 
 	enum Home {
 		static let screen = "screen-homescreen"
 		static let notice = "home-notice"
+		static let enableDevMode = "Enable dev mode"
 	}
 
 	enum Navigation {
-		static let openSettings = "Open Settings"
-    static let settingsSheetTitle = "Settings"
+		/// The menu at the home screen's top-right corner, which holds the layout
+		/// choice, Support, About, Contributing and Feedback. Mirrors
+		/// HOME_MENU_LABEL in app/index.tsx.
+		static let homeMenu = "Home menu"
+		static let supportMenuItem = "Support"
+		static let aboutMenuItem = "About"
+		static let contributingMenuItem = "Contributing"
+		static let feedbackMenuItem = "Feedback"
+		/// The paintbrush on Home and the Messenger's front page. Mirrors CUSTOMIZE_LABEL in
+		/// source/features/customize/labels.ts.
+		static let customizeButton = "Customize"
+		/// A two-line title in a navigation bar, read as its two lines joined by a comma. Mirrors
+		/// NAVIGATION_TITLE_ID in source/components/navigation-title.tsx.
+		static let title = "navigation-title"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
 		/// navigation bar -- `app.navigationBars.buttons[backButton]` matches
@@ -59,6 +97,11 @@ struct TestIdentifiers {
 		/// whatever the label. Both a system back button and an app-provided
 		/// one read `Back`, so the identifier is what separates them.
 		static let systemBackButton = "BackButton"
+		/// The label UIKit gives a sheet's grabber, which it exposes as a button
+		/// with no identifier. Its element is the sheet's child, which is how a
+		/// sheet's own box is found. A form sheet on an iPhone in landscape
+		/// fills the screen and has none.
+		static let sheetGrabber = "Sheet Grabber"
 	}
 
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
@@ -80,7 +123,7 @@ struct TestIdentifiers {
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
 		static let carletonCampus = "Carleton Campus"
-		static let balances = "Balances"
+		static let developer = "Developer"
 		static let hours = "Hours"
 		static let dictionary = "Dictionary"
 		static let courseCatalog = "Course Catalog"
@@ -122,6 +165,8 @@ struct TestIdentifiers {
 		static let editFormTitle = suggestAnEdit
 		static let editForm = "dictionary-edit-form"
 		static let previewSheet = "dictionary-preview-sheet"
+		/// What the preview shows when it is opened with no draft to compare.
+		static let emptyPreview = "Nothing to Preview"
 		static let preview = "Preview"
 		static let reorder = "Reorder"
 		static let addSense = "Add Sense"
@@ -186,19 +231,10 @@ struct TestIdentifiers {
 		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
 		/// matches on the prefix. St. Olaf can rename it.
 		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
-		/// St. Olaf's fullest card: a long About, twenty-one departments (so
-		/// More appears), and Links. Its feed lists its offices as departments.
-		/// St. Olaf can rename it.
-		static let aBuildingWithManyDepartments = "Tomson Hall"
-		/// The section listing what else is at a place. Mirrors the title in
-		/// source/features/map/card/also-here-section.tsx.
-		static let alsoHereSection = "Also at This Location"
 		/// A building with points inside it: The Cage, Stav Hall and more.
 		static let aBuildingWithPoints = "Buntrock Commons"
 		/// A point inside `aBuildingWithPoints`.
 		static let aPointInside = "The Cage"
-		/// An office in the Hours data, keyed to `aBuildingWithManyDepartments`.
-		static let anOffice = "Registrar"
 		/// A St. Olaf building whose description runs well past five lines.
 		static let aBuildingWithALongAbout = "Holland Hall"
 		/// A group in the map sheet's category grid with a list long enough to
@@ -221,27 +257,15 @@ struct TestIdentifiers {
 		/// tap that reaches the footprint instead opens the wrong card.
 		/// St. Olaf can rename it.
 		static let aPointOnlyPlace = "Stav Hall"
-		/// The Outdoors category, and a pond and a trail in it: rows two and
-		/// three, so both show at the middle stop, where opening a group leaves
-		/// the sheet. St. Olaf can rename them; they come from
-		/// StoDevX/campus-map-data.
-		static let outdoorsCategory = "Outdoors"
-		static let aPond = "Baseball Pond"
-		static let aTrail = "Baseball Pond Loop"
 		/// The Recents section's title, and its rows' swipe action. Mirror
 		/// RecentsSection in source/features/map/building-picker.tsx.
 		static let recentsTitle = "Recents"
 		static let recentsRemove = "Remove"
 		/// Mirrors CATEGORY_GRID_ID in source/features/map/category-grid.tsx.
 		static let categoryGrid = "map-category-grid"
-		/// A St. Olaf place in no Dining group, found by search from inside it.
-		static let aPlaceOutsideDining = "Regents Hall of Natural Sciences"
 		/// A row two screens down `parkingCategory`, behind every Accessible
 		/// Parking space. St. Olaf can rename it.
 		static let aRowFarDownParking = "Alumni Hall Road"
-		/// A point inside a building with exactly one venue in the Hours data,
-		/// so its card shows that venue's hours as its own.
-		static let aPointWithItsOwnHours = "The Cage"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/map/index.tsx.
@@ -251,23 +275,11 @@ struct TestIdentifiers {
 		static let osmCredit = "© OpenStreetMap contributors"
 		/// The map screen's title, which its header no longer draws.
 		static let stolafTitle = "St. Olaf Map"
-		/// UIKit's own drag indicator on the presented sheet, found by label --
-		/// it carries no identifier. Its element is the sheet's child, which is
-		/// how the sheet's own box is found.
-		static let sheetGrabber = "Sheet Grabber"
 		/// A St. Olaf-only building near the top of the list, so the expanded
 		/// sheet shows it without scrolling -- and absent from Carleton's map
 		/// data, so selecting it is what would fail if the map's campus parameter
 		/// were ignored.
 		static let aBuilding = "Buntrock Commons"
-	}
-
-	// MARK: - Balances
-
-	enum Balances {
-		static let iAgree = "I Agree"
-		static let balancesHeader = "Balances"
-		static let mealPlanHeader = "Meal Plan"
 	}
 
 	// MARK: - Student Work
@@ -283,33 +295,11 @@ struct TestIdentifiers {
 		static let jobDescriptionRow = "Description"
 		/// The start of a paragraph in the fixture postings' description.
 		static let fixtureJobDescriptionParagraph = "Transferable Skills:"
-		/// A fixture posting whose title carries a term and a pay code, shown
-		/// with both dropped. Mirrors UITEST_CODED_JOB_TITLE.
-		static let fixtureCodedJob = "Stav Student Server"
-		/// Its wage, from the NST1 tier.
-		static let fixtureCodedJobWage = "$13.50/hr"
-		/// Matches LEVEL_LABELS in source/features/sis/student-work/posting.ts.
-		static let entryLevel = "Entry-level"
-		/// The posting only a launch with `LaunchArguments.extraJobPosting`
-		/// has, as its row titles it. Mirrors UITEST_EXTRA_JOB_TITLE.
-		static let fixtureExtraJob = "Planetarium Student Guide"
-		/// What a new posting's row label leads with: the dot's label, from
-		/// NEW_DOT in source/features/sis/student-work/postings-list.tsx.
-		static let newPrefix = "New, "
-		/// The list's sections, from RECENCY_ORDER in
-		/// source/features/sis/student-work/recency.ts.
-		static let thisWeek = "This Week"
-		static let lastWeek = "Last Week"
-		static let earlier = "Earlier"
-		/// Row labels on a posting's screen, from `jobDetailFields` in
-		/// source/features/sis/student-work/lib.ts.
-		static let wageRow = "Wage"
-		static let levelRow = "Level"
-		static let termRow = "Term"
-		/// The coded fixture's term, as `jobTerm` names it.
-		static let academicYear = "Academic Year"
-		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-grid.tsx.
+		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-section.tsx.
 		static let areaGrid = "student-work-area-grid"
+		/// Matches AREA_ROW_ID_PREFIX in source/features/sis/student-work/area-section.tsx.
+		/// Each area row's identifier is this followed by the area's slug.
+		static let areaRowPrefix = "student-work-area:"
 		/// How many areas data/student-work-areas.yaml lists.
 		static let areaCount = 16
 		/// From data/student-work-areas.yaml: one area the fixtures fill, one
@@ -513,7 +503,13 @@ struct TestIdentifiers {
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let byIssue = "By Issue"
 		static let latest = "Latest"
-		static let viewMenuPrefix = "View: "
+		static let viewMenuPrefix = "More, "
+		/// The view menu's way to the staff directory, in source/features/mess/front-page-screen.tsx.
+		static let staffMenuItem = "Staff"
+		/// The start of each staff tile's name, which ends in its profile's id, in source/features/mess/staff-screen.tsx.
+		static let staffTilePrefix = "mess-staff-tile-"
+		/// The heading over a staff member's bio, in source/features/mess/staff-screen.tsx.
+		static let staffBioHeading = "About"
 
 		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
 		static let topTile = "mess-top-tile"
@@ -522,11 +518,9 @@ struct TestIdentifiers {
 		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The paper's name: Latest's masthead, and By Issue's castle's label, in source/features/mess/masthead.tsx.
+		/// The paper's name: the first line of the front page's title, in
+		/// source/features/mess/front-page-screen.tsx, and each issue tile's nameplate.
 		static let paperName = "The Olaf Messenger"
-
-		/// A page's dateline, in source/features/mess/masthead.tsx.
-		static let dateline = "mess-dateline"
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
@@ -543,9 +537,6 @@ struct TestIdentifiers {
 		/// source/features/mess/story-list.tsx.
 		static let storyRowPrefix = "mess-row-"
 
-		/// A News column with stories in it, from olafmessenger.com.
-		static let goodQuestionsColumn = "Good Questions"
-
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
@@ -553,20 +544,12 @@ struct TestIdentifiers {
 		/// paragraphs, quotes and lists, in source/features/mess/story-blocks.tsx.
 		static let storyBody = "mess-story-body"
 
-		/// The card that sends a story with no body, or an embed the reader
-		/// cannot play, to olafmessenger.com, in source/features/mess/story-blocks.tsx.
-		static let storySiteLink = "mess-story-site-link"
-
-		/// The reader's share button label, in source/features/mess/story-screen.tsx.
-		static let shareStory = "Share Story"
-
 		/// The Mess section whose columns the Variety templates draw, and the columns
 		/// the tests open, as the section chips and column chips in source/features/mess/
 		/// name them. They are the paper's own category names, from olafmessenger.com.
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
-		static let crosswordColumn = "Crossword"
 		static let recipesColumn = "Recipes"
 		static let photoColumn = "Photo"
 
@@ -622,10 +605,13 @@ struct TestIdentifiers {
 		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
 		static let seriesStory = "mess-series-story"
 
-		/// A Crossword post's button that opens its puzzle, in
+		/// A Crossword or Puzzle post's button that opens its puzzle, in
 		/// source/features/mess/story-screen.tsx.
-		static let crosswordSolve = "mess-crossword-solve"
+		static let puzzleSolve = "mess-puzzle-solve"
 		static let crosswordSolveLabel = "Solve the crossword"
+		/// A Crossword post, from the recorded Mess fixtures, opened by route: its row and its
+		/// card open the puzzle without the page.
+		static let crosswordStoryRoute = "/messenger/story?id=36814"
 
 		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
 		static let recipeIngredient = "mess-recipe-ingredient"
@@ -634,19 +620,34 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		static let tabs = ["Webcams", "KSTO", "KRLX"]
-		static let krlxTab = "KRLX"
-		/// The station screen's buttons, as VoiceOver names them. Call and
-		/// schedule are icons alone, so their labels are all a listener has
-		/// to go on.
-		static let krlxButtons = [
-			"Listen",
+		static let tabs = ["Webcams"]
+		/// The station picker's segments, at the top of the sheet.
+		static let kstoSegment = "KSTO"
+		static let krlxSegment = "KRLX"
+		/// Play and Stop, in source/features/streaming/radio/player-view and the
+		/// mini-player; each names its station.
+		static let playKsto = "Play KSTO 93.1 FM"
+		static let pauseKsto = "Pause KSTO 93.1 FM"
+		static let playKrlx = "Play 88.1 KRLX-FM"
+		/// The player's bottom row, as VoiceOver names it.
+		static let krlxActions = [
 			"Call 88.1 KRLX-FM",
-			"88.1 KRLX-FM schedule",
+			"Today's schedule",
 		]
+		/// The bottom row's buttons that leave the app, which VoiceOver reads as
+		/// links.
+		static let krlxLinks = [
+			"Chat with 88.1 KRLX-FM",
+		]
+		/// The full player's stand-in for a scrubber, which shows only at full size.
+		static let airStatus = "radio-air-status"
+		/// The Now Playing bar with no station loaded, on Home and in Streaming
+		/// Media's tab bar.
+		static let idleBar = "Not Playing"
+		/// Customize's Radio Player switch.
+		static let showRadioPlayer = "show-radio-player"
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
-		static let kstoTab = "KSTO"
 		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
 		/// KSTO's logos in the order a tap cycles through them.
 		static let kstoLogos = [
@@ -661,9 +662,8 @@ struct TestIdentifiers {
 	// MARK: - Quick Actions
 
 	enum QuickActions {
-		/// The picker's accessibility identifier, set in app/settings/quick-actions.tsx.
+		/// The picker's accessibility identifier, set in app/customize/quick-actions.tsx.
 		static let screen = "screen-quick-actions"
-		static let settingsRow = "Home Screen Quick Actions"
 		static let reset = "Reset to Defaults"
 		/// DEFAULT_QUICK_ACTIONS in source/features/quick-actions/destinations.ts.
 		static let defaults = ["Stav Menu", "Cage Menu", "Olaf Messenger", "Transit"]
@@ -672,11 +672,85 @@ struct TestIdentifiers {
 		static let cageTab = "The Cage"
 	}
 
-	// MARK: - Settings
+	// MARK: - Customize
 
-	enum Settings {
-		static let developer = "Developer"
-		static let enableDevMode = "Enable dev mode"
+	enum Customize {
+		/// The sheet's host, set in app/customize/index.tsx.
+		static let screen = "screen-customize"
+		static let quickActionsRow = "Quick Actions"
+		/// The App Icon row's identifier; its label also carries the current icon's name.
+		static let appIconRow = "app-icon-row"
+		/// The gallery's host, set in app/customize/app-icon.tsx.
+		static let appIconScreen = "screen-app-icon"
+		/// SheetCloseButton's label, in source/components/sheet-close-button.tsx.
+		static let close = "Close"
+	}
+
+	// MARK: - Messenger Customize
+
+	enum MessCustomize {
+		/// The sheet's host, set in app/messenger/customize/index.tsx.
+		static let screen = "screen-mess-customize"
+		/// The Paper Stains picker, in source/features/mess/issue-stains-row.tsx.
+		static let issueStains = "issue-stains"
+		/// The Dark page for Photo stories switch, in app/messenger/customize/index.tsx.
+		static let keepPhotoStoriesDark = "keep-photo-stories-dark"
+	}
+
+	// MARK: - Contributing
+
+	enum Contributing {
+		/// The Contributing screen's host, set in app/contributing/index.tsx.
+		static let screen = "screen-contributing"
+		static let github = "GitHub"
+		static let reportProblem = "Report a Problem"
+		static let openStreetMap = "OpenStreetMap"
+		/// The first entry of `dataSources` in source/features/contributing/data-sources.ts.
+		static let firstDataSource = "St. Olaf College"
+		static let email = "Email us"
+	}
+
+	// MARK: - About
+
+	enum About {
+		/// The story's page dots, labelled in source/features/about/card-carousel.tsx.
+		static let pageDots = "Page"
+		/// The About screen's host, set in app/about/index.tsx.
+		static let screen = "screen-about"
+		static let version = "App Version"
+		/// A section header in app/about/index.tsx.
+		static let storyHeading = "Our story"
+		/// The headings of the first two timeline cards, from source/features/about/timeline.ts.
+		static let firstEra = "🏡 October 2017 — Today"
+		static let secondEra = "🧱 July 2016 — September 2017"
+		/// The credits cards' headings, from app/about/index.tsx.
+		static let contributors = "Contributors"
+		static let acknowledgements = "Acknowledgements"
+		static let privacy = "Privacy"
+		static let legal = "Legal"
+	}
+
+	// MARK: - Support
+
+	enum Support {
+		/// The Support screen's host, set in app/support/index.tsx.
+		static let screen = "screen-support"
+		static let faqs = "FAQs"
+		static let sendFeedback = "Send Feedback"
+		/// ShareTelemetryToggle's label, in source/features/telemetry/consent-toggle.tsx.
+		static let telemetryToggle = "Share anonymous usage and crash data"
+		/// The title of the Report a Problem form, in app/report-problem.tsx.
+		static let reportProblemTitle = "Report a Problem"
+		/// The form's close button, labelled in app/report-problem.tsx.
+		static let closeProblemForm = "Close Screen"
+	}
+
+	// MARK: - Developer
+
+	enum Developer {
+		/// The Developer screen's host, set in app/developer/index.tsx.
+		static let screen = "screen-developer"
+		static let components = "Components"
 	}
 
 	// MARK: - Directory
@@ -722,11 +796,25 @@ struct TestIdentifiers {
 		static let fixtureEntryDepartment = "Computer Science"
 	}
 
+	// MARK: - Layout menu
+
+	enum Layout {
+		/// The ⋯ menu's label, from source/components/layout-menu.tsx.
+		static let menu = "Layout"
+		static let grid = "Grid"
+		static let list = "List"
+	}
+
 	// MARK: - Student Orgs
 
 	enum StudentOrgs {
-		/// Matches CATEGORY_GRID_ID in app/student-orgs/index.tsx.
+		/// Matches CATEGORY_GRID_ID in source/features/student-orgs/category-landing.tsx.
 		static let categoryGrid = "student-orgs-category-grid"
+		/// Matches CATEGORY_LIST_ID in source/features/student-orgs/category-landing.tsx.
+		static let categoryList = "student-orgs-category-list"
+		/// Matches CATEGORY_ROW_ID_PREFIX in source/features/student-orgs/category-landing.tsx. Each
+		/// category row's identifier is this followed by the category's name.
+		static let categoryRowPrefix = "student-orgs-category:"
 		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
 		static let resultsList = "student-orgs-results-list"
 	}
@@ -791,20 +879,6 @@ struct TestIdentifiers {
 		static let reportScreenTitle = reportAction
 		/// The report screen's own submit control, in the navigation bar.
 		static let submitReportAction = "Submit Report"
-
-		/// A St. Olaf venue whose `building` key (`toh`) resolves to a
-		/// differently-named feature -- Tomson Hall, not Registrar -- so a test
-		/// asserting the cutout frames `aBuildingWithCutoutFrames` only passes if
-		/// the join actually used the key. `The Cage`, whose key (`thecage`)
-		/// happens to share wording with its own name, would pass even with a
-		/// broken join that fell back to matching on name.
-		static let aBuildingWithCutout = "Registrar"
-		static let aBuildingWithCutoutFrames = "Tomson Hall"
-
-		/// The prefix `BuildingCutout` sets as its accessibility label, naming
-		/// the building it frames. Mirrors the template literal in
-		/// source/features/building-hours/detail/building-cutout.tsx.
-		static let cutoutLabelPrefix = "Map showing "
 	}
 
 	// MARK: - Course Catalog

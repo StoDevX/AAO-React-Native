@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, HStack, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Host, HStack, List, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
@@ -17,16 +17,15 @@ import {sto} from '../../lib/colors'
 import {useRouter} from 'expo-router'
 import {NoCredentialsError, credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
-import {FaqBannerGroup} from '../../features/faqs/banner'
+import {FaqBannerSlot} from '../../features/faqs/banner'
 import {FAQ_TARGETS} from '../../features/faqs/constants'
-import {DetailRow, DisclosureRow} from '../../components/rows'
+import {DetailRow} from '../../components/rows'
 import {balanceValue} from './lib'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
 	let router = useRouter()
-	let openSettings = () => router.navigate('/settings')
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
@@ -52,13 +51,11 @@ export const BalancesView = (): React.ReactNode => {
 				]}
 			>
 				<Section modifiers={[listRowBackground('clear')]}>
-					<RNHostView matchContents={true}>
-						<FaqBannerGroup
-							onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
-							style={styles.banner}
-							target={FAQ_TARGETS.BALANCES}
-						/>
-					</RNHostView>
+					<FaqBannerSlot
+						onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
+						style={styles.banner}
+						target={FAQ_TARGETS.BALANCES}
+					/>
 				</Section>
 
 				<Section footer={<Text>{DISCLAIMER}</Text>} title="Balances">
@@ -77,13 +74,10 @@ export const BalancesView = (): React.ReactNode => {
 					{data.plan ? <DetailRow label="Meal Plan" value={data.plan} /> : null}
 				</Section>
 
-				{isError && error instanceof Error ? (
-					<Section footer={<Text>You&apos;ll need to log in in order to see this data.</Text>}>
-						{error instanceof NoCredentialsError ? (
-							<DisclosureRow onPress={openSettings} title="Log in with St. Olaf" />
-						) : (
-							<Text modifiers={[foregroundStyle(sto.red)]}>{error.message}</Text>
-						)}
+				{/* A missing login is explained by the FAQ banner above; nowhere in the app signs in to Balances. */}
+				{isError && error instanceof Error && !(error instanceof NoCredentialsError) ? (
+					<Section>
+						<Text modifiers={[foregroundStyle(sto.red)]}>{error.message}</Text>
 					</Section>
 				) : null}
 			</List>
@@ -135,8 +129,8 @@ let styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
 	},
+	// No horizontal margin: the list row already insets its content.
 	banner: {
-		marginHorizontal: 16,
 		marginTop: 16,
 	},
 })

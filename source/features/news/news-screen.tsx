@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
+import {remoteImage} from '../../lib/remote-images'
 import {NewsList} from './news-list'
 import {NewsPicker} from './news-picker'
 import {summarizeFeed} from './lib/feed'
@@ -30,7 +31,9 @@ export function NewsScreen({source}: Props): React.ReactNode {
 				entries={query.data?.entries ?? []}
 				query={query}
 				selectedCategory={category}
-				thumbnail={source.thumbnail}
+				thumbnail={
+					source.thumbnail === false ? false : remoteImage('news-sources', source.thumbnail)
+				}
 			/>
 			<NewsPicker
 				categories={categories}

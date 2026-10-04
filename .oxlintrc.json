@@ -180,7 +180,7 @@
     "typescript/no-require-imports": "error",
     // Needs type information, so it reports only when the type-aware pass
     // runs -- which `options.typeAware` above already turns on for every
-    // `mise run lint`, no extra task or CLI flag. It earns the ~0.8s that
+    // `mise run lint:oxlint`, no extra task or CLI flag. It earns the ~0.8s that
     // pass costs: every legacy expo-calendar method `add-to-device-calendar`
     // called was a stub that throws at runtime, and nothing else in the
     // toolchain -- tsc, jest, the non-type-aware rules -- said a word.
@@ -427,7 +427,7 @@
       }
     },
     {
-      "files": ["images/**/index.ts", "images/transparent.ts"],
+      "files": ["images/**/index.ts"],
       "rules": {
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-return": "off"

@@ -8,6 +8,7 @@ import categoriesJson from './fixtures/categories.json'
 import springPosts from './fixtures/issue-posts.json'
 import postsJson from './fixtures/posts.json'
 import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
+import {NAVIGATION_TITLE_ID} from '../../../components/navigation-title'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
 import {TOP_TILE_ID} from '../issue-grid'
@@ -16,7 +17,6 @@ import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
-import {DATELINE_ID} from '../masthead'
 import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
@@ -109,9 +109,6 @@ function seedTop(): void {
 	)
 }
 
-/** What the masthead's dateline says the page holds. */
-const dateline = () => screen.getByTestId(DATELINE_ID)
-
 /** An item of the view menu in the header, by its label. */
 const menuItem = (name: string) => screen.getByRole('menuitem', {name})
 
@@ -168,14 +165,17 @@ function renderScreen() {
 }
 
 describe('FrontPageScreen', () => {
-	test("opens on By Issue, under the paper's castle rather than its nameplate and no dateline, with the newest issue as the top tile", async () => {
+	test("opens on By Issue, titled with the paper's castle alone, with the newest issue as the top tile", async () => {
 		seedTop()
 		await renderScreen()
 
 		expect(isChecked('By Issue')).toBe(true)
 		expect(isChecked('Latest')).toBe(false)
+		expect(screen.getByTestId(NAVIGATION_TITLE_ID).props.accessibilityLabel).toBe(
+			'The Olaf Messenger',
+		)
+		// The castle names the paper, so the page prints no name of its own
 		expect(screen.queryByText('The Olaf Messenger')).toBeNull()
-		expect(screen.queryByTestId(DATELINE_ID)).toBeNull()
 		expect(screen.getByTestId(TOP_TILE_ID).props.accessibilityLabel).toBe(
 			'April 29, 2026, Student workers deliver petition',
 		)
@@ -196,12 +196,60 @@ describe('FrontPageScreen', () => {
 	test('names the menu by the view it shows, for VoiceOver', async () => {
 		seedTop()
 		await renderScreen()
-		expect(screen.getByLabelText('View: By Issue')).toBeTruthy()
+		expect(screen.getByLabelText('More, By Issue')).toBeTruthy()
 
 		await fireEvent.press(menuItem('Latest'))
-		expect(screen.getByLabelText('View: Latest')).toBeTruthy()
+		expect(screen.getByLabelText('More, Latest')).toBeTruthy()
 		// Latest has no feed cached, so it fetches one.
 		await waitForQueriesToSettle(queryClient)
+	})
+
+	test.each([
+		['Contact', '/messenger/about', 'By Issue'],
+		['Contact', '/messenger/about', 'Latest'],
+		['Staff', '/messenger/staff', 'By Issue'],
+		['Staff', '/messenger/staff', 'Latest'],
+	])("opens the paper's %s page, %s, from the menu in %s", async (item, route, view) => {
+		seedTop()
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+		saveChoice(view)
+		await renderScreen()
+
+		await fireEvent.press(menuItem(item))
+
+		expect(mockNavigate).toHaveBeenCalledWith(route)
+		// The page is not a view, so choosing it leaves the view as it was.
+		expect(savedChoice()).toBe(view)
+	})
+
+	test.each(['By Issue', 'Latest'])(
+		'opens Customize from the paintbrush beside the menu in %s',
+		async (view) => {
+			seedTop()
+			queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+			saveChoice(view)
+			await renderScreen()
+
+			expect(screen.queryByRole('menuitem', {name: 'Customize'})).toBeNull()
+			await fireEvent.press(screen.getByLabelText('Customize'))
+
+			expect(mockNavigate).toHaveBeenCalledWith('/messenger/customize')
+			expect(savedChoice()).toBe(view)
+		},
+	)
+
+	test("titles Latest with the paper's castle alone, as By Issue is", async () => {
+		seedTop()
+		saveChoice('Latest:Opinions')
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.category(OPINIONS), onePage([WATERS]))
+		await renderScreen()
+
+		expect(screen.getByTestId(NAVIGATION_TITLE_ID).props.accessibilityLabel).toBe(
+			'The Olaf Messenger',
+		)
+		expect(screen.queryByText('The Olaf Messenger')).toBeNull()
 	})
 
 	test('offers the sections in Latest only, and remembers the view', async () => {
@@ -216,19 +264,6 @@ describe('FrontPageScreen', () => {
 		expect(isChecked('Latest')).toBe(true)
 		expect(isChecked('All Stories')).toBe(true)
 		expect(isChecked('Opinions')).toBe(false)
-		expect(dateline()).toHaveTextContent('Latest stories')
-	})
-
-	// The nameplate is the front page's heading; the dateline under it is not a second one.
-	test("reads the paper's name as the heading, and not Latest's dateline", async () => {
-		seedTop()
-		saveChoice('Latest')
-		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
-		await renderScreen()
-
-		expect(dateline()).toHaveTextContent('Latest stories')
-		expect(screen.getByRole('header', {name: 'The Olaf Messenger'})).toBeTruthy()
-		expect(screen.queryByRole('header', {name: /Latest stories/u})).toBeNull()
 	})
 
 	test('narrows Latest to the section picked, and keeps it across a visit to By Issue', async () => {
@@ -244,7 +279,6 @@ describe('FrontPageScreen', () => {
 		expect(savedChoice()).toBe('Latest:Opinions')
 		expect(isChecked('Opinions')).toBe(true)
 		expect(isChecked('All Stories')).toBe(false)
-		expect(dateline()).toHaveTextContent('Opinions')
 		expect(screen.getByRole('button', {name: /^I grew up in the Boundary Waters,/u})).toBeTruthy()
 
 		await fireEvent.press(menuItem('By Issue'))
@@ -319,7 +353,7 @@ describe('FrontPageScreen', () => {
 		onlineManager.setOnline(false)
 		await renderScreen()
 
-		expect(dateline()).toHaveTextContent('Latest stories')
+		expect(isChecked('Latest')).toBe(true)
 		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 

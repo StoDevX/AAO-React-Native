@@ -16,13 +16,13 @@ const styles = StyleSheet.create({
 		paddingBottom: 24,
 	},
 	scrollView: {
-		backgroundColor: c.systemBackground,
+		backgroundColor: c.systemGroupedBackground,
 	},
 	legacy: {
 		paddingVertical: 15,
 	},
 	card: {
-		backgroundColor: c.secondarySystemBackground,
+		backgroundColor: c.secondarySystemGroupedBackground,
 		borderColor: c.separator,
 		borderRadius: 12,
 		borderWidth: StyleSheet.hairlineWidth,

@@ -8,11 +8,11 @@ const QUOTE_INDENT = 16
 /** The space between a list's items, in points, tighter than between paragraphs. */
 const LIST_ITEM_SPACING = 6
 
-type Figure = Extract<Block, {type: 'figure' | 'embed'}>
+type Figure = Extract<Block, {type: 'figure' | 'embed' | 'gallery'}>
 
 /**
  * One part of a story's body as the reader draws it: a stretch of prose between figures, set
- * as one text so a selection can run across its paragraphs, or a figure or embed on its own.
+ * as one text so a selection can run across its paragraphs, or a figure, embed or gallery on its own.
  */
 export type BodyPart =
 	| {kind: 'prose'; paragraphs: SelectableTextParagraph[]}
@@ -54,14 +54,14 @@ function paragraphsOf(
 
 /**
  * A story's blocks grouped for drawing: each run of paragraphs, quotes and lists becomes one
- * stretch of prose, and each figure or embed ends the stretch before it. When the blocks open
+ * stretch of prose, and each figure, embed or gallery ends the stretch before it. When the blocks open
  * the story, the first paragraph's opening words are set in small caps, even after a figure.
  */
 export function bodyParts(blocks: Block[], {opens}: {opens: boolean}): BodyPart[] {
 	let openingIndex = opens ? blocks.findIndex((block) => block.type === 'paragraph') : -1
 	let parts: BodyPart[] = []
 	for (let [index, block] of blocks.entries()) {
-		if (block.type === 'figure' || block.type === 'embed') {
+		if (block.type === 'figure' || block.type === 'embed' || block.type === 'gallery') {
 			parts.push({kind: 'block', block})
 			continue
 		}

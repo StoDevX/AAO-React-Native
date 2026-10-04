@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Image, View} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Button, Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
@@ -9,9 +9,6 @@ import {
 	font,
 	foregroundStyle,
 	frame,
-	listRowBackground,
-	listRowInsets,
-	listRowSeparator,
 	listStyle,
 	multilineTextAlignment,
 	onGeometryChange,
@@ -21,26 +18,16 @@ import {
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
-import {images as contactImages} from '../../../images/contacts'
+import {remoteImage, type RemoteImage} from '../../../source/lib/remote-images'
+import {useImageFailure} from '../../../source/lib/use-image-failure'
 import {Markdown} from '@frogpond/markdown'
 import {callPhone} from '../../../source/components/call-phone'
 import {openUrl} from '@frogpond/open-url'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../source/components/tile-layout'
-import {
-	CARD_INSET,
-	PICTURE_CORNER_RADIUS,
-	SECTION_GAP,
-} from '../../../source/components/place-card/card-style'
-
-/// A row on the sheet, inset from its sides like the Hours sheet's, with a
-/// section's gap above it and no hairline.
-const SHEET_ROW = [
-	listRowBackground('clear'),
-	listRowSeparator('hidden'),
-	listRowInsets({top: SECTION_GAP, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
-]
+import {SECTION_GAP, SHEET_ROW} from '../../../source/components/place-card/card-style'
+import {InsetImageRow} from '../../../source/components/inset-image-row'
 
 const ACTION_ROW = [frame({maxWidth: FILL_WIDTH}), ...SHEET_ROW]
 
@@ -105,8 +92,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		}
 	}
 
-	let headerImage =
-		contact.image && contactImages.has(contact.image) ? contactImages.get(contact.image) : null
+	let headerImage = contact.image ? remoteImage('contacts', contact.image) : null
 
 	return (
 		<>
@@ -126,10 +112,12 @@ function ContactBody({
 	headerImage,
 	onPress,
 }: {
-	contact: {text: string; buttonText: string}
-	headerImage: React.ComponentProps<typeof Image>['source'] | null | undefined
+	contact: {text: string; buttonText: string; buttonLink?: string}
+	headerImage: RemoteImage | null
 	onPress: () => void
 }): React.ReactNode {
+	// A photo that cannot be fetched leaves its row out, as no photo does.
+	let [imageFailed, onImageError] = useImageFailure(headerImage?.uri)
 	// A hosted view is given the row's width outright: 100% inside RNHostView
 	// resolves against the whole sheet, and a paragraph's own width is however
 	// long its longest line would be unwrapped. The row fills its width
@@ -146,20 +134,9 @@ function ContactBody({
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('plain'), scrollContentBackground('hidden')]}>
-				{headerImage ? (
+				{headerImage && !imageFailed ? (
 					<Section>
-						{/* On a wrapping stack because RNHostView takes no modifiers of
-						    its own. */}
-						<VStack modifiers={hostedRow}>
-							<RNHostView matchContents={true}>
-								<Image
-									accessibilityIgnoresInvertColors={true}
-									resizeMode="cover"
-									source={headerImage}
-									style={[styles.image, {width: rowWidth}]}
-								/>
-							</RNHostView>
-						</VStack>
+						<InsetImageRow onError={onImageError} source={headerImage} />
 					</Section>
 				) : null}
 
@@ -177,6 +154,8 @@ function ContactBody({
 							modifiers={[buttonStyle('bordered'), controlSize('large')]}
 							onPress={onPress}
 							label={contact.buttonText}
+							// A link opens in the browser; otherwise the button places a call.
+							systemImage={contact.buttonLink ? 'safari' : 'phone.fill'}
 						/>
 					</VStack>
 
@@ -191,9 +170,5 @@ const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
-	},
-	image: {
-		height: 100,
-		borderRadius: PICTURE_CORNER_RADIUS,
 	},
 })

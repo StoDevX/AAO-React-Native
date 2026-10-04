@@ -1,13 +1,19 @@
 import XCTest
 
 class ModuleHoursTests: UITestCaseUnbooted {
-	func testSearchNarrowsTheList() throws {
-		HoursScreen(app: app)
+	/// A query narrows the list, matching a name typed without its accents,
+	/// and refined until nothing matches, the list says so.
+	func testSearchNarrowsTheListToNothing() throws {
+		let screen = HoursScreen(app: app)
 			.navigate()
 			.verifyRowShown(TestIdentifiers.Hours.anExcludedBuilding)
 			.search(for: TestIdentifiers.Hours.deburredQuery)
 			.verifyRowShown(TestIdentifiers.Hours.aBuilding)
 			.verifyRowHidden(TestIdentifiers.Hours.anExcludedBuilding)
+		let query = screen.refineSearch(adding: TestIdentifiers.Hours.unmatchedQuery)
+		screen
+			.verifyNoResultsShown(for: query)
+			.capture("Hours no-results state")
 	}
 
 	/// The favourite action lives in a SwiftUI `swipeActions` group, which is
@@ -25,14 +31,6 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.tapAddToFavorites()
 			.capture("Hours list with a Favorites section")
 			.verifyFavoritesSectionShown()
-	}
-
-	func testSearchWithNoMatchesShowsNoResults() throws {
-		HoursScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Hours.unmatchedQuery)
-			.verifyNoResultsShown(for: TestIdentifiers.Hours.unmatchedQuery)
-			.capture("Hours no-results state")
 	}
 
 	/// A detail sheet's whole life with no edits: it opens over the list, its
@@ -101,23 +99,6 @@ class ModuleHoursTests: UITestCaseUnbooted {
 				for: TestIdentifiers.Hours.aBuildingWithLongSchedule, titleBefore: titleBefore)
 	}
 
-	/// Registrar's `building` key (`toh`) resolves to a feature named Tomson
-	/// Hall, not Registrar -- so this only passes if the cutout actually joined
-	/// on the key, rather than coincidentally matching a feature sharing the
-	/// venue's own name. See `TestIdentifiers.Hours.aBuildingWithCutout`.
-	func testDetailSheetShowsACutoutMapForAVenueWithABuildingKey() throws {
-		HoursScreen(app: app)
-			.navigate()
-			// Registrar's category sits well below the list's initial viewport,
-			// so it is searched into view rather than assumed reachable the way
-			// `anExcludedBuilding` and its Food-category neighbours are.
-			.search(for: TestIdentifiers.Hours.aBuildingWithCutout)
-			.tapRow(TestIdentifiers.Hours.aBuildingWithCutout)
-			.verifyDetailSheetTitled(TestIdentifiers.Hours.aBuildingWithCutout)
-			.verifyCutoutShown(for: TestIdentifiers.Hours.aBuildingWithCutoutFrames)
-			.capture("Hours detail sheet showing a building cutout")
-	}
-
 	/// The report screen's unsaved-changes guard has to survive every way out,
 	/// not just the ones a plain `beforeRemove` listener can see. Dragging the
 	/// sheet down or tapping its dimmed backdrop asks UIKit to dismiss the
@@ -166,6 +147,10 @@ class ModuleHoursTests: UITestCaseUnbooted {
 	/// they both edit. It used to be a `modal` on the OUTER stack -- a
 	/// presentation that can silently no-op on iOS while a formSheet is
 	/// already up -- so this asserts the editor really does come up.
+	///
+	/// Kept apart from the guard test: opening the editor scrolls the report
+	/// screen, and an edit made after coming back does not reliably arm the
+	/// guard.
 	func testScheduleEditorPresentsFromWithinTheReportScreen() throws {
 		HoursScreen(app: app)
 			.navigate()

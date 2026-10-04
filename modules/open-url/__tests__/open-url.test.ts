@@ -15,6 +15,13 @@ jest.mock('../../../source/lib/storage', () => ({
 	getInAppLinkPreference: jest.fn(() => Promise.resolve(true)),
 }))
 
+test('hands a link to iOS outside a chaos run', async () => {
+	let openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
+	expect(await openUrl('tel:5077863000')).toBe(true)
+	expect(openURL).toHaveBeenCalledWith('tel:5077863000')
+	openURL.mockRestore()
+})
+
 describe('openUrl, with links set to open in the app', () => {
 	let openURL: jest.SpiedFunction<typeof Linking.openURL>
 

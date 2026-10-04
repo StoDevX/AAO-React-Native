@@ -9,7 +9,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/event-type": "workspace:*"
+    "@frogpond/event-type": "workspace:*",
+    "@frogpond/launch-arguments": "workspace:*"
   },
   "devDependencies": {
     "@jest/globals": "30.5.2",

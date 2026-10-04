@@ -29,18 +29,6 @@ class ModuleTransitTests: UITestCaseUnbooted {
 			.capture("Transit - Other Modes")
 	}
 
-	/// A single stop's schedule draws the same progress bar down its departure
-	/// times, so it has the same question to answer as the route above: whether
-	/// the bar and its dots survive the card they are drawn inside.
-	func testAStopSchedulePresents() throws {
-		TransitScreen(app: app)
-			.navigate()
-			.openLine(TestIdentifiers.Transit.aLine)
-			.openFirstStop()
-			.verifyStopScheduleShown()
-			.capture("stop schedule")
-	}
-
 	/// Every cell in the strip is a shortcut to the same sheet the header opens
 	/// -- a stop cell is no longer its own destination.
 	func testAStripCellOpensTheTimetable() throws {
@@ -55,10 +43,18 @@ class ModuleTransitTests: UITestCaseUnbooted {
 	/// timetable beneath it, not just relabel the menu. The frozen clock is a
 	/// Saturday, which Express Bus runs, and it does not run on Sunday, so the
 	/// rows giving way to the empty state is the proof.
-	func testPickingADayRedrawsTheTimetable() throws {
+	///
+	/// First, a single stop's schedule draws the same progress bar down its
+	/// departure times, so it has the same question to answer as the route:
+	/// whether the bar and its dots survive the card they are drawn inside.
+	func testAStopScheduleAndPickingADayRedrawsTheTimetable() throws {
 		TransitScreen(app: app)
 			.navigate()
 			.openLine(TestIdentifiers.Transit.aLine)
+			.openFirstStop()
+			.verifyStopScheduleShown()
+			.capture("stop schedule")
+			.goBack()
 			.verifyStopListsDepartures(TestIdentifiers.Transit.aStopOnEveryRunningDay)
 			.pickDay(TestIdentifiers.Transit.aDay)
 			.capture("Transit - Sunday schedule")

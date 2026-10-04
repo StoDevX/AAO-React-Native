@@ -24,7 +24,7 @@ struct HomeScreen: Screen {
 
 	@discardableResult
 	func tapEnableDevMode() -> Self {
-		let enableDevMode = app.buttons[TestIdentifiers.Settings.enableDevMode]
+		let enableDevMode = app.buttons[TestIdentifiers.Home.enableDevMode]
 		XCTAssertTrue(
 			enableDevMode.waitForExistence(timeout: 10),
 			"Context menu should show 'Enable dev mode' option")
@@ -33,24 +33,65 @@ struct HomeScreen: Screen {
 	}
 
 	@discardableResult
-	func openSettings() -> Self {
-		let settingsButton = app.buttons[TestIdentifiers.Navigation.openSettings]
+	func openCustomize() -> CustomizeScreen {
+		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
+		XCTAssertTrue(button.waitForExistence(timeout: 10), "Home should have a Customize button")
+		button.tap()
+		return CustomizeScreen(app: app).checkOpen()
+	}
+
+	/// Open the ⋯ menu and leave it open.
+	@discardableResult
+	func openHomeMenu() -> Self {
+		let menu = app.buttons[TestIdentifiers.Navigation.homeMenu]
 		XCTAssertTrue(
-			settingsButton.waitForExistence(timeout: 10),
-			"Settings button should appear on home screen")
-		settingsButton.tap()
+			menu.waitForExistence(timeout: 10),
+			"Home menu should appear on home screen")
+		menu.tap()
+		return self
+	}
+
+	/// Open the ⋯ menu and choose `item`.
+	@discardableResult
+	func chooseFromHomeMenu(_ item: String) -> Self {
+		openHomeMenu()
+		let entry = app.buttons[item].firstMatch
+		XCTAssertTrue(
+			entry.waitForExistence(timeout: 10),
+			"Home menu should offer \(item)")
+		entry.tap()
 		return self
 	}
 
 	@discardableResult
-	func checkDeveloperSectionVisible() -> Self {
-		let developerSection = app.staticTexts[TestIdentifiers.Settings.developer]
-		// DEVELOPER is the last section in the Settings form, so it starts out
-		// unbuilt rather than merely offscreen.
-		scrollUntilExists(developerSection)
+	func openSupport() -> SupportScreen {
+		chooseFromHomeMenu(TestIdentifiers.Navigation.supportMenuItem)
+		return SupportScreen(app: app).checkOpen()
+	}
+
+	@discardableResult
+	func openContributing() -> ContributingScreen {
+		chooseFromHomeMenu(TestIdentifiers.Navigation.contributingMenuItem)
+		return ContributingScreen(app: app).checkOpen()
+	}
+
+	@discardableResult
+	func openAbout() -> AboutScreen {
+		chooseFromHomeMenu(TestIdentifiers.Navigation.aboutMenuItem)
+		return AboutScreen(app: app).checkOpen()
+	}
+
+	/// Scroll to the Developer tile and open what it holds. Dev mode must be on.
+	@discardableResult
+	func openDeveloper() -> Self {
+		let tile = app.buttons[TestIdentifiers.Buttons.developer].firstMatch
+		scrollUntilExists(tile)
 		XCTAssertTrue(
-			developerSection.waitForExistence(timeout: 30),
-			"DEVELOPER section should be visible after enabling dev mode")
+			tile.waitForExistence(timeout: 30),
+			"Home should show a Developer tile after enabling dev mode")
+		tile.tap()
+		let screen = app.element(matching: TestIdentifiers.Developer.screen)
+		XCTAssertTrue(screen.waitForExistence(timeout: 30), "The Developer tile should open Developer")
 		return self
 	}
 }

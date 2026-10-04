@@ -22,7 +22,7 @@ const staleTime = 1000 * 60 * 5
 
 async function fetchCategoryIcons({signal}: {signal: AbortSignal}): Promise<OrgCategoryType[]> {
 	// Mirrors contacts-query.ts: UI tests read the bundled copy directly, so a
-	// tile's icon and gradient in a screenshot match whatever this checkout
+	// row's icon and gradient in a screenshot match whatever this checkout
 	// carries rather than whatever data/org-categories.yaml happens to
 	// publish at test time.
 	if (isUITesting) {
@@ -32,7 +32,7 @@ async function fetchCategoryIcons({signal}: {signal: AbortSignal}): Promise<OrgC
 	let manifest = await fetchManifest(queryClient)
 	let sources = resolveSources(manifest, REL_ORG_CATEGORIES, [ORG_CATEGORIES_TYPE])
 	let source = sources[0]
-	// No configured source at all means every category tile falls back to
+	// No configured source at all means every category row falls back to
 	// the generic icon and gray gradient -- categories.ts already handles
 	// that for any name this returns nothing for, so this is not an error.
 	if (!source) {

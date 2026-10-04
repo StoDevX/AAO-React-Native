@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, HStack, List, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Host, List, Section, Text} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
@@ -16,7 +16,7 @@ import {callPhone} from '../../source/components/call-phone'
 import {sendEmail} from '../../source/components/send-email'
 import {DetailRow, DisclosureRow} from '../../source/components/rows'
 import * as c from '@frogpond/colors'
-import {PersonPhoto} from '../../source/features/directory/person-photo'
+import {PersonHeader} from '../../source/features/directory/person-header'
 import {directoryContactOptions} from '../../source/features/directory/query'
 import type {
 	CampusLocation,
@@ -26,20 +26,43 @@ import type {
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function DirectoryDetailPage(): React.ReactNode {
-	let router = useRouter()
-
 	let {index, query, type} = useLocalSearchParams<{
 		index: string
-		query: string
-		type: string
+		query?: string
+		type?: string
 	}>()
+
+	// An entry is an index into a search's results, so a link that names no
+	// search -- `AllAboutOlaf://directory/0` -- has nothing to look up.
+	if (!query || !type) {
+		return (
+			<>
+				<Stack.Screen options={{title: ''}} />
+				<NoticeView systemImage="questionmark.circle" title="Entry Not Found" />
+			</>
+		)
+	}
+
+	return (
+		<DirectoryDetail index={Number(index)} query={query} type={type as DirectorySearchTypeEnum} />
+	)
+}
+
+type DirectoryDetailProps = {
+	index: number
+	query: string
+	type: DirectorySearchTypeEnum
+}
+
+function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.ReactNode {
+	let router = useRouter()
 
 	let {
 		data: contact,
 		isLoading,
 		error,
 		refetch,
-	} = useQuery(directoryContactOptions(query, type as DirectorySearchTypeEnum, Number(index)))
+	} = useQuery(directoryContactOptions(query, type, index))
 
 	// No title in the bar: the heading below carries the name, and the bar
 	// repeating it said the same thing twice.
@@ -72,16 +95,8 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		)
 	}
 
-	const {
-		campusLocations,
-		displayName,
-		displayTitle,
-		officeHours,
-		profileUrl,
-		email,
-		departments,
-		pronouns,
-	} = contact
+	const {campusLocations, displayTitle, officeHours, profileUrl, email, departments, pronouns} =
+		contact
 
 	return (
 		<>
@@ -89,22 +104,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
 					<Section>
-						{/* Name leading, photo trailing, both hung from the top -- so a
-						    long name wraps down the left of the photo rather than
-						    pushing it about. The VStack fills what the photo leaves,
-						    which is what gives the name somewhere to wrap within. */}
-						<HStack alignment="top" spacing={12}>
-							<VStack
-								alignment="leading"
-								modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}
-								spacing={2}
-							>
-								<Text modifiers={NAME_MODIFIERS}>{displayName}</Text>
-								{displayTitle ? <Text modifiers={HEADER_MODIFIERS}>{displayTitle}</Text> : null}
-							</VStack>
-
-							<PersonPhoto person={contact} width={PHOTO_WIDTH} />
-						</HStack>
+						<PersonHeader person={contact} subtitle={displayTitle} />
 					</Section>
 
 					{/* An empty array of pronouns is still an array, so asking whether
@@ -182,14 +182,6 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		</>
 	)
 }
-
-/// The photo's height follows from `TILE_ASPECT`, so the crop here and the crop
-/// on the search grid are the same picture.
-const PHOTO_WIDTH = 80
-
-const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
-
-const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
 /// No card behind the credit: it names where the data came from, and is not a
 /// row of it. Matches the org detail.

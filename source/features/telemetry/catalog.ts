@@ -1,4 +1,6 @@
+import type {AppIconName} from '../../../images/icons'
 import type {Campus} from '../building-hours/types'
+import type {StationId} from '../streaming/radio/stations'
 
 /**
  * A route's file-system pattern, such as `/dictionary/[word]`. Only
@@ -28,6 +30,13 @@ export type PublicEventTitle = string & {readonly __brand: 'PublicEventTitle'}
  * text someone typed.
  */
 export type MapGroupLabel = string & {readonly __brand: 'MapGroupLabel'}
+
+/**
+ * A Home Screen quick action's id, such as `'Stav Menu'`: a tile's title or a
+ * café's name, text the app ships. Only the quick-action store makes one, from
+ * an id that names a destination.
+ */
+export type QuickActionId = string & {readonly __brand: 'QuickActionId'}
 
 /** The calendar feeds an event can come from; `other` for anything unrecognized. */
 export type CalendarSourceId = 'stolaf' | 'presence' | 'ksto-schedule' | 'krlx-schedule' | 'other'
@@ -62,6 +71,32 @@ export type TelemetryEvent =
 	  }
 	| {name: 'dictionary.edit.submit'; attributes: Record<string, never>}
 	| {
+			name: 'app.launch'
+			attributes: {icon: AppIconName; links: 'app' | 'safari'; radio: 'on' | 'off'}
+	  }
+	| {name: 'app_icon.change'; attributes: {icon: AppIconName}}
+	| {name: 'open_links.change'; attributes: {links: 'app' | 'safari'}}
+	| {name: 'radio_player.change'; attributes: {radio: 'on' | 'off'}}
+	| {name: 'quick_action.toggle'; attributes: {action: QuickActionId; change: 'add' | 'remove'}}
+	| {
+			name: 'radio.control'
+			attributes: {
+				action: 'play' | 'pause' | 'stop'
+				station: StationId
+				// `system` is Control Center or the lock screen playing a paused station.
+				surface: 'bar' | 'sheet' | 'system'
+			}
+	  }
+	| {name: 'radio.station.browse'; attributes: {station: StationId}}
+	| {
+			name: 'radio.action'
+			attributes: {
+				action: 'call' | 'chat' | 'schedule' | 'full_schedule' | 'website'
+				station: StationId
+			}
+	  }
+	| {name: 'radio.play.error'; attributes: {station: StationId}}
+	| {
 			name: 'api.failure'
 			attributes: {
 				source: QueryKeyHead
@@ -82,6 +117,15 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',
+	'app.launch': 'metric',
+	'app_icon.change': 'metric',
+	'open_links.change': 'metric',
+	'radio_player.change': 'metric',
+	'quick_action.toggle': 'metric',
+	'radio.control': 'metric',
+	'radio.station.browse': 'metric',
+	'radio.action': 'metric',
+	'radio.play.error': 'metric',
 	'api.failure': 'log',
 }
 

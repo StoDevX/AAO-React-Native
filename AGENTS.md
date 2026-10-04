@@ -100,7 +100,10 @@ pnpm is the package manager. npm and yarn both choke on the `workspace:*`
 protocol the modules use.
 
 ```bash
-mise run lint         # oxlint
+mise run lint         # all three below, in parallel
+mise run lint:oxlint  # oxlint
+mise run lint:shell   # shellcheck on every tracked .sh
+mise run lint:actions # zizmor on .github/workflows
 mise run format       # oxfmt; run `format:check` to validate instead
 mise run test         # every test
 mise run test:jest    # Jest: app, source, modules
@@ -143,7 +146,7 @@ The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in
 `plugins/with-alternate-icons.ts` bundles the rest as alternates. Each
 alternate's file name is the name `react-native-change-icon` switches to.
 
-The Settings picker and the Credits screen show PNG previews of each icon,
+Customize's App Icon gallery and the About screen show PNG previews of each icon,
 kept in `images/icons/`. Regenerate them after editing an `.icon`:
 
 ```bash
@@ -158,8 +161,51 @@ gitignored gallery of every logo, to compare them side by side.
 
 The task needs Xcode, whose Icon Composer renders the previews, and runs them
 through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
-the plugin, in `appIcons` in `images/icons/index.ts`, and in the picker's list
-in `source/features/settings/screens/change-icon.tsx`.
+the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
+`ICONS` in `source/features/customize/icons.ts`.
+
+The Old Main (Retro) icon's pixel layers are drawn by `scripts/make-crt-pixels.mjs`
+from the screen grid in that file: the cells as `pixels.svg` and
+`pixels-amber.svg`, and their glow as quarter-size PNGs rendered from the SVGs
+in `assets/old-main-retro.icon/source/`. Edit the grid, run
+`mise run crt-pixels`, then `mise run icons`. The pipeline is Display P3
+throughout: the palette holds P3 components, icon.json reads untagged SVG
+colors as P3, and the PNGs are tagged with the profile, not converted to it.
+
+Every icon costs about 2.3 MiB of each iPhone's download, as actool stores a
+flat 1024px render per appearance without loss, and a layer's own images come
+on top. Keep both down:
+
+- Grain and noise make every render bigger; the Retro icon's backgrounds were
+  1.8 MB each until a blur took the grain out.
+- A soft layer can be a quarter-size PNG scaled up 4x in icon.json's
+  `position`, at no visible cost.
+- Icon Composer ignores SVG filters without a word, so a blur or glow stays a
+  raster layer.
+
+### Images the app fetches
+
+Contact, building, webcam, news-source and radio-station pictures are not in
+the app bundle. The app asks ccc-server for `/v1/images/<group>/<name>.webp`,
+which proxies GitHub Pages; `bundle-data` publishes `images/<group>/*.webp` to
+`docs/img/<group>/`. The map pin and the radio's record (`images/streaming/vinyl.png`)
+stay bundled: both are always drawn, so neither gets a failure state. The
+groups are listed in `images/groups.json`.
+
+Keep an original in `images/<group>/source/`, run `mise run images` to write
+its WebP beside it, and commit both; the run also removes a WebP whose
+original is gone, and a test fails on one that is left. The data names an image by its file name
+without the extension (`image: cage`), and `scripts/bundle-images.test.mjs`
+fails when a name has no WebP; `source/lib/__tests__/published-images.test.ts`
+does the same for the names written in code (radio logos, news sources).
+
+Address images through `remoteImage` in `source/lib/remote-images.ts`, at
+render time, since the server is a setting that loads after launch: keep a
+name in the data, never a URL in a module-level constant. A device keeps a
+fetched image and shows it offline without asking again, so publish a changed
+picture under a new name and point the data at it. Draw a fetched picture with
+`useImageFailure`, so one that cannot load leaves its row out instead of an
+empty frame.
 
 ### Custom Symbols
 
@@ -247,6 +293,26 @@ nothing. A new code needs a change to `JobCode` in
 `source/features/sis/student-work/posting.ts` first. Jest and the UI tests
 read `FIXED_WAGES`, not the data file, so a rate change never breaks them.
 
+### KSTO Schedule
+
+`data/ksto-schedule.yaml` holds KSTO's weekly shows, scraped from the station's
+Now Playing post (`https://www.kstoradio.org/2023/03/17/4243/`). That post is
+the only schedule KSTO publishes as data: its schedule page is an image, and
+the Google Calendar ccc-server used to read stopped at spring 2019. A weekly
+scrape opens a pull request when the file falls behind; merging publishes
+`ksto-schedule.json`, which ccc-server serves as the `ksto-schedule` calendar.
+
+```bash
+mise run scrape-ksto-schedule                   # update the file now
+node scripts/scrape-ksto-schedule.mjs --check   # report without writing; exits 1 on drift
+```
+
+The post keeps its schedule in a script, which the scrape parses but never
+runs. A post the parser does not recognise fails the run and writes nothing.
+Times are Central: the post's own script reads the visitor's clock, so it
+shows the wrong hour outside Minnesota. `updated` is when KSTO last edited the
+post, which tells a schedule left over from an earlier term apart.
+
 ### UI Test Fixtures
 
 Under UI tests the map reads copies of each campus's `map/geojson` from
@@ -276,11 +342,49 @@ runs the Messenger UI tests against the live paper with `--record-fixtures`
 and writes every fetch they made. It writes nothing if the tests fail. With
 more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
 
+### Chaos Runs
+
+`mise run chaos` drives the app at random on a booted simulator while it breaks
+network requests, and stops at the first crash, fatal error, unhandled
+rejection, error screen or hang. [`uitests/Chaos/README.md`](uitests/Chaos/README.md)
+covers reading a finding, replaying a run, what the engine can't do, how it
+works, and how to extend it.
+
+```bash
+mise run chaos:8081 -- --seed 1234 --duration 10m
+mise run chaos:8081 -- --replay logs/chaos/1234
+```
+
+`chaos:8081` runs against the Metro on port 8081. For any other, name it with
+the `TEST_RUNNER_` prefix -- `TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise
+run chaos` -- since `xcodebuild` passes the test only prefixed variables, so a
+bare `AAO_JS_LOCATION` never arrives. Either way, the run refuses a Metro
+serving another checkout. The run exits 0 when it found nothing, 1 when
+it found something, and 2 when it never started. Its evidence lands in
+`logs/chaos/<seed>/`, which a second run of the same seed won't replace
+without `--overwrite`.
+
+A chaos launch passes `--chaos`, not `--uitesting`. Under it the app never
+leaves itself, never signs in, and sends nothing to Sentry. Its modules are
+imported first in `app/_layout.tsx`, so `fetch` is wrapped before anything
+fetches, and they do nothing without the flag. Run `mise run chaos-routes`
+after adding a route.
+
+### Releases
+
+Versions come from Changesets. A change that belongs in the release notes adds
+a file with `mise run changeset` (a plain markdown file in `.changeset/`:
+`"all-about-olaf": patch|minor|major` in the frontmatter, the note below it).
+The Release workflow turns those into a "Version Packages" pull request, and a
+`prerelease:alpha|beta|rc|none` label on it picks the channel. Do not edit
+`version` in `package.json` or add to `CHANGELOG.md` by hand. The logic is in
+`scripts/release.mjs`; see CONTRIBUTING.md for the full flow.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
 
-**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, checks TypeScript types, runs Jest tests, and checks that every module's `@frogpond` dependencies and the lockfile match its package.json. Do not commit if any step fails.
+**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, shellcheck and zizmor, checks TypeScript types, runs Jest tests, and checks that every module's `@frogpond` dependencies and the lockfile match its package.json. Do not commit if any step fails.
 
 **Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
 

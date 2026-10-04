@@ -1,23 +1,18 @@
 import type {ImageSourcePropType} from 'react-native'
-import sunsetBehindMainIconDark from './sunset-behind-main-icon-dark.png'
-import sunsetBehindMainIcon from './sunset-behind-main-icon.png'
-import sunsetBehindMainLogoDark from './sunset-behind-main-logo-dark.png'
-import sunsetBehindMainLogo from './sunset-behind-main-logo.png'
-import windmillDayIconDark from './windmill-day-icon-dark.png'
-import windmillDayIcon from './windmill-day-icon.png'
-import windmillDayLogoDark from './windmill-day-logo-dark.png'
-import windmillDayLogo from './windmill-day-logo.png'
-import windmillIconDark from './windmill-icon-dark.png'
-import windmillIcon from './windmill-icon.png'
-import windmillLogoDark from './windmill-logo-dark.png'
-import windmillLogo from './windmill-logo.png'
-
-type Previews = {
-	/** The Settings picker's tile. */
-	icon: ImageSourcePropType
-	/** The Credits screen's logo. */
-	logo: ImageSourcePropType
-}
+import oldMainRetroDark from './old-main-retro-dark.png'
+import oldMainRetro from './old-main-retro.png'
+import oldMainDark from './old-main-dark.png'
+import oldMain from './old-main.png'
+import windmillSkyDark from './windmill-sky-dark.png'
+import windmillSky from './windmill-sky.png'
+import windmillDawnDark from './windmill-dawn-dark.png'
+import windmillDawn from './windmill-dawn.png'
+import windmillStarsDark from './windmill-stars-dark.png'
+import windmillStars from './windmill-stars.png'
+import windmillGoldenHourDark from './windmill-golden-hour-dark.png'
+import windmillGoldenHour from './windmill-golden-hour.png'
+import windmillDark from './windmill-dark.png'
+import windmill from './windmill.png'
 
 /**
  * Previews of each Icon Composer document in assets/, in its light and dark
@@ -26,18 +21,34 @@ type Previews = {
  */
 export const appIcons = {
 	windmill: {
-		light: {icon: windmillIcon, logo: windmillLogo},
-		dark: {icon: windmillIconDark, logo: windmillLogoDark},
+		light: windmill,
+		dark: windmillDark,
 	},
-	'sunset-behind-main': {
-		light: {icon: sunsetBehindMainIcon, logo: sunsetBehindMainLogo},
-		dark: {icon: sunsetBehindMainIconDark, logo: sunsetBehindMainLogoDark},
+	'old-main': {
+		light: oldMain,
+		dark: oldMainDark,
 	},
-	'windmill-day': {
-		light: {icon: windmillDayIcon, logo: windmillDayLogo},
-		dark: {icon: windmillDayIconDark, logo: windmillDayLogoDark},
+	'old-main-retro': {
+		light: oldMainRetro,
+		dark: oldMainRetroDark,
 	},
-} satisfies Record<string, {light: Previews; dark: Previews}>
+	'windmill-sky': {
+		light: windmillSky,
+		dark: windmillSkyDark,
+	},
+	'windmill-dawn': {
+		light: windmillDawn,
+		dark: windmillDawnDark,
+	},
+	'windmill-golden-hour': {
+		light: windmillGoldenHour,
+		dark: windmillGoldenHourDark,
+	},
+	'windmill-stars': {
+		light: windmillStars,
+		dark: windmillStarsDark,
+	},
+} satisfies Record<string, {light: ImageSourcePropType; dark: ImageSourcePropType}>
 
 export type AppIconName = keyof typeof appIcons
 
@@ -53,7 +64,14 @@ export function iconFor(systemName: string): AppIconName {
 	return Object.hasOwn(appIcons, systemName) ? (systemName as AppIconName) : DEFAULT_ICON
 }
 
-/** The previews matching the app's appearance, from `useColorScheme()`. */
-export function previewsFor(name: AppIconName, scheme: string | null | undefined): Previews {
+/**
+ * The preview matching the app's appearance, from `useColorScheme()`. The
+ * Credits screen and the App Icon gallery show it, and the Customize sheet's
+ * App Icon row scales it down.
+ */
+export function previewFor(
+	name: AppIconName,
+	scheme: string | null | undefined,
+): ImageSourcePropType {
 	return scheme === 'dark' ? appIcons[name].dark : appIcons[name].light
 }

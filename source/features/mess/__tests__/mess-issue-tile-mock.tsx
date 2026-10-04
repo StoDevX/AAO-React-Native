@@ -16,6 +16,7 @@ export function MessIssueTile(props: MessIssueTileProps): React.ReactNode {
 	let value = `${props.layout}, ${props.stains.length} ${props.stainKind}, ${props.paragraphs.length} paragraphs`
 	return (
 		<Pressable
+			accessibilityHint={props.photoTone}
 			accessibilityLabel={props.accessibilityLabel}
 			accessibilityRole="button"
 			accessibilityValue={{text: value}}

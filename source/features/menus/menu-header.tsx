@@ -1,23 +1,22 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {Host, HStack, Image, Menu, Section, Text as UIText, Toggle, VStack} from '@expo/ui/swift-ui'
 import {
-	accessibilityAddTraits,
-	accessibilityElement,
-	accessibilityLabel,
 	background,
 	font,
 	foregroundStyle,
 	frame,
-	lineLimit,
-	minimumScaleFactor,
 	redacted,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import type {MealHeaderOption, MealMenuSelection} from '@frogpond/food-menu'
+import {
+	readAsOneTitle,
+	SUBTITLE_MODIFIERS,
+	TITLE_HOST_STYLE,
+	TitleStack,
+} from '../../components/navigation-title'
 import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
 
 /**
@@ -213,8 +212,11 @@ export function MenuHeaderHost(): React.ReactNode {
 			<Stack.Title asChild={true}>
 				{/* An explicit size rather than `matchContents`: a navigation bar
 				    gives its title view no size to match, so a self-sizing host
-				    collapses and takes the title with it. */}
-				<Host style={styles.menuHost}>
+				    collapses and takes the title with it. The subtitle carries the
+				    day, the meal and its window -- `Sun • Lunch • 11AM – 1:30PM` --
+				    the longest line the bar holds, so it scales itself down past
+				    this width rather than crowd the buttons either side. */}
+				<Host style={TITLE_HOST_STYLE}>
 					{header.meals ? (
 						<MealMenu date={header.date} meals={header.meals} spoken={spoken}>
 							<TitleStack name={header.name} subtitle={subtitle} />
@@ -237,19 +239,6 @@ export function MenuHeaderHost(): React.ReactNode {
 				</Stack.Toolbar>
 			) : null}
 		</>
-	)
-}
-
-/**
- * The cafe's name over whatever the screen has to say about the day, which is
- * the whole of the title whether or not it is also a button.
- */
-function TitleStack(props: {name: string; subtitle: React.ReactNode}): React.ReactNode {
-	return (
-		<VStack spacing={0}>
-			<UIText modifiers={TITLE_MODIFIERS}>{props.name}</UIText>
-			{props.subtitle}
-		</VStack>
 	)
 }
 
@@ -378,52 +367,7 @@ function spokenDetail(detail: string, time: string | null): string {
  */
 const PENDING_DETAIL = '00:00AM – 00:00PM'
 
-// A navigation title reads as the screen's name, not as a link, so the name
-// keeps the label colour a plain title would have. Only the chevron is tinted.
-//
-// One line, and it shrinks a little rather than wrapping: a navigation bar
-// keeps its height whatever it is asked to hold, so a name that wraps pushes
-// the line beneath it out of the bar entirely. It stops shrinking well short of
-// the subtitle's floor -- a name is the one thing on the screen a reader has to
-// be able to read.
-//
-// No `dynamicTypeSize` ceiling over the pair: photographed at
-// `accessibility-extra-extra-extra-large`, the largest size there is, the name
-// and the line under it both still sit inside the bar. A ceiling would hold
-// every accessibility size down to a non-accessibility one, which is a cost
-// paid by the readers who asked for the larger text in the first place.
-const TITLE_MODIFIERS = [
-	font({textStyle: 'headline'}),
-	foregroundStyle(c.label),
-	lineLimit(1),
-	minimumScaleFactor(0.85),
-]
-// The subtitle shrinks rather than truncates: it carries three facts at the
-// largest accessibility type sizes, and a clipped one reads as a different
-// time rather than as a missing one.
-const SUBTITLE_MODIFIERS = [
-	font({textStyle: 'caption'}),
-	foregroundStyle(c.secondaryLabel),
-	lineLimit(1),
-	minimumScaleFactor(0.7),
-]
 const PENDING_SUBTITLE_MODIFIERS = [...SUBTITLE_MODIFIERS, redacted('placeholder')]
-
-/**
- * The title as VoiceOver meets it: one element reading the name and the line
- * under it together, rather than two the reader has to swipe between.
- *
- * A picker already announces itself as a button, and a control announced as a
- * button *and* a heading is a control VoiceOver describes inconsistently -- so
- * the heading trait goes only on a title that cannot be tapped.
- */
-function readAsOneTitle(spoken: string, opts: {isButton: boolean}): ModifierConfig[] {
-	return [
-		accessibilityElement('combine'),
-		accessibilityLabel(spoken),
-		...(opts.isButton ? [] : [accessibilityAddTraits(['isHeader'])]),
-	]
-}
 
 // The disc Shortcuts puts behind its title's chevron, which is what says the
 // title is a button rather than a label.
@@ -433,21 +377,3 @@ const CHEVRON_MODIFIERS = [
 	frame({width: 18, height: 18}),
 	background(c.tertiarySystemFill, shapes.circle()),
 ]
-
-const styles = StyleSheet.create({
-	// The host needs a size of its own -- see the comment where it is drawn --
-	// and this is the widest the bar can give it without crowding the back
-	// button and the filter button either side.
-	//
-	// The subtitle carries the day, the meal and the window it is served in --
-	// `Sun • Lunch • 11AM – 1:30PM` -- which is the longest line the bar has to
-	// hold, and wider than the longest cafe name above it. Past this the back
-	// button and the filter button either side start to crowd, so the subtitle
-	// scales itself down instead (see `SUBTITLE_MODIFIERS`); the name still
-	// clips rather than shrinks, since a navigation bar keeps its height
-	// whatever it is asked to hold.
-	menuHost: {
-		width: 260,
-		height: 44,
-	},
-})

@@ -62,6 +62,10 @@ describe('uitestsNeeded', () => {
 		assert.equal(uitestsNeeded(['uitests/ModuleHomeTests.swift']), true)
 	})
 
+	it('runs when a UITest in a subfolder changed', () => {
+		assert.equal(uitestsNeeded(['uitests/Chaos/ChaosOracle.swift']), true)
+	})
+
 	it('runs on an empty list, which means we could not work out the diff', () => {
 		assert.equal(uitestsNeeded([]), true)
 	})

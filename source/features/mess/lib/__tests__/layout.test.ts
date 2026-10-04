@@ -80,8 +80,9 @@ describe('chooseLayout', () => {
 	it('lays a Crossword story out around its puzzle', () => {
 		let story = puzzleStories.find((s) => s.id === 36814)
 		expect(story?.layout).toStrictEqual({
-			kind: 'crossword',
+			kind: 'puzzle',
 			puzzle: {
+				type: 'crossword',
 				id: 'af644d78',
 				set: 'c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4',
 			},
@@ -99,6 +100,20 @@ describe('chooseLayout', () => {
 		})
 		expect(chosen.layout).toStrictEqual({kind: 'article'})
 		expect(chosen.blocks).toBe(blocks)
+	})
+
+	it('lays a Puzzle story out around its puzzle', () => {
+		let chosen = chooseLayout({
+			column: 'Puzzle',
+			blocks: [],
+			photo: null,
+			html: '<div class="pm-embed-div" data-id="9d6dbf85" data-set="1977" data-puzzletype="wordrow"></div>',
+		})
+		expect(chosen.layout).toStrictEqual({
+			kind: 'puzzle',
+			puzzle: {type: 'wordrow', id: '9d6dbf85', set: '1977'},
+		})
+		expect(chosen.blocks).toStrictEqual([])
 	})
 
 	it('gives a column with no template the article layout', () => {

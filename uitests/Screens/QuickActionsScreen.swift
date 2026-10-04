@@ -1,11 +1,11 @@
 import XCTest
 
-/// Settings → Home Screen Quick Actions: the picker for the app icon's menu.
+/// Customize → Quick Actions: the picker for the app icon's menu.
 struct QuickActionsScreen: Screen {
 	let app: XCUIApplication
 
 	/// The picker itself. Home's tiles share titles with its rows and stay in
-	/// the tree behind the Settings sheet, so a row is only ever queried inside
+	/// the tree behind the Customize sheet, so a row is only ever queried inside
 	/// this.
 	private var picker: XCUIElement {
 		app.element(matching: TestIdentifiers.QuickActions.screen)
@@ -23,6 +23,11 @@ struct QuickActionsScreen: Screen {
 	private func reveal(_ element: XCUIElement) {
 		let swipes: [() -> Void] = [{ picker.swipeUp() }, { picker.swipeDown() }]
 		for swipe in swipes {
+			// Reading every row's label is a query per row, so skip it for a
+			// row that is already in the tree.
+			if element.exists {
+				break
+			}
 			var shown = visibleRows()
 			while !element.exists {
 				swipe()
@@ -38,16 +43,10 @@ struct QuickActionsScreen: Screen {
 		picker.buttons.allElementsBoundByIndex.map(\.label)
 	}
 
-	/// Open the picker the way a user does, from the Settings sheet.
+	/// Open the picker the way a user does, from the Customize sheet.
 	@discardableResult
 	func navigate() -> Self {
-		HomeScreen(app: app).checkHomescreenExists().openSettings()
-		let settingsRow = app.buttons[TestIdentifiers.QuickActions.settingsRow].firstMatch
-		scrollUntilExists(settingsRow)
-		XCTAssertTrue(
-			settingsRow.waitForExistence(timeout: 10),
-			"Settings should offer \(TestIdentifiers.QuickActions.settingsRow)")
-		settingsRow.tap()
+		HomeScreen(app: app).checkHomescreenExists().openCustomize().openQuickActions()
 		XCTAssertTrue(picker.waitForExistence(timeout: 10), "the quick-action picker should open")
 		return self
 	}

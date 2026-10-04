@@ -3,71 +3,25 @@ import XCTest
 class ModuleStudentWorkTests: UITestCaseUnbooted {
 	private typealias IDs = TestIdentifiers.StudentWork
 
-	/// A row drops its title's term and pay code and shows the wage the code
-	/// stands for. The posting's own screen titles it the same way, and turns
-	/// what the prefix and code said into rows.
-	func testCodedPostingShowsItsDisplayTitleWageLevelAndTerm() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifyPostingDetail(IDs.fixtureCodedJob, contains: IDs.fixtureCodedJobWage)
-			.capture("Student Work list")
-			.openJobPosting(IDs.fixtureCodedJob)
-			.capture("Job posting with a display title")
-			.verifyDetailRow(IDs.wageRow, IDs.fixtureCodedJobWage)
-			.verifyDetailRow(IDs.levelRow, IDs.entryLevel)
-			.verifyDetailRow(IDs.termRow, IDs.academicYear)
-	}
-
-	func testPostingsAreSectionedByHowRecentlyTheyWentUp() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifySection(IDs.thisWeek)
-			.verifySection(IDs.lastWeek)
-			.verifySection(IDs.earlier)
-	}
-
-	/// A first visit marks nothing new; a posting that appears before the
-	/// next visit is, and one already seen is not.
-	func testPostingAddedSinceTheLastVisitIsMarkedNew() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifyNothingIsNew()
-			.navigateBackToLanding()
-			.navigateBack()
-
-		keepStateForNextLaunch(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
-
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifyPostingIsNew(IDs.fixtureExtraJob)
-			.capture("Student Work with a new posting")
-			.verifyPostingIsNotNew(IDs.fixtureCodedJob)
-	}
-
-	func testLandingShowsSixteenAreas() throws {
+	func testTheLayoutMenuSwitchesTheAreasToRows() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
 			.verifyAreaTileCount(IDs.areaCount)
-			.capture("Student Work landing")
+			.chooseLayout(TestIdentifiers.Layout.list)
+			.verifyAreaRowsShown()
+			.capture("Student Work area rows")
 	}
 
-	/// An empty area's tile is dimmed, not disabled: it opens, to a list that
-	/// says there is nothing in it.
-	func testEmptyAreaOpensToAListThatSaysSo() throws {
+	/// An area's tile opens the postings filtered to that area. An empty
+	/// area's tile is dimmed, not disabled: it opens, to a list that says
+	/// there is nothing in it.
+	func testAreaTilesOpenTheListFilteredToTheirArea() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
 			.openArea(IDs.emptyArea)
 			.verifyTrigger(IDs.areaFilter, isSelected: true)
 			.verifyNoMatchingJobs()
-	}
-
-	func testAreaTileOpensTheListFilteredToThatArea() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
+			.goBack()
 			.openArea(IDs.researchArea)
 			.verifyTrigger(IDs.areaFilter, isSelected: true)
 			.verifyPostingListed(IDs.fixtureJobWithWrappingField)

@@ -59,7 +59,8 @@ import {collapsedDetentFor, detentsFor, nameOf} from '../../source/features/map/
 import {mapDataOptions} from '../../source/features/map/query'
 import {useRecentPlacesStore} from '../../source/features/map/store'
 import type {Building, Coordinate, Feature} from '../../source/features/map/types'
-import {mapCredits, mapStyleUrl} from '../../source/features/map/urls'
+import {useMapStyleUrl} from '../../source/features/map/style-query'
+import {mapCredits} from '../../source/features/map/urls'
 
 /** Each campus's starting camera position. Carleton's predates this file
  * reading a campus from the route, and is kept exactly as it was. St. Olaf's
@@ -113,6 +114,7 @@ export default function MapPage(): React.ReactNode {
 	)
 
 	let scheme = useColorScheme()
+	let mapStyleUrl = useMapStyleUrl(campus, scheme)
 	let cameraRef = React.useRef<CameraRef>(null)
 	let mapRef = React.useRef<MapRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
@@ -345,7 +347,12 @@ export default function MapPage(): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu accessibilityLabel="About this map" icon="info.circle">
 					{mapCredits(campus).map((credit) => (
-						<Stack.Toolbar.MenuAction key={credit.url} onPress={() => openUrl(credit.url)}>
+						// The compass says the item opens a site, as Safari's own icon does.
+						<Stack.Toolbar.MenuAction
+							key={credit.url}
+							icon="safari"
+							onPress={() => openUrl(credit.url)}
+						>
 							{credit.label}
 						</Stack.Toolbar.MenuAction>
 					))}
@@ -356,7 +363,7 @@ export default function MapPage(): React.ReactNode {
 				attribution={false}
 				logo={false}
 				onPress={handleMapPress}
-				mapStyle={mapStyleUrl(campus, scheme)}
+				mapStyle={mapStyleUrl}
 				style={StyleSheet.absoluteFill}
 			>
 				<Camera

@@ -108,7 +108,7 @@ let onOpen: jest.Mock<(issue: MessIssue) => void>
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	onOpen = jest.fn()
-	useMessStore.setState({openedStories: [], stainKind: 'coffee'})
+	useMessStore.setState({openedStories: [], stainKind: 'coffee', photoTone: 'auto'})
 	tileEvents.renders.length = 0
 	tileEvents.mounts.length = 0
 	// A tile with no photo asks for its lead story's words; unless a test says otherwise, it has none.
@@ -225,6 +225,14 @@ describe('IssueGrid', () => {
 			name: 'April 29, 2026, Hunger Free Campus grant, 4 of 5 stories read',
 		})
 		expect(tile.props.accessibilityValue.text).toBe('grid, 3 tea, 0 paragraphs')
+	})
+
+	test("hands each tile the reader's photo tone", async () => {
+		useMessStore.setState({photoTone: 'sepia'})
+		await renderGrid()
+
+		let tile = screen.getByRole('button', {name: /^April 29, 2026/u})
+		expect(tile.props.accessibilityHint).toBe('sepia')
 	})
 
 	test("sets a tile with no photo with its lead story's words, below its fold", async () => {

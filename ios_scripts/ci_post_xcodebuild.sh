@@ -22,7 +22,17 @@ cd ../../
 
 # ci_post_clone.sh installed mise and sentry-cli, but its PATH and exports end
 # with its process.
-export PATH="$(brew --prefix)/bin:$PATH"
+brew_prefix="$(brew --prefix)"
+export PATH="${brew_prefix}/bin:$PATH"
+
+export SENTRY_ORG='frog-pond-labs'
+export SENTRY_PROJECT='all-about-olaf'
+
+# Run one sentry-cli step, and turn a failure into a warning, so a Sentry outage
+# cannot hold up a TestFlight build.
+sentry() {
+  mise exec -- sentry-cli "$@" || echo "warning: sentry-cli $1 $2 failed; continuing without it"
+}
 
 # sentry-cli detects git metadata only on the CI systems it knows, and Xcode
 # Cloud is not one of them, so hand it Xcode Cloud's own variables.
@@ -43,11 +53,30 @@ elif [ -n "${CI_BRANCH:-}" ]; then
   vcs_args+=(--head-ref "${CI_BRANCH}")
 fi
 
-# A failed upload warns rather than failing the build, so a Sentry outage
-# cannot hold up a TestFlight build.
-mise exec -- sentry-cli build upload "${CI_ARCHIVE_PATH}" \
-  --org frog-pond-labs \
-  --project all-about-olaf \
+sentry build upload "${CI_ARCHIVE_PATH}" \
   --build-configuration Release \
-  "${vcs_args[@]}" \
-  || echo "warning: Sentry size analysis upload failed"
+  "${vcs_args[@]}"
+
+# A pull request build ships nowhere, so it gets no release.
+if [ -n "${CI_PULL_REQUEST_NUMBER:-}" ]; then
+  echo "A pull request build ships nowhere; skipping the Sentry release"
+  exit 0
+fi
+
+# Read the release name from the archived app rather than rebuilding it, so it
+# is exactly what the SDK reports: <bundle id>@<version>+<build>, the default
+# when Sentry.init sets no release.
+app="$(find "${CI_ARCHIVE_PATH}/Products/Applications" -maxdepth 1 -name '*.app' | head -n 1)"
+plist="${app}/Info.plist"
+bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "${plist}")"
+version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "${plist}")"
+build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "${plist}")"
+release="${bundle_id}@${version}+${build}"
+echo "Sentry release: ${release}"
+
+sentry releases new "${release}"
+# --ignore-missing: Xcode Cloud's clone may not reach back to the previous
+# release's commit, and a partial list beats none.
+sentry releases set-commits "${release}" --auto --ignore-missing
+sentry releases finalize "${release}"
+sentry deploys new --release "${release}" --env testflight

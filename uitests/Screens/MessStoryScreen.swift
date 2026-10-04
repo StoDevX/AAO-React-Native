@@ -3,21 +3,31 @@ import XCTest
 struct MessStoryScreen: Screen {
 	let app: XCUIApplication
 
+	/// Wait for a story's headline, for a story with no body text to check, as a Photo story is.
 	@discardableResult
-	func verifyStoryAppears() -> Self {
-		let headline = app.staticTexts[TestIdentifiers.News.storyHeadline]
-		XCTAssertTrue(headline.waitForExistence(timeout: 30), "the story's headline should be visible")
-		capture("Olaf Messenger story")
+	func verifyHeadlineAppears() -> Self {
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.News.shareStory].waitForExistence(timeout: 10),
-			"the reader should offer Share")
-		// A story with no body text sends the reader to the website instead, so
-		// either one proves the page below the header was drawn.
-		let body = app.element(matching: TestIdentifiers.News.storyBody)
-		let siteLink = app.element(matching: TestIdentifiers.News.storySiteLink)
-		XCTAssertTrue(
-			body.waitForExistence(timeout: 10) || siteLink.exists,
-			"the story's body, or a link to read it on the web, should be below the header")
+			app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 30),
+			"the story's headline should be visible")
+		return self
+	}
+
+	/// Wait until the paper beside the column, below the bars, reads as dark or as light. A
+	/// screenshot that can't be read fails the check rather than counting as light.
+	@discardableResult
+	func verifyPage(dark: Bool, _ message: String) -> Self {
+		var brightness: Int?
+		let settled = NSPredicate { _, _ in
+			guard let pixels = ScreenPixels(app.screenshot().image) else { return false }
+			let paper = pixels.colour(at: CGPoint(x: 6, y: app.windows.firstMatch.frame.midY))
+			brightness = (paper.red + paper.green + paper.blue) / 3
+			return (brightness! < 80) == dark
+		}
+		let result = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: settled, object: nil)], timeout: 10)
+		XCTAssertEqual(
+			result, .completed,
+			"\(message) (the paper's brightness read \(brightness.map(String.init) ?? "nothing"))")
 		return self
 	}
 
@@ -72,20 +82,6 @@ struct MessStoryScreen: Screen {
 			title.map { "the series row should offer \"\($0)\"" } ?? "the story should have a series row")
 		capture("A story's series row")
 		thumbnail.tap()
-		return self
-	}
-
-	/// Long-press the story's first paragraph and assert iOS offers to copy it,
-	/// which it does only for text that can be selected.
-	@discardableResult
-	func verifyBodyOffersCopy() -> Self {
-		let body = app.element(matching: TestIdentifiers.News.storyBody)
-		XCTAssertTrue(body.waitForExistence(timeout: 10), "the story should have a paragraph to long-press")
-		body.press(forDuration: 1.0)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
-		let offered = copy.waitForExistence(timeout: 5)
-		capture("Long press on a story paragraph")
-		XCTAssertTrue(offered, "a long press on a story's paragraph should offer Copy")
 		return self
 	}
 
@@ -159,7 +155,16 @@ struct MessStoryScreen: Screen {
 	func verifyLinkOffersLinkMenu(_ label: String) -> Self {
 		let link = storyLink(label)
 		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to hold")
-		link.press(forDuration: 1.5)
+		// Press the link's screen point through SpringBoard rather than pressing
+		// the link itself. The menu's preview loads the linked page live, and
+		// the app never goes quiet while it does, so a press on our own app
+		// waits out XCUITest's full 60s quiescence timeout after landing.
+		// SpringBoard is quiet, and the point is the same point.
+		let target = link.frame
+		XCUIApplication(bundleIdentifier: "com.apple.springboard")
+			.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: target.midX, dy: target.midY))
+			.press(forDuration: 1.5)
 		let copyLink = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copyLink)).firstMatch
 		let offered = copyLink.waitForExistence(timeout: 5)
@@ -465,7 +470,7 @@ struct MessStoryScreen: Screen {
 		let solve = app.buttons.matching(
 			NSPredicate(
 				format: "identifier == %@ AND label == %@",
-				TestIdentifiers.News.crosswordSolve, TestIdentifiers.News.crosswordSolveLabel)
+				TestIdentifiers.News.puzzleSolve, TestIdentifiers.News.crosswordSolveLabel)
 		).firstMatch
 		XCTAssertTrue(solve.waitForExistence(timeout: 30), "a Crossword post should offer to solve its puzzle")
 		capture("A Crossword post")

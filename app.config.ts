@@ -259,6 +259,10 @@ const config: ExpoConfig = {
 				microphonePermission: false,
 			},
 		],
+		// The radio plays through this module, never records. Background playback
+		// is already declared above, so the plugin adds only what it cannot skip;
+		// `false` drops the microphone usage string it would otherwise write.
+		['expo-audio', {microphonePermission: false}],
 		// Adding an event goes through the system editor, which needs no
 		// calendar access, but the module links EventKit, and App Store Connect
 		// rejects an upload that does so without a calendar usage string
@@ -286,6 +290,7 @@ const config: ExpoConfig = {
 		// with-sentry-debug-files-environment edits a phase this plugin writes,
 		// and Expo runs a later plugin's project mod first, so it goes above.
 		'./plugins/with-sentry-debug-files-environment',
+		'./plugins/with-sentry-cli-executable',
 		[
 			'@sentry/react-native/expo',
 			{

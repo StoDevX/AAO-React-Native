@@ -1,10 +1,36 @@
 import * as React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen, within} from '@testing-library/react-native'
 
 import {ActionRow, DetailRow, DisclosureRow} from '../rows'
 import {loadBeforeTests} from '../../testing/load-before-tests'
 
 loadBeforeTests('Image')
+
+const mockFontScale = jest.fn(() => 1)
+// `react-native` re-exports this through a getter, which jest.spyOn cannot
+// replace, so the module behind it is mocked instead.
+jest.mock('react-native/Libraries/Utilities/useWindowDimensions', () => ({
+	__esModule: true,
+	default: () => ({width: 390, height: 844, scale: 3, fontScale: mockFontScale()}),
+}))
+
+afterEach(() => {
+	mockFontScale.mockReturnValue(1)
+})
+
+type HostElement = ReturnType<typeof screen.getByText>
+
+/** The host view holding the row's title and detail lines. */
+function titleStackOf(title: string): HostElement {
+	let stack = screen.getByText(title).parent
+	while (stack && typeof stack.type !== 'string') {
+		stack = stack.parent
+	}
+	if (!stack) {
+		throw new Error(`No host view holds ${title}`)
+	}
+	return stack
+}
 
 describe('DisclosureRow', () => {
 	it('renders the detail line when there is one', async () => {
@@ -48,6 +74,19 @@ describe('DisclosureRow badge', () => {
 	it('draws its badge count', async () => {
 		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
 		expect(screen.getByText('4')).toBeOnTheScreen()
+	})
+
+	it('draws its badge count beside the title at a standard text size', async () => {
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(within(titleStackOf('Entry-level jobs')).queryByText('4')).toBeNull()
+	})
+
+	/// At AX5 a trailing count takes a third of the row, and the title breaks
+	/// mid-word in what is left.
+	it('draws its badge count under the title at an accessibility text size', async () => {
+		mockFontScale.mockReturnValue(3.571)
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(within(titleStackOf('Entry-level jobs')).getByText('4')).toBeOnTheScreen()
 	})
 
 	it('says nothing of a badge of zero', async () => {

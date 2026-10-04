@@ -3,15 +3,18 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import {openUrl} from '@frogpond/open-url'
 
 import categoriesJson from './fixtures/categories.json'
 import postsJson from './fixtures/posts.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {navigationTitleLines} from '../../../testing/navigation-title'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {ColumnScreen} from '../column-screen'
 import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
+import {useMessStore} from '../store'
 import type {MessStory} from '../types'
 
 jest.mock(
@@ -25,6 +28,7 @@ jest.mock('@frogpond/data-sources', () => ({
 	fetchManifest: jest.fn(),
 	fetchSourceBody: jest.fn(),
 }))
+jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 const mockNavigate = jest.fn()
 jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -51,6 +55,14 @@ const QUESTION: MessStory = {
 	layout: {kind: 'article'},
 }
 
+const CROSSWORD: MessStory = {
+	...QUESTION,
+	id: 36900,
+	title: 'Crossword: Finals Week',
+	column: 'Crossword',
+	layout: {kind: 'puzzle', puzzle: {type: 'crossword', id: 'finals', set: 'olafmessenger'}},
+}
+
 let queryClient: QueryClient
 
 beforeEach(() => {
@@ -75,12 +87,60 @@ function renderColumn() {
 }
 
 describe('ColumnScreen', () => {
+	test("is titled with the column's name alone", async () => {
+		await renderColumn()
+
+		expect(navigationTitleLines()).toStrictEqual(['Good Questions'])
+	})
+
 	test("lists the column's stories, and opens one in the reader", async () => {
 		await renderColumn()
 
+		// A story's row leads into the reader, so it points nowhere.
+		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36800'}})
+	})
+
+	test("opens a crossword's puzzle straight from its row", async () => {
+		useMessStore.setState({openedStories: []})
+		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([CROSSWORD]))
+		await renderColumn()
+
+		// The row points out of the app, as any row that opens a page elsewhere does, and with no
+		// photo of its own it shows the puzzle's kind.
+		expect(screen.getByTestId('symbol-arrow.up.right')).toBeOnTheScreen()
+		expect(screen.getByTestId('symbol-square.grid.3x3')).toBeOnTheScreen()
+		await fireEvent.press(screen.getByRole('link', {name: 'Crossword: Finals Week, Apr 29'}))
+
+		expect(openUrl).toHaveBeenCalledWith(
+			'https://puzzleme.amuselabs.com/pmm/crossword?id=finals&set=olafmessenger&embed=1',
+		)
+		expect(mockNavigate).not.toHaveBeenCalled()
+		// Solved from its row, it still counts as read towards its issue's stains.
+		expect(useMessStore.getState().openedStories).toStrictEqual([36900])
+	})
+
+	test('opens a puzzle from its row among other stories too', async () => {
+		let wordGame: MessStory = {
+			...CROSSWORD,
+			id: 37114,
+			title: 'Guess the hidden word',
+			column: 'Puzzle',
+			layout: {kind: 'puzzle', puzzle: {type: 'wordrow', id: '9d6dbf85', set: '1977'}},
+		}
+		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([QUESTION, wordGame]))
+		await renderColumn()
+
+		expect(screen.getAllByTestId('symbol-arrow.up.right')).toHaveLength(1)
+		expect(screen.getByTestId('symbol-puzzlepiece')).toBeOnTheScreen()
+		await fireEvent.press(screen.getByRole('link', {name: 'Guess the hidden word, Apr 29'}))
+
+		expect(openUrl).toHaveBeenCalledWith(
+			'https://puzzleme.amuselabs.com/pmm/wordrow?id=9d6dbf85&set=1977&embed=1',
+		)
+		expect(mockNavigate).not.toHaveBeenCalled()
 	})
 
 	test('says it loads once back online when offline with its stories not cached', async () => {

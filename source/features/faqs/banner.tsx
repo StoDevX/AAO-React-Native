@@ -8,7 +8,10 @@ import {
 	View,
 	ViewStyle,
 	ColorValue,
+	LayoutChangeEvent,
 } from 'react-native'
+import {RNHostView, VStack} from '@expo/ui/swift-ui'
+import {frame} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {SymbolView} from 'expo-symbols'
 import type {SFSymbol} from 'sf-symbols-typescript'
@@ -18,6 +21,7 @@ import {useQuery} from '@tanstack/react-query'
 import {getFaqVersion, useFaqBannerStore} from './store'
 import {useDevBannerStore} from './dev-banner-store'
 import type {Faq, FaqTarget, FaqSeverity} from './types'
+import {FILL_WIDTH} from '../../components/tile-layout'
 
 /** Shared helper to find a matching dev banner by faqId or target */
 export function findDevBanner(
@@ -208,6 +212,33 @@ export function FaqBannerGroup({target, style, onPressFaq}: GroupProps): React.R
 	)
 }
 
+type SlotProps = GroupProps
+
+/**
+ * A `FaqBannerGroup` placed inside a SwiftUI `Host`.
+ *
+ * The slot takes the width SwiftUI proposes and measures only the height, so the
+ * banner's text wraps at the width the screen really has. `matchContents={true}`
+ * sized the banner from its unwrapped text, which overran the row in landscape
+ * and clipped both edges.
+ */
+export function FaqBannerSlot(props: SlotProps): React.ReactNode {
+	let [height, setHeight] = React.useState(0)
+	let onLayout = React.useCallback((event: LayoutChangeEvent) => {
+		setHeight(Math.ceil(event.nativeEvent.layout.height))
+	}, [])
+
+	return (
+		<VStack modifiers={[frame({maxWidth: FILL_WIDTH, height})]}>
+			<RNHostView matchContents={false}>
+				<View onLayout={onLayout} style={styles.slot}>
+					<FaqBannerGroup {...props} />
+				</View>
+			</RNHostView>
+		</VStack>
+	)
+}
+
 type Palette = {
 	background: ColorValue
 	border: ColorValue
@@ -392,6 +423,9 @@ const styles = StyleSheet.create({
 	},
 	icon: {
 		marginRight: 4,
+	},
+	slot: {
+		alignSelf: 'stretch',
 	},
 	groupContainer: {
 		gap: 12,

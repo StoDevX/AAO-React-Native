@@ -1,35 +1,70 @@
 import XCTest
 
 class ModuleStreamingMediaTests: UITestCaseUnbooted {
-	func testKrlxOffersItsStationButtons() throws {
+	/// The bar on Home opens the sheet on the last station viewed. Picking
+	/// another station there only browses: the bar says what is loaded, not
+	/// what the sheet shows. The sheet carries both stations, and the player's
+	/// controls are buttons and links VoiceOver can name. Pausing leaves the
+	/// station loaded, with Play to start it again. KSTO plays here, as KRLX's
+	/// native stream needs a network the simulator's TLS does not always have.
+	///
+	/// Last, Streaming Media lists the streams under its tabs.
+	func testTheBarOpensTheSheetOnBothStations() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
+			.openSheetFromBar(expecting: ids.playKsto)
+			.press(ids.playKsto, expecting: ids.pauseKsto)
+			.pick(ids.krlxSegment, expecting: ids.playKrlx)
+			.capture("Sheet, KRLX, with KSTO playing")
+			.checkButtons([ids.playKrlx] + ids.krlxActions)
+			.checkLinks(ids.krlxLinks)
+			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
+			.closeSheet(expectingBar: ids.pauseKsto)
+			.capture("Home, KSTO loaded")
+			.press(ids.pauseKsto, expecting: ids.playKsto)
+			.openFromHome()
 			.checkStreamListExists()
 			.checkTabs()
-			.openStation(
-				TestIdentifiers.StreamingMedia.krlxTab,
-				expecting: TestIdentifiers.StreamingMedia.krlxButtons[0]
-			)
-			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
-			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
 	}
 
-	func testKstoLogoCyclesOnTap() throws {
+	/// Turning Customize's Radio Player off while a station plays stops it and
+	/// takes the bar off Home, but Streaming Media keeps its own, so the radio
+	/// is still a tap away. Turning it on again brings back Home's idle bar.
+	func testSwitchOffStopsThePlayingStationAndHidesOnlyHomesBar() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
-			.openStation(
-				TestIdentifiers.StreamingMedia.kstoTab,
-				expecting: TestIdentifiers.StreamingMedia.kstoLogos[0]
-			)
-			.checkLogoCycles(TestIdentifiers.StreamingMedia.kstoLogos)
+			.checkShows(ids.idleBar)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.press(ids.playKsto, expecting: ids.pauseKsto)
+			.closeSheet(expectingBar: ids.pauseKsto)
+			.toggleShowRadioPlayer()
+			.checkGone(ids.pauseKsto)
+			.checkGone(ids.idleBar)
+			.capture("Home, switch turned off while KSTO played")
+			.openFromHome()
+			.checkShows(ids.idleBar)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.closeSheet(expectingBar: ids.idleBar)
+			.goBack()
+			.toggleShowRadioPlayer()
+			.checkShows(ids.idleBar)
 	}
 
-	func testKstoScratchKeepsTheLogo() throws {
-		let logos = TestIdentifiers.StreamingMedia.kstoLogos
+	/// Each tap on the KSTO logo moves it to the next, and a drag across the
+	/// record turns it, leaving the logo as it was. Whether the sheet also
+	/// moves is UIKit's, and only a device shows it: a synthetic drag never
+	/// closes this sheet over React Native content.
+	func testTheLogoCyclesAndTheRecordCanBeScratched() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		let logos = ids.kstoLogos
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
-			.openStation(TestIdentifiers.StreamingMedia.kstoTab, expecting: logos[0])
-			.tapLogo(labelled: TestIdentifiers.StreamingMedia.kstoLogoPrefix, until: logos[3])
+			.openSheetFromBar(expecting: ids.playKsto)
+			.checkLogoCycles(logos)
+			.tapLogo(labelled: ids.kstoLogoPrefix, until: logos[3])
 			.checkScrubKeepsLogo(logos[3])
+			.closeSheet(expectingBar: ids.idleBar)
 	}
 }

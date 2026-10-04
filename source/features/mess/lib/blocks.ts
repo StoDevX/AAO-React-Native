@@ -143,18 +143,56 @@ function outermost(node: Element, name: string): Element[] {
 	return found
 }
 
+/**
+ * An image's address over HTTPS. Older posts link uploads over plain HTTP, which iOS loads only
+ * in a web view; the site serves each of them over HTTPS too.
+ */
+export function secureUrl(url: string): string {
+	return url.replace(/^http:\/\//iu, 'https://')
+}
+
 function figureFrom(img: Element, caption: string): Block | null {
-	let url = img.attribs.src
+	let url = img.attribs.src && secureUrl(img.attribs.src)
 	let width = Number.parseInt(img.attribs.width ?? '', 10)
 	let height = Number.parseInt(img.attribs.height ?? '', 10)
 	// An image with no size cannot be given its frame before it loads, and a
 	// zero size gives no aspect ratio.
 	if (!url || !(width > 0 && height > 0)) return null
 	// The article draws the size the HTML asks for; the viewer, where a reader zooms, the largest.
-	let largeUrl = largestSource(img.attribs.srcset, url)
+	let largest = largestSource(img.attribs.srcset, url)
+	let largeUrl = largest && secureUrl(largest)
 	return largeUrl && largeUrl !== url
 		? {type: 'figure', url, largeUrl, width, height, caption}
 		: {type: 'figure', url, width, height, caption}
+}
+
+/**
+ * SNO's slideshow, from `node` or the first element below it: the WordPress plugin writes
+ * only its first photo, and names every photo by media id in `data-photo-ids`. Null when
+ * there is none, or it names no photos.
+ */
+function galleryFrom(node: Element): Block | null {
+	let slideshow = [node, ...descendants(node, 'div')].find(
+		(element) =>
+			element.attribs.class?.split(/\s+/u).includes('sfiphotowrap') &&
+			element.attribs['data-photo-ids'] !== undefined,
+	)
+	if (!slideshow) return null
+	let photoIds = (slideshow.attribs['data-photo-ids'] ?? '')
+		.split(',')
+		.map((id) => Number.parseInt(id, 10))
+		.filter((id) => id > 0)
+	if (photoIds.length === 0) return null
+	let img = descendants(slideshow, 'img')[0]
+	let url = img?.attribs.src && secureUrl(img.attribs.src)
+	let width = Number.parseInt(img?.attribs['data-width'] ?? '', 10)
+	let height = Number.parseInt(img?.attribs['data-height'] ?? '', 10)
+	let cover = url && width > 0 && height > 0 ? {url, width, height} : null
+	let creditLine = descendants(slideshow, 'div').find((element) =>
+		element.attribs.class?.split(/\s+/u).includes('photocredit'),
+	)
+	let credit = creditLine ? collapse(textContent(creditLine)).trim() : ''
+	return {type: 'gallery', photoIds, cover, credit}
 }
 
 function pushParagraph(blocks: Block[], nodes: ChildNode[]): void {
@@ -221,6 +259,12 @@ function blocksOf(node: Element, blocks: Block[]): void {
 			return
 		}
 		default: {
+			// The slideshow's wrapper holds only its overlay and credit, which the gallery draws itself.
+			let gallery = galleryFrom(node)
+			if (gallery) {
+				blocks.push(gallery)
+				return
+			}
 			// WordPress wraps a lone image or player in a paragraph; it is media, not text.
 			for (let media of descendants(node, ...MEDIA)) blocksOf(media, blocks)
 			pushParagraph(

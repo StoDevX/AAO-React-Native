@@ -59,6 +59,19 @@ export function imageLabel(
 }
 
 /**
+ * What VoiceOver reads for one of a gallery's photos, which come with no captions: "Title,
+ * photo by C, picture 2 of 5", or, with no credit, the story's title and writers, as for an image.
+ */
+export function galleryPhotoLabel(
+	story: Pick<MessStory, 'title' | 'bylines'>,
+	credit: string,
+	place: PicturePlace,
+): string {
+	if (!credit) return imageLabel(story, place)
+	return imageLabel({title: `${story.title}, photo by ${credit}`, bylines: []}, place)
+}
+
+/**
  * What VoiceOver reads for a story's lead photo or a figure in its body: its caption, or, with
  * none, the story's title and writers, as for an image. Alt text is not used: the paper leaves
  * it empty, or fills it with a file name.

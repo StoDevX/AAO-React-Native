@@ -101,6 +101,18 @@ extension Screen {
 		return self
 	}
 
+	/// Close Report a Problem with its own close button, and wait for it to go.
+	@discardableResult
+	func closeProblemForm() -> Self {
+		let close = app.buttons[TestIdentifiers.Support.closeProblemForm].firstMatch
+		XCTAssertTrue(close.waitForHittable(timeout: 10), "Report a Problem should have a close button")
+		close.tap()
+		XCTAssertTrue(
+			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForNonExistence(timeout: 10),
+			"Report a Problem should close")
+		return self
+	}
+
 	/// Attach a screenshot of the whole screen to the test report, for as long
 	/// as `captureLifetime` says.
 	@discardableResult
@@ -125,6 +137,19 @@ extension Screen {
 		treeDump.name = name
 		treeDump.lifetime = captureLifetime
 		XCTContext.runActivity(named: name) { $0.add(treeDump) }
+		return self
+	}
+
+	/// Picks "Grid" or "List" from the ⋯ layout menu at the top right of a
+	/// screen that offers one.
+	@discardableResult
+	func chooseLayout(_ layout: String) -> Self {
+		let menu = app.buttons[TestIdentifiers.Layout.menu].firstMatch
+		XCTAssertTrue(menu.waitForExistence(timeout: 30), "The screen should offer a layout menu")
+		menu.tap()
+		let item = app.buttons[layout].firstMatch
+		XCTAssertTrue(item.waitForExistence(timeout: 10), "The layout menu should offer \(layout)")
+		item.tap()
 		return self
 	}
 

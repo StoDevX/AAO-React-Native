@@ -22,10 +22,10 @@ struct StudentOrgsScreen: Screen {
 		verifyTitle(TestIdentifiers.Buttons.studentOrgs)
 	}
 
-	/// Search across every category. The landing screen shows category tiles
-	/// until a query is typed, so this is also how a test reaches an org row
+	/// Search across every category. The landing screen shows categories until
+	/// a query is typed, so this is also how a test reaches an org row
 	/// unambiguously -- a category can share an org's name (e.g. "Academic"),
-	/// but only the search results render `DisclosureRow`s rather than tiles.
+	/// but only the search results list orgs.
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
@@ -104,38 +104,59 @@ struct StudentOrgsScreen: Screen {
 		return self
 	}
 
+	/// Taps the first org in the search results and waits for its detail to
+	/// show a section of its own: a capture taken straight after the tap lands
+	/// mid-animation, with both screens on it.
+	@discardableResult
+	func openFirstResult() -> Self {
+		let firstOrg = resultsList.buttons.firstMatch
+		XCTAssertTrue(firstOrg.waitForHittable(timeout: 30), "An org should be listed")
+		firstOrg.tap()
+		XCTAssertTrue(
+			app.staticTexts["Category"].firstMatch.waitForExistence(timeout: 30),
+			"The org detail should be shown")
+		return self
+	}
+
 	private var resultsList: XCUIElement {
 		app.collectionViews[TestIdentifiers.StudentOrgs.resultsList]
 	}
 
 	@discardableResult
-	func verifyCategoryTilesShown() -> Self {
-		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+	func verifyCategoriesShown() -> Self {
 		XCTAssertTrue(
-			grid.waitForExistence(timeout: 30),
-			"The category grid should be visible before a search")
-		XCTAssertGreaterThan(
-			grid.buttons.count, 0,
-			"The category grid should hold at least one category tile")
+			firstCategoryRow.waitForExistence(timeout: 30),
+			"The category list should hold at least one category before a search")
 		return self
 	}
 
-	/// Taps whichever category tile is first in the grid and returns its label,
-	/// so the caller can assert the next screen is titled for it without this
-	/// test naming a category that Presence.io could rename or remove.
-	func openFirstCategory() -> String {
+	@discardableResult
+	func verifyCategoryGridShown() -> Self {
 		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
-		XCTAssertTrue(
-			grid.waitForExistence(timeout: 30),
-			"The category grid should be visible before a search")
+		XCTAssertTrue(grid.waitForExistence(timeout: 30), "The categories should be drawn as tiles")
+		XCTAssertFalse(firstCategoryRow.exists, "No category should still be drawn as a row")
+		return self
+	}
 
-		let tile = grid.buttons.firstMatch
+	/// Taps whichever category row is first in the list and returns its name,
+	/// so the caller can assert the next screen is titled for it without this
+	/// test naming a category that Presence.io could rename or remove. The
+	/// name comes from the row's identifier, not its label, which ends in the
+	/// org count.
+	func openFirstCategory() -> String {
+		let row = firstCategoryRow
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
-			"The category grid should hold at least one tile")
+			row.waitForExistence(timeout: 30),
+			"The category list should hold at least one category before a search")
 
-		let label = tile.label
-		tile.tap()
-		return label
+		let name = String(row.identifier.dropFirst(TestIdentifiers.StudentOrgs.categoryRowPrefix.count))
+		row.tap()
+		return name
+	}
+
+	private var firstCategoryRow: XCUIElement {
+		app.collectionViews[TestIdentifiers.StudentOrgs.categoryList].buttons
+			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.StudentOrgs.categoryRowPrefix))
+			.firstMatch
 	}
 }

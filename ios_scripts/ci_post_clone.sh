@@ -14,7 +14,8 @@ cd ../../
 
 # Bootstrap mise via Homebrew, which is officially available on Xcode Cloud.
 brew install mise
-export PATH="$(brew --prefix)/bin:$PATH"
+brew_prefix="$(brew --prefix)"
+export PATH="${brew_prefix}/bin:$PATH"
 
 echo "mise version: $(mise --version)"
 
@@ -52,7 +53,8 @@ echo "sentry-cli path: ${SENTRY_CLI_PATH}"
 "${SENTRY_CLI_PATH}" --version
 
 # Put node on PATH for the rest of this script
-export PATH="$(dirname "${NODE_PATH}"):$PATH"
+node_dir="$(dirname "${NODE_PATH}")"
+export PATH="${node_dir}:$PATH"
 
 # Activate mise shims for the pnpm and ruby tools used in task runs
 eval "$(mise activate bash --shims)"
@@ -90,10 +92,9 @@ echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
 {
   printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
 
-  # Sentry's build phase scripts run SENTRY_CLI_EXECUTABLE with node instead
-  # of looking for npm's @sentry/cli, which is not installed. sentry-cli.cjs
-  # hands their arguments to the mise binary; see that file for why.
-  printf 'export SENTRY_CLI_EXECUTABLE=%s\n' "${PWD}/ios_scripts/sentry-cli.cjs"
+  # Sentry's build phases run ios_scripts/sentry-cli.cjs, which .xcode.env
+  # names, and it hands their arguments to the mise binary; see that file for
+  # why.
   printf 'export SENTRY_CLI_BINARY=%s\n' "${SENTRY_CLI_PATH}"
 
   # A failed Sentry upload warns rather than failing the archive, so a Sentry

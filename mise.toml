@@ -2,9 +2,12 @@
 node = "24.21.0"
 pnpm = "12.8.0"
 hk = "2.4.0"
+shellcheck = "0.11.0"
+zizmor = "1.30.1"
 ruby = "3.4.11"
 "gem:bundler" = "4.0.21"
 "aqua:mgdm/htmlq" = "0.4.0"
+"npm:@changesets/cli" = "3.0.3"
 
 # Taps and types on a simulator, which simctl cannot do -- see the
 # run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
@@ -170,11 +173,54 @@ depends = [
 ]
 run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
 
+[tasks."device:metro"]
+description = "Build and deploy a Debug app that loads its JavaScript from Metro, not from the app"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+depends = [
+	{ task = "pnpm:install:frozen" },
+	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = 'build:ios', args = [
+		"{{usage.device}}",
+	] },
+]
+# A bundle left in the app by `mise run device` would win over Metro, which
+# `AppDelegate.bundleURL()` only asks when the app holds none.
+run = [
+	'''rm -f "$APP/main.jsbundle" && rm -rf "$APP/assets"''',
+	{ task = 'device:deploy', args = [
+		"{{usage.device}}",
+	] },
+]
+
 # --- Code quality ---
 
+# mise runs a task's dependencies in parallel.
 [tasks.lint]
+description = "Run oxlint, shellcheck and zizmor"
+depends = ["lint:oxlint", "lint:shell", "lint:actions"]
+
+[tasks."lint:oxlint"]
 description = "Run oxlint"
 run = "oxlint app/ source/ modules/ scripts/ images/ plugins/"
+
+[tasks."lint:shell"]
+description = "Run shellcheck on the shell scripts"
+run = "git ls-files -z '*.sh' | xargs -0 shellcheck"
+
+# zizmor's online audits (impostor commits, known-vulnerable actions) need a
+# GitHub token; without one it runs the offline audits only.
+[tasks."lint:actions"]
+description = "Run zizmor on the GitHub Actions workflows"
+run = '''
+if test -n "${GH_TOKEN:-}${GITHUB_TOKEN:-}"; then
+  zizmor --no-progress .github/workflows
+else
+  zizmor --offline --no-progress .github/workflows
+fi
+'''
 
 [tasks.format]
 description = "Format code with oxfmt"
@@ -190,6 +236,10 @@ description = "Run TypeScript compiler"
 # generates, so tsc cannot run against a clean checkout without it.
 depends = ["bundle-data"]
 run = "tsc --noEmit"
+
+[tasks.changeset]
+description = "Add a changeset: a line for the release notes and how big a bump it is"
+run = "changeset"
 
 [tasks.test]
 description = "Run every test"
@@ -231,6 +281,10 @@ description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
 
+[tasks.images]
+description = "Convert images/<group>/source/ originals to the WebP files the app fetches"
+run = "node scripts/make-images.mjs"
+
 [tasks."refresh-bus-data"]
 description = "Regenerate data/bus-times/ from the Hiawathaland GTFS feed"
 run = "node scripts/refresh-bus-data.mjs"
@@ -256,6 +310,10 @@ run = "scripts/watch-lions-pantry.sh"
 description = "Render the in-app icon previews from assets/*.icon"
 run = "node scripts/make-icons.mjs"
 
+[tasks."crt-pixels"]
+description = "Redraw the Old Main CRT icon's pixel layer from its SVG"
+run = "node scripts/make-crt-pixels.mjs"
+
 [tasks."trace-symbol"]
 description = "Trace a logo into a custom SF Symbol in assets/symbols/"
 run = "node scripts/trace-symbol.mjs"
@@ -269,9 +327,28 @@ run = "node scripts/update-map-fixtures.mjs"
 description = "Re-record Olaf Messenger's UI-test fixtures from a run of its UI tests"
 run = "node scripts/update-mess-fixtures.mjs"
 
+[tasks."chaos-routes"]
+description = "Regenerate the list of routes the chaos monkey opens"
+run = "node scripts/chaos-routes.mjs"
+
+[tasks.chaos]
+description = "Drive the app at random with network faults on a booted simulator"
+run = "node scripts/chaos.mjs"
+
+# The chaos task names no Metro, since 8081 is whichever checkout started Metro
+# first. This one names 8081, and the run refuses it if it serves another.
+[tasks."chaos:8081"]
+description = "Run chaos against the Metro on localhost:8081"
+run = "node scripts/chaos.mjs"
+env.TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081"
+
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
 run = "node scripts/scrape-student-wages.mjs"
+
+[tasks."scrape-ksto-schedule"]
+description = "Update data/ksto-schedule.yaml from KSTO's Now Playing post"
+run = "node scripts/scrape-ksto-schedule.mjs"
 
 # Needs the network -- it fetches the live campus geojson -- so it stays out
 # of validate-data, which gates three workflows including deploy-data. A
@@ -372,8 +449,11 @@ wait_for = ["prebuild"]
 # Keeps the UI-test fixtures a release bundle drops (metro.config.js): this bundle
 # serves the UI tests, and `mise run device` builds, which carry them unused.
 env = { KEEP_UITEST_FIXTURES = "1" }
+# --reset-cache: Metro caches in $TMPDIR, which neither a pnpm install nor
+# deleting ios/ clears, so a bundle can embed a package copy pnpm has replaced.
 run = """
 expo export:embed \
+  --reset-cache \
   --entry-file index.js \
   --dev false \
   --platform ios \

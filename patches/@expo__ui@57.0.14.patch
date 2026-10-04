@@ -91,10 +91,10 @@ index e6cc8665ed24acc90e6b9acaf034a6bbc39afcc0..26ff12ef81061e9b1679d5f9f895a909
  export * from './Form';
  export * from './Gauge';
 diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
-index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7dd106a40 100644
+index 9b6dba1653de433e8848b80f481f71dc8ef097d0..8a7d47529c810c25055c762a0958a730d8b36ba6 100644
 --- a/build/swift-ui/modifiers/index.d.ts
 +++ b/build/swift-ui/modifiers/index.d.ts
-@@ -1068,6 +1068,11 @@ export declare const font: (params: {
+@@ -1068,6 +1068,17 @@ export declare const font: (params: {
       * Dynamic Type setting.
       */
      textStyle?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
@@ -103,9 +103,34 @@ index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7
 +     * glyphs. Mirrors SwiftUI's `Font.smallCaps()`.
 +     */
 +    smallCaps?: boolean;
++    /**
++     * The space between lines of text in this font, relative to its standard
++     * leading. Mirrors SwiftUI's `Font.leading(_:)`, so it scales with Dynamic
++     * Type where a fixed `lineHeight` would not.
++     */
++    leading?: "standard" | "tight" | "loose";
  }) => ModifierConfig;
  /**
   * A standard size for Dynamic Type, from `xSmall` through the five
+diff --git a/build/swift-ui/modifiers/presentationModifiers.d.ts b/build/swift-ui/modifiers/presentationModifiers.d.ts
+index 36de99f5d92b1b0f2c340ba4508109f1a0b6045b..c97ad341a29d12eaa6d8345b9066884003c282c1 100644
+--- a/build/swift-ui/modifiers/presentationModifiers.d.ts
++++ b/build/swift-ui/modifiers/presentationModifiers.d.ts
+@@ -33,6 +33,14 @@ export declare const presentationDetents: (detents: PresentationDetent[], option
+  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/presentationdragindicator(_:)).
+  */
+ export declare const presentationDragIndicator: (visibility: "automatic" | "visible" | "hidden") => ModifierConfig;
++/**
++ * Sets the corner radius of a sheet, in points. `null` restores the system's.
++ * @param radius - The radius, or `null` for the system's own.
++ * @platform ios 16.4+
++ * @platform tvos 16.4+
++ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/presentationcornerradius(_:)).
++ */
++export declare const presentationCornerRadius: (radius: number | null) => ModifierConfig;
+ /**
+  * Presentation background interaction type.
+  */
 diff --git a/ios/ContentUnavailableView.swift b/ios/ContentUnavailableView.swift
 index 3e07eceecb782b3c924ee9e3d5ec20424ef7f491..190d26a536036f9be84322536ce92d80ea3243e1 100644
 --- a/ios/ContentUnavailableView.swift
@@ -315,29 +340,82 @@ index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c524
 +  }
 +}
 diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
-index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..08cf58b869acecbe476279341252554d03cba414 100644
+index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67748e89a8 100644
 --- a/ios/Modifiers/FontModifier.swift
 +++ b/ios/Modifiers/FontModifier.swift
-@@ -81,6 +81,7 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -29,6 +29,20 @@ internal enum FontWeight: String, Enumerable {
+   }
+ }
+ 
++internal enum FontLeading: String, Enumerable {
++  case standard
++  case tight
++  case loose
++
++  func toSwiftUI() -> Font.Leading {
++    switch self {
++    case .standard: .standard
++    case .tight: .tight
++    case .loose: .loose
++    }
++  }
++}
++
+ internal enum FontDesign: String, Enumerable {
+   case `default`
+   case rounded
+@@ -81,6 +95,8 @@ internal struct FontModifier: ViewModifier, Record {
    @Field var weight: FontWeight?
    @Field var design: FontDesign?
    @Field var textStyle: FontTextStyle?
 +  @Field var smallCaps: Bool?
++  @Field var leading: FontLeading?
  
    func body(content: Content) -> some View {
      content.font(resolveFont())
-@@ -90,6 +91,11 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -90,6 +106,17 @@ internal struct FontModifier: ViewModifier, Record {
    // same `Font` as the view path, instead of a fixed-size `Font.custom` that
    // drops `relativeTo` (Dynamic Type) and `weight`.
    func resolveFont() -> Font {
-+    let font = resolveBaseFont()
-+    return smallCaps == true ? font.smallCaps() : font
++    var font = resolveBaseFont()
++    if smallCaps == true {
++      font = font.smallCaps()
++    }
++    if let leading {
++      font = font.leading(leading.toSwiftUI())
++    }
++    return font
 +  }
 +
 +  private func resolveBaseFont() -> Font {
      if let family = family {
        let baseSize = size ?? 17
        var font: Font = if let textStyle = textStyle {
+diff --git a/ios/Modifiers/PresentationModifiers.swift b/ios/Modifiers/PresentationModifiers.swift
+index f38528425a883a5d4dc0c1ad85e62dd278fc24b3..4604b38d6cd3b52c7f4ef9754ca76ab61f3a2f92 100644
+--- a/ios/Modifiers/PresentationModifiers.swift
++++ b/ios/Modifiers/PresentationModifiers.swift
+@@ -160,6 +160,20 @@ internal struct PresentationDragIndicatorModifier: ViewModifier, Record {
+   }
+ }
+ 
++// MARK: - Presentation Corner Radius
++
++internal struct PresentationCornerRadiusModifier: ViewModifier, Record {
++  @Field var radius: Double?
++
++  func body(content: Content) -> some View {
++    if #available(iOS 16.4, tvOS 16.4, *) {
++      content.presentationCornerRadius(radius.map { CGFloat($0) })
++    } else {
++      content
++    }
++  }
++}
++
+ // MARK: - Presentation Background Interaction
+ 
+ internal enum PresentationBackgroundInteractionTypeModifier: String, Enumerable {
 diff --git a/ios/Modifiers/ScrollPositionModifier.swift b/ios/Modifiers/ScrollPositionModifier.swift
 index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a259e6fbc9 100644
 --- a/ios/Modifiers/ScrollPositionModifier.swift
@@ -412,7 +490,7 @@ index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a2
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index 8c426dffff1df73809436999f23a6155b0a72ef8..f8a2d52b031afea9f5dfe582b2a3ee716bc897bc 100644
+index 8c426dffff1df73809436999f23a6155b0a72ef8..9241fa13b7f8e6259caaa9789627b901d43b0f14 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -514,7 +592,18 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..f8a2d52b031afea9f5dfe582b2a3ee71
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2306,6 +2377,14 @@ extension ViewModifierRegistry {
+@@ -2286,6 +2357,10 @@ extension ViewModifierRegistry {
+       return try PresentationDragIndicatorModifier(from: params, appContext: appContext)
+     }
+ 
++    register("presentationCornerRadius") { params, appContext, _ in
++      return try PresentationCornerRadiusModifier(from: params, appContext: appContext)
++    }
++
+     register("presentationBackgroundInteraction") { params, appContext, _ in
+       return try PresentationBackgroundInteractionModifier(from: params, appContext: appContext)
+     }
+@@ -2306,6 +2381,14 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  
@@ -829,3 +918,24 @@ index be4b9f732505b9dc8060a8e5ccbbe0f6b7112709..77c0096917bf338b00260147b4aae6a3
  export * from './DisclosureGroup';
  export * from './Form';
  export * from './Gauge';
+diff --git a/src/swift-ui/modifiers/presentationModifiers.ts b/src/swift-ui/modifiers/presentationModifiers.ts
+index a73238902a2163cadb800ddd24bd031b5725f7e3..45ceab10c35cf1a32a5c82752a30c7c8c26d7c60 100644
+--- a/src/swift-ui/modifiers/presentationModifiers.ts
++++ b/src/swift-ui/modifiers/presentationModifiers.ts
+@@ -56,6 +56,16 @@ export const presentationDetents = (
+ export const presentationDragIndicator = (visibility: 'automatic' | 'visible' | 'hidden') =>
+   createModifier('presentationDragIndicator', { visibility });
+ 
++/**
++ * Sets the corner radius of a sheet, in points. `null` restores the system's.
++ * @param radius - The radius, or `null` for the system's own.
++ * @platform ios 16.4+
++ * @platform tvos 16.4+
++ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/presentationcornerradius(_:)).
++ */
++export const presentationCornerRadius = (radius: number | null) =>
++  createModifier('presentationCornerRadius', { radius });
++
+ /**
+  * Presentation background interaction type.
+  */

@@ -576,7 +576,11 @@ export function List({
 	selection?: (string | number)[]
 	onSelectionChange?: (selection: (string | number)[]) => void
 }): React.ReactNode {
-	let rows = <Refreshable modifiers={modifiers}>{children}</Refreshable>
+	// The identifier goes on a view of its own: the refreshable one already
+	// answers to `testID="refreshable"`, which tests reach a handler through.
+	let identifier = identifierOf(modifiers)
+	let refreshable = <Refreshable modifiers={modifiers}>{children}</Refreshable>
+	let rows = identifier ? <View testID={identifier}>{refreshable}</View> : refreshable
 	let context = React.useMemo(
 		() => (selection && onSelectionChange ? {selection, onSelectionChange} : null),
 		[selection, onSelectionChange],
@@ -679,7 +683,10 @@ export function VStack({
 	let onGeometryChange = modifierOf(modifiers, 'onGeometryChange')?.onGeometryChange
 	return (
 		<Appearing key={String(identity)} onAppear={handler}>
-			<ForwardingView onGeometryChange={onGeometryChange} testID={testID}>
+			<ForwardingView
+				onGeometryChange={onGeometryChange}
+				testID={identifierOf(modifiers) ?? testID}
+			>
 				{children}
 			</ForwardingView>
 		</Appearing>

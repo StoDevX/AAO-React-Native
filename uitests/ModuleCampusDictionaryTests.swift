@@ -1,19 +1,15 @@
 import XCTest
 
 class ModuleCampusDictionaryTests: UITestCaseUnbooted {
-	func testSearchingFromFarDownTheListShowsTheFirstResult() throws {
+	/// A search made from far down the list starts its results at the top.
+	/// The first word then opens a half-height sheet whose lone sense lines up
+	/// with the headword, and the sheet closes again.
+	func testSearchingFromFarDownOpensTheFirstWordInAHalfHeightSheet() throws {
 		try CampusDictionaryScreen(app: app)
 			.navigate()
 			.verifySectionIndexRailScrolls()
 			.search(for: TestIdentifiers.Dictionary.firstEntrySearchTerm)
 			.verifyFirstEntryIsOnScreen()
-	}
-
-	/// A word opens a half-height sheet whose lone sense lines up with the
-	/// headword, and the sheet closes again.
-	func testAWordOpensAHalfHeightSheetThatCloses() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
 			.openFirstWord()
 			.verifyDefinitionSheetIsPresented()
 			.capture("Dictionary definition sheet")
@@ -46,6 +42,10 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
 	/// rather than presenting some other way -- its own Back button is what
 	/// `verifyEditFormPushedIntoSheet` looks for.
+	///
+	/// `usePreventRemove` should catch a sheet drag-down mid-edit the same way
+	/// it catches the form's own Back button -- nothing in Jest exercises this
+	/// gesture at all -- so the sheet is dragged once the edit has landed.
 	func testAnEditPreviewsAsAMarkedUpDiffOnceSomethingChanges() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
@@ -58,6 +58,10 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			.verifyPreviewDisabled()
 			.editFirstDefinition(prepending: "indeed ")
 			.verifyPreviewEnabled()
+			.attemptToDragSheetClosed()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToKeepEditing()
+			.verifyEditFormPushedIntoSheet()
 			// The form once an edit has landed. Its footer is the one place the
 			// second wording is drawn, and it sits under the keyboard until the
 			// form is scrolled -- so revealing it is what makes the capture show
@@ -70,23 +74,5 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			.verifyPreviewShows("something")
 			.verifyPreviewShows("indeed")
 			.verifyNoUnsupportedNestedModifierMarker()
-	}
-
-	/// `usePreventRemove` should catch a sheet drag-down mid-edit the same way
-	/// it catches the form's own Back button -- nothing in Jest exercises this
-	/// gesture at all.
-	func testDraggingTheSheetAwayMidEditIsRefused() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Dictionary.referenceEntry)
-			.openWord(TestIdentifiers.Dictionary.referenceEntry)
-			.verifyDefinitionSheetIsPresented()
-			.openEditor()
-			.verifyEditFormPushedIntoSheet()
-			.editFirstDefinition(prepending: "indeed ")
-			.attemptToDragSheetClosed()
-			.verifyDiscardChangesAlertPresented()
-			.chooseToKeepEditing()
-			.verifyEditFormPushedIntoSheet()
 	}
 }

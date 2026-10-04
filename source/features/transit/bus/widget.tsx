@@ -40,12 +40,12 @@ import type {Moment} from 'moment-timezone'
 
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../components/tile-layout'
+import {isAccessibilityTextSize} from '../../../lib/is-accessibility-text-size'
 import {formatDeparture, NOT_SERVED_SPOKEN} from './components/times'
 import {BusGlyph} from './components/timetable-row'
 import {
 	buildStopStrip,
 	busPropsForCell,
-	isAccessibilityTextSize,
 	legsBehindTheBus,
 	stopCellWidth,
 	stripAnchorIndex,

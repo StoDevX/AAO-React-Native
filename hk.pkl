@@ -10,8 +10,14 @@ local checks = new Mapping<String, Step> {
     fix = "mise run format"
   }
   ["oxlint"] {
-    check = "mise run lint"
-    fix = "mise run lint -- --fix"
+    check = "mise run lint:oxlint"
+    fix = "mise run lint:oxlint -- --fix"
+  }
+  ["shellcheck"] {
+    check = "mise run lint:shell"
+  }
+  ["zizmor"] {
+    check = "mise run lint:actions"
   }
   ["bundle-data"] {
     check = "mise run bundle-data"

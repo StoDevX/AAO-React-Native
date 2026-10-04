@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
+import {createLayoutStore} from '../../../lib/layout-store'
 
 type SeenPostingsStore = {
 	/// The postings on the board when the student last left Student Work, or
@@ -29,3 +30,7 @@ export const useSeenPostingsStore = create<SeenPostingsStore>()(
 		},
 	),
 )
+
+/// Whether the landing screen draws its areas as tiles or rows, as the
+/// student last picked from its layout menu.
+export const useAreaLayoutStore = createLayoutStore('student-work-area-layout', 'grid')

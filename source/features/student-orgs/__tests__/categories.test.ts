@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import {goldGradient, grayGradient} from '@frogpond/colors'
 
-import {buildCategoryTiles, orgsInCategory} from '../categories'
+import {buildCategoryRows, orgsInCategory} from '../categories'
 import type {OrgCategoryMembership, OrgCategoryType, StudentOrgType} from '../types'
 
 function makeOrg(overrides: Partial<StudentOrgType> = {}): StudentOrgType {
@@ -29,7 +29,7 @@ function makeMembership(overrides: Partial<OrgCategoryMembership> = {}): OrgCate
 	}
 }
 
-describe('buildCategoryTiles', () => {
+describe('buildCategoryRows', () => {
 	let curated: OrgCategoryType[] = [
 		{name: 'Academic', icon: 'graduationcap.fill', gradient: 'gold'},
 	]
@@ -37,19 +37,19 @@ describe('buildCategoryTiles', () => {
 	test('a curated category gets its own icon and gradient', () => {
 		let memberships = [makeMembership({name: 'Academic', organizationUris: ['a']})]
 
-		let tiles = buildCategoryTiles(curated, memberships)
+		let rows = buildCategoryRows(curated, memberships)
 
-		expect(tiles).toEqual([
+		expect(rows).toEqual([
 			{name: 'Academic', icon: 'graduationcap.fill', gradient: goldGradient, count: 1},
 		])
 	})
 
-	test('an uncurated category still gets a tile, with the fallback icon and gray gradient', () => {
+	test('an uncurated category still gets a row, with the fallback icon and gray gradient', () => {
 		let memberships = [makeMembership({name: 'Robotics', organizationUris: ['a']})]
 
-		let tiles = buildCategoryTiles(curated, memberships)
+		let rows = buildCategoryRows(curated, memberships)
 
-		expect(tiles).toEqual([
+		expect(rows).toEqual([
 			{name: 'Robotics', icon: 'person.3.fill', gradient: grayGradient, count: 1},
 		])
 	})
@@ -57,13 +57,13 @@ describe('buildCategoryTiles', () => {
 	test('count comes from the membership row, not any org list', () => {
 		let memberships = [makeMembership({name: 'Academic', organizationUris: ['a', 'b', 'c']})]
 
-		let tiles = buildCategoryTiles(curated, memberships)
+		let rows = buildCategoryRows(curated, memberships)
 
-		expect(tiles[0]?.count).toBe(3)
+		expect(rows[0]?.count).toBe(3)
 	})
 
-	test('an empty membership list produces no tiles', () => {
-		expect(buildCategoryTiles(curated, [])).toEqual([])
+	test('an empty membership list produces no rows', () => {
+		expect(buildCategoryRows(curated, [])).toEqual([])
 	})
 })
 

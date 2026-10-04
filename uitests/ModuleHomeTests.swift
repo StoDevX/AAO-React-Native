@@ -1,15 +1,6 @@
 import XCTest
 
 class ModuleHomeTests: UITestCase {
-	func testLongPressNoticeTogglesDevMode() throws {
-		HomeScreen(app: app)
-			.checkHomescreenExists()
-			.longPressNotice()
-			.tapEnableDevMode()
-			.openSettings()
-			.checkDeveloperSectionVisible()
-	}
-
 	/// Every tile that opens a screen in the app opens its own screen.
 	///
 	/// The feature tests open their screens by deep link, so this is the one
@@ -19,6 +10,9 @@ class ModuleHomeTests: UITestCase {
 	///
 	/// Listed in the home screen's order, since the grid is only ever scrolled
 	/// down. Balances opens SIS in the browser, so it has no screen to check.
+	///
+	/// Dev mode, turned on by a long press on the notice, adds the dev-only
+	/// tiles and the Developer tile, which is opened last.
 	func testEveryTileOpensItsScreen() throws {
 		let home = HomeScreen(app: app)
 		// Athletics and Carleton Campus are dev-only tiles.
@@ -60,5 +54,11 @@ class ModuleHomeTests: UITestCase {
 			XCTAssertTrue(mounted.waitForExistence(timeout: 60), "The \(tile) tile should open its own screen")
 			backButton.tap()
 		}
+
+		home.openDeveloper()
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitForExistence(timeout: 10),
+			"Developer should hold the tools Settings' Developer section held")
+		home.capture("developer")
 	}
 }

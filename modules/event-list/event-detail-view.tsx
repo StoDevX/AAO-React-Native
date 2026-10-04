@@ -6,6 +6,7 @@ import {
 	font,
 	foregroundStyle,
 	listRowBackground,
+	listRowInsets,
 	listRowSeparator,
 	multilineTextAlignment,
 	textSelection,
@@ -13,11 +14,26 @@ import {
 import * as c from '@frogpond/colors'
 import type {EventType} from '@frogpond/event-type'
 
+import {FittedImageRow} from '../../source/components/inset-image-row'
+import {PhotoViewerModal} from '../../source/features/map/card/photo-viewer-modal'
 import {EventDetailHeader} from './event-detail-header'
 import {EventTimeline} from './event-timeline'
 import {detailTimeLines} from './times'
 import type {TimelineBlock, TimelineWindow} from './timeline'
 import type {PoweredBy} from './types'
+
+/// The form already insets its rows from the sheet's sides, in line with its
+/// section cards, so the picture's row adds none of its own.
+const IMAGE_ROW = [
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+]
+
+/// The tallest the featured image is drawn, in points. A submitted picture of
+/// any shape is shown whole, scaled to fit, so a very tall one cannot push the
+/// rest of the screen out of reach.
+const IMAGE_MAX_HEIGHT = 250
 
 const styles = StyleSheet.create({
 	host: {
@@ -61,6 +77,8 @@ type Props = {
 
 export function EventDetail({event, poweredBy, color, timeline}: Props): React.ReactNode {
 	let lines = detailTimeLines(event)
+	let [viewing, setViewing] = React.useState(false)
+	let imageLabel = `Photo for ${event.title}`
 
 	return (
 		<Host style={styles.host}>
@@ -71,6 +89,27 @@ export function EventDetail({event, poweredBy, color, timeline}: Props): React.R
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
 					<EventDetailHeader color={color} lines={lines} title={event.title} />
 				</VStack>
+
+				{event.image ? (
+					<SheetSection>
+						<FittedImageRow
+							beside={
+								<PhotoViewerModal
+									label={imageLabel}
+									onClose={() => setViewing(false)}
+									uri={event.image}
+									visible={viewing}
+								/>
+							}
+							label={imageLabel}
+							maxHeight={IMAGE_MAX_HEIGHT}
+							onPress={() => setViewing(true)}
+							rowModifiers={IMAGE_ROW}
+							testID="event-featured-image"
+							uri={event.image}
+						/>
+					</SheetSection>
+				) : null}
 
 				<TextSection content={event.location.trim()} header="Location" />
 				<TextSection content={event.description.trim()} header="Description" />

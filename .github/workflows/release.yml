@@ -1,0 +1,85 @@
+name: Release
+
+# Opens (and keeps current) a "Version Packages" pull request from the
+# changesets on master. Merging it tags the release, and Xcode Cloud builds the
+# tag.
+#
+# The channel is picked on that pull request with a label, `prerelease:alpha`,
+# `prerelease:beta` or `prerelease:rc`, and `prerelease:none` for the final
+# release. Changing a label re-runs this workflow, which rebuilds the pull
+# request in the new channel. See scripts/changeset-version.mjs.
+
+on:
+  push: {branches: [master]}
+  # A label change on the Version PR only starts a run on master (the `rerun`
+  # job below), because changesets/action resets its branch to github.sha, and
+  # on pull_request that is a merge commit the checkout never fetched. On master
+  # it is master's head, which is what the action wants.
+  pull_request:
+    types: [labeled, unlabeled]
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  actions: write # zizmor: ignore[excessive-permissions] -- the rerun job dispatches this workflow
+  contents: write # zizmor: ignore[excessive-permissions] -- the release job pushes the Version PR branch
+  pull-requests: write # zizmor: ignore[excessive-permissions] -- the release job opens the Version PR
+
+jobs:
+  rerun:
+    name: Rebuild the Version PR for its new label
+    runs-on: ubuntu-slim
+    # A channel label on the Version PR itself; no other label or pull request
+    # changes what the Version PR holds.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.head_ref == 'changeset-release/master' &&
+      startsWith(github.event.label.name, 'prerelease:')
+    steps:
+      - run: gh workflow run release.yml --repo "${GITHUB_REPOSITORY}" --ref master
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+  release:
+    name: Version or release
+    runs-on: ubuntu-slim
+    if: github.event_name != 'pull_request'
+    # The Version PR is rebuilt from master by whichever run is last. Never cancel
+    # one halfway: a run that dies between pushing the branch and updating the
+    # pull request leaves the two out of step.
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # zizmor: ignore[artipacked] -- pushes the bot branch with the checkout credentials
+      - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+      - run: pnpm install --frozen-lockfile
+      - id: changesets
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          version-script: node scripts/changeset-version.mjs
+          publish-script: node scripts/changeset-publish.mjs
+          pr-base-branch: master
+          commit-message: Version Packages
+          pr-title: Version Packages
+          # scripts/changeset-publish.mjs makes the tag and the release itself.
+          create-github-releases: false
+          push-git-tags: false
+          # Pull requests opened with the default token start no workflows, so a
+          # Version PR from it never runs Check. Set RELEASE_TOKEN to a token that
+          # can open pull requests (a fine-grained PAT or a GitHub App's) and its
+          # checks run.
+          github-token: ${{ secrets.RELEASE_TOKEN || github.token }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+      # A release changes no screen the UI tests could catch, so the Version PR
+      # skips them. The labels API creates the label if the repo lacks it, where
+      # `gh pr edit --add-label` would fail.
+      - name: Label the Version PR to skip the UI tests
+        if: steps.changesets.outputs.pr-number != ''
+        run: gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels" -f 'labels[]=ci/skip-e2e'
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pr-number }}

@@ -1,3 +1,6 @@
+// First, so a chaos run wraps fetch before anything can fetch.
+import '../source/init/chaos'
+
 // initialization
 import '../source/init/constants'
 import '../source/init/logbox'
@@ -9,12 +12,16 @@ import {useScreenViews} from '../source/features/telemetry/use-screen-views'
 import {watchQueryFailures} from '../source/features/telemetry/query-failures'
 import {track} from '../source/features/telemetry/track'
 import {startQuickActionSync} from '../source/features/quick-actions/sync'
+import {reportLaunch} from '../source/features/customize/telemetry'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
+import {ChaosGuard} from '../source/chaos/guard'
+import {registerNavigationContainer} from '../source/lib/sheet-dismissal'
+import {navigationGuard} from '../source/lib/navigation-guard-install'
 import {LightTheme, DarkTheme} from '@frogpond/app-theme'
 import {ThemeProvider} from 'expo-router/react-navigation'
 import {Stack, useNavigationContainerRef} from 'expo-router'
@@ -24,7 +31,10 @@ import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
+import {RootErrorBoundary} from '../source/components/root-error-boundary'
+import {ScreenErrorFallback} from '../source/components/screen-error-boundary'
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
+import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
@@ -69,8 +79,19 @@ function RootLayout(): React.ReactNode {
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 	const navigationContainerRef = useNavigationContainerRef()
 	useScreenViews()
+	React.useEffect(
+		() => navigationContainerRef.addListener('state', navigationGuard.stateChanged),
+		[navigationContainerRef],
+	)
+	React.useEffect(() => {
+		registerNavigationContainer(navigationContainerRef)
+		return () => registerNavigationContainer(undefined)
+	}, [navigationContainerRef])
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 	React.useEffect(() => startQuickActionSync(), [])
+	React.useEffect(() => {
+		reportLaunch()
+	}, [])
 
 	React.useEffect(() => {
 		if (!IS_PRODUCTION) {
@@ -88,62 +109,83 @@ function RootLayout(): React.ReactNode {
 				<PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
 					<ThemeProvider value={theme}>
 						<StatusBar barStyle={statusBarStyle} />
-						<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
-							<Stack.Screen name="menus" options={{title: 'Menus'}} />
-							<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
-							<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
-							{/* No large title: the front page draws the paper's name in the bar, in its serif,
+						<ChaosGuard>
+							{/* Before the stack, so its hidden player sits beneath every screen. */}
+							<RadioHost />
+							<RadioNowPlayingSheet />
+							{/* A screen that fails to render shows ScreenErrorFallback in its own place,
+							    so the stack, its headers, and every other screen carry on. Expo Router
+							    wraps each screen, nested stacks' included, in a boundary of its own. */}
+							<Stack
+								screenOptions={{headerBackButtonDisplayMode: 'minimal'}}
+								unstable_screenErrorBoundary={ScreenErrorFallback}
+							>
+								<Stack.Screen name="menus" options={{title: 'Menus'}} />
+								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
+								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
+								{/* No large title: the front page draws the paper's name in the bar, in its serif,
 								    and a large title would show the plain name until the page scrolled. */}
-							<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
-							{/* A series thumbnail opens another story over the one being read.
+								<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
+								{/* A series thumbnail opens another story over the one being read.
 								    Keyed by the story and the row that opened it, a tap always opens
 								    a fresh screen: an unkeyed route would swap the params of the
 								    story on top, and one keyed by story alone would move a story
 								    already open further down to the top, and either way Back would
 								    not retrace the reader's steps. A second tap on the same thumbnail
 								    finds the screen the first one opened, so it adds no duplicate. */}
-							<Stack.Screen
-								dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
-								name="messenger/story"
-								options={{title: ''}}
-							/>
-							{/* Over the story, not in place of it, so a drag that closes the viewer
-							    shows the story through its fading black. */}
-							<Stack.Screen
-								name="messenger/image"
-								options={{presentation: 'transparentModal', headerShown: false}}
-							/>
-							<Stack.Screen
-								name="st-olaf-news"
-								options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
-							/>
-							<Stack.Screen name="transit" options={{title: 'Transit'}} />
-							<Stack.Screen name="transit/line" options={DETAIL_SHEET} />
-							<Stack.Screen name="hours" />
-							<Stack.Screen name="hours/all-spaces" />
-							<Stack.Screen name="hours/detail" options={DETAIL_SHEET} />
-							<Stack.Screen name="dictionary/entry" options={DETAIL_SHEET} />
-							{/* A department opens a fresh copy of the Directory over the landing.
+								<Stack.Screen
+									dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
+									name="messenger/story"
+									options={{title: ''}}
+								/>
+								{/* Over the story, not in place of it, so a drag that closes the viewer
+								    shows the story through its fading black. */}
+								<Stack.Screen
+									name="messenger/image"
+									options={{presentation: 'transparentModal', headerShown: false}}
+								/>
+								<Stack.Screen
+									name="st-olaf-news"
+									options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
+								/>
+								<Stack.Screen name="transit" options={{title: 'Transit'}} />
+								<Stack.Screen name="transit/line" options={DETAIL_SHEET} />
+								<Stack.Screen name="hours" />
+								<Stack.Screen name="hours/all-spaces" />
+								<Stack.Screen name="hours/detail" options={DETAIL_SHEET} />
+								<Stack.Screen name="dictionary/entry" options={DETAIL_SHEET} />
+								{/* A department opens a fresh copy of the Directory over the landing.
 								    Keyed by the search it shows, navigating to a different one pushes
 								    it, where an unkeyed route would only swap the params of the
 								    Directory already on top; navigating to the same one still
 								    refuses a duplicate. */}
-							<Stack.Screen
-								dangerouslySingular={(_name, params) =>
-									`${params.queryType ?? ''}:${params.queryParam ?? ''}`
-								}
-								name="directory/index"
-							/>
-							<Stack.Screen name="directory/named" options={DETAIL_SHEET} />
-							<Stack.Screen name="map" />
-							<Stack.Screen name="balances/index" options={{title: 'Balances'}} />
-							<Stack.Screen name="calendar/event" options={DETAIL_SHEET} />
-							<Stack.Screen
-								name="calendar"
-								options={{title: 'Calendar', headerLargeTitleEnabled: true}}
-							/>
-							<Stack.Screen name="settings" options={{headerShown: false, presentation: 'modal'}} />
-						</Stack>
+								<Stack.Screen
+									dangerouslySingular={(_name, params) =>
+										`${params.queryType ?? ''}:${params.queryParam ?? ''}`
+									}
+									name="directory/index"
+								/>
+								{/* Keyed by the contact, so a tap on another contact's tile opens a sheet of
+								    its own. Unkeyed, the tap reuses a sheet still on its way out, and the
+								    new contact leaves with it. */}
+								<Stack.Screen
+									dangerouslySingular={(_name, params) => String(params.title ?? '')}
+									name="directory/named"
+									options={DETAIL_SHEET}
+								/>
+								<Stack.Screen name="map" />
+								<Stack.Screen name="balances/index" options={{title: 'Balances'}} />
+								<Stack.Screen name="calendar/event" options={DETAIL_SHEET} />
+								<Stack.Screen
+									name="calendar"
+									options={{title: 'Calendar', headerLargeTitleEnabled: true}}
+								/>
+								<Stack.Screen name="customize" options={DETAIL_SHEET} />
+								<Stack.Screen name="messenger/customize" options={DETAIL_SHEET} />
+								<Stack.Screen name="developer/network-logger" options={{gestureEnabled: false}} />
+								<Stack.Screen name="report-problem" options={{presentation: 'modal'}} />
+							</Stack>
+						</ChaosGuard>
 					</ThemeProvider>
 				</PersistQueryClientProvider>
 			</PersistGate>
@@ -151,4 +193,17 @@ function RootLayout(): React.ReactNode {
 	)
 }
 
-export default Sentry.wrap(RootLayout)
+/**
+ * Outside `RootLayout` so that a failure anywhere in it, in its own hooks or
+ * in the radio's player beside the screens, ends at the error screen and not
+ * at a blank one.
+ */
+function GuardedRootLayout(): React.ReactNode {
+	return (
+		<RootErrorBoundary>
+			<RootLayout />
+		</RootErrorBoundary>
+	)
+}
+
+export default Sentry.wrap(GuardedRootLayout)

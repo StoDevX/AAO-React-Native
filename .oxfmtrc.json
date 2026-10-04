@@ -2,6 +2,7 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "ignorePatterns": [
     "scripts/fixtures/",
+    ".mise/",
     "assets/*.icon/",
     "source/features/mess/__fixtures__/mess.json"
   ],

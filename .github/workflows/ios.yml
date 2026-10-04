@@ -26,6 +26,8 @@ jobs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-matched-key || steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Restore cached jsbundle
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -48,7 +50,7 @@ jobs:
           restore-keys: |
             jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json') }}
 
-      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+      - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -108,6 +110,8 @@ jobs:
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # The cache holds what ios-build produced, so a change to how that job
       # builds has to invalidate it -- the compiler flags, the toolchain
@@ -167,11 +171,13 @@ jobs:
     if: needs.ios-cache-check.outputs.cache-matched-key == ''
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+      - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
 
@@ -354,6 +360,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       # Only a pull request gets to skip. A push to master and a merge-queue run
       # always run the whole suite, so a gate that is wrong is caught before it
@@ -408,6 +415,8 @@ jobs:
       matrix: ${{ steps.split.outputs.matrix }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # A miss is not a failure: the planner falls back to one unit per test,
       # giving every test an equal share of the split.
@@ -419,10 +428,12 @@ jobs:
           restore-keys: |
             uitest-durations/e=${{ env.cache_epoch }}/ref=master/
 
+      # The chaos canaries test the chaos tool rather than the app, so a pull
+      # request leaves them to the merge queue and master.
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
@@ -452,6 +463,8 @@ jobs:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # Always an artifact now: ios-build publishes what it built, and
       # ios-cache-check republishes what the cache held when the build was
@@ -537,10 +550,14 @@ jobs:
           jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
       - name: Boot the simulator
-        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: xcrun simctl boot "$SIMULATOR_UDID"
 
       - name: Wait for the simulator to be ready
-        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: xcrun simctl bootstatus "$SIMULATOR_UDID" -b
 
       # A re-run with "Enable debug logging" ticked sets runner.debug, and this
       # step then keeps what an ordinary run throws away: every test's
@@ -554,6 +571,10 @@ jobs:
         # TEST_RUNNER_-prefixed variables, with the prefix stripped.
         env:
           TEST_RUNNER_CI: ${{ runner.debug == '1' && 'false' || 'true' }}
+          # Read by the script below, which is written out and run as a separate
+          # process, so the values reach it through the environment.
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+          MATRIX_TESTS: ${{ matrix.tests }}
         run: |
           set -o pipefail
           # The jsbundle was moved into the .app above, so no Metro is involved
@@ -591,8 +612,8 @@ jobs:
           set -o pipefail
           NSUnbufferedIO=YES xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
-            -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
-            ${{ matrix.tests }} \
+            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+            $MATRIX_TESTS \
             -retry-tests-on-failure \
             -collect-test-diagnostics ${{ runner.debug == '1' && 'on-failure' || 'never' }} \
             -resultBundlePath uitest-results \
@@ -664,6 +685,8 @@ jobs:
     if: always() && github.ref == 'refs/heads/master' && needs.ios-uitest.result != 'skipped'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Download every shard's durations
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -698,3 +721,36 @@ jobs:
         with:
           path: uitest-durations.json
           key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/run=${{ github.run_id }}-${{ github.run_attempt }}
+
+  # One check to require instead of one per shard: a shard's name comes from
+  # the matrix, so the set of checks changes with the test split, while this
+  # job's name never does.
+  #
+  # `if: always()` is what makes it usable as a required check. A job skipped
+  # because a need failed reports as skipped, and GitHub counts a skipped
+  # required check as passing, so this has to run after anything that went
+  # wrong and say so itself.
+  #
+  # Every job the suite depends on is a need, so a failure anywhere upstream
+  # (the bundle, the cache check, the build, the plan, a shard) turns this red
+  # even though it skips the shards after it. What stays green is a skip nobody
+  # failed to cause: the gate found nothing to test, the `ci/skip-e2e` label is
+  # on, or a cache hit skipped the build. uitest-durations is left out; it only
+  # saves a timing table, on master.
+  uitest-conclusion:
+    name: UITest Conclusion
+    needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check, ios-uitest]
+    runs-on: ubuntu-slim
+    if: always()
+    steps:
+      - name: Report what the suite did
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+
+      - name: Fail if anything failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "A job the UITests depend on failed or was cancelled." >&2
+          exit 1

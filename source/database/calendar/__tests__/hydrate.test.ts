@@ -54,6 +54,12 @@ describe('hydrate', () => {
 		expect(entry.event.organization).toEqual(['Athletics', 'Student Activities'])
 	})
 
+	it('carries a stored event image through to the event', () => {
+		let wire = JSON.stringify({...JSON.parse(WIRE), image: 'https://example.com/a.jpg'})
+		let [entry] = hydrate([{...ROW, wire}], new Map(), new Date('2026-09-15T19:00:00Z'))
+		expect(entry.event.image).toBe('https://example.com/a.jpg')
+	})
+
 	it('leaves organization absent rather than empty when nothing sponsors it', () => {
 		let [entry] = hydrate([ROW], new Map(), new Date('2026-09-15T19:00:00Z'))
 		expect('organization' in entry.event).toBe(false)

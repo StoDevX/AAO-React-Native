@@ -3,25 +3,25 @@ import {resolveGradient, type Gradient} from '@frogpond/colors'
 import type {OrgCategoryMembership, OrgCategoryType, StudentOrgType} from './types'
 
 /// Drawn for a category with no curated entry in data/org-categories.yaml
-/// yet -- a new Presence.io category should never leave a tile with no
+/// yet -- a new Presence.io category should never leave a row with no
 /// glyph at all while the data catches up.
 export const FALLBACK_CATEGORY_ICON: SFSymbol = 'person.3.fill'
 
-export type CategoryTileData = {
+export type CategoryRowData = {
 	name: string
 	icon: SFSymbol
 	gradient: Gradient
 	count: number
 }
 
-/// Builds one tile per live category membership row -- no org list needed
-/// here, which is the point: the landing screen can show tiles as soon as
+/// Builds one row per live category membership row -- no org list needed
+/// here, which is the point: the landing screen can show rows as soon as
 /// the lightweight `/orgs/categories` route answers, without waiting on all
 /// 225 full org records.
-export function buildCategoryTiles(
+export function buildCategoryRows(
 	curated: OrgCategoryType[],
 	memberships: OrgCategoryMembership[],
-): CategoryTileData[] {
+): CategoryRowData[] {
 	let curatedByName = new Map(curated.map((entry) => [entry.name, entry]))
 
 	return memberships.map((membership) => {

@@ -12,6 +12,15 @@ export type Block =
 	| {type: 'list'; ordered: boolean; items: Run[][]}
 	| {type: 'quote'; runs: Run[]}
 	| {
+			type: 'gallery'
+			/** Its photos' WordPress media ids, in the slideshow's order */
+			photoIds: number[]
+			/** The first photo, the one the HTML carries, to show before the rest have loaded */
+			cover: Photo | null
+			/** Whose photos they are, as the slideshow credits them; empty when it names no one */
+			credit: string
+	  }
+	| {
 			type: 'figure'
 			url: string
 			/** The largest copy the image's srcset offers, for the zoom viewer; none when it offers no larger one */
@@ -24,6 +33,12 @@ export type Block =
 
 /** A Mess category; `parent` is 0 for a top-level one. */
 export type MessCategory = {id: number; name: string; parent: number}
+
+/** Someone on the paper's About page to write to, such as `News Editors`. */
+export type AboutContact = {role: string; email: string}
+
+/** A heading on the paper's About page, with the contacts and paragraphs under it. */
+export type AboutSection = {title: string; contacts: AboutContact[]; paragraphs: string[]}
 
 export type Photo = {url: string; width: number; height: number}
 
@@ -102,7 +117,11 @@ export type MessIssue = {
 
 /** A writer's profile for one staff year. */
 export type StaffProfile = {
+	/** The profile's own post id, not its writer's staff_name term */
+	id: number
 	name: string
+	/** The writer's role on the paper, such as `News Editor`; blank when the profile names none */
+	role: string
 	bio: string
 	photo: Photo | null
 	/** The staff_year term, such as `2025-2026` */
@@ -133,8 +152,13 @@ export type RecipeSection = {label: string; kind: 'ingredients' | 'steps'; items
 /** A Spotify playlist, album or track, by Spotify's base-62 id. */
 export type SpotifyRef = {kind: 'playlist' | 'album' | 'track'; id: string}
 
-/** An Amuse Labs PuzzleMe puzzle, as the placeholder in a Crossword post names it. */
-export type CrosswordPuzzle = {id: string; set: string}
+/** An Amuse Labs PuzzleMe puzzle, as the placeholder in a Crossword or Puzzle post names it. */
+export type Puzzle = {
+	/** PuzzleMe's name for the game, such as `crossword` or `wordrow` */
+	type: string
+	id: string
+	set: string
+}
 
 /** How the reader lays a story out; every template falls back to `article`. */
 export type StoryLayout =
@@ -142,7 +166,7 @@ export type StoryLayout =
 	| {kind: 'horoscopes'; intro: Run[][]; signs: Array<{sign: ZodiacSign; reading: Run[][]}>}
 	| {kind: 'image'; image: Photo}
 	| {kind: 'poem'; stanzas: PoemLine[][]}
-	| {kind: 'crossword'; puzzle: CrosswordPuzzle}
+	| {kind: 'puzzle'; puzzle: Puzzle}
 	| {kind: 'playlist'; spotify: SpotifyRef | null}
 	| {kind: 'recipe'; intro: Block[]; sections: RecipeSection[]; after: Block[]}
 	| {kind: 'feature'; images: CaptionedPhoto[]}

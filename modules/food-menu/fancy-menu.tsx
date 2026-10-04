@@ -26,6 +26,7 @@ import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
 import {formatMealTimes} from './lib/meal-times'
 import {isFeatured} from './lib/is-featured'
 import {offerSpecials} from './lib/offer-specials'
+import {scopeFilterOptions} from './lib/scope-filter-options'
 import {stationSections, type MenuSection} from './lib/station-sections'
 import type {
 	MasterCorIconMapType,
@@ -203,9 +204,17 @@ export function FancyMenu(props: Props): React.ReactNode {
 		[stations, foodItems],
 	)
 
+	const mealItems = useMemo(
+		() =>
+			stations
+				.flatMap((station) => station.items)
+				.flatMap((id) => (foodItems[id] ? [foodItems[id]] : [])),
+		[stations, foodItems],
+	)
+
 	const appliedFilters = useMemo(
-		() => offerSpecials(filters, mealHasSpecials),
-		[filters, mealHasSpecials],
+		() => offerSpecials(scopeFilterOptions(filters, mealItems), mealHasSpecials),
+		[filters, mealItems, mealHasSpecials],
 	)
 
 	const groupedMenuData = useMemo(
@@ -317,7 +326,12 @@ export function FancyMenu(props: Props): React.ReactNode {
 						sectionsWithNotes.map((section) =>
 							section.data.length === 1 && isClosedLabel(section.data[0].label) ? (
 								<Section key={section.title} {...sectionHeaderProps('', section.note)}>
-									<ContentUnavailableView systemImage="clock" title={section.station} />
+									<ContentUnavailableView
+										// A cafe BonApp has shut is named `Closed` already.
+										description={isClosedLabel(section.station) ? undefined : 'Closed'}
+										systemImage="clock"
+										title={section.station}
+									/>
 								</Section>
 							) : (
 								<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>

@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {Image as RNImage, StyleSheet} from 'react-native'
-import type {ColorValue} from 'react-native'
+import {Image as RNImage, StyleSheet, useWindowDimensions} from 'react-native'
+import type {ColorValue, ImageSourcePropType} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
 	Button,
@@ -11,12 +11,14 @@ import {
 	Spacer,
 	Text,
 	VStack,
+	ZStack,
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityRemoveTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
+	aspectRatio,
 	buttonStyle,
 	contentShape,
 	disabled as disabledModifier,
@@ -25,13 +27,18 @@ import {
 	frame,
 	lineLimit,
 	monospacedDigit,
+	resizable,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
 import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import type {Gradient} from '@frogpond/colors'
 
+import {isAccessibilityTextSize} from '../lib/is-accessibility-text-size'
+import {GradientRoundedRectangle} from './gradient-tile'
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
+import {SYSTEM_TYPEFACE, type Typeface} from './lib/typeface'
 
 type RowProps = {
 	title: string
@@ -157,19 +164,34 @@ type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
 }
 
 /**
- * A leading thumbnail fetched over the network. `@expo/ui`'s own `Image` reads
- * only SF Symbols, asset-catalog names and local files, so this is a React
- * Native image hosted inside the SwiftUI row -- which needs its size stated
- * up front, since `RNHostView` gives a hosted view no bounds of its own.
+ * A leading thumbnail: fetched over the network by `uri`, or bundled with the
+ * app by `source`. `@expo/ui`'s own `Image` reads only SF Symbols,
+ * asset-catalog names and local files, so this is a React Native image hosted
+ * inside the SwiftUI row -- which needs its size stated up front, since
+ * `RNHostView` gives a hosted view no bounds of its own.
  */
-type ThumbnailImage = {uri: string; width: number; height: number}
+type ThumbnailImage = ({uri: string} | {source: ImageSourcePropType}) & {
+	width: number
+	height: number
+}
 
-export type DisclosureRowImage = SymbolImage | ThumbnailImage
+/**
+ * A white symbol on a small gradient square, as Settings draws its rows'
+ * icons -- the row-sized cousin of a `GradientTile`, sharing its gradients.
+ */
+type GradientSymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {gradient: Gradient}
+
+export type DisclosureRowImage = SymbolImage | ThumbnailImage | GradientSymbolImage
 
 /// Mirrored by `TestIdentifiers.Rows.thumbnail`.
 const THUMBNAIL_ID = 'disclosure-row-thumbnail'
 
 const SYMBOL_SIZE = 20
+
+/// Settings' own icon size, and the corner that goes with it.
+const ICON_SIZE = 30
+const ICON_RADIUS = 7
+const ICON_SYMBOL_SIZE = 17
 
 type DisclosureRowProps = {
 	title: string
@@ -199,11 +221,41 @@ type DisclosureRowProps = {
 	/** A live status under the details, in its own colour, as a place's open
 	 * or closed state reads. */
 	status?: {text: string; color: ColorValue}
+	/** The type the title and details are set in, for a screen on a background of its own. */
+	typeface?: Typeface
 }
 
-/** A row's leading image: a tinted symbol, or a thumbnail. */
+/** A row's leading image: a tinted symbol, a gradient icon, or a thumbnail. */
 export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
-	if (!('uri' in image)) {
+	if ('gradient' in image) {
+		return (
+			<ZStack modifiers={[frame({width: ICON_SIZE, height: ICON_SIZE})]}>
+				{/* endRadius at the icon's height carries the gradient from its
+				    start color at the top edge to its end color at the bottom. */}
+				<GradientRoundedRectangle
+					cornerRadius={ICON_RADIUS}
+					endRadius={ICON_SIZE}
+					gradient={image.gradient}
+					showShadow={false}
+				/>
+				<Image
+					{...('assetName' in image
+						? {assetName: image.assetName}
+						: {systemName: image.systemName})}
+					color="white"
+					// Fitted into a square rather than sized by font: a wide symbol
+					// (three people) would otherwise stretch the icon past its siblings.
+					modifiers={[
+						resizable(),
+						aspectRatio({contentMode: 'fit'}),
+						frame({width: ICON_SYMBOL_SIZE, height: ICON_SYMBOL_SIZE}),
+					]}
+				/>
+			</ZStack>
+		)
+	}
+
+	if (!('uri' in image) && !('source' in image)) {
 		return (
 			<Image
 				{...('assetName' in image ? {assetName: image.assetName} : {systemName: image.systemName})}
@@ -219,7 +271,7 @@ export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactN
 			<RNHostView matchContents={false}>
 				<RNImage
 					accessibilityIgnoresInvertColors={true}
-					source={{uri: image.uri}}
+					source={'uri' in image ? {uri: image.uri} : image.source}
 					style={[styles.thumbnail, {width: image.width, height: image.height}]}
 					testID={THUMBNAIL_ID}
 				/>
@@ -247,9 +299,18 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		badge,
 		destination = 'push',
 		status,
+		typeface = SYSTEM_TYPEFACE,
 	} = props
 
+	let {fontScale} = useWindowDimensions()
 	let hasBadge = badge !== undefined && badge > 0
+	// At an accessibility size a trailing count takes a third of the row and
+	// the title breaks mid-word in what is left, so the count drops under the
+	// title instead, as Settings does.
+	let stacksBadge = hasBadge && isAccessibilityTextSize(fontScale)
+	let badgeText = (
+		<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>{String(badge)}</Text>
+	)
 	let spokenDetail = status ? [...detailLinesOf(detail), status.text] : detail
 	let spokenLabel =
 		image && 'label' in image && image.label
@@ -258,14 +319,14 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
-		font({textStyle: 'subheadline'}),
-		foregroundStyle(c.secondaryLabel),
+		font({textStyle: 'subheadline', design: typeface.design}),
+		foregroundStyle(typeface.secondaryLabel),
 		...(detailLines ? [lineLimit(detailLines), truncationMode('tail')] : []),
 	]
 
 	// External already carries `arrow.up.right`; tinting the title too would
 	// turn a long link list into a wall of blue.
-	let titleTint = destination === 'action' ? c.systemBlue : c.label
+	let titleTint = destination === 'action' ? typeface.tint : typeface.label
 
 	return (
 		<Button
@@ -282,7 +343,12 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 				{image ? <LeadingImage image={image} /> : null}
 				<VStack alignment="leading" spacing={2}>
 					<Text
-						modifiers={[foregroundStyle(titleTint), lineLimit(titleLines), truncationMode('tail')]}
+						modifiers={[
+							font({textStyle: 'body', design: typeface.design}),
+							foregroundStyle(titleTint),
+							lineLimit(titleLines),
+							truncationMode('tail'),
+						]}
 					>
 						{title}
 					</Text>
@@ -296,16 +362,13 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 							{status.text}
 						</Text>
 					) : null}
+					{stacksBadge ? badgeText : null}
 				</VStack>
 				<Spacer />
 				{/* Drawn here rather than with SwiftUI's .badge, which puts the
 				    count at the row's trailing edge -- past this row's own
 				    chevron, where Settings never has it. */}
-				{hasBadge ? (
-					<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>
-						{String(badge)}
-					</Text>
-				) : null}
+				{hasBadge && !stacksBadge ? badgeText : null}
 				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>

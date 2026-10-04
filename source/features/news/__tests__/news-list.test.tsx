@@ -1,7 +1,9 @@
 import * as React from 'react'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {openUrl} from '@frogpond/open-url'
+
+import {remoteImage} from '../../../lib/remote-images'
 
 import {NewsList} from '../news-list'
 import type {StoryType} from '../types'
@@ -23,14 +25,17 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
-function renderList(onPressStory?: (story: StoryType) => void) {
+function renderList(
+	onPressStory?: (story: StoryType) => void,
+	thumbnail: false | ReturnType<typeof remoteImage> = false,
+) {
 	return render(
 		<NewsList
 			entries={[STORY]}
 			onPressStory={onPressStory}
 			query={QUERY}
 			selectedCategory={null}
-			thumbnail={false}
+			thumbnail={thumbnail}
 		/>,
 	)
 }
@@ -75,5 +80,18 @@ describe('NewsList', () => {
 		} finally {
 			consoleError.mockRestore()
 		}
+	})
+
+	// The source's thumbnail is fetched, so it can fail; the row then goes
+	// without one rather than keeping an empty frame.
+	test('drops the thumbnail when it cannot be fetched', async () => {
+		await renderList(undefined, remoteImage('news-sources', 'stolaf'))
+		expect(screen.getByTestId('news-thumbnail')).toBeTruthy()
+
+		await act(() => {
+			fireEvent(screen.getByTestId('news-thumbnail'), 'error')
+		})
+
+		expect(screen.queryByTestId('news-thumbnail')).toBeNull()
 	})
 })

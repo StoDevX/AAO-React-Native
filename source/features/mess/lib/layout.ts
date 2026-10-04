@@ -1,9 +1,9 @@
 import type {Block, MessStory, StoryLayout} from '../types'
-import {parseCrossword} from './crossword'
 import {parseFeature} from './feature'
 import {parseHoroscopes} from './horoscopes'
 import {parsePlaylist} from './playlist'
 import {parsePoem} from './poem'
+import {parsePuzzle} from './puzzle'
 import {parseRecipe} from './recipe'
 
 /** What a story brings to `chooseLayout`: its column, its parsed body and photo, and the raw HTML. */
@@ -43,10 +43,11 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 				blocks: input.blocks.filter((_, i) => i !== index),
 			}
 		}
-		case 'Crossword': {
-			let crossword = parseCrossword(input.html)
-			if (!crossword) return {layout: {kind: 'article'}, blocks: input.blocks}
-			return {layout: {kind: 'crossword', puzzle: crossword.puzzle}, blocks: crossword.blocks}
+		case 'Crossword':
+		case 'Puzzle': {
+			let found = parsePuzzle(input.html)
+			if (!found) return {layout: {kind: 'article'}, blocks: input.blocks}
+			return {layout: {kind: 'puzzle', puzzle: found.puzzle}, blocks: found.blocks}
 		}
 		case 'Playlist': {
 			let {spotify, blocks} = parsePlaylist(input.html, input.blocks)
