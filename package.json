@@ -115,7 +115,6 @@
   "devDependencies": {
     "@babel/core": "7.29.7",
     "@babel/preset-typescript": "7.29.7",
-    "@changesets/cli": "3.0.3",
     "@expo/config-plugins": "57.0.9",
     "@expo/metro-config": "57.0.12",
     "@jest/globals": "30.5.2",

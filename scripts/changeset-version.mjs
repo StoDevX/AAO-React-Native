@@ -32,7 +32,7 @@ function versionPrLabels() {
 
 function changeset(...args) {
 	console.log(`$ changeset ${args.join(' ')}`)
-	execFileSync('pnpm', ['exec', 'changeset', ...args], {stdio: 'inherit'})
+	execFileSync('changeset', args, {stdio: 'inherit'})
 }
 
 let preState = existsSync(PRE_STATE) ? JSON.parse(readFileSync(PRE_STATE, 'utf8')) : null

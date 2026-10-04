@@ -110,7 +110,7 @@ Changing the label re-runs the workflow, which rebuilds the pull request in the 
 Run as many rounds as you like: each merge bumps `N`, and the final release folds every round's entries into one.
 
 The Version PR needs a changeset to exist.
-To promote a release candidate with nothing new to say, add an empty one with `pnpm exec changeset add --empty`.
+To promote a release candidate with nothing new to say, add an empty one with `mise run changeset -- add --empty`.
 
 The Release workflow opens that pull request with `RELEASE_TOKEN` when the repository has it, and with the default token otherwise.
 A pull request the default token opens starts no other workflows, so Check will not run on it.

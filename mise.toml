@@ -4,6 +4,7 @@ pnpm = "12.8.0"
 hk = "2.4.0"
 ruby = "3.4.11"
 "gem:bundler" = "4.0.21"
+"npm:@changesets/cli" = "3.0.3"
 
 # Taps and types on a simulator, which simctl cannot do -- see the
 # run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
@@ -214,7 +215,7 @@ run = "tsc --noEmit"
 
 [tasks.changeset]
 description = "Add a changeset: a line for the release notes and how big a bump it is"
-run = "pnpm exec changeset"
+run = "changeset"
 
 [tasks.test]
 description = "Run every test"
