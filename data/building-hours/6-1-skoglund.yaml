@@ -14,4 +14,13 @@ schedule:
       - {days: [Sa], from: '9:00am', to: '9:00pm'}
       - {days: [Su], from: '12:00pm', to: '11:00pm'}
 
-breakSchedule: {}
+# https://wp.stolaf.edu/current-students/breaks/ (2026–27, checked 2026-10-04)
+# Tostrud/Skoglund Fall Break: October 10–11 noon–4pm; October 12–13 9am–6pm.
+# These are building hours, not pool, ice arena, or climbing-wall service hours.
+# The October 9 lead-in is outside this pilot's academic break interval.
+breakSchedule:
+  fall:
+    - title: Hours
+      hours:
+        - {days: [Sa, Su], from: '12:00pm', to: '4:00pm'}
+        - {days: [Mo, Tu], from: '9:00am', to: '6:00pm'}
