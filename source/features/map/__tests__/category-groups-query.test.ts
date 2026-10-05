@@ -8,7 +8,7 @@ import {
 	type Jrd,
 } from '@frogpond/data-sources'
 
-import {BUNDLED_MAP_CATEGORIES, mapCategoriesOptions} from '../category-groups-query'
+import {mapCategoriesOptions} from '../category-groups-query'
 import type {MapCategoryTable} from '../lib/category-groups'
 
 // The live path is the one under test; the suite-wide setup runs as a UI test.
@@ -58,8 +58,7 @@ describe('mapCategoriesOptions', () => {
 		await expect(run()).resolves.toEqual(PUBLISHED)
 	})
 
-	// React Query keeps a table it already has when a fetch fails; the
-	// picker draws the bundled copy only when it has none.
+	// React Query keeps a table it already has when a fetch fails.
 	test('fails when the file cannot be fetched', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
 		;(fetchSourceBody as jest.Mock<() => Promise<never>>).mockRejectedValue(new Error('offline'))
@@ -83,7 +82,7 @@ describe('mapCategoriesOptions', () => {
 	})
 
 	// A released app can meet a file published for a newer one; a shape it
-	// cannot read must fail the fetch, leaving the bundled copy in place,
+	// cannot read must fail the fetch, leaving any table already cached in place,
 	// rather than reach the grid and throw during render.
 	test('refuses a file missing a campus', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
@@ -144,20 +143,18 @@ describe('mapCategoriesOptions', () => {
 	// A table restored from the persisted cache never passed through the
 	// fetch, so one an older build saved in an older shape reaches the
 	// picker unchecked unless it is checked again on the way out.
-	test('reads an unreadable cached table as the bundled copy', () => {
-		let select = mapCategoriesOptions.select as (table: unknown) => MapCategoryTable
+	test('reads an unreadable cached table as none', () => {
+		let select = mapCategoriesOptions.select as (table: unknown) => MapCategoryTable | undefined
 		let olderShape = {stolaf: PUBLISHED.stolaf.groups, carleton: []}
-		expect(select(olderShape)).toBe(BUNDLED_MAP_CATEGORIES)
+		expect(select(olderShape)).toBeUndefined()
 	})
 
 	test('reads a readable cached table as itself', () => {
-		let select = mapCategoriesOptions.select as (table: unknown) => MapCategoryTable
+		let select = mapCategoriesOptions.select as (table: unknown) => MapCategoryTable | undefined
 		expect(select(PUBLISHED)).toEqual(PUBLISHED)
 	})
 
-	// The bundled copy is there from the start and stays when the live file
-	// cannot be had, rather than a failure leaving the grid with nothing.
-	test('keeps the bundled copy when the fetch fails', async () => {
+	test('has no table when the first fetch fails', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
 		;(fetchSourceBody as jest.Mock<() => Promise<never>>).mockRejectedValue(new Error('offline'))
 		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
@@ -165,7 +162,7 @@ describe('mapCategoriesOptions', () => {
 			await client
 				.query({...mapCategoriesOptions, retry: false, networkMode: 'always', staleTime: 0})
 				.catch(() => undefined)
-			expect(client.getQueryData(mapCategoriesOptions.queryKey)).toEqual(BUNDLED_MAP_CATEGORIES)
+			expect(client.getQueryData(mapCategoriesOptions.queryKey)).toBeUndefined()
 		} finally {
 			client.clear()
 		}
