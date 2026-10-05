@@ -138,13 +138,50 @@ function dependencies(head, diff) {
 	}
 }
 
+/** A list of names, ten at most, then how many more there are. */
+function listed(names) {
+	let shown = names.slice(0, TOP_MOVERS).join(', ')
+	let more = names.length - TOP_MOVERS
+	return more > 0 ? `${shown}, and ${more} more` : shown
+}
+
+/**
+ * The native-change notice, one line per kind of change, or nothing when
+ * there is none.
+ */
+function nativeNotice(nativeChanges) {
+	if (nativeChanges === null) {
+		return []
+	}
+	let kinds = [
+		['App config and plugins', nativeChanges.config.map((file) => `\`${file}\``)],
+		['Native module code', nativeChanges.code.map((file) => `\`${file}\``)],
+		[
+			'Dependencies that likely ship native code',
+			nativeChanges.packages.map((change) => `${change.name} ${changeText(change)}`),
+		],
+	]
+	return [
+		'### Native changes',
+		'Needs a new native build, not a JS reload. Check Info.plist, entitlements and the privacy manifest by hand.',
+		'',
+		...kinds
+			.filter(([, items]) => items.length > 0)
+			.map(([name, items]) => `- **${name}:** ${listed(items)}`),
+	]
+}
+
 /**
  * Renders the comment. `head` is null when this commit could not be
  * measured; `diff` is null when there is no baseline, and `baselineNote`
  * then says why. `limit` caps the rendered length, so the full tables can
  * be dropped from the PR comment but kept in the job summary (`Infinity`).
+ * `nativeChanges` is what `findNativeChanges` found, or null/absent for none.
  */
-export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_LIMIT) {
+export function renderComment(
+	{head, diff, baselineNote, gate, nativeChanges = null},
+	limit = COMMENT_LIMIT,
+) {
 	let lines = [MARKER, '### JS bundle']
 	if (head === null) {
 		lines.push('JS size unavailable: there is no usable size report for this commit.')
@@ -177,9 +214,16 @@ export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_
 
 	// A commit that could not be measured has no dependencies to show.
 	let deps = head === null ? {top: [], tables: []} : dependencies(head, diff)
-	let full = [...lines, ...tables, ...deps.top, ...deps.tables].join('\n')
+	let native = nativeNotice(nativeChanges)
+	let full = [...lines, ...tables, ...deps.top, ...deps.tables, ...native].join('\n')
 	if (full.length <= limit || (tables.length === 0 && deps.tables.length === 0)) {
 		return full
 	}
-	return [...lines, ...deps.top, "The full tables are in this run's job summary.", ''].join('\n')
+	return [
+		...lines,
+		...deps.top,
+		"The full tables are in this run's job summary.",
+		'',
+		...native,
+	].join('\n')
 }

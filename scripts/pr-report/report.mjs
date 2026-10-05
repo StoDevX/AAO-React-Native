@@ -10,6 +10,7 @@ import {parseArgs} from 'node:util'
 
 import {diffReports} from './diff.mjs'
 import {decideGate} from './gate.mjs'
+import {findNativeChanges} from './native-changes.mjs'
 import {renderComment} from './render.mjs'
 import {REPORT_VERSION} from './report-version.mjs'
 
@@ -65,12 +66,12 @@ export function readReport(path) {
 }
 
 /** The failed result for a commit with no usable size report. */
-function unreadable() {
+function unreadable(nativeChanges) {
 	let gate = {
 		pass: false,
 		message: 'No size report for this commit, so the size gate cannot pass.',
 	}
-	let empty = {head: null, diff: null, baselineNote: null, gate}
+	let empty = {head: null, diff: null, baselineNote: null, gate, nativeChanges}
 	return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
 }
 
@@ -82,9 +83,12 @@ function unreadable() {
  * no report for `head.baseSha` itself (still running, cancelled, expired);
  * for any other base branch it is `head.baseSha` or there is no baseline.
  */
-export function buildPrReport({head, baseline, comparedSha, baseRef, labels, limit}) {
+export function buildPrReport({head, baseline, comparedSha, baseRef, labels, limit, files = []}) {
+	// A dependency change can only be told from the two reports; the files
+	// need neither, so the notice still shows the changes it can find.
+	let nativeChanges = (diff) => findNativeChanges({files, packageChanges: diff?.deps.changes ?? []})
 	if (head === null) {
-		return unreadable()
+		return unreadable(nativeChanges(null))
 	}
 
 	let short = head.baseSha ? head.baseSha.slice(0, 7) : 'none'
@@ -120,7 +124,7 @@ export function buildPrReport({head, baseline, comparedSha, baseRef, labels, lim
 		diff !== null && comparedSha !== head.baseSha
 			? {pass: true, message: 'Compared with an older master commit, so the size gate passes.'}
 			: decideGate({hermes: diff?.hermes ?? null, labels, limit})
-	let full = {head, diff, baselineNote, gate}
+	let full = {head, diff, baselineNote, gate, nativeChanges: nativeChanges(diff)}
 	return {comment: renderComment(full), summary: renderComment(full, Infinity), pass: gate.pass}
 }
 
@@ -132,6 +136,7 @@ function main() {
 			'compared-sha': {type: 'string'},
 			'base-ref': {type: 'string'},
 			labels: {type: 'string'},
+			files: {type: 'string'},
 			'comment-out': {type: 'string'},
 			'summary-out': {type: 'string'},
 		},
@@ -143,6 +148,7 @@ function main() {
 		comparedSha: values['compared-sha'],
 		baseRef: values['base-ref'],
 		labels,
+		files: JSON.parse(readFileSync(values.files, 'utf8')),
 	})
 	writeFileSync(values['comment-out'], comment)
 	writeFileSync(values['summary-out'], summary)
