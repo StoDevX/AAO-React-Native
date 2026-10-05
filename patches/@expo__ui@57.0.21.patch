@@ -112,25 +112,6 @@ index d1e4d37272d5596f58e1f318641ff9b913f507ec..734d58360f48e7506d47f2b9c517f264
  }) => ModifierConfig;
  /**
   * A standard size for Dynamic Type, from `xSmall` through the five
-diff --git a/build/swift-ui/modifiers/presentationModifiers.d.ts b/build/swift-ui/modifiers/presentationModifiers.d.ts
-index 63a99ee409bb6f8185af757fc9e42d8d4ff783b3..fb3a52e9cc1ab8ec67e5eed7dae5933271966ef4 100644
---- a/build/swift-ui/modifiers/presentationModifiers.d.ts
-+++ b/build/swift-ui/modifiers/presentationModifiers.d.ts
-@@ -34,6 +34,14 @@ export declare const presentationDetents: (detents: PresentationDetent[], option
-  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/presentationdragindicator(_:)).
-  */
- export declare const presentationDragIndicator: (visibility: "automatic" | "visible" | "hidden") => ModifierConfig;
-+/**
-+ * Sets the corner radius of a sheet, in points. `null` restores the system's.
-+ * @param radius - The radius, or `null` for the system's own.
-+ * @platform ios 16.4+
-+ * @platform tvos 16.4+
-+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/presentationcornerradius(_:)).
-+ */
-+export declare const presentationCornerRadius: (radius: number | null) => ModifierConfig;
- /**
-  * Sets the corner radius of a sheet presentation.
-  * @param cornerRadius - The corner radius in points, or `null` to use the system default.
 diff --git a/ios/ContentUnavailableView.swift b/ios/ContentUnavailableView.swift
 index 3e07eceecb782b3c924ee9e3d5ec20424ef7f491..190d26a536036f9be84322536ce92d80ea3243e1 100644
 --- a/ios/ContentUnavailableView.swift
@@ -340,10 +321,10 @@ index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c524
 +  }
 +}
 diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
-index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67748e89a8 100644
+index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..4c34459f350bc40a0076483cb40bcd7c1195b2d6 100644
 --- a/ios/Modifiers/FontModifier.swift
 +++ b/ios/Modifiers/FontModifier.swift
-@@ -29,6 +29,20 @@ internal enum FontWeight: String, Enumerable {
+@@ -29,6 +29,34 @@ internal enum FontWeight: String, Enumerable {
    }
  }
  
@@ -361,10 +342,24 @@ index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67
 +  }
 +}
 +
++internal enum FontLeading: String, Enumerable {
++  case standard
++  case tight
++  case loose
++
++  func toSwiftUI() -> Font.Leading {
++    switch self {
++    case .standard: .standard
++    case .tight: .tight
++    case .loose: .loose
++    }
++  }
++}
++
  internal enum FontDesign: String, Enumerable {
    case `default`
    case rounded
-@@ -81,6 +95,8 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -81,6 +109,8 @@ internal struct FontModifier: ViewModifier, Record {
    @Field var weight: FontWeight?
    @Field var design: FontDesign?
    @Field var textStyle: FontTextStyle?
@@ -373,7 +368,7 @@ index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67
  
    func body(content: Content) -> some View {
      content.font(resolveFont())
-@@ -90,6 +106,17 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -90,6 +120,17 @@ internal struct FontModifier: ViewModifier, Record {
    // same `Font` as the view path, instead of a fixed-size `Font.custom` that
    // drops `relativeTo` (Dynamic Type) and `weight`.
    func resolveFont() -> Font {
@@ -391,31 +386,6 @@ index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67
      if let family = family {
        let baseSize = size ?? 17
        var font: Font = if let textStyle = textStyle {
-diff --git a/ios/Modifiers/PresentationModifiers.swift b/ios/Modifiers/PresentationModifiers.swift
-index 5fbab80bd07e91d099a151f827ac6ac470bfcfe7..bca8ceca14a484cdc625243edd7ed347d26bf54d 100644
---- a/ios/Modifiers/PresentationModifiers.swift
-+++ b/ios/Modifiers/PresentationModifiers.swift
-@@ -170,6 +170,20 @@ internal struct PresentationCornerRadiusModifier: ViewModifier, Record {
-   }
- }
- 
-+// MARK: - Presentation Corner Radius
-+
-+internal struct PresentationCornerRadiusModifier: ViewModifier, Record {
-+  @Field var radius: Double?
-+
-+  func body(content: Content) -> some View {
-+    if #available(iOS 16.4, tvOS 16.4, *) {
-+      content.presentationCornerRadius(radius.map { CGFloat($0) })
-+    } else {
-+      content
-+    }
-+  }
-+}
-+
- // MARK: - Presentation Background Interaction
- 
- internal enum PresentationBackgroundInteractionTypeModifier: String, Enumerable {
 diff --git a/ios/Modifiers/ScrollPositionModifier.swift b/ios/Modifiers/ScrollPositionModifier.swift
 index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a259e6fbc9 100644
 --- a/ios/Modifiers/ScrollPositionModifier.swift
@@ -490,10 +460,10 @@ index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a2
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index f26602224fade516297aad1d7aa18fbb18110adc..c4354501457c4271baf33599168430eb5d45cd97 100644
+index f26602224fade516297aad1d7aa18fbb18110adc..d022f1c2026ee94e7ffb983fdeb24c7ebd7b4de6 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
-@@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
+@@ -43,6 +43,38 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
    }
  }
  
@@ -513,10 +483,26 @@ index f26602224fade516297aad1d7aa18fbb18110adc..c4354501457c4271baf33599168430eb
 +  }
 +}
 +
++/// Attaches the letter a native A-Z jumplist rail shows for this `Section`.
++/// `sectionIndexLabel(_:)` is iOS 26+ only; below that this is a no-op, so the
++/// list looks exactly as it did before the patch.
++internal struct SectionIndexLabelModifier: ViewModifier, Record {
++  @Field var label: String = ""
++
++  @ViewBuilder
++  func body(content: Content) -> some View {
++    if #available(iOS 26.0, *) {
++      content.sectionIndexLabel(label)
++    } else {
++      content
++    }
++  }
++}
++
  internal struct ShadowModifier: ViewModifier, Record {
    @Field var color: Color = .white
    @Field var radius: CGFloat = 0
-@@ -519,6 +535,32 @@ internal struct OnAppearModifier: ViewModifier, Record {
+@@ -519,6 +551,58 @@ internal struct OnAppearModifier: ViewModifier, Record {
    }
  }
  
@@ -546,10 +532,36 @@ index f26602224fade516297aad1d7aa18fbb18110adc..c4354501457c4271baf33599168430eb
 +  }
 +}
 +
++/// Sends a tapped web link in the text below this view to JavaScript, instead
++/// of letting SwiftUI's default action open it in Safari, so the app can choose
++/// where the page opens. A link with any other scheme, such as `mailto:`,
++/// `tel:` or `sms:`, takes the system's own action, since only the system
++/// knows which app opens it.
++internal struct OpenURLActionModifier: ViewModifier, Record {
++  var eventDispatcher: EventDispatcher?
++
++  init() {}
++
++  init(from params: Dict, appContext: AppContext, eventDispatcher: EventDispatcher) throws {
++    try self = .init(from: params, appContext: appContext)
++    self.eventDispatcher = eventDispatcher
++  }
++
++  func body(content: Content) -> some View {
++    content.environment(\.openURL, OpenURLAction { url in
++      guard let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else {
++        return .systemAction
++      }
++      eventDispatcher?(["openURLAction": ["url": url.absoluteString]])
++      return .handled
++    })
++  }
++}
++
  internal struct OnDisappearModifier: ViewModifier, Record {
    var eventDispatcher: EventDispatcher?
  
-@@ -1183,6 +1225,23 @@ internal enum TextLinePattern: String, Enumerable {
+@@ -1183,6 +1267,40 @@ internal enum TextLinePattern: String, Enumerable {
    case dashDotDot
  }
  
@@ -570,10 +582,27 @@ index f26602224fade516297aad1d7aa18fbb18110adc..c4354501457c4271baf33599168430eb
 +  }
 +}
 +
++@available(iOS 16.0, macOS 13.0, tvOS 16.0, *)
++internal extension TextLinePattern {
++  /// The SwiftUI pattern this maps to. `TextUnderLine` and `TextStrikeThrough`
++  /// each still switch over all five cases inline, upstream's own code and
++  /// left alone; the nested-`Text` arms below need the same mapping, so it is
++  /// factored out here rather than written inline a third time.
++  var lineStyle: Text.LineStyle.Pattern {
++    switch self {
++    case .solid: return .solid
++    case .dash: return .dash
++    case .dot: return .dot
++    case .dashDot: return .dashDot
++    case .dashDotDot: return .dashDotDot
++    }
++  }
++}
++
  internal struct TextUnderLine: ViewModifier, Record {
    @Field var isActive: Bool = false
    @Field var pattern: TextLinePattern = .solid
-@@ -1629,6 +1688,18 @@ public class ViewModifierRegistry {
+@@ -1629,6 +1747,18 @@ public class ViewModifierRegistry {
          return text.foregroundColor(color)
        }
        return text
@@ -592,21 +621,18 @@ index f26602224fade516297aad1d7aa18fbb18110adc..c4354501457c4271baf33599168430eb
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2353,6 +2424,10 @@ extension ViewModifierRegistry {
-       return try PresentationCornerRadiusModifier(from: params, appContext: appContext)
-     }
- 
-+    register("presentationCornerRadius") { params, appContext, _ in
-+      return try PresentationCornerRadiusModifier(from: params, appContext: appContext)
-+    }
-+
-     register("presentationBackgroundInteraction") { params, appContext, _ in
-       return try PresentationBackgroundInteractionModifier(from: params, appContext: appContext)
-     }
-@@ -2373,6 +2448,14 @@ extension ViewModifierRegistry {
+@@ -2373,6 +2503,22 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  
++    register("openURLAction") { params, appContext, eventDispatcher in
++      return try OpenURLActionModifier(from: params, appContext: appContext, eventDispatcher: eventDispatcher)
++    }
++
++    register("sectionIndexLabel") { params, appContext, _ in
++      return try SectionIndexLabelModifier(from: params, appContext: appContext)
++    }
++
 +    register("openURLAction") { params, appContext, eventDispatcher in
 +      return try OpenURLActionModifier(from: params, appContext: appContext, eventDispatcher: eventDispatcher)
 +    }
@@ -918,24 +944,3 @@ index d748811ada800c9edd3a8e04aeadcdefed6e1e4d..f6f453ed3489191eb3b71df8ac658360
  export * from './DisclosureGroup';
  export * from './Form';
  export * from './Gauge';
-diff --git a/src/swift-ui/modifiers/presentationModifiers.ts b/src/swift-ui/modifiers/presentationModifiers.ts
-index 34bf1795d947fd48b21afe7c0960b328af094ff4..319ca953a0ad1f2f4fbef75c41753413b39e985b 100644
---- a/src/swift-ui/modifiers/presentationModifiers.ts
-+++ b/src/swift-ui/modifiers/presentationModifiers.ts
-@@ -57,6 +57,16 @@ export const presentationDetents = (
- export const presentationDragIndicator = (visibility: 'automatic' | 'visible' | 'hidden') =>
-   createModifier('presentationDragIndicator', { visibility });
- 
-+/**
-+ * Sets the corner radius of a sheet, in points. `null` restores the system's.
-+ * @param radius - The radius, or `null` for the system's own.
-+ * @platform ios 16.4+
-+ * @platform tvos 16.4+
-+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/presentationcornerradius(_:)).
-+ */
-+export const presentationCornerRadius = (radius: number | null) =>
-+  createModifier('presentationCornerRadius', { radius });
-+
- /**
-  * Sets the corner radius of a sheet presentation.
-  * @param cornerRadius - The corner radius in points, or `null` to use the system default.
