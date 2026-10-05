@@ -269,3 +269,64 @@ describe('renderComment dependencies', () => {
 		assert.equal(markdown.match(/The full tables are in this run's job summary\./gu).length, 1)
 	})
 })
+
+describe('renderComment native changes', () => {
+	let base = {head, diff: null, baselineNote: null, gate: pass}
+	let section = (markdown) => markdown.slice(markdown.indexOf('### Native changes'))
+
+	it('lists what needs a native build', () => {
+		let markdown = renderComment({
+			...base,
+			nativeChanges: {
+				config: ['app.config.ts', 'plugins/with-custom-symbols.ts'],
+				code: ['modules/audio-route/ios/AudioRouteModule.swift'],
+				packages: [
+					{name: 'expo-audio', kind: 'bumped', before: ['1.0.0'], after: ['1.1.0']},
+					{name: 'react-native-zeroconf', kind: 'added', before: null, after: ['0.17.2']},
+				],
+			},
+		})
+		assert.equal(
+			section(markdown),
+			[
+				'### Native changes',
+				'Needs a new native build, not a JS reload. Check Info.plist, entitlements and the privacy manifest by hand.',
+				'',
+				'- **App config and plugins:** `app.config.ts`, `plugins/with-custom-symbols.ts`',
+				'- **Native module code:** `modules/audio-route/ios/AudioRouteModule.swift`',
+				'- **Dependencies that likely ship native code:** expo-audio 1.0.0 → 1.1.0, react-native-zeroconf added 0.17.2',
+			].join('\n'),
+		)
+	})
+
+	it('leaves out a kind with no changes', () => {
+		let markdown = renderComment({
+			...base,
+			nativeChanges: {config: ['app.config.ts'], code: [], packages: []},
+		})
+		assert.doesNotMatch(markdown, /Native module code|Dependencies that likely/u)
+	})
+
+	it('shows ten files at most, then a count', () => {
+		let code = Array.from(
+			{length: 13},
+			(_, i) => `modules/m/ios/F${String(i).padStart(2, '0')}.swift`,
+		)
+		let markdown = renderComment({...base, nativeChanges: {config: [], code, packages: []}})
+		assert.match(markdown, /F09\.swift`, and 3 more$/u)
+		assert.doesNotMatch(markdown, /F10/u)
+	})
+
+	it('leaves the section out when nothing native changed', () => {
+		assert.doesNotMatch(renderComment({...base, nativeChanges: null}), /Native changes/u)
+		assert.doesNotMatch(renderComment(base), /Native changes/u)
+	})
+
+	it('keeps the section when the full tables are dropped', () => {
+		let markdown = renderComment(
+			{...base, nativeChanges: {config: ['app.config.ts'], code: [], packages: []}},
+			10,
+		)
+		assert.match(markdown, /### Native changes/u)
+	})
+})
