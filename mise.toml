@@ -176,7 +176,7 @@ usage = '''
   arg "<sim_udid>" help="The simulator to build for"
 '''
 run = '''
-  xcrun simctl list devices booted --json | jq -r --arg name "${usage_sim_udid?}" '[.devices[][] | select(.name == $name)][0].udid // empty'
+  xcrun simctl list devices booted --json | jq --raw-output --exit-status --arg name "${usage_sim_udid?}" '[.devices[][] | select(.name == $name)][0].udid // empty'
 '''
 
 [tasks."device:deploy"]
