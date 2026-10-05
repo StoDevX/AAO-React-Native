@@ -115,7 +115,13 @@ jobs:
           newest_status=${newest#* }
           if [ -n "$newest_id" ]; then
             if [ "$newest_status" != "completed" ]; then
-              gh run watch "$newest_id" --repo "$GITHUB_REPOSITORY" --exit-status || true
+              echo "Waiting for run $newest_id to finish."
+              # Not `gh run watch`: without a terminal it reprints the whole
+              # run view every few seconds, hundreds of lines. The step's
+              # timeout bounds this loop.
+              until [ "$(gh run view "$newest_id" --repo "$GITHUB_REPOSITORY" --json status --jq .status 2>/dev/null)" = completed ]; do
+                sleep 10
+              done
             fi
             if gh run download "$newest_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ 2>/dev/null; then
               exit 0
