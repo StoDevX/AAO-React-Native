@@ -252,7 +252,7 @@ run = '''
 if test -n "${GH_TOKEN:-}${GITHUB_TOKEN:-}"; then
   zizmor --no-progress .github/workflows
 else
-  env -u GH_TOKEN -u GITHUB_TOKEN zizmor --offline --no-progress .github/workflows
+  zizmor --offline --no-progress .github/workflows
 fi
 '''
 
