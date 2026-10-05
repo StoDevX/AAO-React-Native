@@ -19,7 +19,7 @@ export default function StudentWorkPostingsPage(): React.ReactNode {
 		level?: string
 		term?: string
 	}>()
-	let {data: areas = NO_AREAS} = useQuery(studentWorkAreasOptions)
+	let {data: areas = NO_AREAS, isSuccess: areasLoaded} = useQuery(studentWorkAreasOptions)
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
@@ -34,7 +34,11 @@ export default function StudentWorkPostingsPage(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 			<SearchBar onChangeText={setQuery} value={query} />
-			<PostingsList initialChosen={initialChosen} searchQuery={searchQuery} />
+			<PostingsList
+				initialChosen={initialChosen}
+				key={areasLoaded ? 'areas-loaded' : 'areas-loading'}
+				searchQuery={searchQuery}
+			/>
 		</>
 	)
 }
