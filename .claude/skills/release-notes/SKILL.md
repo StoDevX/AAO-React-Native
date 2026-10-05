@@ -89,6 +89,31 @@ Read each referenced PR's description, and its diff wherever the description
 and the changeset leave unclear what a user sees. A PR you cannot read gets an
 `uncertain` coverage entry.
 
+Most of the range's commits sit on PR branches, and its messages often say
+more than the PR descriptions. Walk the first-parent merges oldest first and
+give each commit to the first one that brings it in:
+
+```bash
+git log --first-parent --reverse --format=%H <prev>..<tag> | while read m; do
+	echo "M $m $(git show -s --format=%s "$m" | grep -oE '#[0-9]+' | head -1)"
+	git rev-parse -q --verify "$m^2" >/dev/null && git rev-list --reverse "$m^1..$m^2" | sed 's/^/C /'
+done
+```
+
+That misattributes stacked PRs, which merge into another PR's branch instead
+of the base:
+
+- A "Merge pull request #N" commit inside a branch marks a stacked PR; the
+  commits it merged belong to #N, not to the PR that carried the branch.
+- When one PR branched from another's unmerged branch, the earlier PR's
+  commits arrive with whichever merged first. Credit them to the PR whose
+  title they match.
+- A PR named in the existing release body but in no log subject was stacked
+  too. Find its commits by its title.
+
+Count the log with `grep -c .`; `wc -l` misses the last line, which has no
+newline.
+
 ## 6. Answer
 
 Write the answer to `release.json` in the scratchpad:
@@ -122,7 +147,12 @@ Write the answer to `release.json` in the scratchpad:
    already has that prefix. A title that starts with the tag and other
    punctuation (`v1.2.3 - Feature`) keeps only the description.
 2. **Coverage.** One entry for each line of the git log, in its order, each
-   with a non-empty reason.
+   with a non-empty reason. On a large range, assess by PR first, then by
+   commit. Within a PR the notes include, tests, fixtures, merges, tooling
+   and internal refactors are `omitted`. Then read every `included` commit
+   against the notes, and mark it `omitted`, saying why, when no bullet
+   describes what it changes. A first pass on commit subjects alone gets
+   about one in ten wrong.
 3. **Links.** Request every URL with `curl -sI`, and fix or drop any that
    404s.
 
