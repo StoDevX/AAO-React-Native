@@ -5,7 +5,8 @@
 set -uo pipefail
 
 body_file=$1
-marker='<!-- aao-pr-report -->'
+marker=$(node -p "require('./scripts/pr-report/render.mjs').MARKER") \
+	|| { echo "::warning::Could not read the report marker."; exit 0; }
 comments="repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments"
 
 existing=$(gh api --paginate "$comments" \

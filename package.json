@@ -142,7 +142,6 @@
     "oxlint": "1.86.0",
     "oxlint-tsgolint": "7.0.2003",
     "sf-symbols-typescript": "2.2.0",
-    "source-map-explorer": "2.5.3",
     "typescript": "7.0.2",
     "xcode": "3.0.1"
   },

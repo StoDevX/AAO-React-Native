@@ -42,6 +42,23 @@ function fullTable(summary, heading, changes) {
 	]
 }
 
+/** A table of the groups that changed most, or nothing when none changed. */
+function moversTable(heading, changes) {
+	let movers = changes
+		.filter((change) => change.delta !== 0)
+		.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
+		.slice(0, TOP_MOVERS)
+	if (movers.length === 0) {
+		return []
+	}
+	return [
+		`| ${heading} | Before | After | Δ |`,
+		'| --- | --- | --- | --- |',
+		...movers.map((change) => row(change.name, change)),
+		'',
+	]
+}
+
 /**
  * Renders the comment. `head` is null when this commit could not be
  * measured; `diff` is null when there is no baseline, and `baselineNote`
@@ -68,25 +85,13 @@ export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_
 	// The tables below are unminified JS source bytes from the source map,
 	// not the Hermes bytecode the headline and gate measure.
 	lines.push(
-		'Package and feature sizes are unminified JS from the source map; the gate uses bytecode.',
+		'Package and feature sizes are unminified JS from the source map, without its unmapped bytes and line endings; the gate uses bytecode.',
 		'',
+		// Features break down `(app)`, so they get their own table: mixed in
+		// with the packages, one change would take two of the slots.
+		...moversTable('Changed most', diff.byPackage),
+		...moversTable('Features changed most', diff.byFeature),
 	)
-
-	let movers = [
-		...diff.byPackage.map((change) => ({label: change.name, change})),
-		...diff.byFeature.map((change) => ({label: `feature: ${change.name}`, change})),
-	]
-		.filter(({change}) => change.delta !== 0)
-		.sort((a, b) => Math.abs(b.change.delta) - Math.abs(a.change.delta))
-		.slice(0, TOP_MOVERS)
-	if (movers.length > 0) {
-		lines.push(
-			'| Changed most | Before | After | Δ |',
-			'| --- | --- | --- | --- |',
-			...movers.map(({label, change}) => row(label, change)),
-			'',
-		)
-	}
 
 	let tables = [
 		...fullTable('All packages', 'Package', diff.byPackage),

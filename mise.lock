@@ -96,6 +96,11 @@ aube = { path = ".mise/locks/npm-changesets-cli/3.0.3", digest = "sha256:424e16c
 backend = "npm:@changesets/cli"
 specifiers = ["3.0.3"]
 
+[[tools."npm:source-map-explorer"]]
+version = "2.5.3"
+backend = "npm:source-map-explorer"
+specifiers = ["2.5.3"]
+
 [[tools.oxipng]]
 version = "10.2.1"
 backend = "aqua:oxipng/oxipng"

@@ -6,9 +6,8 @@ import {describe, it} from 'node:test'
 
 import {buildPrReport, readReport} from './report.mjs'
 
-let report = (hermesBytes, {version = 2, baseSha = 'abcdef1234'} = {}) => ({
+let report = (hermesBytes, {version = 1, baseSha = 'abcdef1234'} = {}) => ({
 	version,
-	sha: 'x',
 	baseSha,
 	js: {hermesBytes, byPackage: {a: 1}, byFeature: {}},
 })
@@ -34,7 +33,7 @@ describe('readReport', () => {
 
 	it('returns null for a current-version report missing js', () => {
 		let path = join(dir, 'no-js.json')
-		writeFileSync(path, JSON.stringify({version: 2, sha: 'x', baseSha: null}))
+		writeFileSync(path, JSON.stringify({version: 1, baseSha: null}))
 		assert.equal(readReport(path), null)
 	})
 
@@ -43,8 +42,7 @@ describe('readReport', () => {
 		writeFileSync(
 			path,
 			JSON.stringify({
-				version: 2,
-				sha: 'x',
+				version: 1,
 				baseSha: null,
 				js: {hermesBytes: 'x', byPackage: {}, byFeature: {}},
 			}),
@@ -54,8 +52,8 @@ describe('readReport', () => {
 
 	it('reads an older-version report without checking its js shape', () => {
 		let path = join(dir, 'old.json')
-		writeFileSync(path, JSON.stringify({version: 1, sha: 'x', js: {minifiedBytes: 1}}))
-		assert.deepEqual(readReport(path), {version: 1, sha: 'x', js: {minifiedBytes: 1}})
+		writeFileSync(path, JSON.stringify({version: 0, js: {minifiedBytes: 1}}))
+		assert.deepEqual(readReport(path), {version: 0, js: {minifiedBytes: 1}})
 	})
 })
 
@@ -171,7 +169,7 @@ describe('buildPrReport', () => {
 		assert.doesNotMatch(result.comment, /No master report at or before/u)
 	})
 
-	it('diffs against an older baseline and explains the gap, still failing on growth', () => {
+	it('diffs against an older baseline and explains the gap, but does not gate on it', () => {
 		let result = buildPrReport({
 			head: report(300, {baseSha: 'abcdef1234'}),
 			baseline: report(100),
@@ -180,7 +178,7 @@ describe('buildPrReport', () => {
 			labels: [],
 			limit: 100,
 		})
-		assert.equal(result.pass, false)
+		assert.equal(result.pass, true)
 		assert.match(
 			result.comment,
 			/Compared with master at `older56`, older than this PR's base `abcdef1`: growth merged in between is counted here\./u,
@@ -193,8 +191,7 @@ describe('buildPrReport', () => {
 			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
 		)
 		let bigReport = (hermesBytes) => ({
-			version: 2,
-			sha: 'x',
+			version: 1,
 			baseSha: 'abcdef1234',
 			js: {hermesBytes, byPackage: huge, byFeature: {}},
 		})

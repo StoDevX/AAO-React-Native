@@ -27,8 +27,7 @@ describe('diffGroups', () => {
 describe('diffReports', () => {
 	it('diffs the hermes total and both groupings', () => {
 		let report = (hermesBytes) => ({
-			version: 2,
-			sha: 'x',
+			version: 1,
 			baseSha: null,
 			js: {hermesBytes, byPackage: {a: hermesBytes}, byFeature: {}},
 		})

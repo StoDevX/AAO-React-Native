@@ -7,7 +7,7 @@ import {COMMENT_LIMIT, MARKER, renderComment} from './render.mjs'
 let KiB = 1024
 let MiB = 1024 * KiB
 
-let report = (js) => ({version: 2, sha: 'x', baseSha: null, js})
+let report = (js) => ({version: 1, baseSha: null, js})
 
 let baseline = report({
 	hermesBytes: 4 * MiB,
@@ -38,14 +38,17 @@ describe('renderComment', () => {
 				'',
 				'✅ Within the 50.0 KiB limit.',
 				'',
-				'Package and feature sizes are unminified JS from the source map; the gate uses bytecode.',
+				'Package and feature sizes are unminified JS from the source map, without its unmapped bytes and line endings; the gate uses bytecode.',
 				'',
 				'| Changed most | Before | After | Δ |',
 				'| --- | --- | --- | --- |',
 				'| date-fns | 80.0 KiB | 91.0 KiB | +11.0 KiB |',
 				'| lodash | 10.0 KiB | — | -10.0 KiB |',
 				'| zod | — | 2.0 KiB | +2.0 KiB |',
-				'| feature: dining | 20.0 KiB | 21.0 KiB | +1.0 KiB |',
+				'',
+				'| Features changed most | Before | After | Δ |',
+				'| --- | --- | --- | --- |',
+				'| dining | 20.0 KiB | 21.0 KiB | +1.0 KiB |',
 				'',
 				'<details><summary>All packages</summary>',
 				'',

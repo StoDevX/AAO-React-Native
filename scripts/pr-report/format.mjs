@@ -8,12 +8,14 @@ const UNITS = ['B', 'KiB', 'MiB', 'GiB']
 export function formatBytes(bytes) {
 	let size = Math.abs(bytes)
 	let unit = 0
-	while (size >= 1024 && unit < UNITS.length - 1) {
+	let text = size.toFixed(0)
+	// Round before picking the unit, so 1048575 B reads `1.00 MiB`, not `1024.0 KiB`.
+	while (Number(text) >= 1024 && unit < UNITS.length - 1) {
 		size /= 1024
 		unit += 1
+		text = size.toFixed(unit === 1 ? 1 : 2)
 	}
-	let digits = unit === 0 ? 0 : unit === 1 ? 1 : 2
-	return `${bytes < 0 ? '-' : ''}${size.toFixed(digits)} ${UNITS[unit]}`
+	return `${bytes < 0 ? '-' : ''}${text} ${UNITS[unit]}`
 }
 
 /** Formats a change with its sign: `+12.3 KiB`, `-512 B`, `0 B`. */

@@ -7,6 +7,7 @@ zizmor = "1.30.1"
 ruby = "3.4.11"
 "gem:bundler" = "4.0.21"
 "npm:@changesets/cli" = "3.0.3"
+"npm:source-map-explorer" = "2.5.3"
 
 # Taps and types on a simulator, which simctl cannot do -- see the
 # run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
@@ -482,7 +483,7 @@ case "$(uname -s)" in
   *) bin="$hermes/hermesc/linux64-bin/hermesc" ;;
 esac
 "$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log" || { cat "$out/hermesc.log" >&2; exit 1; }
-source-map-explorer "$out/main.jsbundle" "$out/main.jsbundle.map" --json --no-border-checks > "$out/explorer.json"
+source-map-explorer "$out/main.jsbundle" "$out/main.jsbundle.map" --json --no-border-checks --no-root > "$out/explorer.json"
 node scripts/pr-report/js-size.mjs "$out"
 """
 

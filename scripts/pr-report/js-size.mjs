@@ -9,7 +9,7 @@
 import {readFileSync, statSync, writeFileSync} from 'node:fs'
 
 /** Bumped whenever the report's shape changes, so an older baseline is not misread. */
-export const REPORT_VERSION = 2
+export const REPORT_VERSION = 1
 
 const NODE_MODULES = '/node_modules/'
 
@@ -38,17 +38,31 @@ export function groupOf(path) {
 	return '(app)'
 }
 
+/**
+ * source-map-explorer's buckets for bytes no mapping covers: the gaps between
+ * mappings (mostly leading indentation) and every line ending. They belong
+ * to no package, and spread across the whole bundle, so counting them
+ * would charge a package's indentation to `(runtime)`.
+ */
+const UNATTRIBUTED = new Set(['[unmapped]', '[EOLs]'])
+
 /** Names the `source/features/<name>` directory a file is in, or null. */
 export function featureOf(path) {
 	let feature = path.match(/^\/source\/features\/([^/]+)\//u)
 	return feature ? feature[1] : null
 }
 
-/** Sums source-map-explorer's per-file bytes by group, and app code by feature. */
+/**
+ * Sums source-map-explorer's per-file bytes by group, and app code by
+ * feature. Unmapped bytes and line endings are left out.
+ */
 export function groupBundle(files) {
 	let byPackage = {}
 	let byFeature = {}
 	for (let [path, {size}] of Object.entries(files)) {
+		if (UNATTRIBUTED.has(path)) {
+			continue
+		}
 		let group = groupOf(path)
 		byPackage[group] = (byPackage[group] ?? 0) + size
 		if (group === '(app)') {
@@ -60,11 +74,10 @@ export function groupBundle(files) {
 }
 
 /** Builds `size-report.json` from the measured totals and source-map-explorer's output. */
-export function buildReport({sha, baseSha, hermesBytes, explorer}) {
+export function buildReport({baseSha, hermesBytes, explorer}) {
 	let {byPackage, byFeature} = groupBundle(explorer.results[0].files)
 	return {
 		version: REPORT_VERSION,
-		sha,
 		baseSha,
 		js: {hermesBytes, byPackage, byFeature},
 	}
@@ -72,16 +85,13 @@ export function buildReport({sha, baseSha, hermesBytes, explorer}) {
 
 /**
  * Reads the bytecode and explorer output from `dir`, and writes
- * `dir/size-report.json`. The commit comes from SIZE_REPORT_SHA, which CI
- * sets; a run by hand records `local`. `baseSha` is the master commit this
- * one was built against (SIZE_REPORT_BASE_SHA), or null on a push to master.
+ * `dir/size-report.json`. `baseSha` is the master commit this one was built
+ * against (SIZE_REPORT_BASE_SHA), or null on a push to master.
  */
 function main() {
 	let dir = process.argv[2] ?? 'size-report'
-	let sha = process.env.SIZE_REPORT_SHA || 'local'
 	let baseSha = process.env.SIZE_REPORT_BASE_SHA || null
 	let report = buildReport({
-		sha,
 		baseSha,
 		hermesBytes: statSync(`${dir}/main.hbc`).size,
 		explorer: JSON.parse(readFileSync(`${dir}/explorer.json`, 'utf8')),

@@ -13,7 +13,9 @@ concurrency:
   # A push gets its own group (by commit), so a queued master run is never
   # cancelled by a later push landing while it waits; a pull request shares
   # one group per ref, so a stale run for the same PR is replaced.
-  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
+  # A label change gets a group of its own too, so labeling a pull request
+  # does not cancel the run measuring its latest push.
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{ contains(fromJSON('["labeled", "unlabeled"]'), github.event.action) && '-labels' || '' }}
   # Never cancel a push to master: a cancelled run uploads no report, and
   # every later PR needs one for each master commit to compare against.
   cancel-in-progress: ${{ github.event_name != 'push' }}
@@ -26,8 +28,9 @@ jobs:
     name: JS size
     runs-on: ubuntu-26.04
     # The merge queue has nothing to compare and no labels to read; the PR
-    # passed the gate already.
-    if: github.event_name != 'merge_group'
+    # passed the gate already. A label change measures nothing new: `report`
+    # reuses the report from the PR's last push.
+    if: github.event_name != 'merge_group' && !contains(fromJSON('["labeled", "unlabeled"]'), github.event.action)
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -44,10 +47,6 @@ jobs:
         run: echo "SIZE_REPORT_BASE_SHA=$(git rev-parse HEAD^1)" >> "$GITHUB_ENV"
       - name: Measure the production bundle
         run: mise run size-report
-        env:
-          # The commit actually measured: on a pull_request this is the
-          # merge commit GitHub built for the run, not the PR's head.
-          SIZE_REPORT_SHA: ${{ github.sha }}
       - name: Upload the size report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -94,6 +93,26 @@ jobs:
           name: size-report
           path: head/
 
+      - name: Download the size report from this PR's last push
+        # A label change skips js-size, so the report to compare comes from
+        # the newest earlier run on this head commit that uploaded one.
+        if: github.event_name == 'pull_request' && needs.js-size.result == 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p head/
+          for run_id in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+            --event pull_request --commit "$HEAD_SHA" --limit 20 --json databaseId \
+            --jq '.[].databaseId'); do
+            [ "$run_id" = "$RUN_ID" ] && continue
+            if gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ 2>/dev/null; then
+              exit 0
+            fi
+          done
+          echo "No earlier size report for $HEAD_SHA."
+
       - name: Find and download master's baseline report
         # Stacked PRs (base isn't master) have nothing to compare with, so
         # skip the lookup entirely; report.mjs renders that explanation.
@@ -130,6 +149,8 @@ jobs:
         run: |
           printf '%s' "$LABELS" > labels.json
           status=0
+          # Exit code 2 is a failed gate; any other non-zero is a crash,
+          # which fails this step before anything is posted.
           node scripts/pr-report/report.mjs \
             --head head/size-report.json \
             --baseline baseline/size-report.json \
@@ -138,6 +159,9 @@ jobs:
             --labels labels.json \
             --comment-out comment.md \
             --summary-out summary.md || status=$?
+          if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then
+            exit "$status"
+          fi
           cat summary.md >> "$GITHUB_STEP_SUMMARY"
           echo "status=$status" >> "$GITHUB_OUTPUT"
 

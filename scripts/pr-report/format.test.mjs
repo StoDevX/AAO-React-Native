@@ -13,6 +13,11 @@ describe('formatBytes', () => {
 	it('keeps the sign of a negative figure', () => {
 		assert.equal(formatBytes(-2048), '-2.0 KiB')
 	})
+
+	it('rounds before picking the unit', () => {
+		assert.equal(formatBytes(1048575), '1.00 MiB')
+		assert.equal(formatBytes(1023.6), '1.0 KiB')
+	})
 })
 
 describe('formatDelta', () => {

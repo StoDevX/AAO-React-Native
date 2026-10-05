@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Build the pull request report from this commit's size report and
- * master's, write its markdown, and exit non-zero when the size gate fails.
+ * master's, write its markdown, and exit with GATE_FAILED_EXIT_CODE when the
+ * size gate fails.
  */
 
 import {readFileSync, writeFileSync} from 'node:fs'
@@ -11,6 +12,12 @@ import {diffReports} from './diff.mjs'
 import {decideGate} from './gate.mjs'
 import {REPORT_VERSION} from './js-size.mjs'
 import {renderComment} from './render.mjs'
+
+/**
+ * Exit code for a failed size gate. Any other non-zero code is a crash, which
+ * node reports as 1, so the workflow can tell the two apart.
+ */
+export const GATE_FAILED_EXIT_CODE = 2
 
 /**
  * Reads a size report, or returns null when there is none to read. A
@@ -86,7 +93,12 @@ export function buildPrReport({head, baseline, comparedSha, baseRef, labels, lim
 		}
 	}
 
-	let gate = decideGate({hermes: diff?.hermes ?? null, labels, limit})
+	// A fallback baseline counts growth other PRs merged in between, which
+	// this PR did not add, so it is shown but never gates.
+	let gate =
+		diff !== null && comparedSha !== head.baseSha
+			? {pass: true, message: 'Compared with an older master commit, so the size gate passes.'}
+			: decideGate({hermes: diff?.hermes ?? null, labels, limit})
 	let full = {head, diff, baselineNote, gate}
 	return {comment: renderComment(full), summary: renderComment(full, Infinity), pass: gate.pass}
 }
@@ -113,7 +125,7 @@ function main() {
 	})
 	writeFileSync(values['comment-out'], comment)
 	writeFileSync(values['summary-out'], summary)
-	process.exitCode = pass ? 0 : 1
+	process.exitCode = pass ? 0 : GATE_FAILED_EXIT_CODE
 }
 
 if (import.meta.main) {

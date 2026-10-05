@@ -30,9 +30,7 @@ describe('groupOf', () => {
 
 	it('counts the bundler entries as runtime', () => {
 		for (let path of [
-			'[unmapped]',
 			'[no source]',
-			'[EOLs]',
 			'[sourceMappingURL]',
 			'../external-require',
 			'../assets-registry',
@@ -66,7 +64,7 @@ describe('featureOf', () => {
 })
 
 describe('groupBundle', () => {
-	it('sums bytes per group, and per feature for app code only', () => {
+	it('sums bytes per group, and per feature for app code only, leaving out unmapped bytes and line endings', () => {
 		let files = {
 			'/node_modules/.pnpm/a@1/node_modules/a/x.js': {size: 10},
 			'/node_modules/.pnpm/a@1/node_modules/a/y.js': {size: 5},
@@ -76,20 +74,21 @@ describe('groupBundle', () => {
 			'/app/index.tsx': {size: 1},
 			'/modules/colors/index.ts': {size: 7},
 			'[unmapped]': {size: 100},
+			'[EOLs]': {size: 50},
+			'[sourceMappingURL]': {size: 6},
 		}
 		assert.deepEqual(groupBundle(files), {
-			byPackage: {a: 15, '(app)': 10, 'modules/colors': 7, '(runtime)': 100},
+			byPackage: {a: 15, '(app)': 10, 'modules/colors': 7, '(runtime)': 6},
 			byFeature: {dining: 7, '(other)': 3},
 		})
 	})
 })
 
 describe('buildReport', () => {
-	it('wraps the groups with the version, commit, base commit and totals', () => {
+	it('wraps the groups with the version, base commit and totals', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
-		assert.deepEqual(buildReport({sha: 'abc', baseSha: 'def', hermesBytes: 90, explorer}), {
-			version: 2,
-			sha: 'abc',
+		assert.deepEqual(buildReport({baseSha: 'def', hermesBytes: 90, explorer}), {
+			version: 1,
 			baseSha: 'def',
 			js: {
 				hermesBytes: 90,
@@ -101,7 +100,7 @@ describe('buildReport', () => {
 
 	it('records no base commit as null, for a push to master', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
-		let report = buildReport({sha: 'abc', baseSha: null, hermesBytes: 90, explorer})
+		let report = buildReport({baseSha: null, hermesBytes: 90, explorer})
 		assert.equal(report.baseSha, null)
 	})
 })
