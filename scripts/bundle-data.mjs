@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
-import {isNotJunk} from './junk.mjs'
 import path from 'node:path'
+import {isDataEntry} from './data-entries.mjs'
+import {loadScheduleData} from './schedule-data.ts'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
 import {buildFaqs} from './build-faqs.mjs'
@@ -11,11 +12,7 @@ import {bundleImages} from './bundle-images.mjs'
 const isDir = (pth) => fs.statSync(pth).isDirectory()
 const isFile = (pth) => fs.statSync(pth).isFile()
 
-const readDir = (pth) =>
-	fs
-		.readdirSync(pth)
-		.filter(isNotJunk)
-		.filter((entry) => !entry.startsWith('_'))
+const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 
 const findDirsIn = (pth) => readDir(pth).filter((entry) => isDir(path.join(pth, entry)))
 
@@ -46,15 +43,41 @@ const step = (label, work) => {
 	console.timeEnd(label)
 }
 
+// Check every schedule input before creating or writing any generated output.
+const hasSchedules =
+	fs.existsSync(path.join(fromDir, 'breaks.yaml')) ||
+	fs.existsSync(path.join(fromDir, 'building-hours'))
+const schedules = hasSchedules ? loadScheduleData(fromDir) : undefined
+
 fs.mkdirSync(toDir, {recursive: true})
+
+if (schedules) {
+	let hours = schedules.spaces.map(({data}) => data)
+	let compatibleHours = hours.map(({breakSchedule: _breakSchedule, ...fields}) => fields)
+	let outputs = [
+		['building-hours-authored.json', hours],
+		['building-hours.json', compatibleHours],
+		['breaks.json', schedules.calendar],
+	]
+	for (let [filename, data] of outputs) {
+		let output = path.join(toDir, filename)
+		step(`bundle-schedules ${output}`, () =>
+			fs.writeFileSync(output, JSON.stringify({data}) + '\n'),
+		)
+	}
+}
 
 // Bundle each directory of yaml files into one big json file
 const dirs = findDirsIn(fromDir)
-dirs.forEach((dirname) => {
-	let input = path.join(fromDir, dirname)
-	let output = path.join(toDir, dirname) + '.json'
-	step(`bundle-data-dir ${input} ${output}`, () => bundleDataDir({fromDir: input, toFile: output}))
-})
+dirs
+	.filter((dirname) => dirname !== 'building-hours')
+	.forEach((dirname) => {
+		let input = path.join(fromDir, dirname)
+		let output = path.join(toDir, dirname) + '.json'
+		step(`bundle-data-dir ${input} ${output}`, () =>
+			bundleDataDir({fromDir: input, toFile: output}),
+		)
+	})
 
 // Convert these files into JSON equivalents
 const specialFiles = new Map([
@@ -62,7 +85,9 @@ const specialFiles = new Map([
 	['sources.yaml', buildSources],
 ])
 
-const files = findFilesIn(fromDir).filter((file) => !specialFiles.has(file))
+const files = findFilesIn(fromDir).filter(
+	(file) => !specialFiles.has(file) && file !== 'breaks.yaml',
+)
 files.forEach((file) => {
 	// Get the absolute paths to the input and output files
 	let input = path.join(fromDir, file)
@@ -97,5 +122,5 @@ step(`bundle-images images ${toDir}`, () => {
 })
 
 console.log(
-	`bundle-data: ${dirs.length} directories, ${files.length + built} files and ${images} images -> ${toDir}`,
+	`bundle-data: ${dirs.length} directories, ${files.length + built + (schedules ? 2 : 0)} files and ${images} images -> ${toDir}`,
 )

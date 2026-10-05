@@ -1,4 +1,4 @@
-import {readFileSync} from 'node:fs'
+import {readFileSync, readdirSync} from 'node:fs'
 import {join} from 'node:path'
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
@@ -13,6 +13,7 @@ import type {
 	BuildingType,
 	NamedBuildingScheduleType,
 } from '../source/features/building-hours/types.ts'
+import {isDataEntry} from './data-entries.mjs'
 import {SCHEMA_BASE} from './paths.mjs'
 import {validateSchedules} from './validate-schedules.ts'
 
@@ -155,4 +156,20 @@ export function parseScheduleData(
 		calendarInput.label,
 	)
 	return {calendar, spaces}
+}
+
+/** Retains the filename in both YAML syntax errors and validation errors. */
+function readInput(filename: string): ScheduleDataInput {
+	return {label: filename, data: load(readFileSync(filename, 'utf8'), {filename})}
+}
+
+/** Reads and validates the complete calendar and hours before generation starts. */
+export function loadScheduleData(fromDir: string): ScheduleData {
+	let hoursDir = join(fromDir, 'building-hours')
+	let files = readdirSync(hoursDir).filter(isDataEntry)
+	files.sort(new Intl.Collator(undefined, {numeric: true}).compare)
+	return parseScheduleData(
+		readInput(join(fromDir, 'breaks.yaml')),
+		files.map((file) => readInput(join(hoursDir, file))),
+	)
 }

@@ -7,7 +7,7 @@ import {isDataEntry} from './data-entries.mjs'
 import {parseArgs} from 'node:util'
 import {validate} from './validate.mjs'
 import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
-import {parseScheduleData} from './schedule-data.ts'
+import {loadScheduleData, parseScheduleData} from './schedule-data.ts'
 
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
@@ -37,10 +37,7 @@ const readSpaces = () =>
 // Break keys and references are meaningful only against the paired calendar.
 // Always check the pair when either scheduling input is selected.
 if (!args.data && args.schemaNames.some((name) => name === 'breaks' || name === 'building-hours')) {
-	parseScheduleData(
-		{label: 'breaks.yaml', data: readYaml(path.join(DATA_BASE, 'breaks.yaml'))},
-		readSpaces(),
-	)
+	loadScheduleData(DATA_BASE)
 }
 
 // allow either --data/--schema or automatic schema loading
