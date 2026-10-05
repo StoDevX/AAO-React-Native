@@ -130,6 +130,15 @@ jobs:
         run: |
           gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name]' > labels.json
 
+      - name: List the files the pull request changes
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename' \
+            | jq -R -s 'split("\n") | map(select(. != ""))' > files.json
+
       - name: Build the report
         id: build
         if: github.event_name == 'pull_request'
@@ -145,6 +154,7 @@ jobs:
             --compared-sha "${COMPARED_SHA:-}" \
             --base-ref "$BASE_REF" \
             --labels labels.json \
+            --files files.json \
             --comment-out comment.md \
             --summary-out summary.md || status=$?
           if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then

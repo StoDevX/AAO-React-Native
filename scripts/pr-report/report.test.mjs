@@ -97,6 +97,47 @@ describe('buildPrReport', () => {
 		assert.match(result.comment, /Changed most|All packages/u)
 	})
 
+	it('adds the native notice for changed files, with or without a baseline', () => {
+		let result = buildPrReport({
+			head: report(100),
+			baseline: null,
+			comparedSha: null,
+			baseRef: 'master',
+			labels: [],
+			files: ['app.config.ts', 'source/features/dining/store.ts'],
+		})
+		assert.match(result.comment, /### Native changes[^]*`app\.config\.ts`/u)
+		assert.doesNotMatch(result.comment, /dining/u)
+	})
+
+	it('adds the native notice for a bumped native dependency', () => {
+		let before = report(100)
+		let after = report(100)
+		before.deps.packages['expo-audio'] = ['1.0.0']
+		after.deps.packages['expo-audio'] = ['1.1.0']
+		let result = buildPrReport({
+			head: after,
+			baseline: before,
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			files: [],
+		})
+		assert.match(result.comment, /expo-audio 1\.0\.0 → 1\.1\.0/u)
+	})
+
+	it('leaves the native notice out when nothing native changed', () => {
+		let result = buildPrReport({
+			head: report(100),
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			files: ['data/ksto-schedule.yaml'],
+		})
+		assert.doesNotMatch(result.comment, /Native changes/u)
+	})
+
 	it('fails when this commit has no report', () => {
 		let result = buildPrReport({
 			head: null,
