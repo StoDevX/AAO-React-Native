@@ -272,7 +272,7 @@ run = "jest"
 [tasks."test:node"]
 description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "scripts/pr-report/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"' "modules/schedules/*.test.ts"'
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "scripts/pr-report/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts" "modules/schedules/*.test.ts"'
 
 # --- Data ---
 
