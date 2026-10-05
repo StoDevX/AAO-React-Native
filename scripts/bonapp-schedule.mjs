@@ -17,10 +17,10 @@ const DAY_BY_NAME = {Mon: 'Mo', Tue: 'Tu', Wed: 'We', Thu: 'Th', Fri: 'Fr', Sat:
 /** Matches the data schema's time definition in data/_schemas/_defs.yaml. */
 const TIME = /^1?\d:[0-5]?\d[ap]m$/u
 
-// The weekly list and the "open now" list above it share
-// `dotted-leader-container`; only the weekly one is a `day-part`. Keying on
-// that class is what keeps today's single-line hours out of the result -- they
-// name no day, so taking them would invent hours for the whole week.
+// Special hours and weekly hours share row classes. Only the list directly
+// under Weekly Schedule defines recurring hours; dated rows elsewhere on the
+// page must not become the normal weekly schedule.
+const WEEKLY_LIST = /<p\b[^>]*>\s*Weekly Schedule\s*<\/p>\s*<ul\b[^>]*>(.*?)<\/ul>/su
 const ROW = /<li class=['"][^'"]*\bday-part\b[^'"]*['"]>(.*?)<\/li>/gsu
 const SPAN = /<span class=['"][^'"]*['"]>(.*?)<\/span>/gsu
 
@@ -54,8 +54,9 @@ export function parseWeeklySchedule(html) {
 		throw new Error('bonapp: no Weekly Schedule section in the page')
 	}
 
+	let weekly = WEEKLY_LIST.exec(html)?.[1] ?? ''
 	let rows = []
-	for (let [, inner] of html.matchAll(ROW)) {
+	for (let [, inner] of weekly.matchAll(ROW)) {
 		let spans = [...inner.matchAll(SPAN)].map(([, span]) => htmlText(span))
 		let [daypart, when] = spans.length >= 2 ? spans : [htmlText(inner), '']
 		let match = /^(.+?),\s*(\S+\s*[ap]m)\s*-\s*(\S+\s*[ap]m)$/iu.exec(when)

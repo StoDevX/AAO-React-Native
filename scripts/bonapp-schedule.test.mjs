@@ -53,6 +53,25 @@ test("ignores the today's-hours list, which shares a class but is not a day-part
 	assert.ok(!rows.some((row) => row.daypart === ''))
 })
 
+test('ignores dated special hours before and after the weekly list', () => {
+	let weekly = fixture('stav-hall')
+	let special =
+		"<div class='cafe-hours-special'><p class='current-status'>SPECIAL HOURS</p>" +
+		"<ul class='list-unstyled'><li class='day-part dotted-leader-container'>" +
+		"<span class='dotted-leader-content pull-left'>Dinner&nbsp;</span>" +
+		"<span class='dotted-leader-content pull-right'>&nbsp;October 9, 4:30 pm - 6:00 pm</span></li>" +
+		"<li class='day-part'><span style='text-transform: none;'>Have a well-deserved break!</span></li></ul></div>"
+	assert.deepEqual(parseWeeklySchedule(special + weekly + special), parseWeeklySchedule(weekly))
+})
+
+test('rejects dated rows inside the weekly list rather than silently skipping them', () => {
+	let html =
+		"<p>Weekly Schedule</p><ul><li class='day-part'>" +
+		"<span class='pull-left'>Dinner</span>" +
+		"<span class='pull-right'>October 9, 4:30 pm - 6:00 pm</span></li></ul>"
+	assert.throws(() => parseWeeklySchedule(html), /unknown day "October 9"/u)
+})
+
 test('expands a Mon-Sun range across the whole week', () => {
 	let rows = parseWeeklySchedule(fixture('the-cave'))
 	assert.deepEqual(rows, [
@@ -98,8 +117,8 @@ test('throws when the heading is present but no rows parse', () => {
 test('throws on a time the data schema would reject', () => {
 	let html =
 		"<p class='current-status'>Weekly Schedule</p>" +
-		"<li class='day-part'><span class='pull-left'>Lunch</span>" +
-		"<span class='pull-right'>Mon, 25:99 xm - 1:30 pm</span></li>"
+		"<ul><li class='day-part'><span class='pull-left'>Lunch</span>" +
+		"<span class='pull-right'>Mon, 25:99 xm - 1:30 pm</span></li></ul>"
 	assert.throws(() => parseWeeklySchedule(html), /25:99 xm/u)
 })
 
