@@ -15,7 +15,7 @@
     "@frogpond/touchable": "workspace:*"
   },
   "peerDependencies": {
-    "expo-symbols": "^57.0.2",
+    "expo-symbols": "^57.0.3",
     "react": "catalog:",
     "react-native": "catalog:"
   }
