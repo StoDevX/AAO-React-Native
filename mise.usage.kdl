@@ -1,6 +1,6 @@
 flagset "chaos" {
     flag "-s --simulator <sim_name>" help="The simulator name to build to" help_heading="Simulator Selection" {
-        conflicts "--simulator-udid"
+        conflicts "--udid"
         complete run=#"xcrun simctl list devices booted --json | jq -r '[.devices[][]] | map("\(.name)") | .[] // empty'"#
     }
     flag "-u --udid <sim_udid>" help="The simulator UDID to build to" help_heading="Simulator Selection" {
