@@ -90,7 +90,9 @@ function main() {
 		baseSha,
 		hermesBytes: statSync(`${dir}/main.hbc`).size,
 		explorer: JSON.parse(readFileSync(`${dir}/explorer.json`, 'utf8')),
-		// Relative to the repo root, where the size-report task runs.
+		// Relative to the repo root, where the size-report task runs. `.pnpm`
+		// is pnpm's isolated layout, which this repo uses; a hoisted linker
+		// would have no such directory.
 		deps: {
 			nodeModulesBytes: nodeModulesBytes('node_modules/.pnpm'),
 			packages: parsePackages(readFileSync('pnpm-lock.yaml', 'utf8')),

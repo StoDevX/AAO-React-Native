@@ -68,6 +68,14 @@ describe('readReport', () => {
 		assert.equal(readReport(path), null)
 	})
 
+	it('returns null for a current-version report whose package versions are not lists of strings', () => {
+		for (let packages of [{a: '1.0.0'}, {a: [1]}, ['a']]) {
+			let path = join(dir, 'bad-packages.json')
+			writeFileSync(path, JSON.stringify({...report(5), deps: {nodeModulesBytes: 1, packages}}))
+			assert.equal(readReport(path), null)
+		}
+	})
+
 	it('reads an older-version report without checking its js shape', () => {
 		let path = join(dir, 'old.json')
 		writeFileSync(path, JSON.stringify({version: 0, js: {minifiedBytes: 1}}))

@@ -52,7 +52,11 @@ export function readReport(path) {
 			deps === null ||
 			!Number.isFinite(deps.nodeModulesBytes) ||
 			typeof deps.packages !== 'object' ||
-			deps.packages === null
+			deps.packages === null ||
+			Array.isArray(deps.packages) ||
+			!Object.values(deps.packages).every(
+				(versions) => Array.isArray(versions) && versions.every((v) => typeof v === 'string'),
+			)
 		) {
 			return null
 		}

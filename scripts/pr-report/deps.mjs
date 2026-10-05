@@ -6,10 +6,27 @@ import {lstatSync, readdirSync} from 'node:fs'
 import {join} from 'node:path'
 
 import {load} from 'js-yaml'
+import semver from 'semver'
+
+/**
+ * Orders versions by semver. A version that is not one (a tarball URL) goes
+ * after those that are, by text, since semver cannot compare it.
+ */
+function compareVersions(a, b) {
+	let aValid = semver.valid(a) !== null
+	let bValid = semver.valid(b) !== null
+	if (aValid && bValid) {
+		return semver.compare(a, b)
+	}
+	if (aValid !== bValid) {
+		return aValid ? -1 : 1
+	}
+	return a.localeCompare(b)
+}
 
 /**
  * Lists each package in a pnpm lockfile's `packages:` section with the
- * versions installed, sorted. A key is `name@version`; a scoped name starts
+ * versions installed, in semver order. A key is `name@version`; a scoped name starts
  * with its own `@`, so the split is the first `@` after the first character.
  * A non-registry version (`foo@https://…`) stays whole.
  */
@@ -21,7 +38,7 @@ export function parsePackages(lockfileText) {
 		packages[name] = [...(packages[name] ?? []), key.slice(at + 1)]
 	}
 	for (let versions of Object.values(packages)) {
-		versions.sort()
+		versions.sort(compareVersions)
 	}
 	return packages
 }

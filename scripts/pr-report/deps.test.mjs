@@ -24,6 +24,24 @@ describe('parsePackages', () => {
 		assert.deepEqual(parsePackages(lockfile), {react: ['19.2.3'], semver: ['6.3.1', '7.6.0']})
 	})
 
+	it('sorts versions as semver, not as text', () => {
+		let lockfile = [
+			'packages:',
+			'  a@10.0.0:',
+			'    resolution: {integrity: sha512-a}',
+			'  a@9.1.0:',
+			'    resolution: {integrity: sha512-b}',
+			'  a@9.0.0-beta.1:',
+			'    resolution: {integrity: sha512-c}',
+			'  a@https://example.com/a.tgz:',
+			'    resolution: {tarball: https://example.com/a.tgz}',
+			'',
+		].join('\n')
+		assert.deepEqual(parsePackages(lockfile), {
+			a: ['9.0.0-beta.1', '9.1.0', '10.0.0', 'https://example.com/a.tgz'],
+		})
+	})
+
 	it('keeps a scoped name whole', () => {
 		let lockfile = "packages:\n  '@babel/core@7.29.0':\n    resolution: {integrity: sha512-a}\n"
 		assert.deepEqual(parsePackages(lockfile), {'@babel/core': ['7.29.0']})
