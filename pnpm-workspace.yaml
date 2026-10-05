@@ -147,7 +147,7 @@ overrides:
   # shell-quote@1.8.3 (via react-devtools-core, a react-native dependency):
   # critical newline-escaping bug (GHSA-w7jw-789q-3m8p) and a ReDoS in
   # parse() (GHSA-395f-4hp3-45gv). No fix within 1.8.x; next fixed release is 1.10.0.
-  'shell-quote@': '1.11.0'
+  'shell-quote@': '1.12.0'
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
