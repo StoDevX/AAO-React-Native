@@ -166,7 +166,7 @@ files are gitignored. Add `--table` to write `images/icons/logos.html`, a
 gitignored gallery of every logo, to compare them side by side.
 
 The task needs Xcode, whose Icon Composer renders the previews, and runs them
-through oxipng. A new `.icon` alternate also needs an entry in `ALTERNATE_ICONS` in
+through oxipng; the Retro set also needs ImageMagick (`brew install imagemagick`). A new `.icon` alternate also needs an entry in `ALTERNATE_ICONS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
 `ICONS` in `source/features/customize/icons.ts`.
 
@@ -175,14 +175,19 @@ The Old Main (Retro) icon's source is an Icon Composer document in
 layers are drawn by `scripts/make-crt-pixels.mjs` from the screen grid in that
 file: the cells as `pixels.svg` and `pixels-amber.svg`, and their glow as
 quarter-size PNGs rendered from the SVGs in the document's `source/`. Edit the
-grid, run `mise run crt-pixels`, then `mise run icons`, which renders the
-document into the app icon set and the previews. The set's images are flattened
-onto black with no alpha, as iOS applies its own mask, reduced to 8 bits, since
-ictool writes 16, and converted to sRGB, since actool stores a second, 16-bit
-copy beside every Display P3 image. The drawing is Display P3 throughout: the
-palette holds P3 components, icon.json reads untagged SVG colors as P3, and the
-glow PNGs are tagged with the profile, not converted to it. Only the set's
-images lose the wider gamut.
+grid, run `mise run crt-pixels`, then `mise run icons`.
+
+`mise run icons` makes the previews with ictool but the app icon set with
+ImageMagick, stacking the document's layers itself. ictool bakes a rounded mask
+and a lit rim into its render, iOS draws its own over any app icon, and the dark
+one's rim then glows, so the set is a plain full-bleed square. It is converted
+to sRGB, 8 bits and no alpha: actool stores a second, 16-bit copy beside every
+Display P3 image, and the app icon sets want no alpha. The drawing is Display P3
+throughout (the palette holds P3 components, icon.json reads untagged SVG colors
+as P3, and the glow PNGs are tagged with the profile, not converted to it), so
+only the set's images lose the wider gamut. The stack ignores the document's
+translucency and glass, which it matches to within a few percent. A change to
+the document's layer order or fill needs the same change in `retroSetImages`.
 
 Every `.icon` costs about 2.3 MiB of each iPhone's download, as actool stores a
 flat 1024px render per appearance without loss, and a layer's own images come

@@ -5,6 +5,9 @@
  *
  * `--all` adds the tinted renditions; `--table` writes a gallery of every logo
  * to images/icons/logos.html. Both outputs are gitignored.
+ *
+ * Old Main (Retro) also gets its app icon set, which is stacked from the layers
+ * of its document rather than exported, so its previews and its set differ.
  */
 import {execFileSync} from 'node:child_process'
 import {mkdirSync, readdirSync, writeFileSync} from 'node:fs'
@@ -52,10 +55,6 @@ const TINTED_APPEARANCES = [
  * @property {string} output the PNG to write
  * @property {number} points the preview's size on screen
  * @property {string} rendition the ictool rendition
- * @property {number} [scale] the render scale, SCALE when absent
- * @property {boolean} [srgb] whether to convert the render from Display P3 to sRGB
- * @property {boolean} [opaque] whether to flatten the render onto black, dropping its alpha
- * @property {number} [depth] bits a channel to reduce the render to, as rendered when absent
  */
 
 /**
@@ -80,16 +79,20 @@ export function exportPlan(entries, {all = false} = {}) {
 /**
  * Old Main (Retro) ships as a plain app icon set, not as its `.icon`, which
  * would cost a render for the tinted look too. Its Icon Composer document stays
- * here as the source the set and the previews are rendered from.
+ * here as the source the set and the previews are made from.
  */
 const RETRO_DOCUMENT = join(SOURCE_DIR, '0-source-icons', 'old-main-retro.icon')
 const RETRO_SET = join(SOURCE_DIR, 'old-main-retro.xcassets', 'old-main-retro.appiconset')
 
-/** What ictool's Display P3 renders are converted to, for an app icon set. */
-const SRGB_PROFILE = '/System/Library/ColorSync/Profiles/sRGB Profile.icc'
-
 /** The size in pixels of an app icon set's image. */
 const APP_ICON_SIZE = 1024
+
+/** Where the document keeps the colors it draws in, and what the set converts them to. */
+const P3_PROFILE = '/System/Library/ColorSync/Profiles/Display P3.icc'
+const SRGB_PROFILE = '/System/Library/ColorSync/Profiles/sRGB Profile.icc'
+
+/** The document's fill, which its opaque background covers; the set starts from it. */
+const RETRO_FILL = 'rgb(20,28,12)'
 
 /** @returns {Export[]} */
 export function retroPreviews() {
@@ -102,21 +105,70 @@ export function retroPreviews() {
 }
 
 /**
- * The light and dark images of the Retro app icon set, 1024px each, at scale 1.
+ * The light and dark images of the Retro app icon set, each with the layers of
+ * the source document that make it, bottom first.
  *
- * @returns {Export[]}
+ * Stacked here rather than exported by ictool, which bakes its rounded mask and
+ * a lit rim into the render. iOS draws its own on top of any app icon, so the
+ * baked ones show twice, and the dark rim glows.
+ *
+ * @returns {{output: string, layers: string[]}[]}
  */
-export function retroExports() {
-	return APPEARANCES.map((appearance) => ({
-		input: RETRO_DOCUMENT,
-		output: join(RETRO_SET, appearance.rendition === 'Dark' ? 'dark.png' : 'light.png'),
-		points: APP_ICON_SIZE,
-		rendition: appearance.rendition,
-		scale: 1,
-		depth: 8,
-		opaque: true,
-		srgb: true,
+export function retroSetImages() {
+	let assets = join(RETRO_DOCUMENT, 'Assets')
+	return [
+		{name: 'light', pixels: 'pixels', background: 'background', glow: 'pixels-glow'},
+		{
+			name: 'dark',
+			pixels: 'pixels-amber',
+			background: 'background-amber',
+			glow: 'pixels-amber-glow',
+		},
+	].map(({name, pixels, background, glow}) => ({
+		output: join(RETRO_SET, `${name}.png`),
+		layers: [`${background}.png`, `${glow}.png`, `${pixels}.svg`, 'wave.png'].map((layer) =>
+			join(assets, layer),
+		),
 	}))
+}
+
+/**
+ * Stack an image's layers over the document's fill. icon.json scales its
+ * raster layers up from a quarter of the canvas, so each is brought to full
+ * size. The layers hold Display P3 numbers, which the profile then names, and
+ * the result becomes sRGB, 8-bit and opaque: actool keeps a second, 16-bit copy
+ * of any Display P3 image, and the app icon sets want no alpha.
+ *
+ * @param {{output: string, layers: string[]}} image
+ */
+function stackRetroImage({output, layers}) {
+	let size = `${APP_ICON_SIZE}x${APP_ICON_SIZE}`
+	execFileSync('magick', [
+		'-size',
+		size,
+		`xc:${RETRO_FILL}`,
+		...layers.flatMap((layer) => [
+			'(',
+			...(layer.endsWith('.svg')
+				? ['-background', 'none', layer]
+				: ['-quiet', layer, '+profile', '*']),
+			'-filter',
+			'Lanczos',
+			'-resize',
+			size,
+			')',
+			'-composite',
+		]),
+		'-alpha',
+		'off',
+		'-profile',
+		P3_PROFILE,
+		'-profile',
+		SRGB_PROFILE,
+		'-depth',
+		'8',
+		output,
+	])
 }
 
 /**
@@ -172,7 +224,6 @@ function main() {
 	let plan = [
 		...exportPlan(readdirSync(SOURCE_DIR), {all: process.argv.includes('--all')}),
 		...retroPreviews(),
-		...retroExports(),
 	]
 
 	mkdirSync(RETRO_SET, {recursive: true})
@@ -182,7 +233,7 @@ function main() {
 	)
 	writeFileSync(join(RETRO_SET, 'Contents.json'), JSON.stringify(RETRO_CONTENTS, null, 2) + '\n')
 
-	for (let {input, output, points, rendition, scale = SCALE, depth, opaque, srgb} of plan) {
+	for (let {input, output, points, rendition} of plan) {
 		console.log(`make-icons: ${input} -> ${output}`)
 		execFileSync(ICTOOL, [
 			input,
@@ -198,22 +249,27 @@ function main() {
 			'--height',
 			String(points),
 			'--scale',
-			String(scale),
+			String(SCALE),
 		])
-		if (depth || opaque || srgb) {
-			execFileSync('magick', [
-				output,
-				...(srgb ? ['-profile', SRGB_PROFILE] : []),
-				...(opaque ? ['-background', 'black', '-alpha', 'remove', '-alpha', 'off'] : []),
-				...(depth ? ['-depth', String(depth)] : []),
-				output,
-			])
-		}
+	}
+
+	let setImages = retroSetImages()
+	for (let image of setImages) {
+		console.log(`make-icons: ${RETRO_DOCUMENT} -> ${image.output}`)
+		stackRetroImage(image)
 	}
 
 	execFileSync(
 		'oxipng',
-		['-o', 'max', '--strip', 'safe', '--zopfli', ...plan.map((p) => p.output)],
+		[
+			'-o',
+			'max',
+			'--strip',
+			'safe',
+			'--zopfli',
+			...plan.map((p) => p.output),
+			...setImages.map((i) => i.output),
+		],
 		{
 			stdio: 'inherit',
 		},

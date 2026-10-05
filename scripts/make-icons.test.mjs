@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
+import {join} from 'node:path'
 import {describe, it} from 'node:test'
-import {exportPlan, retroExports, retroPreviews} from './make-icons.mjs'
+import {exportPlan, retroPreviews, retroSetImages} from './make-icons.mjs'
 
 describe('exportPlan', () => {
 	it('exports a light and dark preview for each Icon Composer document', () => {
@@ -56,26 +57,25 @@ describe('retroPreviews', () => {
 	})
 })
 
-describe('retroExports', () => {
-	it('renders a 1024px light and dark icon into the Retro app icon set', () => {
-		let plan = retroExports()
-		assert.deepEqual(
-			plan.map((p) => [p.output, p.rendition]),
-			[
-				['assets/old-main-retro.xcassets/old-main-retro.appiconset/light.png', 'Default'],
-				['assets/old-main-retro.xcassets/old-main-retro.appiconset/dark.png', 'Dark'],
-			],
-		)
-		for (let p of plan) {
-			assert.equal(p.input, 'assets/0-source-icons/old-main-retro.icon')
-			assert.equal(p.points, 1024)
-			assert.equal(p.scale, 1)
-			// ictool writes 16 bits a channel, which doubles what actool stores.
-			assert.equal(p.depth, 8)
-			// ictool bakes in the rounded mask; iOS applies its own, and wants no alpha.
-			assert.equal(p.opaque, true)
-			// actool stores a 16-bit copy beside each Display P3 image, which undoes the 8 bits.
-			assert.equal(p.srgb, true)
-		}
+describe('retroSetImages', () => {
+	it('stacks each appearance from the layers of the source document, bottom first', () => {
+		let assets = 'assets/0-source-icons/old-main-retro.icon/Assets'
+		assert.deepEqual(retroSetImages(), [
+			{
+				output: 'assets/old-main-retro.xcassets/old-main-retro.appiconset/light.png',
+				layers: ['background.png', 'pixels-glow.png', 'pixels.svg', 'wave.png'].map((layer) =>
+					join(assets, layer),
+				),
+			},
+			{
+				output: 'assets/old-main-retro.xcassets/old-main-retro.appiconset/dark.png',
+				layers: [
+					'background-amber.png',
+					'pixels-amber-glow.png',
+					'pixels-amber.svg',
+					'wave.png',
+				].map((layer) => join(assets, layer)),
+			},
+		])
 	})
 })
