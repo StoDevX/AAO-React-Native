@@ -10,8 +10,8 @@ import {parseArgs} from 'node:util'
 
 import {diffReports} from './diff.mjs'
 import {decideGate} from './gate.mjs'
-import {REPORT_VERSION} from './js-size.mjs'
 import {renderComment} from './render.mjs'
+import {REPORT_VERSION} from './report-version.mjs'
 
 /**
  * Exit code for a failed size gate. Any other non-zero code is a crash, which

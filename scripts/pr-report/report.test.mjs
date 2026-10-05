@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
-import {mkdtempSync, writeFileSync} from 'node:fs'
+import {mkdtempSync, readFileSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
-import {join} from 'node:path'
+import {dirname, join, resolve} from 'node:path'
 import {describe, it} from 'node:test'
 
 import {buildPrReport, readReport} from './report.mjs'
@@ -251,5 +251,30 @@ describe('buildPrReport', () => {
 		assert.doesNotMatch(result.comment, /All packages/u)
 		assert.match(result.comment, /The full tables are in this run's job summary\./u)
 		assert.match(result.summary, /All packages/u)
+	})
+})
+
+describe('report.mjs imports', () => {
+	// The workflow's `report` job installs Node but not node_modules, so
+	// everything report.mjs reaches must be a relative file or a Node builtin.
+	it('reach no package from node_modules', () => {
+		let seen = new Set()
+		let packages = []
+		let visit = (file) => {
+			if (seen.has(file)) {
+				return
+			}
+			seen.add(file)
+			let source = readFileSync(file, 'utf8')
+			for (let [, specifier] of source.matchAll(/^import [^\n]*? from '([^']+)'/gmu)) {
+				if (specifier.startsWith('./')) {
+					visit(resolve(dirname(file), specifier))
+				} else if (!specifier.startsWith('node:')) {
+					packages.push(`${specifier} (from ${file})`)
+				}
+			}
+		}
+		visit(resolve(import.meta.dirname, 'report.mjs'))
+		assert.deepEqual(packages, [])
 	})
 })

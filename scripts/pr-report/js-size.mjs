@@ -9,9 +9,7 @@
 import {readFileSync, statSync, writeFileSync} from 'node:fs'
 
 import {nodeModulesBytes, parsePackages} from './deps.mjs'
-
-/** Bumped whenever the report's shape changes, so an older baseline is not misread. */
-export const REPORT_VERSION = 2
+import {REPORT_VERSION} from './report-version.mjs'
 
 const NODE_MODULES = '/node_modules/'
 
