@@ -40,14 +40,6 @@ export default function APITestPage(): React.ReactNode {
 		<>
 			<Stack.Title>API Tester</Stack.Title>
 
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Network Logger"
-					icon="network"
-					onPress={() => router.navigate('/developer/network-logger')}
-				/>
-			</Stack.Toolbar>
-
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
