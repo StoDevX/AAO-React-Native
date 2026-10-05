@@ -10,7 +10,7 @@ import {
 import {now} from '@frogpond/timer'
 import {useQueries, useQuery, type UseQueryResult} from '@tanstack/react-query'
 import {areaMembership, type AreaStatus, type StudentWorkArea} from './areas'
-import {studentWorkAreasOptions} from './areas-query'
+import {NO_AREAS, studentWorkAreasOptions} from './areas-query'
 import type {FilterContext} from './filters'
 import {newPostingIds} from './new-postings'
 import {useSeenPostingsStore} from './store'
@@ -19,7 +19,7 @@ import {idsNeedingDetail, unitsAvailability, unitsByPosting, type UnitsAvailabil
 export type StudentWorkBoard = {
 	board: UseQueryResult<JobCategory[]>
 	jobs: JobSummary[]
-	/// Always there: the areas query starts from the copy the app ships.
+	/// Empty until the areas load.
 	areas: StudentWorkArea[]
 	/// Whether postings can be sorted into areas yet.
 	availability: UnitsAvailability
@@ -51,7 +51,7 @@ export function useStudentWorkBoard({
 		...jobPostingsOptions,
 		refetchOnMount: checkForNewPostings ? 'always' : true,
 	})
-	let {data: areas} = useQuery(studentWorkAreasOptions)
+	let {data: areas = NO_AREAS} = useQuery(studentWorkAreasOptions)
 	let units = useQuery(postingUnitsOptions)
 	let availability = unitsAvailability(units)
 

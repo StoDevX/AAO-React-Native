@@ -1,53 +1,11 @@
 import * as React from 'react'
 import {Image, Pressable, StyleSheet} from 'react-native'
-import {RNHostView, VStack} from '@expo/ui/swift-ui'
-import {frame, onGeometryChange, type ModifierConfig} from '@expo/ui/swift-ui/modifiers'
+import {listRowBackground, listRowInsets, listRowSeparator} from '@expo/ui/swift-ui/modifiers'
 
+import {HostedRow, type RowProps} from './hosted-row'
 import {fitImage} from './lib/fit-image'
-import {FILL_WIDTH} from './tile-layout'
-import {PICTURE_CORNER_RADIUS, SHEET_ROW} from './place-card/card-style'
-
-type RowProps = {
-	/**
-	 * How the list lays the row out: its background, hairline and insets.
-	 * Defaults to the sheet's own, which insets the picture from the sheet's
-	 * sides; a form whose rows are already inset passes its own.
-	 */
-	rowModifiers?: ModifierConfig[]
-}
-
-/**
- * A row of a sheet holding React Native content, given the row's width
- * outright: 100% inside `RNHostView` resolves against the whole sheet. The row
- * fills its width whatever its content's, so measuring it can't feed back on
- * itself.
- */
-function HostedRow({
-	rowModifiers = SHEET_ROW,
-	beside,
-	children,
-}: RowProps & {
-	/** Drawn in the row after the hosted content, outside its host. */
-	beside?: React.ReactNode
-	children: (rowWidth: number) => React.ReactElement
-}): React.ReactNode {
-	let [rowWidth, setRowWidth] = React.useState(0)
-
-	// On a wrapping stack because RNHostView takes no modifiers of its own. The
-	// list's row modifiers go last: outside the frame, where the list reads them.
-	return (
-		<VStack
-			modifiers={[
-				frame({maxWidth: FILL_WIDTH}),
-				onGeometryChange((box) => setRowWidth(box.width)),
-				...rowModifiers,
-			]}
-		>
-			<RNHostView matchContents={true}>{children(rowWidth)}</RNHostView>
-			{beside}
-		</VStack>
-	)
-}
+import {PICTURE_CORNER_RADIUS} from './place-card/card-style'
+import {PhotoViewerModal} from '../features/map/card/photo-viewer-modal'
 
 type BannerProps = RowProps & {
 	source: React.ComponentProps<typeof Image>['source']
@@ -188,3 +146,52 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 	},
 })
+
+/// A featured photo fills its row edge to edge, with no card behind it: the
+/// list already insets its rows from the screen's sides, in line with the
+/// section cards around it.
+const PHOTO_ROW = [
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+]
+
+/// The tallest a featured photo is drawn, in points. A submitted picture of
+/// any shape is shown whole, scaled to fit, so a very tall one cannot push the
+/// rest of the screen out of reach.
+const PHOTO_MAX_HEIGHT = 250
+
+type ViewablePhotoProps = {
+	uri: string
+	/** Read aloud for the photo, and for the full-screen viewer it opens. */
+	label: string
+	testID?: string
+}
+
+/**
+ * A featured photo -- an event's, an organization's cover -- shown whole in
+ * its own row, which opens full screen when tapped. One component so every
+ * screen draws its featured photo the same way.
+ */
+export function ViewablePhotoRow({uri, label, testID}: ViewablePhotoProps): React.ReactNode {
+	let [viewing, setViewing] = React.useState(false)
+
+	return (
+		<FittedImageRow
+			beside={
+				<PhotoViewerModal
+					label={label}
+					onClose={() => setViewing(false)}
+					uri={uri}
+					visible={viewing}
+				/>
+			}
+			label={label}
+			maxHeight={PHOTO_MAX_HEIGHT}
+			onPress={() => setViewing(true)}
+			rowModifiers={PHOTO_ROW}
+			testID={testID}
+			uri={uri}
+		/>
+	)
+}

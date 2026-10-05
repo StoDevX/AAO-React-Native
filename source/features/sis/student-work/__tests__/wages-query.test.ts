@@ -6,7 +6,6 @@ import {
 	REL_STUDENT_WAGES,
 	type Jrd,
 } from '@frogpond/data-sources'
-import bundled from '../../../../../docs/student-wages.json'
 import {studentWagesOptions} from '../wages-query'
 
 // The live path is the one under test; the suite-wide setup runs as a UI test.
@@ -52,8 +51,6 @@ describe('studentWagesOptions', () => {
 		await expect(run(studentWagesOptions)).resolves.toEqual(PUBLISHED)
 	})
 
-	// React Query keeps the wages it already has when a fetch fails, so the
-	// shipped copy must not be passed off as the live one.
 	test('fails when the wages file cannot be fetched', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
 		;(fetchSourceBody as jest.Mock<() => Promise<never>>).mockRejectedValue(new Error('offline'))
@@ -68,10 +65,7 @@ describe('studentWagesOptions', () => {
 		await expect(run(studentWagesOptions)).rejects.toThrow()
 	})
 
-	test('starts from the wages the app shipped with, already stale', () => {
-		let initial = studentWagesOptions.initialData
-		let wages = typeof initial === 'function' ? initial() : initial
-		expect(wages).toEqual(bundled.data)
-		expect(studentWagesOptions.initialDataUpdatedAt).toBe(0)
+	test('has no wages until they are fetched', () => {
+		expect(studentWagesOptions.initialData).toBeUndefined()
 	})
 })

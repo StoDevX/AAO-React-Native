@@ -61,7 +61,7 @@ const JobRow = React.memo(function JobRow({
 	job: JobSummary
 	isNew: boolean
 	onOpen: (jobId: string) => void
-	wages: HourlyWages
+	wages: HourlyWages | undefined
 }): React.ReactNode {
 	return (
 		<DisclosureRow

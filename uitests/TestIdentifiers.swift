@@ -402,9 +402,6 @@ struct TestIdentifiers {
 			optionPrefix + title
 		}
 
-		/// Matches SPORTS_FILTER_KEY in source/features/athletics/sports-filter.ts.
-		static let athleticsSports = "sports"
-
 		/// Filter keys from modules/food-menu/lib/build-filters.ts.
 		enum MenusKeys {
 			static let specials = "specials"
@@ -413,6 +410,14 @@ struct TestIdentifiers {
 	}
 
 	// MARK: - Calendar
+
+	enum Athletics {
+		/// The bottom-toolbar sports menu. Matches LABEL in
+		/// source/features/athletics/sports-menu.tsx.
+		static let sportsMenu = "Sports filter"
+		/// Shown at the foot of the menu once any sport is chosen.
+		static let resetFilters = "Reset Filters"
+	}
 
 	enum Calendar {
 		static let picker = "Calendar filter"

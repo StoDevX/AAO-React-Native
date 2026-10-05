@@ -193,10 +193,13 @@ function PickerContents({
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
 
 	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions(campus))
-	// Starts as the bundled copy, and keeps it through a failed fetch.
+	// Undefined until the categories load; no groups are drawn meanwhile.
 	let {data: table} = useQuery(mapCategoriesOptions)
 
-	let groups = React.useMemo(() => groupsFor(table, campus, buildings), [table, campus, buildings])
+	let groups = React.useMemo(
+		() => (table ? groupsFor(table, campus, buildings) : []),
+		[table, campus, buildings],
+	)
 	let icons = table?.[campus]?.icons ?? []
 
 	// Held with its campus, so a switch closes it; and looked up among the

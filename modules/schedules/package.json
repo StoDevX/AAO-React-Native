@@ -1,0 +1,15 @@
+{
+  "name": "@frogpond/schedules",
+  "version": "1.0.0",
+  "description": "Pure calendar and schedule policy contracts",
+  "license": "ISC",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  },
+  "dependencies": {
+    "@date-fns/tz": "1.5.0",
+    "date-fns": "4.4.0"
+  }
+}
