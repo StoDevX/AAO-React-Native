@@ -11,7 +11,7 @@
   "dependencies": {
     "@frogpond/colors": "workspace:*",
     "@frogpond/open-url": "workspace:*",
-    "react-native-enriched-markdown": "1.0.2"
+    "react-native-enriched-markdown": "1.1.0"
   },
   "peerDependencies": {
     "react": "catalog:",

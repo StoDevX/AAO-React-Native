@@ -54,6 +54,7 @@ function init() {
 	addFormats(validator)
 	addKeywords(validator)
 	validator.addSchema(defs)
+	validator.addSchema(load(fs.readFileSync(path.join(SCHEMA_BASE, '_schedules.yaml'), 'utf8')))
 
 	return validator
 }

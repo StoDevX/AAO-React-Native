@@ -26,6 +26,8 @@ That runs a random seed for ten minutes and writes everything it saw to
 | `--fault-rate <0–1>` | Share of requests to break (default `0.25`) |
 | `--replay logs/chaos/<seed>` | Replay a run against its recorded responses |
 | `--prebuilt` | Skip the build when nothing native changed |
+| `--bundled` | Embed the JavaScript from `mise run bundle:ios` in the build, so no Metro is needed |
+| `--simulator <name>` / `--udid <udid>` | The booted simulator to run on, when several are booted |
 | `--overwrite` | Record over an earlier run of the same seed |
 | `--rotate` | Let the monkey turn the device; without it, a rotate step does nothing |
 | `--session` | Run a realistic session instead of a fuzzer; see Sessions |
@@ -148,7 +150,7 @@ What it hides is still counted as `ignored`.
 ## Replaying a Run
 
 ```bash
-mise run chaos:8081 -- --replay logs/chaos/1234
+mise run chaos:8081 --replay logs/chaos/1234
 ```
 
 A replay takes the seed from the directory's name and answers every request

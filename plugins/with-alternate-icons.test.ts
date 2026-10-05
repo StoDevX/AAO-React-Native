@@ -9,6 +9,7 @@ import type {XcodeProject} from 'xcode'
 
 import {
 	ALTERNATE_ICONS,
+	STATIC_ALTERNATE_ICONS,
 	addAlternateIconResources,
 	assertLayersPresent,
 	compressAppIcons,
@@ -51,6 +52,11 @@ function makeProjectRoot(icons: readonly string[]): string {
 		mkdirSync(dir, {recursive: true})
 		writeFileSync(join(root, 'assets', `${name}.icon`, 'icon.json'), iconJSON('Layer.png'))
 		writeFileSync(join(dir, 'Layer.png'), name)
+	}
+	for (let name of STATIC_ALTERNATE_ICONS) {
+		let set = join(root, 'assets', `${name}.xcassets`, `${name}.appiconset`)
+		mkdirSync(set, {recursive: true})
+		writeFileSync(join(set, 'icon.png'), name)
 	}
 	return root
 }
@@ -100,6 +106,31 @@ describe('copyAlternateIcons', () => {
 		}
 	})
 
+	it('copies each static app icon set into the native project catalog', () => {
+		let root = makeProjectRoot(ALTERNATE_ICONS)
+		let destination = join(root, 'ios', 'AllAboutOlaf')
+		mkdirSync(join(destination, 'Images.xcassets'), {recursive: true})
+
+		copyAlternateIcons(root, destination)
+
+		for (let name of STATIC_ALTERNATE_ICONS) {
+			let copied = join(destination, 'Images.xcassets', `${name}.appiconset`)
+			assert.equal(readFileSync(join(copied, 'icon.png'), 'utf8'), name)
+		}
+	})
+
+	it('fails loudly when a static set is missing', () => {
+		let root = makeProjectRoot(ALTERNATE_ICONS)
+		rmSync(join(root, 'assets', 'old-main-retro.xcassets'), {recursive: true})
+		let destination = join(root, 'ios', 'AllAboutOlaf')
+		mkdirSync(join(destination, 'Images.xcassets'), {recursive: true})
+
+		assert.throws(
+			() => copyAlternateIcons(root, destination),
+			/assets\/old-main-retro\.xcassets\/old-main-retro\.appiconset is missing/u,
+		)
+	})
+
 	it('fails loudly when a document is missing', () => {
 		let root = makeProjectRoot(['old-main'])
 		let destination = join(root, 'ios', 'AllAboutOlaf')
@@ -142,6 +173,15 @@ describe('assertLayersPresent', () => {
 			() => assertLayersPresent(root, 'assets/windmill.icon'),
 			/assets\/windmill\.icon\/Assets\/Layer 3\.png is missing/u,
 		)
+	})
+})
+
+describe('STATIC_ALTERNATE_ICONS', () => {
+	it('lists every app icon set in assets/', () => {
+		let sets = readdirSync(join(import.meta.dirname, '../assets'))
+			.filter((entry) => entry.endsWith('.xcassets'))
+			.map((entry) => entry.slice(0, -'.xcassets'.length))
+		assert.deepEqual(STATIC_ALTERNATE_ICONS.toSorted(), sets.toSorted())
 	})
 })
 

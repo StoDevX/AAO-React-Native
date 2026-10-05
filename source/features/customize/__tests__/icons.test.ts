@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals'
-import {appIcons} from '../../../../images/icons'
+import {DEFAULT_ICON, appIcons, iconFor} from '../../../../images/icons'
 import {ICONS, currentIconEntry, galleryColumns, iconEntry, iconsByGroup} from '../icons'
 
 describe('ICONS', () => {
@@ -29,8 +29,14 @@ describe('iconsByGroup', () => {
 
 	it('gathers the windmill variants', () => {
 		let windmills = iconsByGroup()[1].icons
-		expect(windmills).toHaveLength(4)
+		expect(windmills).toHaveLength(3)
 		expect(windmills.every((i) => i.type.startsWith('windmill-'))).toBe(true)
+	})
+})
+
+describe('iconFor', () => {
+	it('shows the primary for the retired Stars icon', () => {
+		expect(iconFor('windmill-stars')).toBe(DEFAULT_ICON)
 	})
 })
 

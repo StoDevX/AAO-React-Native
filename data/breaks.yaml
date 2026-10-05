@@ -1,69 +1,47 @@
-# `hasMealPlan` denotes if meal plans are active over the break
-# `limitedAccess` denotes if there is limited access to campus over the break
-
-# `applicable` denotes which calendar years this schedule applies to
-applicable: {from: 2016, to: 2017}
-
-# Unlike the other keys, `schoolYear` denotes when this schedule applies.
-# If schoolYear doesn't apply, it switches to summer hours.
-schoolYear:
-  start: 2016-08-29
-  end: 2017-05-24T10:00:00Z
-  # endForSeniors is a special key for denoting senior end time, vs. general end time
-  endForSeniors: 2017-05-29T11:00:00Z
-
-weekZero:
-  description: The week where campus is prepared for incoming students.
-  hasMealPlan: true
-  limitedAccess: true
-  start: 2016-08-29
-  end: 2016-09-02
-
-weekOne:
-  description: New students week!
-  hasMealPlan: true
-  limitedAccess: true
-  start: 2016-09-03
-  end: 2016-09-07
-
-fall:
-  description: 'Fall Break! :leaves:'
-  hasMealPlan: true
-  start: 2016-08-15T17:00:00Z
-  end: 2016-08-18
-
-thanksgiving:
-  description: ':turkey: Gobble gobble'
-  hasMealPlan: true
-  start: 2016-11-23T17:00:00Z
-  end: 2016-11-27
-
-christmasfest:
-  description: 'Welcome, visitors! Students, stay warm!'
-  start: 2016-12-01
-  end: 2016-12-04
-
-winter:
-  description: 'Happy holidays! :snow: :blizzard:'
-  hasMealPlan: false
-  limitedAccess: true
-  start: 2016-12-21T10:00:00Z
-  end: 2017-01-01T10:00:00Z
-
-interim:
-  description: It's finally over! Relax and prepare for round 3.
-  hasMealPlan: false
-  start: 2017-01-28T14:00:00Z
-  end: 2017-02-05
-
-spring:
-  description: 'Spring is coming… I think… :snow: :blizzard:'
-  hasMealPlan: false
-  start: 2017-03-18
-  end: 2017-03-26T10:00:00Z
-
-easter:
-  description: 'Peace, love, and happiness to all of you.'
-  hasMealPlan: false
-  start: 2017-04-14
-  end: 2017-04-17T10:00:00Z
+# Official 2026–27 Registrar academic calendar, revised 2026-08-11.
+# https://wp.stolaf.edu/registrar/files/2026/08/2026-27-Academic-Calendar-FINAL-8.11.26.pdf
+# Verified 2026-10-04; boundaries are inclusive dates in America/Chicago.
+# Academic dates establish calendar context only, not operating hours.
+# weekOne retains the orientation identifier; weekZero has no verified boundary.
+# Summer is omitted until operating boundaries are established.
+timezone: America/Chicago
+templates:
+  library-fall-closed:
+    # https://wp.stolaf.edu/current-students/breaks/ (2026–27, checked 2026-10-04)
+    # Rolvaag and Music Library both explicitly close October 10–13, 2026.
+    - title: Fall Break
+      isPhysicallyOpen: false
+      hours: []
+      notes: Closed for Fall Break.
+breaks:
+  weekOne:
+    name: New Student Orientation
+    start: '2026-09-04'
+    end: '2026-09-09'
+  fall:
+    name: Fall Break
+    start: '2026-10-10'
+    end: '2026-10-13'
+  thanksgiving:
+    name: Thanksgiving Break
+    start: '2026-11-25'
+    end: '2026-11-29'
+  christmasfest:
+    name: Christmas Fest
+    start: '2026-12-04'
+    end: '2026-12-05'
+  winter:
+    name: Winter Break
+    start: '2026-12-23'
+    end: '2027-01-03'
+  interim:
+    name: January Term Break
+    start: '2027-01-30'
+    end: '2027-02-09'
+  spring:
+    name: Spring Break
+    start: '2027-03-26'
+    end: '2027-04-04'
+  easter:
+    name: Easter
+    date: '2027-03-28'

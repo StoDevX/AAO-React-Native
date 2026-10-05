@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
-import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
 import {HtmlContent} from '@frogpond/html-content'
@@ -17,7 +17,6 @@ import {parseBody} from '../../../source/features/developer/api-test/util/parse-
 type DisplayMode = 'raw' | 'parsed'
 
 export default function APITestDetailPage(): React.ReactNode {
-	let router = useRouter()
 	let {displayName = ''} = useLocalSearchParams<{displayName?: string}>()
 
 	const cleanedName = displayName.trim().toLowerCase()
@@ -58,9 +57,6 @@ export default function APITestDetailPage(): React.ReactNode {
 			<Stack.Title>{cleanedName}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/developer/network-logger')}>
-						Network Logger
-					</Stack.Toolbar.MenuAction>
 					<Stack.Toolbar.MenuAction
 						isOn={displayMode === 'parsed'}
 						onPress={() => setDisplayMode(displayMode === 'parsed' ? 'raw' : 'parsed')}

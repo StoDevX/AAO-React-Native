@@ -11,6 +11,7 @@ enum ChaosRoutes {
 		"balances",
 		"calendar",
 		"calendar/event",
+		"calendar/organization",
 		"carleton-burton-menu",
 		"carleton-ldc-menu",
 		"carleton-sayles-menu",

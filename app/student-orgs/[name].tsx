@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {Host, LabeledContent, List, Section, Text} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
@@ -9,16 +9,23 @@ import {
 	listStyle,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {DisclosureRow} from '../../source/components/rows'
 import {SelectableText} from '@frogpond/selectable-text'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../source/components/send-email'
-import {showNameOrEmail} from '../../source/features/student-orgs/util'
+import {ViewablePhotoRow} from '../../source/components/inset-image-row'
+import {MarkdownRow} from '../../source/components/markdown-row'
+import {
+	instagramHandle,
+	meetingRows,
+	showNameOrEmail,
+	withDetail,
+} from '../../source/features/student-orgs/util'
 import {decode} from '@frogpond/html-lib'
-import {orgByNameOptions} from '../../source/features/student-orgs/query'
+import {orgByNameOptions, orgDetailOptions} from '../../source/features/student-orgs/query'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 /**
@@ -58,7 +65,16 @@ const styles = StyleSheet.create({
 
 export default function StudentOrgsDetailPage(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
-	let {data: org, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
+	let router = useRouter()
+	let {data: listed, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
+	// What only the org's own Presence pages hold. The list's record is shown
+	// meanwhile, and stands alone if this never arrives.
+	let {data: detail} = useQuery({
+		...orgDetailOptions(listed?.organizationUri ?? ''),
+		enabled: Boolean(listed?.organizationUri),
+	})
+
+	let org = listed ? withDetail(listed, detail) : undefined
 
 	let screenTitle = <Stack.Title>{org?.name ?? name}</Stack.Title>
 
@@ -93,7 +109,15 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 		)
 	}
 
-	let {name: orgName, category, meetings, website, contacts, advisors, description} = org
+	let {name: orgName, category, website, contacts, advisors, description} = org
+	let meetings = meetingRows(org)
+	// The server keeps every handle the officers typed, repeats included.
+	let socialLinks = org.socialLinks ? [...new Set(org.socialLinks)] : []
+	let officeHours = decode(org.officeHours?.trim() ?? '')
+	let officeLocation = decode(org.officeLocation?.trim() ?? '')
+	let additionalInformation = org.additionalInformation?.trim() ?? ''
+	let openCalendar = () =>
+		router.navigate({pathname: '/calendar/organization', params: {name: orgName}})
 
 	return (
 		<>
@@ -104,17 +128,53 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 						<Text modifiers={ORG_NAME_MODIFIERS}>{orgName}</Text>
 					</Section>
 
+					{org.photoUrl ? (
+						<Section>
+							<ViewablePhotoRow
+								label={`Photo for ${orgName}`}
+								testID="org-cover-photo"
+								uri={org.photoUrl}
+							/>
+						</Section>
+					) : null}
+
 					{category ? (
 						<Section title="Category">
 							<Text>{category}</Text>
 						</Section>
 					) : null}
 
-					{meetings ? (
-						<Section title="Meetings">
-							<SelectableText text={decode(meetings)} />
+					{/* Presence's own order: officers write "see information above" in
+					    the meeting fields, meaning these two. */}
+					{/* Both are markdown from the org's own record; the list's plain
+					    description, shown meanwhile, reads as markdown too. */}
+					{description ? (
+						<Section title="Description">
+							<MarkdownRow rowModifiers={[]} source={decode(description)} />
 						</Section>
 					) : null}
+
+					{additionalInformation ? (
+						<Section title="More Information">
+							<MarkdownRow rowModifiers={[]} source={additionalInformation} />
+						</Section>
+					) : null}
+
+					{meetings.length > 0 ? (
+						<Section title="Meetings">
+							{meetings.map(({label, value}) => (
+								<LabeledContent key={label} label={label}>
+									<SelectableText text={decode(value)} />
+								</LabeledContent>
+							))}
+						</Section>
+					) : null}
+
+					{/* Always offered: Presence's own "has upcoming events" flag disagrees
+					    with its events feed, so the calendar is the one to say. */}
+					<Section>
+						<DisclosureRow onPress={openCalendar} title="Upcoming Events" />
+					</Section>
 
 					{website ? (
 						<Section title="Website">
@@ -131,7 +191,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 							{contacts.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
-									destination="action"
+									destination="external"
 									detail={contact.title}
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={showNameOrEmail(contact)}
@@ -145,7 +205,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 							{advisors.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
-									destination="action"
+									destination="external"
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={contact.name}
 								/>
@@ -153,9 +213,41 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 						</Section>
 					) : null}
 
-					{description ? (
-						<Section title="Description">
-							<SelectableText text={decode(description)} />
+					{socialLinks.length > 0 ? (
+						<Section title="Instagram">
+							{socialLinks.map((link) => (
+								<DisclosureRow
+									key={link}
+									destination="external"
+									onPress={() => openUrl(link)}
+									title={instagramHandle(link)}
+								/>
+							))}
+						</Section>
+					) : null}
+
+					{officeHours || officeLocation ? (
+						<Section title="Office">
+							{officeLocation ? (
+								<LabeledContent label="Location">
+									<SelectableText text={officeLocation} />
+								</LabeledContent>
+							) : null}
+							{officeHours ? (
+								<LabeledContent label="Hours">
+									<SelectableText text={officeHours} />
+								</LabeledContent>
+							) : null}
+						</Section>
+					) : null}
+
+					{org.constitutionUrl ? (
+						<Section>
+							<DisclosureRow
+								destination="external"
+								onPress={() => openUrl(org.constitutionUrl ?? '')}
+								title="Constitution"
+							/>
 						</Section>
 					) : null}
 
