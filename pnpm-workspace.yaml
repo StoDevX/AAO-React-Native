@@ -135,10 +135,9 @@ overrides:
   # SDK we hold. 57.0.11 matches it. Move it when the Expo set moves.
   '@expo/router-server': '57.0.11'
   # expo-router carries its own @expo/ui range, which a fresh resolve floats to
-  # the newest. The app holds 57.0.14 (see scripts/validate-expo-versions.mjs),
-  # so expo-router gets the same copy, and with it the patch, rather than a
-  # second one nothing has checked.
-  '@expo/ui': '57.0.14'
+  # the newest. expo-router gets the app's copy, and with it the patch, rather
+  # than a second one nothing has checked.
+  '@expo/ui': '57.0.21'
   # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
   # (never part of the shipped JS bundle). Each override is scoped to the
   # currently-resolved major/minor so it can't clobber some other, unrelated
@@ -200,6 +199,6 @@ overrides:
 saveExact: true
 savePrefix: ''
 patchedDependencies:
-  '@expo/ui@57.0.14': patches/@expo__ui@57.0.14.patch
+  '@expo/ui@57.0.21': patches/@expo__ui@57.0.21.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
   react-native@0.86.3: patches/react-native@0.86.3.patch
