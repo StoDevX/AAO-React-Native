@@ -118,7 +118,7 @@
     "@expo/config-plugins": "57.0.9",
     "@expo/metro-config": "57.0.12",
     "@jest/globals": "30.5.2",
-    "@react-native/jest-preset": "0.87.1",
+    "@react-native/jest-preset": "0.86.3",
     "@tanstack/eslint-plugin-query": "5.104.0",
     "@testing-library/react-native": "14.0.1",
     "@types/base-64": "1.0.2",
