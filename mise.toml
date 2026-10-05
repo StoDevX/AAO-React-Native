@@ -56,7 +56,10 @@ run = "pnpm install --frozen-lockfile"
 
 [tasks.ios]
 description = "Run the iOS app"
-run = "expo run:ios"
+usage = '''
+  arg "<device>" help="The device to run on" default="" env="DEVICE"
+'''
+run = "expo run:ios${usage_device:+ --device \"$usage_device\"}"
 
 [tasks.start]
 description = "Start Metro bundler"
@@ -325,15 +328,45 @@ run = "node scripts/update-mess-fixtures.mjs"
 description = "Regenerate the list of routes the chaos monkey opens"
 run = "node scripts/chaos-routes.mjs"
 
+# An optional first argument names a booted simulator, which becomes the
+# SIMULATOR_UDID the script reads; the rest are the script's own flags. A usage
+# spec cannot do this, since it reads a leading flag as the simulator's name,
+# so mise appends the arguments to the `chaos` call at the end instead.
 [tasks.chaos]
 description = "Drive the app at random with network faults on a booted simulator"
-run = "node scripts/chaos.mjs"
+run = '''
+chaos() {
+  case "${1:-}" in
+    "" | -*) ;;
+    *)
+      SIMULATOR_UDID="$(xcrun simctl list devices booted --json | jq -r --arg name "$1" '[.devices[][] | select(.name == $name)][0].udid // empty')"
+      if test -z "$SIMULATOR_UDID"; then echo "no booted simulator is named $1" >&2; return 1; fi
+      export SIMULATOR_UDID
+      shift
+      ;;
+  esac
+  node scripts/chaos.mjs "$@"
+}
+chaos'''
 
 # The chaos task names no Metro, since 8081 is whichever checkout started Metro
 # first. This one names 8081, and the run refuses it if it serves another.
 [tasks."chaos:8081"]
 description = "Run chaos against the Metro on localhost:8081"
-run = "node scripts/chaos.mjs"
+run = '''
+chaos() {
+  case "${1:-}" in
+    "" | -*) ;;
+    *)
+      SIMULATOR_UDID="$(xcrun simctl list devices booted --json | jq -r --arg name "$1" '[.devices[][] | select(.name == $name)][0].udid // empty')"
+      if test -z "$SIMULATOR_UDID"; then echo "no booted simulator is named $1" >&2; return 1; fi
+      export SIMULATOR_UDID
+      shift
+      ;;
+  esac
+  node scripts/chaos.mjs "$@"
+}
+chaos'''
 env.TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081"
 
 [tasks."scrape-student-wages"]
