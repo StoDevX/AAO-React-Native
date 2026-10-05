@@ -149,9 +149,9 @@ describe('diffPackages', () => {
 describe('diffReports', () => {
 	it('diffs the hermes total, both groupings and the dependencies', () => {
 		let report = (hermesBytes, nodeModulesBytes, packages, sizes) => ({
-			version: 3,
+			version: 4,
 			baseSha: null,
-			js: {hermesBytes, byPackage: {a: hermesBytes}, byFeature: {}},
+			js: {hermesBytes, assetsBytes: 0, byPackage: {a: hermesBytes}, byFeature: {}},
 			deps: {nodeModulesBytes, packages, sizes},
 		})
 		assert.deepEqual(

@@ -24,7 +24,7 @@ export const GATE_FAILED_EXIT_CODE = 2
  * Reads a size report, or returns null when there is none to read. A
  * download that failed or expired leaves no file, or a file that is not a
  * report, and both mean the same thing here: nothing to compare. A report at
- * the current version is also checked for the JS and dependency shapes this script reads,
+ * the current version is also checked for the JS, asset and dependency shapes this script reads,
  * so a half-written or corrupted upload reads as missing rather than
  * crashing the comparison.
  */
@@ -45,6 +45,7 @@ export function readReport(path) {
 			typeof js !== 'object' ||
 			js === null ||
 			!Number.isFinite(js.hermesBytes) ||
+			!Number.isFinite(js.assetsBytes) ||
 			typeof js.byPackage !== 'object' ||
 			js.byPackage === null ||
 			typeof js.byFeature !== 'object' ||

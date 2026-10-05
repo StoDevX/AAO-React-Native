@@ -6,10 +6,10 @@ import {describe, it} from 'node:test'
 
 import {buildPrReport, readReport} from './report.mjs'
 
-let report = (hermesBytes, {version = 3, baseSha = 'abcdef1234'} = {}) => ({
+let report = (hermesBytes, {version = 4, baseSha = 'abcdef1234'} = {}) => ({
 	version,
 	baseSha,
-	js: {hermesBytes, byPackage: {a: 1}, byFeature: {}},
+	js: {hermesBytes, assetsBytes: 0, byPackage: {a: 1}, byFeature: {}},
 	deps: {
 		nodeModulesBytes: 1000,
 		packages: {a: ['1.0.0']},
@@ -38,7 +38,7 @@ describe('readReport', () => {
 
 	it('returns null for a current-version report missing js', () => {
 		let path = join(dir, 'no-js.json')
-		writeFileSync(path, JSON.stringify({version: 3, baseSha: null}))
+		writeFileSync(path, JSON.stringify({version: 4, baseSha: null}))
 		assert.equal(readReport(path), null)
 	})
 
@@ -47,12 +47,20 @@ describe('readReport', () => {
 		writeFileSync(
 			path,
 			JSON.stringify({
-				version: 3,
+				version: 4,
 				baseSha: null,
-				js: {hermesBytes: 'x', byPackage: {}, byFeature: {}},
+				js: {hermesBytes: 'x', assetsBytes: 1, byPackage: {}, byFeature: {}},
 				deps: {nodeModulesBytes: 1, packages: {}, sizes: {}},
 			}),
 		)
+		assert.equal(readReport(path), null)
+	})
+
+	it('returns null for a current-version report whose assetsBytes is not a number', () => {
+		let path = join(dir, 'bad-assets.json')
+		let bad = report(5)
+		bad.js.assetsBytes = 'x'
+		writeFileSync(path, JSON.stringify(bad))
 		assert.equal(readReport(path), null)
 	})
 
@@ -291,7 +299,7 @@ describe('buildPrReport', () => {
 			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
 		)
 		let bigReport = (hermesBytes) => ({
-			version: 3,
+			version: 4,
 			baseSha: 'abcdef1234',
 			js: {hermesBytes, byPackage: huge, byFeature: {}},
 			deps: {nodeModulesBytes: 1000, packages: {}, sizes: {}},

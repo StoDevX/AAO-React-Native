@@ -9,7 +9,7 @@ let MiB = 1024 * KiB
 
 let installed = {nodeModulesBytes: 800 * MiB, packages: {}, sizes: {}}
 let report = (js, deps = installed) => ({
-	version: 3,
+	version: 4,
 	baseSha: null,
 	js,
 	deps,
@@ -17,11 +17,13 @@ let report = (js, deps = installed) => ({
 
 let baseline = report({
 	hermesBytes: 4 * MiB,
+	assetsBytes: 0,
 	byPackage: {'date-fns': 80 * KiB, lodash: 10 * KiB, '(app)': 500 * KiB},
 	byFeature: {dining: 20 * KiB},
 })
 let head = report({
 	hermesBytes: 4 * MiB + 12 * KiB,
+	assetsBytes: 0,
 	byPackage: {'date-fns': 91 * KiB, '(app)': 500 * KiB, zod: 2 * KiB},
 	byFeature: {dining: 21 * KiB},
 })
