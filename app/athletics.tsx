@@ -1,19 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Divider, Host, ScrollView, Text, useNativeState, VStack} from '@expo/ui/swift-ui'
-import {
-	background,
-	font,
-	foregroundStyle,
-	frame,
-	id,
-	onAppear,
-	padding,
-	refreshable,
-	scrollPosition,
-	scrollTargetLayout,
-	shapes,
-} from '@expo/ui/swift-ui/modifiers'
+import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {foregroundStyle, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
@@ -35,57 +23,7 @@ import {daySections, filterBySport} from '../source/features/athletics/utils'
 // effect below on every render.
 const NO_SCORES: ProcessedScore[] = []
 
-const HEADER_MODIFIERS = [
-	font({textStyle: 'title3', weight: 'semibold'}),
-	foregroundStyle(c.secondaryLabel),
-	frame({maxWidth: Infinity, alignment: 'leading'}),
-	padding({horizontal: 20}),
-]
-const CARD_MODIFIERS = [
-	background(c.secondarySystemGroupedBackground, shapes.roundedRectangle({cornerRadius: 26})),
-	padding({horizontal: 16}),
-]
-const ROW_MODIFIERS = [padding({horizontal: 16, vertical: 12})]
-const DIVIDER_MODIFIERS = [padding({leading: 16})]
-const QUIET_ROW_MODIFIERS = [
-	foregroundStyle(c.secondaryLabel),
-	frame({maxWidth: Infinity, alignment: 'leading'}),
-	...ROW_MODIFIERS,
-]
-
-type DayProps = {
-	section: DaySection
-	/** Fires as the section first appears, for the list to scroll Today into place. */
-	onAppearToday?: () => void
-}
-
-/** A day's header over a grouped card of its games. */
-function Day({section, onAppearToday}: DayProps): React.ReactNode {
-	return (
-		<VStack
-			// The id goes last: a modifier outside it keeps its identity across a
-			// new debug date, so `onAppear` would not fire again.
-			modifiers={[...(onAppearToday ? [onAppear(onAppearToday)] : []), id(section.key)]}
-			spacing={8}
-		>
-			<Text modifiers={HEADER_MODIFIERS}>{section.title}</Text>
-			<VStack modifiers={CARD_MODIFIERS} spacing={0}>
-				{section.data.length === 0 ? (
-					<Text modifiers={QUIET_ROW_MODIFIERS}>No games today</Text>
-				) : (
-					section.data.map((score, index) => (
-						<VStack key={score.id} spacing={0}>
-							{index > 0 ? <Divider modifiers={DIVIDER_MODIFIERS} /> : null}
-							<VStack modifiers={ROW_MODIFIERS}>
-								<AthleticsRow score={score} />
-							</VStack>
-						</VStack>
-					))
-				)}
-			</VStack>
-		</VStack>
-	)
-}
+const QUIET_ROW_MODIFIERS = [foregroundStyle(c.secondaryLabel)]
 
 type ScoreListProps = {
 	sections: DaySection[]
@@ -93,43 +31,35 @@ type ScoreListProps = {
 }
 
 /**
- * Every day's games in one list, opened at Today: the days before sit above,
- * a scroll up away, and the days after below.
+ * Every day's games in one list, a section per day.
  *
- * A `ScrollView` over a stack rather than a `List`, drawn to look like an
- * inset grouped one: SwiftUI's `scrollPosition(id:)` names its targets through
- * the `scrollTargetLayout()` stack it scrolls, which a `List` does not have, so
- * on a `List` it is set and silently ignored and the list opens at its top.
+ * The list opens at its top, which is Today: the scores feed drops each game
+ * at midnight Central, so earlier days appear only under the debug date or the
+ * UI-test fixtures. `@expo/ui` has no way to scroll a `List` to a row --
+ * `scrollPosition(id:)` needs a `scrollTargetLayout()` stack a `List` does not
+ * have -- so opening at Today with earlier days above waits on #8565.
  */
 function ScoreList({sections, onRefresh}: ScoreListProps): React.ReactNode {
-	let scrollTarget = useNativeState<string | null>(null)
-	let scrollToToday = React.useCallback(
-		(key: string) => () => scrollTarget.set(key),
-		[scrollTarget],
-	)
-
 	return (
 		<Host style={styles.host}>
-			<ScrollView
+			<List
 				modifiers={[
-					scrollPosition(scrollTarget, {anchor: 'top'}),
+					listStyle('insetGrouped'),
 					refreshable(async () => {
 						await onRefresh()
 					}),
 				]}
 			>
-				{/* Every child carries an id, as `scrollTargetLayout` asks: one it cannot
-				    name reports itself as nil to the binding `scrollPosition` reads. */}
-				<VStack modifiers={[scrollTargetLayout(), padding({vertical: 16})]} spacing={24}>
-					{sections.map((section) => (
-						<Day
-							key={section.key}
-							onAppearToday={section.isToday ? scrollToToday(section.key) : undefined}
-							section={section}
-						/>
-					))}
-				</VStack>
-			</ScrollView>
+				{sections.map((section) => (
+					<Section key={section.key} title={section.title}>
+						{section.data.length === 0 ? (
+							<Text modifiers={QUIET_ROW_MODIFIERS}>No games today</Text>
+						) : (
+							section.data.map((score) => <AthleticsRow key={score.id} score={score} />)
+						)}
+					</Section>
+				))}
+			</List>
 		</Host>
 	)
 }
@@ -208,8 +138,8 @@ function AthleticsView(): React.ReactNode {
 			{filtered.length === 0 ? (
 				<EmptyListNotice />
 			) : (
-				// Keyed on the day so a new debug date lays the list out afresh and
-				// scrolls back to its Today.
+				// Keyed on the day so a new debug date lays the list out afresh,
+				// opened at its top.
 				<ScoreList key={today.toDateString()} onRefresh={refetch} sections={sections} />
 			)}
 		</>

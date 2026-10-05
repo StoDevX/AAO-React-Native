@@ -123,8 +123,8 @@ function dayTitle(day: Date, today: Date): string {
 
 /**
  * Lays the games out one section per local day, earliest first, each day in
- * kickoff order. Today always has a section, games or not: the list opens
- * scrolled to it, with the days before above and the days after below.
+ * kickoff order. Today always has a section, games or not, so the list
+ * always says what today holds.
  */
 export function daySections(scores: ProcessedScore[], now: Date = new Date()): DaySection[] {
 	const today = startOfDay(now)
