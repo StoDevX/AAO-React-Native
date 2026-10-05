@@ -443,7 +443,7 @@ depends = ["bundle-data"]
 wait_for = ["prebuild"]
 # Keeps the UI-test fixtures a release bundle drops (metro.config.js): this bundle
 # serves the UI tests, and `mise run device` builds, which carry them unused.
-env = { KEEP_UITEST_FIXTURES = "1" }
+env = { KEEP_UITEST_FIXTURES = "1", EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH = "1", EXPO_UNSTABLE_TREE_SHAKING = "1" }
 # --reset-cache: Metro caches in $TMPDIR, which neither a pnpm install nor
 # deleting ios/ clears, so a bundle can embed a package copy pnpm has replaced.
 run = """
@@ -472,6 +472,8 @@ expo export:embed \
 [tasks."size-report"]
 description = "Measure the production JS bundle for the PR report"
 depends = ["bundle-data"]
+# The same tree shaking as the Release build (plugins/with-tree-shaking.ts).
+env = { EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH = "1", EXPO_UNSTABLE_TREE_SHAKING = "1" }
 run = """
 set -euo pipefail
 out=size-report
