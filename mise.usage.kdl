@@ -1,0 +1,33 @@
+flagset "chaos" {
+    flag "-s --simulator <sim_name>" help="The simulator name to build to" help_heading="Simulator Selection" {
+        conflicts "--simulator-udid"
+        complete run=#"xcrun simctl list devices booted --json | jq -r '[.devices[][]] | map("\(.name)") | .[] // empty'"#
+    }
+    flag "-u --udid <sim_udid>" help="The simulator UDID to build to" help_heading="Simulator Selection" {
+        conflicts "--simulator"
+        complete run=#"xcrun simctl list devices booted --json | jq -r '[.devices[][]] | map("\(.udid)") | .[] // empty'"#
+    }
+
+    flag "--metro <port>" help="The Metro port to point the app at" default="8081" {
+        arg "<port>" validate="int(value) >= 1 && int(value) <= 65535" validate_error="must be a valid port"
+    }
+
+    flag "--seed <N>" help="The seed for the chaos monkey" {
+        arg "<N>" validate="type(int(value)) == 'int'" validate_error="must be an integer"
+    }
+    flag "--steps <N>" default="100000" help="The number of steps the chaos monkey will take" {
+        arg "<N>" validate="int(value) > 0" validate_error="must be a positive integer"
+    }
+    flag "--duration <N>" default="10m" help="The duration of the chaos monkey run; defaults to seconds, or end the number with s, m, or h." {
+        arg "<N>" validate=#"value matches "^\\d+[smh]?$" || int(value) > 0"# validate_error="must be a positive integer optionally followed by s, m, or h"
+    }
+    flag "--fault-rate <N>" default="0.25" help="The fault rate for the chaos monkey, between 0 and 1" {
+        arg "<N>" validate="float(value) >= 0 && float(value) <= 1" validate_error="must be between 0 and 1"
+    }
+    flag "--replay <file>" help="Replay a previous chaos monkey run from the specified file" effect="read"
+
+    flag "--prebuilt" help="Use prebuilt artifacts instead of building them"
+    flag "--overwrite" help="Overwrite existing artifacts"
+}
+
+

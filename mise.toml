@@ -59,7 +59,7 @@ description = "Run the iOS app"
 usage = '''
   arg "<device>" help="The device to run on" default="" env="DEVICE"
 '''
-run = "expo run:ios${usage_device:+ --device \"$usage_device\"}"
+run = '''expo run:ios ${usage_device:+ --device "$usage_device"}'''
 
 [tasks.start]
 description = "Start Metro bundler"
@@ -167,6 +167,16 @@ usage = '''
 '''
 run = '''
   xcrun devicectl list devices --filter "Name = '${usage_device?}'" --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output --exit-status .result.devices[0].properties.hardware.udid
+'''
+
+[tasks."sim:find-udid"]
+hide = true
+description = "Find the UDID of a simulator, or exit 1 if no device found"
+usage = '''
+  arg "<sim_udid>" help="The simulator to build for"
+'''
+run = '''
+  xcrun simctl list devices booted --json | jq -r --arg name "${usage_sim_udid?}" '[.devices[][] | select(.name == $name)][0].udid // empty'
 '''
 
 [tasks."device:deploy"]
@@ -355,40 +365,31 @@ run = "node scripts/chaos-routes.mjs"
 # so mise appends the arguments to the `chaos` call at the end instead.
 [tasks.chaos]
 description = "Drive the app at random with network faults on a booted simulator"
-run = '''
-chaos() {
-  case "${1:-}" in
-    "" | -*) ;;
-    *)
-      SIMULATOR_UDID="$(xcrun simctl list devices booted --json | jq -r --arg name "$1" '[.devices[][] | select(.name == $name)][0].udid // empty')"
-      if test -z "$SIMULATOR_UDID"; then echo "no booted simulator is named $1" >&2; return 1; fi
-      export SIMULATOR_UDID
-      shift
-      ;;
-  esac
-  node scripts/chaos.mjs "$@"
-}
-chaos'''
+usage = '''
+include file="{{ config_root }}/mise.usage.kdl"; use "chaos";
+'''
+run = """
+#!/usr/bin/env bash
 
-# The chaos task names no Metro, since 8081 is whichever checkout started Metro
-# first. This one names 8081, and the run refuses it if it serves another.
-[tasks."chaos:8081"]
-description = "Run chaos against the Metro on localhost:8081"
-run = '''
-chaos() {
-  case "${1:-}" in
-    "" | -*) ;;
-    *)
-      SIMULATOR_UDID="$(xcrun simctl list devices booted --json | jq -r --arg name "$1" '[.devices[][] | select(.name == $name)][0].udid // empty')"
-      if test -z "$SIMULATOR_UDID"; then echo "no booted simulator is named $1" >&2; return 1; fi
-      export SIMULATOR_UDID
-      shift
-      ;;
-  esac
-  node scripts/chaos.mjs "$@"
-}
-chaos'''
-env.TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081"
+if test -z "${TEST_RUNNER_AAO_JS_LOCATION}"; then
+  export TEST_RUNNER_AAO_JS_LOCATION="localhost:${usage_metro}"
+fi
+
+if test -z "${SIMULATOR_UDID}"; then
+  export SIMULATOR_UDID="${usage_udid:-"$(mise run find-udid "${usage_simulator:-}")"}"
+fi
+
+args=()
+test -n "${usage_seed:-}"        && args+=(--seed "$usage_seed")
+test -n "${usage_steps:-}"       && args+=(--steps "$usage_steps")
+test -n "${usage_duration:-}"    && args+=(--duration "$usage_duration")
+test -n "${usage_fault_rate:-}"  && args+=(--fault-rate "$usage_fault_rate")
+test -n "${usage_replay:-}"      && args+=(--replay "$usage_replay")
+test "${usage_prebuilt:-false}" = "true"   && args+=(--prebuilt)
+test "${usage_overwrite:-false}" = "true"  && args+=(--overwrite)
+
+node scripts/chaos.mjs "${args[@]}"
+"""
 
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
