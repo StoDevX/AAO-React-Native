@@ -97,12 +97,30 @@ jobs:
         # A label change skips js-size, so the report to compare comes from
         # the newest earlier run on this head commit that uploaded one.
         if: github.event_name == 'pull_request' && needs.js-size.result == 'skipped'
+        timeout-minutes: 20
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           RUN_ID: ${{ github.run_id }}
         run: |
           mkdir -p head/
+          # The newest earlier run on this commit is normally the push that
+          # raced this label change, still measuring it; wait for it rather
+          # than falling straight to the loop below, which would otherwise
+          # find nothing to download until it finishes on its own.
+          newest=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+            --event pull_request --commit "$HEAD_SHA" --limit 5 --json databaseId,status \
+            --jq '([.[] | select((.databaseId | tostring) != env.RUN_ID)][0] // {databaseId: "", status: ""}) | "\(.databaseId) \(.status)"' 2>/dev/null) || newest=''
+          newest_id=${newest%% *}
+          newest_status=${newest#* }
+          if [ -n "$newest_id" ]; then
+            if [ "$newest_status" != "completed" ]; then
+              gh run watch "$newest_id" --repo "$GITHUB_REPOSITORY" --exit-status || true
+            fi
+            if gh run download "$newest_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ 2>/dev/null; then
+              exit 0
+            fi
+          fi
           for run_id in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
             --event pull_request --commit "$HEAD_SHA" --limit 20 --json databaseId \
             --jq '.[].databaseId'); do
@@ -140,14 +158,24 @@ jobs:
           gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
             || echo "Master's report for $commit could not be downloaded."
 
+      - name: Read the pull request's current labels
+        # The event payload's labels are from whenever this run was
+        # triggered; a run can finish after a label was added or removed
+        # since then (see the wait above), so the gate reads the labels the
+        # API has now instead.
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name]' > labels.json
+
       - name: Build the report
         id: build
         if: github.event_name == 'pull_request'
         env:
-          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
           BASE_REF: ${{ github.base_ref }}
         run: |
-          printf '%s' "$LABELS" > labels.json
           status=0
           # Exit code 2 is a failed gate; any other non-zero is a crash,
           # which fails this step before anything is posted.
