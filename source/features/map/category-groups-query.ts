@@ -35,9 +35,8 @@ const PublishedMapCategoriesSchema = z.object({
 	data: z.object({stolaf: CampusSchema, carleton: CampusSchema}),
 })
 
-/// The copy this build shipped with: what the grid draws before the first
-/// fetch, offline, and under UI tests.
-export const BUNDLED_MAP_CATEGORIES = (mapCategoriesData as {data: MapCategoryTable}).data
+/// This checkout's copy, which UI tests read in place of the published one.
+const UITEST_MAP_CATEGORIES = (mapCategoriesData as {data: MapCategoryTable}).data
 
 export const keys = {
 	all: ['map-categories'] as const,
@@ -51,13 +50,13 @@ async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapC
 	// UI tests read the bundled copy, so a screenshot's tiles match this
 	// checkout rather than whatever is published at test time.
 	if (isUITesting) {
-		return BUNDLED_MAP_CATEGORIES
+		return UITEST_MAP_CATEGORIES
 	}
 
 	let manifest = await fetchManifest(queryClient)
 	let source = resolveSources(manifest, REL_MAP_CATEGORIES, [MAP_CATEGORIES_TYPE])[0]
 	if (!source) {
-		return BUNDLED_MAP_CATEGORIES
+		throw new Error('map-categories: the manifest lists no source')
 	}
 
 	let body = await fetchSourceBody(source.href, signal, 'Map categories')
@@ -81,13 +80,13 @@ class UnreadableMapCategoriesError extends Error {
 	}
 }
 
-/// The cached table if this build can read it, else the bundled copy. A
+/// The cached table if this build can read it, else none. A
 /// table restored from the persisted cache never passed through
 /// `fetchMapCategories`, so one an older build saved in an older shape would
 /// otherwise reach the picker unchecked.
-function readableMapCategories(table: unknown): MapCategoryTable {
+function readableMapCategories(table: unknown): MapCategoryTable | undefined {
 	let parsed = PublishedMapCategoriesSchema.safeParse({data: table})
-	return parsed.success ? (parsed.data.data as MapCategoryTable) : BUNDLED_MAP_CATEGORIES
+	return parsed.success ? (parsed.data.data as MapCategoryTable) : undefined
 }
 
 const MAX_FETCH_RETRIES = 3
@@ -97,9 +96,8 @@ export const mapCategoriesOptions = queryOptions({
 	queryFn: fetchMapCategories,
 	staleTime,
 	select: readableMapCategories,
-	// There from the start, since a query that has never run does not run
-	// offline; marked stale so the live copy replaces it when it can.
-	initialData: BUNDLED_MAP_CATEGORIES,
+	// UI tests' copy is there from the start, marked stale.
+	initialData: isUITesting ? UITEST_MAP_CATEGORIES : undefined,
 	initialDataUpdatedAt: 0,
 	retry: (failures, error) =>
 		!(error instanceof UnreadableMapCategoriesError) && failures < MAX_FETCH_RETRIES,
