@@ -6,6 +6,7 @@ shellcheck = "0.11.0"
 zizmor = "1.30.1"
 ruby = "3.4.11"
 "gem:bundler" = "4.0.21"
+"aqua:mgdm/htmlq" = "0.4.0"
 "npm:@changesets/cli" = "3.0.3"
 "npm:source-map-explorer" = "2.5.3"
 
@@ -300,6 +301,11 @@ run = "node scripts/validate-data.mjs"
 [tasks."scrape-dining"]
 description = "Update data/building-hours/ from Bon Appétit's café pages"
 run = "node scripts/scrape-bonapp.mjs"
+
+# Needs the network, so it stays out of validate-data, as scrape-dining does.
+[tasks."watch-lions-pantry"]
+description = "Report when the Lion's Pantry hours line on the Taylor Center page changes or goes missing"
+run = "scripts/watch-lions-pantry.sh"
 
 [tasks.icons]
 description = "Render the in-app icon previews from assets/*.icon, and the Retro app icon set"

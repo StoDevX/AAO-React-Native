@@ -2,6 +2,31 @@
 
 lockfile_version = 3
 
+[[tools."aqua:mgdm/htmlq"]]
+version = "0.4.0"
+backend = "aqua:mgdm/htmlq"
+specifiers = ["0.4.0"]
+
+[tools."aqua:mgdm/htmlq"."platforms.linux-x64"]
+url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
+url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128274"
+
+[tools."aqua:mgdm/htmlq"."platforms.linux-x64-musl"]
+url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
+url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128274"
+
+[tools."aqua:mgdm/htmlq"."platforms.macos-arm64"]
+url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-darwin.tar.gz"
+url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128388"
+
+[tools."aqua:mgdm/htmlq"."platforms.macos-x64"]
+url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-darwin.tar.gz"
+url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128388"
+
+[tools."aqua:mgdm/htmlq"."platforms.windows-x64"]
+url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-windows.zip"
+url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128332"
+
 [[tools."gem:bundler"]]
 version = "4.0.21"
 backend = "gem:bundler"

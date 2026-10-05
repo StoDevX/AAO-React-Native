@@ -278,6 +278,22 @@ Bon Appétit's café pages are the better source generally: the Weekly Schedule
 table is in the server HTML, and `wp.stolaf.edu/buntrock/eat/` has been wrong
 about Stav twice.
 
+### Lion's Pantry Hours
+
+`data/building-hours/7-5-lions-pantry.yaml` is edited by hand from one line on
+the Taylor Center's pantry page, under its "Pantry PROCESS" heading. A daily
+workflow reads that line with `htmlq` and compares it with the copy in
+`scripts/lions-pantry-hours.txt`, opening an issue when it changes or goes
+missing.
+
+```bash
+mise run watch-lions-pantry               # exits 1 on a change or a missing line
+scripts/watch-lions-pantry.sh --update    # accept the page's current line
+```
+
+After editing the YAML to match a change, run `--update` and commit the
+snapshot with it. A failed fetch exits 2 and does not open an issue.
+
 ### Student Wages
 
 `data/student-wages.yaml` holds the hourly rate for each pay code (ST1–3,
