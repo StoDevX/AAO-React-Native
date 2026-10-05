@@ -199,18 +199,30 @@ export interface GameSummary {
 }
 
 /**
- * Decides whether a score row shows a kickoff time or a scoreline.
+ * What a live or finished row shows: the score, with the result letter in
+ * front once there is one. A meet -- cross country, golf, swimming --
+ * finishes with no score, and the feed puts the team's placing, when it has
+ * one, in `prescore_info` instead.
+ */
+function resultLabel(score: ProcessedScore): string {
+	let hasScore = score.team_score !== '' || score.opponent_score !== ''
+	if (score.status.indicator === 'final' && !hasScore) {
+		return score.prescore_info.trim() || 'Final'
+	}
+	return [score.result, `${score.team_score}-${score.opponent_score}`].filter(Boolean).join(' ')
+}
+
+/**
+ * Decides whether a score row shows a kickoff time or a result.
  *
  * A game that is scheduled, or has started with no score reported yet, shows
  * its time -- ccc-server blanks the score for both. Anything live or finished
- * shows the score, with the result letter in front of it once there is one.
+ * shows its result; see `resultLabel`.
  */
 export function gameSummary(score: ProcessedScore): GameSummary {
 	let showsTime = score.status.indicator === 'scheduled' || score.status.indicator === 'started'
 	// All-day and multi-day fixtures carry no `time` string.
-	let label = showsTime
-		? score.time || 'All day'
-		: [score.result, `${score.team_score}-${score.opponent_score}`].filter(Boolean).join(' ')
+	let label = showsTime ? score.time || 'All day' : resultLabel(score)
 
 	return {
 		showsTime,

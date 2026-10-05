@@ -99,6 +99,34 @@ describe('gameSummary', () => {
 		expect(summary.label).toBe('2-2')
 	})
 
+	/// A cross-country or golf meet finishes with an `N` result and no score;
+	/// the feed puts the team's placing in `prescore_info` instead.
+	it("shows a finished meet's placing in place of a score", () => {
+		let summary = gameSummary(
+			makeScore({
+				status: {indicator: 'final'} as ProcessedScore['status'],
+				result: 'N' as ProcessedScore['result'],
+				prescore_info: '18th of 35',
+			}),
+		)
+
+		expect(summary.showsTime).toBe(false)
+		expect(summary.label).toBe('18th of 35')
+	})
+
+	/// Swimming meets have finished with an `N` result and neither a score nor
+	/// a placing.
+	it('says Final for a finished meet with no score or placing', () => {
+		let summary = gameSummary(
+			makeScore({
+				status: {indicator: 'final'} as ProcessedScore['status'],
+				result: 'N' as ProcessedScore['result'],
+			}),
+		)
+
+		expect(summary.label).toBe('Final')
+	})
+
 	it('reads out the sport, both teams and the state of play', () => {
 		let summary = gameSummary(makeScore({}))
 
