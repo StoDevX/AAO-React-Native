@@ -28,7 +28,6 @@ export const DeveloperSection = (): React.ReactElement => {
 	const onBonAppButton = () => router.navigate('/developer/bon-app-picker')
 	const onBannerBuilderButton = () => router.navigate('/developer/banner-builder')
 	const onDebugButton = () => router.navigate('/developer/debug')
-	const onNetworkLoggerButton = () => router.navigate('/developer/network-logger')
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()
@@ -60,7 +59,6 @@ export const DeveloperSection = (): React.ReactElement => {
 				<NavigationRow onPress={onBonAppButton} title="Bon Appetit Picker" />
 				<NavigationRow onPress={onBannerBuilderButton} title="Banner Builder" />
 				<NavigationRow onPress={onDebugButton} title="Debug" />
-				<NavigationRow onPress={onNetworkLoggerButton} title="Network Logger" />
 				<ActionRow onPress={sendSentryMessage} title="Send a Sentry Message" />
 				<ActionRow onPress={sendSentryException} title="Send a Sentry Exception" />
 			</Section>

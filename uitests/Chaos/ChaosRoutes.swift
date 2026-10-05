@@ -39,7 +39,6 @@ enum ChaosRoutes {
 		"developer/component-library/rows",
 		"developer/debug",
 		"developer/debug/[...keyPath]",
-		"developer/network-logger",
 		"dictionary",
 		"dictionary/entry/[word]",
 		"dictionary/entry/edit",
