@@ -40,7 +40,7 @@ const BODY = [
 	'**This job description is for general information purposes. It is not intended to list all duties and responsibilities of the position, and it may change at any time without notice.**',
 ].join('\n\n')
 
-/// Each fixture posting's unit number, as its description would carry it.
+/// Each fixture posting's unit number, as ccc-server would publish it.
 /// The fillers share one unit, so one area has enough postings to scroll.
 /// Every area these leave out -- Faith & Vocation among them -- has no
 /// postings, so a UI test can open an empty area.
@@ -58,7 +58,6 @@ const WRAPPING_JOB: JobDetail = {
 	schedule: 'Part time',
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-09-10T17:20:22+00:00',
-	unit: FIXTURE_UNITS['uitest-1'] ?? null,
 	fields: [
 		{label: 'Classification', value: 'Student Employee (non-exempt)'},
 		{label: 'Department', value: 'Research'},
@@ -79,7 +78,6 @@ const SHORT_JOB: JobDetail = {
 	schedule: 'Part time',
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-09-08T15:00:00+00:00',
-	unit: FIXTURE_UNITS['uitest-2'] ?? null,
 	fields: [
 		{label: 'Classification', value: 'Student Employee (non-exempt)'},
 		{label: 'Department', value: 'Libraries'},
@@ -96,7 +94,6 @@ const CODED_JOB: JobDetail = {
 	schedule: 'Part time',
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-09-05T15:00:00+00:00',
-	unit: FIXTURE_UNITS['uitest-3'] ?? null,
 	fields: [
 		{label: 'Classification', value: 'Student Employee (non-exempt)'},
 		{label: 'Department', value: 'Stav Hall'},
@@ -124,7 +121,6 @@ const FILLER_JOBS: JobDetail[] = Array.from({length: FILLER_COUNT}, (_, index) =
 		location: 'Northfield, MN, United States',
 		postedDate: FILLER_DATES[index % FILLER_DATES.length],
 		fields: [],
-		unit: FILLER_UNIT,
 		body: BODY,
 		url: `${SITE}/job/uitest-filler-${number}`,
 	}
@@ -149,5 +145,5 @@ export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 /// What ccc-server's `/student-work/units` would publish for the fixture
 /// board.
 export const UITEST_POSTING_UNITS: Record<string, string | null> = Object.fromEntries(
-	UITEST_JOB_DETAILS.map((job) => [job.id, job.unit]),
+	UITEST_JOB_DETAILS.map((job) => [job.id, FIXTURE_UNITS[job.id] ?? FILLER_UNIT]),
 )

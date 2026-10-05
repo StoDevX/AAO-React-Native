@@ -42,7 +42,7 @@ export function unitFieldOf(html) {
 /**
  * A unit alone (`15120`), after its fund (`10-15120`), or after another unit
  * in an account string (`41066-11300`, `41203-11184-53000-00512`). The same
- * rule as `unitNumber` in modules/ccc-jobs/parsers/unit-number.ts.
+ * rule as `unitNumber` in ccc-server's `source/student-work/unit-number.ts`.
  */
 const UNIT_NUMBER = /^(?:\d{2,3}-|\d{5}-)?(\d{5})(?!\d)/u
 
@@ -87,8 +87,9 @@ export function postingsOutsideAreas(board, published, listedUnits) {
  *   different unit, or none, for it.
  * - `unreadable`: the unit number is missing, blank, or not a unit number.
  *
- * A posting the published map lacks, whose own unit an area lists, is in that
- * area: the app reads it from the posting's detail, as this does.
+ * A posting the published map lacks, whose own unit an area lists, is left
+ * out: the map runs up to an hour behind the board, and the app files the
+ * posting in an area once the map has it.
  */
 export function classifyUnassigned(postings, listedUnits, published) {
 	let unlisted = new Map()

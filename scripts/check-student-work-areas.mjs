@@ -4,8 +4,7 @@
 // each from the unit number in its description.
 //
 // A posting is in an area when the unit ccc-server publishes for it is one the
-// area lists, and a posting the published map lacks is read from its detail.
-// This sorts the board the same way, with the app's own URLs and parsers from
+// area lists. This sorts the board the same way, with the app's own URLs from
 // modules/ccc-jobs, and reports what lands in no area.
 //
 // Prints a Markdown report. With --check, exits 1 when some posting carries a
