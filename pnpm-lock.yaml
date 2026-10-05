@@ -206,8 +206,8 @@ importers:
         specifier: workspace:*
         version: link:modules/use-debounce
       '@maplibre/maplibre-react-native':
-        specifier: 11.4.0
-        version: 11.4.0(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
+        specifier: 11.4.1
+        version: 11.4.1(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@react-native-async-storage/async-storage':
         specifier: 3.1.1
         version: 3.1.1(react-native@0.86.3)(react@19.2.3)
@@ -459,8 +459,8 @@ importers:
         specifier: 57.0.13
         version: 57.0.13(@babel/core@7.29.7)(@babel/runtime@7.29.7)(expo@57.0.19)(react-refresh@0.14.2)(supports-color@8.1.1)
       csv-parse:
-        specifier: 7.0.2
-        version: 7.0.2
+        specifier: 7.0.3
+        version: 7.0.3
       jest:
         specifier: 30.5.2
         version: 30.5.2(@types/node@26.6.4)(supports-color@8.1.1)
@@ -2020,8 +2020,8 @@ packages:
     resolution: {integrity: sha512-QFKCXkOeSzOr8jF75jm6kySOg+dUvOehPhRi68gcOYPHb7U5JloUq0dJW0Y5/fZV8ygfT0Vp2RWodvq+fyxFWA==}
     hasBin: true
 
-  '@maplibre/maplibre-react-native@11.4.0':
-    resolution: {integrity: sha512-jCXpIz+yjI70jyitBfvtApN7CU9l7IDorNgWO4Vm8FVnDSQ9fYikpSvZPTgPDk9vqmC770UlunTU/pm+eAVEsw==}
+  '@maplibre/maplibre-react-native@11.4.1':
+    resolution: {integrity: sha512-cpqkHsZuXMIC8InoEBe1nmWyzTTED/5gTx92Sx1gxJC4qBnshDtY9Rg05oZphHSyS4ALvpFEaH7/Ua4qKdfCaA==}
     peerDependencies:
       '@types/geojson': ^7946.0.0
       '@types/react': '>=19.1.0'
@@ -3490,8 +3490,8 @@ packages:
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
-  csv-parse@7.0.2:
-    resolution: {integrity: sha512-uKZghv9UmPkMVLYy//KZ9HFAIJsl7wkhoEdIL0+rhuSY9pZQlhaeGEDPIe+/w7eh81MOql8Q/9+inAGWG6ZHYA==}
+  csv-parse@7.0.3:
+    resolution: {integrity: sha512-YFd3QM/yo17vH91L1IOZuvl09zM0zEEtdfTcOCKWcMdM++MNaQSyp09slXyFCLaPXvHstQFx/xC8myiFHSMUvw==}
 
   date-fns@4.4.0:
     resolution: {integrity: sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==}
@@ -6846,7 +6846,7 @@ snapshots:
       quickselect: 3.0.0
       tinyqueue: 3.0.0
 
-  '@maplibre/maplibre-react-native@11.4.0(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)':
+  '@maplibre/maplibre-react-native@11.4.1(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)':
     dependencies:
       '@maplibre/maplibre-gl-style-spec': 26.2.1
       '@turf/distance': 7.4.0
@@ -8157,7 +8157,7 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  csv-parse@7.0.2: {}
+  csv-parse@7.0.3: {}
 
   date-fns@4.4.0: {}
 

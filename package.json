@@ -49,7 +49,7 @@
     "@frogpond/touch-claim": "workspace:*",
     "@frogpond/touchable": "workspace:*",
     "@frogpond/use-debounce": "workspace:*",
-    "@maplibre/maplibre-react-native": "11.4.0",
+    "@maplibre/maplibre-react-native": "11.4.1",
     "@react-native-async-storage/async-storage": "3.1.1",
     "@react-native-community/netinfo": "12.0.1",
     "@reduxjs/toolkit": "2.13.0",
@@ -135,7 +135,7 @@
     "babel-jest": "30.5.2",
     "babel-plugin-transform-remove-console": "6.9.4",
     "babel-preset-expo": "57.0.13",
-    "csv-parse": "7.0.2",
+    "csv-parse": "7.0.3",
     "jest": "30.5.2",
     "js-yaml": "catalog:",
     "oxfmt": "0.71.0",
@@ -148,7 +148,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@12.8.0",
+  "packageManager": "pnpm@12.8.2",
   "enriched-markdown": {
     "enableCodeHighlight": false,
     "enableMath": false
