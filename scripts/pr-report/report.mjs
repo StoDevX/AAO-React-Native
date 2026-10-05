@@ -61,6 +61,19 @@ export function readReport(path) {
 }
 
 /**
+ * The failed result for a commit with no usable size report; `note` says
+ * why, when more than "none" needs saying.
+ */
+function unreadable(note) {
+	let gate = {
+		pass: false,
+		message: 'No size report for this commit, so the size gate cannot pass.',
+	}
+	let empty = {head: null, diff: null, baselineNote: note, gate}
+	return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
+}
+
+/**
  * Builds the comment, the job summary and the gate result from this
  * commit's report and master's. `head.baseSha` is the master commit this PR
  * is based on; `comparedSha` is the master commit `baseline` actually came
@@ -69,13 +82,16 @@ export function readReport(path) {
  * the PR's base branch: only `master` has a baseline to compare with.
  */
 export function buildPrReport({head, baseline, comparedSha, baseRef, labels, limit}) {
+	// A head report at another version has no shape this script can read: a
+	// label change reuses the report from the PR's last push, which can
+	// predate a change to the report.
+	if (head !== null && head.version !== REPORT_VERSION) {
+		return unreadable(
+			`This commit's size report is an older format (version ${head.version}), so there is nothing to show; push a commit to measure it again.`,
+		)
+	}
 	if (head === null) {
-		let gate = {
-			pass: false,
-			message: 'No size report for this commit, so the size gate cannot pass.',
-		}
-		let empty = {head, diff: null, baselineNote: null, gate}
-		return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
+		return unreadable(null)
 	}
 
 	let short = head.baseSha ? head.baseSha.slice(0, 7) : 'none'

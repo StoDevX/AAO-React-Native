@@ -147,7 +147,7 @@ function dependencies(head, diff) {
 export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_LIMIT) {
 	let lines = [MARKER, '### JS bundle']
 	if (head === null) {
-		lines.push('JS size unavailable: the `js-size` job did not produce a report.')
+		lines.push('JS size unavailable: there is no usable size report for this commit.')
 	} else if (diff === null) {
 		lines.push(`Hermes bytecode: **${formatBytes(head.js.hermesBytes)}**`)
 	} else {

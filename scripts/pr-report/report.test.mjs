@@ -102,6 +102,24 @@ describe('buildPrReport', () => {
 		assert.match(result.comment, /JS size unavailable/u)
 	})
 
+	it('reports an older-format report for this commit as unusable, without crashing', () => {
+		// A label change reuses the report from the PR's last push, which can
+		// predate a change to the report's shape and so lack `deps`.
+		let {deps, ...older} = report(300, {version: 1})
+		let result = buildPrReport({
+			head: older,
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			limit: 100,
+		})
+		assert.equal(result.pass, false)
+		assert.match(result.comment, /older format \(version 1\)/u)
+		assert.match(result.comment, /push a commit/u)
+		assert.doesNotMatch(result.comment, /Dependencies/u)
+	})
+
 	it('passes with no comparison when the PR is not based on master', () => {
 		let result = buildPrReport({
 			head: report(300),
