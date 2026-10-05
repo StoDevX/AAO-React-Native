@@ -45,7 +45,7 @@ export type StudentOrgDetailType = StudentOrgType & {
 	constitutionUrl?: string
 	officeHours?: string
 	officeLocation?: string
-	/** Plain text, like `description`. */
+	/** Markdown, as `description` is in this record. */
 	additionalInformation?: string
 }
 

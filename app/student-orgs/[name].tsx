@@ -17,6 +17,7 @@ import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../source/components/send-email'
 import {ViewablePhotoRow} from '../../source/components/inset-image-row'
+import {MarkdownRow} from '../../source/components/markdown-row'
 import {
 	instagramHandle,
 	meetingRows,
@@ -145,15 +146,17 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 
 					{/* Presence's own order: officers write "see information above" in
 					    the meeting fields, meaning these two. */}
+					{/* Both are markdown from the org's own record; the list's plain
+					    description, shown meanwhile, reads as markdown too. */}
 					{description ? (
 						<Section title="Description">
-							<SelectableText text={decode(description)} />
+							<MarkdownRow rowModifiers={[]} source={decode(description)} />
 						</Section>
 					) : null}
 
 					{additionalInformation ? (
 						<Section title="More Information">
-							<SelectableText text={additionalInformation} />
+							<MarkdownRow rowModifiers={[]} source={additionalInformation} />
 						</Section>
 					) : null}
 
