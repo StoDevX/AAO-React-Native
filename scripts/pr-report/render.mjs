@@ -59,6 +59,85 @@ function moversTable(heading, changes) {
 	]
 }
 
+/** What happened to a package, in a table cell: `added 4.1.0`, `19.2.2 → 19.2.3`. */
+function changeText({kind, before, after}) {
+	if (kind === 'added') {
+		return `added ${after.join(', ')}`
+	}
+	if (kind === 'removed') {
+		return `removed ${before.join(', ')}`
+	}
+	return `${before.join(', ')} → ${after.join(', ')}`
+}
+
+/** A table of package changes, or nothing when there are none. */
+function changesTable(changes) {
+	if (changes.length === 0) {
+		return []
+	}
+	return [
+		'| Package | Change |',
+		'| --- | --- |',
+		...changes.map((change) => `| ${change.name} | ${changeText(change)} |`),
+		'',
+	]
+}
+
+/** A table of packages installed at two or more versions, or nothing. */
+function duplicatesTable(duplicates) {
+	if (duplicates.length === 0) {
+		return []
+	}
+	return [
+		'| Duplicate | Versions |',
+		'| --- | --- |',
+		...duplicates.map(
+			(duplicate) =>
+				`| ${duplicate.name} | ${duplicate.versions.join(', ')}${duplicate.isNew ? ' (new)' : ''} |`,
+		),
+		'',
+	]
+}
+
+/**
+ * The dependency section as its always-shown lines and its collapsed tables.
+ * With no diff there is only this commit's `node_modules` size.
+ */
+function dependencies(head, diff) {
+	if (diff === null) {
+		return {
+			top: ['### Dependencies', `node_modules **${formatBytes(head.deps.nodeModulesBytes)}**`],
+			tables: [],
+		}
+	}
+	let {nodeModules, changes, duplicates} = diff.deps
+	let count = (kind) => changes.filter((change) => change.kind === kind).length
+	let counts =
+		changes.length === 0
+			? 'No package changes'
+			: `+${count('added')} added, −${count('removed')} removed, ${count('bumped')} bumped`
+	let top = [
+		'### Dependencies',
+		`${counts} · node_modules ${total(nodeModules, true)}`,
+		'',
+		...changesTable(changes.slice(0, TOP_MOVERS)),
+	]
+	if (changes.length === 0 && duplicates.length === 0) {
+		return {top, tables: []}
+	}
+	return {
+		top,
+		tables: [
+			'<details><summary>All changes and duplicates</summary>',
+			'',
+			...changesTable(changes),
+			...duplicatesTable(duplicates),
+			'</details>',
+			'',
+		],
+	}
+}
+
 /**
  * Renders the comment. `head` is null when this commit could not be
  * measured; `diff` is null when there is no baseline, and `baselineNote`
@@ -78,29 +157,29 @@ export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_
 		lines.push('', baselineNote)
 	}
 	lines.push('', `${gate.pass ? '✅' : '❌'} ${gate.message}`, '')
-	if (diff === null) {
-		return lines.join('\n')
+	let tables = []
+	if (diff !== null) {
+		// The tables below are minified JS source bytes from the source map,
+		// not the Hermes bytecode the headline and gate measure.
+		lines.push(
+			'Package and feature sizes are minified JS from the source map; the gate uses bytecode.',
+			'',
+			// Features break down `(app)`, so they get their own table: mixed in
+			// with the packages, one change would take two of the slots.
+			...moversTable('Changed most', diff.byPackage),
+			...moversTable('Features changed most', diff.byFeature),
+		)
+		tables = [
+			...fullTable('All packages', 'Package', diff.byPackage),
+			...fullTable('All features', 'Feature', diff.byFeature),
+		]
 	}
 
-	// The tables below are minified JS source bytes from the source map,
-	// not the Hermes bytecode the headline and gate measure.
-	lines.push(
-		'Package and feature sizes are minified JS from the source map; the gate uses bytecode.',
-		'',
-		// Features break down `(app)`, so they get their own table: mixed in
-		// with the packages, one change would take two of the slots.
-		...moversTable('Changed most', diff.byPackage),
-		...moversTable('Features changed most', diff.byFeature),
-	)
-
-	let tables = [
-		...fullTable('All packages', 'Package', diff.byPackage),
-		...fullTable('All features', 'Feature', diff.byFeature),
-	]
-	let full = [...lines, ...tables].join('\n')
-	if (full.length <= limit) {
+	// A commit that could not be measured has no dependencies to show.
+	let deps = head === null ? {top: [], tables: []} : dependencies(head, diff)
+	let full = [...lines, ...tables, ...deps.top, ...deps.tables].join('\n')
+	if (full.length <= limit || (tables.length === 0 && deps.tables.length === 0)) {
 		return full
 	}
-	lines.push("The full tables are in this run's job summary.", '')
-	return lines.join('\n')
+	return [...lines, ...deps.top, "The full tables are in this run's job summary.", ''].join('\n')
 }
