@@ -506,3 +506,70 @@ describe('schedule data contracts', () => {
 		/overlaps first with an equal calendar-day span/u,
 	)
 })
+
+describe('server schedule contract fixtures', () => {
+	let response = (name) =>
+		JSON.parse(readFileSync(new URL(`fixtures/schedules/${name}.json`, import.meta.url), 'utf8'))
+
+	it('keeps complete hours and only the input break keys in canonical responses', () => {
+		let {calendar, spaces} = pair()
+		let expected = response('spaces-resolved').data
+		assert.equal(expected.length, spaces.length)
+		for (let [index, actual] of expected.entries()) {
+			let {breakSchedule: entries, ...fields} = actual
+			let {breakSchedule: inputEntries, ...inputFields} = spaces[index]
+			assert.deepEqual(fields, inputFields)
+			assert.deepEqual(Object.keys(entries), Object.keys(inputEntries))
+			for (let schedule of Object.values(entries)) {
+				assert.equal(typeof schedule, 'object')
+				assert.equal(Array.isArray(schedule), false)
+				assert.ok(Array.isArray(schedule.schedule))
+				assert.ok(Array.isArray(schedule.exceptions))
+			}
+		}
+		assert.deepEqual(
+			parse({calendar, spaces: expected}).spaces.map(({data}) => data),
+			expected,
+		)
+	})
+
+	it('specifies complete replacements, target-context aliases and independent exceptions', () => {
+		let {calendar, spaces} = pair()
+		let [office, building] = response('spaces-resolved').data
+		let spring = calendar.breaks.spring.templates['office-hours']
+		assert.deepEqual(office.breakSchedule.spring, spring)
+		assert.deepEqual(office.breakSchedule.easter, spring)
+		assert.notDeepEqual(office.breakSchedule.spring, calendar.templates['office-hours'])
+		assert.deepEqual(office.breakSchedule.fall, {
+			schedule: calendar.templates.closed,
+			exceptions: [],
+		})
+		assert.deepEqual(office.breakSchedule.winter, {schedule: spaces[0].schedule, exceptions: []})
+		assert.deepEqual(office.exceptions, spaces[0].exceptions)
+		assert.deepEqual(office.breakSchedule.interim, spaces[0].breakSchedule.interim)
+		assert.deepEqual(building.breakSchedule.fall, {
+			schedule: spaces[1].breakSchedule.fall,
+			exceptions: [],
+		})
+		assert.deepEqual(building.breakSchedule.winter, {
+			...calendar.breaks.winter.defaultSpaceSchedule,
+			exceptions: [],
+		})
+		assert.deepEqual(building.breakSchedule.interim, office.breakSchedule.fall)
+		assert.equal(Object.hasOwn(building.breakSchedule, 'easter'), false)
+	})
+
+	it('limits the calendar response to its timezone and keyed names and dates', () => {
+		let calendar = fixture('calendar')
+		let expected = response('calendar-response')
+		assert.deepEqual(Object.keys(expected), ['data'])
+		assert.deepEqual(Object.keys(expected.data), ['timezone', 'breaks'])
+		assert.equal(expected.data.timezone, calendar.timezone)
+		assert.deepEqual(Object.keys(expected.data.breaks), Object.keys(calendar.breaks))
+		for (let [key, entry] of Object.entries(calendar.breaks)) {
+			let {defaultSpaceSchedule: _default, templates: _templates, ...dates} = entry
+			assert.deepEqual(expected.data.breaks[key], dates)
+		}
+		assert.doesNotThrow(() => parse({calendar: expected.data, spaces: []}))
+	})
+})
