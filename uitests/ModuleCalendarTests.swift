@@ -16,9 +16,10 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 	/// Reset Filters is an undo, so it has nothing to offer an unfiltered list.
 	///
 	/// The picker is three lists in one: which calendars contribute events, and a
-	/// row per axis the list can be narrowed along. SwiftUI renders a Menu's
-	/// contents bottom-to-top, so only a screenshot settles the order they
-	/// actually reach the screen in. The category submenu is opened last:
+	/// row per axis the list can be narrowed along, written in reading order and
+	/// pinned there with menuOrder(.fixed). Only a screenshot settles the order
+	/// they actually reach the screen in, the category choices A-Z included. The
+	/// category submenu is opened last:
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
 	///
@@ -65,6 +66,7 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     screen
       .openPicker()
       .openSubmenu(TestIdentifiers.Calendar.categoryMenu)
+      .capture("31-category-choices")
       .tapMenuItem(TestIdentifiers.Calendar.categories[0])
       .dismissMenu()
     screen.capture("after filtering")
