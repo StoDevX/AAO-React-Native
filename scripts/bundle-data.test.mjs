@@ -57,11 +57,11 @@ function contentsIn(dir) {
 }
 
 describe('schedule bundling', () => {
-	it('publishes unresolved schedules and a compatible feed with normal hours and exceptions', () => {
+	it('publishes authored policies while preserving normal hours and space exceptions', () => {
 		withInputs(({toDir, calendar, spaces, run}) => {
 			let result = run()
 			assert.equal(result.status, 0, result.stderr)
-			let hours = readJson(toDir, 'building-hours-authored.json')
+			let hours = readJson(toDir, 'building-hours.json')
 			assert.deepEqual(
 				hours.map((space) => space.name),
 				spaces.map((space) => space.name),
@@ -76,7 +76,7 @@ describe('schedule bundling', () => {
 			})
 			assert.deepEqual(hours[0].breakSchedule.interim, spaces[0].breakSchedule.interim)
 			assert.deepEqual(
-				readJson(toDir, 'building-hours.json'),
+				hours.map(({breakSchedule: _breakSchedule, ...fields}) => fields),
 				spaces.map(({breakSchedule: _breakSchedule, ...fields}) => fields),
 			)
 			let breaks = readJson(toDir, 'breaks.json')
@@ -91,7 +91,8 @@ describe('schedule bundling', () => {
 				calendar.breaks.spring.templates['office-hours'],
 			)
 			assert.deepEqual(breaks.breaks.easter, calendar.breaks.easter)
-			for (let name of ['building-hours.json', 'building-hours-authored.json', 'breaks.json']) {
+			assert.equal(existsSync(join(toDir, 'building-hours-authored.json')), false)
+			for (let name of ['building-hours.json', 'breaks.json']) {
 				assert.ok(readFileSync(join(toDir, name), 'utf8').endsWith('\n'))
 			}
 		})
@@ -106,12 +107,22 @@ describe('schedule bundling', () => {
 			writeFileSync(join(fromDir, 'building-hours', '.DS_Store'), 'junk')
 			let result = run()
 			assert.equal(result.status, 0, result.stderr)
-			let hours = readJson(toDir, 'building-hours-authored.json')
+			let hours = readJson(toDir, 'building-hours.json')
 			assert.deepEqual(
 				hours.map((space) => space.name),
 				['First', spaces[0].name, spaces[1].name],
 			)
 			assert.equal(Object.hasOwn(hours[1], 'breakSchedule'), false)
+		})
+	})
+
+	it('removes the retired authored feed after successful validation', () => {
+		withInputs(({toDir, run}) => {
+			mkdirSync(toDir)
+			writeFileSync(join(toDir, 'building-hours-authored.json'), 'obsolete feed\n')
+			assert.equal(run().status, 0)
+			assert.equal(existsSync(join(toDir, 'building-hours-authored.json')), false)
+			assert.ok(readJson(toDir, 'building-hours.json')[0].breakSchedule)
 		})
 	})
 

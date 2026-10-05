@@ -53,10 +53,8 @@ fs.mkdirSync(toDir, {recursive: true})
 
 if (schedules) {
 	let hours = schedules.spaces.map(({data}) => data)
-	let compatibleHours = hours.map(({breakSchedule: _breakSchedule, ...fields}) => fields)
 	let outputs = [
-		['building-hours-authored.json', hours],
-		['building-hours.json', compatibleHours],
+		['building-hours.json', hours],
 		['breaks.json', schedules.calendar],
 	]
 	for (let [filename, data] of outputs) {
@@ -65,6 +63,8 @@ if (schedules) {
 			fs.writeFileSync(output, JSON.stringify({data}) + '\n'),
 		)
 	}
+	// Remove the retired generated feed only after validating and writing its replacement.
+	fs.rmSync(path.join(toDir, 'building-hours-authored.json'), {force: true})
 }
 
 // Bundle each directory of yaml files into one big json file
