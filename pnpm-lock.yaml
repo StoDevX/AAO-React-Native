@@ -365,8 +365,8 @@ importers:
         specifier: 0.10.1
         version: 0.10.1(@babel/core@7.29.7)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
       react-native-zeroconf:
-        specifier: 0.16.1
-        version: 0.16.1(react-native@0.86.3)(react@19.2.3)
+        specifier: 0.17.2
+        version: 0.17.2(react-native@0.86.3)(react@19.2.3)
       react-redux:
         specifier: 9.3.0
         version: 9.3.0(@types/react@19.2.18)(react@19.2.3)(redux@5.0.1)
@@ -4960,9 +4960,8 @@ packages:
       react: '*'
       react-native: 0.83 - 0.86
 
-  react-native-zeroconf@0.16.1:
-    resolution: {integrity: sha512-12bmmbuChI+8bx6J8UOUFjwpuIjUjpxOMd+Ej5GJT28DOpJF4VWTsT/OxwWQLUFPYurqGQGdzLtUisywKuO7gw==}
-    deprecated: '0.17 adds Windows support, subtypes, resolveService, updateService and live updates, plus Android fixes. Upgrade: npm i react-native-zeroconf@^0.17. Migration guide: https://zeroconf.balthazar.dev/Migration-Guide'
+  react-native-zeroconf@0.17.2:
+    resolution: {integrity: sha512-83rMghFAYvlfIRTsC6Cbpel6DItUfEU3zFK1YADlxcbRpwA576+60pCLMi/zfjiTUvnfjAIiPUNqdTfvidjhMg==}
     peerDependencies:
       react: '*'
       react-native: '>=0.60'
@@ -9865,7 +9864,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-native-zeroconf@0.16.1(react-native@0.86.3)(react@19.2.3):
+  react-native-zeroconf@0.17.2(react-native@0.86.3)(react@19.2.3):
     dependencies:
       events: 3.3.0
       react: 19.2.3
