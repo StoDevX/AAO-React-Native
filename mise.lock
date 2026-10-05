@@ -31,37 +31,37 @@ specifiers = ["2.5.0"]
 checksum = "sha256:c800091c414e1c8e8628137275d88c257bcfe0c35dd31d2762923a71dae7df7f"
 url = "https://github.com/jdx/hk/releases/download/v2.5.0/hk-aarch64-unknown-linux-gnu.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
-repository_ids = { repository = "922514152", owner = "216188" }
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.linux-arm64-musl"]
 checksum = "sha256:1e839b96defad21b5118d9554f2146811a2ce8d8eef90b3da1d592834969b717"
 url = "https://github.com/jdx/hk/releases/download/v2.5.0/hk-aarch64-unknown-linux-musl.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
-repository_ids = { repository = "922514152", owner = "216188" }
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.linux-x64"]
 checksum = "sha256:449b83c35ac3a460f80a4c9a41ad99430add8cf6caa6ceadc27e810feac3647d"
 url = "https://github.com/jdx/hk/releases/download/v2.5.0/hk-x86_64-unknown-linux-gnu.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
-repository_ids = { repository = "922514152", owner = "216188" }
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.linux-x64-musl"]
 checksum = "sha256:55b349ed8ebbb9cc11e3ff7f741230035061e45621c0b2c87fffeeb37fadcfd0"
 url = "https://github.com/jdx/hk/releases/download/v2.5.0/hk-x86_64-unknown-linux-musl.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
-repository_ids = { repository = "922514152", owner = "216188" }
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.macos-arm64"]
 checksum = "sha256:fabbed3a44e72c601759fa81d56f3c9403ca466853bdf77e87cc69d986cb151a"
 url = "https://github.com/jdx/hk/releases/download/v2.5.0/hk-aarch64-apple-darwin.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
-repository_ids = { repository = "922514152", owner = "216188" }
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.windows-x64"]
 checksum = "sha256:9d3063f0eadb316415dc2aaea51608f436eb6ffe44e00c2e460294c66f269a54"
 url = "https://github.com/jdx/hk/releases/download/v2.5.0/hk-x86_64-pc-windows-msvc.zip"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
-repository_ids = { repository = "922514152", owner = "216188" }
+repository_ids = { repository = "922514152" }
 
 [[tools.node]]
 version = "24.21.0"
@@ -216,8 +216,8 @@ ruby_build_repo = "https://github.com/rbenv/ruby-build.git"
 ruby_install = "false"
 
 [tools.ruby."platforms.linux-arm64"]
-checksum = "sha256:6e4483d9b1c5cd8d6e94529324774eb9bd26aa81d3bed236298c189750e227db"
-url = "https://github.com/jdx/ruby/releases/download/3.4.11-1/ruby-3.4.11.arm64_linux.tar.gz"
+checksum = "sha256:dcb1e5254779d0c901f913a235611816ff6bb149aaa631be3b7209649b59836f"
+url = "https://github.com/jdx/ruby/releases/download/3.4.11-2/ruby-3.4.11.arm64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-arm64-musl"]
@@ -225,8 +225,8 @@ checksum = "sha256:5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d
 url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz"
 
 [tools.ruby."platforms.linux-x64"]
-checksum = "sha256:b25a69eb4004852bc57877047f23fc8b1300aab6d2245f37ea6563f19305070b"
-url = "https://github.com/jdx/ruby/releases/download/3.4.11-1/ruby-3.4.11.x86_64_linux.tar.gz"
+checksum = "sha256:187448200a8af7a9caf32bc4eb40b63bdc1fe3666400d1bdd875fc1adbe0be36"
+url = "https://github.com/jdx/ruby/releases/download/3.4.11-2/ruby-3.4.11.x86_64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-x64-musl"]
@@ -234,8 +234,8 @@ checksum = "sha256:5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d
 url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz"
 
 [tools.ruby."platforms.macos-arm64"]
-checksum = "sha256:4daac1266bd302c1a20fff0d65b25919ef3d64740ace1afd9f8bff69fd63db42"
-url = "https://github.com/jdx/ruby/releases/download/3.4.11-1/ruby-3.4.11.macos.tar.gz"
+checksum = "sha256:72efe9e14e3a9a254edf3dc56f2e843422e8b23317e4bc2b6cef9271c3838d89"
+url = "https://github.com/jdx/ruby/releases/download/3.4.11-2/ruby-3.4.11.macos.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.macos-x64"]
