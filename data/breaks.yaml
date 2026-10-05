@@ -1,40 +1,47 @@
-# Historical 2016–17 dates; verified current dates belong to breaks/upstream-data.
-# Boundaries are inclusive calendar dates in America/Chicago.
+# Official 2026–27 Registrar academic calendar, revised 2026-08-11.
+# https://wp.stolaf.edu/registrar/files/2026/08/2026-27-Academic-Calendar-FINAL-8.11.26.pdf
+# Verified 2026-10-04; boundaries are inclusive dates in America/Chicago.
+# Academic dates establish calendar context only, not operating hours.
+# weekOne retains the orientation identifier; weekZero has no verified boundary.
+# Summer is omitted until operating boundaries are established.
 timezone: America/Chicago
+templates:
+  library-fall-closed:
+    # https://wp.stolaf.edu/current-students/breaks/ (2026–27, checked 2026-10-04)
+    # Rolvaag and Music Library both explicitly close October 10–13, 2026.
+    - title: Fall Break
+      isPhysicallyOpen: false
+      hours: []
+      notes: Closed for Fall Break.
 breaks:
-  weekZero:
-    name: Week Zero
-    start: '2016-08-29'
-    end: '2016-09-02'
   weekOne:
-    name: Week One
-    start: '2016-09-03'
-    end: '2016-09-07'
+    name: New Student Orientation
+    start: '2026-09-04'
+    end: '2026-09-09'
   fall:
     name: Fall Break
-    start: '2016-08-15'
-    end: '2016-08-18'
+    start: '2026-10-10'
+    end: '2026-10-13'
   thanksgiving:
     name: Thanksgiving Break
-    start: '2016-11-23'
-    end: '2016-11-27'
+    start: '2026-11-25'
+    end: '2026-11-29'
   christmasfest:
     name: Christmas Fest
-    start: '2016-12-01'
-    end: '2016-12-04'
+    start: '2026-12-04'
+    end: '2026-12-05'
   winter:
     name: Winter Break
-    start: '2016-12-21'
-    end: '2017-01-01'
+    start: '2026-12-23'
+    end: '2027-01-03'
   interim:
-    name: Interim Break
-    start: '2017-01-28'
-    end: '2017-02-05'
+    name: January Term Break
+    start: '2027-01-30'
+    end: '2027-02-09'
   spring:
     name: Spring Break
-    start: '2017-03-18'
-    end: '2017-03-26'
+    start: '2027-03-26'
+    end: '2027-04-04'
   easter:
-    name: Easter Break
-    start: '2017-04-14'
-    end: '2017-04-17'
+    name: Easter
+    date: '2027-03-28'
