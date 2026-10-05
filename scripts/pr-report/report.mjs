@@ -64,58 +64,53 @@ export function readReport(path) {
 	return parsed
 }
 
-/**
- * The failed result for a commit with no usable size report; `note` says
- * why, when more than "none" needs saying.
- */
-function unreadable(note) {
+/** The failed result for a commit with no usable size report. */
+function unreadable() {
 	let gate = {
 		pass: false,
 		message: 'No size report for this commit, so the size gate cannot pass.',
 	}
-	let empty = {head: null, diff: null, baselineNote: note, gate}
+	let empty = {head: null, diff: null, baselineNote: null, gate}
 	return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
 }
 
 /**
  * Builds the comment, the job summary and the gate result from this
- * commit's report and master's. `head.baseSha` is the master commit this PR
- * is based on; `comparedSha` is the master commit `baseline` actually came
- * from, which can be an older ancestor when there is no report for
- * `head.baseSha` itself (still running, cancelled, expired). `baseRef` is
- * the PR's base branch: only `master` has a baseline to compare with.
+ * commit's report and its base branch's. `head.baseSha` is the base branch
+ * commit this PR is based on; `comparedSha` is the commit `baseline`
+ * actually came from. For master that can be an older ancestor when there is
+ * no report for `head.baseSha` itself (still running, cancelled, expired);
+ * for any other base branch it is `head.baseSha` or there is no baseline.
  */
 export function buildPrReport({head, baseline, comparedSha, baseRef, labels, limit}) {
-	// A head report at another version has no shape this script can read: a
-	// label change reuses the report from the PR's last push, which can
-	// predate a change to the report.
-	if (head !== null && head.version !== REPORT_VERSION) {
-		return unreadable(
-			`This commit's size report is an older format (version ${head.version}), so there is nothing to show; push a commit to measure it again.`,
-		)
-	}
 	if (head === null) {
-		return unreadable(null)
+		return unreadable()
 	}
 
 	let short = head.baseSha ? head.baseSha.slice(0, 7) : 'none'
 	let baselineNote = null
 	let diff = null
-	if (baseRef !== 'master') {
-		baselineNote = `No comparison: this PR is based on \`${baseRef}\`, not master.`
-	} else if (baseline === null) {
-		baselineNote = `No master report at or before \`${short}\`.`
+	// How the notes name the base branch: master plainly, any other branch (a
+	// PR stacked on another) in code style.
+	let branch = baseRef === 'master' ? 'master' : `\`${baseRef}\``
+	if (baseline === null) {
+		baselineNote =
+			baseRef === 'master'
+				? `No master report at or before \`${short}\`.`
+				: `No report for ${branch} at \`${short}\`.`
 	} else if (baseline.version !== REPORT_VERSION) {
 		// Name the commit the baseline actually came from, which can be an
 		// older ancestor than the PR's base (`short`) when find-baseline.sh
 		// fell back to one.
 		let comparedShort = (comparedSha || head.baseSha)?.slice(0, 7) ?? 'none'
-		baselineNote = `Baseline format changed (master's report for \`${comparedShort}\` is version ${baseline.version}), so there is nothing to compare.`
+		baselineNote = `Baseline format changed (${branch}'s report for \`${comparedShort}\` is version ${baseline.version}), so there is nothing to compare.`
 	} else {
 		diff = diffReports(baseline, head)
 		if (comparedSha !== head.baseSha) {
 			let comparedShort = comparedSha.slice(0, 7)
-			baselineNote = `Compared with master at \`${comparedShort}\`, older than this PR's base \`${short}\`: growth merged in between is counted here.`
+			baselineNote = `Compared with ${branch} at \`${comparedShort}\`, older than this PR's base \`${short}\`: growth merged in between is counted here.`
+		} else if (baseRef !== 'master') {
+			baselineNote = `Compared with ${branch}, this PR's base branch, at \`${short}\`.`
 		}
 	}
 
