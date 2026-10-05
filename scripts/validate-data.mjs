@@ -7,6 +7,7 @@ import {isDataEntry} from './data-entries.mjs'
 import {parseArgs} from 'node:util'
 import {validate} from './validate.mjs'
 import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
+import {parseScheduleData} from './schedule-data.ts'
 
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
@@ -27,11 +28,33 @@ const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 // get cli arguments
 const args = getArgs(process.argv.slice(2))
 
+const readSpaces = () =>
+	readDir(path.join(DATA_BASE, 'building-hours')).map((filename) => ({
+		label: `building-hours/${filename}`,
+		data: readYaml(path.join(DATA_BASE, 'building-hours', filename)),
+	}))
+
+// Break keys and references are meaningful only against the paired calendar.
+// Always check the pair when either scheduling input is selected.
+if (!args.data && args.schemaNames.some((name) => name === 'breaks' || name === 'building-hours')) {
+	parseScheduleData(
+		{label: 'breaks.yaml', data: readYaml(path.join(DATA_BASE, 'breaks.yaml'))},
+		readSpaces(),
+	)
+}
+
 // allow either --data/--schema or automatic schema loading
 let iterator
 if (args.data) {
 	let dataFile = readYaml(args.data)
 	let schemaFile = readYaml(args.schema)
+	if (schemaFile.$id === 'building-hours.json') {
+		parseScheduleData({label: 'breaks.yaml', data: readYaml(path.join(DATA_BASE, 'breaks.yaml'))}, [
+			{label: args.data, data: dataFile},
+		])
+	} else if (schemaFile.$id === 'breaks.json') {
+		parseScheduleData({label: args.data, data: dataFile}, readSpaces())
+	}
 	iterator = [[[args.schema, schemaFile, dataFile]]]
 } else {
 	iterator = args.schemaNames.map((schemaName) => load(schemaName))
