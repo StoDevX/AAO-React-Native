@@ -349,3 +349,155 @@ describe('renderComment native changes', () => {
 		assert.match(markdown, /### Native changes/u)
 	})
 })
+
+describe('the app size section', () => {
+	let base = {head, diff: null, baselineNote: null, gate: pass}
+	let appReport = (installBytes, downloadBytes) => ({
+		version: 1,
+		sha: 'abcdef1234',
+		measuredSha: 'abcdef1234',
+		device: 'iPhone18,3',
+		installBytes,
+		downloadBytes,
+		byGroup: {},
+		byAsset: {},
+	})
+	let section = (comment) =>
+		comment.slice(comment.indexOf('### App size'), comment.indexOf('### Dependencies'))
+
+	it('says when the archive failed, with a warning', () => {
+		let app = {
+			needed: true,
+			head: null,
+			baseline: null,
+			diff: null,
+			total: null,
+			note: null,
+			gate: {
+				pass: true,
+				warn: true,
+				message:
+					'No app size for this commit; the app size gate will fail this once it is enforced.',
+			},
+		}
+		assert.equal(
+			section(renderComment({...base, app})),
+			[
+				'### App size',
+				"App size unavailable: the archive or its measurement failed. See this run's App size job.",
+				'',
+				'⚠️ No app size for this commit; the app size gate will fail this once it is enforced.',
+				'',
+				'',
+			].join('\n'),
+		)
+	})
+
+	it('shows both sizes, the total, the gate and the movers', () => {
+		let rows = [
+			{name: 'Assets.car', before: 1024 * 1024, after: 2 * 1024 * 1024, delta: 1024 * 1024},
+			{name: 'Assets.car › aurora', before: null, after: 1024 * 1024, delta: 1024 * 1024},
+			{name: 'AllAboutOlaf', before: 1024, after: 1024, delta: 0},
+		]
+		let app = {
+			needed: true,
+			head: appReport(3 * 1024 * 1024, 2 * 1024 * 1024),
+			baseline: appReport(2 * 1024 * 1024, 1024 * 1024),
+			diff: {
+				install: {
+					name: 'install',
+					before: 2 * 1024 * 1024,
+					after: 3 * 1024 * 1024,
+					delta: 1024 * 1024,
+				},
+				download: {
+					name: 'download',
+					before: 1024 * 1024,
+					after: 2 * 1024 * 1024,
+					delta: 1024 * 1024,
+				},
+				rows,
+			},
+			total: {name: 'total', before: 4 * 1024 * 1024, after: 5 * 1024 * 1024, delta: 1024 * 1024},
+			note: null,
+			gate: {pass: true, warn: true, message: 'Over.'},
+		}
+		assert.equal(
+			section(renderComment({...base, app})),
+			[
+				'### App size',
+				'iPhone18,3, native only: install **3.00 MiB** (+1.00 MiB, +50.0%) · download 2.00 MiB (+1.00 MiB, +100.0%)',
+				'With JS and bundled images: 5.00 MiB (+1.00 MiB, +25.0%)',
+				'',
+				'⚠️ Over.',
+				'',
+				'| Changed most | Before | After | Δ |',
+				'| --- | --- | --- | --- |',
+				'| Assets.car | 1.00 MiB | 2.00 MiB | +1.00 MiB |',
+				'| Assets.car › aurora | — | 1.00 MiB | +1.00 MiB |',
+				'',
+				'<details><summary>All groups and assets</summary>',
+				'',
+				'| Group or asset | Before | After | Δ |',
+				'| --- | --- | --- | --- |',
+				'| Assets.car | 1.00 MiB | 2.00 MiB | +1.00 MiB |',
+				'| Assets.car › aurora | — | 1.00 MiB | +1.00 MiB |',
+				'| AllAboutOlaf | 1.0 KiB | 1.0 KiB | 0 B |',
+				'',
+				'</details>',
+				'',
+				'',
+			].join('\n'),
+		)
+	})
+
+	it("shows the base branch's figures and this PR's total when nothing native changed", () => {
+		let app = {
+			needed: false,
+			head: null,
+			baseline: appReport(2 * 1024 * 1024, 1024 * 1024),
+			diff: null,
+			total: {
+				name: 'total',
+				before: 4 * 1024 * 1024,
+				after: 4 * 1024 * 1024 + 12 * 1024,
+				delta: 12 * 1024,
+			},
+			note: null,
+			gate: {pass: true, warn: false, message: ''},
+		}
+		assert.equal(
+			section(renderComment({...base, app})),
+			[
+				'### App size',
+				'No native changes. Measured at `abcdef1`: install **2.00 MiB** · download 1.00 MiB',
+				"With this PR's JS and bundled images: 4.01 MiB (+12.0 KiB, +0.3%)",
+				'',
+				'',
+			].join('\n'),
+		)
+	})
+
+	it('has no section without app data', () => {
+		assert.doesNotMatch(renderComment(base), /App size/u)
+	})
+
+	it('keeps the headline but drops the tables past the limit', () => {
+		let app = {
+			needed: true,
+			head: appReport(3 * MiB, 2 * MiB),
+			baseline: appReport(2 * MiB, MiB),
+			diff: {
+				install: {name: 'install', before: 2 * MiB, after: 3 * MiB, delta: MiB},
+				download: {name: 'download', before: MiB, after: 2 * MiB, delta: MiB},
+				rows: [{name: 'Assets.car', before: MiB, after: 2 * MiB, delta: MiB}],
+			},
+			total: null,
+			note: null,
+			gate: {pass: true, warn: false, message: 'Within.'},
+		}
+		let markdown = renderComment({...base, app}, 10)
+		assert.match(markdown, /### App size\niPhone18,3, native only: install \*\*3\.00 MiB\*\*/u)
+		assert.doesNotMatch(markdown, /All groups and assets/u)
+	})
+})

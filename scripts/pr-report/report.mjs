@@ -8,8 +8,8 @@
 import {readFileSync, writeFileSync} from 'node:fs'
 import {parseArgs} from 'node:util'
 
-import {diffReports} from './diff.mjs'
-import {decideGate} from './gate.mjs'
+import {diffApp, diffReports} from './diff.mjs'
+import {APP_GATE_ENFORCED, APP_GROWTH_LIMIT_BYTES, decideAppGate, decideGate} from './gate.mjs'
 import {findNativeChanges} from './native-changes.mjs'
 import {renderComment} from './render.mjs'
 import {APP_SIZE_VERSION, REPORT_VERSION} from './report-version.mjs'
@@ -115,13 +115,114 @@ export function readAppReport(path) {
 }
 
 /** The failed result for a commit with no usable size report. */
-function unreadable(nativeChanges) {
+function unreadable(nativeChanges, app) {
 	let gate = {
 		pass: false,
 		message: 'No size report for this commit, so the size gate cannot pass.',
 	}
-	let empty = {head: null, diff: null, baselineNote: null, gate, nativeChanges}
+	let empty = {head: null, diff: null, baselineNote: null, gate, nativeChanges, app}
 	return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
+}
+
+/** What a size report's JS adds to the app: its bytecode and bundled images. */
+const jsBytes = (report) => report.js.hermesBytes + report.js.assetsBytes
+
+/**
+ * The app size section, or null when there is nothing to show: no native
+ * change and no baseline. `needed` is whether this PR changed native paths;
+ * `appHead` is its app report (null when it did not archive, or the archive
+ * failed); `appBaseline` is the base branch's. `head` and `baseline` are the
+ * size reports, whose JS completes the total; `baseline` is null unless it
+ * is the current version.
+ */
+export function buildAppSection({
+	needed,
+	appHead,
+	appBaseline,
+	head,
+	baseline,
+	comparedSha,
+	labels,
+	appLimit = APP_GROWTH_LIMIT_BYTES,
+	appEnforced = APP_GATE_ENFORCED,
+}) {
+	let notes = []
+	let usable = null
+	if (appBaseline === null) {
+		if (needed && appHead !== null) {
+			notes.push('No app size for the base branch to compare with.')
+		}
+	} else if (appBaseline.version !== APP_SIZE_VERSION) {
+		if (needed && appHead !== null) {
+			notes.push(
+				`Baseline app size format changed (version ${appBaseline.version}), so there is nothing to compare.`,
+			)
+		}
+	} else {
+		usable = appBaseline
+		if (usable.measuredSha !== comparedSha) {
+			notes.push(
+				`The base branch's native figures were measured at \`${usable.measuredSha.slice(0, 7)}\` and carried forward.`,
+			)
+		}
+	}
+	if (!needed && usable === null) {
+		return null
+	}
+
+	let diff = needed && appHead !== null && usable !== null ? diffApp(usable, appHead) : null
+	let native = needed ? appHead?.installBytes : usable.installBytes
+	let total = null
+	if (native !== undefined && head !== null) {
+		let after = native + jsBytes(head)
+		if (usable !== null && baseline !== null) {
+			let before = usable.installBytes + jsBytes(baseline)
+			total = {name: 'total', before, after, delta: after - before}
+		} else {
+			total = {after}
+		}
+	}
+
+	let gate
+	if (!needed) {
+		gate = {pass: true, warn: false, message: ''}
+	} else if (appHead === null) {
+		gate = appEnforced
+			? {
+					pass: false,
+					warn: false,
+					message: 'No app size for this commit, so the app size gate cannot pass.',
+				}
+			: {
+					pass: true,
+					warn: true,
+					message:
+						'No app size for this commit; the app size gate will fail this once it is enforced.',
+				}
+	} else if (diff !== null && head !== null && comparedSha !== head.baseSha) {
+		gate = {
+			pass: true,
+			warn: false,
+			message: 'Compared with an older master commit, so the app size gate passes.',
+		}
+	} else {
+		gate = decideAppGate({
+			install: diff?.install ?? null,
+			labels,
+			limit: appLimit,
+			enforced: appEnforced,
+		})
+	}
+
+	return {
+		needed,
+		head: appHead,
+		baseline: usable,
+		diff,
+		total,
+		note: notes.length > 0 ? notes.join(' ') : null,
+		gate,
+	}
 }
 
 /**
@@ -131,13 +232,39 @@ function unreadable(nativeChanges) {
  * actually came from. For master that can be an older ancestor when there is
  * no report for `head.baseSha` itself (still running, cancelled, expired);
  * for any other base branch it is `head.baseSha` or there is no baseline.
+ * `appNeeded`, `appHead` and `appBaseline` feed the app size section, as
+ * `buildAppSection` describes; either gate failing fails the report.
  */
-export function buildPrReport({head, baseline, comparedSha, baseRef, labels, limit, files = []}) {
+export function buildPrReport({
+	head,
+	baseline,
+	comparedSha,
+	baseRef,
+	labels,
+	limit,
+	files = [],
+	appNeeded = false,
+	appHead = null,
+	appBaseline = null,
+	appLimit,
+	appEnforced,
+}) {
 	// A dependency change can only be told from the two reports; the files
 	// need neither, so the notice still shows the changes it can find.
 	let nativeChanges = (diff) => findNativeChanges({files, packageChanges: diff?.deps.changes ?? []})
+	let app = buildAppSection({
+		needed: appNeeded,
+		appHead,
+		appBaseline,
+		head,
+		baseline: baseline?.version === REPORT_VERSION ? baseline : null,
+		comparedSha,
+		labels,
+		appLimit,
+		appEnforced,
+	})
 	if (head === null) {
-		return unreadable(nativeChanges(null))
+		return unreadable(nativeChanges(null), app)
 	}
 
 	let short = head.baseSha ? head.baseSha.slice(0, 7) : 'none'
@@ -173,8 +300,12 @@ export function buildPrReport({head, baseline, comparedSha, baseRef, labels, lim
 		diff !== null && comparedSha !== head.baseSha
 			? {pass: true, message: 'Compared with an older master commit, so the size gate passes.'}
 			: decideGate({hermes: diff?.hermes ?? null, labels, limit})
-	let full = {head, diff, baselineNote, gate, nativeChanges: nativeChanges(diff)}
-	return {comment: renderComment(full), summary: renderComment(full, Infinity), pass: gate.pass}
+	let full = {head, diff, baselineNote, gate, nativeChanges: nativeChanges(diff), app}
+	return {
+		comment: renderComment(full),
+		summary: renderComment(full, Infinity),
+		pass: gate.pass && (app?.gate.pass ?? true),
+	}
 }
 
 function main() {
@@ -186,6 +317,9 @@ function main() {
 			'base-ref': {type: 'string'},
 			labels: {type: 'string'},
 			files: {type: 'string'},
+			'app-needed': {type: 'string'},
+			'app-head': {type: 'string'},
+			'app-baseline': {type: 'string'},
 			'comment-out': {type: 'string'},
 			'summary-out': {type: 'string'},
 		},
@@ -198,6 +332,11 @@ function main() {
 		baseRef: values['base-ref'],
 		labels,
 		files: JSON.parse(readFileSync(values.files, 'utf8')),
+		// A path that is absent, because no archive ran or none was found,
+		// reads as null.
+		appNeeded: values['app-needed'] === 'true',
+		appHead: readAppReport(values['app-head']),
+		appBaseline: readAppReport(values['app-baseline']),
 	})
 	writeFileSync(values['comment-out'], comment)
 	writeFileSync(values['summary-out'], summary)

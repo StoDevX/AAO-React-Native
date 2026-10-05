@@ -4,7 +4,7 @@ import {tmpdir} from 'node:os'
 import {dirname, join, resolve} from 'node:path'
 import {describe, it} from 'node:test'
 
-import {buildPrReport, readAppReport, readReport} from './report.mjs'
+import {buildAppSection, buildPrReport, readAppReport, readReport} from './report.mjs'
 
 let report = (hermesBytes, {version = 4, baseSha = 'abcdef1234'} = {}) => ({
 	version,
@@ -136,6 +136,7 @@ describe('readAppReport', () => {
 
 	it('returns null for a missing file', () => {
 		assert.equal(readAppReport(join(dir, 'absent.json')), null)
+		assert.equal(readAppReport(undefined), null)
 	})
 
 	it('returns null for a current-version report with a malformed field', () => {
@@ -362,6 +363,204 @@ describe('buildPrReport', () => {
 		assert.doesNotMatch(result.comment, /All packages/u)
 		assert.match(result.comment, /The full tables are in this run's job summary\./u)
 		assert.match(result.summary, /All packages/u)
+	})
+})
+
+describe('buildAppSection', () => {
+	let common = {labels: [], appLimit: 100, appEnforced: false}
+
+	it('leaves the section out when nothing native changed and there is no baseline', () => {
+		let app = buildAppSection({
+			...common,
+			needed: false,
+			appHead: null,
+			appBaseline: null,
+			head: report(10),
+			baseline: report(10),
+			comparedSha: 'abcdef1234',
+		})
+		assert.equal(app, null)
+	})
+
+	it('warns, not fails, when a native change was not measured and the gate is report-only', () => {
+		let app = buildAppSection({
+			...common,
+			needed: true,
+			appHead: null,
+			appBaseline: appReport(100),
+			head: report(10),
+			baseline: report(10),
+			comparedSha: 'abcdef1234',
+		})
+		assert.deepEqual(app.gate, {
+			pass: true,
+			warn: true,
+			message: 'No app size for this commit; the app size gate will fail this once it is enforced.',
+		})
+	})
+
+	it('fails when a native change was not measured and the gate is enforced', () => {
+		let app = buildAppSection({
+			...common,
+			appEnforced: true,
+			needed: true,
+			appHead: null,
+			appBaseline: appReport(100),
+			head: report(10),
+			baseline: report(10),
+			comparedSha: 'abcdef1234',
+		})
+		assert.equal(app.gate.pass, false)
+	})
+
+	it('totals native, Hermes and asset bytes on both sides', () => {
+		let head = report(10)
+		head.js.assetsBytes = 5
+		let baseline = report(8)
+		baseline.js.assetsBytes = 5
+		let app = buildAppSection({
+			...common,
+			needed: true,
+			appHead: appReport(150),
+			appBaseline: appReport(100),
+			head,
+			baseline,
+			comparedSha: 'abcdef1234',
+		})
+		assert.deepEqual(app.total, {name: 'total', before: 113, after: 165, delta: 52})
+		assert.equal(app.diff.install.delta, 50)
+	})
+
+	it('uses the base branch native figure plus this PR JS when nothing native changed', () => {
+		let app = buildAppSection({
+			...common,
+			needed: false,
+			appHead: null,
+			appBaseline: appReport(100),
+			head: report(12),
+			baseline: report(10),
+			comparedSha: 'abcdef1234',
+		})
+		assert.deepEqual(app.total, {name: 'total', before: 110, after: 112, delta: 2})
+		assert.equal(app.diff, null)
+	})
+
+	it('notes a baseline at another version and passes', () => {
+		let app = buildAppSection({
+			...common,
+			needed: true,
+			appHead: appReport(1000),
+			appBaseline: {version: 0},
+			head: report(10),
+			baseline: report(10),
+			comparedSha: 'abcdef1234',
+		})
+		assert.equal(
+			app.note,
+			'Baseline app size format changed (version 0), so there is nothing to compare.',
+		)
+		assert.equal(app.diff, null)
+		assert.equal(app.gate.pass, true)
+		assert.equal(app.gate.warn, false)
+	})
+
+	it('notes a missing baseline and passes', () => {
+		let app = buildAppSection({
+			...common,
+			needed: true,
+			appHead: appReport(1000),
+			appBaseline: null,
+			head: report(10),
+			baseline: null,
+			comparedSha: null,
+		})
+		assert.equal(app.note, 'No app size for the base branch to compare with.')
+		assert.deepEqual(app.total, {after: 1010})
+		assert.equal(app.gate.pass, true)
+	})
+
+	it('names the commit that measured carried-forward figures', () => {
+		let app = buildAppSection({
+			...common,
+			needed: true,
+			appHead: appReport(100),
+			appBaseline: appReport(100, {measuredSha: '1234567abc'}),
+			head: report(10),
+			baseline: report(10),
+			comparedSha: 'abcdef1234',
+		})
+		assert.equal(
+			app.note,
+			"The base branch's native figures were measured at `1234567` and carried forward.",
+		)
+	})
+
+	it('passes growth against an older master commit', () => {
+		let app = buildAppSection({
+			...common,
+			appEnforced: true,
+			needed: true,
+			appHead: appReport(100000),
+			appBaseline: appReport(100, {measuredSha: '9999999999'}),
+			head: report(10),
+			baseline: report(10),
+			comparedSha: '9999999999',
+		})
+		assert.equal(app.gate.pass, true)
+		assert.match(app.gate.message, /older master commit/u)
+	})
+})
+
+describe('buildPrReport with app size', () => {
+	it('fails when the enforced app gate fails, even if the JS gate passes', () => {
+		let result = buildPrReport({
+			head: report(100),
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			limit: 100,
+			appNeeded: true,
+			appHead: appReport(1000),
+			appBaseline: appReport(100),
+			appLimit: 100,
+			appEnforced: true,
+		})
+		assert.equal(result.pass, false)
+		assert.match(result.comment, /### App size/u)
+	})
+
+	it('passes with a warning when the report-only app gate would fail', () => {
+		let result = buildPrReport({
+			head: report(100),
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			limit: 100,
+			appNeeded: true,
+			appHead: appReport(1000),
+			appBaseline: appReport(100),
+			appLimit: 100,
+			appEnforced: false,
+		})
+		assert.equal(result.pass, true)
+		assert.match(result.comment, /⚠️ App install size grew/u)
+	})
+
+	it('shows the app section even when this commit has no size report', () => {
+		let result = buildPrReport({
+			head: null,
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			appNeeded: true,
+			appHead: appReport(1000),
+			appBaseline: appReport(100),
+		})
+		assert.match(result.comment, /### App size/u)
+		assert.equal(result.pass, false)
 	})
 })
 
