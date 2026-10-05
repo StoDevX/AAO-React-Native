@@ -1,0 +1,102 @@
+name: iOS (xtool, experimental)
+
+# Builds the iOS app on Linux with xtool (https://github.com/xtool-org/xtool)
+# and compares it with the app Xcode builds in the iOS workflow.
+#
+# Experimental and manual: xtool builds SwiftPM packages, not an Xcode
+# workspace with CocoaPods, and its Darwin SDK is made from an Xcode .xip that
+# Apple only serves to a signed-in developer. So this needs XCODE_XIP_URL, a
+# secret pointing at somewhere we may fetch that file, and an xtool.yml +
+# Package.swift for the app (XTOOL_PROJECT_DIR) which this repo does not yet
+# have. Until then the build step fails, by design, rather than passing empty.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mac_run_id:
+        description: 'iOS workflow run whose ios-app artifact to compare against'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  XTOOL_VERSION: '1.20.1'
+  XTOOL_PROJECT_DIR: 'xtool'
+
+jobs:
+  ios-xtool-build:
+    name: Build for iOS with xtool
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install xtool
+        run: |
+          curl -fsSL -o xtool.AppImage \
+            "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool-x86_64.AppImage"
+          chmod +x xtool.AppImage
+          sudo mv xtool.AppImage /usr/local/bin/xtool
+
+      - name: Install the Darwin SDK from Xcode.xip
+        env:
+          XCODE_XIP_URL: ${{ secrets.XCODE_XIP_URL }}
+        run: |
+          if [ -z "$XCODE_XIP_URL" ]; then
+            echo "::error::XCODE_XIP_URL is not set; xtool cannot build the Darwin SDK without Xcode.xip"
+            exit 1
+          fi
+          curl -fsSL -o Xcode.xip "$XCODE_XIP_URL"
+          xtool sdk build Xcode.xip
+
+      - name: Build the app
+        working-directory: ${{ env.XTOOL_PROJECT_DIR }}
+        run: |
+          if [ ! -f xtool.yml ]; then
+            echo "::error::$XTOOL_PROJECT_DIR/xtool.yml is missing; the app has no xtool project yet"
+            exit 1
+          fi
+          xtool dev build --ipa
+          mkdir -p ../linux-build
+          unzip -q xtool/*.ipa -d ../linux-build
+
+      - name: Upload the Linux build
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ios-app-xtool
+          path: linux-build
+          retention-days: 3
+
+  ios-xtool-compare:
+    name: Compare Mac and Linux builds
+    needs: [ios-xtool-build]
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download the Linux build
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ios-app-xtool
+          path: linux-build
+
+      - name: Download the Mac build
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ios-app
+          run-id: ${{ inputs.mac_run_id }}
+          github-token: ${{ github.token }}
+          path: mac-build
+
+      - name: Compare
+        run: |
+          tar -C mac-build -xf mac-build/ios-app.tar
+          mac_app=$(find mac-build -maxdepth 4 -name 'AllAboutOlaf.app' -path '*Debug-iphonesimulator*' | head -n1)
+          linux_app=$(find linux-build -maxdepth 3 -name '*.app' | head -n1)
+          scripts/compare-ios-apps.sh "$mac_app" "$linux_app" | tee "$GITHUB_STEP_SUMMARY"
