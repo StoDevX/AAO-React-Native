@@ -391,7 +391,9 @@ describe('buildAppSection', () => {
 			head: report(10),
 			baseline: report(10),
 			comparedSha: 'abcdef1234',
+			runUrl: 'https://github.com/o/r/actions/runs/1',
 		})
+		assert.equal(app.runUrl, 'https://github.com/o/r/actions/runs/1')
 		assert.deepEqual(app.gate, {
 			pass: true,
 			warn: true,
@@ -561,6 +563,21 @@ describe('buildPrReport with app size', () => {
 		})
 		assert.match(result.comment, /### App size/u)
 		assert.equal(result.pass, false)
+	})
+
+	it('links an unmeasured native change to the run that tried', () => {
+		let result = buildPrReport({
+			head: report(100),
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			appNeeded: true,
+			appHead: null,
+			appBaseline: appReport(100),
+			runUrl: 'https://github.com/o/r/actions/runs/1',
+		})
+		assert.match(result.comment, /\[this run\]\(https:\/\/github\.com\/o\/r\/actions\/runs\/1\)/u)
 	})
 })
 

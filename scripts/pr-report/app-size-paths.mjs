@@ -26,6 +26,8 @@ const NATIVE = [
 	/^mise\.toml$/u,
 	// The measurement itself: a change to it must be seen to work.
 	/^scripts\/pr-report\/app-size\.mjs$/u,
+	// Picks the Xcode the archive is built with, and how it runs.
+	/^\.github\/workflows\/pr-report\.yml$/u,
 ]
 
 /** Whether a changed file can change the native app. */

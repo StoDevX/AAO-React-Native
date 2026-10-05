@@ -133,7 +133,8 @@ const jsBytes = (report) => report.js.hermesBytes + report.js.assetsBytes
  * `appHead` is its app report (null when it did not archive, or the archive
  * failed); `appBaseline` is the base branch's. `head` and `baseline` are the
  * size reports, whose JS completes the total; `baseline` is null unless it
- * is the current version.
+ * is the current version. `runUrl` is this workflow run's page, which the
+ * section links when the archive failed.
  */
 export function buildAppSection({
 	needed,
@@ -145,6 +146,7 @@ export function buildAppSection({
 	labels,
 	appLimit = APP_GROWTH_LIMIT_BYTES,
 	appEnforced = APP_GATE_ENFORCED,
+	runUrl,
 }) {
 	let notes = []
 	let usable = null
@@ -221,6 +223,7 @@ export function buildAppSection({
 		diff,
 		total,
 		note: notes.length > 0 ? notes.join(' ') : null,
+		runUrl,
 		gate,
 	}
 }
@@ -232,7 +235,7 @@ export function buildAppSection({
  * actually came from. For master that can be an older ancestor when there is
  * no report for `head.baseSha` itself (still running, cancelled, expired);
  * for any other base branch it is `head.baseSha` or there is no baseline.
- * `appNeeded`, `appHead` and `appBaseline` feed the app size section, as
+ * `appNeeded`, `appHead`, `appBaseline` and `runUrl` feed the app size section, as
  * `buildAppSection` describes; either gate failing fails the report.
  */
 export function buildPrReport({
@@ -248,6 +251,7 @@ export function buildPrReport({
 	appBaseline = null,
 	appLimit,
 	appEnforced,
+	runUrl,
 }) {
 	// A dependency change can only be told from the two reports; the files
 	// need neither, so the notice still shows the changes it can find.
@@ -262,6 +266,7 @@ export function buildPrReport({
 		labels,
 		appLimit,
 		appEnforced,
+		runUrl,
 	})
 	if (head === null) {
 		return unreadable(nativeChanges(null), app)
@@ -320,6 +325,7 @@ function main() {
 			'app-needed': {type: 'string'},
 			'app-head': {type: 'string'},
 			'app-baseline': {type: 'string'},
+			'run-url': {type: 'string'},
 			'comment-out': {type: 'string'},
 			'summary-out': {type: 'string'},
 		},
@@ -337,6 +343,7 @@ function main() {
 		appNeeded: values['app-needed'] === 'true',
 		appHead: readAppReport(values['app-head']),
 		appBaseline: readAppReport(values['app-baseline']),
+		runUrl: values['run-url'],
 	})
 	writeFileSync(values['comment-out'], comment)
 	writeFileSync(values['summary-out'], summary)

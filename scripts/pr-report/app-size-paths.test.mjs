@@ -22,6 +22,7 @@ describe('isNativePath', () => {
 		'patches/react-native.patch',
 		'mise.toml',
 		'scripts/pr-report/app-size.mjs',
+		'.github/workflows/pr-report.yml',
 	]) {
 		it(`counts ${path}`, () => assert.equal(isNativePath(path), true))
 	}
@@ -34,7 +35,7 @@ describe('isNativePath', () => {
 		'plugins/with-alternate-icons.test.ts',
 		'data/building-hours/1-3-stav.yaml',
 		'scripts/pr-report/render.mjs',
-		'.github/workflows/pr-report.yml',
+		'.github/workflows/ios.yml',
 	]) {
 		it(`leaves out ${path}`, () => assert.equal(isNativePath(path), false))
 	}

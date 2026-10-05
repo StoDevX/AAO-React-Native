@@ -110,7 +110,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Archive and measure the native app
         env:
-          APP_SIZE_SHA: ${{ github.sha }}
+          # On a pull request, its head commit rather than the merge commit,
+          # which is on no branch: a PR stacked on this one compares with
+          # this report and expects the commit its base branch points at.
+          APP_SIZE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: mise run app-size
       - name: Upload the app size report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -291,6 +294,7 @@ jobs:
             --app-needed "$APP_NEEDED" \
             --app-head app-head/app-size.json \
             --app-baseline app-baseline/app-size.json \
+            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
             --comment-out comment.md \
             --summary-out summary.md || status=$?
           if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then

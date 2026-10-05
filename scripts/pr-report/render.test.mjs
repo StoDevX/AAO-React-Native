@@ -373,6 +373,7 @@ describe('the app size section', () => {
 			diff: null,
 			total: null,
 			note: null,
+			runUrl: 'https://github.com/o/r/actions/runs/1',
 			gate: {
 				pass: true,
 				warn: true,
@@ -384,7 +385,7 @@ describe('the app size section', () => {
 			section(renderComment({...base, app})),
 			[
 				'### App size',
-				"App size unavailable: the archive or its measurement failed. See this run's App size job.",
+				'App size unavailable: the archive or its measurement failed. See the App size job in [this run](https://github.com/o/r/actions/runs/1).',
 				'',
 				'⚠️ No app size for this commit; the app size gate will fail this once it is enforced.',
 				'',
