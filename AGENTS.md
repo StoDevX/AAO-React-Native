@@ -233,7 +233,7 @@ simulator, or validate it in the SF Symbols app.
 In dev mode (debug builds, or with the dev-mode override enabled in Settings), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.
 
 To use this:
-1. Start `ccc-server` with mDNS advertisement enabled: `mise run stolaf-college:mdns` (in the `ccc-server` repo)
+1. Start `ccc-server` with mDNS advertisement enabled: `mise run start:with-server` starts it beside Metro, from a `ccc-server` checkout next to this one (set `CCC_SERVER_DIR` for one elsewhere). Metro keeps the terminal, and Ctrl-C stops both. To run the server alone, `mise run stolaf-college:mdns` in the `ccc-server` repo
 2. Run a debug build of the app on a device on the same network
 3. Navigate to Settings → Server URL — the server will appear automatically
 

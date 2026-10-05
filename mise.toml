@@ -65,6 +65,27 @@ run = "expo run:ios${usage_device:+ --device \"$usage_device\"}"
 description = "Start Metro bundler"
 run = "expo start"
 
+# ccc-server runs in the background so Metro keeps the terminal, and with it the
+# keys that reload the app and open the debugger; under `depends` both would
+# lose the TTY. The server advertises itself over mDNS, so a device finds it in
+# Settings -> Server URL. The trap stops the server when Metro exits any other
+# way than Ctrl-C, which reaches both on its own.
+[tasks."start:with-server"]
+description = "Start ccc-server for St. Olaf and Metro together"
+env.CCC_SERVER_DIR = "{{config_root}}/../ccc-server"
+run = '''
+if test ! -f "$CCC_SERVER_DIR/.config/mise.toml"; then
+  echo "error: no ccc-server checkout at $CCC_SERVER_DIR; set CCC_SERVER_DIR" >&2
+  exit 1
+fi
+
+mise --cd "$CCC_SERVER_DIR" run stolaf-college:mdns &
+server=$!
+trap 'kill "$server" 2>/dev/null' EXIT
+
+expo start
+'''
+
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
 wait_for = ["pnpm:install:*"]
