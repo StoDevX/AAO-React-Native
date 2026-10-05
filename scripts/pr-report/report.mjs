@@ -12,7 +12,7 @@ import {diffReports} from './diff.mjs'
 import {decideGate} from './gate.mjs'
 import {findNativeChanges} from './native-changes.mjs'
 import {renderComment} from './render.mjs'
-import {REPORT_VERSION} from './report-version.mjs'
+import {APP_SIZE_VERSION, REPORT_VERSION} from './report-version.mjs'
 
 /**
  * Exit code for a failed size gate. Any other non-zero code is a crash, which
@@ -21,14 +21,15 @@ import {REPORT_VERSION} from './report-version.mjs'
 export const GATE_FAILED_EXIT_CODE = 2
 
 /**
- * Reads a size report, or returns null when there is none to read. A
+ * Reads a JSON report, or returns null when there is none to read. A
  * download that failed or expired leaves no file, or a file that is not a
  * report, and both mean the same thing here: nothing to compare. A report at
- * the current version is also checked for the JS, asset and dependency shapes this script reads,
- * so a half-written or corrupted upload reads as missing rather than
- * crashing the comparison.
+ * `version` is also checked with `isMalformed`, so a half-written or
+ * corrupted upload reads as missing rather than crashing the comparison; a
+ * report at another version is returned unchecked, so the comment can say
+ * the format changed.
  */
-export function readReport(path) {
+function readVersioned(path, version, isMalformed) {
 	let parsed
 	try {
 		parsed = JSON.parse(readFileSync(path, 'utf8'))
@@ -38,10 +39,21 @@ export function readReport(path) {
 	if (typeof parsed !== 'object' || parsed === null || typeof parsed.version !== 'number') {
 		return null
 	}
-	if (parsed.version === REPORT_VERSION) {
-		let js = parsed.js
-		let deps = parsed.deps
-		if (
+	if (parsed.version === version && isMalformed(parsed)) {
+		return null
+	}
+	return parsed
+}
+
+/**
+ * Reads a size report, as `readVersioned` does, checking the JS, asset and
+ * dependency shapes this script reads.
+ */
+export function readReport(path) {
+	return readVersioned(
+		path,
+		REPORT_VERSION,
+		({js, deps}) =>
 			typeof js !== 'object' ||
 			js === null ||
 			!Number.isFinite(js.hermesBytes) ||
@@ -68,12 +80,38 @@ export function readReport(path) {
 					size !== null &&
 					Number.isFinite(size.installed) &&
 					Number.isFinite(size.bundled),
-			)
-		) {
-			return null
-		}
-	}
-	return parsed
+			),
+	)
+}
+
+/** Whether `value` is a plain object whose values are all finite numbers. */
+function isByteMap(value) {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		!Array.isArray(value) &&
+		Object.values(value).every((bytes) => Number.isFinite(bytes))
+	)
+}
+
+/**
+ * Reads an app report, as `readVersioned` does, checking the figures and
+ * maps this script reads.
+ */
+export function readAppReport(path) {
+	return readVersioned(
+		path,
+		APP_SIZE_VERSION,
+		(report) =>
+			!(
+				typeof report.measuredSha === 'string' &&
+				typeof report.device === 'string' &&
+				Number.isFinite(report.installBytes) &&
+				Number.isFinite(report.downloadBytes) &&
+				isByteMap(report.byGroup) &&
+				isByteMap(report.byAsset)
+			),
+	)
 }
 
 /** The failed result for a commit with no usable size report. */

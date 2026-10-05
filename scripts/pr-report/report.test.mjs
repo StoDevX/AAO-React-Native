@@ -4,7 +4,7 @@ import {tmpdir} from 'node:os'
 import {dirname, join, resolve} from 'node:path'
 import {describe, it} from 'node:test'
 
-import {buildPrReport, readReport} from './report.mjs'
+import {buildPrReport, readAppReport, readReport} from './report.mjs'
 
 let report = (hermesBytes, {version = 4, baseSha = 'abcdef1234'} = {}) => ({
 	version,
@@ -111,6 +111,53 @@ describe('readReport', () => {
 		let path = join(dir, 'old.json')
 		writeFileSync(path, JSON.stringify({version: 0, js: {minifiedBytes: 1}}))
 		assert.deepEqual(readReport(path), {version: 0, js: {minifiedBytes: 1}})
+	})
+})
+
+let appReport = (installBytes, {version = 1, measuredSha = 'abcdef1234'} = {}) => ({
+	version,
+	sha: 'abcdef1234',
+	measuredSha,
+	device: 'iPhone18,3',
+	installBytes,
+	downloadBytes: Math.round(installBytes / 2),
+	byGroup: {'Assets.car': installBytes},
+	byAsset: {windmill: installBytes},
+})
+
+describe('readAppReport', () => {
+	let dir = mkdtempSync(join(tmpdir(), 'pr-report-app-'))
+
+	it('reads a report', () => {
+		let path = join(dir, 'ok.json')
+		writeFileSync(path, JSON.stringify(appReport(5)))
+		assert.deepEqual(readAppReport(path), appReport(5))
+	})
+
+	it('returns null for a missing file', () => {
+		assert.equal(readAppReport(join(dir, 'absent.json')), null)
+	})
+
+	it('returns null for a current-version report with a malformed field', () => {
+		for (let bad of [
+			{installBytes: 'x'},
+			{downloadBytes: null},
+			{measuredSha: 5},
+			{device: undefined},
+			{byGroup: null},
+			{byGroup: {a: 'x'}},
+			{byAsset: ['a']},
+		]) {
+			let path = join(dir, 'bad.json')
+			writeFileSync(path, JSON.stringify({...appReport(5), ...bad}))
+			assert.equal(readAppReport(path), null, JSON.stringify(bad))
+		}
+	})
+
+	it('reads another version without checking its shape', () => {
+		let path = join(dir, 'old.json')
+		writeFileSync(path, JSON.stringify({version: 0}))
+		assert.deepEqual(readAppReport(path), {version: 0})
 	})
 })
 
