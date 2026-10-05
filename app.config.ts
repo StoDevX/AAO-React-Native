@@ -291,6 +291,7 @@ const config: ExpoConfig = {
 		// and Expo runs a later plugin's project mod first, so it goes above.
 		'./plugins/with-sentry-debug-files-environment',
 		'./plugins/with-sentry-cli-executable',
+		'./plugins/with-tree-shaking',
 		[
 			'@sentry/react-native/expo',
 			{
