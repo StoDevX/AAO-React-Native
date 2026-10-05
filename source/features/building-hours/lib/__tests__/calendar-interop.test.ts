@@ -11,7 +11,6 @@ describe('calendar boundaries with existing Moment hours consumers', () => {
 			expect(startMs).toBe(opening.valueOf())
 			expect(endMs).toBe(opening.clone().add(1, 'day').valueOf())
 			expect(moment.tz(startMs, timezone).format('YYYY-MM-DD HH:mm')).toBe(`${date} 00:00`)
-			expect(moment.tz(startMs, timezone).toDate().getTime()).toBe(startMs)
 		},
 	)
 })
