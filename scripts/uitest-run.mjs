@@ -2,7 +2,7 @@
 // that need a UI test run's side effects: update-mess-fixtures and chaos.
 
 import {execFileSync} from 'node:child_process'
-import {existsSync} from 'node:fs'
+import {cpSync, existsSync, rmSync} from 'node:fs'
 import {join} from 'node:path'
 
 import {pickSimulator} from './mess-fixtures.mjs'
@@ -19,9 +19,14 @@ export function run(command, args, options = {}) {
 }
 
 /** The booted simulator to use, or the one SIMULATOR_UDID names. */
-export function bootedSimulator() {
+export function bootedSimulator(udid = process.env.SIMULATOR_UDID) {
+	return pickSimulator(bootedSimulators(), udid)
+}
+
+/** Every booted simulator. */
+export function bootedSimulators() {
 	let booted = JSON.parse(run('xcrun', ['simctl', 'list', 'devices', 'booted', '-j'])).devices
-	return pickSimulator(Object.values(booted).flat(), process.env.SIMULATOR_UDID)
+	return Object.values(booted).flat()
 }
 
 /**
@@ -66,6 +71,20 @@ export function buildArgs(udid) {
 
 /** Where `buildForTesting` leaves the app. */
 export const BUILT_APP = 'ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app'
+
+/**
+ * Puts the bundle `mise run bundle:ios` wrote, and its assets, into the built
+ * app, which then runs without Metro; the CI shards do the same by hand.
+ */
+export function embedJsBundle(app = BUILT_APP) {
+	let bundle = 'ios/AllAboutOlaf/main.jsbundle'
+	if (!existsSync(bundle)) {
+		throw new Error(`no ${bundle}; run mise run bundle:ios first`)
+	}
+	cpSync(bundle, join(app, 'main.jsbundle'))
+	rmSync(join(app, 'assets'), {recursive: true, force: true})
+	cpSync('ios/assets', join(app, 'assets'), {recursive: true})
+}
 
 /**
  * Installs the built app on `udid`. `build-for-testing` builds it without

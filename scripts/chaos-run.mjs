@@ -34,6 +34,37 @@ function parseFaultRate(text) {
 /** How long a replay may run unless told otherwise: its step count is its bound. */
 export const REPLAY_DURATION = 24 * 3600
 
+/** What `chaos.mjs --help` prints. */
+export const CHAOS_HELP = `Drive the app at random on a booted simulator while breaking network requests.
+
+Usage: mise run chaos[:8081|:bundled] [--] [flags]
+
+  chaos:8081     test against the Metro on localhost:8081
+  chaos:bundled  embed the JavaScript in the build, so no Metro is needed
+  chaos          name the Metro yourself with TEST_RUNNER_AAO_JS_LOCATION
+
+mise reads a flag it knows, such as --help, itself; put \`--\` before it.
+
+Flags:
+  --seed <N>          the seed; random when omitted
+  --steps <N>         the most steps to take (default 100000)
+  --duration <N>      how long to run: seconds, or end with s, m or h (default 10m)
+  --fault-rate <N>    the share of requests to break, 0 to 1 (default 0.25)
+  --replay <dir>      replay the run in <dir>, such as logs/chaos/1234; it takes
+                      its seed and step budget from the recording
+  --prebuilt          use the app already built instead of building it
+  --bundled           embed the JavaScript from \`mise run bundle:ios\` in the build
+  --overwrite         replace the evidence an earlier run of the seed left
+  --simulator <name>  the booted simulator, by name, when several are booted
+  --udid <udid>       the booted simulator, by UDID
+  -h, --help          print this
+`
+
+/** Whether the arguments ask for help. */
+export function wantsHelp(argv) {
+	return argv.includes('--help') || argv.includes('-h')
+}
+
 /**
  * mise run chaos's options from its arguments. A replay's step budget stays
  * null unless given, for `withReplayBudget` to fill from the recording.
@@ -46,7 +77,10 @@ export function parseChaosArgs(argv) {
 		faultRate: '0.25',
 		replay: null,
 		prebuilt: false,
+		bundled: false,
 		overwrite: false,
+		simulator: null,
+		udid: null,
 	}
 	for (let i = 0; i < argv.length; i++) {
 		let flag = argv[i]
@@ -73,12 +107,24 @@ export function parseChaosArgs(argv) {
 			case '--prebuilt':
 				options.prebuilt = true
 				break
+			case '--bundled':
+				options.bundled = true
+				break
 			case '--overwrite':
 				options.overwrite = true
+				break
+			case '--simulator':
+				options.simulator = value()
+				break
+			case '--udid':
+				options.udid = value()
 				break
 			default:
 				throw new Error(`unknown flag ${flag}`)
 		}
+	}
+	if (options.simulator && options.udid) {
+		throw new Error('--simulator and --udid cannot be combined: each names the simulator')
 	}
 	if (options.replay) {
 		if (options.seed !== null) {
@@ -101,6 +147,23 @@ export function parseChaosArgs(argv) {
 		throw new Error('the seed must be a positive whole number')
 	}
 	return options
+}
+
+/**
+ * The UDID of the booted simulator the options name, or undefined when they
+ * name none, which leaves the choice to the one booted simulator.
+ */
+export function simulatorUdid(booted, {simulator, udid}) {
+	if (!simulator) return udid ?? undefined
+	let named = booted.filter((device) => device.name === simulator)
+	if (named.length === 0) throw new Error(`no booted simulator is named ${simulator}`)
+	if (named.length > 1) {
+		let list = named.map((device) => device.udid).join(', ')
+		throw new Error(
+			`several booted simulators are named ${simulator}; pick one with --udid: ${list}`,
+		)
+	}
+	return named[0].udid
 }
 
 /** A replay's options with its step budget, by default the recording's step count. */
@@ -338,7 +401,8 @@ export function jsSourceProblem({env, hasEmbeddedBundle}) {
 	let lines = [
 		'No JavaScript source for the run: name the Metro serving this checkout, e.g.',
 		'  TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise run chaos',
-		'or, for the Metro on 8081, mise run chaos:8081',
+		'or, for the Metro on 8081, mise run chaos:8081,',
+		'or, to embed the JavaScript in the build, mise run chaos:bundled',
 	]
 	if (env.AAO_JS_LOCATION) {
 		lines.push(

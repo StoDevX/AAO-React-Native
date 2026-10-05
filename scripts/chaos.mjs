@@ -17,6 +17,7 @@ import {
 import {join} from 'node:path'
 
 import {
+	CHAOS_HELP,
 	chaosOutputDir,
 	checkAppContainer,
 	checkOutputDir,
@@ -25,6 +26,7 @@ import {
 	recordedTapes,
 	tapeFiles,
 	parseChaosArgs,
+	simulatorUdid,
 	replayVerdict,
 	jsSourceProblem,
 	metroProblem,
@@ -32,12 +34,15 @@ import {
 	testFailureMessages,
 	stoppingFindings,
 	testEnv,
+	wantsHelp,
 	withReplayBudget,
 } from './chaos-run.mjs'
 import {
 	appDataPath,
 	bootedSimulator,
+	bootedSimulators,
 	buildForTesting,
+	embedJsBundle,
 	findXctestrun,
 	installBuiltApp,
 	run,
@@ -54,7 +59,12 @@ try {
 }
 
 function main() {
-	let options = parseChaosArgs(process.argv.slice(2))
+	let argv = process.argv.slice(2)
+	if (wantsHelp(argv)) {
+		console.log(CHAOS_HELP)
+		return
+	}
+	let options = parseChaosArgs(argv)
 	let out = chaosOutputDir(options)
 	checkOutputDir({options, out, exists: existsSync(out)})
 
@@ -70,7 +80,10 @@ function main() {
 		options = withReplayBudget(options, recorded.steps)
 	}
 
-	let problem = jsSourceProblem({env: process.env, hasEmbeddedBundle: builtAppHasBundle()})
+	let problem = jsSourceProblem({
+		env: process.env,
+		hasEmbeddedBundle: options.bundled || builtAppHasBundle(),
+	})
 	if (problem) {
 		throw new Error(problem)
 	}
@@ -86,11 +99,17 @@ function main() {
 		}
 	}
 
-	let device = bootedSimulator()
+	let device = bootedSimulator(
+		simulatorUdid(bootedSimulators(), options) ?? process.env.SIMULATOR_UDID,
+	)
 	console.log(`chaos seed ${options.seed} on ${device.name} (${device.udid}) -> ${out}`)
 
 	if (!options.prebuilt) {
 		buildForTesting(device.udid)
+	}
+
+	if (options.bundled) {
+		embedJsBundle()
 	}
 
 	installBuiltApp(device.udid)

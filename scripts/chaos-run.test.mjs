@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import {test} from 'node:test'
 
 import {
+	CHAOS_HELP,
 	chaosOutputDir,
 	checkAppContainer,
 	checkOutputDir,
@@ -16,10 +17,12 @@ import {
 	parseFindingLines,
 	REPLAY_DURATION,
 	replayVerdict,
+	simulatorUdid,
 	runOutcome,
 	stoppingFindings,
 	testEnv,
 	testFailureMessages,
+	wantsHelp,
 	withReplayBudget,
 } from './chaos-run.mjs'
 
@@ -61,7 +64,10 @@ test('reads every flag', () => {
 			faultRate: '0.5',
 			replay: null,
 			prebuilt: true,
+			bundled: false,
 			overwrite: true,
+			simulator: null,
+			udid: null,
 		},
 	)
 })
@@ -507,6 +513,7 @@ test('refuses a run with no JavaScript source, naming the variable to set', () =
 	let problem = jsSourceProblem({env: {}, hasEmbeddedBundle: false})
 	assert.match(problem, /TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise run chaos/u)
 	assert.match(problem, /mise run chaos:8081/u)
+	assert.match(problem, /mise run chaos:bundled/u)
 })
 
 test('accepts a Metro serving this checkout', () => {
@@ -560,4 +567,56 @@ test('collects the failure messages from xcresulttool test results', () => {
 	}
 	assert.deepEqual(testFailureMessages(results), ['failed: caught error: "No Metro was named"'])
 	assert.deepEqual(testFailureMessages({}), [])
+})
+
+test('reads the simulator by name or UDID, and whether to embed the bundle', () => {
+	let defaults = parseChaosArgs([])
+	assert.equal(defaults.bundled, false)
+	assert.equal(defaults.simulator, null)
+	assert.equal(defaults.udid, null)
+
+	let options = parseChaosArgs(['--bundled', '--simulator', 'iPhone 17e'])
+	assert.equal(options.bundled, true)
+	assert.equal(options.simulator, 'iPhone 17e')
+	assert.equal(parseChaosArgs(['--udid', 'ABC']).udid, 'ABC')
+	assert.throws(() => parseChaosArgs(['--simulator', 'iPhone 17e', '--udid', 'ABC']), /--udid/u)
+})
+
+test('finds the UDID of a simulator named on the command line', () => {
+	let booted = [
+		{name: 'iPhone 17e', udid: 'A'},
+		{name: 'iPad', udid: 'B'},
+	]
+	assert.equal(simulatorUdid(booted, {simulator: 'iPad', udid: null}), 'B')
+	assert.equal(simulatorUdid(booted, {simulator: null, udid: 'A'}), 'A')
+	assert.equal(simulatorUdid(booted, {simulator: null, udid: null}), undefined)
+	assert.throws(() => simulatorUdid(booted, {simulator: 'iPod', udid: null}), /iPod/u)
+	assert.throws(
+		() => simulatorUdid([...booted, {name: 'iPad', udid: 'C'}], {simulator: 'iPad', udid: null}),
+		/B, C|several/u,
+	)
+})
+
+test('asks for help with --help or -h', () => {
+	assert.equal(wantsHelp(['--seed', '5', '--help']), true)
+	assert.equal(wantsHelp(['-h']), true)
+	assert.equal(wantsHelp(['--seed', '5']), false)
+})
+
+test('documents every flag in its help', () => {
+	for (let flag of [
+		'--seed',
+		'--steps',
+		'--duration',
+		'--fault-rate',
+		'--replay',
+		'--prebuilt',
+		'--bundled',
+		'--overwrite',
+		'--simulator',
+		'--udid',
+		'--help',
+	]) {
+		assert.ok(CHAOS_HELP.includes(flag), `${flag} is missing from the help`)
+	}
 })
