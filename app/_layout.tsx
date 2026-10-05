@@ -182,7 +182,6 @@ function RootLayout(): React.ReactNode {
 								/>
 								<Stack.Screen name="customize" options={DETAIL_SHEET} />
 								<Stack.Screen name="messenger/customize" options={DETAIL_SHEET} />
-								<Stack.Screen name="developer/network-logger" options={{gestureEnabled: false}} />
 								<Stack.Screen name="report-problem" options={{presentation: 'modal'}} />
 							</Stack>
 						</ChaosGuard>

@@ -1,12 +1,13 @@
 [tools]
 node = "24.21.0"
-pnpm = "12.8.0"
+pnpm = "12.8.2"
 hk = "2.5.0"
 shellcheck = "0.11.0"
 zizmor = "1.30.1"
 ruby = "3.4.11"
-"gem:bundler" = "4.0.21"
+"gem:bundler" = "4.0.22"
 "npm:@changesets/cli" = "3.0.3"
+"npm:source-map-explorer" = "2.5.3"
 
 # Taps and types on a simulator, which simctl cannot do -- see the
 # run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
@@ -56,11 +57,35 @@ run = "pnpm install --frozen-lockfile"
 
 [tasks.ios]
 description = "Run the iOS app"
-run = "expo run:ios"
+usage = '''
+  arg "<device>" help="The device to run on" default="" env="DEVICE"
+'''
+run = '''expo run:ios ${usage_device:+ --device "$usage_device"}'''
 
 [tasks.start]
 description = "Start Metro bundler"
 run = "expo start"
+
+# ccc-server runs in the background so Metro keeps the terminal, and with it the
+# keys that reload the app and open the debugger; under `depends` both would
+# lose the TTY. The server advertises itself over mDNS, so a device finds it in
+# Settings -> Server URL. The trap stops the server when Metro exits any other
+# way than Ctrl-C, which reaches both on its own.
+[tasks."start:with-server"]
+description = "Start ccc-server for St. Olaf and Metro together"
+run = '''
+CCC_SERVER_DIR="${CCC_SERVER_DIR:-{{config_root}}/../ccc-server}"
+if test ! -f "$CCC_SERVER_DIR/.config/mise.toml"; then
+  echo "error: no ccc-server checkout at $CCC_SERVER_DIR; set CCC_SERVER_DIR" >&2
+  exit 1
+fi
+
+mise --cd "$CCC_SERVER_DIR" run stolaf-college:mdns &
+server=$!
+trap 'kill "$server" 2>/dev/null' EXIT
+
+expo start
+'''
 
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
@@ -143,6 +168,16 @@ usage = '''
 '''
 run = '''
   xcrun devicectl list devices --filter "Name = '${usage_device?}'" --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output --exit-status .result.devices[0].properties.hardware.udid
+'''
+
+[tasks."sim:find-udid"]
+hide = true
+description = "Find the UDID of a simulator, or exit 1 if no device found"
+usage = '''
+  arg "<sim_udid>" help="The simulator to build for"
+'''
+run = '''
+  xcrun simctl list devices booted --json | jq --raw-output --exit-status --arg name "${usage_sim_udid?}" '[.devices[][] | select(.name == $name)][0].udid // empty'
 '''
 
 [tasks."device:deploy"]
@@ -271,7 +306,7 @@ run = "jest"
 [tasks."test:node"]
 description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "scripts/pr-report/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts" "modules/schedules/*.test.ts"'
 
 # --- Data ---
 
@@ -301,7 +336,7 @@ description = "Update data/building-hours/ from Bon Appétit's café pages"
 run = "node scripts/scrape-bonapp.mjs"
 
 [tasks.icons]
-description = "Render the in-app icon previews from assets/*.icon"
+description = "Render the in-app icon previews from assets/*.icon, and the Retro app icon set"
 run = "node scripts/make-icons.mjs"
 
 [tasks."crt-pixels"]
@@ -325,16 +360,37 @@ run = "node scripts/update-mess-fixtures.mjs"
 description = "Regenerate the list of routes the chaos monkey opens"
 run = "node scripts/chaos-routes.mjs"
 
+# An optional first argument names a booted simulator, which becomes the
+# SIMULATOR_UDID the script reads; the rest are the script's own flags. A usage
+# spec cannot do this, since it reads a leading flag as the simulator's name,
+# so mise appends the arguments to the `chaos` call at the end instead.
 [tasks.chaos]
 description = "Drive the app at random with network faults on a booted simulator"
-run = "node scripts/chaos.mjs"
+usage = '''
+include file="{{ config_root }}/mise.usage.kdl"; use "chaos";
+'''
+run = """
+#!/usr/bin/env bash
 
-# The chaos task names no Metro, since 8081 is whichever checkout started Metro
-# first. This one names 8081, and the run refuses it if it serves another.
-[tasks."chaos:8081"]
-description = "Run chaos against the Metro on localhost:8081"
-run = "node scripts/chaos.mjs"
-env.TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081"
+if test -z "${TEST_RUNNER_AAO_JS_LOCATION}"; then
+  export TEST_RUNNER_AAO_JS_LOCATION="localhost:${usage_metro}"
+fi
+
+if test -z "${SIMULATOR_UDID}"; then
+  export SIMULATOR_UDID="${usage_udid:-"$(mise run find-udid "${usage_simulator:-}")"}"
+fi
+
+args=()
+test -n "${usage_seed:-}"        && args+=(--seed "$usage_seed")
+test -n "${usage_steps:-}"       && args+=(--steps "$usage_steps")
+test -n "${usage_duration:-}"    && args+=(--duration "$usage_duration")
+test -n "${usage_fault_rate:-}"  && args+=(--fault-rate "$usage_fault_rate")
+test -n "${usage_replay:-}"      && args+=(--replay "$usage_replay")
+test "${usage_prebuilt:-false}" = "true"   && args+=(--prebuilt)
+test "${usage_overwrite:-false}" = "true"  && args+=(--overwrite)
+
+node scripts/chaos.mjs "${args[@]}"
+"""
 
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
@@ -442,7 +498,7 @@ depends = ["bundle-data"]
 wait_for = ["prebuild"]
 # Keeps the UI-test fixtures a release bundle drops (metro.config.js): this bundle
 # serves the UI tests, and `mise run device` builds, which carry them unused.
-env = { KEEP_UITEST_FIXTURES = "1" }
+env = { KEEP_UITEST_FIXTURES = "1", EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH = "1", EXPO_UNSTABLE_TREE_SHAKING = "1" }
 # --reset-cache: Metro caches in $TMPDIR, which neither a pnpm install nor
 # deleting ios/ clears, so a bundle can embed a package copy pnpm has replaced.
 run = """
@@ -454,6 +510,54 @@ expo export:embed \
   --bundle-output ./ios/AllAboutOlaf/main.jsbundle \
   --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map \
   --assets-dest ./ios
+"""
+
+# Measures what ships: no UI-test fixtures and no mocked mode, unlike
+# bundle:ios, and the same hermesc flags as Xcode's Release build.
+#
+# Bundles twice. The unminified bundle is what a Release build ships
+# (expo/scripts/react-native-xcode.sh passes --minify false whenever Hermes
+# is on), so hermesc compiles it for the bytecode figure the headline and
+# gate use. Its own source map is mostly unattributable, though: indentation
+# and line endings are not worth minifying away, so source-map-explorer puts
+# several megabytes of them in [unmapped]/[EOLs], which no package or
+# feature owns. A minified copy's [unmapped] is Metro's module wrappers
+# instead, so the per-package and per-feature tables are built from the
+# minified bundle's source map.
+[tasks."size-report"]
+description = "Measure the production JS bundle for the PR report"
+depends = ["bundle-data"]
+# The same tree shaking as the Release build (plugins/with-tree-shaking.ts).
+env = { EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH = "1", EXPO_UNSTABLE_TREE_SHAKING = "1" }
+run = """
+set -euo pipefail
+out=size-report
+rm -rf "$out" && mkdir -p "$out"
+expo export:embed \
+  --reset-cache \
+  --entry-file index.js \
+  --dev false \
+  --minify false \
+  --platform ios \
+  --bundle-output "$out/main.jsbundle" \
+  --sourcemap-output "$out/main.jsbundle.map" \
+  --assets-dest "$out/assets"
+expo export:embed \
+  --reset-cache \
+  --entry-file index.js \
+  --dev false \
+  --platform ios \
+  --bundle-output "$out/minified/main.jsbundle" \
+  --sourcemap-output "$out/minified/main.jsbundle.map" \
+  --assets-dest "$out/minified/assets"
+hermes=$(node -p "require('path').dirname(require.resolve('hermes-compiler/package.json', {paths: [require('path').dirname(require.resolve('react-native/package.json'))]}))")
+case "$(uname -s)" in
+  Darwin) bin="$hermes/hermesc/osx-bin/hermesc" ;;
+  *) bin="$hermes/hermesc/linux64-bin/hermesc" ;;
+esac
+"$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log" || { cat "$out/hermesc.log" >&2; exit 1; }
+source-map-explorer "$out/minified/main.jsbundle" "$out/minified/main.jsbundle.map" --json --no-border-checks --no-root > "$out/explorer.json"
+node scripts/pr-report/js-size.mjs "$out"
 """
 
 # --- Agent tasks ---

@@ -1,0 +1,31 @@
+{
+  "data": {
+    "timezone": "America/Chicago",
+    "breaks": {
+      "fall": {
+        "name": "Fall Break",
+        "start": "2026-10-10",
+        "end": "2026-10-13"
+      },
+      "winter": {
+        "name": "Winter Break",
+        "start": "2026-12-21",
+        "end": "2027-01-03"
+      },
+      "interim": {
+        "name": "Interim Break",
+        "start": "2027-01-30",
+        "end": "2027-02-07"
+      },
+      "spring": {
+        "name": "Spring Break",
+        "start": "2027-03-20",
+        "end": "2027-03-28"
+      },
+      "easter": {
+        "name": "Easter",
+        "date": "2027-03-28"
+      }
+    }
+  }
+}

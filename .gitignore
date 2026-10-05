@@ -92,3 +92,5 @@ expo-env.d.ts
 images/icons/*-tinted-*.png
 # The logo gallery from `mise run icons -- --table`
 images/icons/logos.html
+# Output of `mise run size-report`
+/size-report/

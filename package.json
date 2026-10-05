@@ -37,6 +37,7 @@
     "@frogpond/open-url": "workspace:*",
     "@frogpond/place-card-header": "workspace:*",
     "@frogpond/quick-actions": "workspace:*",
+    "@frogpond/schedules": "workspace:*",
     "@frogpond/selectable-text": "workspace:*",
     "@frogpond/separator": "workspace:*",
     "@frogpond/sheet-section": "workspace:*",
@@ -48,7 +49,7 @@
     "@frogpond/touch-claim": "workspace:*",
     "@frogpond/touchable": "workspace:*",
     "@frogpond/use-debounce": "workspace:*",
-    "@maplibre/maplibre-react-native": "11.4.0",
+    "@maplibre/maplibre-react-native": "11.4.1",
     "@react-native-async-storage/async-storage": "3.1.1",
     "@react-native-community/netinfo": "12.0.1",
     "@reduxjs/toolkit": "2.13.0",
@@ -94,7 +95,6 @@
     "react-native-change-icon": "5.0.0",
     "react-native-enriched-markdown": "1.1.0",
     "react-native-keychain": "10.0.0",
-    "react-native-network-logger": "3.0.0",
     "react-native-reanimated": "4.5.1",
     "react-native-restart-newarch": "1.0.88",
     "react-native-safe-area-context": "5.7.0",
@@ -102,7 +102,7 @@
     "react-native-url-polyfill": "4.0.0",
     "react-native-webview": "13.16.1",
     "react-native-worklets": "0.10.1",
-    "react-native-zeroconf": "0.16.1",
+    "react-native-zeroconf": "0.17.2",
     "react-redux": "9.3.0",
     "redux-persist": "6.0.0",
     "semver": "7.8.5",
@@ -135,7 +135,7 @@
     "babel-jest": "30.5.2",
     "babel-plugin-transform-remove-console": "6.9.4",
     "babel-preset-expo": "57.0.13",
-    "csv-parse": "7.0.2",
+    "csv-parse": "7.0.3",
     "jest": "30.5.2",
     "js-yaml": "catalog:",
     "oxfmt": "0.71.0",
@@ -148,7 +148,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@12.8.0",
+  "packageManager": "pnpm@12.8.2",
   "enriched-markdown": {
     "enableCodeHighlight": false,
     "enableMath": false

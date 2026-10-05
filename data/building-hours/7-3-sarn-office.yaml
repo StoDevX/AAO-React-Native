@@ -17,11 +17,4 @@ schedule:
       - {days: [Fr], from: '10:00am', to: '11:00am'}
     notes: Buntrock Commons Room 14, next to KSTO
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer: []
+breakSchedule: {}

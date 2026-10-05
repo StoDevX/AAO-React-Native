@@ -3,10 +3,15 @@ import {join} from 'node:path'
 import {describe, expect, it} from '@jest/globals'
 import {appIcons, iconFor, previewFor} from '../index'
 
-/** The names of the Icon Composer documents in assets/. */
-const DOCUMENTS = readdirSync(join(__dirname, '../../../assets'))
-	.filter((entry) => entry.endsWith('.icon'))
-	.map((entry) => entry.slice(0, -'.icon'.length))
+/**
+ * The names of the Icon Composer documents in assets/, and of those kept in
+ * assets/0-source-icons/ only to render a static app icon set from.
+ */
+const DOCUMENTS = ['assets', 'assets/0-source-icons'].flatMap((dir) =>
+	readdirSync(join(__dirname, '../../..', dir))
+		.filter((entry) => entry.endsWith('.icon'))
+		.map((entry) => entry.slice(0, -'.icon'.length)),
+)
 
 describe('appIcons', () => {
 	it('has previews for every Icon Composer document', () => {

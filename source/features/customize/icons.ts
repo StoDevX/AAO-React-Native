@@ -18,7 +18,6 @@ export const ICONS: ReadonlyArray<IconEntry> = [
 	{title: 'Windmill (Sky)', type: 'windmill-sky', group: 'Windmill'},
 	{title: 'Windmill (Dawn)', type: 'windmill-dawn', group: 'Windmill'},
 	{title: 'Windmill (Golden Hour)', type: 'windmill-golden-hour', group: 'Windmill'},
-	{title: 'Windmill (Stars)', type: 'windmill-stars', group: 'Windmill'},
 ]
 
 const GROUP_ORDER: ReadonlyArray<IconGroup> = ['Classic', 'Windmill']
