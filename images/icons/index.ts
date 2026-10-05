@@ -7,8 +7,6 @@ import windmillSkyDark from './windmill-sky-dark.png'
 import windmillSky from './windmill-sky.png'
 import windmillDawnDark from './windmill-dawn-dark.png'
 import windmillDawn from './windmill-dawn.png'
-import windmillStarsDark from './windmill-stars-dark.png'
-import windmillStars from './windmill-stars.png'
 import windmillGoldenHourDark from './windmill-golden-hour-dark.png'
 import windmillGoldenHour from './windmill-golden-hour.png'
 import windmillDark from './windmill-dark.png'
@@ -43,10 +41,6 @@ export const appIcons = {
 	'windmill-golden-hour': {
 		light: windmillGoldenHour,
 		dark: windmillGoldenHourDark,
-	},
-	'windmill-stars': {
-		light: windmillStars,
-		dark: windmillStarsDark,
 	},
 } satisfies Record<string, {light: ImageSourcePropType; dark: ImageSourcePropType}>
 

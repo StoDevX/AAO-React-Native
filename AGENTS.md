@@ -146,6 +146,12 @@ The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in
 `plugins/with-alternate-icons.ts` bundles the rest as alternates. Each
 alternate's file name is the name `react-native-change-icon` switches to.
 
+Old Main (Retro) is the exception: a static app icon set,
+`assets/old-main-retro.xcassets/old-main-retro.appiconset`, with a light and a
+dark image and no tinted one, since iOS tints it on its own and a rendered
+tinted look would cost another 1024px render. `STATIC_ALTERNATE_ICONS` in the
+plugin lists such sets, which it copies into the app's `Images.xcassets`.
+
 Customize's App Icon gallery and the About screen show PNG previews of each icon,
 kept in `images/icons/`. Regenerate them after editing an `.icon`:
 
@@ -160,21 +166,33 @@ files are gitignored. Add `--table` to write `images/icons/logos.html`, a
 gitignored gallery of every logo, to compare them side by side.
 
 The task needs Xcode, whose Icon Composer renders the previews, and runs them
-through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
+through oxipng; the Retro set also needs ImageMagick (`brew install imagemagick`). A new `.icon` alternate also needs an entry in `ALTERNATE_ICONS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
 `ICONS` in `source/features/customize/icons.ts`.
 
-The Old Main (Retro) icon's pixel layers are drawn by `scripts/make-crt-pixels.mjs`
-from the screen grid in that file: the cells as `pixels.svg` and
-`pixels-amber.svg`, and their glow as quarter-size PNGs rendered from the SVGs
-in `assets/old-main-retro.icon/source/`. Edit the grid, run
-`mise run crt-pixels`, then `mise run icons`. The pipeline is Display P3
-throughout: the palette holds P3 components, icon.json reads untagged SVG
-colors as P3, and the PNGs are tagged with the profile, not converted to it.
+The Old Main (Retro) icon's source is an Icon Composer document in
+`assets/0-source-icons/old-main-retro.icon`, kept out of the bundle. Its pixel
+layers are drawn by `scripts/make-crt-pixels.mjs` from the screen grid in that
+file: the cells as `pixels.svg` and `pixels-amber.svg`, and their glow as
+quarter-size PNGs rendered from the SVGs in the document's `source/`. Edit the
+grid, run `mise run crt-pixels`, then `mise run icons`.
 
-Every icon costs about 2.3 MiB of each iPhone's download, as actool stores a
+`mise run icons` makes the previews with ictool but the app icon set with
+ImageMagick, stacking the document's layers itself. ictool bakes a rounded mask
+and a lit rim into its render, iOS draws its own over any app icon, and the dark
+one's rim then glows, so the set is a plain full-bleed square. It is converted
+to sRGB, 8 bits and no alpha: actool stores a second, 16-bit copy beside every
+Display P3 image, and the app icon sets want no alpha. The drawing is Display P3
+throughout (the palette holds P3 components, icon.json reads untagged SVG colors
+as P3, and the glow PNGs are tagged with the profile, not converted to it), so
+only the set's images lose the wider gamut. The stack ignores the document's
+translucency and glass, which it matches to within a few percent. A change to
+the document's layer order or fill needs the same change in `retroSetImages`.
+
+Every `.icon` costs about 2.3 MiB of each iPhone's download, as actool stores a
 flat 1024px render per appearance without loss, and a layer's own images come
-on top. Keep both down:
+on top. A static app icon set costs one render per image it lists. Keep both
+down:
 
 - Grain and noise make every render bigger; the Retro icon's backgrounds were
   1.8 MB each until a blur took the grain out.
