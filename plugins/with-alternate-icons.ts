@@ -10,13 +10,14 @@ import type {XcodeProject} from 'xcode'
  * names. Each document's name is the key `react-native-change-icon` passes to
  * `setAlternateIconName`.
  */
-export const ALTERNATE_ICONS = [
-	'old-main',
-	'windmill-sky',
-	'windmill-dawn',
-	'windmill-golden-hour',
-	'old-main-retro',
-]
+export const ALTERNATE_ICONS = ['old-main', 'windmill-sky', 'windmill-dawn', 'windmill-golden-hour']
+
+/**
+ * App icon sets bundled as they are, with no `.icon` document, for an icon
+ * whose tinted look adds nothing: each set costs one render per appearance it
+ * lists. Each lives at assets/<name>.xcassets/<name>.appiconset.
+ */
+export const STATIC_ALTERNATE_ICONS = ['old-main-retro']
 
 /** Where the tracked documents live, relative to the repository root. */
 const SOURCE_DIR = 'assets'
@@ -130,7 +131,7 @@ export function assertLayersPresent(projectRoot: string, documentPath: string): 
 	}
 }
 
-/** Copy each alternate's document from the repository into the native project. */
+/** Copy each alternate's document, and each static icon set, from the repository into the native project. */
 export function copyAlternateIcons(projectRoot: string, destination: string): void {
 	for (let name of ALTERNATE_ICONS) {
 		let document = join(SOURCE_DIR, `${name}.icon`)
@@ -142,6 +143,17 @@ export function copyAlternateIcons(projectRoot: string, destination: string): vo
 		}
 		assertLayersPresent(projectRoot, document)
 		cpSync(source, join(destination, `${name}.icon`), {recursive: true})
+	}
+
+	for (let name of STATIC_ALTERNATE_ICONS) {
+		let set = join(SOURCE_DIR, `${name}.xcassets`, `${name}.appiconset`)
+		let source = join(projectRoot, set)
+		if (!existsSync(source)) {
+			throw new Error(
+				`with-alternate-icons: ${set} is missing. A missing alternate icon fails silently at runtime, so this is a hard error.`,
+			)
+		}
+		cpSync(source, join(destination, 'Images.xcassets', `${name}.appiconset`), {recursive: true})
 	}
 }
 

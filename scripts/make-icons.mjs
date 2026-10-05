@@ -7,7 +7,7 @@
  * to images/icons/logos.html. Both outputs are gitignored.
  */
 import {execFileSync} from 'node:child_process'
-import {readdirSync, writeFileSync} from 'node:fs'
+import {mkdirSync, readdirSync, writeFileSync} from 'node:fs'
 import {basename, join} from 'node:path'
 
 /**
@@ -52,6 +52,9 @@ const TINTED_APPEARANCES = [
  * @property {string} output the PNG to write
  * @property {number} points the preview's size on screen
  * @property {string} rendition the ictool rendition
+ * @property {number} [scale] the render scale, SCALE when absent
+ * @property {boolean} [opaque] whether to flatten the render onto black, dropping its alpha
+ * @property {number} [depth] bits a channel to reduce the render to, as rendered when absent
  */
 
 /**
@@ -71,6 +74,44 @@ export function exportPlan(entries, {all = false} = {}) {
 				rendition: appearance.rendition,
 			})),
 		)
+}
+
+/**
+ * Old Main (Retro) ships as a plain app icon set, not as its `.icon`, which
+ * would cost a render for the tinted look too. Its Icon Composer document stays
+ * here as the source the set and the previews are rendered from.
+ */
+const RETRO_DOCUMENT = join(SOURCE_DIR, '0-source-icons', 'old-main-retro.icon')
+const RETRO_SET = join(SOURCE_DIR, 'old-main-retro.xcassets', 'old-main-retro.appiconset')
+
+/** The size in pixels of an app icon set's image. */
+const APP_ICON_SIZE = 1024
+
+/** @returns {Export[]} */
+export function retroPreviews() {
+	return APPEARANCES.map((appearance) => ({
+		input: RETRO_DOCUMENT,
+		output: join(OUTPUT_DIR, `old-main-retro${appearance.suffix}.png`),
+		points: POINTS,
+		rendition: appearance.rendition,
+	}))
+}
+
+/**
+ * The light and dark images of the Retro app icon set, 1024px each, at scale 1.
+ *
+ * @returns {Export[]}
+ */
+export function retroExports() {
+	return APPEARANCES.map((appearance) => ({
+		input: RETRO_DOCUMENT,
+		output: join(RETRO_SET, appearance.rendition === 'Dark' ? 'dark.png' : 'light.png'),
+		points: APP_ICON_SIZE,
+		rendition: appearance.rendition,
+		scale: 1,
+		depth: 8,
+		opaque: true,
+	}))
 }
 
 /**
@@ -107,10 +148,36 @@ export function logoGallery(plan) {
 	].join('\n')
 }
 
-function main() {
-	let plan = exportPlan(readdirSync(SOURCE_DIR), {all: process.argv.includes('--all')})
+/** The app icon set's manifest: a light image and a dark one, no tinted. */
+const RETRO_CONTENTS = {
+	images: [
+		{filename: 'light.png', idiom: 'universal', platform: 'ios', size: '1024x1024'},
+		{
+			appearances: [{appearance: 'luminosity', value: 'dark'}],
+			filename: 'dark.png',
+			idiom: 'universal',
+			platform: 'ios',
+			size: '1024x1024',
+		},
+	],
+	info: {author: 'xcode', version: 1},
+}
 
-	for (let {input, output, points, rendition} of plan) {
+function main() {
+	let plan = [
+		...exportPlan(readdirSync(SOURCE_DIR), {all: process.argv.includes('--all')}),
+		...retroPreviews(),
+		...retroExports(),
+	]
+
+	mkdirSync(RETRO_SET, {recursive: true})
+	writeFileSync(
+		join(SOURCE_DIR, 'old-main-retro.xcassets', 'Contents.json'),
+		JSON.stringify({info: RETRO_CONTENTS.info}, null, 2) + '\n',
+	)
+	writeFileSync(join(RETRO_SET, 'Contents.json'), JSON.stringify(RETRO_CONTENTS, null, 2) + '\n')
+
+	for (let {input, output, points, rendition, scale = SCALE, depth, opaque} of plan) {
 		console.log(`make-icons: ${input} -> ${output}`)
 		execFileSync(ICTOOL, [
 			input,
@@ -126,8 +193,17 @@ function main() {
 			'--height',
 			String(points),
 			'--scale',
-			String(SCALE),
+			String(scale),
 		])
+		if (depth || opaque) {
+			// magick keeps the Display P3 profile ictool tagged the render with.
+			execFileSync('magick', [
+				output,
+				...(opaque ? ['-background', 'black', '-alpha', 'remove', '-alpha', 'off'] : []),
+				...(depth ? ['-depth', String(depth)] : []),
+				output,
+			])
+		}
 	}
 
 	execFileSync(

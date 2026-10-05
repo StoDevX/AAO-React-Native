@@ -301,7 +301,7 @@ description = "Update data/building-hours/ from Bon Appétit's café pages"
 run = "node scripts/scrape-bonapp.mjs"
 
 [tasks.icons]
-description = "Render the in-app icon previews from assets/*.icon"
+description = "Render the in-app icon previews from assets/*.icon, and the Retro app icon set"
 run = "node scripts/make-icons.mjs"
 
 [tasks."crt-pixels"]
