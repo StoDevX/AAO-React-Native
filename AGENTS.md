@@ -177,10 +177,12 @@ file: the cells as `pixels.svg` and `pixels-amber.svg`, and their glow as
 quarter-size PNGs rendered from the SVGs in the document's `source/`. Edit the
 grid, run `mise run crt-pixels`, then `mise run icons`, which renders the
 document into the app icon set and the previews. The set's images are flattened
-onto black with no alpha, as iOS applies its own mask, and reduced to 8 bits,
-since ictool writes 16 and actool stores each as it is. The pipeline is Display
-P3 throughout: the palette holds P3 components, icon.json reads untagged SVG
-colors as P3, and the PNGs are tagged with the profile, not converted to it.
+onto black with no alpha, as iOS applies its own mask, reduced to 8 bits, since
+ictool writes 16, and converted to sRGB, since actool stores a second, 16-bit
+copy beside every Display P3 image. The drawing is Display P3 throughout: the
+palette holds P3 components, icon.json reads untagged SVG colors as P3, and the
+glow PNGs are tagged with the profile, not converted to it. Only the set's
+images lose the wider gamut.
 
 Every `.icon` costs about 2.3 MiB of each iPhone's download, as actool stores a
 flat 1024px render per appearance without loss, and a layer's own images come

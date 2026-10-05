@@ -53,6 +53,7 @@ const TINTED_APPEARANCES = [
  * @property {number} points the preview's size on screen
  * @property {string} rendition the ictool rendition
  * @property {number} [scale] the render scale, SCALE when absent
+ * @property {boolean} [srgb] whether to convert the render from Display P3 to sRGB
  * @property {boolean} [opaque] whether to flatten the render onto black, dropping its alpha
  * @property {number} [depth] bits a channel to reduce the render to, as rendered when absent
  */
@@ -84,6 +85,9 @@ export function exportPlan(entries, {all = false} = {}) {
 const RETRO_DOCUMENT = join(SOURCE_DIR, '0-source-icons', 'old-main-retro.icon')
 const RETRO_SET = join(SOURCE_DIR, 'old-main-retro.xcassets', 'old-main-retro.appiconset')
 
+/** What ictool's Display P3 renders are converted to, for an app icon set. */
+const SRGB_PROFILE = '/System/Library/ColorSync/Profiles/sRGB Profile.icc'
+
 /** The size in pixels of an app icon set's image. */
 const APP_ICON_SIZE = 1024
 
@@ -111,6 +115,7 @@ export function retroExports() {
 		scale: 1,
 		depth: 8,
 		opaque: true,
+		srgb: true,
 	}))
 }
 
@@ -177,7 +182,7 @@ function main() {
 	)
 	writeFileSync(join(RETRO_SET, 'Contents.json'), JSON.stringify(RETRO_CONTENTS, null, 2) + '\n')
 
-	for (let {input, output, points, rendition, scale = SCALE, depth, opaque} of plan) {
+	for (let {input, output, points, rendition, scale = SCALE, depth, opaque, srgb} of plan) {
 		console.log(`make-icons: ${input} -> ${output}`)
 		execFileSync(ICTOOL, [
 			input,
@@ -195,10 +200,10 @@ function main() {
 			'--scale',
 			String(scale),
 		])
-		if (depth || opaque) {
-			// magick keeps the Display P3 profile ictool tagged the render with.
+		if (depth || opaque || srgb) {
 			execFileSync('magick', [
 				output,
+				...(srgb ? ['-profile', SRGB_PROFILE] : []),
 				...(opaque ? ['-background', 'black', '-alpha', 'remove', '-alpha', 'off'] : []),
 				...(depth ? ['-depth', String(depth)] : []),
 				output,

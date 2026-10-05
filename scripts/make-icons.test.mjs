@@ -74,6 +74,8 @@ describe('retroExports', () => {
 			assert.equal(p.depth, 8)
 			// ictool bakes in the rounded mask; iOS applies its own, and wants no alpha.
 			assert.equal(p.opaque, true)
+			// actool stores a 16-bit copy beside each Display P3 image, which undoes the 8 bits.
+			assert.equal(p.srgb, true)
 		}
 	})
 })
