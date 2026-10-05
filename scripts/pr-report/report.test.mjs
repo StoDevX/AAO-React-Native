@@ -110,25 +110,7 @@ describe('buildPrReport', () => {
 		assert.match(result.comment, /JS size unavailable/u)
 	})
 
-	it('reports an older-format report for this commit as unusable, without crashing', () => {
-		// A label change reuses the report from the PR's last push, which can
-		// predate a change to the report's shape and so lack `deps`.
-		let {deps, ...older} = report(300, {version: 1})
-		let result = buildPrReport({
-			head: older,
-			baseline: report(100),
-			comparedSha: 'abcdef1234',
-			baseRef: 'master',
-			labels: [],
-			limit: 100,
-		})
-		assert.equal(result.pass, false)
-		assert.match(result.comment, /older format \(version 1\)/u)
-		assert.match(result.comment, /push a commit/u)
-		assert.doesNotMatch(result.comment, /Dependencies/u)
-	})
-
-	it('passes with no comparison when the PR is not based on master', () => {
+	it("compares a stacked PR with its base branch's report, and gates on it", () => {
 		let result = buildPrReport({
 			head: report(300),
 			baseline: report(100),
@@ -137,12 +119,39 @@ describe('buildPrReport', () => {
 			labels: [],
 			limit: 100,
 		})
-		assert.equal(result.pass, true)
+		assert.equal(result.pass, false)
 		assert.match(
 			result.comment,
-			/No comparison: this PR is based on `feature\/other`, not master\./u,
+			/Compared with `feature\/other`, this PR's base branch, at `abcdef1`\./u,
 		)
-		assert.doesNotMatch(result.comment, /Changed most/u)
+		assert.match(result.comment, /Changed most|All packages/u)
+	})
+
+	it('passes with a note when a stacked PR has no report for its base branch', () => {
+		let result = buildPrReport({
+			head: report(300),
+			baseline: null,
+			comparedSha: null,
+			baseRef: 'feature/other',
+			labels: [],
+			limit: 100,
+		})
+		assert.equal(result.pass, true)
+		assert.match(result.comment, /No report for `feature\/other` at `abcdef1`\./u)
+		assert.doesNotMatch(result.comment, /master/u)
+	})
+
+	it("names the base branch when a stacked PR's baseline is another format version", () => {
+		let result = buildPrReport({
+			head: report(300),
+			baseline: report(100, {version: 0}),
+			comparedSha: 'abcdef1234',
+			baseRef: 'feature/other',
+			labels: [],
+			limit: 100,
+		})
+		assert.equal(result.pass, true)
+		assert.match(result.comment, /`feature\/other`'s report for `abcdef1` is version 0/u)
 	})
 
 	it('passes with a note when there is no baseline', () => {
@@ -194,23 +203,6 @@ describe('buildPrReport', () => {
 		})
 		assert.equal(result.pass, true)
 		assert.doesNotMatch(result.comment, /Compared with master/u)
-	})
-
-	it('passes with the no-comparison note when a non-master base also has no baseline', () => {
-		let result = buildPrReport({
-			head: report(300),
-			baseline: null,
-			comparedSha: null,
-			baseRef: 'feature/other',
-			labels: [],
-			limit: 100,
-		})
-		assert.equal(result.pass, true)
-		assert.match(
-			result.comment,
-			/No comparison: this PR is based on `feature\/other`, not master\./u,
-		)
-		assert.doesNotMatch(result.comment, /No master report at or before/u)
 	})
 
 	it('diffs against an older baseline and explains the gap, but does not gate on it', () => {

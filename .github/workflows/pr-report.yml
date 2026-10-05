@@ -12,10 +12,9 @@ permissions:
 concurrency:
   # A push gets its own group (by commit), so a queued master run is never
   # cancelled by a later push landing while it waits; a pull request shares
-  # one group per ref, so a stale run for the same PR is replaced.
-  # A label change gets a group of its own too, so labeling a pull request
-  # does not cancel the run measuring its latest push.
-  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{ contains(fromJSON('["labeled", "unlabeled"]'), github.event.action) && '-labels' || '' }}
+  # one group per ref, so a stale run for the same PR is replaced. A label
+  # change reruns the measurement, so it replaces the run before it too.
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
   # Never cancel a push to master: a cancelled run uploads no report, and
   # every later PR needs one for each master commit to compare against.
   cancel-in-progress: ${{ github.event_name != 'push' }}
@@ -28,9 +27,8 @@ jobs:
     name: JS size
     runs-on: ubuntu-26.04
     # The merge queue has nothing to compare and no labels to read; the PR
-    # passed the gate already. A label change measures nothing new: `report`
-    # reuses the report from the PR's last push.
-    if: github.event_name != 'merge_group' && !contains(fromJSON('["labeled", "unlabeled"]'), github.event.action)
+    # passed the gate already.
+    if: github.event_name != 'merge_group'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -55,8 +53,8 @@ jobs:
           # Master's reports are every later PR's baseline.
           retention-days: ${{ github.event_name == 'push' && 90 || 7 }}
 
-  # The check to require. On a pull request it compares with master and posts
-  # the comment; in the merge queue it passes without measuring. `!cancelled()`
+  # The check to require. On a pull request it compares with the base branch and
+  # posts the comment; in the merge queue it passes without measuring. `!cancelled()`
   # keeps it running when js-size failed (so the PR says why) or was skipped
   # (the merge queue, where a skipped required check would otherwise count as
   # passing), but not when this run itself was cancelled — a superseded run
@@ -93,56 +91,13 @@ jobs:
           name: size-report
           path: head/
 
-      - name: Download the size report from this PR's last push
-        # A label change skips js-size, so the report to compare comes from
-        # the newest earlier run on this head commit that uploaded one.
-        if: github.event_name == 'pull_request' && needs.js-size.result == 'skipped'
-        timeout-minutes: 20
+      - name: Find and download the base branch's baseline report
+        # Master's run for the base commit, or for a PR stacked on another
+        # branch, that branch's own PR run.
+        if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          mkdir -p head/
-          # The newest earlier run on this commit is normally the push that
-          # raced this label change, still measuring it; wait for it rather
-          # than falling straight to the loop below, which would otherwise
-          # find nothing to download until it finishes on its own.
-          newest=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
-            --event pull_request --commit "$HEAD_SHA" --limit 5 --json databaseId,status \
-            --jq '([.[] | select((.databaseId | tostring) != env.RUN_ID)][0] // {databaseId: "", status: ""}) | "\(.databaseId) \(.status)"' 2>/dev/null) || newest=''
-          newest_id=${newest%% *}
-          newest_status=${newest#* }
-          if [ -n "$newest_id" ]; then
-            if [ "$newest_status" != "completed" ]; then
-              echo "Waiting for run $newest_id to finish."
-              # Not `gh run watch`: without a terminal it reprints the whole
-              # run view every few seconds, hundreds of lines. The step's
-              # timeout bounds this loop.
-              until [ "$(gh run view "$newest_id" --repo "$GITHUB_REPOSITORY" --json status --jq .status 2>/dev/null)" = completed ]; do
-                sleep 10
-              done
-            fi
-            if gh run download "$newest_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ 2>/dev/null; then
-              exit 0
-            fi
-          fi
-          for run_id in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
-            --event pull_request --commit "$HEAD_SHA" --limit 20 --json databaseId \
-            --jq '.[].databaseId'); do
-            [ "$run_id" = "$RUN_ID" ] && continue
-            if gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ 2>/dev/null; then
-              exit 0
-            fi
-          done
-          echo "No earlier size report for $HEAD_SHA."
-
-      - name: Find and download master's baseline report
-        # Stacked PRs (base isn't master) have nothing to compare with, so
-        # skip the lookup entirely; report.mjs renders that explanation.
-        if: github.event_name == 'pull_request' && github.base_ref == 'master'
-        env:
-          GH_TOKEN: ${{ github.token }}
+          BASE_REF: ${{ github.base_ref }}
         run: |
           mkdir -p baseline/
           # head/size-report.json is missing when js-size failed; jq then
@@ -153,22 +108,21 @@ jobs:
             echo "No base commit recorded for this run; nothing to compare."
             exit 0
           fi
-          found=$(scripts/pr-report/find-baseline.sh "$base_sha")
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha" "$BASE_REF")
           if [ -z "$found" ]; then
-            echo "No master baseline found for $base_sha."
+            echo "No baseline found on $BASE_REF for $base_sha."
             exit 0
           fi
           run_id=${found%% *}
           commit=${found#* }
           echo "COMPARED_SHA=$commit" >> "$GITHUB_ENV"
           gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
-            || echo "Master's report for $commit could not be downloaded."
+            || echo "The report for $commit on $BASE_REF could not be downloaded."
 
       - name: Read the pull request's current labels
-        # The event payload's labels are from whenever this run was
-        # triggered; a run can finish after a label was added or removed
-        # since then (see the wait above), so the gate reads the labels the
-        # API has now instead.
+        # The event payload's labels are from when this run was triggered. A
+        # label changed since then queues a run that replaces this one, but
+        # until it does, the gate reads the labels the API has now.
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
