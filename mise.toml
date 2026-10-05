@@ -45,6 +45,10 @@ _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"
 HK_MISE = "1"
 
+# The names of the devices and simulators Xcode knows, for completing a device.
+[vars]
+device_names = "xcrun devicectl list devices --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output '.result.devices[].properties.state.name'"
+
 [hooks]
 postinstall = "hk install --mise"
 
@@ -55,12 +59,18 @@ run = "pnpm install --frozen-lockfile"
 
 # --- App commands ---
 
+# Flags for expo go after `--`: mise run ios "iPhone 17e" -- --scheme Foo
 [tasks.ios]
 description = "Run the iOS app"
 usage = '''
-  arg "<device>" help="The device to run on" default="" env="DEVICE"
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
 '''
-run = '''expo run:ios ${usage_device:+ --device "$usage_device"}'''
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
 
 [tasks.start]
 description = "Start Metro bundler"
@@ -69,20 +79,28 @@ run = "expo start"
 # ccc-server runs in the background so Metro keeps the terminal, and with it the
 # keys that reload the app and open the debugger; under `depends` both would
 # lose the TTY. The server advertises itself over mDNS, so a device finds it in
-# Settings -> Server URL. The trap stops the server when Metro exits any other
-# way than Ctrl-C, which reaches both on its own.
+# Settings -> Server URL. It runs in its own process group (`set -m`) so the
+# trap can stop mise and the server it spawned together; Ctrl-C then reaches
+# only Metro, and the trap stops the server. ccc-server is looked for beside
+# the main checkout, which a linked worktree is not: git's common directory
+# is the main checkout's .git for a clone and a worktree alike.
 [tasks."start:with-server"]
 description = "Start ccc-server for St. Olaf and Metro together"
 run = '''
-CCC_SERVER_DIR="${CCC_SERVER_DIR:-{{config_root}}/../ccc-server}"
+#!/usr/bin/env bash
+if test -z "${CCC_SERVER_DIR:-}"; then
+  main_checkout="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+  CCC_SERVER_DIR="$main_checkout/../ccc-server"
+fi
 if test ! -f "$CCC_SERVER_DIR/.config/mise.toml"; then
   echo "error: no ccc-server checkout at $CCC_SERVER_DIR; set CCC_SERVER_DIR" >&2
   exit 1
 fi
 
+set -m
 mise --cd "$CCC_SERVER_DIR" run stolaf-college:mdns &
 server=$!
-trap 'kill "$server" 2>/dev/null' EXIT
+trap 'kill -- -"$server" 2>/dev/null' EXIT
 
 expo start
 '''
@@ -170,16 +188,6 @@ run = '''
   xcrun devicectl list devices --filter "Name = '${usage_device?}'" --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output --exit-status .result.devices[0].properties.hardware.udid
 '''
 
-[tasks."sim:find-udid"]
-hide = true
-description = "Find the UDID of a simulator, or exit 1 if no device found"
-usage = '''
-  arg "<sim_udid>" help="The simulator to build for"
-'''
-run = '''
-  xcrun simctl list devices booted --json | jq --raw-output --exit-status --arg name "${usage_sim_udid?}" '[.devices[][] | select(.name == $name)][0].udid // empty'
-'''
-
 [tasks."device:deploy"]
 hide = true
 description = "Deploy the app to a physical device"
@@ -195,6 +203,7 @@ run = '''
 description = "Build and deploy the app to a physical device"
 usage = '''
   arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
 '''
 depends = [
 	{ task = "pnpm:install:frozen" },
@@ -211,6 +220,7 @@ run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
 description = "Build and deploy a Debug app that loads its JavaScript from Metro, not from the app"
 usage = '''
   arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
 '''
 env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
 depends = [
@@ -360,37 +370,25 @@ run = "node scripts/update-mess-fixtures.mjs"
 description = "Regenerate the list of routes the chaos monkey opens"
 run = "node scripts/chaos-routes.mjs"
 
-# An optional first argument names a booted simulator, which becomes the
-# SIMULATOR_UDID the script reads; the rest are the script's own flags. A usage
-# spec cannot do this, since it reads a leading flag as the simulator's name,
-# so mise appends the arguments to the `chaos` call at the end instead.
+# These tasks have no usage spec, so mise appends their arguments to the
+# command and scripts/chaos.mjs parses them; mise reads a flag it knows, such as
+# --help, itself, so that one needs `--` first. A replay takes its step budget
+# from its recording, which no default here may override.
 [tasks.chaos]
 description = "Drive the app at random with network faults on a booted simulator"
-usage = '''
-include file="{{ config_root }}/mise.usage.kdl"; use "chaos";
-'''
-run = """
-#!/usr/bin/env bash
+run = "node scripts/chaos.mjs"
 
-if test -z "${TEST_RUNNER_AAO_JS_LOCATION}"; then
-  export TEST_RUNNER_AAO_JS_LOCATION="localhost:${usage_metro}"
-fi
+# TEST_RUNNER_ names the Metro to the test, since `xcodebuild` passes it only
+# prefixed variables.
+[tasks."chaos:8081"]
+description = "Run chaos against the Metro on localhost:8081"
+env = { TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081" }
+run = "node scripts/chaos.mjs"
 
-if test -z "${SIMULATOR_UDID}"; then
-  export SIMULATOR_UDID="${usage_udid:-"$(mise run find-udid "${usage_simulator:-}")"}"
-fi
-
-args=()
-test -n "${usage_seed:-}"        && args+=(--seed "$usage_seed")
-test -n "${usage_steps:-}"       && args+=(--steps "$usage_steps")
-test -n "${usage_duration:-}"    && args+=(--duration "$usage_duration")
-test -n "${usage_fault_rate:-}"  && args+=(--fault-rate "$usage_fault_rate")
-test -n "${usage_replay:-}"      && args+=(--replay "$usage_replay")
-test "${usage_prebuilt:-false}" = "true"   && args+=(--prebuilt)
-test "${usage_overwrite:-false}" = "true"  && args+=(--overwrite)
-
-node scripts/chaos.mjs "${args[@]}"
-"""
+[tasks."chaos:bundled"]
+description = "Run chaos on a build with its JavaScript embedded, so no Metro is needed"
+depends = ["bundle:ios"]
+run = "node scripts/chaos.mjs --bundled"
 
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"

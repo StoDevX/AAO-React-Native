@@ -90,7 +90,7 @@ Then decide whose bug it is:
 ## Replaying a Run
 
 ```bash
-mise run chaos:8081 -- --replay logs/chaos/1234
+mise run chaos:8081 --replay logs/chaos/1234
 ```
 
 A replay takes the seed from the directory's name and answers every request
