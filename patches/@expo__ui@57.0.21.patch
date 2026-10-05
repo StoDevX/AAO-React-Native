@@ -324,7 +324,7 @@ diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
 index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..4c34459f350bc40a0076483cb40bcd7c1195b2d6 100644
 --- a/ios/Modifiers/FontModifier.swift
 +++ b/ios/Modifiers/FontModifier.swift
-@@ -29,6 +29,34 @@ internal enum FontWeight: String, Enumerable {
+@@ -29,6 +29,20 @@ internal enum FontWeight: String, Enumerable {
    }
  }
  
@@ -342,24 +342,10 @@ index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..4c34459f350bc40a0076483cb40bcd7c
 +  }
 +}
 +
-+internal enum FontLeading: String, Enumerable {
-+  case standard
-+  case tight
-+  case loose
-+
-+  func toSwiftUI() -> Font.Leading {
-+    switch self {
-+    case .standard: .standard
-+    case .tight: .tight
-+    case .loose: .loose
-+    }
-+  }
-+}
-+
  internal enum FontDesign: String, Enumerable {
    case `default`
    case rounded
-@@ -81,6 +109,8 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -81,6 +95,8 @@ internal struct FontModifier: ViewModifier, Record {
    @Field var weight: FontWeight?
    @Field var design: FontDesign?
    @Field var textStyle: FontTextStyle?
@@ -368,7 +354,7 @@ index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..4c34459f350bc40a0076483cb40bcd7c
  
    func body(content: Content) -> some View {
      content.font(resolveFont())
-@@ -90,6 +120,17 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -90,6 +106,17 @@ internal struct FontModifier: ViewModifier, Record {
    // same `Font` as the view path, instead of a fixed-size `Font.custom` that
    // drops `relativeTo` (Dynamic Type) and `weight`.
    func resolveFont() -> Font {
