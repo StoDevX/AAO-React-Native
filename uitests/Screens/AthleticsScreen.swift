@@ -15,4 +15,37 @@ struct AthleticsScreen: Screen {
 	func navigate() -> Self {
 		open(route: "/athletics", mountedWhen: mounted)
 	}
+
+	/// Open the bottom-toolbar menu that narrows the list to chosen sports.
+	@discardableResult
+	func openSportsMenu() -> Self {
+		let menu = app.buttons[TestIdentifiers.Athletics.sportsMenu]
+		XCTAssertTrue(
+			menu.waitForExistence(timeout: 30),
+			"the sports menu should be in the toolbar")
+		menu.tap()
+		return self
+	}
+
+	/// Tap an item in the open menu. A sport is a Toggle and Reset Filters a
+	/// Button; both reach XCUITest as buttons labelled with their titles.
+	@discardableResult
+	func tapMenuItem(_ title: String) -> Self {
+		let item = app.buttons[title]
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 30),
+			"\(title) should be offered in the sports menu")
+		item.tap()
+		return self
+	}
+
+	/// Close the open menu by tapping away from it, near the top of the list.
+	@discardableResult
+	func dismissMenu(waitingFor title: String) -> Self {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
+		XCTAssertTrue(
+			app.buttons[title].waitForNonExistence(timeout: 10),
+			"tapping away from the sports menu should close it")
+		return self
+	}
 }
