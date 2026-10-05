@@ -70,30 +70,35 @@ function changeText({kind, before, after}) {
 	return `${before.join(', ')} → ${after.join(', ')}`
 }
 
-/** A table of package changes, or nothing when there are none. */
+/** A table of package changes, with the bytes each adds, or nothing when there are none. */
 function changesTable(changes) {
 	if (changes.length === 0) {
 		return []
 	}
 	return [
-		'| Package | Change |',
-		'| --- | --- |',
-		...changes.map((change) => `| ${change.name} | ${changeText(change)} |`),
+		'| Package | Change | Δ installed | Δ in bundle |',
+		'| --- | --- | --- | --- |',
+		...changes.map(
+			(change) =>
+				`| ${change.name} | ${changeText(change)} | ${formatDelta(change.installedDelta)} | ${formatDelta(change.bundledDelta)} |`,
+		),
 		'',
 	]
 }
 
-/** A table of packages installed at two or more versions, or nothing. */
+/** A table of packages installed at two or more versions, a row for each version, or nothing. */
 function duplicatesTable(duplicates) {
 	if (duplicates.length === 0) {
 		return []
 	}
 	return [
-		'| Duplicate | Versions |',
-		'| --- | --- |',
-		...duplicates.map(
-			(duplicate) =>
-				`| ${duplicate.name} | ${duplicate.versions.join(', ')}${duplicate.isNew ? ' (new)' : ''} |`,
+		'| Duplicate | Version | Installed | In bundle |',
+		'| --- | --- | --- | --- |',
+		...duplicates.flatMap((duplicate) =>
+			duplicate.versions.map(
+				(v) =>
+					`| ${duplicate.name}${duplicate.isNew ? ' (new)' : ''} | ${v.version} | ${formatBytes(v.installed)} | ${formatBytes(v.bundled)} |`,
+			),
 		),
 		'',
 	]
