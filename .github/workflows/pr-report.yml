@@ -200,6 +200,27 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: scripts/pr-report/upsert-comment.sh comment.md
 
+      - name: Report that the report could not be built
+        # A crash before "Post the comment" (in "Build the report" or an
+        # earlier step) skips every later step by default, leaving the PR
+        # with whatever an earlier run posted, perhaps a passing ✅. This
+        # step replaces it with a notice instead. It runs before "Size
+        # gate", so that step's own deliberate failure on a failed gate —
+        # after the real comment already posted — never reaches here.
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          marker=$(node -p "require('./scripts/pr-report/render.mjs').MARKER") \
+            || { echo "::warning::Could not read the report marker."; exit 0; }
+          {
+            echo "$marker"
+            echo '### JS bundle'
+            echo "The PR report could not be built. See [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID) for details."
+          } > crash.md
+          scripts/pr-report/upsert-comment.sh crash.md
+
       - name: Size gate
         if: github.event_name == 'pull_request' && steps.build.outputs.status != '0'
         run: |
