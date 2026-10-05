@@ -480,8 +480,11 @@ run = "pnpm install --frozen-lockfile --lockfile-only --config.trust-lockfile=tr
 # dry run resolves every tool against the lock without installing anything:
 # it exits 1 for a tool the lock does not name, or a version it names
 # differently, and 0 when they agree -- whether or not the tools are present.
+# Only the project's tools are held to the lock: a tool in a contributor's own
+# ~/.config/mise/config.toml can never be in it.
 [tasks."validate-mise-lock"]
 description = "Check that mise.lock matches mise.toml"
+env = { MISE_LOCKED_SCOPES = "project" }
 run = "mise install --locked --dry-run"
 
 [tasks."compress-data"]
