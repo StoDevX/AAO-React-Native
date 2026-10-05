@@ -1,0 +1,228 @@
+name: PR report
+
+on:
+  push: {branches: [master]}
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  # A push gets its own group (by commit), so a queued master run is never
+  # cancelled by a later push landing while it waits; a pull request shares
+  # one group per ref, so a stale run for the same PR is replaced.
+  # A label change gets a group of its own too, so labeling a pull request
+  # does not cancel the run measuring its latest push.
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{ contains(fromJSON('["labeled", "unlabeled"]'), github.event.action) && '-labels' || '' }}
+  # Never cancel a push to master: a cancelled run uploads no report, and
+  # every later PR needs one for each master commit to compare against.
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+env:
+  MISE_RUBY_COMPILE: 'false'
+
+jobs:
+  js-size:
+    name: JS size
+    runs-on: ubuntu-26.04
+    # The merge queue has nothing to compare and no labels to read; the PR
+    # passed the gate already. A label change measures nothing new: `report`
+    # reuses the report from the PR's last push.
+    if: github.event_name != 'merge_group' && !contains(fromJSON('["labeled", "unlabeled"]'), github.event.action)
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # Need the merge commit's parent too, to record which master
+          # commit a pull request was based on.
+          fetch-depth: 2
+      - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+      - run: pnpm install --frozen-lockfile
+      - name: Record the master commit this PR is based on
+        if: github.event_name == 'pull_request'
+        run: echo "SIZE_REPORT_BASE_SHA=$(git rev-parse HEAD^1)" >> "$GITHUB_ENV"
+      - name: Measure the production bundle
+        run: mise run size-report
+      - name: Upload the size report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: size-report
+          path: size-report/size-report.json
+          # Master's reports are every later PR's baseline.
+          retention-days: ${{ github.event_name == 'push' && 90 || 7 }}
+
+  # The check to require. On a pull request it compares with master and posts
+  # the comment; in the merge queue it passes without measuring. `!cancelled()`
+  # keeps it running when js-size failed (so the PR says why) or was skipped
+  # (the merge queue, where a skipped required check would otherwise count as
+  # passing), but not when this run itself was cancelled — a superseded run
+  # posts nothing, rather than a comment for a commit nobody cares about.
+  report:
+    name: PR report
+    needs: [js-size]
+    if: ${{ !cancelled() && github.event_name != 'push' }}
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    steps:
+      - name: Pass in the merge queue
+        if: github.event_name == 'merge_group'
+        run: echo "The pull request passed the size gate before it was queued."
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'pull_request'
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
+        if: github.event_name == 'pull_request'
+        with:
+          # -node: this job only installs node, unlike js-size's full toolchain.
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      - name: Download this commit's size report
+        if: github.event_name == 'pull_request' && needs.js-size.result == 'success'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: size-report
+          path: head/
+
+      - name: Download the size report from this PR's last push
+        # A label change skips js-size, so the report to compare comes from
+        # the newest earlier run on this head commit that uploaded one.
+        if: github.event_name == 'pull_request' && needs.js-size.result == 'skipped'
+        timeout-minutes: 20
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p head/
+          # The newest earlier run on this commit is normally the push that
+          # raced this label change, still measuring it; wait for it rather
+          # than falling straight to the loop below, which would otherwise
+          # find nothing to download until it finishes on its own.
+          newest=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+            --event pull_request --commit "$HEAD_SHA" --limit 5 --json databaseId,status \
+            --jq '([.[] | select((.databaseId | tostring) != env.RUN_ID)][0] // {databaseId: "", status: ""}) | "\(.databaseId) \(.status)"' 2>/dev/null) || newest=''
+          newest_id=${newest%% *}
+          newest_status=${newest#* }
+          if [ -n "$newest_id" ]; then
+            if [ "$newest_status" != "completed" ]; then
+              gh run watch "$newest_id" --repo "$GITHUB_REPOSITORY" --exit-status || true
+            fi
+            if gh run download "$newest_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ 2>/dev/null; then
+              exit 0
+            fi
+          fi
+          for run_id in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+            --event pull_request --commit "$HEAD_SHA" --limit 20 --json databaseId \
+            --jq '.[].databaseId'); do
+            [ "$run_id" = "$RUN_ID" ] && continue
+            if gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ 2>/dev/null; then
+              exit 0
+            fi
+          done
+          echo "No earlier size report for $HEAD_SHA."
+
+      - name: Find and download master's baseline report
+        # Stacked PRs (base isn't master) have nothing to compare with, so
+        # skip the lookup entirely; report.mjs renders that explanation.
+        if: github.event_name == 'pull_request' && github.base_ref == 'master'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p baseline/
+          # head/size-report.json is missing when js-size failed; jq then
+          # exits non-zero, and `|| true` keeps that from failing the step
+          # under bash -e, so the report and comment steps still run.
+          base_sha=$(jq -r '.baseSha // empty' head/size-report.json 2>/dev/null || true)
+          if [ -z "$base_sha" ]; then
+            echo "No base commit recorded for this run; nothing to compare."
+            exit 0
+          fi
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha")
+          if [ -z "$found" ]; then
+            echo "No master baseline found for $base_sha."
+            exit 0
+          fi
+          run_id=${found%% *}
+          commit=${found#* }
+          echo "COMPARED_SHA=$commit" >> "$GITHUB_ENV"
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
+            || echo "Master's report for $commit could not be downloaded."
+
+      - name: Read the pull request's current labels
+        # The event payload's labels are from whenever this run was
+        # triggered; a run can finish after a label was added or removed
+        # since then (see the wait above), so the gate reads the labels the
+        # API has now instead.
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name]' > labels.json
+
+      - name: Build the report
+        id: build
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          status=0
+          # Exit code 2 is a failed gate; any other non-zero is a crash,
+          # which fails this step before anything is posted.
+          node scripts/pr-report/report.mjs \
+            --head head/size-report.json \
+            --baseline baseline/size-report.json \
+            --compared-sha "${COMPARED_SHA:-}" \
+            --base-ref "$BASE_REF" \
+            --labels labels.json \
+            --comment-out comment.md \
+            --summary-out summary.md || status=$?
+          if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then
+            exit "$status"
+          fi
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Post the comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: scripts/pr-report/upsert-comment.sh comment.md
+
+      - name: Report that the report could not be built
+        # A crash before "Post the comment" (in "Build the report" or an
+        # earlier step) skips every later step by default, leaving the PR
+        # with whatever an earlier run posted, perhaps a passing ✅. This
+        # step replaces it with a notice instead. It runs before "Size
+        # gate", so that step's own deliberate failure on a failed gate —
+        # after the real comment already posted — never reaches here.
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          marker=$(node -p "require('./scripts/pr-report/render.mjs').MARKER") \
+            || { echo "::warning::Could not read the report marker."; exit 0; }
+          {
+            echo "$marker"
+            echo '### JS bundle'
+            echo "The PR report could not be built. See [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID) for details."
+          } > crash.md
+          scripts/pr-report/upsert-comment.sh crash.md
+
+      - name: Size gate
+        if: github.event_name == 'pull_request' && steps.build.outputs.status != '0'
+        run: |
+          echo "::error::The size gate failed. See the PR report comment or this job's summary."
+          exit 1
