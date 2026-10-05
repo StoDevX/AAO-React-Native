@@ -7,7 +7,13 @@ import {COMMENT_LIMIT, MARKER, renderComment} from './render.mjs'
 let KiB = 1024
 let MiB = 1024 * KiB
 
-let report = (js) => ({version: 1, baseSha: null, js})
+let installed = {nodeModulesBytes: 800 * MiB, packages: {}}
+let report = (js, deps = installed) => ({
+	version: 2,
+	baseSha: null,
+	js,
+	deps,
+})
 
 let baseline = report({
 	hermesBytes: 4 * MiB,

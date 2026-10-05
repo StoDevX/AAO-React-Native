@@ -6,10 +6,11 @@ import {describe, it} from 'node:test'
 
 import {buildPrReport, readReport} from './report.mjs'
 
-let report = (hermesBytes, {version = 1, baseSha = 'abcdef1234'} = {}) => ({
+let report = (hermesBytes, {version = 2, baseSha = 'abcdef1234'} = {}) => ({
 	version,
 	baseSha,
 	js: {hermesBytes, byPackage: {a: 1}, byFeature: {}},
+	deps: {nodeModulesBytes: 1000, packages: {a: ['1.0.0']}},
 })
 
 describe('readReport', () => {
@@ -33,7 +34,7 @@ describe('readReport', () => {
 
 	it('returns null for a current-version report missing js', () => {
 		let path = join(dir, 'no-js.json')
-		writeFileSync(path, JSON.stringify({version: 1, baseSha: null}))
+		writeFileSync(path, JSON.stringify({version: 2, baseSha: null}))
 		assert.equal(readReport(path), null)
 	})
 
@@ -42,10 +43,27 @@ describe('readReport', () => {
 		writeFileSync(
 			path,
 			JSON.stringify({
-				version: 1,
+				version: 2,
 				baseSha: null,
 				js: {hermesBytes: 'x', byPackage: {}, byFeature: {}},
+				deps: {nodeModulesBytes: 1, packages: {}},
 			}),
+		)
+		assert.equal(readReport(path), null)
+	})
+
+	it('returns null for a current-version report missing deps', () => {
+		let path = join(dir, 'no-deps.json')
+		let {deps, ...withoutDeps} = report(5)
+		writeFileSync(path, JSON.stringify(withoutDeps))
+		assert.equal(readReport(path), null)
+	})
+
+	it('returns null for a current-version report whose deps are malformed', () => {
+		let path = join(dir, 'bad-deps.json')
+		writeFileSync(
+			path,
+			JSON.stringify({...report(5), deps: {nodeModulesBytes: 'x', packages: null}}),
 		)
 		assert.equal(readReport(path), null)
 	})
@@ -191,9 +209,10 @@ describe('buildPrReport', () => {
 			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
 		)
 		let bigReport = (hermesBytes) => ({
-			version: 1,
+			version: 2,
 			baseSha: 'abcdef1234',
 			js: {hermesBytes, byPackage: huge, byFeature: {}},
+			deps: {nodeModulesBytes: 1000, packages: {}},
 		})
 		let result = buildPrReport({
 			head: bigReport(300),

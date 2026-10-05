@@ -8,8 +8,10 @@
 
 import {readFileSync, statSync, writeFileSync} from 'node:fs'
 
+import {nodeModulesBytes, parsePackages} from './deps.mjs'
+
 /** Bumped whenever the report's shape changes, so an older baseline is not misread. */
-export const REPORT_VERSION = 1
+export const REPORT_VERSION = 2
 
 const NODE_MODULES = '/node_modules/'
 
@@ -64,18 +66,20 @@ export function groupBundle(files) {
 	return {byPackage, byFeature}
 }
 
-/** Builds `size-report.json` from the measured totals and source-map-explorer's output. */
-export function buildReport({baseSha, hermesBytes, explorer}) {
+/** Builds `size-report.json` from the measured totals, source-map-explorer's output and the installed dependencies. */
+export function buildReport({baseSha, hermesBytes, explorer, deps}) {
 	let {byPackage, byFeature} = groupBundle(explorer.results[0].files)
 	return {
 		version: REPORT_VERSION,
 		baseSha,
 		js: {hermesBytes, byPackage, byFeature},
+		deps,
 	}
 }
 
 /**
- * Reads the bytecode and explorer output from `dir`, and writes
+ * Reads the bytecode and explorer output from `dir`, the lockfile and
+ * `node_modules` from the working directory, and writes
  * `dir/size-report.json`. `baseSha` is the master commit this one was built
  * against (SIZE_REPORT_BASE_SHA), or null on a push to master.
  */
@@ -86,6 +90,11 @@ function main() {
 		baseSha,
 		hermesBytes: statSync(`${dir}/main.hbc`).size,
 		explorer: JSON.parse(readFileSync(`${dir}/explorer.json`, 'utf8')),
+		// Relative to the repo root, where the size-report task runs.
+		deps: {
+			nodeModulesBytes: nodeModulesBytes('node_modules/.pnpm'),
+			packages: parsePackages(readFileSync('pnpm-lock.yaml', 'utf8')),
+		},
 	})
 	writeFileSync(`${dir}/size-report.json`, `${JSON.stringify(report, null, '\t')}\n`)
 	console.error(`Wrote ${dir}/size-report.json`)
