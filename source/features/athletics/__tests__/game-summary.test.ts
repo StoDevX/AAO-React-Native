@@ -114,8 +114,8 @@ describe('gameSummary', () => {
 		expect(summary.label).toBe('18th of 35')
 	})
 
-	/// Swimming meets have finished with an `N` result and neither a score nor
-	/// a placing.
+	/// A swimming meet can finish with an `N` result and neither a score nor a
+	/// placing.
 	it('says Final for a finished meet with no score or placing', () => {
 		let summary = gameSummary(
 			makeScore({

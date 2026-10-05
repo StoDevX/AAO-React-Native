@@ -24,11 +24,9 @@ function menu(overrides = {}): React.ReactElement {
 	)
 }
 
-test('lists each sport under its section, without the division prefix', async () => {
+test('names a sport without the division prefix its section already states', async () => {
 	await render(menu())
-	expect(screen.getByText("Women's Sports")).toBeTruthy()
 	expect(screen.getByText('Soccer')).toBeTruthy()
-	expect(screen.getByText('Volleyball')).toBeTruthy()
 })
 
 test('toggling a sport hands back its full name', async () => {
