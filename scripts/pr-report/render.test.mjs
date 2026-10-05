@@ -38,7 +38,7 @@ describe('renderComment', () => {
 				'',
 				'✅ Within the 50.0 KiB limit.',
 				'',
-				'Package and feature sizes are unminified JS from the source map, without its unmapped bytes and line endings; the gate uses bytecode.',
+				'Package and feature sizes are minified JS from the source map; the gate uses bytecode.',
 				'',
 				'| Changed most | Before | After | Δ |',
 				'| --- | --- | --- | --- |',

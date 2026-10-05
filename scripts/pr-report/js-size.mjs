@@ -38,14 +38,6 @@ export function groupOf(path) {
 	return '(app)'
 }
 
-/**
- * source-map-explorer's buckets for bytes no mapping covers: the gaps between
- * mappings (mostly leading indentation) and every line ending. They belong
- * to no package, and spread across the whole bundle, so counting them
- * would charge a package's indentation to `(runtime)`.
- */
-const UNATTRIBUTED = new Set(['[unmapped]', '[EOLs]'])
-
 /** Names the `source/features/<name>` directory a file is in, or null. */
 export function featureOf(path) {
 	let feature = path.match(/^\/source\/features\/([^/]+)\//u)
@@ -54,15 +46,14 @@ export function featureOf(path) {
 
 /**
  * Sums source-map-explorer's per-file bytes by group, and app code by
- * feature. Unmapped bytes and line endings are left out.
+ * feature. `files` is the minified bundle's source map: its `[unmapped]` is
+ * Metro's module wrappers, which `groupOf` already counts as `(runtime)`,
+ * unlike the unminified bundle's, which is mostly indentation no package owns.
  */
 export function groupBundle(files) {
 	let byPackage = {}
 	let byFeature = {}
 	for (let [path, {size}] of Object.entries(files)) {
-		if (UNATTRIBUTED.has(path)) {
-			continue
-		}
 		let group = groupOf(path)
 		byPackage[group] = (byPackage[group] ?? 0) + size
 		if (group === '(app)') {

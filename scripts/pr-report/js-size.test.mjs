@@ -30,7 +30,9 @@ describe('groupOf', () => {
 
 	it('counts the bundler entries as runtime', () => {
 		for (let path of [
+			'[unmapped]',
 			'[no source]',
+			'[EOLs]',
 			'[sourceMappingURL]',
 			'../external-require',
 			'../assets-registry',
@@ -64,7 +66,7 @@ describe('featureOf', () => {
 })
 
 describe('groupBundle', () => {
-	it('sums bytes per group, and per feature for app code only, leaving out unmapped bytes and line endings', () => {
+	it('sums bytes per group, and per feature for app code only', () => {
 		let files = {
 			'/node_modules/.pnpm/a@1/node_modules/a/x.js': {size: 10},
 			'/node_modules/.pnpm/a@1/node_modules/a/y.js': {size: 5},
@@ -78,7 +80,7 @@ describe('groupBundle', () => {
 			'[sourceMappingURL]': {size: 6},
 		}
 		assert.deepEqual(groupBundle(files), {
-			byPackage: {a: 15, '(app)': 10, 'modules/colors': 7, '(runtime)': 6},
+			byPackage: {a: 15, '(app)': 10, 'modules/colors': 7, '(runtime)': 156},
 			byFeature: {dining: 7, '(other)': 3},
 		})
 	})

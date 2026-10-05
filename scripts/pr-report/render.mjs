@@ -82,10 +82,10 @@ export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_
 		return lines.join('\n')
 	}
 
-	// The tables below are unminified JS source bytes from the source map,
+	// The tables below are minified JS source bytes from the source map,
 	// not the Hermes bytecode the headline and gate measure.
 	lines.push(
-		'Package and feature sizes are unminified JS from the source map, without its unmapped bytes and line endings; the gate uses bytecode.',
+		'Package and feature sizes are minified JS from the source map; the gate uses bytecode.',
 		'',
 		// Features break down `(app)`, so they get their own table: mixed in
 		// with the packages, one change would take two of the slots.

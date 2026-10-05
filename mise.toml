@@ -459,6 +459,16 @@ expo export:embed \
 
 # Measures what ships: no UI-test fixtures and no mocked mode, unlike
 # bundle:ios, and the same hermesc flags as Xcode's Release build.
+#
+# Bundles twice. The unminified bundle is what a Release build ships
+# (expo/scripts/react-native-xcode.sh passes --minify false whenever Hermes
+# is on), so hermesc compiles it for the bytecode figure the headline and
+# gate use. Its own source map is mostly unattributable, though: indentation
+# and line endings are not worth minifying away, so source-map-explorer puts
+# several megabytes of them in [unmapped]/[EOLs], which no package or
+# feature owns. A minified copy's [unmapped] is Metro's module wrappers
+# instead, so the per-package and per-feature tables are built from the
+# minified bundle's source map.
 [tasks."size-report"]
 description = "Measure the production JS bundle for the PR report"
 depends = ["bundle-data"]
@@ -466,8 +476,6 @@ run = """
 set -euo pipefail
 out=size-report
 rm -rf "$out" && mkdir -p "$out"
-# --minify false: expo/scripts/react-native-xcode.sh passes it whenever
-# Hermes is on in a Release build, so an unminified bundle is what ships.
 expo export:embed \
   --reset-cache \
   --entry-file index.js \
@@ -477,13 +485,21 @@ expo export:embed \
   --bundle-output "$out/main.jsbundle" \
   --sourcemap-output "$out/main.jsbundle.map" \
   --assets-dest "$out/assets"
+expo export:embed \
+  --reset-cache \
+  --entry-file index.js \
+  --dev false \
+  --platform ios \
+  --bundle-output "$out/minified/main.jsbundle" \
+  --sourcemap-output "$out/minified/main.jsbundle.map" \
+  --assets-dest "$out/minified/assets"
 hermes=$(node -p "require('path').dirname(require.resolve('hermes-compiler/package.json', {paths: [require('path').dirname(require.resolve('react-native/package.json'))]}))")
 case "$(uname -s)" in
   Darwin) bin="$hermes/hermesc/osx-bin/hermesc" ;;
   *) bin="$hermes/hermesc/linux64-bin/hermesc" ;;
 esac
 "$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log" || { cat "$out/hermesc.log" >&2; exit 1; }
-source-map-explorer "$out/main.jsbundle" "$out/main.jsbundle.map" --json --no-border-checks --no-root > "$out/explorer.json"
+source-map-explorer "$out/minified/main.jsbundle" "$out/minified/main.jsbundle.map" --json --no-border-checks --no-root > "$out/explorer.json"
 node scripts/pr-report/js-size.mjs "$out"
 """
 
