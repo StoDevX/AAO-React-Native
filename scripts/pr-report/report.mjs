@@ -10,8 +10,8 @@ import {parseArgs} from 'node:util'
 
 import {diffReports} from './diff.mjs'
 import {decideGate} from './gate.mjs'
-import {REPORT_VERSION} from './js-size.mjs'
 import {renderComment} from './render.mjs'
+import {REPORT_VERSION} from './report-version.mjs'
 
 /**
  * Exit code for a failed size gate. Any other non-zero code is a crash, which
@@ -23,7 +23,7 @@ export const GATE_FAILED_EXIT_CODE = 2
  * Reads a size report, or returns null when there is none to read. A
  * download that failed or expired leaves no file, or a file that is not a
  * report, and both mean the same thing here: nothing to compare. A report at
- * the current version is also checked for the JS shape this script reads,
+ * the current version is also checked for the JS and dependency shapes this script reads,
  * so a half-written or corrupted upload reads as missing rather than
  * crashing the comparison.
  */
@@ -39,6 +39,7 @@ export function readReport(path) {
 	}
 	if (parsed.version === REPORT_VERSION) {
 		let js = parsed.js
+		let deps = parsed.deps
 		if (
 			typeof js !== 'object' ||
 			js === null ||
@@ -46,12 +47,34 @@ export function readReport(path) {
 			typeof js.byPackage !== 'object' ||
 			js.byPackage === null ||
 			typeof js.byFeature !== 'object' ||
-			js.byFeature === null
+			js.byFeature === null ||
+			typeof deps !== 'object' ||
+			deps === null ||
+			!Number.isFinite(deps.nodeModulesBytes) ||
+			typeof deps.packages !== 'object' ||
+			deps.packages === null ||
+			Array.isArray(deps.packages) ||
+			!Object.values(deps.packages).every(
+				(versions) => Array.isArray(versions) && versions.every((v) => typeof v === 'string'),
+			)
 		) {
 			return null
 		}
 	}
 	return parsed
+}
+
+/**
+ * The failed result for a commit with no usable size report; `note` says
+ * why, when more than "none" needs saying.
+ */
+function unreadable(note) {
+	let gate = {
+		pass: false,
+		message: 'No size report for this commit, so the size gate cannot pass.',
+	}
+	let empty = {head: null, diff: null, baselineNote: note, gate}
+	return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
 }
 
 /**
@@ -63,13 +86,16 @@ export function readReport(path) {
  * the PR's base branch: only `master` has a baseline to compare with.
  */
 export function buildPrReport({head, baseline, comparedSha, baseRef, labels, limit}) {
+	// A head report at another version has no shape this script can read: a
+	// label change reuses the report from the PR's last push, which can
+	// predate a change to the report.
+	if (head !== null && head.version !== REPORT_VERSION) {
+		return unreadable(
+			`This commit's size report is an older format (version ${head.version}), so there is nothing to show; push a commit to measure it again.`,
+		)
+	}
 	if (head === null) {
-		let gate = {
-			pass: false,
-			message: 'No size report for this commit, so the size gate cannot pass.',
-		}
-		let empty = {head, diff: null, baselineNote: null, gate}
-		return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
+		return unreadable(null)
 	}
 
 	let short = head.baseSha ? head.baseSha.slice(0, 7) : 'none'

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {describe, it} from 'node:test'
 
-import {diffGroups, diffReports} from './diff.mjs'
+import {diffGroups, diffPackages, diffReports} from './diff.mjs'
 
 describe('diffGroups', () => {
 	it('orders by size of change, largest first, then by name', () => {
@@ -24,17 +24,63 @@ describe('diffGroups', () => {
 	})
 })
 
+describe('diffPackages', () => {
+	it('sorts added, removed and bumped packages by name', () => {
+		let before = {react: ['19.2.2'], lodash: ['4.17.21'], same: ['1.0.0']}
+		let after = {react: ['19.2.3'], 'date-fns': ['4.1.0'], same: ['1.0.0']}
+		assert.deepEqual(diffPackages(before, after).changes, [
+			{name: 'date-fns', kind: 'added', before: null, after: ['4.1.0']},
+			{name: 'lodash', kind: 'removed', before: ['4.17.21'], after: null},
+			{name: 'react', kind: 'bumped', before: ['19.2.2'], after: ['19.2.3']},
+		])
+	})
+
+	it('does not report a package whose versions are unchanged', () => {
+		assert.deepEqual(diffPackages({a: ['1.0.0', '2.0.0']}, {a: ['1.0.0', '2.0.0']}), {
+			changes: [],
+			duplicates: [{name: 'a', versions: ['1.0.0', '2.0.0'], isNew: false}],
+		})
+	})
+
+	it('reports a package gaining a second version as a bump and a new duplicate', () => {
+		let result = diffPackages({a: ['1.0.0']}, {a: ['1.0.0', '2.0.0']})
+		assert.deepEqual(result.changes, [
+			{name: 'a', kind: 'bumped', before: ['1.0.0'], after: ['1.0.0', '2.0.0']},
+		])
+		assert.deepEqual(result.duplicates, [{name: 'a', versions: ['1.0.0', '2.0.0'], isNew: true}])
+	})
+
+	it('treats a new package with two versions as a new duplicate', () => {
+		assert.deepEqual(diffPackages({}, {a: ['1.0.0', '2.0.0']}).duplicates, [
+			{name: 'a', versions: ['1.0.0', '2.0.0'], isNew: true},
+		])
+	})
+
+	it('lists no duplicate for a package with one version', () => {
+		assert.deepEqual(diffPackages({}, {a: ['1.0.0']}).duplicates, [])
+	})
+})
+
 describe('diffReports', () => {
-	it('diffs the hermes total and both groupings', () => {
-		let report = (hermesBytes) => ({
-			version: 1,
+	it('diffs the hermes total, both groupings and the dependencies', () => {
+		let report = (hermesBytes, nodeModulesBytes, packages) => ({
+			version: 2,
 			baseSha: null,
 			js: {hermesBytes, byPackage: {a: hermesBytes}, byFeature: {}},
+			deps: {nodeModulesBytes, packages},
 		})
-		assert.deepEqual(diffReports(report(200), report(230)), {
-			hermes: {name: 'hermes', before: 200, after: 230, delta: 30},
-			byPackage: [{name: 'a', before: 200, after: 230, delta: 30}],
-			byFeature: [],
-		})
+		assert.deepEqual(
+			diffReports(report(200, 1000, {a: ['1.0.0']}), report(230, 1500, {a: ['1.1.0']})),
+			{
+				hermes: {name: 'hermes', before: 200, after: 230, delta: 30},
+				byPackage: [{name: 'a', before: 200, after: 230, delta: 30}],
+				byFeature: [],
+				deps: {
+					nodeModules: {name: 'node_modules', before: 1000, after: 1500, delta: 500},
+					changes: [{name: 'a', kind: 'bumped', before: ['1.0.0'], after: ['1.1.0']}],
+					duplicates: [],
+				},
+			},
+		)
 	})
 })

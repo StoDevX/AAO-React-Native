@@ -1,15 +1,16 @@
 import assert from 'node:assert/strict'
-import {mkdtempSync, writeFileSync} from 'node:fs'
+import {mkdtempSync, readFileSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
-import {join} from 'node:path'
+import {dirname, join, resolve} from 'node:path'
 import {describe, it} from 'node:test'
 
 import {buildPrReport, readReport} from './report.mjs'
 
-let report = (hermesBytes, {version = 1, baseSha = 'abcdef1234'} = {}) => ({
+let report = (hermesBytes, {version = 2, baseSha = 'abcdef1234'} = {}) => ({
 	version,
 	baseSha,
 	js: {hermesBytes, byPackage: {a: 1}, byFeature: {}},
+	deps: {nodeModulesBytes: 1000, packages: {a: ['1.0.0']}},
 })
 
 describe('readReport', () => {
@@ -33,7 +34,7 @@ describe('readReport', () => {
 
 	it('returns null for a current-version report missing js', () => {
 		let path = join(dir, 'no-js.json')
-		writeFileSync(path, JSON.stringify({version: 1, baseSha: null}))
+		writeFileSync(path, JSON.stringify({version: 2, baseSha: null}))
 		assert.equal(readReport(path), null)
 	})
 
@@ -42,12 +43,37 @@ describe('readReport', () => {
 		writeFileSync(
 			path,
 			JSON.stringify({
-				version: 1,
+				version: 2,
 				baseSha: null,
 				js: {hermesBytes: 'x', byPackage: {}, byFeature: {}},
+				deps: {nodeModulesBytes: 1, packages: {}},
 			}),
 		)
 		assert.equal(readReport(path), null)
+	})
+
+	it('returns null for a current-version report missing deps', () => {
+		let path = join(dir, 'no-deps.json')
+		let {deps, ...withoutDeps} = report(5)
+		writeFileSync(path, JSON.stringify(withoutDeps))
+		assert.equal(readReport(path), null)
+	})
+
+	it('returns null for a current-version report whose deps are malformed', () => {
+		let path = join(dir, 'bad-deps.json')
+		writeFileSync(
+			path,
+			JSON.stringify({...report(5), deps: {nodeModulesBytes: 'x', packages: null}}),
+		)
+		assert.equal(readReport(path), null)
+	})
+
+	it('returns null for a current-version report whose package versions are not lists of strings', () => {
+		for (let packages of [{a: '1.0.0'}, {a: [1]}, ['a']]) {
+			let path = join(dir, 'bad-packages.json')
+			writeFileSync(path, JSON.stringify({...report(5), deps: {nodeModulesBytes: 1, packages}}))
+			assert.equal(readReport(path), null)
+		}
 	})
 
 	it('reads an older-version report without checking its js shape', () => {
@@ -82,6 +108,24 @@ describe('buildPrReport', () => {
 		})
 		assert.equal(result.pass, false)
 		assert.match(result.comment, /JS size unavailable/u)
+	})
+
+	it('reports an older-format report for this commit as unusable, without crashing', () => {
+		// A label change reuses the report from the PR's last push, which can
+		// predate a change to the report's shape and so lack `deps`.
+		let {deps, ...older} = report(300, {version: 1})
+		let result = buildPrReport({
+			head: older,
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			limit: 100,
+		})
+		assert.equal(result.pass, false)
+		assert.match(result.comment, /older format \(version 1\)/u)
+		assert.match(result.comment, /push a commit/u)
+		assert.doesNotMatch(result.comment, /Dependencies/u)
 	})
 
 	it('passes with no comparison when the PR is not based on master', () => {
@@ -191,9 +235,10 @@ describe('buildPrReport', () => {
 			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
 		)
 		let bigReport = (hermesBytes) => ({
-			version: 1,
+			version: 2,
 			baseSha: 'abcdef1234',
 			js: {hermesBytes, byPackage: huge, byFeature: {}},
+			deps: {nodeModulesBytes: 1000, packages: {}},
 		})
 		let result = buildPrReport({
 			head: bigReport(300),
@@ -206,5 +251,30 @@ describe('buildPrReport', () => {
 		assert.doesNotMatch(result.comment, /All packages/u)
 		assert.match(result.comment, /The full tables are in this run's job summary\./u)
 		assert.match(result.summary, /All packages/u)
+	})
+})
+
+describe('report.mjs imports', () => {
+	// The workflow's `report` job installs Node but not node_modules, so
+	// everything report.mjs reaches must be a relative file or a Node builtin.
+	it('reach no package from node_modules', () => {
+		let seen = new Set()
+		let packages = []
+		let visit = (file) => {
+			if (seen.has(file)) {
+				return
+			}
+			seen.add(file)
+			let source = readFileSync(file, 'utf8')
+			for (let [, specifier] of source.matchAll(/^import [^\n]*? from '([^']+)'/gmu)) {
+				if (specifier.startsWith('./')) {
+					visit(resolve(dirname(file), specifier))
+				} else if (!specifier.startsWith('node:')) {
+					packages.push(`${specifier} (from ${file})`)
+				}
+			}
+		}
+		visit(resolve(import.meta.dirname, 'report.mjs'))
+		assert.deepEqual(packages, [])
 	})
 })
