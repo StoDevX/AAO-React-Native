@@ -22,16 +22,35 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 			yesterday.frame.minY, today.frame.minY, "Yesterday should sit above Today")
 	}
 
-	func testAthleticsSportsFilter() throws {
+	/// The sports menu offers each sport as a toggle, and Reset Filters only
+	/// once one is on. The rows are written in reading order and pinned there
+	/// with menuOrder(.fixed); the screenshot is what shows they arrive that way
+	/// rather than reversed, as a bottom-bar menu otherwise draws them.
+	func testAthleticsSportsMenu() throws {
 		let screen = AthleticsScreen(app: app).navigate()
-		let filters = FilterScreen(app: app)
-		let key = TestIdentifiers.Filter.athleticsSports
+		let reset = TestIdentifiers.Athletics.resetFilters
 
-		filters.openFilter(key, until: filters.option("Volleyball"))
-		screen.capture("Athletics - Sports filter")
+		screen.openSportsMenu()
+		XCTAssertTrue(
+			app.buttons["Volleyball"].waitForExistence(timeout: 30),
+			"Volleyball should be offered in the sports menu")
+		XCTAssertTrue(
+			app.buttons[reset].waitForNonExistence(timeout: 10),
+			"Reset Filters should be absent while every sport shows")
+		screen.capture("Athletics - sports menu")
 
-		filters.option("Volleyball").tap()
-		filters.dismissSheet(waitingFor: "Volleyball")
-		filters.verifyTrigger(key, isSelected: true)
+		screen.tapMenuItem("Volleyball").dismissMenu(waitingFor: "Volleyball")
+
+		screen.openSportsMenu()
+		XCTAssertTrue(
+			app.buttons[reset].waitForExistence(timeout: 30),
+			"Reset Filters should be offered once a sport is chosen")
+		screen.capture("Athletics - sports menu with a sport chosen")
+
+		screen.tapMenuItem(reset)
+		screen.openSportsMenu()
+		XCTAssertTrue(
+			app.buttons[reset].waitForNonExistence(timeout: 10),
+			"Reset Filters should clear the choice")
 	}
 }

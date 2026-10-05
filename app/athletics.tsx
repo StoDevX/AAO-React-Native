@@ -5,7 +5,6 @@ import {foregroundStyle, listStyle, refreshable} from '@expo/ui/swift-ui/modifie
 import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {FilterToolbar} from '@frogpond/filter'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {now} from '@frogpond/timer'
 import * as c from '@frogpond/colors'
@@ -14,10 +13,10 @@ import {DebugDatePicker} from '../source/features/athletics/debug-date-picker'
 import {EmptyListNotice} from '../source/features/athletics/empty-notice'
 import {athleticsOptions} from '../source/features/athletics/query'
 import {AthleticsRow} from '../source/features/athletics/row'
-import {sportsFilter} from '../source/features/athletics/sports-filter'
+import {SportsMenu} from '../source/features/athletics/sports-menu'
 import {useFilterStore} from '../source/features/athletics/store'
 import type {DaySection, ProcessedScore} from '../source/features/athletics/types'
-import {daySections, filterBySport} from '../source/features/athletics/utils'
+import {daySections, filterBySport, sportFilterSections} from '../source/features/athletics/utils'
 
 // Stable so a pending query's default `[]` doesn't invalidate the memos and
 // effect below on every render.
@@ -68,6 +67,7 @@ function AthleticsView(): React.ReactNode {
 	const [debugDate, setDebugDate] = React.useState<Date | null>(null)
 	const selectedSports = useFilterStore((s) => s.selectedSports)
 	const setSelectedSports = useFilterStore((s) => s.setSelectedSports)
+	const toggleSport = useFilterStore((s) => s.toggleSport)
 	const setAvailableSports = useFilterStore((s) => s.setAvailableSports)
 
 	const {data = NO_SCORES, error, refetch, isLoading, isError} = useQuery(athleticsOptions)
@@ -79,12 +79,12 @@ function AthleticsView(): React.ReactNode {
 	// not depend on the day the suite happens to run.
 	const today = React.useMemo(() => debugDate ?? now().toDate(), [debugDate])
 
-	const filter = React.useMemo(() => sportsFilter(data, selectedSports), [data, selectedSports])
+	const sports = React.useMemo(() => sportFilterSections(data), [data])
 
 	// Keep availableSports in sync so the filter-hint selector can compare membership
 	React.useEffect(() => {
-		setAvailableSports(filter.spec.options.map((option) => option.title))
-	}, [filter, setAvailableSports])
+		setAvailableSports(sports.flatMap((section) => section.data))
+	}, [sports, setAvailableSports])
 
 	const filtered = React.useMemo(() => filterBySport(data, selectedSports), [data, selectedSports])
 	const sections = React.useMemo(() => daySections(filtered, today), [filtered, today])
@@ -125,15 +125,11 @@ function AthleticsView(): React.ReactNode {
 	return (
 		<>
 			{datePicker}
-			<FilterToolbar
-				filters={[filter]}
-				onChange={(changed) => {
-					// The sports list is the only filter this toolbar carries.
-					if (changed.type !== 'list') {
-						return
-					}
-					setSelectedSports(changed.spec.selected.map((option) => option.title))
-				}}
+			<SportsMenu
+				onReset={() => setSelectedSports([])}
+				onToggleSport={toggleSport}
+				sections={sports}
+				selectedSports={selectedSports}
 			/>
 			{filtered.length === 0 ? (
 				<EmptyListNotice />

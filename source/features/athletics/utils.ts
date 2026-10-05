@@ -173,6 +173,15 @@ export function sportFilterSections(scores: ProcessedScore[]): SportSection[] {
 }
 
 /**
+ * A sport's name without its division prefix, for use where the section header
+ * already says which division it is -- "Men's Basketball" under a "Men's"
+ * heading reads as a stutter.
+ */
+export function shortSportName(sport: string): string {
+	return sport.replace(/^(Men's|Women's)\s/u, '')
+}
+
+/**
  * Narrows the games to the selected sports. An empty selection means "show
  * everything" -- see `isFilterActive`.
  */
