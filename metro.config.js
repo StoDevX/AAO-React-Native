@@ -17,7 +17,15 @@ const {EMPTY_FIXTURE, stubsFixture} = require('./scripts/metro-fixtures.mjs')
 // Sentry's wrapper adds a debug ID to the bundle and its source map, so Sentry
 // matches the two by ID rather than by release name. It is handed the same
 // getDefaultConfig as before so the base config does not change.
-const defaultConfig = getSentryExpoConfig(__dirname, {getDefaultConfig})
+//
+// @sentry/browser re-exports the web session replay and feedback widgets, which
+// the app never turns on (it has no replayIntegration or feedbackIntegration);
+// Sentry leaves both in the bundle unless told otherwise.
+const defaultConfig = getSentryExpoConfig(__dirname, {
+	getDefaultConfig,
+	includeWebReplay: false,
+	includeWebFeedback: false,
+})
 
 // The resolver Sentry's config installs; the stub below resolves through it,
 // then swaps a fixture's result.
