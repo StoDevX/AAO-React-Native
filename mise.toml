@@ -558,6 +558,29 @@ source-map-explorer "$out/minified/main.jsbundle" "$out/minified/main.jsbundle.m
 node scripts/pr-report/js-size.mjs "$out"
 """
 
+[tasks."app-size"]
+description = "Archive the native app without its JS bundle and measure it for the PR report"
+# The JS bundle and its images are measured by size-report, on Linux.
+env = { SKIP_BUNDLING = "1", SENTRY_DISABLE_AUTO_UPLOAD = "true" }
+run = """
+set -euo pipefail
+out=app-size
+rm -rf "$out" && mkdir -p "$out"
+mise run prebuild
+NSUnbufferedIO=YES xcodebuild archive \
+  -workspace ios/AllAboutOlaf.xcworkspace \
+  -scheme AllAboutOlaf \
+  -configuration Release \
+  -destination 'generic/platform=iOS' \
+  -archivePath "$out/AllAboutOlaf.xcarchive" \
+  CODE_SIGN_IDENTITY="" \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
+  2>&1 | xcbeautify
+APP_SIZE_SHA="${APP_SIZE_SHA:-$(git rev-parse HEAD)}" \
+  node scripts/pr-report/app-size.mjs "$out/AllAboutOlaf.xcarchive" "$out/app-size.json"
+"""
+
 # --- Agent tasks ---
 
 [tasks."agent:setup"]

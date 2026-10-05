@@ -94,3 +94,6 @@ images/icons/*-tinted-*.png
 images/icons/logos.html
 # Output of `mise run size-report`
 /size-report/
+
+# Output of `mise run app-size`
+/app-size/
