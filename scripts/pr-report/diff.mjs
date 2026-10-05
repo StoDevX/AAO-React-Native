@@ -20,34 +20,86 @@ export function diffGroups(before, after) {
 
 const byName = (a, b) => a.localeCompare(b)
 
+/** What one installed version costs; zero for one the report has no size for. */
+function sizeOf(deps, name, version) {
+	return deps.sizes[`${name}@${version}`] ?? {installed: 0, bundled: 0}
+}
+
+/** What a package's versions cost together, or nothing for a side without the package. */
+function totalSize(deps, name, versions) {
+	let total = {installed: 0, bundled: 0}
+	for (let version of versions ?? []) {
+		let size = sizeOf(deps, name, version)
+		total.installed += size.installed
+		total.bundled += size.bundled
+	}
+	return total
+}
+
+/** The `key` bytes (`installed` or `bundled`) a duplicate's versions cost together. */
+const cost = (duplicate, key) => duplicate.versions.reduce((sum, v) => sum + v[key], 0)
+
 /**
- * Diffs two name→versions maps. A package is added or removed when its name
- * is on one side only, and bumped when its versions differ (the lists are
- * sorted, so a join compares them). Duplicates are the packages with two or
- * more versions in `after`, new when `before` had fewer.
+ * Diffs two reports' `deps`. A package is added or removed when its name is
+ * on one side only, and bumped when its versions differ (the lists are
+ * sorted, so a join compares them); each change carries how many installed
+ * and bundled bytes it adds. Changes come largest first, by bundled bytes,
+ * then installed bytes, since the bundle is what ships. Duplicates are the
+ * packages with two or more versions in `after`, new when `before` had
+ * fewer, in the same order by what their versions cost.
  */
 export function diffPackages(before, after) {
-	let names = [...new Set([...Object.keys(before), ...Object.keys(after)])].sort(byName)
+	let names = [...new Set([...Object.keys(before.packages), ...Object.keys(after.packages)])].sort(
+		byName,
+	)
 	let changes = []
 	for (let name of names) {
-		let was = before[name] ?? null
-		let now = after[name] ?? null
+		let was = before.packages[name] ?? null
+		let now = after.packages[name] ?? null
+		let kind = null
 		if (was === null) {
-			changes.push({name, kind: 'added', before: null, after: now})
+			kind = 'added'
 		} else if (now === null) {
-			changes.push({name, kind: 'removed', before: was, after: null})
+			kind = 'removed'
 		} else if (was.join(',') !== now.join(',')) {
-			changes.push({name, kind: 'bumped', before: was, after: now})
+			kind = 'bumped'
+		}
+		if (kind !== null) {
+			let wasSize = totalSize(before, name, was)
+			let nowSize = totalSize(after, name, now)
+			changes.push({
+				name,
+				kind,
+				before: was,
+				after: now,
+				installedDelta: nowSize.installed - wasSize.installed,
+				bundledDelta: nowSize.bundled - wasSize.bundled,
+			})
 		}
 	}
-	let duplicates = Object.keys(after)
-		.sort(byName)
-		.filter((name) => after[name].length > 1)
+	changes.sort(
+		(a, b) =>
+			Math.abs(b.bundledDelta) - Math.abs(a.bundledDelta) ||
+			Math.abs(b.installedDelta) - Math.abs(a.installedDelta) ||
+			byName(a.name, b.name),
+	)
+
+	let duplicates = Object.keys(after.packages)
+		.filter((name) => after.packages[name].length > 1)
 		.map((name) => ({
 			name,
-			versions: after[name],
-			isNew: (before[name]?.length ?? 0) < 2,
+			isNew: (before.packages[name]?.length ?? 0) < 2,
+			versions: after.packages[name].map((version) => ({
+				version,
+				...sizeOf(after, name, version),
+			})),
 		}))
+	duplicates.sort(
+		(a, b) =>
+			cost(b, 'bundled') - cost(a, 'bundled') ||
+			cost(b, 'installed') - cost(a, 'installed') ||
+			byName(a.name, b.name),
+	)
 	return {changes, duplicates}
 }
 
@@ -70,7 +122,7 @@ export function diffReports(baseline, head) {
 				after: head.deps.nodeModulesBytes,
 				delta: head.deps.nodeModulesBytes - baseline.deps.nodeModulesBytes,
 			},
-			...diffPackages(baseline.deps.packages, head.deps.packages),
+			...diffPackages(baseline.deps, head.deps),
 		},
 	}
 }

@@ -6,11 +6,15 @@ import {describe, it} from 'node:test'
 
 import {buildPrReport, readReport} from './report.mjs'
 
-let report = (hermesBytes, {version = 2, baseSha = 'abcdef1234'} = {}) => ({
+let report = (hermesBytes, {version = 3, baseSha = 'abcdef1234'} = {}) => ({
 	version,
 	baseSha,
 	js: {hermesBytes, byPackage: {a: 1}, byFeature: {}},
-	deps: {nodeModulesBytes: 1000, packages: {a: ['1.0.0']}},
+	deps: {
+		nodeModulesBytes: 1000,
+		packages: {a: ['1.0.0']},
+		sizes: {'a@1.0.0': {installed: 10, bundled: 4}},
+	},
 })
 
 describe('readReport', () => {
@@ -34,7 +38,7 @@ describe('readReport', () => {
 
 	it('returns null for a current-version report missing js', () => {
 		let path = join(dir, 'no-js.json')
-		writeFileSync(path, JSON.stringify({version: 2, baseSha: null}))
+		writeFileSync(path, JSON.stringify({version: 3, baseSha: null}))
 		assert.equal(readReport(path), null)
 	})
 
@@ -43,10 +47,10 @@ describe('readReport', () => {
 		writeFileSync(
 			path,
 			JSON.stringify({
-				version: 2,
+				version: 3,
 				baseSha: null,
 				js: {hermesBytes: 'x', byPackage: {}, byFeature: {}},
-				deps: {nodeModulesBytes: 1, packages: {}},
+				deps: {nodeModulesBytes: 1, packages: {}, sizes: {}},
 			}),
 		)
 		assert.equal(readReport(path), null)
@@ -71,7 +75,26 @@ describe('readReport', () => {
 	it('returns null for a current-version report whose package versions are not lists of strings', () => {
 		for (let packages of [{a: '1.0.0'}, {a: [1]}, ['a']]) {
 			let path = join(dir, 'bad-packages.json')
-			writeFileSync(path, JSON.stringify({...report(5), deps: {nodeModulesBytes: 1, packages}}))
+			writeFileSync(
+				path,
+				JSON.stringify({...report(5), deps: {nodeModulesBytes: 1, packages, sizes: {}}}),
+			)
+			assert.equal(readReport(path), null)
+		}
+	})
+
+	it('returns null for a current-version report whose sizes are malformed', () => {
+		for (let sizes of [
+			undefined,
+			null,
+			['a'],
+			{a: 5},
+			{a: {installed: 1}},
+			{a: {installed: 'x', bundled: 1}},
+		]) {
+			let path = join(dir, 'bad-sizes.json')
+			let deps = {nodeModulesBytes: 1, packages: {}, sizes}
+			writeFileSync(path, JSON.stringify({...report(5), deps}))
 			assert.equal(readReport(path), null)
 		}
 	})
@@ -268,10 +291,10 @@ describe('buildPrReport', () => {
 			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
 		)
 		let bigReport = (hermesBytes) => ({
-			version: 2,
+			version: 3,
 			baseSha: 'abcdef1234',
 			js: {hermesBytes, byPackage: huge, byFeature: {}},
-			deps: {nodeModulesBytes: 1000, packages: {}},
+			deps: {nodeModulesBytes: 1000, packages: {}, sizes: {}},
 		})
 		let result = buildPrReport({
 			head: bigReport(300),

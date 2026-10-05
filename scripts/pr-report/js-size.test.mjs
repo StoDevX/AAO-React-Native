@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {describe, it} from 'node:test'
 
-import {buildReport, featureOf, groupBundle, groupOf} from './js-size.mjs'
+import {buildReport, bundledSizes, featureOf, groupBundle, groupOf} from './js-size.mjs'
 
 describe('groupOf', () => {
 	it('names a package from a pnpm store path', () => {
@@ -87,12 +87,16 @@ describe('groupBundle', () => {
 })
 
 describe('buildReport', () => {
-	let deps = {nodeModulesBytes: 1000, packages: {react: ['19.2.3']}}
+	let deps = {
+		nodeModulesBytes: 1000,
+		packages: {react: ['19.2.3']},
+		sizes: {'react@19.2.3': {installed: 900, bundled: 400}},
+	}
 
 	it('wraps the groups with the version, base commit, totals and dependencies', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
 		assert.deepEqual(buildReport({baseSha: 'def', hermesBytes: 90, explorer, deps}), {
-			version: 2,
+			version: 3,
 			baseSha: 'def',
 			js: {
 				hermesBytes: 90,
@@ -107,5 +111,29 @@ describe('buildReport', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
 		let report = buildReport({baseSha: null, hermesBytes: 90, explorer, deps})
 		assert.equal(report.baseSha, null)
+	})
+})
+
+describe('bundledSizes', () => {
+	it('sums the bundled bytes of each package version, keyed name@version', () => {
+		let files = {
+			'/node_modules/.pnpm/date-fns@4.1.0/node_modules/date-fns/format.js': {size: 10},
+			'/node_modules/.pnpm/date-fns@4.1.0/node_modules/date-fns/parse.js': {size: 5},
+			'/node_modules/.pnpm/@sentry+react@10.71.0_react@19.2.3/node_modules/@sentry/react/index.js':
+				{
+					size: 7,
+				},
+			'/node_modules/.pnpm/semver@6.3.1/node_modules/semver/a.js': {size: 3},
+			'/node_modules/.pnpm/semver@7.8.5/node_modules/semver/a.js': {size: 4},
+			'/source/features/dining/a.ts': {size: 100},
+			'/modules/colors/index.ts': {size: 20},
+			'[unmapped]': {size: 9},
+		}
+		assert.deepEqual(bundledSizes(files), {
+			'date-fns@4.1.0': 15,
+			'@sentry/react@10.71.0': 7,
+			'semver@6.3.1': 3,
+			'semver@7.8.5': 4,
+		})
 	})
 })

@@ -7,9 +7,9 @@ import {COMMENT_LIMIT, MARKER, renderComment} from './render.mjs'
 let KiB = 1024
 let MiB = 1024 * KiB
 
-let installed = {nodeModulesBytes: 800 * MiB, packages: {}}
+let installed = {nodeModulesBytes: 800 * MiB, packages: {}, sizes: {}}
 let report = (js, deps = installed) => ({
-	version: 2,
+	version: 3,
 	baseSha: null,
 	js,
 	deps,
@@ -161,14 +161,32 @@ describe('renderComment', () => {
 })
 
 describe('renderComment dependencies', () => {
-	let deps = (nodeModulesBytes, packages) => ({nodeModulesBytes, packages})
+	let size = (installed, bundled) => ({installed, bundled})
+	let deps = (nodeModulesBytes, packages, sizes = {}) => ({nodeModulesBytes, packages, sizes})
 	let before = report(
 		baseline.js,
-		deps(800 * MiB, {lodash: ['4.17.21'], react: ['19.2.2'], semver: ['7.6.0']}),
+		deps(
+			800 * MiB,
+			{lodash: ['4.17.21'], react: ['19.2.2'], semver: ['7.6.0']},
+			{
+				'lodash@4.17.21': size(600 * KiB, 0),
+				'react@19.2.2': size(2 * MiB, 100 * KiB),
+				'semver@7.6.0': size(50 * KiB, 0),
+			},
+		),
 	)
 	let after = report(
 		head.js,
-		deps(804 * MiB, {'date-fns': ['4.1.0'], react: ['19.2.3'], semver: ['6.3.1', '7.6.0']}),
+		deps(
+			804 * MiB,
+			{'date-fns': ['4.1.0'], react: ['19.2.3'], semver: ['6.3.1', '7.6.0']},
+			{
+				'date-fns@4.1.0': size(MiB, 80 * KiB),
+				'react@19.2.3': size(2 * MiB + 512 * KiB, 110 * KiB),
+				'semver@6.3.1': size(40 * KiB, 0),
+				'semver@7.6.0': size(50 * KiB, 0),
+			},
+		),
 	)
 	let section = (markdown) => markdown.slice(markdown.indexOf('### Dependencies'))
 
@@ -179,31 +197,29 @@ describe('renderComment dependencies', () => {
 			baselineNote: null,
 			gate: pass,
 		})
+		let changes = [
+			'| Package | Change | Δ installed | Δ in bundle |',
+			'| --- | --- | --- | --- |',
+			'| date-fns | added 4.1.0 | +1.00 MiB | +80.0 KiB |',
+			'| react | 19.2.2 → 19.2.3 | +512.0 KiB | +10.0 KiB |',
+			'| lodash | removed 4.17.21 | -600.0 KiB | 0 B |',
+			'| semver | 7.6.0 → 6.3.1, 7.6.0 | +40.0 KiB | 0 B |',
+			'',
+		]
 		assert.equal(
 			section(markdown),
 			[
 				'### Dependencies',
 				'+1 added, −1 removed, 2 bumped · node_modules **804.00 MiB** (+4.00 MiB, +0.5%)',
 				'',
-				'| Package | Change |',
-				'| --- | --- |',
-				'| date-fns | added 4.1.0 |',
-				'| lodash | removed 4.17.21 |',
-				'| react | 19.2.2 → 19.2.3 |',
-				'| semver | 7.6.0 → 6.3.1, 7.6.0 |',
-				'',
+				...changes,
 				'<details><summary>All changes and duplicates</summary>',
 				'',
-				'| Package | Change |',
-				'| --- | --- |',
-				'| date-fns | added 4.1.0 |',
-				'| lodash | removed 4.17.21 |',
-				'| react | 19.2.2 → 19.2.3 |',
-				'| semver | 7.6.0 → 6.3.1, 7.6.0 |',
-				'',
-				'| Duplicate | Versions |',
-				'| --- | --- |',
-				'| semver | 6.3.1, 7.6.0 (new) |',
+				...changes,
+				'| Duplicate | Version | Installed | In bundle |',
+				'| --- | --- | --- | --- |',
+				'| semver (new) | 6.3.1 | 40.0 KiB | 0 B |',
+				'| semver (new) | 7.6.0 | 50.0 KiB | 0 B |',
 				'',
 				'</details>',
 				'',
@@ -219,7 +235,8 @@ describe('renderComment dependencies', () => {
 			baselineNote: null,
 			gate: pass,
 		})
-		assert.match(section(markdown), /\| a \| 1\.0\.0, 2\.0\.0 \|/u)
+		assert.match(section(markdown), /\| a \| 1\.0\.0 \| 0 B \| 0 B \|/u)
+		assert.match(section(markdown), /\| a \| 2\.0\.0 \| 0 B \| 0 B \|/u)
 		assert.doesNotMatch(section(markdown), /\(new\)/u)
 		assert.doesNotMatch(section(markdown), /\| Package \| Change \|/u)
 	})
