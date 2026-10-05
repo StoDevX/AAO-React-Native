@@ -4,13 +4,15 @@ import {innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 const INVISIBLE = /[\u200B-\u200D\uFEFF]/gu
 
 /// A St. Olaf unit: five digits, sometimes behind a two- or three-digit fund
-/// ("10-13001", "010-11725"). The fund is not part of the unit, and
-/// data/student-work-areas.yaml lists units without one. When a posting names
-/// two units, the first is the one it is filed under.
+/// ("10-13001", "010-11725") or a five-digit unit of another office, as in
+/// the account strings "41066-11300" and "41203-11184-53000-00512". Neither
+/// prefix is part of the unit, and data/student-work-areas.yaml lists units
+/// without one. When a posting names two units, the first is the one it is
+/// filed under.
 ///
 /// ccc-server's `/student-work/units` reads units by the same rule, in
 /// `source/student-work/unit-number.ts`; the two must agree.
-const UNIT = /^(?:\d{2,3}-)?(\d{5})(?!\d)/u
+const UNIT = /^(?:\d{2,3}-|\d{5}-)?(\d{5})(?!\d)/u
 
 /// The unit a "Unit Number" value names, or null when it names none.
 export function unitNumber(value: string): string | null {

@@ -10,6 +10,12 @@ describe('unitNumber', () => {
 		expect(unitNumber('010-11725')).toBe('11725')
 	})
 
+	test('reads the unit after an account-string prefix', () => {
+		expect(unitNumber('41066-11300')).toBe('11300')
+		expect(unitNumber('45452-11565.')).toBe('11565')
+		expect(unitNumber('41203-11184-53000-00512')).toBe('11184')
+	})
+
 	test('takes the first of two units', () => {
 		expect(unitNumber('10-13001 / 10-13000')).toBe('13001')
 	})
