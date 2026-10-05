@@ -56,6 +56,16 @@ export function readReport(path) {
 			Array.isArray(deps.packages) ||
 			!Object.values(deps.packages).every(
 				(versions) => Array.isArray(versions) && versions.every((v) => typeof v === 'string'),
+			) ||
+			typeof deps.sizes !== 'object' ||
+			deps.sizes === null ||
+			Array.isArray(deps.sizes) ||
+			!Object.values(deps.sizes).every(
+				(size) =>
+					typeof size === 'object' &&
+					size !== null &&
+					Number.isFinite(size.installed) &&
+					Number.isFinite(size.bundled),
 			)
 		) {
 			return null

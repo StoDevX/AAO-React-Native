@@ -8,7 +8,13 @@
 
 import {readFileSync, statSync, writeFileSync} from 'node:fs'
 
-import {nodeModulesBytes, parsePackages} from './deps.mjs'
+import {
+	combineSizes,
+	installedSizes,
+	nodeModulesBytes,
+	packageKeyOfDir,
+	parsePackages,
+} from './deps.mjs'
 import {REPORT_VERSION} from './report-version.mjs'
 
 const NODE_MODULES = '/node_modules/'
@@ -64,6 +70,25 @@ export function groupBundle(files) {
 	return {byPackage, byFeature}
 }
 
+const PNPM_PACKAGE_DIR = /\/\.pnpm\/([^/]+)\/node_modules\//u
+
+/**
+ * Sums source-map-explorer's per-file bytes by package version, keyed
+ * `name@version`. The version is in the path of a pnpm-installed file; a
+ * file outside `node_modules/.pnpm` belongs to no package version.
+ */
+export function bundledSizes(files) {
+	let sizes = {}
+	for (let [path, {size}] of Object.entries(files)) {
+		let dir = path.match(PNPM_PACKAGE_DIR)
+		let key = dir ? packageKeyOfDir(dir[1]) : null
+		if (key !== null) {
+			sizes[key] = (sizes[key] ?? 0) + size
+		}
+	}
+	return sizes
+}
+
 /** Builds `size-report.json` from the measured totals, source-map-explorer's output and the installed dependencies. */
 export function buildReport({baseSha, hermesBytes, explorer, deps}) {
 	let {byPackage, byFeature} = groupBundle(explorer.results[0].files)
@@ -84,16 +109,21 @@ export function buildReport({baseSha, hermesBytes, explorer, deps}) {
 function main() {
 	let dir = process.argv[2] ?? 'size-report'
 	let baseSha = process.env.SIZE_REPORT_BASE_SHA || null
+	let explorer = JSON.parse(readFileSync(`${dir}/explorer.json`, 'utf8'))
 	let report = buildReport({
 		baseSha,
 		hermesBytes: statSync(`${dir}/main.hbc`).size,
-		explorer: JSON.parse(readFileSync(`${dir}/explorer.json`, 'utf8')),
+		explorer,
 		// Relative to the repo root, where the size-report task runs. `.pnpm`
 		// is pnpm's isolated layout, which this repo uses; a hoisted linker
 		// would have no such directory.
 		deps: {
 			nodeModulesBytes: nodeModulesBytes('node_modules/.pnpm'),
 			packages: parsePackages(readFileSync('pnpm-lock.yaml', 'utf8')),
+			sizes: combineSizes(
+				installedSizes('node_modules/.pnpm'),
+				bundledSizes(explorer.results[0].files),
+			),
 		},
 	})
 	writeFileSync(`${dir}/size-report.json`, `${JSON.stringify(report, null, '\t')}\n`)

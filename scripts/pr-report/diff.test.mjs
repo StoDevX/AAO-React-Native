@@ -64,7 +64,7 @@ describe('diffPackages', () => {
 describe('diffReports', () => {
 	it('diffs the hermes total, both groupings and the dependencies', () => {
 		let report = (hermesBytes, nodeModulesBytes, packages) => ({
-			version: 2,
+			version: 3,
 			baseSha: null,
 			js: {hermesBytes, byPackage: {a: hermesBytes}, byFeature: {}},
 			deps: {nodeModulesBytes, packages},

@@ -7,9 +7,9 @@ import {COMMENT_LIMIT, MARKER, renderComment} from './render.mjs'
 let KiB = 1024
 let MiB = 1024 * KiB
 
-let installed = {nodeModulesBytes: 800 * MiB, packages: {}}
+let installed = {nodeModulesBytes: 800 * MiB, packages: {}, sizes: {}}
 let report = (js, deps = installed) => ({
-	version: 2,
+	version: 3,
 	baseSha: null,
 	js,
 	deps,
@@ -161,7 +161,7 @@ describe('renderComment', () => {
 })
 
 describe('renderComment dependencies', () => {
-	let deps = (nodeModulesBytes, packages) => ({nodeModulesBytes, packages})
+	let deps = (nodeModulesBytes, packages) => ({nodeModulesBytes, packages, sizes: {}})
 	let before = report(
 		baseline.js,
 		deps(800 * MiB, {lodash: ['4.17.21'], react: ['19.2.2'], semver: ['7.6.0']}),
