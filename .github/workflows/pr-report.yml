@@ -205,6 +205,28 @@ jobs:
         if: github.event_name == 'merge_group'
         run: echo "The pull request passed the size gate before it was queued."
 
+      - name: Leave the comment to a run still measuring this commit
+        # A label change archives nothing, so another run for this commit
+        # that is still going (opening a PR with a label starts two) will
+        # measure the app and post the whole comment, reading the labels as
+        # they are by then. Posting here as well could land after it and put
+        # back a comment without the app size.
+        id: defer
+        if: >-
+          github.event_name == 'pull_request'
+          && (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          others=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+            --event pull_request --commit "$HEAD_SHA" --limit 20 --json databaseId,status \
+            --jq "[.[] | select(.status != \"completed\" and .databaseId != $GITHUB_RUN_ID)] | length")
+          if [ "${others:-0}" -gt 0 ]; then
+            echo "Another run for $HEAD_SHA is still going; it posts the comment."
+            echo "defer=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: github.event_name == 'pull_request'
         with:
@@ -232,11 +254,12 @@ jobs:
 
       - name: Reuse this commit's app size from an earlier run
         # A label change archives nothing; the run that last measured this
-        # commit has the figures. With none yet (it is still archiving, or
-        # failed), the section says the app size is unavailable.
+        # commit has the figures. With none (its archive failed), the section
+        # says the app size is unavailable.
         if: >-
           github.event_name == 'pull_request'
           && (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+          && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -253,7 +276,7 @@ jobs:
       - name: Find and download the base branch's baseline report
         # Master's run for the base commit, or for a PR stacked on another
         # branch, that branch's own PR run.
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           BASE_REF: ${{ github.base_ref }}
@@ -292,7 +315,7 @@ jobs:
         # The event payload's labels are from when this run was triggered. A
         # label changed since then queues a run that replaces this one, but
         # until it does, the gate reads the labels the API has now.
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -300,7 +323,7 @@ jobs:
           gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name]' > labels.json
 
       - name: List the files the pull request changes
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -310,7 +333,7 @@ jobs:
 
       - name: Build the report
         id: build
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           BASE_REF: ${{ github.base_ref }}
           APP_NEEDED: ${{ needs.app-size-gate.outputs.needed != 'false' }}
@@ -344,7 +367,7 @@ jobs:
           echo "status=$status" >> "$GITHUB_OUTPUT"
 
       - name: Post the comment
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -357,7 +380,7 @@ jobs:
         # step replaces it with a notice instead. It runs before "Size
         # gate", so that step's own deliberate failure on a failed gate —
         # after the real comment already posted — never reaches here.
-        if: failure() && github.event_name == 'pull_request'
+        if: failure() && github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -372,7 +395,9 @@ jobs:
           scripts/pr-report/upsert-comment.sh crash.md
 
       - name: Size gate
-        if: github.event_name == 'pull_request' && steps.build.outputs.status != '0'
+        if: >-
+          github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
+          && steps.build.outputs.status != '0'
         run: |
           echo "::error::The size gate failed. See the PR report comment or this job's summary."
           exit 1
