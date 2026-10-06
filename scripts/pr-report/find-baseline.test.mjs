@@ -38,6 +38,18 @@ let push = (databaseId, headSha, status = 'success') => ({
 })
 let reports = (...names) => names.map((name) => ({name, expired: false}))
 
+describe('find-baseline.sh for another workflow', () => {
+	it("searches the named workflow's runs, not pr-report.yml's", () => {
+		let iosRun = {...push(7, base), workflow: 'ios.yml'}
+		let data = {
+			runs: [push(2, base), iosRun],
+			artifacts: {2: reports('uitest-report'), 7: reports('uitest-report')},
+		}
+		assert.equal(findBaseline(data, base, 'master', 'uitest-report', 'ios.yml'), `7 ${base}\n`)
+		assert.equal(findBaseline(data, base, 'master', 'uitest-report'), `2 ${base}\n`)
+	})
+})
+
 describe('find-baseline.sh on master', () => {
 	it("picks the base commit's own run when it has the artifact", () => {
 		let out = findBaseline({runs: [push(2, base)], artifacts: {2: reports('size-report')}}, base)

@@ -103,7 +103,39 @@ export function diffPackages(before, after) {
 	return {changes, duplicates}
 }
 
-/** Diffs every figure two size reports share, JS and dependencies. */
+/** A total of two reports' `publish` blocks, as a change. */
+function publishTotal(name, before, after) {
+	return {name, before, after, delta: after - before}
+}
+
+/** A `publish` block's data files and image groups as one name→bytes map. */
+function publishRows(publish) {
+	return {
+		...Object.fromEntries(
+			Object.entries(publish.byFile).map(([name, file]) => [`${name} (gzip)`, file.gzipBytes]),
+		),
+		...Object.fromEntries(
+			Object.entries(publish.byImageGroup).map(([group, bytes]) => [`images/${group}`, bytes]),
+		),
+	}
+}
+
+/**
+ * Diffs two reports' `publish` blocks: the data and image totals, and every
+ * data file (by gzipped size, which is what a device downloads) and image
+ * group as one list. A data file is named `<file> (gzip)`, an image group
+ * `images/<group>`.
+ */
+export function diffPublish(before, after) {
+	return {
+		data: publishTotal('data', before.dataGzipBytes, after.dataGzipBytes),
+		images: publishTotal('images', before.imageBytes, after.imageBytes),
+		newImages: after.imageCount - before.imageCount,
+		rows: diffGroups(publishRows(before), publishRows(after)),
+	}
+}
+
+/** Diffs every figure two size reports share, JS, dependencies and published data. */
 export function diffReports(baseline, head) {
 	let total = (name, key) => ({
 		name,
@@ -124,6 +156,7 @@ export function diffReports(baseline, head) {
 			},
 			...diffPackages(baseline.deps, head.deps),
 		},
+		publish: diffPublish(baseline.publish, head.publish),
 	}
 }
 

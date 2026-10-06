@@ -2,6 +2,10 @@
 # Edits the pull request's report comment, or creates it, from a markdown
 # file. Never fails the job: a comment that cannot be posted (a fork's
 # read-only token, an API outage) still leaves the job summary.
+#
+# The UI-test block (see uitest-report.mjs) is written by another job, after
+# the suite finishes. An edit here keeps the block the comment already has,
+# so a new push's report doesn't drop it before the new suite's replaces it.
 set -uo pipefail
 
 body_file=$1
@@ -14,7 +18,20 @@ existing=$(gh api --paginate "$comments" \
 	| head -n 1)
 
 if [ -n "$existing" ]; then
-	gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" -F "body=@${body_file}" >/dev/null \
+	# Keep the block on any failure to read it: a comment without one is
+	# better than none.
+	merged=$(mktemp)
+	cp "$body_file" "$merged"
+	old=$(mktemp)
+	if gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" --jq .body > "$old" 2>/dev/null; then
+		block=$(mktemp)
+		node scripts/pr-report/uitest-report.mjs extract "$old" > "$block" 2>/dev/null || : > "$block"
+		if [ -s "$block" ]; then
+			node scripts/pr-report/uitest-report.mjs splice "$body_file" "$block" > "$merged" \
+				|| cp "$body_file" "$merged"
+		fi
+	fi
+	gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" -F "body=@${merged}" >/dev/null \
 		|| echo "::warning::Could not edit the PR report comment."
 else
 	gh api --method POST "$comments" -F "body=@${body_file}" >/dev/null \

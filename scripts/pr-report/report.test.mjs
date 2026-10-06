@@ -6,7 +6,7 @@ import {describe, it} from 'node:test'
 
 import {buildAppSection, buildPrReport, readAppReport, readReport} from './report.mjs'
 
-let report = (hermesBytes, {version = 4, baseSha = 'abcdef1234'} = {}) => ({
+let report = (hermesBytes, {version = 5, baseSha = 'abcdef1234'} = {}) => ({
 	version,
 	baseSha,
 	js: {hermesBytes, assetsBytes: 0, byPackage: {a: 1}, byFeature: {}},
@@ -14,6 +14,14 @@ let report = (hermesBytes, {version = 4, baseSha = 'abcdef1234'} = {}) => ({
 		nodeModulesBytes: 1000,
 		packages: {a: ['1.0.0']},
 		sizes: {'a@1.0.0': {installed: 10, bundled: 4}},
+	},
+	publish: {
+		dataBytes: 40,
+		dataGzipBytes: 10,
+		imageBytes: 500,
+		imageCount: 2,
+		byFile: {'a.json': {bytes: 40, gzipBytes: 10}},
+		byImageGroup: {spaces: 500},
 	},
 })
 
@@ -38,7 +46,7 @@ describe('readReport', () => {
 
 	it('returns null for a current-version report missing js', () => {
 		let path = join(dir, 'no-js.json')
-		writeFileSync(path, JSON.stringify({version: 4, baseSha: null}))
+		writeFileSync(path, JSON.stringify({version: 5, baseSha: null}))
 		assert.equal(readReport(path), null)
 	})
 
@@ -47,7 +55,7 @@ describe('readReport', () => {
 		writeFileSync(
 			path,
 			JSON.stringify({
-				version: 4,
+				version: 5,
 				baseSha: null,
 				js: {hermesBytes: 'x', assetsBytes: 1, byPackage: {}, byFeature: {}},
 				deps: {nodeModulesBytes: 1, packages: {}, sizes: {}},
@@ -62,6 +70,22 @@ describe('readReport', () => {
 		bad.js.assetsBytes = 'x'
 		writeFileSync(path, JSON.stringify(bad))
 		assert.equal(readReport(path), null)
+	})
+
+	it('returns null for a current-version report whose published data is missing or malformed', () => {
+		let good = report(5).publish
+		let {publish, ...withoutPublish} = report(5)
+		for (let bad of [
+			withoutPublish,
+			{...report(5), publish: {...good, dataGzipBytes: 'x'}},
+			{...report(5), publish: {...good, byFile: [good.byFile]}},
+			{...report(5), publish: {...good, byFile: {'a.json': {bytes: 1}}}},
+			{...report(5), publish: {...good, byImageGroup: {spaces: 'x'}}},
+		]) {
+			let path = join(dir, 'bad-publish.json')
+			writeFileSync(path, JSON.stringify(bad))
+			assert.equal(readReport(path), null)
+		}
 	})
 
 	it('returns null for a current-version report missing deps', () => {
@@ -348,10 +372,11 @@ describe('buildPrReport', () => {
 			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
 		)
 		let bigReport = (hermesBytes) => ({
-			version: 4,
+			version: 5,
 			baseSha: 'abcdef1234',
 			js: {hermesBytes, byPackage: huge, byFeature: {}},
 			deps: {nodeModulesBytes: 1000, packages: {}, sizes: {}},
+			publish: report(1).publish,
 		})
 		let result = buildPrReport({
 			head: bigReport(300),

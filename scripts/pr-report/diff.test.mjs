@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {describe, it} from 'node:test'
 
-import {diffApp, diffGroups, diffPackages, diffReports} from './diff.mjs'
+import {diffApp, diffGroups, diffPackages, diffPublish, diffReports} from './diff.mjs'
 
 describe('diffGroups', () => {
 	it('orders by size of change, largest first, then by name', () => {
@@ -146,13 +146,50 @@ describe('diffPackages', () => {
 	})
 })
 
+let emptyPublish = {
+	dataBytes: 0,
+	dataGzipBytes: 0,
+	imageBytes: 0,
+	imageCount: 0,
+	byFile: {},
+	byImageGroup: {},
+}
+
+describe('diffPublish', () => {
+	let publish = (gzip, imageBytes, imageCount) => ({
+		dataBytes: gzip * 4,
+		dataGzipBytes: gzip,
+		imageBytes,
+		imageCount,
+		byFile: {'faqs.json': {bytes: gzip * 4, gzipBytes: gzip}},
+		byImageGroup: {spaces: imageBytes},
+	})
+
+	it('diffs the gzipped data and the images, and lists files and groups as rows', () => {
+		assert.deepEqual(diffPublish(publish(100, 1000, 4), publish(130, 1500, 6)), {
+			data: {name: 'data', before: 100, after: 130, delta: 30},
+			images: {name: 'images', before: 1000, after: 1500, delta: 500},
+			newImages: 2,
+			rows: [
+				{name: 'images/spaces', before: 1000, after: 1500, delta: 500},
+				{name: 'faqs.json (gzip)', before: 100, after: 130, delta: 30},
+			],
+		})
+	})
+
+	it('counts removed images as a negative number of new ones', () => {
+		assert.equal(diffPublish(publish(1, 10, 5), publish(1, 10, 3)).newImages, -2)
+	})
+})
+
 describe('diffReports', () => {
 	it('diffs the hermes total, both groupings and the dependencies', () => {
 		let report = (hermesBytes, nodeModulesBytes, packages, sizes) => ({
-			version: 4,
+			version: 5,
 			baseSha: null,
 			js: {hermesBytes, assetsBytes: 0, byPackage: {a: hermesBytes}, byFeature: {}},
 			deps: {nodeModulesBytes, packages, sizes},
+			publish: emptyPublish,
 		})
 		assert.deepEqual(
 			diffReports(
@@ -177,6 +214,7 @@ describe('diffReports', () => {
 					],
 					duplicates: [],
 				},
+				publish: diffPublish(emptyPublish, emptyPublish),
 			},
 		)
 	})

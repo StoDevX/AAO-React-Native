@@ -227,6 +227,12 @@ jobs:
       contents: read
       actions: read
       pull-requests: write
+    # One writer at a time per pull request: pr-report-uitests.yml edits the
+    # same comment. A queued job replaces an older queued one, so a newer
+    # report wins; the merge queue and others get a group of their own.
+    concurrency:
+      group: ${{ github.event_name == 'pull_request' && format('pr-report-comment-{0}', github.event.pull_request.number) || format('pr-report-run-{0}', github.run_id) }}
+      cancel-in-progress: false
     steps:
       - name: Pass in the merge queue
         if: github.event_name == 'merge_group'

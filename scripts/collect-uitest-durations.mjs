@@ -52,7 +52,7 @@ export function collectDurations(testNodes) {
  * default 1 MB pipe buffer on a full shard.
  * @returns {object[]}
  */
-function readTestNodes(bundlePath) {
+export function readTestNodes(bundlePath) {
 	const stdout = execFileSync(
 		'xcrun',
 		['xcresulttool', 'get', 'test-results', 'tests', '--path', bundlePath],

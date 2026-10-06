@@ -103,12 +103,21 @@ describe('buildReport', () => {
 		sizes: {'react@19.2.3': {installed: 900, bundled: 400}},
 	}
 
-	it('wraps the groups with the version, base commit, totals and dependencies', () => {
+	let publish = {
+		dataBytes: 10,
+		dataGzipBytes: 4,
+		imageBytes: 20,
+		imageCount: 1,
+		byFile: {'a.json': {bytes: 10, gzipBytes: 4}},
+		byImageGroup: {spaces: 20},
+	}
+
+	it('wraps the groups with the version, base commit, totals, dependencies and published data', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
 		assert.deepEqual(
-			buildReport({baseSha: 'def', hermesBytes: 90, assetsBytes: 7, explorer, deps}),
+			buildReport({baseSha: 'def', hermesBytes: 90, assetsBytes: 7, explorer, deps, publish}),
 			{
-				version: 4,
+				version: 5,
 				baseSha: 'def',
 				js: {
 					hermesBytes: 90,
@@ -117,6 +126,7 @@ describe('buildReport', () => {
 					byFeature: {'(other)': 50},
 				},
 				deps,
+				publish,
 			},
 		)
 	})

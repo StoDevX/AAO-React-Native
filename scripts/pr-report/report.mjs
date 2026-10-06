@@ -45,15 +45,38 @@ function readVersioned(path, version, isMalformed) {
 	return parsed
 }
 
+/** Whether a size report's `publish` block lacks the figures and maps this script reads. */
+function isMalformedPublish(publish) {
+	return !(
+		typeof publish === 'object' &&
+		publish !== null &&
+		Number.isFinite(publish.dataBytes) &&
+		Number.isFinite(publish.dataGzipBytes) &&
+		Number.isFinite(publish.imageBytes) &&
+		Number.isFinite(publish.imageCount) &&
+		isByteMap(publish.byImageGroup) &&
+		typeof publish.byFile === 'object' &&
+		publish.byFile !== null &&
+		!Array.isArray(publish.byFile) &&
+		Object.values(publish.byFile).every(
+			(file) =>
+				typeof file === 'object' &&
+				file !== null &&
+				Number.isFinite(file.bytes) &&
+				Number.isFinite(file.gzipBytes),
+		)
+	)
+}
+
 /**
- * Reads a size report, as `readVersioned` does, checking the JS, asset and
- * dependency shapes this script reads.
+ * Reads a size report, as `readVersioned` does, checking the JS, asset,
+ * dependency and published-data shapes this script reads.
  */
 export function readReport(path) {
 	return readVersioned(
 		path,
 		REPORT_VERSION,
-		({js, deps}) =>
+		({js, deps, publish}) =>
 			typeof js !== 'object' ||
 			js === null ||
 			!Number.isFinite(js.hermesBytes) ||
@@ -80,7 +103,8 @@ export function readReport(path) {
 					size !== null &&
 					Number.isFinite(size.installed) &&
 					Number.isFinite(size.bundled),
-			),
+			) ||
+			isMalformedPublish(publish),
 	)
 }
 

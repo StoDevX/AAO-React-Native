@@ -84,7 +84,7 @@ export function formatReport(flaky) {
  * The bundle holds every attempt of every test, so the JSON outgrows the
  * default 1 MB pipe buffer on a full shard.
  */
-function readTestNodes(bundlePath) {
+export function readTestNodes(bundlePath) {
 	const stdout = execFileSync(
 		'xcrun',
 		['xcresulttool', 'get', 'test-results', 'tests', '--path', bundlePath],
