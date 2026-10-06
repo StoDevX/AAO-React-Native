@@ -1,4 +1,4 @@
-import {resolveGradient, type Gradient} from '@frogpond/colors'
+import {grayGradient, resolveGradient, type Gradient} from '@frogpond/colors'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import type {UnitsAvailability} from './units'
 
@@ -29,6 +29,21 @@ export function toAreas(entries: AreaEntry[]): StudentWorkArea[] {
 	}))
 }
 
+/// Postings whose Unit Number the server could not read. Not in
+/// data/student-work-areas.yaml: no edit there can place them.
+export const UNKNOWN_AREA: StudentWorkArea = {
+	name: 'Unknown',
+	slug: 'unknown',
+	icon: 'questionmark.circle.fill' as SFSymbol,
+	gradient: grayGradient,
+	units: [],
+}
+
+/// The published areas followed by Unknown; none until the areas load.
+export function withUnknownArea(areas: StudentWorkArea[]): StudentWorkArea[] {
+	return areas.length === 0 ? areas : [...areas, UNKNOWN_AREA]
+}
+
 export type AreaStatus = {
 	/// The board's postings in this area.
 	ids: Set<string>
@@ -38,8 +53,8 @@ export type AreaStatus = {
 }
 
 /// Which of the board's postings each area holds, keyed by the area's slug. A
-/// posting belongs to every area that lists its unit; one whose unit is null,
-/// or not known yet, belongs to none.
+/// posting belongs to every area that lists its unit. One whose unit is null,
+/// with no parsable unit number, belongs to Unknown; one not known yet, to none.
 export function areaMembership(
 	areas: StudentWorkArea[],
 	unitsById: Map<string, string | null>,
@@ -52,7 +67,8 @@ export function areaMembership(
 		let ids = new Set<string>()
 		for (let id of boardIds) {
 			let unit = unitsById.get(id)
-			if (unit !== undefined && unit !== null && units.has(unit)) ids.add(id)
+			if (unit === undefined) continue
+			if (unit === null ? area.slug === UNKNOWN_AREA.slug : units.has(unit)) ids.add(id)
 		}
 		statuses.set(area.slug, {ids, count: ids.size, empty: ids.size === 0})
 	}
