@@ -4,7 +4,7 @@ import {track} from '../../telemetry/track'
 import {MutedStationPage} from './muted-station-page'
 import {NativeStreamPlayer} from './native-player'
 import {useNowPlaying} from './use-now-playing'
-import {useStationSources, type StationSources} from './sources'
+import {shippedStationSources, useStationSources, type StationSources} from './sources'
 import {useStationSchedule} from './use-station-schedule'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
@@ -44,15 +44,45 @@ type PlayersProps = Omit<React.ComponentProps<typeof NativeStation>, 'streamSour
  * one. Mounted afresh for each play, it keeps the sources the play started
  * with, so a manifest that arrives mid-play changes the next play rather than
  * restarting this one.
+ *
+ * A published stream that fails before any audio arrives is tried once more
+ * from the shipped one, in a fresh player, so a broken manifest entry does not
+ * silence the station until a fixed one reaches the device. A failure after
+ * audio has played, or of the shipped stream, is reported as it is.
  */
 function StationPlayers({sources, ...player}: PlayersProps): React.ReactNode {
-	let [{streamSourceUrl, embeddedPlayerUrl}] = React.useState(sources)
+	let [{streamSourceUrl: startingUrl, embeddedPlayerUrl}] = React.useState(sources)
+	let [streamSourceUrl, setStreamSourceUrl] = React.useState(startingUrl)
+	let shippedUrl = shippedStationSources(player.station.id).streamSourceUrl
+	let played = React.useRef(false)
+
+	let {onPlay, onError} = player
+	let handlePlay = React.useCallback(() => {
+		played.current = true
+		onPlay?.()
+	}, [onPlay])
+	let handleError = React.useCallback(
+		(error: HtmlAudioError) => {
+			if (!played.current && streamSourceUrl !== shippedUrl) {
+				setStreamSourceUrl(shippedUrl)
+				return
+			}
+			onError?.(error)
+		},
+		[onError, streamSourceUrl, shippedUrl],
+	)
 
 	// Every station plays natively, which iOS can put in Control Center. A station
 	// that also has a player page of its own gets it loaded beside, silent.
 	return (
 		<>
-			<NativeStation {...player} streamSourceUrl={streamSourceUrl} />
+			<NativeStation
+				key={streamSourceUrl}
+				{...player}
+				onError={handleError}
+				onPlay={handlePlay}
+				streamSourceUrl={streamSourceUrl}
+			/>
 			{embeddedPlayerUrl ? (
 				// DECISION (St. Olaf / KSTO): their player page's analytics count listens,
 				// and they asked that the app keep loading it. It plays with its sound

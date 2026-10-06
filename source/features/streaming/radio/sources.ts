@@ -93,6 +93,11 @@ export function stationSources(manifest: Jrd, stationId: StationId): StationSour
 	}
 }
 
+/** `stationId`'s sources as the app ships them. */
+export function shippedStationSources(stationId: StationId): StationSources {
+	return stationSources(SHIPPED, stationId)
+}
+
 /**
  * `stationId`'s sources from the manifest in the cache, however old, which a
  * fetch refreshes behind it; a failed fetch leaves the cached copy standing.

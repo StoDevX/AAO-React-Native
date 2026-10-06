@@ -24,9 +24,17 @@ let mockStatus = {
 	error: null as string | null,
 }
 const mockUseAudioPlayer = jest.fn((_source: string) => mockPlayer)
+// Streams that fail to load. A player's status is asked for straight after its
+// source, so the last source given is the one whose status is wanted.
+let mockFailingSources = new Set<string>()
+let mockLastSource = ''
 jest.mock('expo-audio', () => ({
-	useAudioPlayer: (source: string) => mockUseAudioPlayer(source),
-	useAudioPlayerStatus: () => mockStatus,
+	useAudioPlayer: (source: string) => {
+		mockLastSource = source
+		return mockUseAudioPlayer(source)
+	},
+	useAudioPlayerStatus: () =>
+		mockFailingSources.has(mockLastSource) ? {...mockStatus, error: 'Cannot Open'} : mockStatus,
 	setAudioModeAsync: () => Promise.resolve(),
 }))
 
@@ -96,6 +104,7 @@ describe('RadioHost', () => {
 
 	afterEach(() => {
 		mockShow = null
+		mockFailingSources = new Set()
 		queryClient.clear()
 		mockUseAudioPlayer.mockClear()
 	})
@@ -202,5 +211,63 @@ describe('RadioHost', () => {
 		await screen.rerender(<RadioHost />)
 
 		expect(mockUseAudioPlayer).toHaveBeenLastCalledWith('https://example.test/krlx.mp3')
+	})
+
+	describe('when the published stream fails to load', () => {
+		const SHIPPED_KRLX = 'https://s3.voscast.com:10803/stream'
+		const PUBLISHED_KRLX = 'https://example.test/krlx.mp3'
+
+		beforeEach(() => {
+			let published: Jrd = {
+				subject: 'https://stolaf.edu',
+				links: [
+					{
+						rel: REL_RADIO_STREAM,
+						href: PUBLISHED_KRLX,
+						type: 'audio/mpeg',
+						properties: {[ID_PROPERTY]: 'krlx'},
+					},
+				],
+			}
+			queryClient.setQueryData(manifestOptions.queryKey, published)
+			useRadioStore.getState().stop()
+			useRadioStore.getState().play('krlx')
+		})
+
+		test('plays the shipped stream instead, without reporting a failure', async () => {
+			mockFailingSources = new Set([PUBLISHED_KRLX])
+			await render(<RadioHost />)
+
+			expect(mockUseAudioPlayer).toHaveBeenCalledWith(PUBLISHED_KRLX)
+			expect(mockUseAudioPlayer).toHaveBeenLastCalledWith(SHIPPED_KRLX)
+			expect(useRadioStore.getState()).toMatchObject({playState: 'starting', error: null})
+		})
+
+		test('reports the failure when the shipped stream fails too', async () => {
+			mockFailingSources = new Set([PUBLISHED_KRLX, SHIPPED_KRLX])
+			await render(<RadioHost />)
+
+			expect(useRadioStore.getState()).toMatchObject({
+				stationId: 'krlx',
+				playState: 'stopped',
+				error: {message: 'Cannot Open'},
+			})
+		})
+
+		test('reports a failure after audio has played, rather than switching streams', async () => {
+			mockStatus = {playing: true, isBuffering: false, didJustFinish: false, error: null}
+			let screen = await render(<RadioHost />)
+			expect(useRadioStore.getState().playState).toBe('playing')
+
+			mockFailingSources = new Set([PUBLISHED_KRLX])
+			await screen.rerender(<RadioHost />)
+
+			expect(mockUseAudioPlayer).not.toHaveBeenCalledWith(SHIPPED_KRLX)
+			expect(useRadioStore.getState()).toMatchObject({
+				playState: 'stopped',
+				error: {message: 'Cannot Open'},
+			})
+			mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
+		})
 	})
 })
