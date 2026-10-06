@@ -24,12 +24,17 @@
 # not a workflow failure, so no error here is fatal: anything that goes
 # wrong prints nothing.
 #
-# Usage: find-baseline.sh <base-sha> [<base-branch> | --pull-request] [<artifact>]
+# The runs searched are pr-report.yml's, or the named workflow's: the UI-test
+# report comes from ios.yml, whose master runs are cancelled by the next push
+# more often, which the ancestor walk below absorbs.
+#
+# Usage: find-baseline.sh <base-sha> [<base-branch> | --pull-request] [<artifact>] [<workflow>]
 set -uo pipefail
 
 base_sha=$1
 base_ref=${2:-master}
 artifact=${3:-size-report}
+workflow=${4:-pr-report.yml}
 
 # A SHA that doesn't look like one (empty, truncated, mixed case) is never a
 # valid commit to look up; print nothing rather than pass it to gh/git.
@@ -61,7 +66,7 @@ first_with_artifact() {
 
 if [ "$base_ref" = --pull-request ]; then
 	# Wide, since every size/accepted change adds a run with no reports.
-	gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+	gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
 		--event pull_request --commit "$base_sha" \
 		--limit 50 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null \
 		| first_with_artifact
@@ -69,19 +74,19 @@ if [ "$base_ref" = --pull-request ]; then
 fi
 
 if [ "$base_ref" != master ]; then
-	gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+	gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
 		--branch "$base_ref" --event pull_request --commit "$base_sha" \
 		--limit 10 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null \
 		| first_with_artifact
 	exit 0
 fi
 
-gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
 	--branch master --event push --commit "$base_sha" \
 	--limit 10 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null \
 	| first_with_artifact && exit 0
 
-runs=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+runs=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
 	--branch master --event push \
 	--limit 30 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null)
 [ -n "$runs" ] || exit 0

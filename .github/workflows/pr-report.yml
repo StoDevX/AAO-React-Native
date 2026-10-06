@@ -5,6 +5,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   merge_group:
+  # The UI tests run in ios.yml and outlast everything above, so their half of
+  # the report is written when that workflow completes. Every other job here
+  # leaves this event alone.
+  workflow_run:
+    workflows: [iOS]
+    types: [completed]
 
 permissions:
   contents: read
@@ -18,12 +24,14 @@ concurrency:
   # run's archive, which a PR opened with a label would otherwise lose every
   # time, and a label that runs nothing must not cancel one that does.
   group: >-
-    ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{
+    ${{ github.workflow }}-${{
+    github.event_name == 'workflow_run' && format('uitests-{0}', github.event.workflow_run.id)
+    || github.event_name == 'push' && github.sha || github.ref }}${{
     (github.event.action == 'labeled' || github.event.action == 'unlabeled')
     && format('-label-{0}', github.event.label.name) || '' }}
   # Never cancel a push to master: a cancelled run uploads no report, and
   # every later PR needs one for each master commit to compare against.
-  cancel-in-progress: ${{ github.event_name != 'push' }}
+  cancel-in-progress: ${{ github.event_name != 'push' && github.event_name != 'workflow_run' }}
 
 env:
   MISE_RUBY_COMPILE: 'false'
@@ -38,7 +46,7 @@ jobs:
     # passed the gate already. A label change measures nothing: the report
     # job reuses what an earlier run measured for this commit.
     if: >-
-      github.event_name != 'merge_group'
+      github.event_name != 'merge_group' && github.event_name != 'workflow_run'
       && github.event.action != 'labeled' && github.event.action != 'unlabeled'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -74,7 +82,7 @@ jobs:
     # Not in the merge queue, nor for a label change but size/accepted
     # (gate.mjs's ACCEPT_LABEL), the only label that changes the report.
     if: >-
-      github.event_name != 'merge_group'
+      github.event_name != 'merge_group' && github.event_name != 'workflow_run'
       && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
       || github.event.label.name == 'size/accepted')
     outputs:
@@ -122,7 +130,7 @@ jobs:
     # archives; the merge queue has nothing to compare, and a label change
     # cannot change the app.
     if: >-
-      ${{ !cancelled() && github.event_name != 'merge_group'
+      ${{ !cancelled() && github.event_name != 'merge_group' && github.event_name != 'workflow_run'
       && github.event.action != 'labeled' && github.event.action != 'unlabeled'
       && needs.app-size-gate.outputs.needed != 'false' }}
     runs-on: xcode-27
@@ -219,7 +227,7 @@ jobs:
     needs: [js-size, app-size-gate, app-size]
     # As js-size, a label but size/accepted runs nothing.
     if: >-
-      ${{ !cancelled() && github.event_name != 'push'
+      ${{ !cancelled() && github.event_name != 'push' && github.event_name != 'workflow_run'
       && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
       || github.event.label.name == 'size/accepted') }}
     runs-on: ubuntu-slim
@@ -227,6 +235,12 @@ jobs:
       contents: read
       actions: read
       pull-requests: write
+    # One writer at a time per pull request: the UI-test job below edits the
+    # same comment. A queued job replaces an older queued one, so a newer
+    # report wins; the merge queue and others get a group of their own.
+    concurrency:
+      group: ${{ github.event_name == 'pull_request' && format('pr-report-comment-{0}', github.event.pull_request.number) || format('pr-report-run-{0}', github.run_id) }}
+      cancel-in-progress: false
     steps:
       - name: Pass in the merge queue
         if: github.event_name == 'merge_group'
@@ -432,3 +446,72 @@ jobs:
         run: |
           echo "::error::The size gate failed. See the PR report comment or this job's summary."
           exit 1
+
+  # The UI-test block of the comment, written when ios.yml completes. This runs
+  # master's copy of this workflow with a write token, so it reads the pull
+  # request's artifact as data only (readUitestReport drops anything unsafe to
+  # print) and never checks out or runs its code.
+  uitest-report:
+    name: UI-test report
+    if: >-
+      ${{ github.event_name == 'workflow_run'
+      && github.event.workflow_run.event == 'pull_request'
+      && github.event.workflow_run.conclusion != 'cancelled'
+      && toJSON(github.event.workflow_run.pull_requests) != '[]' }}
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    # Shares the report job's group, so the two never edit the comment at once.
+    concurrency:
+      group: pr-report-comment-${{ github.event.workflow_run.pull_requests[0].number }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      - name: Download the suite's report and master's
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          mkdir -p head baseline
+          if ! gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir head/; then
+            echo "Run $RUN_ID has no UI-test report; the suite did not run."
+            exit 0
+          fi
+          base_sha=$(jq -r '.baseSha // empty' head/uitest-report.json 2>/dev/null || true)
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha" master uitest-report ios.yml)
+          if [ -z "$found" ]; then
+            echo "No master UI-test report at or before ${base_sha:-the base commit}."
+            exit 0
+          fi
+          echo "COMPARED_SHA=${found#* }" >> "$GITHUB_ENV"
+          gh run download "${found%% *}" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir baseline/ \
+            || echo "The report for ${found#* } could not be downloaded."
+
+      - name: Render the block
+        run: |
+          node scripts/pr-report/uitest-report.mjs render \
+            --head head/uitest-report.json \
+            --baseline baseline/uitest-report.json \
+            --compared-sha "${COMPARED_SHA:-}" \
+            --out block.md
+          if [ -f block.md ]; then
+            cat block.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Put the block in the comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          if [ -f block.md ]; then
+            scripts/pr-report/upsert-uitest-block.sh block.md
+          fi

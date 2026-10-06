@@ -16,6 +16,7 @@ import {
 	packageKeyOfDir,
 	parsePackages,
 } from './deps.mjs'
+import {measurePublish} from './publish-size.mjs'
 import {REPORT_VERSION} from './report-version.mjs'
 
 const NODE_MODULES = '/node_modules/'
@@ -110,14 +111,15 @@ export function directoryBytes(dir) {
 	return readdirSync(dir).reduce((sum, name) => sum + directoryBytes(join(dir, name)), 0)
 }
 
-/** Builds `size-report.json` from the measured totals, source-map-explorer's output and the installed dependencies. */
-export function buildReport({baseSha, hermesBytes, assetsBytes, explorer, deps}) {
+/** Builds `size-report.json` from the measured totals, source-map-explorer's output, the installed dependencies and the published data. */
+export function buildReport({baseSha, hermesBytes, assetsBytes, explorer, deps, publish}) {
 	let {byPackage, byFeature} = groupBundle(explorer.results[0].files)
 	return {
 		version: REPORT_VERSION,
 		baseSha,
 		js: {hermesBytes, assetsBytes, byPackage, byFeature},
 		deps,
+		publish,
 	}
 }
 
@@ -148,6 +150,8 @@ function main() {
 				bundledSizes(explorer.results[0].files),
 			),
 		},
+		// bundle-data's output, which the size-report task depends on.
+		publish: measurePublish('docs'),
 	})
 	writeFileSync(`${dir}/size-report.json`, `${JSON.stringify(report, null, '\t')}\n`)
 	console.error(`Wrote ${dir}/size-report.json`)

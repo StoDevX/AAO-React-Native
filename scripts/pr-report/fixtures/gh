@@ -4,7 +4,7 @@
  * the JSON file named by FAKE_GH_DATA:
  *
  *   {
- *     runs: [{databaseId, headSha, headBranch, event, status}],  // newest first
+ *     runs: [{databaseId, headSha, headBranch, event, status, workflow}],  // newest first; workflow defaults to pr-report.yml
  *     artifacts: {<run id>: [{name, expired}]},
  *     ancestors: {<sha>: [<sha>, …]},                    // newest first
  *   }
@@ -26,6 +26,7 @@ let output
 if (args[0] === 'run' && args[1] === 'list') {
 	output = data.runs
 		.filter((run) => option('--branch') === undefined || run.headBranch === option('--branch'))
+		.filter((run) => (run.workflow ?? 'pr-report.yml') === option('--workflow'))
 		.filter((run) => run.event === option('--event'))
 		.filter((run) => option('--commit') === undefined || run.headSha === option('--commit'))
 		.filter((run) => option('--status') === undefined || run.status === option('--status'))

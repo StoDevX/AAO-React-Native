@@ -204,6 +204,46 @@ function dependencies(head, diff) {
 	}
 }
 
+/** The images line's note on how many files came or went, or nothing when the count held. */
+function imageCount(newImages) {
+	if (newImages === 0) {
+		return ''
+	}
+	return `, ${Math.abs(newImages)} ${newImages > 0 ? 'new' : 'fewer'}`
+}
+
+/**
+ * The published data and images section as its always-shown lines and its
+ * collapsed table. With no diff there are only this commit's figures.
+ */
+function publishSection(head, diff) {
+	let {publish} = head
+	if (diff === null) {
+		return {
+			top: [
+				'### Published data and images',
+				`Data **${formatBytes(publish.dataGzipBytes)}** gzipped · images **${formatBytes(publish.imageBytes)}** (${publish.imageCount} files)`,
+				'',
+			],
+			tables: [],
+		}
+	}
+	let {data, images, newImages, rows} = diff.publish
+	let imageTotal = total(images, true).replace(/\)$/u, `${imageCount(newImages)})`)
+	return {
+		top: [
+			'### Published data and images',
+			`Data ${total(data, true)} gzipped · images ${imageTotal}`,
+			'',
+			...moversTable('Changed most', rows),
+		],
+		// An unchanged site is one line, not a table of zeros.
+		tables: rows.some((row) => row.delta !== 0)
+			? fullTable('All data files and image groups', 'File or group', rows)
+			: [],
+	}
+}
+
 /** A list of names, ten at most, then how many more there are. */
 function listed(names) {
 	let shown = names.slice(0, TOP_MOVERS).join(', ')
@@ -282,6 +322,7 @@ export function renderComment(
 	// A commit that could not be measured has no dependencies to show.
 	let deps = head === null ? {top: [], tables: []} : dependencies(head, diff)
 	let appSection = appSize(app)
+	let publish = head === null ? {top: [], tables: []} : publishSection(head, diff)
 	let native = nativeNotice(nativeChanges)
 	let full = [
 		...lines,
@@ -290,11 +331,16 @@ export function renderComment(
 		...appSection.tables,
 		...deps.top,
 		...deps.tables,
+		...publish.top,
+		...publish.tables,
 		...native,
 	].join('\n')
 	if (
 		full.length <= limit ||
-		(tables.length === 0 && appSection.tables.length === 0 && deps.tables.length === 0)
+		(tables.length === 0 &&
+			appSection.tables.length === 0 &&
+			deps.tables.length === 0 &&
+			publish.tables.length === 0)
 	) {
 		return full
 	}
@@ -302,6 +348,7 @@ export function renderComment(
 		...lines,
 		...appSection.top,
 		...deps.top,
+		...publish.top,
 		"The full tables are in this run's job summary.",
 		'',
 		...native,

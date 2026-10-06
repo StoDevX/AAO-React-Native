@@ -8,11 +8,20 @@ let KiB = 1024
 let MiB = 1024 * KiB
 
 let installed = {nodeModulesBytes: 800 * MiB, packages: {}, sizes: {}}
-let report = (js, deps = installed) => ({
-	version: 4,
+let publish = (gzip, images, count) => ({
+	dataBytes: gzip * 4,
+	dataGzipBytes: gzip,
+	imageBytes: images,
+	imageCount: count,
+	byFile: {'faqs.json': {bytes: gzip * 4, gzipBytes: gzip}},
+	byImageGroup: {spaces: images},
+})
+let report = (js, deps = installed, published = publish(40 * KiB, 3 * MiB, 10)) => ({
+	version: 5,
 	baseSha: null,
 	js,
 	deps,
+	publish: published,
 })
 
 let baseline = report({
@@ -79,6 +88,9 @@ describe('renderComment', () => {
 				'',
 				'### Dependencies',
 				'No package changes · node_modules **800.00 MiB** (0 B, 0.0%)',
+				'',
+				'### Published data and images',
+				'Data **40.0 KiB** (0 B, 0.0%) gzipped · images **3.00 MiB** (0 B, 0.0%)',
 				'',
 			].join('\n'),
 		)
@@ -162,6 +174,78 @@ describe('renderComment', () => {
 	})
 })
 
+describe('renderComment published data and images', () => {
+	let before = report(baseline.js, installed, publish(40 * KiB, 3 * MiB, 10))
+	let after = report(head.js, installed, {
+		...publish(44 * KiB, 3 * MiB + 120 * KiB, 12),
+		byFile: {
+			'faqs.json': {bytes: 176 * KiB, gzipBytes: 44 * KiB},
+		},
+		byImageGroup: {spaces: 3 * MiB + 120 * KiB},
+	})
+	let section = (markdown) => markdown.slice(markdown.indexOf('### Published'))
+
+	it('renders the totals, the files and groups that changed, and the full table', () => {
+		let markdown = renderComment({
+			head: after,
+			diff: diffReports(before, after),
+			baselineNote: null,
+			gate: pass,
+		})
+		let rows = [
+			'| images/spaces | 3.00 MiB | 3.12 MiB | +120.0 KiB |',
+			'| faqs.json (gzip) | 40.0 KiB | 44.0 KiB | +4.0 KiB |',
+		]
+		assert.equal(
+			section(markdown),
+			[
+				'### Published data and images',
+				'Data **44.0 KiB** (+4.0 KiB, +10.0%) gzipped · images **3.12 MiB** (+120.0 KiB, +3.9%, 2 new)',
+				'',
+				'| Changed most | Before | After | Δ |',
+				'| --- | --- | --- | --- |',
+				...rows,
+				'',
+				'<details><summary>All data files and image groups</summary>',
+				'',
+				'| File or group | Before | After | Δ |',
+				'| --- | --- | --- | --- |',
+				...rows,
+				'',
+				'</details>',
+				'',
+			].join('\n'),
+		)
+	})
+
+	it('shows only this commit with no baseline', () => {
+		let markdown = renderComment({
+			head: after,
+			diff: null,
+			baselineNote: 'No baseline for `abc1234`.',
+			gate: pass,
+		})
+		assert.equal(
+			section(markdown),
+			[
+				'### Published data and images',
+				'Data **44.0 KiB** gzipped · images **3.12 MiB** (12 files)',
+				'',
+			].join('\n'),
+		)
+	})
+
+	it('leaves the section out when this commit could not be measured', () => {
+		let markdown = renderComment({
+			head: null,
+			diff: null,
+			baselineNote: null,
+			gate: {pass: false, message: 'No size report for this commit.'},
+		})
+		assert.doesNotMatch(markdown, /Published data/u)
+	})
+})
+
 describe('renderComment dependencies', () => {
 	let size = (installed, bundled) => ({installed, bundled})
 	let deps = (nodeModulesBytes, packages, sizes = {}) => ({nodeModulesBytes, packages, sizes})
@@ -190,7 +274,11 @@ describe('renderComment dependencies', () => {
 			},
 		),
 	)
-	let section = (markdown) => markdown.slice(markdown.indexOf('### Dependencies'))
+	// Up to the next section, less the blank line that separates them.
+	let section = (markdown) =>
+		markdown
+			.slice(markdown.indexOf('### Dependencies'), markdown.indexOf('### Published'))
+			.replace(/\n$/u, '')
 
 	it('renders counts, the node_modules change, the changes and the duplicates', () => {
 		let markdown = renderComment({

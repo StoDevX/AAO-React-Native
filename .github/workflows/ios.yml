@@ -564,6 +564,10 @@ jobs:
       # screenshots, and the simulator diagnostics xcodebuild gathers after a
       # failure. Gathering them takes about ten minutes once the tests finish,
       # so a debug run gets the extra time.
+      - name: Note when the tests start
+        # The shard's report says how long the tests took, not the job.
+        run: echo "UITEST_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+
       - name: Run UITests
         timeout-minutes: ${{ runner.debug == '1' && 60 || 45 }}
         # Tells Screen.capture it is in CI, so a passing test's screenshots are
@@ -633,6 +637,23 @@ jobs:
       - name: Record test durations
         if: always()
         run: node scripts/collect-uitest-durations.mjs uitest-results.xcresult uitest-durations.json
+
+      # `if: always()`, as above: a shard that went red is still part of the
+      # report the pull request comment shows.
+      - name: Record the shard's report
+        if: always()
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: node scripts/pr-report/uitest-report.mjs shard uitest-results.xcresult uitest-shard.json --shard "$SHARD" --started "${UITEST_STARTED:-0}"
+
+      - name: Upload the shard's report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: uitest-shard-${{ matrix.shard }}
+          path: uitest-shard.json
+          if-no-files-found: ignore
+          retention-days: 1
 
       - name: Upload test durations
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -721,6 +742,58 @@ jobs:
         with:
           path: uitest-durations.json
           key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/run=${{ github.run_id }}-${{ github.run_attempt }}
+
+  # The UI-test half of the pull request report. pr-report.yml cannot depend on
+  # a job here, so this publishes the shards' figures as an artifact, which
+  # that workflow reads once this one completes. Master's reports are the
+  # baseline every later pull request compares with.
+  #
+  # Skipped when the suite was, as uitest-durations is: a run with no shard
+  # files writes no report and the artifact upload finds nothing.
+  uitest-report:
+    name: Publish the UITest report
+    needs: [ios-uitest]
+    runs-on: ubuntu-slim
+    if: always() && needs.ios-uitest.result != 'skipped'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # A pull request's merge commit and its first parent, the master
+          # commit it was based on.
+          fetch-depth: 2
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          # -node: this job only runs a script, as pr-report.yml's report job.
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      - name: Download every shard's report
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: uitest-shard-*
+          path: shards/
+
+      - name: Merge them into one report
+        env:
+          RESULT: ${{ needs.ios-uitest.result }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          base=""
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base=$(git rev-parse HEAD^1)
+          fi
+          mkdir -p uitest-report
+          node scripts/pr-report/uitest-report.mjs merge shards/ uitest-report/uitest-report.json \
+            --sha "$HEAD_SHA" --base-sha "$base" --result "$RESULT"
+
+      - name: Upload the report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: uitest-report
+          path: uitest-report/uitest-report.json
+          if-no-files-found: ignore
+          retention-days: ${{ github.event_name == 'push' && 90 || 7 }}
 
   # One check to require instead of one per shard: a shard's name comes from
   # the matrix, so the set of checks changes with the test split, while this
