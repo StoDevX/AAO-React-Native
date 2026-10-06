@@ -172,7 +172,7 @@ function duplicatesTable(duplicates) {
 function dependencies(head, diff) {
 	if (diff === null) {
 		return {
-			top: ['### Dependencies', `node_modules **${formatBytes(head.deps.nodeModulesBytes)}**`],
+			top: ['### Dependencies', `node_modules **${formatBytes(head.deps.nodeModulesBytes)}**`, ''],
 			tables: [],
 		}
 	}

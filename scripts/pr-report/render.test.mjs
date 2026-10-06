@@ -353,7 +353,10 @@ describe('renderComment dependencies', () => {
 			baselineNote: 'No baseline for `abc1234`.',
 			gate: pass,
 		})
-		assert.equal(section(markdown), ['### Dependencies', 'node_modules **804.00 MiB**'].join('\n'))
+		assert.equal(
+			section(markdown),
+			['### Dependencies', 'node_modules **804.00 MiB**', ''].join('\n'),
+		)
 	})
 
 	it('leaves the section out when this commit could not be measured', () => {
