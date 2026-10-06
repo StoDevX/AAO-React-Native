@@ -21,8 +21,24 @@ public class LaunchArgumentsModule: Module {
 			"chaosMode": arguments.contains("--chaos-replay") ? "replay" : "record",
 			"chaosFaultRate": Double(Self.value(after: "--chaos-fault-rate") ?? "") ?? 0.25,
 			"chaosProfile": Self.value(after: "--chaos-profile") == "session" ? "session" : "fuzz",
+			// What the binary was built as. NODE_ENV only says how the JS was
+			// bundled, and local builds embed a release bundle too.
+			"isSimulator": Self.isSimulator,
+			"isDebugNativeBuild": Self.isDebugNativeBuild,
 		])
 	}
+
+	#if targetEnvironment(simulator)
+	private static let isSimulator = true
+	#else
+	private static let isSimulator = false
+	#endif
+
+	#if DEBUG
+	private static let isDebugNativeBuild = true
+	#else
+	private static let isDebugNativeBuild = false
+	#endif
 
 	/// The argument following `flag`, as `--chaos-seed 42` passes 42. Outside
 	/// `definition()` because its result builder accepts no local functions.

@@ -18,6 +18,8 @@ interface LaunchArgumentsModule extends NativeModule {
 	chaosMode: ChaosMode
 	chaosFaultRate: number
 	chaosProfile: ChaosProfile
+	isSimulator: boolean
+	isDebugNativeBuild: boolean
 }
 
 const LaunchArguments = requireNativeModule<LaunchArgumentsModule>('LaunchArguments')
@@ -30,3 +32,7 @@ export const chaosLaunch: number = LaunchArguments.chaosLaunch
 export const chaosMode: ChaosMode = LaunchArguments.chaosMode
 export const chaosFaultRate: number = LaunchArguments.chaosFaultRate
 export const chaosProfile: ChaosProfile = LaunchArguments.chaosProfile
+/** Running on a simulator, whatever the JS bundle. */
+export const isSimulator: boolean = LaunchArguments.isSimulator
+/** The native code was built in the Debug configuration, as every local build is. */
+export const isDebugNativeBuild: boolean = LaunchArguments.isDebugNativeBuild

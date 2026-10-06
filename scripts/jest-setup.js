@@ -101,6 +101,8 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	chaosMode: 'record',
 	chaosFaultRate: 0,
 	chaosProfile: 'fuzz',
+	isSimulator: true,
+	isDebugNativeBuild: true,
 }))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({
