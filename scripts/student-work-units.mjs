@@ -39,10 +39,14 @@ export function unitFieldOf(html) {
 	return match ? match[1].trim() : undefined
 }
 
-/** A unit alone (`15120`) or after its fund (`10-15120`), as the work-authorisation list writes it. */
-const UNIT_NUMBER = /^(?:\d{2,3}-)?(\d{5})$/u
+/**
+ * A unit alone (`15120`), after its fund (`10-15120`), or after another unit
+ * in an account string (`41066-11300`, `41203-11184-53000-00512`). The same
+ * rule as `unitNumber` in ccc-server's `source/student-work/unit-number.ts`.
+ */
+const UNIT_NUMBER = /^(?:\d{2,3}-|\d{5}-)?(\d{5})(?!\d)/u
 
-/** The five-digit unit in a field, or undefined when the field holds anything else. */
+/** The five-digit unit a field starts with, or undefined when it holds none. */
 export function unitNumberOf(field) {
 	return UNIT_NUMBER.exec(field ?? '')?.[1]
 }
@@ -83,8 +87,9 @@ export function postingsOutsideAreas(board, published, listedUnits) {
  *   different unit, or none, for it.
  * - `unreadable`: the unit number is missing, blank, or not a unit number.
  *
- * A posting the published map lacks, whose own unit an area lists, is in that
- * area: the app reads it from the posting's detail, as this does.
+ * A posting the published map lacks, whose own unit an area lists, is left
+ * out: the map runs up to an hour behind the board, and the app files the
+ * posting in an area once the map has it.
  */
 export function classifyUnassigned(postings, listedUnits, published) {
 	let unlisted = new Map()

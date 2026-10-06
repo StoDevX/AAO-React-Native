@@ -58,20 +58,20 @@ describe('useStudentWorkBoard', () => {
 		)
 	})
 
-	test('reads a unit the map lacks from the posting’s detail', async () => {
+	test('files a posting the map lacks in no area, and reads no details', async () => {
 		let {'uitest-3': _dining, ...withoutDining} = UITEST_POSTING_UNITS
 		client.setQueryData<PostingUnits>(keys.postingUnits, withoutDining)
 
 		let {result} = await renderHook(() => useStudentWorkBoard(), {wrapper: Wrapper})
 
-		await waitFor(() =>
-			expect(result.current.context.membership.get('dining')?.ids).toEqual(new Set(['uitest-3'])),
-		)
-		expect(client.getQueryData(keys.detail('uitest-3'))).toBeDefined()
-		expect(client.getQueryData(keys.detail('uitest-1'))).toBeUndefined()
+		await waitFor(() => expect(result.current.availability).toBe('ready'))
+		await waitFor(() => expect(result.current.jobs.length).toBeGreaterThan(0))
+		expect(result.current.context.membership.get('dining')?.ids).toEqual(new Set())
+		expect(result.current.context.membership.get('research')?.ids).toEqual(new Set(['uitest-1']))
+		expect(client.getQueryCache().findAll({queryKey: ['jobs', 'detail']})).toEqual([])
 	})
 
-	test('with no map and nothing saved, reads no details and knows no areas', async () => {
+	test('with no map and nothing saved, knows no areas', async () => {
 		client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 		jest.spyOn(postingUnitsOptions, 'queryFn').mockRejectedValue(new Error('ccc-server is down'))
 
@@ -79,7 +79,6 @@ describe('useStudentWorkBoard', () => {
 
 		await waitFor(() => expect(result.current.availability).toBe('unavailable'))
 		expect(result.current.context.membership.size).toBe(0)
-		expect(client.getQueryCache().findAll({queryKey: ['jobs', 'detail']})).toEqual([])
 	})
 
 	// Opening Student Work checks for new postings -- that is what the New dots

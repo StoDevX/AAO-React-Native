@@ -8,7 +8,7 @@
 # Each unit is written with its name from the work-authorisation list, for
 # whoever edits this file next:
 # https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json
-# 22005 and 24200 are not on that list; their names come from their postings.
+# 22005, 24200 and 47009 are not on that list; their names come from their postings.
 #
 # A weekly workflow opens an issue when a posting carries a unit no area lists;
 # `mise run check-student-work-areas` prints the same report.
@@ -85,6 +85,8 @@
     - '11237' # Neuro Science
     - '11250' # Nursing Department
     - '11220' # MSCS (Math, Stats & Comp Sci)
+    - '47009' # Natural Lands
+    - '11009' # Land Stewardship (Oracle)
 
 - name: Humanities & Social Sciences
   slug: humanities
@@ -98,6 +100,7 @@
     - '11350' # Sociology Department
     - '11300' # Political Science Department
     - '11353' # Social Work & Family Studies
+    - '11184' # First Year Seminar
 
 - name: Library & Technology
   slug: library-technology
@@ -116,6 +119,8 @@
   units:
     - '16220' # Communications
     - '16202' # Alumni and Parent Relations
+    - '16243' # Homecoming/family weekend
+    - '16223' # Annual Fund Office
 
 - name: Student Government
   slug: student-government
@@ -155,6 +160,7 @@
     - '45417' # Institute Freedom/Community
     - '11378' # ETS - Student Work Comm Servic
     - '45427' # Inst Frdm Comm-Bracken PA Con
+    - '11565' # Academic Civic Engagement
 
 - name: Faith & Vocation
   slug: faith-vocation
