@@ -26,6 +26,10 @@ export const manifestOptions = queryOptions({
 	// immediately rather than wait offline for a retry that can't run.
 	networkMode: 'offlineFirst',
 	retry: false,
+	// A failed refetch leaves the last manifest in the cache, and it is written
+	// to storage as it is, so a failure on one launch does not leave the next
+	// one with nothing cached. The radio plays from it however old it is.
+	meta: {persistAfterFailure: true},
 	queryFn: async ({signal}): Promise<Jrd> => {
 		let response = await client.get('sources', {signal}).json()
 		return JrdSchema.parse(response)

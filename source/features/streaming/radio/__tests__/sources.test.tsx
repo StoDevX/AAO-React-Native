@@ -116,6 +116,21 @@ describe('stationSources', () => {
 		)
 	})
 
+	// The manifest's schema accepts these, and `URL` throws on each.
+	test.each(['https://host:99999/stream', 'https://[bad/'])(
+		'keeps the shipped stream and page when the published ones are %s',
+		(href) => {
+			let manifest = manifestWith(
+				link(REL_RADIO_STREAM, 'ksto', href, 'application/vnd.apple.mpegurl'),
+				link(REL_RADIO_PLAYER_PAGE, 'ksto', href, 'text/html'),
+			)
+			expect(stationSources(manifest, 'ksto')).toMatchObject({
+				streamSourceUrl: 'https://cdn.stobcm.com/ksto/live.m3u8',
+				embeddedPlayerUrl: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+			})
+		},
+	)
+
 	test("keeps KSTO's shipped player page when the published one is not over HTTPS", () => {
 		let manifest = manifestWith(
 			link(REL_RADIO_PLAYER_PAGE, 'ksto', 'http://www.stolaf.edu/ksto.html', 'text/html'),

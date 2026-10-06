@@ -33,33 +33,56 @@ type PersistMeta = {
 	persist?: boolean
 	/** An infinite query persists only this many of its first pages, and persists them even after a later page fails */
 	persistPages?: number
+	/** True persists the data a query last loaded even after a refetch fails, as loaded, so a failure cannot erase it from storage */
+	persistAfterFailure?: boolean
 }
 
 /** The persistence a query asks for, read from its `meta`, which carries no type of its own. */
 function persistMeta(meta: unknown): PersistMeta {
 	if (typeof meta !== 'object' || meta === null) return {}
-	let {persist, persistPages} = meta as Record<string, unknown>
+	let {persist, persistPages, persistAfterFailure} = meta as Record<string, unknown>
 	return {
 		persist: typeof persist === 'boolean' ? persist : undefined,
 		persistPages: typeof persistPages === 'number' ? persistPages : undefined,
+		persistAfterFailure: persistAfterFailure === true,
+	}
+}
+
+/** `query` written as having loaded `data`, with no failure, since the failure did not take the data with it. */
+function asLoaded<Q extends PersistedClient['clientState']['queries'][number]>(
+	query: Q,
+	data: unknown,
+): Q {
+	return {
+		...query,
+		state: {
+			...query.state,
+			data,
+			status: 'success' as const,
+			error: null,
+			fetchFailureCount: 0,
+			fetchFailureReason: null,
+		},
 	}
 }
 
 /**
  * How the persisted cache is written: as JSON, with each query that sets `persistPages` cut to its
  * first pages and written as loaded, since any failure belonged to a later page. The whole cache is
- * one AsyncStorage value, and a list paged through would otherwise grow it for good.
+ * one AsyncStorage value, and a list paged through would otherwise grow it for good. A query that
+ * sets `persistAfterFailure` is written as loaded too, with the data it had before a refetch failed.
  */
 export function serializeCache(client: PersistedClient): string {
 	let queries = client.clientState.queries.map((query) => {
-		let {persistPages} = persistMeta(query.meta)
+		let {persistPages, persistAfterFailure} = persistMeta(query.meta)
 		let data = query.state.data
-		if (persistPages === undefined || !isInfiniteData(data)) return query
-		let state = {...query.state, data: firstPagesOf(data, persistPages), status: 'success' as const}
-		return {
-			...query,
-			state: {...state, error: null, fetchFailureCount: 0, fetchFailureReason: null},
+		if (persistPages !== undefined && isInfiniteData(data)) {
+			return asLoaded(query, firstPagesOf(data, persistPages))
 		}
+		if (persistAfterFailure && query.state.status === 'error' && data !== undefined) {
+			return asLoaded(query, data)
+		}
+		return query
 	})
 	return JSON.stringify({...client, clientState: {...client.clientState, queries}})
 }
@@ -115,9 +138,10 @@ export const persistOptions = {
 		// A query can also set its own rule in `meta` (see `PersistMeta`).
 		shouldDehydrateQuery: (query: Query): boolean => {
 			if (isCalendarQueryKey(query.queryKey)) return false
-			let {persist, persistPages} = persistMeta(query.meta)
+			let {persist, persistPages, persistAfterFailure} = persistMeta(query.meta)
 			if (persist === false) return false
 			if (persistPages !== undefined && isInfiniteData(query.state.data)) return true
+			if (persistAfterFailure && query.state.data !== undefined) return true
 			return defaultShouldDehydrateQuery(query)
 		},
 	},

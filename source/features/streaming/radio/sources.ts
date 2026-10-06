@@ -64,10 +64,26 @@ function optionalHref(
 	}
 }
 
-/** `stationId`'s player page as `manifest` names it, absolute, wherever it is. */
-function anyPlayerPageUrl(manifest: Jrd, stationId: StationId): string | undefined {
-	let href = optionalHref(manifest, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
-	return href === undefined ? undefined : apiUrl(href)
+/**
+ * `href` as an absolute URL, or undefined if it is not one: the manifest's
+ * schema accepts addresses `URL` cannot read, such as a port past 65535, and
+ * one of those must not fail the render the radio is drawn in.
+ */
+function absoluteUrl(href: string): string | undefined {
+	try {
+		return apiUrl(href)
+	} catch {
+		return undefined
+	}
+}
+
+/** `stationId`'s stream as `manifest` names it, or its shipped one if that is not a URL. */
+function streamUrl(manifest: Jrd, stationId: StationId): string {
+	let href = resolveSource(manifest, REL_RADIO_STREAM, stationId, STREAM_TYPES).href
+	return (
+		absoluteUrl(href) ??
+		apiUrl(resolveSource(SHIPPED, REL_RADIO_STREAM, stationId, STREAM_TYPES).href)
+	)
 }
 
 /** Whether `url` is somewhere a player page may be loaded from. */
@@ -76,13 +92,21 @@ function isPlayerPageUrl(url: string): boolean {
 	return protocol === 'https:' && PLAYER_PAGE_HOSTS.includes(host)
 }
 
-/** `stationId`'s player page as `manifest` names it, or its shipped one if that is not somewhere a page may be. */
+/**
+ * `stationId`'s player page as `manifest` names it, or its shipped one if that
+ * is not a URL or not somewhere a page may be.
+ */
 function playerPageUrl(manifest: Jrd, stationId: StationId): string | undefined {
-	let url = anyPlayerPageUrl(manifest, stationId)
-	if (url === undefined || isPlayerPageUrl(url)) {
+	let href = optionalHref(manifest, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
+	if (href === undefined) {
+		return undefined
+	}
+	let url = absoluteUrl(href)
+	if (url !== undefined && isPlayerPageUrl(url)) {
 		return url
 	}
-	return anyPlayerPageUrl(SHIPPED, stationId)
+	let shipped = optionalHref(SHIPPED, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
+	return shipped === undefined ? undefined : apiUrl(shipped)
 }
 
 /**
@@ -92,9 +116,7 @@ function playerPageUrl(manifest: Jrd, stationId: StationId): string | undefined 
  */
 export function stationSources(manifest: Jrd, stationId: StationId): StationSources {
 	return {
-		streamSourceUrl: apiUrl(
-			resolveSource(manifest, REL_RADIO_STREAM, stationId, STREAM_TYPES).href,
-		),
+		streamSourceUrl: streamUrl(manifest, stationId),
 		embeddedPlayerUrl: playerPageUrl(manifest, stationId),
 		nowPlayingUrl: optionalHref(manifest, REL_RADIO_NOW_PLAYING, stationId, [NOW_PLAYING_TYPE]),
 	}
