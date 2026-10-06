@@ -96,6 +96,8 @@ export type TelemetryEvent =
 			}
 	  }
 	| {name: 'radio.play.error'; attributes: {station: StationId}}
+	// A published stream failed before any audio, and the shipped one was tried instead.
+	| {name: 'radio.stream.fallback'; attributes: {station: StationId}}
 	| {
 			name: 'api.failure'
 			attributes: {
@@ -126,6 +128,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'radio.station.browse': 'metric',
 	'radio.action': 'metric',
 	'radio.play.error': 'metric',
+	'radio.stream.fallback': 'metric',
 	'api.failure': 'log',
 }
 

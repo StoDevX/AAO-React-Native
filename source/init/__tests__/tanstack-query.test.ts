@@ -5,6 +5,8 @@ import {
 	type Persister,
 } from '@tanstack/react-query-persist-client'
 
+import {manifestOptions} from '@frogpond/data-sources'
+
 import {CALENDAR_READ_KEY} from '../../database/calendar/read'
 import {persistOptions, serializeCache} from '../tanstack-query'
 
@@ -121,9 +123,55 @@ describe('a query that sets how it persists, in its meta', () => {
 		})
 	})
 
+	// A refetch that fails leaves the data it had in the cache, and it stands in storage too.
+	test('persists the data it had after a refetch fails, written as loaded, with `persistAfterFailure`', () => {
+		let failed = cached(
+			['data-sources', 'manifest'],
+			{status: 'error', data: {links: []}, error: {}, fetchFailureCount: 1},
+			{persistAfterFailure: true},
+		)
+		expect(dehydrates(failed)).toBe(true)
+		expect(written([failed]).clientState.queries[0]?.state).toMatchObject({
+			status: 'success',
+			error: null,
+			fetchFailureCount: 0,
+			data: {links: []},
+		})
+	})
+
+	test('persists nothing for a failed query with `persistAfterFailure` that never loaded', () => {
+		expect(
+			dehydrates(
+				cached(['data-sources', 'manifest'], {status: 'error'}, {persistAfterFailure: true}),
+			),
+		).toBe(false)
+	})
+
 	test('persists no failed list without pages, nor any other failed query', () => {
 		expect(dehydrates(cached(['a-list'], {status: 'error'}, {persistPages: 1}))).toBe(false)
 		expect(dehydrates(cached(['news', 'stolaf'], {status: 'error', data: LIST}))).toBe(false)
+	})
+})
+
+describe('the sources manifest', () => {
+	// The radio plays from the cached manifest however old it is, so a failed
+	// refresh on one launch must not leave the next launch with none.
+	test('stays in storage after a refresh fails', async () => {
+		let client = new QueryClient()
+		try {
+			client.setQueryData(manifestOptions.queryKey, {subject: 'cached', links: []}, {updatedAt: 0})
+			await client
+				.query({...manifestOptions, queryFn: () => Promise.reject(new Error('offline'))})
+				.catch(() => undefined)
+			expect(client.getQueryState(manifestOptions.queryKey)?.status).toBe('error')
+
+			let dehydrated = dehydrate(client, persistOptions.dehydrateOptions)
+			let saved = {timestamp: 1, buster: '', clientState: dehydrated} as PersistedClient
+			let [manifest] = (JSON.parse(serializeCache(saved)) as PersistedClient).clientState.queries
+			expect(manifest?.state).toMatchObject({status: 'success', data: {subject: 'cached'}})
+		} finally {
+			client.clear()
+		}
 	})
 })
 
