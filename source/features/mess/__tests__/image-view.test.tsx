@@ -28,7 +28,12 @@ jest.mock('@frogpond/data-sources', () => ({
 const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
 const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
 
-const IMAGE = {url: 'https://olafmessenger.com/comic.png', width: 1000, height: 1400}
+const IMAGE = {
+	url: 'https://olafmessenger.com/comic.png',
+	width: 1000,
+	height: 1400,
+	caption: '',
+}
 
 const COMIC: MessStory = {
 	id: 36819,

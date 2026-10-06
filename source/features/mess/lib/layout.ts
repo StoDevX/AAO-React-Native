@@ -32,14 +32,20 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 		case 'Artwork': {
 			if (input.photo) {
 				let {url, width, height} = input.photo
-				return {layout: {kind: 'image', image: {url, width, height}}, blocks: input.blocks}
+				// The photo's caption, else its alt text when that reads as words.
+				let caption = input.photo.caption || input.photo.alt || ''
+				return {
+					layout: {kind: 'image', image: {url, width, height, caption}},
+					blocks: input.blocks,
+				}
 			}
 			let index = input.blocks.findIndex((b) => b.type === 'figure')
 			let figure = input.blocks[index]
 			if (figure?.type !== 'figure') return {layout: {kind: 'article'}, blocks: input.blocks}
 			let {url, width, height} = figure
+			let caption = figure.caption || figure.alt || ''
 			return {
-				layout: {kind: 'image', image: {url, width, height}},
+				layout: {kind: 'image', image: {url, width, height, caption}},
 				blocks: input.blocks.filter((_, i) => i !== index),
 			}
 		}

@@ -142,9 +142,23 @@ describe('chooseLayout', () => {
 		expect(story?.layout).toMatchObject({kind: 'image', image: {url: story?.photo?.url}})
 	})
 
-	it('gives the image layout a photo without its caption', () => {
-		let story = varietyStories.find((s) => s.id === 36819)
-		expect(story?.layout.kind === 'image' && 'caption' in story.layout.image).toBe(false)
+	it("gives the image layout the featured photo's caption", () => {
+		let photo = {url: 'https://example.com/p.png', width: 800, height: 600, caption: 'Week 3'}
+		let chosen = chooseLayout({column: 'Comic', blocks: [], photo, html: ''})
+		expect(chosen.layout).toStrictEqual({kind: 'image', image: photo})
+	})
+
+	it("falls back to the featured photo's readable alt text, and never to a file name", () => {
+		let photo = {url: 'https://example.com/p.png', width: 800, height: 600, caption: ''}
+		let described = chooseLayout({
+			column: 'Artwork',
+			blocks: [],
+			photo: {...photo, alt: "A Shoe's Journey by Zoe Esterly"},
+			html: '',
+		})
+		expect(described.layout).toMatchObject({image: {caption: "A Shoe's Journey by Zoe Esterly"}})
+		let bare = chooseLayout({column: 'Artwork', blocks: [], photo, html: ''})
+		expect(bare.layout).toMatchObject({image: {caption: ''}})
 	})
 
 	it('uses a comic’s inline image and takes it out of the body', () => {
@@ -165,9 +179,35 @@ describe('chooseLayout', () => {
 		let chosen = chooseLayout({column: 'Comic', blocks: [figure, paragraph], photo: null, html: ''})
 		expect(chosen.layout).toStrictEqual({
 			kind: 'image',
-			image: {url: 'https://example.com/c.png', width: 600, height: 400},
+			image: {url: 'https://example.com/c.png', width: 600, height: 400, caption: 'A comic'},
 		})
 		expect(chosen.blocks).toStrictEqual([paragraph])
+	})
+
+	it("prefers a comic's figcaption to its alt text", () => {
+		let figure: Block = {
+			type: 'figure',
+			url: 'https://example.com/c.png',
+			width: 600,
+			height: 400,
+			caption: 'Week 3',
+			alt: 'A strip about midterms',
+		}
+		let chosen = chooseLayout({column: 'Comic', blocks: [figure], photo: null, html: ''})
+		expect(chosen.layout).toMatchObject({image: {caption: 'Week 3'}})
+	})
+
+	it("falls back to a comic's alt text when its figure has no caption", () => {
+		let figure: Block = {
+			type: 'figure',
+			url: 'https://example.com/c.png',
+			width: 600,
+			height: 400,
+			caption: '',
+			alt: 'A strip about midterms',
+		}
+		let chosen = chooseLayout({column: 'Comic', blocks: [figure], photo: null, html: ''})
+		expect(chosen.layout).toMatchObject({image: {caption: 'A strip about midterms'}})
 	})
 
 	it('lays artwork out as an image', () => {

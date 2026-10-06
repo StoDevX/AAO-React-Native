@@ -10,8 +10,8 @@ import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
 import type {Block, CaptionedPhoto, MessStory} from './types'
 
-/** A picture to show, and what VoiceOver reads for it. */
-type Picture = {url: string; label: string}
+/** A picture to show, what VoiceOver reads for it, and the caption drawn over it; empty when it has none. */
+type Picture = {url: string; label: string; caption: string}
 
 type Gallery = Extract<Block, {type: 'gallery'}>
 
@@ -26,7 +26,7 @@ function galleryPictureAt(
 		let photo = photos[index]
 		if (!photo) continue
 		let label = galleryPhotoLabel(story, gallery.credit, {index, count: photos.length})
-		return {url: photo.largeUrl ?? photo.url, label}
+		return {url: photo.largeUrl ?? photo.url, label, caption: photo.caption}
 	}
 	return null
 }
@@ -50,14 +50,24 @@ function pictureOf(
 		let figures = story.blocks.flatMap((block) => (block.type === 'figure' ? [block] : []))
 		let photos: Array<CaptionedPhoto | null> = [story.photo, ...figures]
 		let photo = photos.find((candidate) => candidate?.url === url)
-		if (photo) return {url: photo.largeUrl ?? photo.url, label: photoLabel(story, photo.caption)}
+		if (photo) {
+			return {
+				url: photo.largeUrl ?? photo.url,
+				label: photoLabel(story, photo.caption),
+				// The caption, else the alt text when the paper wrote words in it.
+				caption: photo.caption || photo.alt || '',
+			}
+		}
 		return galleryPictureAt(story, galleries, url)
 	}
 	let label = imageLabel(story, picturePlace(story, index))
-	if (story.layout.kind === 'image') return {url: story.layout.image.url, label}
+	if (story.layout.kind === 'image') {
+		let {url: uri, caption} = story.layout.image
+		return {url: uri, label, caption}
+	}
 	if (story.layout.kind === 'feature') {
 		let image = story.layout.images[index]
-		return image ? {url: image.largeUrl ?? image.url, label} : null
+		return image ? {url: image.largeUrl ?? image.url, label, caption: image.caption} : null
 	}
 	return null
 }
@@ -92,7 +102,12 @@ export function ImageViewer({id, index = 0, url}: Props): React.ReactNode {
 			closeTestID="mess-image-viewer-close"
 			image={
 				image
-					? {uri: image.url, accessibilityLabel: image.label, testID: 'mess-image-viewer-image'}
+					? {
+							uri: image.url,
+							accessibilityLabel: image.label,
+							caption: image.caption,
+							testID: 'mess-image-viewer-image',
+						}
 					: null
 			}
 			onClose={close}

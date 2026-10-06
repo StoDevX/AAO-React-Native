@@ -94,6 +94,30 @@ describe('parseBlocks', () => {
 		])
 	})
 
+	it("keeps a figure's alt text when it reads as words", () => {
+		let html =
+			'<figure><img src="https://x.test/a.jpg" width="600" height="400" alt="A Shoe&#8217;s Journey by Zoe Esterly"></figure>'
+		expect(parseBlocks(html)).toStrictEqual([
+			{
+				type: 'figure',
+				url: 'https://x.test/a.jpg',
+				width: 600,
+				height: 400,
+				caption: '',
+				alt: 'A Shoe\u2019s Journey by Zoe Esterly',
+			},
+		])
+	})
+
+	it('keeps no alt text when it is empty or a file name', () => {
+		for (let alt of ['', 'Polish_20200910_145120759']) {
+			let html = `<img src="https://x.test/a.jpg" width="600" height="400" alt="${alt}">`
+			expect(parseBlocks(html)).toStrictEqual([
+				{type: 'figure', url: 'https://x.test/a.jpg', width: 600, height: 400, caption: ''},
+			])
+		}
+	})
+
 	it("keeps the srcset's largest copy beside the image it shows, for the zoom viewer", () => {
 		let html =
 			'<figure><img src="https://x.test/a-600x400.jpg" width="600" height="400" ' +

@@ -25,6 +25,7 @@ import {DoubleTapView, type DoubleTapPoint} from '@frogpond/double-tap'
 import {DragToDismissView} from '@frogpond/drag-to-dismiss'
 import {shareImage} from './lib/share-image'
 import {doubleTapZoom} from './lib/zoom'
+import {ViewerCaption} from './viewer-caption'
 
 /** Apple's smallest comfortable tap target, in points. */
 const TAP_TARGET = 44
@@ -39,8 +40,11 @@ const BUTTON_ICON = [
 ]
 
 type Props = {
-	/** The picture, or null while there is none to show; `placeholder` stands in for it. */
-	image: {uri: string; accessibilityLabel: string; testID?: string} | null
+	/**
+	 * The picture, or null while there is none to show; `placeholder` stands in for it. Its
+	 * `caption`, when it has words, is drawn over the bottom of the picture.
+	 */
+	image: {uri: string; accessibilityLabel: string; testID?: string; caption?: string} | null
 	placeholder?: React.ReactNode
 	closeTestID: string
 	onClose: () => void
@@ -50,10 +54,11 @@ type Props = {
 
 /**
  * A picture on its own, on black, to pinch or double-tap to zoom, with a close
- * button that stays whether or not there is a picture, and a share button when there is one.
+ * button that stays whether or not there is a picture, a share button when there is one, and
+ * the picture's caption when it has one.
  * At its fitted size, a drag up or down carries the picture away and closes the viewer,
  * fading the black to show the screen beneath, so the viewer must be presented over that
- * screen. The buttons step aside for the drag, as Photos' controls do.
+ * screen. The buttons and the caption step aside for the drag, as Photos' controls do.
  *
  * The zooming view is a React Native `ScrollView`, because `@expo/ui` has no view that
  * zooms; the buttons over it are SwiftUI.
@@ -138,42 +143,59 @@ export function ZoomImageViewer({
 				{content}
 			</DragToDismissView>
 			{dragging ? null : (
-				<View
-					pointerEvents="box-none"
-					style={[
-						styles.overlay,
-						{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
-					]}
-				>
-					<View pointerEvents="box-none" style={styles.buttonRow}>
-						{image ? (
-							<Host style={[styles.buttonHost, styles.shareHost]}>
+				<>
+					<View
+						pointerEvents="box-none"
+						style={[
+							styles.overlay,
+							{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
+						]}
+					>
+						<View pointerEvents="box-none" style={styles.buttonRow}>
+							{image ? (
+								<Host style={[styles.buttonHost, styles.shareHost]}>
+									<Button
+										modifiers={[
+											buttonStyle('plain'),
+											accessibilityLabel('Share'),
+											accessibilityIdentifier(shareTestID),
+										]}
+										onPress={() => shareImage(image.uri).catch(() => undefined)}
+									>
+										<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
+									</Button>
+								</Host>
+							) : null}
+							<Host style={styles.buttonHost}>
 								<Button
 									modifiers={[
 										buttonStyle('plain'),
-										accessibilityLabel('Share'),
-										accessibilityIdentifier(shareTestID),
+										accessibilityLabel('Close'),
+										accessibilityIdentifier(closeTestID),
 									]}
-									onPress={() => shareImage(image.uri).catch(() => undefined)}
+									onPress={onClose}
 								>
-									<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
+									<Image modifiers={BUTTON_ICON} systemName="xmark" />
 								</Button>
 							</Host>
-						) : null}
-						<Host style={styles.buttonHost}>
-							<Button
-								modifiers={[
-									buttonStyle('plain'),
-									accessibilityLabel('Close'),
-									accessibilityIdentifier(closeTestID),
-								]}
-								onPress={onClose}
-							>
-								<Image modifiers={BUTTON_ICON} systemName="xmark" />
-							</Button>
-						</Host>
+						</View>
 					</View>
-				</View>
+					{image?.caption ? (
+						<View
+							pointerEvents="box-none"
+							style={[
+								styles.captionOverlay,
+								{
+									paddingBottom: insets.bottom + 8,
+									paddingLeft: insets.left + 12,
+									paddingRight: insets.right + 12,
+								},
+							]}
+						>
+							<ViewerCaption text={image.caption} />
+						</View>
+					) : null}
+				</>
 			)}
 		</View>
 	)
@@ -184,6 +206,7 @@ const styles = StyleSheet.create({
 	backdrop: {flex: 1, backgroundColor: 'black'},
 	fill: {flex: 1},
 	overlay: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0},
+	captionOverlay: {position: 'absolute', right: 0, bottom: 0, left: 0},
 	buttonRow: {flexDirection: 'row', justifyContent: 'flex-end', padding: 8},
 	buttonHost: {width: TAP_TARGET, height: TAP_TARGET},
 	// Share sits in the corner opposite Close, so a tap meant for one never lands on the other.

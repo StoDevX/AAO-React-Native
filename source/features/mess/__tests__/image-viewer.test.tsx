@@ -44,7 +44,35 @@ const COMIC: MessStory = {
 	bylines: [{id: 381, name: 'Juliet Stouffer'}],
 	photo: null,
 	blocks: [],
-	layout: {kind: 'image', image: {url: 'https://olafmessenger.com/c.png', width: 800, height: 600}},
+	layout: {
+		kind: 'image',
+		image: {url: 'https://olafmessenger.com/c.png', width: 800, height: 600, caption: ''},
+	},
+}
+
+/** A comic whose picture carries a caption. */
+const CAPTIONED_COMIC: MessStory = {
+	...COMIC,
+	id: 36820,
+	layout: {
+		kind: 'image',
+		image: {url: 'https://olafmessenger.com/d.png', width: 800, height: 600, caption: 'Week 3'},
+	},
+}
+
+/** An article whose lead photo has alt text but no caption. */
+const DESCRIBED: MessStory = {
+	...COMIC,
+	id: 36860,
+	column: null,
+	photo: {
+		url: 'https://olafmessenger.com/described.jpg',
+		width: 600,
+		height: 400,
+		caption: '',
+		alt: 'Photos from the "7 Feet for 7 Shots" march',
+	},
+	layout: {kind: 'article'},
 }
 
 const ARTICLE: MessStory = {...COMIC, id: 36911, title: 'An article', layout: {kind: 'article'}}
@@ -138,7 +166,16 @@ beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	queryClient.setQueryData(
 		messKeys.feed,
-		onePage([COMIC, ARTICLE, PHOTO_SET, NO_PICTURE, ILLUSTRATED, GALLERY]),
+		onePage([
+			COMIC,
+			CAPTIONED_COMIC,
+			DESCRIBED,
+			ARTICLE,
+			PHOTO_SET,
+			NO_PICTURE,
+			ILLUSTRATED,
+			GALLERY,
+		]),
 	)
 })
 
@@ -244,6 +281,52 @@ describe('ImageViewer', () => {
 		await fireEvent(image, 'dragCancel')
 		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Share'})).toBeTruthy()
+	})
+
+	test("shows a comic's caption over its picture", async () => {
+		await renderViewer(36820)
+		expect(screen.getByText('Week 3')).toBeTruthy()
+	})
+
+	test("shows a feature page's picture's caption, and none for a picture without one", async () => {
+		await renderViewer(33129, 1)
+		expect(screen.getByText('At the cup')).toBeTruthy()
+		await screen.unmount()
+
+		await renderViewer(33129, 0)
+		expect(screen.queryByTestId('viewer-caption')).toBeNull()
+	})
+
+	test("shows a lead photo's caption, and a figure's, found by address", async () => {
+		await renderViewer(36859, undefined, LEAD.url)
+		expect(screen.getByText('Students deliver the petition.')).toBeTruthy()
+		await screen.unmount()
+
+		await renderViewer(36859, undefined, FIGURE.url)
+		expect(screen.getByText('The petition, signed.')).toBeTruthy()
+	})
+
+	test('shows the alt text when a picture has no caption', async () => {
+		await renderViewer(36860, undefined, 'https://olafmessenger.com/described.jpg')
+		expect(screen.getByText('Photos from the "7 Feet for 7 Shots" march')).toBeTruthy()
+	})
+
+	test('shows no caption for a picture with neither a caption nor alt text', async () => {
+		await renderViewer(36819)
+		expect(screen.queryByTestId('viewer-caption')).toBeNull()
+	})
+
+	test('hides the caption while the picture is dragged, and brings it back if it springs back', async () => {
+		await renderViewer(36820)
+		let image = screen.getByRole('image', {
+			name: 'Mouse Friends: sunsets of life, by Juliet Stouffer',
+		})
+
+		await fireEvent(image, 'dragStart')
+		expect(screen.queryByTestId('viewer-caption')).toBeNull()
+
+		await fireEvent(image, 'dragCancel')
+		expect(screen.getByText('Week 3')).toBeTruthy()
 	})
 
 	test('says the image is unavailable for a story without one, and can still close', async () => {
