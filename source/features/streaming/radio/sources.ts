@@ -17,9 +17,10 @@ export const NOW_PLAYING_TYPE = 'application/vnd.metaradio.stationnow+json'
 export const PLAYER_PAGE_TYPE = 'text/html'
 
 /**
- * Where a player page may be. The page runs unseen, with its media allowed to
- * start by itself, so a published page elsewhere is not loaded: the station
- * keeps its shipped page instead.
+ * Where a player page may be, over HTTPS only. The page runs unseen, with its
+ * media allowed to start by itself, so a published page elsewhere, or one a
+ * network could swap in transit, is not loaded: the station keeps its shipped
+ * page instead.
  */
 const PLAYER_PAGE_HOSTS: readonly string[] = ['www.stolaf.edu']
 
@@ -32,7 +33,7 @@ export type StationSources = {
 	 * so that its analytics keep counting listens. The app loads it with its
 	 * sound off, beside the stream it plays itself. See `MutedStationPage` and
 	 * `RadioHost`, and the DECISION beside KSTO's entries in the manifest. An
-	 * absolute URL, on one of `PLAYER_PAGE_HOSTS`.
+	 * HTTPS URL, on one of `PLAYER_PAGE_HOSTS`.
 	 */
 	embeddedPlayerUrl?: string
 	/**
@@ -69,10 +70,16 @@ function anyPlayerPageUrl(manifest: Jrd, stationId: StationId): string | undefin
 	return href === undefined ? undefined : apiUrl(href)
 }
 
-/** `stationId`'s player page as `manifest` names it, or its shipped one if that is not on `PLAYER_PAGE_HOSTS`. */
+/** Whether `url` is somewhere a player page may be loaded from. */
+function isPlayerPageUrl(url: string): boolean {
+	let {protocol, host} = new URL(url)
+	return protocol === 'https:' && PLAYER_PAGE_HOSTS.includes(host)
+}
+
+/** `stationId`'s player page as `manifest` names it, or its shipped one if that is not somewhere a page may be. */
 function playerPageUrl(manifest: Jrd, stationId: StationId): string | undefined {
 	let url = anyPlayerPageUrl(manifest, stationId)
-	if (url === undefined || PLAYER_PAGE_HOSTS.includes(new URL(url).host)) {
+	if (url === undefined || isPlayerPageUrl(url)) {
 		return url
 	}
 	return anyPlayerPageUrl(SHIPPED, stationId)

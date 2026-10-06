@@ -116,6 +116,15 @@ describe('stationSources', () => {
 		)
 	})
 
+	test("keeps KSTO's shipped player page when the published one is not over HTTPS", () => {
+		let manifest = manifestWith(
+			link(REL_RADIO_PLAYER_PAGE, 'ksto', 'http://www.stolaf.edu/ksto.html', 'text/html'),
+		)
+		expect(stationSources(manifest, 'ksto').embeddedPlayerUrl).toBe(
+			'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+		)
+	})
+
 	test('gives a station no player page the published manifest puts on another site', () => {
 		let manifest = manifestWith(
 			link(REL_RADIO_PLAYER_PAGE, 'krlx', 'https://example.test/krlx.html', 'text/html'),
@@ -130,7 +139,7 @@ describe('stationSources', () => {
 			let {streamSourceUrl, embeddedPlayerUrl} = stationSources(EMPTY, stationId)
 			expect(streamSourceUrl).toMatch(/^https:\/\//u)
 			if (embeddedPlayerUrl !== undefined) {
-				expect(new URL(embeddedPlayerUrl).host).toBe('www.stolaf.edu')
+				expect(embeddedPlayerUrl).toMatch(/^https:\/\/www\.stolaf\.edu\//u)
 			}
 		},
 	)
