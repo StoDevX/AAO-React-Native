@@ -54,6 +54,18 @@ describe('parseGalleryPhotos', () => {
 		expect(parseGalleryPhotos(body, [1])[0]?.caption).toBe('Holland Hall at dusk.')
 	})
 
+	it("keeps a photo's alt text when it reads as words, and not when it is a file name", () => {
+		let body = [
+			{...bare(1, 'https://olafmessenger.com/a.jpg'), alt_text: 'Holland Hall at dusk'},
+			{...bare(2, 'https://olafmessenger.com/b.jpg'), alt_text: 'OliviaAmschler_2'},
+			{...bare(3, 'https://olafmessenger.com/c.jpg'), alt_text: ''},
+		]
+		let photos = parseGalleryPhotos(body, [1, 2, 3])
+		expect(photos[0]?.alt).toBe('Holland Hall at dusk')
+		expect(photos[1]).not.toHaveProperty('alt')
+		expect(photos[2]).not.toHaveProperty('alt')
+	})
+
 	it('loads a photo WordPress lists over plain HTTP from its HTTPS address', () => {
 		expect(parseGalleryPhotos([bare(1, 'http://olafmessenger.com/a.jpg')], [1])[0]?.url).toBe(
 			'https://olafmessenger.com/a.jpg',

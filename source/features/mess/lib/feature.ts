@@ -17,7 +17,7 @@ function pictureKey(url: string): string {
  * A Photo or Short Story post's pictures: its featured photo first, then each figure in its
  * body, in order, each with its caption; and the body left once the figures are taken out.
  * A copy of the featured photo in the body is drawn once, and lends the featured photo its
- * caption when that has none.
+ * caption, and its alt text, when that has none.
  */
 export function parseFeature(
 	photo: MessStory['photo'],
@@ -30,14 +30,27 @@ export function parseFeature(
 			rest.push(block)
 			continue
 		}
-		let {url, largeUrl, width, height, caption} = block
+		let {url, largeUrl, width, height, caption, alt} = block
 		if (photo !== null && pictureKey(url) === pictureKey(photo.url)) {
 			let [featured] = images
-			if (featured && featured.caption === '') images[0] = {...featured, caption}
+			if (featured) {
+				images[0] = {
+					...featured,
+					caption: featured.caption || caption,
+					...(featured.alt || !alt ? {} : {alt}),
+				}
+			}
 			continue
 		}
 		// The page draws `url`; the viewer, where a reader zooms, the larger copy.
-		images.push(largeUrl ? {url, largeUrl, width, height, caption} : {url, width, height, caption})
+		images.push({
+			url,
+			...(largeUrl ? {largeUrl} : {}),
+			width,
+			height,
+			caption,
+			...(alt ? {alt} : {}),
+		})
 	}
 	return {images, blocks: rest}
 }

@@ -26,7 +26,7 @@ function galleryPictureAt(
 		let photo = photos[index]
 		if (!photo) continue
 		let label = galleryPhotoLabel(story, gallery.credit, {index, count: photos.length})
-		return {url: photo.largeUrl ?? photo.url, label, caption: photo.caption}
+		return {url: photo.largeUrl ?? photo.url, label, caption: photo.caption || photo.alt || ''}
 	}
 	return null
 }
@@ -67,7 +67,8 @@ function pictureOf(
 	}
 	if (story.layout.kind === 'feature') {
 		let image = story.layout.images[index]
-		return image ? {url: image.largeUrl ?? image.url, label, caption: image.caption} : null
+		if (!image) return null
+		return {url: image.largeUrl ?? image.url, label, caption: image.caption || image.alt || ''}
 	}
 	return null
 }

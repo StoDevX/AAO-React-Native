@@ -311,6 +311,37 @@ describe('ImageViewer', () => {
 		expect(screen.getByText('Photos from the "7 Feet for 7 Shots" march')).toBeTruthy()
 	})
 
+	test("shows a feature page's picture's alt text when it has no caption", async () => {
+		queryClient.setQueryData(
+			messKeys.feed,
+			onePage([
+				{
+					...PHOTO_SET,
+					id: 33130,
+					layout: {kind: 'feature', images: [{...BEES, alt: 'Bees drinking lemonade'}]},
+				},
+			]),
+		)
+		await renderViewer(33130, 0)
+		expect(screen.getByText('Bees drinking lemonade')).toBeTruthy()
+	})
+
+	test("shows a gallery photo's alt text when it has no caption", async () => {
+		let second = {
+			url: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_2-896x1200.png',
+			width: 896,
+			height: 1200,
+			caption: '',
+			alt: 'Gallery walk at dusk',
+		}
+		queryClient.setQueryData(messKeys.gallery([36255, 36256]), [
+			{...GALLERY_COVER, caption: ''},
+			second,
+		])
+		await renderViewer(36238, undefined, second.url)
+		expect(screen.getByText('Gallery walk at dusk')).toBeTruthy()
+	})
+
 	test('shows no caption for a picture with neither a caption nor alt text', async () => {
 		await renderViewer(36819)
 		expect(screen.queryByTestId('viewer-caption')).toBeNull()
