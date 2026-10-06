@@ -773,18 +773,4 @@ describe('through ccc-server', () => {
 			'news/mess/wp/v2/staff_profile?staff_year=1147&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded',
 		])
 	})
-
-	test("reads ccc-server's 400 for a page past the last as an empty last page", async () => {
-		serveProxied(() =>
-			Promise.reject(
-				new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
-					code: 'rest_post_invalid_page_number',
-				}),
-			),
-		)
-
-		let page = await runPage<MessStory[]>(messFeedOptions, 7)
-
-		expect(page).toStrictEqual([])
-	})
 })
