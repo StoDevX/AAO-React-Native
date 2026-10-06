@@ -25,13 +25,18 @@ struct ContributingScreen: Screen {
 		).firstMatch
 	}
 
-	/// Scroll the screen until `title`'s row is on it.
+	/// Scroll the screen until `title`'s row is on it: down the page first, then
+	/// back up it for a row the page has already scrolled past.
 	@discardableResult
 	func reveal(_ title: String) -> Self {
 		let target = row(title)
 		for _ in 0..<8 {
 			if target.exists && target.isHittable { break }
 			host.swipeUp()
+		}
+		for _ in 0..<8 {
+			if target.exists && target.isHittable { break }
+			host.swipeDown()
 		}
 		XCTAssertTrue(target.exists, "Contributing should offer \(title)")
 		return self

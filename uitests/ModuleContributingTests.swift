@@ -3,7 +3,7 @@ import XCTest
 class ModuleContributingTests: UITestCase {
 	/// The ways to reach us come first, above the source code, and Report a
 	/// Problem opens its form and closes back to Contributing. Then every
-	/// section is there, down to the email row at the foot.
+	/// section is there, and the email row is still reachable from the foot.
 	func testContributingOffersEverySectionWithFeedbackFirst() throws {
 		let contributing = HomeScreen(app: app).checkHomescreenExists().openContributing()
 		let ids = TestIdentifiers.Contributing.self
@@ -27,6 +27,6 @@ class ModuleContributingTests: UITestCase {
 		contributing.capture("contributing-middle")
 
 		contributing.reveal(ids.email)
-		contributing.capture("contributing-bottom")
+		contributing.capture("contributing-email")
 	}
 }
