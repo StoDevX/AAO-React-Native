@@ -84,13 +84,15 @@ struct TestIdentifiers {
 
 	enum Home {
 		static let screen = "screen-homescreen"
+		/// The tiled layout's grid, HOME_GRID_ID in app/index.tsx.
+		static let tileGrid = "home-tile-grid"
 		static let notice = "home-notice"
 		static let enableDevMode = "Enable dev mode"
 	}
 
 	enum Navigation {
-		/// The menu at the home screen's top-right corner, which holds the layout
-		/// choice, Support, About, Contributing and Feedback. Mirrors
+		/// The menu at the home screen's top-right corner, which holds Support,
+		/// About, Contributing and Feedback. Mirrors
 		/// HOME_MENU_LABEL in app/index.tsx.
 		static let homeMenu = "Home menu"
 		static let supportMenuItem = "Support"
@@ -701,6 +703,11 @@ struct TestIdentifiers {
 		/// The sheet's host, set in app/customize/index.tsx.
 		static let screen = "screen-customize"
 		static let quickActionsRow = "Quick Actions"
+		/// The Layout picker's identifier, set in app/customize/index.tsx.
+		static let homeLayout = "home-layout"
+		/// The Layout menu's names for Home's two layouts.
+		static let tiledLayout = "Tiled"
+		static let listLayout = "List"
 		/// The App Icon row's identifier; its label also carries the current icon's name.
 		static let appIconRow = "app-icon-row"
 		/// The gallery's host, set in app/customize/app-icon.tsx.

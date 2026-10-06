@@ -140,6 +140,23 @@ extension Screen {
 		return self
 	}
 
+	/// Choose `name` from a menu picker and wait for the picker to show it.
+	@discardableResult
+	func choose(_ name: String, from picker: XCUIElement) -> Self {
+		XCTAssertTrue(picker.waitForExistence(timeout: 10), "the screen should offer the picker for \(name)")
+		picker.tap()
+		let item = app.buttons[name].firstMatch
+		XCTAssertTrue(item.waitForExistence(timeout: 10), "the menu should offer \(name)")
+		item.tap()
+		let chosen = XCTNSPredicateExpectation(
+			predicate: NSPredicate(format: "value == %@ OR label CONTAINS %@", name, name),
+			object: picker)
+		XCTAssertEqual(
+			XCTWaiter().wait(for: [chosen], timeout: 10), .completed,
+			"the picker should show \(name) (it reads \(picker.label), \(String(describing: picker.value)))")
+		return self
+	}
+
 	/// Picks "Grid" or "List" from the ⋯ layout menu at the top right of a
 	/// screen that offers one.
 	@discardableResult

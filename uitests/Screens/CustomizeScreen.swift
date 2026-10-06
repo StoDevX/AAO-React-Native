@@ -1,6 +1,6 @@
 import XCTest
 
-/// Home's paintbrush sheet: App Icon, Open Links, Radio Player, Quick Actions.
+/// Home's paintbrush sheet: App Icon, Open Links, Layout, Radio Player, Quick Actions.
 struct CustomizeScreen: Screen {
 	let app: XCUIApplication
 
@@ -10,6 +10,12 @@ struct CustomizeScreen: Screen {
 	func checkOpen() -> Self {
 		XCTAssertTrue(sheet.waitForExistence(timeout: 10), "Customize should open")
 		return self
+	}
+
+	/// Choose how Home lays out its tiles, by the name the Layout menu gives it.
+	@discardableResult
+	func chooseHomeLayout(_ name: String) -> Self {
+		choose(name, from: sheet.buttons[TestIdentifiers.Customize.homeLayout].firstMatch)
 	}
 
 	@discardableResult

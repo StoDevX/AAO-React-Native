@@ -25,21 +25,6 @@ struct MessCustomizeScreen: Screen {
 		choose(name, from: issueStains)
 	}
 
-	private func choose(_ name: String, from picker: XCUIElement) -> Self {
-		XCTAssertTrue(picker.waitForExistence(timeout: 10), "Customize should offer the picker for \(name)")
-		picker.tap()
-		let item = app.buttons[name].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "the menu should offer \(name)")
-		item.tap()
-		let chosen = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value == %@ OR label CONTAINS %@", name, name),
-			object: picker)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [chosen], timeout: 10), .completed,
-			"the picker should show \(name) (it reads \(picker.label), \(String(describing: picker.value)))")
-		return self
-	}
-
 	/// Turn Dark page for Photo stories on or off, tapping the switch itself: a tap at the
 	/// row's centre lands on the label, which flips nothing in a Form.
 	@discardableResult
