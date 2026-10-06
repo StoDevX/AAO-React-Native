@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render} from '@testing-library/react-native'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {ID_PROPERTY, manifestOptions, REL_RADIO_STREAM, type Jrd} from '@frogpond/data-sources'
 
-import {RadioHost} from '../host'
+import {RadioHost as BareRadioHost} from '../host'
 import {STATIONS, logoImage} from '../stations'
 import {useRadioStore} from '../store'
 
@@ -47,6 +49,24 @@ jest.mock('../use-now-playing', () => ({
 	},
 }))
 
+// The manifest is asked for over the network; here it cannot be had, so the
+// stations play from the shipped entries unless a test caches one.
+jest.mock('@frogpond/api', () => ({
+	...(jest.requireActual('@frogpond/api') as object),
+	client: {get: () => ({json: () => Promise.reject(new Error('offline'))})},
+}))
+
+let queryClient: QueryClient
+
+/** The host, with the query cache it reads the stations' sources from. */
+function RadioHost(): React.ReactNode {
+	return (
+		<QueryClientProvider client={queryClient}>
+			<BareRadioHost />
+		</QueryClientProvider>
+	)
+}
+
 /** Renders the host and returns a way to post a message from the station's page. */
 async function renderHost() {
 	let screen = await render(<RadioHost />)
@@ -68,6 +88,7 @@ async function renderHost() {
 
 describe('RadioHost', () => {
 	beforeEach(() => {
+		queryClient = new QueryClient()
 		useRadioStore.setState({stationId: null, playState: 'stopped', error: null, playerKey: 0})
 		useRadioStore.getState().play('ksto')
 		useRadioStore.getState().reportPlaying(1)
@@ -75,6 +96,8 @@ describe('RadioHost', () => {
 
 	afterEach(() => {
 		mockShow = null
+		queryClient.clear()
+		mockUseAudioPlayer.mockClear()
 	})
 
 	test('plays KSTO natively from its stream, and loads its player page beside it', async () => {
@@ -149,5 +172,35 @@ describe('RadioHost', () => {
 			expect.objectContaining({title: 'Pitch Perfect', artist: '88.1 KRLX-FM'}),
 			{isLiveStream: true},
 		)
+	})
+
+	test('plays on from the stream it started with when a manifest moves the station mid-play', async () => {
+		useRadioStore.getState().stop()
+		useRadioStore.getState().play('krlx')
+		let screen = await render(<RadioHost />)
+
+		let moved: Jrd = {
+			subject: 'https://stolaf.edu',
+			links: [
+				{
+					rel: REL_RADIO_STREAM,
+					href: 'https://example.test/krlx.mp3',
+					type: 'audio/mpeg',
+					properties: {[ID_PROPERTY]: 'krlx'},
+				},
+			],
+		}
+		await act(() => {
+			queryClient.setQueryData(manifestOptions.queryKey, moved)
+		})
+		await screen.rerender(<RadioHost />)
+
+		expect(mockUseAudioPlayer).not.toHaveBeenCalledWith('https://example.test/krlx.mp3')
+
+		// The next play takes the station from where the manifest now says it is.
+		await act(() => useRadioStore.getState().play('krlx'))
+		await screen.rerender(<RadioHost />)
+
+		expect(mockUseAudioPlayer).toHaveBeenLastCalledWith('https://example.test/krlx.mp3')
 	})
 })
