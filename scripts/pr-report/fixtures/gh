@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+/**
+ * A stand-in for the two `gh` calls find-baseline.sh makes, answering from
+ * the JSON file named by FAKE_GH_DATA:
+ *
+ *   {
+ *     runs: [{databaseId, headSha, headBranch, event, status}],  // newest first
+ *     artifacts: {<run id>: [{name, expired}]},
+ *     ancestors: {<sha>: [<sha>, …]},                    // newest first
+ *   }
+ *
+ * `--jq` is applied with the real jq, which prints strings raw as gh does.
+ */
+
+import {execFileSync} from 'node:child_process'
+import {readFileSync} from 'node:fs'
+
+let data = JSON.parse(readFileSync(process.env.FAKE_GH_DATA, 'utf8'))
+let args = process.argv.slice(2)
+let option = (name) => {
+	let index = args.indexOf(name)
+	return index === -1 ? undefined : args[index + 1]
+}
+
+let output
+if (args[0] === 'run' && args[1] === 'list') {
+	output = data.runs
+		.filter((run) => run.headBranch === option('--branch'))
+		.filter((run) => run.event === option('--event'))
+		.filter((run) => option('--commit') === undefined || run.headSha === option('--commit'))
+		.filter((run) => option('--status') === undefined || run.status === option('--status'))
+		.slice(0, Number(option('--limit')))
+} else if (args[0] === 'api') {
+	let artifacts = args[1].match(/actions\/runs\/(\d+)\/artifacts\?name=(.+)$/u)
+	let commits = args[1].match(/commits\?sha=([0-9a-f]+)&/u)
+	if (artifacts) {
+		let named = (data.artifacts[artifacts[1]] ?? []).filter((a) => a.name === artifacts[2])
+		output = {total_count: named.length, artifacts: named}
+	} else if (commits) {
+		output = (data.ancestors[commits[1]] ?? []).map((sha) => ({sha}))
+	}
+}
+if (output === undefined) {
+	console.error(`fake gh: unexpected call: ${args.join(' ')}`)
+	process.exit(1)
+}
+process.stdout.write(execFileSync('jq', ['-r', option('--jq')], {input: JSON.stringify(output)}))

@@ -92,7 +92,7 @@ function appSize(app) {
 		}
 	} else if (app.head === null) {
 		top.push(
-			`App size unavailable: the archive or its measurement failed. See the App size job in [this run](${app.runUrl}).`,
+			`App size unavailable: no measurement for this commit yet. [The App size job](${app.runUrl}) failed, or has not finished.`,
 		)
 	} else {
 		let install = app.diff?.install ?? {after: app.head.installBytes}

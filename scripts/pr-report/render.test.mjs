@@ -385,7 +385,7 @@ describe('the app size section', () => {
 			section(renderComment({...base, app})),
 			[
 				'### App size',
-				'App size unavailable: the archive or its measurement failed. See the App size job in [this run](https://github.com/o/r/actions/runs/1).',
+				'App size unavailable: no measurement for this commit yet. [The App size job](https://github.com/o/r/actions/runs/1) failed, or has not finished.',
 				'',
 				'⚠️ No app size for this commit; the app size gate will fail this once it is enforced.',
 				'',

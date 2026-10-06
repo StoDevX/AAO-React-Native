@@ -114,9 +114,9 @@ describe('readReport', () => {
 	})
 })
 
-let appReport = (installBytes, {version = 1, measuredSha = 'abcdef1234'} = {}) => ({
+let appReport = (installBytes, {version = 1, sha = 'abcdef1234', measuredSha = sha} = {}) => ({
 	version,
-	sha: 'abcdef1234',
+	sha,
 	measuredSha,
 	device: 'iPhone18,3',
 	installBytes,
@@ -144,6 +144,7 @@ describe('readAppReport', () => {
 			{installBytes: 'x'},
 			{downloadBytes: null},
 			{measuredSha: 5},
+			{sha: null},
 			{device: undefined},
 			{byGroup: null},
 			{byGroup: {a: 'x'}},
@@ -377,7 +378,6 @@ describe('buildAppSection', () => {
 			appBaseline: null,
 			head: report(10),
 			baseline: report(10),
-			comparedSha: 'abcdef1234',
 		})
 		assert.equal(app, null)
 	})
@@ -390,7 +390,6 @@ describe('buildAppSection', () => {
 			appBaseline: appReport(100),
 			head: report(10),
 			baseline: report(10),
-			comparedSha: 'abcdef1234',
 			runUrl: 'https://github.com/o/r/actions/runs/1',
 		})
 		assert.equal(app.runUrl, 'https://github.com/o/r/actions/runs/1')
@@ -410,7 +409,6 @@ describe('buildAppSection', () => {
 			appBaseline: appReport(100),
 			head: report(10),
 			baseline: report(10),
-			comparedSha: 'abcdef1234',
 		})
 		assert.equal(app.gate.pass, false)
 	})
@@ -427,7 +425,6 @@ describe('buildAppSection', () => {
 			appBaseline: appReport(100),
 			head,
 			baseline,
-			comparedSha: 'abcdef1234',
 		})
 		assert.deepEqual(app.total, {name: 'total', before: 113, after: 165, delta: 52})
 		assert.equal(app.diff.install.delta, 50)
@@ -441,7 +438,6 @@ describe('buildAppSection', () => {
 			appBaseline: appReport(100),
 			head: report(12),
 			baseline: report(10),
-			comparedSha: 'abcdef1234',
 		})
 		assert.deepEqual(app.total, {name: 'total', before: 110, after: 112, delta: 2})
 		assert.equal(app.diff, null)
@@ -455,7 +451,6 @@ describe('buildAppSection', () => {
 			appBaseline: {version: 0},
 			head: report(10),
 			baseline: report(10),
-			comparedSha: 'abcdef1234',
 		})
 		assert.equal(
 			app.note,
@@ -474,7 +469,6 @@ describe('buildAppSection', () => {
 			appBaseline: null,
 			head: report(10),
 			baseline: null,
-			comparedSha: null,
 		})
 		assert.equal(app.note, 'No app size for the base branch to compare with.')
 		assert.deepEqual(app.total, {after: 1010})
@@ -489,7 +483,6 @@ describe('buildAppSection', () => {
 			appBaseline: appReport(100, {measuredSha: '1234567abc'}),
 			head: report(10),
 			baseline: report(10),
-			comparedSha: 'abcdef1234',
 		})
 		assert.equal(
 			app.note,
@@ -503,13 +496,24 @@ describe('buildAppSection', () => {
 			appEnforced: true,
 			needed: true,
 			appHead: appReport(100000),
-			appBaseline: appReport(100, {measuredSha: '9999999999'}),
+			appBaseline: appReport(100, {sha: '9999999999'}),
 			head: report(10),
 			baseline: report(10),
-			comparedSha: '9999999999',
 		})
 		assert.equal(app.gate.pass, true)
 		assert.match(app.gate.message, /older master commit/u)
+	})
+
+	it('calls no figures carried forward when they were measured at their own commit', () => {
+		let app = buildAppSection({
+			...common,
+			needed: true,
+			appHead: appReport(100),
+			appBaseline: appReport(100),
+			head: report(10),
+			baseline: report(10),
+		})
+		assert.equal(app.note, null)
 	})
 })
 
@@ -565,7 +569,7 @@ describe('buildPrReport with app size', () => {
 		assert.equal(result.pass, false)
 	})
 
-	it('links an unmeasured native change to the run that tried', () => {
+	it('links an unmeasured native change to the App size job', () => {
 		let result = buildPrReport({
 			head: report(100),
 			baseline: report(100),
@@ -577,7 +581,10 @@ describe('buildPrReport with app size', () => {
 			appBaseline: appReport(100),
 			runUrl: 'https://github.com/o/r/actions/runs/1',
 		})
-		assert.match(result.comment, /\[this run\]\(https:\/\/github\.com\/o\/r\/actions\/runs\/1\)/u)
+		assert.match(
+			result.comment,
+			/\[The App size job\]\(https:\/\/github\.com\/o\/r\/actions\/runs\/1\)/u,
+		)
 	})
 })
 

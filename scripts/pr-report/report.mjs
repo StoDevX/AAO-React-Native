@@ -104,6 +104,7 @@ export function readAppReport(path) {
 		APP_SIZE_VERSION,
 		(report) =>
 			!(
+				typeof report.sha === 'string' &&
 				typeof report.measuredSha === 'string' &&
 				typeof report.device === 'string' &&
 				Number.isFinite(report.installBytes) &&
@@ -131,10 +132,12 @@ const jsBytes = (report) => report.js.hermesBytes + report.js.assetsBytes
  * The app size section, or null when there is nothing to show: no native
  * change and no baseline. `needed` is whether this PR changed native paths;
  * `appHead` is its app report (null when it did not archive, or the archive
- * failed); `appBaseline` is the base branch's. `head` and `baseline` are the
+ * failed); `appBaseline` is the base branch's, whose `sha` is the commit it
+ * stands for and `measuredSha` the one that archived. `head` and `baseline` are the
  * size reports, whose JS completes the total; `baseline` is null unless it
- * is the current version. `runUrl` is this workflow run's page, which the
- * section links when the archive failed.
+ * is the current version. `runUrl` is where to find the App size job, which
+ * the section links when there is no measurement: this run, or on a label
+ * change, which archives nothing, the pull request's checks.
  */
 export function buildAppSection({
 	needed,
@@ -142,7 +145,6 @@ export function buildAppSection({
 	appBaseline,
 	head,
 	baseline,
-	comparedSha,
 	labels,
 	appLimit = APP_GROWTH_LIMIT_BYTES,
 	appEnforced = APP_GATE_ENFORCED,
@@ -162,7 +164,7 @@ export function buildAppSection({
 		}
 	} else {
 		usable = appBaseline
-		if (usable.measuredSha !== comparedSha) {
+		if (usable.measuredSha !== usable.sha) {
 			notes.push(
 				`The base branch's native figures were measured at \`${usable.measuredSha.slice(0, 7)}\` and carried forward.`,
 			)
@@ -201,7 +203,7 @@ export function buildAppSection({
 					message:
 						'No app size for this commit; the app size gate will fail this once it is enforced.',
 				}
-	} else if (diff !== null && head !== null && comparedSha !== head.baseSha) {
+	} else if (diff !== null && head !== null && usable.sha !== head.baseSha) {
 		gate = {
 			pass: true,
 			warn: false,
@@ -262,7 +264,6 @@ export function buildPrReport({
 		appBaseline,
 		head,
 		baseline: baseline?.version === REPORT_VERSION ? baseline : null,
-		comparedSha,
 		labels,
 		appLimit,
 		appEnforced,

@@ -13,8 +13,10 @@ concurrency:
   # A push gets its own group (by commit), so a queued master run is never
   # cancelled by a later push landing while it waits; a pull request shares
   # one group per ref, so a stale run for the same PR is replaced. A label
-  # change reruns the measurement, so it replaces the run before it too.
-  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
+  # change archives nothing and reads the app size an earlier run measured,
+  # so it gets a group of its own: it must not cancel that run's archive,
+  # which a PR opened with a label would otherwise lose every time.
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && '-labels' || '' }}
   # Never cancel a push to master: a cancelled run uploads no report, and
   # every later PR needs one for each master commit to compare against.
   cancel-in-progress: ${{ github.event_name != 'push' }}
@@ -94,8 +96,12 @@ jobs:
     name: App size
     needs: [app-size-gate]
     # !cancelled(), so a failed or never-started gate (empty output) still
-    # archives; the merge queue has nothing to compare.
-    if: ${{ !cancelled() && github.event_name != 'merge_group' && needs.app-size-gate.outputs.needed != 'false' }}
+    # archives; the merge queue has nothing to compare, and a label change
+    # cannot change the app.
+    if: >-
+      ${{ !cancelled() && github.event_name != 'merge_group'
+      && github.event.action != 'labeled' && github.event.action != 'unlabeled'
+      && needs.app-size-gate.outputs.needed != 'false' }}
     runs-on: xcode-27
     timeout-minutes: 60
     steps:
@@ -151,7 +157,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          found=$(scripts/pr-report/find-baseline.sh "$(git rev-parse HEAD^1)" master)
+          found=$(scripts/pr-report/find-baseline.sh "$(git rev-parse HEAD^1)" master app-size)
           if [ -z "$found" ]; then
             echo "No earlier master report to carry forward."
             exit 0
@@ -224,6 +230,26 @@ jobs:
           name: app-size
           path: app-head/
 
+      - name: Reuse this commit's app size from an earlier run
+        # A label change archives nothing; the run that last measured this
+        # commit has the figures. With none yet (it is still archiving, or
+        # failed), the section says the app size is unavailable.
+        if: >-
+          github.event_name == 'pull_request'
+          && (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          found=$(scripts/pr-report/find-baseline.sh "$HEAD_SHA" "$HEAD_REF" app-size)
+          if [ -z "$found" ]; then
+            echo "No earlier run has an app size for $HEAD_SHA."
+            exit 0
+          fi
+          gh run download "${found%% *}" --repo "$GITHUB_REPOSITORY" --name app-size --dir app-head/ \
+            || echo "The app size for $HEAD_SHA could not be downloaded."
+
       - name: Find and download the base branch's baseline report
         # Master's run for the base commit, or for a PR stacked on another
         # branch, that branch's own PR run.
@@ -242,17 +268,25 @@ jobs:
             exit 0
           fi
           found=$(scripts/pr-report/find-baseline.sh "$base_sha" "$BASE_REF")
-          if [ -z "$found" ]; then
+          if [ -n "$found" ]; then
+            run_id=${found%% *}
+            commit=${found#* }
+            echo "COMPARED_SHA=$commit" >> "$GITHUB_ENV"
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
+              || echo "The report for $commit on $BASE_REF could not be downloaded."
+          else
             echo "No baseline found on $BASE_REF for $base_sha."
-            exit 0
           fi
-          run_id=${found%% *}
-          commit=${found#* }
-          echo "COMPARED_SHA=$commit" >> "$GITHUB_ENV"
-          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
-            || echo "The report for $commit on $BASE_REF could not be downloaded."
-          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name app-size --dir app-baseline/ \
-            || echo "No app size report for $commit on $BASE_REF."
+          # Looked up on its own: the newest run with an app size can be
+          # older than the newest with a size report, as a master run with no
+          # native change, or one still archiving, may have none.
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha" "$BASE_REF" app-size)
+          if [ -n "$found" ]; then
+            gh run download "${found%% *}" --repo "$GITHUB_REPOSITORY" --name app-size --dir app-baseline/ \
+              || echo "The app size for ${found#* } on $BASE_REF could not be downloaded."
+          else
+            echo "No app size baseline found on $BASE_REF for $base_sha."
+          fi
 
       - name: Read the pull request's current labels
         # The event payload's labels are from when this run was triggered. A
@@ -280,6 +314,12 @@ jobs:
         env:
           BASE_REF: ${{ github.base_ref }}
           APP_NEEDED: ${{ needs.app-size-gate.outputs.needed != 'false' }}
+          # Where the App size job for this commit is: this run, or for a
+          # label change, which runs none, the pull request's checks.
+          APP_JOB_URL: >-
+            ${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+            && format('{0}/{1}/pull/{2}/checks', github.server_url, github.repository, github.event.pull_request.number)
+            || format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
         run: |
           status=0
           # Exit code 2 is a failed gate; any other non-zero is a crash,
@@ -294,7 +334,7 @@ jobs:
             --app-needed "$APP_NEEDED" \
             --app-head app-head/app-size.json \
             --app-baseline app-baseline/app-size.json \
-            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --run-url "$APP_JOB_URL" \
             --comment-out comment.md \
             --summary-out summary.md || status=$?
           if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then
