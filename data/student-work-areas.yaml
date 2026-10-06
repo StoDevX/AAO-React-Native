@@ -3,7 +3,8 @@
 # an area when the Unit Number in its description is one of the area's units,
 # five digits without any fund prefix, as ccc-server's /student-work/units
 # reads it; a unit listed nowhere here leaves its postings under "All job
-# postings" only.
+# postings" only. The unit `unknown` is what ccc-server publishes for a posting
+# whose description has no unit number it can read.
 #
 # Each unit is written with its name from the work-authorisation list, for
 # whoever edits this file next:
@@ -168,3 +169,10 @@
   gradient: pale-gold
   units:
     - '45158' # Lilly End: Nourish Voc Chldrn
+
+- name: Unknown
+  slug: unknown
+  icon: questionmark.circle.fill
+  gradient: gray
+  units:
+    - 'unknown' # postings whose Unit Number ccc-server cannot read

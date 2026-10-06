@@ -1,12 +1,5 @@
 import {blueGradient} from '@frogpond/colors'
-import {
-	areaMembership,
-	chosenAreaState,
-	toAreas,
-	UNKNOWN_AREA,
-	withUnknownArea,
-	type StudentWorkArea,
-} from '../areas'
+import {areaMembership, chosenAreaState, toAreas, type StudentWorkArea} from '../areas'
 
 function area(slug: string, units: string[]): StudentWorkArea {
 	return {name: slug, slug, icon: 'star', gradient: ['#000', '#fff'], units}
@@ -30,27 +23,6 @@ describe('areaMembership', () => {
 		let membership = areaMembership([DINING], new Map([['a', null]]), new Set(['a']))
 
 		expect(membership.get('dining')).toEqual({ids: new Set(), count: 0, empty: true})
-	})
-
-	test('puts a posting with a null unit in Unknown, and only there', () => {
-		let membership = areaMembership(
-			withUnknownArea([DINING]),
-			new Map([
-				['a', null],
-				['b', '22005'],
-				['c', '99999'],
-			]),
-			new Set(['a', 'b', 'c']),
-		)
-
-		expect(membership.get('unknown')).toEqual({ids: new Set(['a']), count: 1, empty: false})
-		expect(membership.get('dining')?.ids).toEqual(new Set(['b']))
-	})
-
-	test('leaves a posting with no unit known yet out of Unknown', () => {
-		let membership = areaMembership(withUnknownArea([DINING]), new Map(), new Set(['a']))
-
-		expect(membership.get(UNKNOWN_AREA.slug)?.count).toBe(0)
 	})
 
 	test('leaves out a unit no area lists', () => {
@@ -80,16 +52,6 @@ describe('areaMembership', () => {
 
 		expect(membership.get('dining')?.ids.has('a')).toBe(true)
 		expect(membership.get('bonapp')?.ids.has('a')).toBe(true)
-	})
-})
-
-describe('withUnknownArea', () => {
-	test('appends Unknown once areas have loaded', () => {
-		expect(withUnknownArea([DINING])).toEqual([DINING, UNKNOWN_AREA])
-	})
-
-	test('adds nothing before they load', () => {
-		expect(withUnknownArea([])).toEqual([])
 	})
 })
 

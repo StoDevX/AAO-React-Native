@@ -7,7 +7,7 @@ import {
 } from '@frogpond/ccc-jobs'
 import {now} from '@frogpond/timer'
 import {useQuery, type UseQueryResult} from '@tanstack/react-query'
-import {areaMembership, withUnknownArea, type AreaStatus, type StudentWorkArea} from './areas'
+import {areaMembership, type AreaStatus, type StudentWorkArea} from './areas'
 import {NO_AREAS, studentWorkAreasOptions} from './areas-query'
 import type {FilterContext} from './filters'
 import {newPostingIds} from './new-postings'
@@ -39,8 +39,7 @@ export function useStudentWorkBoard({
 		...jobPostingsOptions,
 		refetchOnMount: checkForNewPostings ? 'always' : true,
 	})
-	let {data: publishedAreas = NO_AREAS} = useQuery(studentWorkAreasOptions)
-	let areas = React.useMemo(() => withUnknownArea(publishedAreas), [publishedAreas])
+	let {data: areas = NO_AREAS} = useQuery(studentWorkAreasOptions)
 	let units = useQuery(postingUnitsOptions)
 	let availability = unitsAvailability(units)
 

@@ -96,7 +96,7 @@ const PostingUnitsSchema = z.record(z.string(), z.string().nullable())
 
 /// Each board posting's unit by posting ID, from ccc-server. A posting the
 /// server could not read is absent; one whose description names no unit is
-/// null.
+/// "unknown" (older servers sent null).
 export type PostingUnits = z.infer<typeof PostingUnitsSchema>
 
 /// One hour, as long as ccc-server caches its answer.

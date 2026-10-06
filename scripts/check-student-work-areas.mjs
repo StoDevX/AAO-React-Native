@@ -54,7 +54,10 @@ async function main() {
 	if (!units) throw new Error(`student-work: no ${REL_UNITS} link in data/sources.yaml`)
 
 	let areas = load(readFileSync(AREAS, 'utf8'))
+	// ccc-server publishes "unknown" for a posting with no readable unit number.
+	// The Unknown area holds those, but no edit places them, so they stay in the report.
 	let listedUnits = new Set(areas.flatMap((area) => area.units))
+	listedUnits.delete('unknown')
 
 	let [board, published] = await Promise.all([
 		fetchJson(requisitionsUrl(site)).then(parseRequisitions),

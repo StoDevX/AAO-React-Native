@@ -130,7 +130,7 @@ export function buildJobFilters(
 	)
 
 	return [
-		// Sixteen areas are too many rows for a pull-down menu.
+		// Seventeen areas are too many rows for a pull-down menu.
 		listFilter('area', 'Area', areaOrder, knownAreas, chosenAreaNames, 'sheet'),
 		listFilter(
 			'posted',
