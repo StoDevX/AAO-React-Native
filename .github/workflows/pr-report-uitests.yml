@@ -1,0 +1,84 @@
+name: PR report UI tests
+
+# The UI-test block of pr-report.yml's comment. The suite runs in ios.yml and
+# outlasts the rest of the report, so this writes the block when it completes.
+# It is a workflow of its own so that the privileged trigger, and the checks
+# it brings, stay out of pr-report.yml.
+on:
+  workflow_run: # zizmor: ignore[dangerous-triggers] -- reads the pull request's artifact as data only, and checks out and runs master's code
+    workflows: [iOS]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  uitest-report:
+    name: UI-test report
+    if: >-
+      ${{ github.event.workflow_run.event == 'pull_request'
+      && github.event.workflow_run.conclusion != 'cancelled'
+      && toJSON(github.event.workflow_run.pull_requests) != '[]' }}
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    # Shares the report job's group in pr-report.yml, so the two never edit the
+    # comment at once.
+    concurrency:
+      group: pr-report-comment-${{ github.event.workflow_run.pull_requests[0].number }}
+      cancel-in-progress: false
+    steps:
+      # A workflow_run checks out the default branch: master's scripts, never
+      # the pull request's.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      - name: Download the suite's report and master's
+        id: download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          mkdir -p head baseline
+          if ! gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir head/; then
+            echo "Run $RUN_ID has no UI-test report; the suite did not run."
+            exit 0
+          fi
+          base_sha=$(jq -r '.baseSha // empty' head/uitest-report.json 2>/dev/null || true)
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha" master uitest-report ios.yml)
+          if [ -z "$found" ]; then
+            echo "No master UI-test report at or before ${base_sha:-the base commit}."
+            exit 0
+          fi
+          echo "compared=${found#* }" >> "$GITHUB_OUTPUT"
+          gh run download "${found%% *}" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir baseline/ \
+            || echo "The report for ${found#* } could not be downloaded."
+
+      - name: Render the block
+        env:
+          COMPARED_SHA: ${{ steps.download.outputs.compared }}
+        run: |
+          node scripts/pr-report/uitest-report.mjs render \
+            --head head/uitest-report.json \
+            --baseline baseline/uitest-report.json \
+            --compared-sha "$COMPARED_SHA" \
+            --out block.md
+          if [ -f block.md ]; then
+            cat block.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Put the block in the comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          if [ -f block.md ]; then
+            scripts/pr-report/upsert-uitest-block.sh block.md
+          fi
