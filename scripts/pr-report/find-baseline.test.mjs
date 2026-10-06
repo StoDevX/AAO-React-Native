@@ -147,6 +147,16 @@ describe('find-baseline.sh --pull-request', () => {
 		assert.equal(out, `5 ${base}\n`)
 	})
 
+	it('looks past many label runs, which upload no reports', () => {
+		let labelRuns = Array.from({length: 12}, (_, i) => pr(100 - i, base, 'feature'))
+		let out = findBaseline(
+			{runs: [...labelRuns, pr(5, base, 'feature')], artifacts: {5: reports('size-report')}},
+			base,
+			'--pull-request',
+		)
+		assert.equal(out, `5 ${base}\n`)
+	})
+
 	it("never falls back to master's runs, even for a branch named master", () => {
 		let out = findBaseline(
 			{

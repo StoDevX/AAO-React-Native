@@ -60,9 +60,10 @@ first_with_artifact() {
 }
 
 if [ "$base_ref" = --pull-request ]; then
+	# Wide, since every size/accepted change adds a run with no reports.
 	gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
 		--event pull_request --commit "$base_sha" \
-		--limit 10 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null \
+		--limit 50 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null \
 		| first_with_artifact
 	exit 0
 fi
