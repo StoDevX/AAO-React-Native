@@ -1,7 +1,14 @@
 import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {fetchManifest, fetchSourceBody, SourceFetchError, type Jrd} from '@frogpond/data-sources'
+import {
+	fetchManifest,
+	fetchSourceBody,
+	ID_PROPERTY,
+	REL_NEWS,
+	SourceFetchError,
+	type Jrd,
+} from '@frogpond/data-sources'
 import posts from './fixtures/posts.json'
 import categories from './fixtures/categories.json'
 import profiles from './fixtures/profiles-390.json'
@@ -19,6 +26,7 @@ import {queryClient} from '../../../init/tanstack-query'
 import {
 	MissingMessStoryError,
 	messAboutOptions,
+	messCategoriesOptions,
 	messStaffOptions,
 	messCategoryOptions,
 	messFeedOptions,
@@ -77,6 +85,25 @@ function serve(answer: (href: string) => unknown): void {
 	mockBody.mockImplementation((href) =>
 		Promise.resolve(href.includes('/categories') ? categories : answer(href)),
 	)
+}
+
+/** The manifest once the Messenger's link names ccc-server's copy of the paper. */
+const PROXIED = {
+	subject: 'https://stolaf.edu',
+	links: [
+		{
+			rel: REL_NEWS,
+			href: 'news/mess/wp/v2/posts?per_page=50&_embed=true',
+			type: 'application/vnd.wordpress.v2.posts+json',
+			properties: {[ID_PROPERTY]: 'mess'},
+		},
+	],
+} as unknown as Jrd
+
+/** As `serve`, with the manifest naming ccc-server. */
+function serveProxied(answer: (href: string) => unknown): void {
+	serve(answer)
+	mockManifest.mockResolvedValue(PROXIED)
 }
 
 type RawPost = (typeof varietyPosts)[number]
@@ -689,5 +716,55 @@ describe('messIssueOptions', () => {
 		expect(
 			placeholder(shown, {queryKey: ['mess', 'issue', 'week:2026-05-04', [9, 8]]}),
 		).toBeUndefined()
+	})
+})
+
+describe('through ccc-server', () => {
+	test('asks ccc-server for the category tree', async () => {
+		serveProxied(() => [])
+
+		await run(messCategoriesOptions)
+
+		expect(fetchedHrefs()).toStrictEqual([
+			'news/mess/wp/v2/categories?per_page=100&_fields=id,name,parent',
+		])
+	})
+
+	test('asks ccc-server for a later page of the feed', async () => {
+		serveProxied(() => posts)
+
+		await runPage(messFeedOptions, 3)
+
+		expect(fetchedHrefs()).toContain('news/mess/wp/v2/posts?per_page=50&_embed=true&page=3')
+	})
+
+	test('asks ccc-server for one story by id', async () => {
+		serveProxied(() => posts[0])
+
+		let fetched = await run<MessStory>(messStoryOptions(36859))
+
+		expect(fetched.id).toBe(36859)
+		expect(fetchedHrefs()).toContain('news/mess/wp/v2/posts/36859?_embed=true')
+	})
+
+	test('asks ccc-server for the staff years, then the staff', async () => {
+		serveProxied((href) => (href.includes('/staff_year') ? staffYears : staff))
+
+		await run(messStaffOptions)
+
+		expect(fetchedHrefs()).toStrictEqual([
+			'news/mess/wp/v2/staff_year?hide_empty=true&per_page=100&_fields=id,name',
+			'news/mess/wp/v2/staff_profile?staff_year=1147&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded',
+		])
+	})
+
+	test("reads ccc-server's 400 for a page past the last as an empty last page", async () => {
+		serveProxied(() =>
+			Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)),
+		)
+
+		let page = await runPage<MessStory[]>(messFeedOptions, 7)
+
+		expect(page).toStrictEqual([])
 	})
 })
