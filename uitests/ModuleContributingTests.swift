@@ -8,12 +8,12 @@ class ModuleContributingTests: UITestCase {
 		let contributing = HomeScreen(app: app).checkHomescreenExists().openContributing()
 		let ids = TestIdentifiers.Contributing.self
 
-		let github = contributing.row(ids.github)
-		XCTAssertTrue(github.waitForExistence(timeout: 10), "Contributing should offer GitHub")
+		let appSource = contributing.row(ids.appSource)
+		XCTAssertTrue(appSource.waitForExistence(timeout: 10), "Contributing should offer the app's source")
 		for title in [ids.reportProblem, ids.email] {
 			let row = contributing.row(title)
 			XCTAssertTrue(row.exists, "\(title) should be on screen when Contributing opens")
-			XCTAssertLessThan(row.frame.minY, github.frame.minY, "\(title) should sit above GitHub")
+			XCTAssertLessThan(row.frame.minY, appSource.frame.minY, "\(title) should sit above the source code")
 		}
 		contributing.capture("contributing")
 
@@ -21,7 +21,7 @@ class ModuleContributingTests: UITestCase {
 		XCTAssertTrue(
 			contributing.host.waitForExistence(timeout: 10), "Closing the form should return to Contributing")
 
-		for title in [ids.openStreetMap, ids.firstDataSource] {
+		for title in [ids.cccServer, ids.openStreetMap, ids.firstDataSource] {
 			contributing.reveal(title)
 		}
 		contributing.capture("contributing-middle")

@@ -725,7 +725,8 @@ struct TestIdentifiers {
 	enum Contributing {
 		/// The Contributing screen's host, set in app/contributing/index.tsx.
 		static let screen = "screen-contributing"
-		static let github = "GitHub"
+		static let appSource = "All About Olaf"
+		static let cccServer = "ccc-server"
 		static let reportProblem = "Report a Problem"
 		static let openStreetMap = "OpenStreetMap"
 		/// The first entry of `dataSources` in source/features/contributing/data-sources.ts.
