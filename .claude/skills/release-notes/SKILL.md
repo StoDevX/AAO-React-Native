@@ -40,8 +40,15 @@ The project context for the user prompt:
 ```bash
 git fetch --tags origin
 git rev-parse --is-shallow-repository   # true: git fetch --unshallow origin
-git tag --merged "<tag>" --sort=-v:refname | grep -vx "<tag>"
+tag='<tag>'
+git tag --merged "$tag" --sort=-v:refname | grep -vx -- "$tag"
 ```
+
+Tag names come from the remote, and git allows `$` and `(` in them, which a
+shell would run. So a ref goes into a command only as the single-quoted value
+of a variable (`tag='v2.9.0'`, `prev='v2.8.0'`), set in the same command that
+uses it, and only after it matches `^[A-Za-z0-9._/-]+$`. Stop and tell the
+user about a tag that does not.
 
 The baseline is the first tag listed whose commit differs from the target's,
 or the root commit when there is none. `v2.9.0-rc.4` gets `v2.9.0-rc.3`. For
@@ -51,7 +58,7 @@ range you picked before going on.
 
 ## 3. Gather the context
 
-- **`git_log`**: `git log "<prev>..<tag>" --pretty=format:'%H %s' --reverse`
+- **`git_log`**: `git log "$prev..$tag" --pretty=format:'%H %s' --reverse`
 - **Referenced PRs**: each `#N` in a `(#N)` or a "Merge pull request #N from
   …" subject, in log order.
 - **Changelog entry**: the `CHANGELOG.md` section headed by the version, with
@@ -95,7 +102,8 @@ more than the PR descriptions. Walk the first-parent merges oldest first and
 give each commit to the first one that brings it in:
 
 ```bash
-git log --first-parent --reverse --format=%H "<prev>..<tag>" | while read m; do
+tag='<tag>' prev='<prev>'
+git log --first-parent --reverse --format=%H "$prev..$tag" | while read m; do
 	echo "M $m $(git show -s --format=%s "$m" | sed -nE 's/.*\(#([0-9]+)\)$/#\1/p; s/^Merge pull request #([0-9]+) .*/#\1/p')"
 	git rev-parse -q --verify "$m^2" >/dev/null && git rev-list --reverse "$m^1..$m^2" | sed 's/^/C /'
 done
