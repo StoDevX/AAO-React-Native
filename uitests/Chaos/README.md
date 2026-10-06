@@ -9,7 +9,14 @@ find the crashes and dead ends that no one thought to write a test for.
 Boot a simulator and start Metro for this checkout, then:
 
 ```bash
+# fuzzing: random usage
 mise run chaos:8081
+
+# session: more realistic user-like usage
+mise run chaos:8081 -- --session
+
+# prebuilt: skip the build when nothing native changed
+mise run chaos:8081 -- --session --prebuilt
 ```
 
 For a Metro on another port, name it:
