@@ -4,7 +4,7 @@ import {track} from '../../telemetry/track'
 import {MutedStationPage} from './muted-station-page'
 import {NativeStreamPlayer} from './native-player'
 import {useNowPlaying} from './use-now-playing'
-import {shippedStationSources, useStationSources, type StationSources} from './sources'
+import {shippedStreamUrl, useStationSources, type StationSources} from './sources'
 import {useStationSchedule} from './use-station-schedule'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
@@ -54,7 +54,6 @@ function StationPlayers({sources, ...player}: PlayersProps): React.ReactNode {
 	let [{streamSourceUrl: startingUrl, embeddedPlayerUrl}] = React.useState(sources)
 	let [streamSourceUrl, setStreamSourceUrl] = React.useState(startingUrl)
 	let stationId = player.station.id
-	let shippedUrl = shippedStationSources(stationId).streamSourceUrl
 	let played = React.useRef(false)
 
 	let {onPlay, onError} = player
@@ -64,6 +63,7 @@ function StationPlayers({sources, ...player}: PlayersProps): React.ReactNode {
 	}, [onPlay])
 	let handleError = React.useCallback(
 		(error: HtmlAudioError) => {
+			let shippedUrl = shippedStreamUrl(stationId)
 			if (!played.current && streamSourceUrl !== shippedUrl) {
 				// Counted, so that a broken manifest entry shows before the shipped stream fails too.
 				track({name: 'radio.stream.fallback', attributes: {station: stationId}})
@@ -72,7 +72,7 @@ function StationPlayers({sources, ...player}: PlayersProps): React.ReactNode {
 			}
 			onError?.(error)
 		},
-		[onError, streamSourceUrl, shippedUrl, stationId],
+		[onError, streamSourceUrl, stationId],
 	)
 
 	// Every station plays natively, which iOS can put in Control Center. A station

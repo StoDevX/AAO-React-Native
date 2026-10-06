@@ -8,7 +8,7 @@ import {
 	type StationNow,
 } from './now-playing'
 import {useSelectedLogo} from './player-view/use-logo-cycle'
-import {useStationSources} from './sources'
+import {useNowPlayingHref} from './sources'
 import type {Station} from './stations'
 import {useRadioStore} from './store'
 
@@ -33,7 +33,7 @@ export function useNowPlaying(
 			state.stationId === station.id &&
 			(state.playState === 'playing' || state.playState === 'starting'),
 	)
-	let url = useStationSources(station.id)?.nowPlayingUrl
+	let url = useNowPlayingHref(station.id)
 	let query = useQuery({
 		queryKey: ['radio-now-playing', station.id, url],
 		queryFn: ({signal}) => fetchStationNow(url ?? '', signal),

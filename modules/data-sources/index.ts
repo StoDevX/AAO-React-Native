@@ -1,5 +1,12 @@
 export {fetchSourceBody, isAbsoluteHref, SourceFetchError} from './fetch-source'
-export {fetchManifest, manifestOptions, resolveSource, resolveSources} from './resolve'
+export {
+	fetchManifest,
+	hasBundledSource,
+	manifestOptions,
+	resolveSource,
+	resolveSources,
+} from './resolve'
+export {useManifest} from './use-manifest'
 export {
 	ID_PROPERTY,
 	JrdSchema,

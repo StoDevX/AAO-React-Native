@@ -1,10 +1,10 @@
-import {useIsRestoring, useQuery} from '@tanstack/react-query'
 import {
-	manifestOptions,
+	hasBundledSource,
 	REL_RADIO_NOW_PLAYING,
 	REL_RADIO_PLAYER_PAGE,
 	REL_RADIO_STREAM,
 	resolveSource,
+	useManifest,
 	type Jrd,
 } from '@frogpond/data-sources'
 import {apiUrl} from '../../../lib/api-url'
@@ -47,9 +47,12 @@ export type StationSources = {
 const SHIPPED: Jrd = {subject: '', links: []}
 
 /**
- * A source a station may not have. A missing or unreadable published entry
- * still falls back to the shipped one, so a station that ships with a player
- * page cannot lose it to an edit of the manifest.
+ * A source a station may not have. One the app ships with is resolved as any
+ * other, so a missing or unreadable published entry falls back to the shipped
+ * one and a station cannot lose its player page to an edit of the manifest;
+ * and a shipped entry this build cannot use throws, as `resolveSource` does,
+ * rather than quietly dropping the source. One the app does not ship with is
+ * whatever the published manifest makes of it, or nothing.
  */
 function optionalHref(
 	manifest: Jrd,
@@ -57,6 +60,9 @@ function optionalHref(
 	id: StationId,
 	types: readonly string[],
 ): string | undefined {
+	if (hasBundledSource(rel, id)) {
+		return resolveSource(manifest, rel, id, types).href
+	}
 	try {
 		return resolveSource(manifest, rel, id, types).href
 	} catch {
@@ -118,27 +124,32 @@ export function stationSources(manifest: Jrd, stationId: StationId): StationSour
 	return {
 		streamSourceUrl: streamUrl(manifest, stationId),
 		embeddedPlayerUrl: playerPageUrl(manifest, stationId),
-		nowPlayingUrl: optionalHref(manifest, REL_RADIO_NOW_PLAYING, stationId, [NOW_PLAYING_TYPE]),
+		nowPlayingUrl: nowPlayingHref(manifest, stationId),
 	}
 }
 
-/** `stationId`'s sources as the app ships them. */
-export function shippedStationSources(stationId: StationId): StationSources {
-	return stationSources(SHIPPED, stationId)
+/** `stationId`'s song feed as `manifest` names it, else as shipped. */
+function nowPlayingHref(manifest: Jrd, stationId: StationId): string | undefined {
+	return optionalHref(manifest, REL_RADIO_NOW_PLAYING, stationId, [NOW_PLAYING_TYPE])
+}
+
+/** `stationId`'s stream as the app ships it. */
+export function shippedStreamUrl(stationId: StationId): string {
+	return streamUrl(SHIPPED, stationId)
 }
 
 /**
- * `stationId`'s sources from the manifest in the cache, however old, which a
- * fetch refreshes behind it; a failed fetch leaves the cached copy standing.
- * Only with nothing cached at all do the shipped entries stand in. While the
- * saved cache is still being read back there is no telling which it will be,
- * so this is undefined until it has been.
+ * `stationId`'s sources from the manifest in the cache, however old, else as
+ * shipped; undefined until the saved cache has been read back. See
+ * `useManifest`.
  */
 export function useStationSources(stationId: StationId): StationSources | undefined {
-	let restoring = useIsRestoring()
-	let {data: manifest} = useQuery(manifestOptions)
-	if (restoring) {
-		return undefined
-	}
-	return stationSources(manifest ?? SHIPPED, stationId)
+	let manifest = useManifest()
+	return manifest === undefined ? undefined : stationSources(manifest, stationId)
+}
+
+/** `stationId`'s song feed, as `useStationSources` would give it, without the rest. */
+export function useNowPlayingHref(stationId: StationId): string | undefined {
+	let manifest = useManifest()
+	return manifest === undefined ? undefined : nowPlayingHref(manifest, stationId)
 }

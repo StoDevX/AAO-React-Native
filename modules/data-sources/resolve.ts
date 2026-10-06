@@ -62,6 +62,13 @@ function find(manifest: Jrd, rel: string, id: string): ResolvedSource | undefine
 	return link ? toResolved(link) : undefined
 }
 
+/// Whether the bundled manifest has an entry for `rel` and `id`, of any type.
+/// A source the build ships with is one the app relies on; one it does not is
+/// optional, and only the published manifest may name it.
+export function hasBundledSource(rel: string, id: string): boolean {
+	return find(bundled, rel, id) !== undefined
+}
+
 /// Rules 2 and 3. A source that is missing, or that names a format this build
 /// has no parser for, falls back to its bundled entry — so publishing a new
 /// format tag cannot break installs that predate the parser. Rule 3 also
