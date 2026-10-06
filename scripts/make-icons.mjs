@@ -8,6 +8,9 @@
  *
  * Old Main (Retro) also gets its app icon set, which is stacked from the layers
  * of its document rather than exported, so its previews and its set differ.
+ *
+ * Lion and O is for Olaf have no document: their app icon sets are the artwork,
+ * and their previews are scaled down from it.
  */
 import {execFileSync} from 'node:child_process'
 import {mkdirSync, readdirSync, writeFileSync} from 'node:fs'
@@ -93,6 +96,65 @@ const SRGB_PROFILE = '/System/Library/ColorSync/Profiles/sRGB Profile.icc'
 
 /** The document's fill, which its opaque background covers; the set starts from it. */
 const RETRO_FILL = 'rgb(20,28,12)'
+
+/**
+ * The app icon sets drawn outside Icon Composer, whose light and dark images
+ * are committed as they are. Each lives at assets/<name>.xcassets/<name>.appiconset.
+ */
+const ARTWORK_SETS = ['lion', 'o-is-for-olaf']
+
+/** The corner radius, in preview pixels, that matches the mask ictool bakes into a preview. */
+const PREVIEW_CORNER_RADIUS = 90
+
+/**
+ * Each artwork set's previews, scaled from the set's image for the appearance.
+ *
+ * @returns {{input: string, output: string}[]}
+ */
+export function artworkPreviews() {
+	return ARTWORK_SETS.flatMap((name) =>
+		[
+			{suffix: '', image: 'light'},
+			{suffix: '-dark', image: 'dark'},
+		].map(({suffix, image}) => ({
+			input: join(SOURCE_DIR, `${name}.xcassets`, `${name}.appiconset`, `${image}.png`),
+			output: join(OUTPUT_DIR, `${name}${suffix}.png`),
+		})),
+	)
+}
+
+/**
+ * Scale an artwork image to preview size and round its corners, as ictool does
+ * for a document's render, since the app draws a preview as it is.
+ *
+ * @param {{input: string, output: string}} preview
+ */
+function scaleArtwork({input, output}) {
+	let size = POINTS * SCALE
+	let corner = PREVIEW_CORNER_RADIUS
+	execFileSync('magick', [
+		input,
+		'-filter',
+		'Lanczos',
+		'-resize',
+		`${size}x${size}`,
+		'(',
+		'-size',
+		`${size}x${size}`,
+		'xc:black',
+		'-fill',
+		'white',
+		'-draw',
+		`roundrectangle 0,0 ${size - 1},${size - 1} ${corner},${corner}`,
+		')',
+		'-alpha',
+		'off',
+		'-compose',
+		'CopyOpacity',
+		'-composite',
+		output,
+	])
+}
 
 /** @returns {Export[]} */
 export function retroPreviews() {
@@ -253,6 +315,12 @@ function main() {
 		])
 	}
 
+	let artwork = artworkPreviews()
+	for (let preview of artwork) {
+		console.log(`make-icons: ${preview.input} -> ${preview.output}`)
+		scaleArtwork(preview)
+	}
+
 	let setImages = retroSetImages()
 	for (let image of setImages) {
 		console.log(`make-icons: ${RETRO_DOCUMENT} -> ${image.output}`)
@@ -268,6 +336,7 @@ function main() {
 			'safe',
 			'--zopfli',
 			...plan.map((p) => p.output),
+			...artwork.flatMap((p) => [p.input, p.output]),
 			...setImages.map((i) => i.output),
 		],
 		{

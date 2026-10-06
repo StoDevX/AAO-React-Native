@@ -19,11 +19,13 @@ describe('iconsByGroup', () => {
 		expect(iconsByGroup().map((g) => g.group)).toEqual(['Classic', 'Windmill'])
 	})
 
-	it('keeps Classic to Big Ole and the two Old Main icons', () => {
+	it('keeps Classic to Big Ole, the two Old Main icons, the Lion and O is for Olaf', () => {
 		expect(iconsByGroup()[0].icons.map((i) => i.type)).toEqual([
 			'windmill',
 			'old-main',
 			'old-main-retro',
+			'lion',
+			'o-is-for-olaf',
 		])
 	})
 

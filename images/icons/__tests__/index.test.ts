@@ -4,18 +4,23 @@ import {describe, expect, it} from '@jest/globals'
 import {appIcons, iconFor, previewFor} from '../index'
 
 /**
- * The names of the Icon Composer documents in assets/, and of those kept in
- * assets/0-source-icons/ only to render a static app icon set from.
+ * The names of the Icon Composer documents in assets/, of those kept in
+ * assets/0-source-icons/ only to render a static app icon set from, and of the
+ * static app icon sets in assets/. Old Main (Retro) is both a source and a set.
  */
-const DOCUMENTS = ['assets', 'assets/0-source-icons'].flatMap((dir) =>
-	readdirSync(join(__dirname, '../../..', dir))
-		.filter((entry) => entry.endsWith('.icon'))
-		.map((entry) => entry.slice(0, -'.icon'.length)),
-)
+const ICONS = [
+	...new Set(
+		['assets', 'assets/0-source-icons'].flatMap((dir) =>
+			readdirSync(join(__dirname, '../../..', dir))
+				.filter((entry) => entry.endsWith('.icon') || entry.endsWith('.xcassets'))
+				.map((entry) => entry.slice(0, entry.lastIndexOf('.'))),
+		),
+	),
+]
 
 describe('appIcons', () => {
-	it('has previews for every Icon Composer document', () => {
-		expect(Object.keys(appIcons).toSorted()).toEqual(DOCUMENTS.toSorted())
+	it('has previews for every app icon', () => {
+		expect(Object.keys(appIcons).toSorted()).toEqual(ICONS.toSorted())
 	})
 })
 

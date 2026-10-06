@@ -15,6 +15,8 @@ export const ICONS: ReadonlyArray<IconEntry> = [
 	{title: 'Big Ole', type: 'windmill', group: 'Classic'},
 	{title: 'Old Main', type: 'old-main', group: 'Classic'},
 	{title: 'Old Main (Retro)', type: 'old-main-retro', group: 'Classic'},
+	{title: 'Lion', type: 'lion', group: 'Classic'},
+	{title: 'O is for Olaf', type: 'o-is-for-olaf', group: 'Classic'},
 	{title: 'Windmill (Sky)', type: 'windmill-sky', group: 'Windmill'},
 	{title: 'Windmill (Dawn)', type: 'windmill-dawn', group: 'Windmill'},
 	{title: 'Windmill (Golden Hour)', type: 'windmill-golden-hour', group: 'Windmill'},
