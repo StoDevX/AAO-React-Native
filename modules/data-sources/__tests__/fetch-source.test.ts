@@ -127,28 +127,6 @@ describe('fetchSourceBody', () => {
 		})
 	})
 
-	test('fails with the status when an absolute error body never finishes, without its code', async () => {
-		jest.useFakeTimers()
-		// headers arrive, then the body stalls
-		let stalled = {
-			ok: false,
-			status: 400,
-			headers: new Headers({'content-type': 'application/json'}),
-			text: () => new Promise<string>(() => undefined),
-		}
-		global.fetch = jest.fn(() => Promise.resolve(stalled)) as unknown as typeof fetch
-
-		let failure = fetchSourceBody(
-			'https://olafmessenger.com/wp-json/wp/v2/posts?page=54',
-			new AbortController().signal,
-			'Olaf Messenger',
-		)
-		let assertion = expect(failure).rejects.toMatchObject({status: 400, code: undefined})
-
-		await jest.advanceTimersByTimeAsync(10_000)
-		await assertion
-	})
-
 	test("keeps ky's error, which names the URL, as a relative failure's cause", async () => {
 		global.fetch = jest.fn(() =>
 			Promise.resolve(new Response('', {status: 502})),

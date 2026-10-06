@@ -64,32 +64,16 @@ function wordpressCode(body: unknown): string | undefined {
 	return typeof body.code === 'string' ? body.code : undefined
 }
 
-/// How long an error body has to arrive. Reading it only names the error's
-/// `code`, so a body that stalls costs the code, never the error itself:
-/// `fetchWithTimeout` has already let go of its timer and the caller's signal.
-const ERROR_BODY_TIMEOUT_MS = 2_000
-
-/// The largest error body read for its code. WordPress's are a few hundred bytes.
-const ERROR_BODY_MAX_BYTES = 64 * 1024
-
-/// An error body read as JSON, or undefined when it is not JSON, is larger
-/// than `ERROR_BODY_MAX_BYTES`, or does not arrive in `ERROR_BODY_TIMEOUT_MS`.
+/// An error body read as JSON, or undefined when it is not JSON. React Native's
+/// `fetch` (whatwg-fetch over XHR) resolves only once the whole body has
+/// arrived, inside `fetchWithTimeout`'s timer, so this reads what is already in
+/// memory and needs no bound of its own.
 async function errorBody(response: Response): Promise<unknown> {
 	if (!response.headers.get('content-type')?.includes('json')) return undefined
-	if (Number(response.headers.get('content-length') ?? 0) > ERROR_BODY_MAX_BYTES) return undefined
-
-	let timer: ReturnType<typeof setTimeout> | undefined
-	let gaveUp = new Promise<undefined>((resolve) => {
-		timer = setTimeout(resolve, ERROR_BODY_TIMEOUT_MS, undefined)
-	})
 	try {
-		let text = await Promise.race([response.text(), gaveUp])
-		if (text === undefined || text.length > ERROR_BODY_MAX_BYTES) return undefined
-		return JSON.parse(text) as unknown
+		return JSON.parse(await response.text()) as unknown
 	} catch {
 		return undefined
-	} finally {
-		clearTimeout(timer)
 	}
 }
 

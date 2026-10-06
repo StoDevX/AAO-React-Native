@@ -6,8 +6,10 @@ export function mergeRecordings(lines) {
 	let table = {}
 	for (let text of lines) {
 		if (!text.trim()) continue
-		let {href, format, body, status} = JSON.parse(text)
-		table[`${format} ${href}`] = status === undefined ? body : {status}
+		let {href, format, body, status, code} = JSON.parse(text)
+		// a failure keeps WordPress's code, which tells a page past the last from any other 400
+		let failure = code === undefined ? {status} : {status, code}
+		table[`${format} ${href}`] = status === undefined ? body : failure
 	}
 	return table
 }
