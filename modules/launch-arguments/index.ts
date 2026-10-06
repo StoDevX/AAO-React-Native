@@ -34,5 +34,5 @@ export const chaosFaultRate: number = LaunchArguments.chaosFaultRate
 export const chaosProfile: ChaosProfile = LaunchArguments.chaosProfile
 /** Running on a simulator, whatever the JS bundle. */
 export const isSimulator: boolean = LaunchArguments.isSimulator
-/** The native code was built in the Debug configuration, as every local build is. */
+/** The native code was built in the Debug configuration, as the UI tests' and `mise run device`'s are. */
 export const isDebugNativeBuild: boolean = LaunchArguments.isDebugNativeBuild
