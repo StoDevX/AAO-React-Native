@@ -13,6 +13,7 @@ import {openEmail} from '../../source/features/support/open-email'
 import {GH_BASE_URL} from '../../source/lib/constants'
 
 const OSM_URL = 'https://www.openstreetmap.org/'
+const CCC_SERVER_URL = 'https://github.com/frog-pond/ccc-server'
 
 const styles = StyleSheet.create({
 	host: {
@@ -52,12 +53,20 @@ export default function ContributingPage(): React.ReactNode {
 
 					<SheetSection title="We have source code">
 						<Blurb>
-							All About Olaf is open source. Read the code, report a bug, or send a change.
+							All About Olaf and the server behind it are open source on GitHub. Read the code,
+							report a bug, or send a change.
 						</Blurb>
 						<DisclosureRow
 							destination="external"
+							detail="This app"
 							onPress={() => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})}
-							title="GitHub"
+							title="All About Olaf"
+						/>
+						<DisclosureRow
+							destination="external"
+							detail="The server that gathers the app’s data"
+							onPress={() => trackedOpenUrl({url: CCC_SERVER_URL})}
+							title="ccc-server"
 						/>
 					</SheetSection>
 

@@ -189,7 +189,6 @@ export default function HomePage(): React.ReactNode {
 	// The saved layout loads after the first render. Drawing before then would
 	// draw the default and jump.
 	let hydrated = useHomeLayoutStore((state) => state.hydrated)
-	let setLayout = useHomeLayoutStore((state) => state.setLayout)
 	let barVisible = useRadioBarVisible()
 	let views = visibleViews(HomeViews(), {isDev})
 
@@ -205,22 +204,6 @@ export default function HomePage(): React.ReactNode {
 			</Stack.Toolbar>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="ellipsis">
-					<Stack.Toolbar.Menu inline={true} palette={true} title="Layout">
-						<Stack.Toolbar.MenuAction
-							icon="square.grid.2x2"
-							isOn={layout === 'tiled'}
-							onPress={() => setLayout('tiled')}
-						>
-							Tiled
-						</Stack.Toolbar.MenuAction>
-						<Stack.Toolbar.MenuAction
-							icon="list.bullet"
-							isOn={layout === 'list'}
-							onPress={() => setLayout('list')}
-						>
-							List
-						</Stack.Toolbar.MenuAction>
-					</Stack.Toolbar.Menu>
 					<Stack.Toolbar.Menu inline={true}>
 						<Stack.Toolbar.MenuAction
 							icon="lifepreserver"
