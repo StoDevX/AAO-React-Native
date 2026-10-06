@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {client, isHTTPError} from '@frogpond/api'
 
 const FETCH_TIMEOUT_MS = 10_000
 
@@ -57,7 +57,8 @@ export class SourceFetchError extends Error {
 /// resolves against the configured api root (honouring the Settings
 /// server-URL override and mDNS discovery) and already carries ky's 10-second
 /// default timeout. An absolute href bypasses the api root by design, so it
-/// gets the same 10-second timeout applied manually.
+/// gets the same 10-second timeout applied manually. An error status from
+/// either kind throws `SourceFetchError`.
 ///
 /// `format` picks the body parser: `'json'` (the default) for sources like
 /// WordPress's REST API, `'text'` for sources whose media type is not JSON —
@@ -69,8 +70,18 @@ export async function fetchSourceBody(
 	format: 'json' | 'text' = 'json',
 ): Promise<unknown> {
 	if (!isAbsoluteHref(href)) {
-		let request = client.get(href, {signal})
-		return format === 'text' ? request.text() : request.json()
+		try {
+			let request = client.get(href, {signal})
+			return await (format === 'text' ? request.text() : request.json())
+		} catch (error) {
+			// The same error an absolute source's refusal throws, so a caller reads a
+			// proxied source's status the way it reads a direct one's.
+			if (isHTTPError(error)) {
+				let {status} = error.response
+				throw new SourceFetchError(`${label} fetch failed: ${status}`, status)
+			}
+			throw error
+		}
 	}
 
 	let response = await fetchWithTimeout(href, signal)

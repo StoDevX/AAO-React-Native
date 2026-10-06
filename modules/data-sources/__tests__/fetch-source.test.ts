@@ -73,6 +73,27 @@ describe('fetchSourceBody', () => {
 		})
 	})
 
+	test.each([400, 404])(
+		'a relative href answered with %i throws a SourceFetchError carrying the status',
+		async (status) => {
+			global.fetch = jest.fn(() =>
+				Promise.resolve(new Response('{"code":"rest_post_invalid_page_number"}', {status})),
+			) as unknown as typeof fetch
+
+			let failure = fetchSourceBody(
+				'news/mess/wp/v2/posts?page=54',
+				new AbortController().signal,
+				'Olaf Messenger issues',
+			)
+
+			await expect(failure).rejects.toBeInstanceOf(SourceFetchError)
+			await expect(failure).rejects.toMatchObject({
+				status,
+				message: `Olaf Messenger issues fetch failed: ${status}`,
+			})
+		},
+	)
+
 	// This app's `AbortSignal` comes from react-native's `abort-controller`
 	// polyfill, which has no `AbortSignal.any`/`AbortSignal.timeout` statics
 	// (Node's own `AbortSignal` does, so a test using those would pass under
