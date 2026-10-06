@@ -314,6 +314,26 @@ function mainShard(args) {
 	writeFileSync(out, `${JSON.stringify(shard, null, '\t')}\n`)
 }
 
+/**
+ * Every shard file under `dir`, however the artifact download nested them. A
+ * suite that did not run has no shard artifacts, so downloading them creates
+ * no directory: that reads as no shards, not an error.
+ */
+export function readShardFiles(dir) {
+	let names
+	try {
+		names = readdirSync(dir, {recursive: true})
+	} catch (error) {
+		if (error.code === 'ENOENT') {
+			return []
+		}
+		throw error
+	}
+	return names
+		.filter((name) => name.endsWith('uitest-shard.json'))
+		.map((name) => JSON.parse(readFileSync(join(dir, name), 'utf8')))
+}
+
 function mainMerge(args) {
 	let {values, positionals} = parseArgs({
 		args,
@@ -321,9 +341,7 @@ function mainMerge(args) {
 		options: {sha: {type: 'string'}, 'base-sha': {type: 'string'}, result: {type: 'string'}},
 	})
 	let [dir, out] = positionals
-	let shards = readdirSync(dir, {recursive: true})
-		.filter((name) => name.endsWith('uitest-shard.json'))
-		.map((name) => JSON.parse(readFileSync(join(dir, name), 'utf8')))
+	let shards = readShardFiles(dir)
 	if (shards.length === 0) {
 		console.log('No shard reports; the suite did not run.')
 		return

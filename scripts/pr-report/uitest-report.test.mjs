@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import {mkdtempSync, writeFileSync} from 'node:fs'
+import {mkdirSync, mkdtempSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {describe, it} from 'node:test'
@@ -13,6 +13,7 @@ import {
 	extractBlock,
 	formatSeconds,
 	mergeShards,
+	readShardFiles,
 	readUitestReport,
 	spliceBlock,
 } from './uitest-report.mjs'
@@ -51,6 +52,22 @@ describe('buildShard', () => {
 			durations: {'FooTests/testA()': 12.5},
 			flaky: [{identifier: 'FooTests/testA()', attempts: 2}],
 		})
+	})
+})
+
+describe('readShardFiles', () => {
+	it('finds shard files however deeply the download nested them', () => {
+		let dir = mkdtempSync(join(tmpdir(), 'uitest-shards-'))
+		mkdirSync(join(dir, 'uitest-shard-1'))
+		mkdirSync(join(dir, 'uitest-shard-2'))
+		writeFileSync(join(dir, 'uitest-shard-1', 'uitest-shard.json'), '{"shard": "1"}')
+		writeFileSync(join(dir, 'uitest-shard-2', 'uitest-shard.json'), '{"shard": "2"}')
+		writeFileSync(join(dir, 'uitest-shard-2', 'other.json'), '{"shard": "x"}')
+		assert.deepEqual(readShardFiles(dir), [{shard: '1'}, {shard: '2'}])
+	})
+
+	it('reads a directory that does not exist as no shards', () => {
+		assert.deepEqual(readShardFiles(join(tmpdir(), 'uitest-shards-no-such-dir')), [])
 	})
 })
 
