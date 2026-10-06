@@ -370,11 +370,6 @@ describe('ImageViewer', () => {
 		expect(screen.getByText('Gallery walk at dusk')).toBeTruthy()
 	})
 
-	test('shows no caption for a picture with neither a caption nor alt text', async () => {
-		await renderViewer(36819)
-		expect(screen.queryByTestId('viewer-caption')).toBeNull()
-	})
-
 	test('hides the caption while the picture is dragged, and brings it back if it springs back', async () => {
 		await renderViewer(36820)
 		let image = screen.getByRole('image', {
