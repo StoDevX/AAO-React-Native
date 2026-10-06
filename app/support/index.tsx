@@ -16,7 +16,7 @@ import {useQuery} from '@tanstack/react-query'
 
 import {callPhone} from '../../source/components/call-phone'
 import {NavigationRow} from '../../source/components/rows'
-import {FILL_WIDTH} from '../../source/components/tile-layout'
+import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
 import {contactsOptions} from '../../source/features/directory/contacts-query'
 import {FaqBannerSlot} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
@@ -25,6 +25,11 @@ import {ShareTelemetryToggle} from '../../source/features/telemetry/consent-togg
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
+	},
+	// Above the Form, which insets its rows by about `SCREEN_MARGIN`.
+	banner: {
+		marginHorizontal: SCREEN_MARGIN,
+		marginTop: TILE_SPACING,
 	},
 })
 
@@ -56,53 +61,51 @@ export default function SupportPage(): React.ReactNode {
 		<>
 			<Stack.Title>Support</Stack.Title>
 
-			<Host modifiers={[accessibilityIdentifier('screen-support')]} style={styles.host}>
-				<Form>
-					<VStack
-						modifiers={[
-							listRowBackground('clear'),
-							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-							listRowSeparator('hidden'),
-						]}
-					>
-						<FaqBannerSlot target={FAQ_TARGETS.SETTINGS_ROOT} />
-					</VStack>
+			<Host matchContents={false} style={styles.host}>
+				<VStack spacing={0}>
+					{/* Above the Form rather than a row in it: a row with nothing
+					    in it, as when there is no banner, still takes a row's
+					    minimum height. */}
+					<FaqBannerSlot style={styles.banner} target={FAQ_TARGETS.SETTINGS_ROOT} />
+					{/* On the Form, not the Host: a Host's identifier reaches each
+					    child of the stack, and the empty banner slot would be found first. */}
+					<Form modifiers={[accessibilityIdentifier('screen-support')]}>
+						<HStack
+							modifiers={[
+								listRowBackground('clear'),
+								listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+								listRowSeparator('hidden'),
+							]}
+							spacing={12}
+						>
+							{buttons.map(({title, phoneNumber}) => (
+								<Button
+									key={title}
+									modifiers={[
+										...EMERGENCY_BUTTON,
+										accessibilityLabel(`Call ${title}`),
+										disabled(!phoneNumber),
+									]}
+									onPress={() => phoneNumber && callPhone(phoneNumber, {title: `Call ${title}`})}
+								>
+									<Text>{title}</Text>
+								</Button>
+							))}
+						</HStack>
 
-					<HStack
-						modifiers={[
-							listRowBackground('clear'),
-							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-							listRowSeparator('hidden'),
-						]}
-						spacing={12}
-					>
-						{buttons.map(({title, phoneNumber}) => (
-							<Button
-								key={title}
-								modifiers={[
-									...EMERGENCY_BUTTON,
-									accessibilityLabel(`Call ${title}`),
-									disabled(!phoneNumber),
-								]}
-								onPress={() => phoneNumber && callPhone(phoneNumber, {title: `Call ${title}`})}
-							>
-								<Text>{title}</Text>
-							</Button>
-						))}
-					</HStack>
+						<Section>
+							<NavigationRow onPress={() => router.navigate('/faq')} title="FAQs" />
+							<NavigationRow
+								onPress={() => router.navigate('/report-problem')}
+								title="Send Feedback"
+							/>
+						</Section>
 
-					<Section>
-						<NavigationRow onPress={() => router.navigate('/faq')} title="FAQs" />
-						<NavigationRow
-							onPress={() => router.navigate('/report-problem')}
-							title="Send Feedback"
-						/>
-					</Section>
-
-					<Section>
-						<ShareTelemetryToggle />
-					</Section>
-				</Form>
+						<Section>
+							<ShareTelemetryToggle />
+						</Section>
+					</Form>
+				</VStack>
 			</Host>
 		</>
 	)
