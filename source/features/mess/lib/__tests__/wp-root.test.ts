@@ -1,4 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
+import bundled from '@frogpond/data-sources/bundled.json'
+import {ID_PROPERTY, REL_NEWS} from '@frogpond/data-sources'
 import {wpRoot} from '../wp-root'
 
 describe('wpRoot', () => {
@@ -21,5 +23,16 @@ describe('wpRoot', () => {
 
 	test('refuses an href that is not a list of WordPress posts', () => {
 		expect(() => wpRoot('news/named/mess')).toThrow(/not a WordPress posts href/u)
+	})
+
+	// The manifest can move the Messenger between the paper and ccc-server without a release, so
+	// CI refuses an href this build could not find the REST root of before any phone sees it.
+	// `bundled.json` is `data/sources.yaml` as published, and CI checks the two match.
+	test("finds the REST root of the Messenger's href in the manifest", () => {
+		let link = bundled.links.find(
+			(entry) => entry.rel === REL_NEWS && entry.properties[ID_PROPERTY] === 'mess',
+		)
+		expect(link).toBeDefined()
+		expect(() => wpRoot(link?.href ?? '')).not.toThrow()
 	})
 })
