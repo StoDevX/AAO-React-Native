@@ -27,6 +27,9 @@ function start(): void {
 			isPrerelease: isDebugBuild(),
 			isConsented,
 		}),
+		// A disabled native SDK still installs its crash and hang trackers, and
+		// still flushes reports saved on disk when it starts.
+		enableNative: IS_REPORTING_BUILD,
 
 		tracesSampleRate: 0.2,
 		profilesSampleRate: 0.1,

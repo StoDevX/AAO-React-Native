@@ -81,13 +81,22 @@ describe.each([
 
 		expect(lastInitOptions()).toMatchObject({enabled: false})
 	})
+
+	// The native SDK's own trackers flush what they saved on disk at start.
+	it('does not start the native SDK', () => {
+		mockLaunch[flag] = true
+
+		launch()
+
+		expect(lastInitOptions()).toMatchObject({enableNative: false})
+	})
 })
 
 describe('starting Sentry', () => {
 	it('sends by default, with the device ID as the only user field', () => {
 		launch()
 
-		expect(lastInitOptions()).toMatchObject({enabled: true})
+		expect(lastInitOptions()).toMatchObject({enabled: true, enableNative: true})
 		expect(mockSentry.setUser).toHaveBeenCalledWith({id: 'id-1'})
 	})
 
