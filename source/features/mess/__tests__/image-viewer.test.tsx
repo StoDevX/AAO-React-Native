@@ -50,14 +50,18 @@ const COMIC: MessStory = {
 	},
 }
 
+const CAPTIONED_COMIC_IMAGE = {
+	url: 'https://olafmessenger.com/d.png',
+	width: 800,
+	height: 600,
+	caption: 'Week 3',
+}
+
 /** A comic whose picture carries a caption. */
 const CAPTIONED_COMIC: MessStory = {
 	...COMIC,
 	id: 36820,
-	layout: {
-		kind: 'image',
-		image: {url: 'https://olafmessenger.com/d.png', width: 800, height: 600, caption: 'Week 3'},
-	},
+	layout: {kind: 'image', image: CAPTIONED_COMIC_IMAGE},
 }
 
 /** An article whose lead photo has alt text but no caption. */
@@ -311,6 +315,30 @@ describe('ImageViewer', () => {
 		expect(screen.getByText('Photos from the "7 Feet for 7 Shots" march')).toBeTruthy()
 	})
 
+	test("shows a comic's alt text when its picture has no caption", async () => {
+		queryClient.setQueryData(
+			messKeys.feed,
+			onePage([
+				{
+					...COMIC,
+					id: 36821,
+					layout: {
+						kind: 'image',
+						image: {
+							url: 'https://olafmessenger.com/e.png',
+							width: 800,
+							height: 600,
+							caption: '',
+							alt: 'A strip about midterms',
+						},
+					},
+				},
+			]),
+		)
+		await renderViewer(36821)
+		expect(screen.getByText('A strip about midterms')).toBeTruthy()
+	})
+
 	test("shows a feature page's picture's alt text when it has no caption", async () => {
 		queryClient.setQueryData(
 			messKeys.feed,
@@ -358,6 +386,47 @@ describe('ImageViewer', () => {
 
 		await fireEvent(image, 'dragCancel')
 		expect(screen.getByText('Week 3')).toBeTruthy()
+	})
+
+	test('hides its buttons and caption on a tap of the picture, and brings them back on another', async () => {
+		await renderViewer(36820)
+		let image = screen.getByRole('image', {
+			name: 'Mouse Friends: sunsets of life, by Juliet Stouffer',
+		})
+
+		await fireEvent(image, 'singleTap')
+		expect(screen.queryByRole('button', {name: 'Close'})).toBeNull()
+		expect(screen.queryByText('Week 3')).toBeNull()
+
+		await fireEvent(image, 'singleTap')
+		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
+		expect(screen.getByText('Week 3')).toBeTruthy()
+	})
+
+	test('keeps an opened caption open through a drag that springs back', async () => {
+		let poem = 'Roses are red\nViolets are blue\nThe Mess prints it all\nAnd so should you'
+		queryClient.setQueryData(
+			messKeys.feed,
+			onePage([
+				{
+					...CAPTIONED_COMIC,
+					id: 36822,
+					layout: {kind: 'image', image: {...CAPTIONED_COMIC_IMAGE, caption: poem}},
+				},
+			]),
+		)
+		await renderViewer(36822)
+		await fireEvent(screen.getByText(poem), 'textLayout', {
+			nativeEvent: {lines: Array.from({length: 4}, () => ({text: '', height: 20}))},
+		})
+		await fireEvent.press(screen.getByRole('button', {name: 'Show more'}))
+
+		let image = screen.getByRole('image', {
+			name: 'Mouse Friends: sunsets of life, by Juliet Stouffer',
+		})
+		await fireEvent(image, 'dragStart')
+		await fireEvent(image, 'dragCancel')
+		expect(screen.getByRole('button', {name: 'Show less'})).toBeTruthy()
 	})
 
 	test('says the image is unavailable for a story without one, and can still close', async () => {

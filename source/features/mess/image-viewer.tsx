@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native'
 import {useQueries} from '@tanstack/react-query'
 import {ZoomImageViewer} from '../../components/zoom-image-viewer'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
+import {shownCaption} from './lib/alt'
 import {galleryPhotoLabel, imageLabel, photoLabel, picturePlace} from './lib/byline'
 import {shownPhotos} from './lib/gallery'
 import {messGalleryOptions} from './query'
@@ -26,7 +27,7 @@ function galleryPictureAt(
 		let photo = photos[index]
 		if (!photo) continue
 		let label = galleryPhotoLabel(story, gallery.credit, {index, count: photos.length})
-		return {url: photo.largeUrl ?? photo.url, label, caption: photo.caption || photo.alt || ''}
+		return {url: photo.largeUrl ?? photo.url, label, caption: shownCaption(photo)}
 	}
 	return null
 }
@@ -54,21 +55,20 @@ function pictureOf(
 			return {
 				url: photo.largeUrl ?? photo.url,
 				label: photoLabel(story, photo.caption),
-				// The caption, else the alt text when the paper wrote words in it.
-				caption: photo.caption || photo.alt || '',
+				caption: shownCaption(photo),
 			}
 		}
 		return galleryPictureAt(story, galleries, url)
 	}
 	let label = imageLabel(story, picturePlace(story, index))
 	if (story.layout.kind === 'image') {
-		let {url: uri, caption} = story.layout.image
-		return {url: uri, label, caption}
+		let {image} = story.layout
+		return {url: image.url, label, caption: shownCaption(image)}
 	}
 	if (story.layout.kind === 'feature') {
 		let image = story.layout.images[index]
 		if (!image) return null
-		return {url: image.largeUrl ?? image.url, label, caption: image.caption || image.alt || ''}
+		return {url: image.largeUrl ?? image.url, label, caption: shownCaption(image)}
 	}
 	return null
 }

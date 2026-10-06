@@ -8,9 +8,7 @@ import {
 	useWindowDimensions,
 	type TextLayoutEvent,
 } from 'react-native'
-
-/** Apple's smallest comfortable tap target, in points. */
-const TAP_TARGET = 44
+import {TAP_TARGET} from '../lib/tap-target'
 
 /** How many lines a caption takes before it is cut off with an ellipsis. */
 const COLLAPSED_LINES = 3
@@ -56,18 +54,22 @@ function Caption({text}: Props): React.ReactNode {
 		</Text>
 	)
 
+	let maxHeight = height * EXPANDED_HEIGHT
+
 	return (
-		<View style={styles.panel} testID="viewer-caption">
+		// Only the toggle and an opened caption's scroll view take touches; a pinch, a double tap
+		// or a drag to close that starts on the rest reaches the picture beneath.
+		<View pointerEvents="box-none" style={styles.panel} testID="viewer-caption">
 			{expanded ? (
 				<ScrollView
 					indicatorStyle="white"
-					style={{maxHeight: height * EXPANDED_HEIGHT}}
+					style={[styles.scroll, {maxHeight}]}
 					testID="viewer-caption-scroll"
 				>
 					{caption}
 				</ScrollView>
 			) : (
-				caption
+				<View pointerEvents="none">{caption}</View>
 			)}
 			{cutOff || expanded ? (
 				<Pressable
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 14,
 		paddingTop: 10,
 	},
+	scroll: {flexGrow: 0},
 	text: {color: 'white', fontSize: 15, lineHeight: 21, paddingBottom: 10},
 	toggle: {
 		alignItems: 'flex-start',

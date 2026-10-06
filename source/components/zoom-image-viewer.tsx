@@ -26,9 +26,7 @@ import {DragToDismissView} from '@frogpond/drag-to-dismiss'
 import {shareImage} from './lib/share-image'
 import {doubleTapZoom} from './lib/zoom'
 import {ViewerCaption} from './viewer-caption'
-
-/** Apple's smallest comfortable tap target, in points. */
-const TAP_TARGET = 44
+import {TAP_TARGET} from '../lib/tap-target'
 
 /** A button's symbol over the picture: white on a dark circle, filling the tap target. */
 const BUTTON_ICON = [
@@ -58,7 +56,8 @@ type Props = {
  * the picture's caption when it has one.
  * At its fitted size, a drag up or down carries the picture away and closes the viewer,
  * fading the black to show the screen beneath, so the viewer must be presented over that
- * screen. The buttons and the caption step aside for the drag, as Photos' controls do.
+ * screen. The buttons and the caption step aside for the drag, and a tap on the picture puts
+ * them away until the next, as Photos' controls do.
  *
  * The zooming view is a React Native `ScrollView`, because `@expo/ui` has no view that
  * zooms; the buttons over it are SwiftUI.
@@ -74,6 +73,10 @@ export function ZoomImageViewer({
 	let insets = useSafeAreaInsets()
 
 	let [dragging, setDragging] = React.useState(false)
+	// A tap on the picture puts the buttons and caption away, and another brings them back.
+	let [controlsHidden, setControlsHidden] = React.useState(false)
+	let onSingleTap = React.useCallback(() => setControlsHidden((hidden) => !hidden), [])
+	let controlsShown = !dragging && !controlsHidden
 
 	let scrollView = React.useRef<ScrollView>(null)
 	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events,
@@ -113,7 +116,7 @@ export function ZoomImageViewer({
 				showsVerticalScrollIndicator={false}
 				style={styles.fill}
 			>
-				<DoubleTapView onDoubleTap={onDoubleTap}>
+				<DoubleTapView onDoubleTap={onDoubleTap} onSingleTap={onSingleTap}>
 					<RNImage
 						accessibilityIgnoresInvertColors={true}
 						accessibilityLabel={image.accessibilityLabel}
@@ -142,61 +145,64 @@ export function ZoomImageViewer({
 			>
 				{content}
 			</DragToDismissView>
-			{dragging ? null : (
-				<>
-					<View
-						pointerEvents="box-none"
-						style={[
-							styles.overlay,
-							{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
-						]}
-					>
-						<View pointerEvents="box-none" style={styles.buttonRow}>
-							{image ? (
-								<Host style={[styles.buttonHost, styles.shareHost]}>
-									<Button
-										modifiers={[
-											buttonStyle('plain'),
-											accessibilityLabel('Share'),
-											accessibilityIdentifier(shareTestID),
-										]}
-										onPress={() => shareImage(image.uri).catch(() => undefined)}
-									>
-										<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
-									</Button>
-								</Host>
-							) : null}
-							<Host style={styles.buttonHost}>
+			{controlsShown ? (
+				<View
+					pointerEvents="box-none"
+					style={[
+						styles.overlay,
+						{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
+					]}
+				>
+					<View pointerEvents="box-none" style={styles.buttonRow}>
+						{image ? (
+							<Host style={[styles.buttonHost, styles.shareHost]}>
 								<Button
 									modifiers={[
 										buttonStyle('plain'),
-										accessibilityLabel('Close'),
-										accessibilityIdentifier(closeTestID),
+										accessibilityLabel('Share'),
+										accessibilityIdentifier(shareTestID),
 									]}
-									onPress={onClose}
+									onPress={() => shareImage(image.uri).catch(() => undefined)}
 								>
-									<Image modifiers={BUTTON_ICON} systemName="xmark" />
+									<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
 								</Button>
 							</Host>
-						</View>
+						) : null}
+						<Host style={styles.buttonHost}>
+							<Button
+								modifiers={[
+									buttonStyle('plain'),
+									accessibilityLabel('Close'),
+									accessibilityIdentifier(closeTestID),
+								]}
+								onPress={onClose}
+							>
+								<Image modifiers={BUTTON_ICON} systemName="xmark" />
+							</Button>
+						</Host>
 					</View>
-					{image?.caption ? (
-						<View
-							pointerEvents="box-none"
-							style={[
-								styles.captionOverlay,
-								{
-									paddingBottom: insets.bottom + 8,
-									paddingLeft: insets.left + 12,
-									paddingRight: insets.right + 12,
-								},
-							]}
-						>
-							<ViewerCaption text={image.caption} />
-						</View>
-					) : null}
-				</>
-			)}
+				</View>
+			) : null}
+			{image?.caption ? (
+				// Kept mounted while it is put away, so an opened caption stays open, at the place it
+				// was read to, when it comes back.
+				<View
+					accessibilityElementsHidden={!controlsShown}
+					importantForAccessibility={controlsShown ? 'auto' : 'no-hide-descendants'}
+					pointerEvents={controlsShown ? 'box-none' : 'none'}
+					style={[
+						styles.captionOverlay,
+						{
+							paddingBottom: insets.bottom + 8,
+							paddingLeft: insets.left + 12,
+							paddingRight: insets.right + 12,
+						},
+						controlsShown ? null : styles.putAway,
+					]}
+				>
+					<ViewerCaption text={image.caption} />
+				</View>
+			) : null}
 		</View>
 	)
 }
@@ -207,6 +213,7 @@ const styles = StyleSheet.create({
 	fill: {flex: 1},
 	overlay: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0},
 	captionOverlay: {position: 'absolute', right: 0, bottom: 0, left: 0},
+	putAway: {opacity: 0},
 	buttonRow: {flexDirection: 'row', justifyContent: 'flex-end', padding: 8},
 	buttonHost: {width: TAP_TARGET, height: TAP_TARGET},
 	// Share sits in the corner opposite Close, so a tap meant for one never lands on the other.

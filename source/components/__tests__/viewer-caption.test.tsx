@@ -7,8 +7,10 @@ import {ViewerCaption} from '../viewer-caption'
 
 loadBeforeTests('ScrollView', 'Text')
 
-// The test environment has no layout pass, so the lines a text broke into are sent by hand, as
-// the device sends them.
+/**
+ * Sends the lines a text broke into, as the device does after laying it out; the test
+ * environment has no layout pass to send them itself.
+ */
 async function lay(text: string, lineCount: number): Promise<void> {
 	await fireEvent(screen.getByText(text), 'textLayout', {
 		nativeEvent: {lines: Array.from({length: lineCount}, () => ({text: '', height: 20}))},

@@ -14,7 +14,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {useIsFocused} from 'expo-router'
 import {useKeepAwake} from 'expo-keep-awake'
-import {TAP_TARGET} from './lib/glyph-grid'
+import {TAP_TARGET} from '../../lib/tap-target'
 import {runsToMarkdown} from './lib/markdown'
 import {faded, ink, messRed} from './palette'
 import {SECTION_HEADING, StoryBlocks} from './story-blocks'

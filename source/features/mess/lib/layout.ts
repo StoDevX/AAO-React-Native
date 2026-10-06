@@ -31,21 +31,18 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 		case 'Comic':
 		case 'Artwork': {
 			if (input.photo) {
-				let {url, width, height} = input.photo
-				// The photo's caption, else its alt text when that reads as words.
-				let caption = input.photo.caption || input.photo.alt || ''
+				let {url, width, height, caption, alt} = input.photo
 				return {
-					layout: {kind: 'image', image: {url, width, height, caption}},
+					layout: {kind: 'image', image: {url, width, height, caption, ...(alt ? {alt} : {})}},
 					blocks: input.blocks,
 				}
 			}
 			let index = input.blocks.findIndex((b) => b.type === 'figure')
 			let figure = input.blocks[index]
 			if (figure?.type !== 'figure') return {layout: {kind: 'article'}, blocks: input.blocks}
-			let {url, width, height} = figure
-			let caption = figure.caption || figure.alt || ''
+			let {url, width, height, caption, alt} = figure
 			return {
-				layout: {kind: 'image', image: {url, width, height, caption}},
+				layout: {kind: 'image', image: {url, width, height, caption, ...(alt ? {alt} : {})}},
 				blocks: input.blocks.filter((_, i) => i !== index),
 			}
 		}
