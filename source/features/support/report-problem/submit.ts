@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/react-native'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
-import {IS_PRODUCTION} from '@frogpond/constants'
 
+import {IS_REPORTING_BUILD} from '../../../init/reporting-build'
 import {SUPPORT_EMAIL} from '../../../lib/constants'
 import {useTelemetryStore} from '../../telemetry/store'
 
@@ -27,7 +27,7 @@ type SubmitReportArgs = {
 export type SubmitResult = 'sent' | 'disabled' | 'opted-out'
 
 export function submitReport(args: SubmitReportArgs): SubmitResult {
-	if (!IS_PRODUCTION) {
+	if (!IS_REPORTING_BUILD) {
 		return 'disabled'
 	}
 	// Sentry is closed once sharing is off, so a report sent now would vanish.

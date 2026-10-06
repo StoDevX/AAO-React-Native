@@ -6,6 +6,7 @@ import '../source/init/constants'
 import '../source/init/logbox'
 import '../source/init/moment'
 import * as sentryInit from '../source/init/sentry'
+import {IS_REPORTING_BUILD} from '../source/init/reporting-build'
 import '../source/init/api'
 import {queryClient, persistOptions} from '../source/init/tanstack-query'
 import {useScreenViews} from '../source/features/telemetry/use-screen-views'
@@ -28,7 +29,6 @@ import {Stack, useNavigationContainerRef} from 'expo-router'
 import * as Sentry from '@sentry/react-native'
 
 import {LoadingView} from '@frogpond/notice'
-import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 import {RootErrorBoundary} from '../source/components/root-error-boundary'
@@ -94,7 +94,7 @@ function RootLayout(): React.ReactNode {
 	}, [])
 
 	React.useEffect(() => {
-		if (!IS_PRODUCTION) {
+		if (!IS_REPORTING_BUILD) {
 			return
 		}
 

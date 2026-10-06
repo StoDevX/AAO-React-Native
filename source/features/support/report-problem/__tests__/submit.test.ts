@@ -21,7 +21,7 @@ jest.mock('expo-sqlite/kv-store', () => ({
 	Storage: {getItemSync: () => null, setItemSync: () => undefined, removeItemSync: () => true},
 }))
 jest.mock('expo-crypto', () => ({randomUUID: () => 'id-1'}))
-jest.mock('@frogpond/constants', () => ({IS_PRODUCTION: true}))
+jest.mock('../../../../init/reporting-build', () => ({IS_REPORTING_BUILD: true}))
 jest.mock('expo-device', () => ({
 	brand: 'Apple',
 	modelName: 'iPhone 14 Pro',
@@ -145,10 +145,10 @@ describe('reportEmail', () => {
 	})
 })
 
-describe('submitReport in non-production', () => {
+describe('submitReport in a build that sends nothing', () => {
 	it('reports that Sentry is disabled and does not call Sentry.captureFeedback', () => {
 		jest.resetModules()
-		jest.doMock('@frogpond/constants', () => ({IS_PRODUCTION: false}))
+		jest.doMock('../../../../init/reporting-build', () => ({IS_REPORTING_BUILD: false}))
 		jest.doMock('@sentry/react-native', () => ({captureFeedback: jest.fn()}))
 		const SentryDev =
 			// oxlint-disable-next-line typescript/no-require-imports -- re-require after jest.doMock to pick up the mocked deps
