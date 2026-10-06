@@ -2,7 +2,10 @@ import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Form, Grid, Host, LabeledContent, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
+	accessibilityHint,
 	accessibilityIdentifier,
+	contentShape,
 	fixedSize,
 	font,
 	foregroundStyle,
@@ -11,8 +14,11 @@ import {
 	listRowInsets,
 	listRowSeparator,
 	multilineTextAlignment,
+	onTapGesture,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as Application from 'expo-application'
+import Constants from 'expo-constants'
 import * as c from '@frogpond/colors'
 import {SheetSection} from '@frogpond/sheet-section'
 import {Stack, useRouter} from 'expo-router'
@@ -22,7 +28,7 @@ import {PagedSection, type Card} from '../../source/features/about/card-carousel
 import {acknowledgements, contributors, creditRows} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
 import {INTRO, timeline} from '../../source/features/about/timeline'
-import {formatVersion} from '../../source/features/about/version'
+import {versionDetails} from '../../source/features/about/version'
 
 const styles = StyleSheet.create({
 	host: {
@@ -48,12 +54,17 @@ const credits = [
 	{id: 'acknowledgements', heading: 'Acknowledgements', names: acknowledgements},
 ]
 
-const version = formatVersion(Application.nativeApplicationVersion, Application.nativeBuildVersion)
+const versions = versionDetails(
+	Application.nativeApplicationVersion,
+	Application.nativeBuildVersion,
+	Constants.expoConfig?.extra?.commit as string | undefined,
+)
 
 /// Who we are: what the app is and where it came from, who made it, and the policies that govern it.
 export default function AboutPage(): React.ReactNode {
 	let router = useRouter()
 	let {fontScale} = useWindowDimensions()
+	let [versionIndex, setVersionIndex] = React.useState(0)
 
 	return (
 		<>
@@ -82,8 +93,17 @@ export default function AboutPage(): React.ReactNode {
 					</VStack>
 
 					<SheetSection>
-						<LabeledContent label="App Version">
-							<Text>{version}</Text>
+						<LabeledContent
+							label="App Version"
+							modifiers={[
+								// The whole row takes the tap, not only its text.
+								contentShape(shapes.rectangle()),
+								onTapGesture(() => setVersionIndex((index) => (index + 1) % versions.length)),
+								accessibilityAddTraits(['isButton']),
+								accessibilityHint('Shows the build number and commit'),
+							]}
+						>
+							<Text>{versions[versionIndex]}</Text>
 						</LabeledContent>
 					</SheetSection>
 

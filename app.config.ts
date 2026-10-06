@@ -49,22 +49,30 @@ if (!(requested in VARIANTS)) {
 const variant = VARIANTS[requested as keyof typeof VARIANTS]
 
 /**
- * The build number: Xcode Cloud's, when it sets one. A local build has no such
- * counter, so it takes the short git SHA of the checkout, which says which
- * commit a device is running. A SHA is not a number, so this suits a build to
- * your own device, never an upload to App Store Connect (CI always sets one).
- * Falls back to a fixed number outside a git checkout.
+ * The short git SHA of the checkout, which says which commit a build came
+ * from. Undefined outside a git checkout.
  */
-function localBuildNumber(): string {
+function commitSha(): string | undefined {
 	try {
 		return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
 			encoding: 'utf8',
 			stdio: ['ignore', 'pipe', 'ignore'],
 		}).trim()
 	} catch {
-		return '17'
+		return undefined
 	}
 }
+
+const commit = commitSha()
+
+/**
+ * The build number: Xcode Cloud's, when it sets one. A local build has no such
+ * counter, so it takes the commit's SHA, which says which commit a device is
+ * running. A SHA is not a number, so this suits a build to your own device,
+ * never an upload to App Store Connect (CI always sets one). Falls back to a
+ * fixed number outside a git checkout.
+ */
+const buildNumber = process.env.CI_BUILD_NUMBER ?? commit ?? '17'
 
 /**
  * The declarative description of the iOS project.
@@ -111,7 +119,7 @@ const config: ExpoConfig = {
 		icon: './assets/windmill.icon',
 		// Xcode Cloud's build number becomes an input to generation rather than
 		// something agvtool edits afterwards.
-		buildNumber: process.env.CI_BUILD_NUMBER ?? localBuildNumber(),
+		buildNumber,
 		supportsTablet: true,
 
 		// Expo's schema covers both keys the PrivacyInfo.xcprivacy needs, so no
@@ -250,7 +258,7 @@ const config: ExpoConfig = {
 		},
 	},
 
-	extra: {fullVersion},
+	extra: {fullVersion, commit},
 
 	plugins: [
 		[
