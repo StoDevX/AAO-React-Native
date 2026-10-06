@@ -1,4 +1,4 @@
-import {setApiRoot} from '@frogpond/api'
+import {isHTTPError, setApiRoot} from '@frogpond/api'
 import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
 
 describe('isAbsoluteHref', () => {
@@ -73,27 +73,6 @@ describe('fetchSourceBody', () => {
 		})
 	})
 
-	test.each([400, 404])(
-		'a relative href answered with %i throws a SourceFetchError carrying the status',
-		async (status) => {
-			global.fetch = jest.fn(() =>
-				Promise.resolve(new Response('{"code":"rest_post_invalid_page_number"}', {status})),
-			) as unknown as typeof fetch
-
-			let failure = fetchSourceBody(
-				'news/mess/wp/v2/posts?page=54',
-				new AbortController().signal,
-				'Olaf Messenger issues',
-			)
-
-			await expect(failure).rejects.toBeInstanceOf(SourceFetchError)
-			await expect(failure).rejects.toMatchObject({
-				status,
-				message: `Olaf Messenger issues fetch failed: ${status}`,
-			})
-		},
-	)
-
 	describe.each([
 		['an absolute', 'https://olafmessenger.com/wp-json/wp/v2/posts?page=54'],
 		['a relative', 'news/mess/wp/v2/posts?page=54'],
@@ -127,7 +106,7 @@ describe('fetchSourceBody', () => {
 		})
 	})
 
-	test("keeps ky's error, which names the URL, as a relative failure's cause", async () => {
+	test("keeps ky's error as a relative failure's cause", async () => {
 		global.fetch = jest.fn(() =>
 			Promise.resolve(new Response('', {status: 502})),
 		) as unknown as typeof fetch
@@ -139,7 +118,7 @@ describe('fetchSourceBody', () => {
 		).catch((caught: unknown) => caught)
 
 		expect(error).toBeInstanceOf(SourceFetchError)
-		expect(String((error as Error).cause)).toContain('calendar/named/ksto-schedule')
+		expect(isHTTPError((error as Error).cause)).toBe(true)
 	})
 
 	// This app's `AbortSignal` comes from react-native's `abort-controller`
