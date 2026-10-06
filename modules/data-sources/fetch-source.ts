@@ -40,15 +40,36 @@ async function fetchWithTimeout(href: string, signal: AbortSignal): Promise<Resp
 	}
 }
 
-/// An absolute source that answered with an error status, carrying the status so a caller can
-/// tell one kind of refusal from another.
+/// A source, absolute or relative, that answered with an error status. It carries the status,
+/// and the `code` a WordPress error body names (`rest_post_invalid_page_number`), so a caller can
+/// tell one kind of refusal from another. A relative source's `cause` is ky's error, which names
+/// the URL.
 export class SourceFetchError extends Error {
+	readonly code: string | undefined
+
 	constructor(
 		message: string,
 		readonly status: number,
+		{code, cause}: {code?: string | undefined; cause?: unknown} = {},
 	) {
-		super(message)
+		super(message, {cause})
 		this.name = 'SourceFetchError'
+		this.code = code
+	}
+}
+
+/// The `code` a WordPress error body names, or undefined for any other body.
+function wordpressCode(body: unknown): string | undefined {
+	if (typeof body !== 'object' || body === null || !('code' in body)) return undefined
+	return typeof body.code === 'string' ? body.code : undefined
+}
+
+/// An error body read as JSON, or undefined when it is not JSON.
+async function errorBody(response: Response): Promise<unknown> {
+	try {
+		return JSON.parse(await response.text()) as unknown
+	} catch {
+		return undefined
 	}
 }
 
@@ -78,7 +99,10 @@ export async function fetchSourceBody(
 			// proxied source's status the way it reads a direct one's.
 			if (isHTTPError(error)) {
 				let {status} = error.response
-				throw new SourceFetchError(`${label} fetch failed: ${status}`, status)
+				throw new SourceFetchError(`${label} fetch failed: ${status}`, status, {
+					code: wordpressCode(error.data),
+					cause: error,
+				})
 			}
 			throw error
 		}
@@ -86,7 +110,10 @@ export async function fetchSourceBody(
 
 	let response = await fetchWithTimeout(href, signal)
 	if (!response.ok) {
-		throw new SourceFetchError(`${label} fetch failed: ${response.status}`, response.status)
+		let code = wordpressCode(await errorBody(response))
+		throw new SourceFetchError(`${label} fetch failed: ${response.status}`, response.status, {
+			code,
+		})
 	}
 
 	return format === 'text' ? response.text() : response.json()

@@ -174,7 +174,13 @@ describe('messFeedOptions', () => {
 	})
 
 	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
-		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+		serve(() =>
+			Promise.reject(
+				new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+					code: 'rest_post_invalid_page_number',
+				}),
+			),
+		)
 
 		let page = await runPage<MessStory[]>(messFeedOptions, 7)
 
@@ -333,7 +339,13 @@ describe('messCategoryOptions', () => {
 	})
 
 	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
-		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+		serve(() =>
+			Promise.reject(
+				new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+					code: 'rest_post_invalid_page_number',
+				}),
+			),
+		)
 
 		expect(await runPage(messCategoryOptions(23), 4)).toStrictEqual([])
 	})
@@ -617,7 +629,11 @@ describe('messIssuesOptions', () => {
 	// multiple of a hundred, since the last page is then full.
 	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
 		serve(() =>
-			Promise.reject(new SourceFetchError('Olaf Messenger issues fetch failed: 400', 400)),
+			Promise.reject(
+				new SourceFetchError('Olaf Messenger issues fetch failed: 400', 400, {
+					code: 'rest_post_invalid_page_number',
+				}),
+			),
 		)
 
 		let page = await runPage<LightPost[]>(messIssuesOptions, 54)
@@ -760,7 +776,11 @@ describe('through ccc-server', () => {
 
 	test("reads ccc-server's 400 for a page past the last as an empty last page", async () => {
 		serveProxied(() =>
-			Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)),
+			Promise.reject(
+				new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+					code: 'rest_post_invalid_page_number',
+				}),
+			),
 		)
 
 		let page = await runPage<MessStory[]>(messFeedOptions, 7)
