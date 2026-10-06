@@ -9,7 +9,14 @@ find the crashes and dead ends that no one thought to write a test for.
 Boot a simulator and start Metro for this checkout, then:
 
 ```bash
+# fuzzing: random usage
 mise run chaos:8081
+
+# session: more realistic user-like usage
+mise run chaos:8081 -- --session
+
+# prebuilt: skip the build when nothing native changed
+mise run chaos:8081 -- --session --prebuilt
 ```
 
 For a Metro on another port, name it:
@@ -26,7 +33,11 @@ That runs a random seed for ten minutes and writes everything it saw to
 | `--fault-rate <0–1>` | Share of requests to break (default `0.25`) |
 | `--replay logs/chaos/<seed>` | Replay a run against its recorded responses |
 | `--prebuilt` | Skip the build when nothing native changed |
+| `--bundled` | Embed the JavaScript from `mise run bundle:ios` in the build, so no Metro is needed |
+| `--simulator <name>` / `--udid <udid>` | The booted simulator to run on, when several are booted |
 | `--overwrite` | Record over an earlier run of the same seed |
+| `--rotate` | Let the monkey turn the device; without it, a rotate step does nothing |
+| `--session` | Run a realistic session instead of a fuzzer; see Sessions |
 
 A run refuses to record into a `logs/chaos/<seed>/` that already exists, so
 re-running a seed never deletes the evidence of the last one; pass
@@ -47,6 +58,28 @@ The exit code says what happened:
 | 1 | It found something |
 | 2 | It never started, or its result couldn't be read |
 
+## Sessions
+
+`mise run chaos -- --session` runs the same engine as a realistic session, to
+catch the bugs real users hit rather than the ones only hostile input reaches.
+
+| | Fuzzing | Session |
+| --- | --- | --- |
+| Start | fresh install | fresh once, then never reset |
+| Getting around | taps, and opening routes by URL, which relaunches | taps, and a link into the running app when no new screen has appeared in 40 steps |
+| Typed text | hostile strings | strings the app received, whole or a prefix |
+| Network | 25% of requests faulted | offline windows of 5–30 s, and 5% faulted outside them |
+| Events | background; rotation with `--rotate` | background for 2–120 s; killed and cold-started with its saved state |
+
+After 40 steps without a new screen, a session opens a top-level route by URL
+in the running app, as a widget's link does, rather than relaunching it. A
+session's `type` step types what the app has received so far, so a replay
+that receives it at a different moment can type something else.
+
+Every run writes `run.json` with its profile and rotation, and a replay takes
+both from it. A finding made in the first minute of a launch a kill began is summarised as
+its kind `(cold start)`: it came from restoring saved state.
+
 ## Reading a Finding
 
 A run that exits 1 found something. In `logs/chaos/<seed>/`:
@@ -54,18 +87,25 @@ A run that exits 1 found something. In `logs/chaos/<seed>/`:
 1. **`outcome.json`** names the stop reason. `native crash`, `hang`,
    `error screen` and `js: <kind>: <message>` come from the monkey; a
    stopping line in the findings file can fail the run on its own.
-2. **`attachments/`** holds the evidence:
+2. **`attachments/`** holds the evidence, each file named for what it is:
    - the `chaos stop screen` screenshot, taken as the monkey stopped and named
      for its orientation. XCTest's own failure screenshot is taken after the
      device turns back to portrait, so trust this one;
    - the `chaos trapped screen` screenshot, when the monkey found a screen with
      nothing to press;
-   - `chaos-steps.jsonl`, every action with its target and orientation;
+   - `chaos-steps.jsonl`, every action with its target, the target's type and
+     frame, and orientation;
    - `chaos-warnings.txt`, things worth a look that didn't stop the run.
 3. **`chaos-findings.jsonl`** is what the app's probe saw: fatal errors,
-   unhandled rejections, `console.error` calls, and attempts to leave the app.
+   unhandled rejections, `console.error` calls, attempts to leave the app,
+   mutations, and stalls, where the JS thread was busy for more than a second.
 4. **`chaos-tape-<launch>.jsonl`** is every response the app received, faults
    included: one file per launch, since opening a route relaunches the app.
+5. **Mutations.** A `mutation` finding names the request, the JSON path and
+   the change, e.g. `3 GET https://…/menu #0 $.items[2].label: "Lunch" → ""`.
+   When a run stops, the summary lists the mutations from the launch that
+   stopped. A mutation keeps the body's shape, so a stop after one is data a
+   server could send; judge whether it would.
 
 Then decide whose bug it is:
 
@@ -85,7 +125,34 @@ Then decide whose bug it is:
 - `no escape hatch`: the monkey found a screen with nothing to press and had
   to rotate, drag or swipe its way out. A person may be stuck there.
 - `escaped the app`: something sent the app to the background.
-- `system alert`: a permission prompt appeared and the monkey dismissed it.
+- `system alert`: a SpringBoard alert, such as a permission prompt or the
+  icon-change notice, appeared and the monkey dismissed it. The monkey taps
+  through SpringBoard, so an alert that keeps the app from going quiet never
+  holds a tap up.
+- `stuck spinner`: in a session, a loading spinner still up 20 seconds after an
+  offline window ended.
+- `unlabelled`: a button, link, switch, tab, segmented control or slider
+  that VoiceOver has no name for. Cells and layout read their children, so
+  they are not checked.
+- `small target`: something to press narrower or shorter than 44pt, other
+  than the system's own: bar items, the Back button, the sheet grabber and
+  switches. XCUITest
+  sees the frame, not a `hitSlop`, so a control that is bigger to the touch
+  is a false alarm: give it a 44pt frame, or add its identifier to
+  `TestIdentifiers.Chaos.smallTargetAllowList` with a comment saying why.
+
+### The Summary
+
+Under its outcome, a run prints everything it saw that did not stop it,
+counted: the monkey's warnings by kind, console errors and stalls by their
+first line, and mutations and attempts to leave the app as totals. The full
+summary is in `outcome.json`. When a run stops, the mutations fed to the
+launch that stopped are listed first.
+
+`scripts/chaos-ignore.json` hides a warning or finding the team has decided
+is not worth a look. It starts empty. Each entry names a `kind`, a `match`
+the text must contain, and `why`; a run refuses an entry without a reason.
+What it hides is still counted as `ignored`.
 
 ## Replaying a Run
 
@@ -108,6 +175,9 @@ record the seed again. A replay reports one of:
 - `not reached`: its budget ran out first.
 - `diverged at step K`: it did something the recording did not.
 
+A run recorded before tap weighting and the developer routes' removal no
+longer replays step for step; record the seed again.
+
 Replay is best-effort. Timing, and anything that doesn't go through JS `fetch`
 (images, WebViews, map tiles), can still differ.
 
@@ -121,7 +191,7 @@ Replay is best-effort. Timing, and anything that doesn't go through JS `fetch`
   replay fetches them live. The tape holds text, and React Native cannot
   rebuild a body with a NUL in it from a string: reading it back as bytes
   crashes the app.
-- **Sheets in landscape** fill the screen on iPhone and ignore a drag down, so
+- **Sheets in landscape**, with `--rotate`, fill the screen on iPhone and ignore a drag down, so
   the monkey can only leave one by rotating.
 - **A fatal under a modal** can hide from the beacon until the modal closes.
   The findings file still catches it at the end of the run, but the stop
@@ -154,9 +224,11 @@ Two halves talk through one hidden view.
 | --- | --- |
 | `install.ts` | Wires everything up at launch; imported first in `app/_layout.tsx` |
 | `fetch.ts` | Wraps `fetch`: breaks some requests, and records or replays each answer |
-| `faults.ts` | Picks a fault per request: latency, a 404 or 500, a network failure, or an empty, malformed or truncated body |
+| `faults.ts` | Picks a fault per request: half the time a mutation, else latency, a 404 or 500, a network failure, or an empty, malformed or truncated body |
+| `mutate.ts` | Changes one value in a JSON body to another of the same type: an array emptied, cut to one or lengthened, a string made empty, long or unusual, a number made 0, negative or huge, a boolean flipped |
 | `tape.ts` | Names each launch's tape, and keys responses by launch, method and URL |
 | `probe.ts` | Catches fatal errors, unhandled rejections and `console.error` |
+| `stall.ts` | Records a `stall` when a 250ms timer fires more than a second late, ignoring the launch and a return from the background |
 | `findings.ts` | Writes findings to `chaos-findings.jsonl` and feeds the beacon |
 | `guard.tsx` | An error boundary around the app, and the beacon: a 1×1 view labelled with the first stopping finding |
 | `blocked.ts` | URLs a run must never reach |
@@ -174,6 +246,7 @@ transparent view from the accessibility tree XCUITest reads.
 | `ChaosOracle.swift` | Reads the screen in one snapshot and decides whether to stop |
 | `ChaosAction.swift` | The actions and how often each is picked |
 | `ChaosRandom.swift` | The seeded random generator |
+| `ChaosWeighting.swift` | The weighted pick that favours targets and routes used least |
 | `ChaosRoutes.swift` | Every route in `app/`, generated |
 | `ChaosTests.swift` | `testChaos`, and the canaries that prove the oracles can see |
 
@@ -188,7 +261,9 @@ builds, runs the test, collects the files, and decides the exit code.
 | Stop another way out of the app | Guard it with `isChaos` and `reportOutOfApp`, as `openUrl` does |
 | Recognise another error screen | `TestIdentifiers.Chaos.errorScreenIdentifiers`, or `errorScreenLabels` when it has no identifier |
 | Change how often an action happens | `weight` in `ChaosAction.swift`; the weights sum to 100 |
+| Change how the monkey picks among targets or routes | `pickWeighted` in `ChaosWeighting.swift`: each is weighted by 1 / (1 + times used) |
 | Add awkward text to type | `chaosStrings` in `ChaosAction.swift` |
+| Open a route the monkey skips | `SKIPPED` or `SKIPPED_PREFIXES` in `scripts/chaos-routes.mjs` |
 | Add a fault | `Fault` and `pickFault` in `source/chaos/faults.ts` |
 
 Run `mise run chaos-routes` after adding a route; a test fails until you do.
@@ -200,5 +275,5 @@ repeating. Each action draws its values before it touches the UI.
 Chaos runs happen on your own machine; nothing runs them in CI. The
 `ChaosCanaryTests` do run in the ordinary UI test shards, in the merge
 queue and on master; pull requests leave them out to save shard time. They
-plant a crash and a missing probe and check that the oracles
-notice, so a change can't quietly blind the engine.
+plant a crash, a missing probe and a small unlabelled button, and check
+that the oracles notice, so a change can't quietly blind the engine.

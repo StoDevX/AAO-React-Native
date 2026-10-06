@@ -22,6 +22,18 @@ export type TapeEntry = {
 	fault: Fault['kind']
 	/** Set when the body was left off the tape, so a replay fetches it again. */
 	live?: boolean
+	/** Which value a `mutated` fault changed, and how. */
+	mutation?: {path: string; change: string}
+	/** Set when a session's offline window failed the request. */
+	offline?: true
+	/** How long the window this request began lasts, on the request that began it. */
+	offlineMs?: number
+	/**
+	 * Set on the line taped when a request starts, which its answer's line
+	 * replaces. Left alone, it marks a request the app never saw answered,
+	 * because the app was killed first.
+	 */
+	pending?: true
 }
 
 /**

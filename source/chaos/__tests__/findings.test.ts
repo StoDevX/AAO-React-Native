@@ -13,6 +13,21 @@ beforeEach(() => {
 })
 
 describe('reportFinding', () => {
+	test('records how long after launch a finding was made', () => {
+		let file = memoryLineFile()
+		setFindingsFile(file)
+		reportFinding('console-error', 'boom')
+		let {sinceLaunchMs} = JSON.parse(file.readLines()[0]) as {sinceLaunchMs: number}
+		expect(sinceLaunchMs).toBeGreaterThanOrEqual(0)
+	})
+
+	test('records the launch a finding was made in', () => {
+		let file = memoryLineFile()
+		setFindingsFile(file, 4)
+		reportFinding('console-error', 'boom')
+		expect(JSON.parse(file.readLines()[0])).toMatchObject({kind: 'console-error', launch: 4})
+	})
+
 	test('writes every finding to the findings file', () => {
 		let file = memoryLineFile()
 		setFindingsFile(file)

@@ -55,6 +55,8 @@ Flags:
   --prebuilt          use the app already built instead of building it
   --bundled           embed the JavaScript from \`mise run bundle:ios\` in the build
   --overwrite         replace the evidence an earlier run of the seed left
+  --rotate            let the run turn the device; without it, a rotate step does nothing
+  --session           run a realistic session instead of a fuzzer
   --simulator <name>  the booted simulator, by name, when several are booted
   --udid <udid>       the booted simulator, by UDID
   -h, --help          print this
@@ -79,6 +81,8 @@ export function parseChaosArgs(argv) {
 		prebuilt: false,
 		bundled: false,
 		overwrite: false,
+		rotate: false,
+		profile: 'fuzz',
 		simulator: null,
 		udid: null,
 	}
@@ -112,6 +116,12 @@ export function parseChaosArgs(argv) {
 				break
 			case '--overwrite':
 				options.overwrite = true
+				break
+			case '--rotate':
+				options.rotate = true
+				break
+			case '--session':
+				options.profile = 'session'
 				break
 			case '--simulator':
 				options.simulator = value()
@@ -169,6 +179,53 @@ export function simulatorUdid(booted, {simulator, udid}) {
 /** A replay's options with its step budget, by default the recording's step count. */
 export function withReplayBudget(options, recordedSteps) {
 	return {...options, steps: options.steps ?? recordedSteps?.length ?? 0}
+}
+
+/**
+ * A replay's options with rotation as the recording had it, read from its
+ * rotate steps: one that did nothing is logged `off`. A recording with no
+ * rotate step replays the same either way, so the flag given stands.
+ */
+export function withRecordedRotation(options, recordedSteps) {
+	let rotations = (recordedSteps ?? [])
+		.map((line) => JSON.parse(line))
+		.filter((step) => step.action === 'rotate')
+	if (rotations.length === 0) return options
+	return {...options, rotate: rotations[0].label !== 'off'}
+}
+
+/** What a replay needs to know about how a run was made, written as its run.json. */
+export function runSettings(options) {
+	return {profile: options.profile, rotate: options.rotate}
+}
+
+/**
+ * A replay's options with the profile and rotation its recording was made
+ * with: from its run.json, or for a recording without one, a fuzzing run
+ * whose rotation is read from its steps.
+ */
+export function withRecordedSettings(options, runJsonText, recordedSteps) {
+	if (runJsonText !== null) {
+		let {profile, rotate} = JSON.parse(runJsonText)
+		return {...options, profile, rotate}
+	}
+	return {...withRecordedRotation(options, recordedSteps), profile: 'fuzz'}
+}
+
+/**
+ * How long after launch a finding still belongs to its cold start: the
+ * monkey waits up to 30 s for the bundle and 30 s more for something to press.
+ */
+export const COLD_START_MS = 60_000
+
+/** The launches a kill began: a kill step is logged with the launch it started. */
+export function coldStartLaunches(steps) {
+	return new Set(
+		steps
+			.map((line) => JSON.parse(line))
+			.filter((step) => step.action === 'kill')
+			.map((step) => step.launch),
+	)
 }
 
 /**
@@ -268,16 +325,71 @@ export function testEnv(options) {
 		TEST_RUNNER_AAO_CHAOS_FAULT_RATE: options.faultRate,
 	}
 	if (options.replay) env.TEST_RUNNER_AAO_CHAOS_REPLAY = '1'
+	if (options.rotate) env.TEST_RUNNER_AAO_CHAOS_ROTATE = '1'
+	if (options.profile === 'session') env.TEST_RUNNER_AAO_CHAOS_PROFILE = 'session'
 	return env
+}
+
+/** XCTest's suffix on an exported attachment's suggested name: `_<index>_<UUID>` before the extension. */
+const ATTACHMENT_SUFFIX =
+	/_\d+_[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}(?=\.[^.]+$|$)/iu
+
+/**
+ * Each exported attachment's file name, mapped to the name it was attached
+ * under. A second attachment of one name is numbered, so neither is lost.
+ */
+export function readableAttachmentNames(manifest) {
+	let names = new Map()
+	let taken = new Set()
+	for (let attachment of manifest.flatMap((test) => test.attachments)) {
+		let name = attachment.suggestedHumanReadableName.replace(ATTACHMENT_SUFFIX, '')
+		let dot = name.lastIndexOf('.')
+		let [stem, extension] = dot > 0 ? [name.slice(0, dot), name.slice(dot)] : [name, '']
+		let candidate = name
+		for (let n = 2; taken.has(candidate); n++) {
+			candidate = `${stem} ${n}${extension}`
+		}
+		taken.add(candidate)
+		names.set(attachment.exportedFileName, candidate)
+	}
+	return names
 }
 
 /** The first step at which two step logs disagree, or null if one is a prefix of the other. */
 export function firstDivergence(before, after) {
 	let length = Math.min(before.length, after.length)
 	for (let i = 0; i < length; i++) {
-		if (before[i] !== after[i]) return i
+		if (!sameStep(before[i], after[i])) return i
 	}
 	return null
+}
+
+/**
+ * Whether a replayed step line did what the recorded one did. A recording
+ * made before steps logged what they typed has no `text`, so a replayed step
+ * is compared without its own.
+ */
+function sameStep(recorded, replayed) {
+	if (recorded === replayed) return true
+	let a = parseStep(recorded)
+	let b = parseStep(replayed)
+	if (!a || !b || 'text' in a) return false
+	let {text: _ignored, ...rest} = b
+	return sortedJson(a) === sortedJson(rest)
+}
+
+/** A step line's fields, or null for a line that is not JSON. */
+function parseStep(line) {
+	try {
+		return JSON.parse(line)
+	} catch {
+		return null
+	}
+}
+
+/** `step` as JSON with its keys in order, so two steps compare by content. */
+function sortedJson(step) {
+	return JSON.stringify(step, Object.keys(step).sort())
 }
 
 /**
@@ -332,6 +444,153 @@ export function parseFindingLines(lines) {
 /** The findings among `lines` severe enough to fail a run even if the test itself passed. */
 export function stoppingFindings(lines) {
 	return parseFindingLines(lines).filter((finding) => STOPPING_FINDING_KINDS.has(finding.kind))
+}
+
+/**
+ * The run's ignore list from scripts/chaos-ignore.json's text. Each entry
+ * hides warnings or findings of `kind` whose text contains `match`, and must
+ * say `why`, so nothing is hidden without a reason someone can check.
+ */
+export function parseIgnoreList(text) {
+	let entries = JSON.parse(text)
+	if (!Array.isArray(entries)) {
+		throw new TypeError('scripts/chaos-ignore.json must hold a list')
+	}
+	for (let entry of entries) {
+		for (let field of ['kind', 'match', 'why']) {
+			if (typeof entry?.[field] !== 'string' || entry[field] === '') {
+				throw new Error(
+					`scripts/chaos-ignore.json: every entry needs a ${field}; ${JSON.stringify(entry)} has none`,
+				)
+			}
+		}
+	}
+	return entries
+}
+
+/** Findings that are counted, not listed: there are many, and none is a bug alone. */
+const COUNTED_KINDS = ['mutation', 'out-of-app']
+
+/** The first line of `text`. */
+function firstLine(text) {
+	return String(text).split('\n')[0].trim()
+}
+
+/**
+ * A monkey warning's kind and detail: `kind: detail`, with the detail possibly
+ * empty, or a bare line named by what comes before ` (`.
+ */
+function splitWarning(line) {
+	let colon = /:(?: |$)/u.exec(line)
+	if (colon && colon.index > 0) {
+		return {kind: line.slice(0, colon.index), detail: line.slice(colon.index + colon[0].length)}
+	}
+	let paren = line.indexOf(' (')
+	return {kind: paren > 0 ? line.slice(0, paren) : line, detail: line}
+}
+
+/** Adds one member to the group under `key`, keeping groups in first-seen order. */
+function addTo(groups, key, kind, example) {
+	let group = groups.get(key)
+	if (group) {
+		group.count++
+	} else {
+		groups.set(key, {kind, count: 1, example})
+	}
+}
+
+/**
+ * Everything a run saw that did not stop it, counted: the monkey's warnings by
+ * kind, console errors and stalls by kind and first line with digits
+ * collapsed, and mutations and attempts to leave the app as bare counts.
+ * Anything the ignore list matches is counted as ignored instead. A finding
+ * made in the first `COLD_START_MS` of one of `coldLaunches` is grouped as its
+ * kind `(cold start)`.
+ */
+export function summarizeRun({findings, warnings, ignore, coldLaunches = new Set()}) {
+	let ignored = 0
+	let isIgnored = (kind, text) =>
+		ignore.some((entry) => entry.kind === kind && text.includes(entry.match))
+
+	let warningGroups = new Map()
+	for (let line of warnings) {
+		if (!line.trim()) continue
+		let {kind, detail} = splitWarning(line.trim())
+		if (isIgnored(kind, line)) {
+			ignored++
+			continue
+		}
+		addTo(warningGroups, kind, kind, firstLine(detail))
+	}
+
+	let findingGroups = new Map()
+	let counts = {mutation: 0, 'out-of-app': 0}
+	for (let finding of findings) {
+		if (STOPPING_FINDING_KINDS.has(finding.kind)) continue
+		let message = String(finding.message)
+		if (isIgnored(finding.kind, message)) {
+			ignored++
+			continue
+		}
+		if (COUNTED_KINDS.includes(finding.kind)) {
+			counts[finding.kind]++
+			continue
+		}
+		let line = firstLine(message)
+		// Made while a launch a kill began was still starting, it came from restoring saved state.
+		let cold =
+			coldLaunches.has(finding.launch) && (finding.sinceLaunchMs ?? Infinity) < COLD_START_MS
+		let kind = cold ? `${finding.kind} (cold start)` : finding.kind
+		addTo(findingGroups, `${kind} ${line.replaceAll(/\d+/gu, '#')}`, kind, line)
+	}
+
+	return {
+		warnings: [...warningGroups.values()],
+		findings: [...findingGroups.values()],
+		counts,
+		ignored,
+	}
+}
+
+/** How many characters of a group's example the summary prints. */
+const EXAMPLE_LENGTH = 100
+
+/** `text`, cut to `EXAMPLE_LENGTH` with an ellipsis when it is longer. */
+function clip(text) {
+	return text.length > EXAMPLE_LENGTH ? `${text.slice(0, EXAMPLE_LENGTH - 1)}…` : text
+}
+
+/** `summary` as the lines printed under a run's outcome; `outcome.json` keeps the examples whole. */
+export function formatSummary(summary) {
+	let lines = []
+	if (summary.warnings.length > 0) {
+		lines.push('  warnings')
+		for (let group of summary.warnings) {
+			lines.push(`    ${group.kind} ×${group.count}  ${clip(group.example)}`)
+		}
+	}
+	for (let group of summary.findings) {
+		lines.push(`  ${group.kind} ×${group.count}  ${clip(group.example)}`)
+	}
+	lines.push(
+		`  mutations ×${summary.counts.mutation}   out-of-app ×${summary.counts['out-of-app']}   ignored ×${summary.ignored}`,
+	)
+	return lines.join('\n')
+}
+
+/**
+ * The launch a run stopped in: its last step's, or the first launch when it
+ * took no step, as when the app dies on what it was fed at launch.
+ */
+export function stopLaunch(steps) {
+	return steps.length > 0 ? JSON.parse(steps.at(-1)).launch : 0
+}
+
+/** The mutations one launch's tape records, as `key path: change`; a torn line is skipped. */
+export function stopMutations(tapeLines) {
+	return parseFindingLines(tapeLines)
+		.filter((entry) => entry.mutation)
+		.map((entry) => `${entry.key} ${entry.mutation.path}: ${entry.mutation.change}`)
 }
 
 /** How the monkey reports a launch whose bundle never answered. */

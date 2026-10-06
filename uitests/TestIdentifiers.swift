@@ -47,6 +47,8 @@ struct TestIdentifiers {
 		static let launch = "--chaos-launch"
 		static let replay = "--chaos-replay"
 		static let faultRate = "--chaos-fault-rate"
+		/// `fuzz` or `session`; see uitests/Chaos/README.md.
+		static let profile = "--chaos-profile"
 		/// The hidden element whose label is the latest stopping finding.
 		static let beacon = "chaos.findings"
 		/// The beacon's label while there is nothing to report.
@@ -63,6 +65,19 @@ struct TestIdentifiers {
 		/// the canary that proves the monkey can leave one: the Dictionary's
 		/// preview, which has nothing to show without a draft.
 		static let sheetTrapRoute = "dictionary/entry/preview"
+		/// The hidden element labelled `online` or `offline`, as a session's network is.
+		static let network = "chaos.network"
+		/// The hidden element listing strings the app received, for a session to type.
+		static let vocab = "chaos.vocab"
+		/// What separates its words.
+		static let vocabSeparator: Character = "\u{1F}"
+		/// A route drawing one small unlabelled button, for the target oracles' canary.
+		static let targetsCanaryRoute = "chaos-canary-targets"
+		/// The canary's button.
+		static let targetsCanaryButton = "chaos.canary-target"
+		/// Targets whose hit area is wider than their frame, through `hitSlop`,
+		/// so the small-target oracle passes them over. Each entry says why.
+		static let smallTargetAllowList: Set<String> = []
 	}
 
 	// MARK: - testID-based identifiers

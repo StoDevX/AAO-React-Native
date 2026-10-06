@@ -11,6 +11,7 @@ import {
 	readdirSync,
 	readFileSync,
 	realpathSync,
+	renameSync,
 	rmSync,
 	writeFileSync,
 } from 'node:fs'
@@ -22,10 +23,14 @@ import {
 	checkAppContainer,
 	checkOutputDir,
 	FINDINGS_FILE,
+	formatSummary,
 	isRunFile,
 	recordedTapes,
 	tapeFiles,
 	parseChaosArgs,
+	parseFindingLines,
+	parseIgnoreList,
+	readableAttachmentNames,
 	simulatorUdid,
 	replayVerdict,
 	jsSourceProblem,
@@ -33,7 +38,13 @@ import {
 	runOutcome,
 	testFailureMessages,
 	stoppingFindings,
+	stopLaunch,
+	stopMutations,
+	summarizeRun,
 	testEnv,
+	coldStartLaunches,
+	runSettings,
+	withRecordedSettings,
 	wantsHelp,
 	withReplayBudget,
 } from './chaos-run.mjs'
@@ -65,6 +76,7 @@ function main() {
 		return
 	}
 	let options = parseChaosArgs(argv)
+	let ignore = parseIgnoreList(readFileSync(new URL('chaos-ignore.json', import.meta.url), 'utf8'))
 	let out = chaosOutputDir(options)
 	checkOutputDir({options, out, exists: existsSync(out)})
 
@@ -77,7 +89,12 @@ function main() {
 			}
 		: null
 	if (recorded) {
-		options = withReplayBudget(options, recorded.steps)
+		let runJson = join(options.replay, 'run.json')
+		options = withRecordedSettings(
+			withReplayBudget(options, recorded.steps),
+			existsSync(runJson) ? readFileSync(runJson, 'utf8') : null,
+			recorded.steps,
+		)
 	}
 
 	let problem = jsSourceProblem({
@@ -129,6 +146,7 @@ function main() {
 
 	rmSync(out, {recursive: true, force: true})
 	mkdirSync(out, {recursive: true})
+	writeFileSync(join(out, 'run.json'), `${JSON.stringify(runSettings(options), null, '\t')}\n`)
 	let resultBundle = join(out, 'result.xcresult')
 	let testError = null
 	try {
@@ -180,6 +198,7 @@ function main() {
 		attachmentsError = error.stderr || error.message
 		console.warn(`could not export the run's attachments: ${attachmentsError}`)
 	}
+	nameAttachments(join(out, 'attachments'))
 
 	let steps = stepLines(join(out, 'attachments')) ?? []
 	let stop = stopReason(join(out, 'attachments'))
@@ -214,15 +233,39 @@ function main() {
 			console.error(message)
 		}
 	}
+	let summary = summarizeRun({
+		findings: parseFindingLines(findingLines),
+		warnings: (attachmentText(join(out, 'attachments'), 'chaos-warnings') ?? '').split('\n'),
+		ignore,
+		coldLaunches: coldStartLaunches(steps),
+	})
+	// The tape of the launch the run stopped in holds what that launch was fed.
+	let lastTape = join(out, `chaos-tape-${stopLaunch(steps)}.jsonl`)
+	let mutationsAtStop =
+		outcome.exitCode === 1 && existsSync(lastTape)
+			? stopMutations(readFileSync(lastTape, 'utf8').split('\n'))
+			: []
 	writeFileSync(
 		join(out, 'outcome.json'),
-		`${JSON.stringify({...outcome, stopReason: stop, replay: verdict?.message ?? null}, null, '\t')}\n`,
+		`${JSON.stringify(
+			{...outcome, stopReason: stop, replay: verdict?.message ?? null, mutationsAtStop, summary},
+			null,
+			'\t',
+		)}\n`,
 	)
-	console.log(
+	let report = [
 		outcome.exitCode === 0
-			? `${outcome.message}: seed ${options.seed}`
+			? `chaos found nothing that stopped it: seed ${options.seed}, ${steps.length} steps`
 			: `${outcome.message}: see ${out}`,
-	)
+	]
+	if (mutationsAtStop.length > 0) {
+		report.push(
+			'  mutated in the launch that stopped',
+			...mutationsAtStop.map((line) => `    ${line}`),
+		)
+	}
+	report.push(formatSummary(summary))
+	console.log(report.join('\n'))
 	process.exitCode = outcome.exitCode
 }
 
@@ -292,4 +335,22 @@ function stepLines(dir) {
 /** Why the monkey stopped the run, or null if it used up its budget. */
 function stopReason(dir) {
 	return attachmentText(dir, 'chaos-stop')?.trim() || null
+}
+
+/**
+ * Renames each exported attachment in `dir` from xcresulttool's UUID to the
+ * name it was attached under, and points the manifest at the new names, so
+ * `attachmentText` still finds them.
+ */
+function nameAttachments(dir) {
+	let manifestPath = join(dir, 'manifest.json')
+	if (!existsSync(manifestPath)) return
+	let manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+	let names = readableAttachmentNames(manifest)
+	for (let attachment of manifest.flatMap((test) => test.attachments)) {
+		let name = names.get(attachment.exportedFileName)
+		renameSync(join(dir, attachment.exportedFileName), join(dir, name))
+		attachment.exportedFileName = name
+	}
+	writeFileSync(manifestPath, `${JSON.stringify(manifest, null, '\t')}\n`)
 }

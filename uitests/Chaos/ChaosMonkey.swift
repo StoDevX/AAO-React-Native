@@ -19,6 +19,17 @@ final class ChaosMonkey {
 	private let seed: UInt64
 	private let replay: Bool
 	private let faultRate: String
+	/// Whether `.rotate` turns the device. Off, it does nothing, but keeps its
+	/// place in the pick table, so a seed takes the same steps either way.
+	private let rotate: Bool
+	/// A fuzzer, or a realistic session; see uitests/Chaos/README.md.
+	private let profile: ChaosProfile
+	/// What the current step typed, for its log line.
+	private var lastTyped = ""
+	/// Watches a session for a spinner left after an offline window.
+	private var spinnerWatch = ChaosSpinnerWatch()
+	/// Tells when a session keeps seeing the same screens.
+	private var novelty = ChaosNovelty()
 	private var random: ChaosRandom
 	private var launch = 0
 	private var steps: [String] = []
@@ -29,6 +40,12 @@ final class ChaosMonkey {
 	private var lastTargetsSeen = Date()
 	private var backsWithoutChange = 0
 	private var lastSignature = ""
+	/// How often each route has been opened this run, to favour the rest.
+	private var routeOpens: [String: Int] = [:]
+	/// How often each target has been tapped, keyed by screen title and target.
+	private var taps: [String: Int] = [:]
+	/// Target warnings already given, so each screen's target is reported once.
+	private var reportedTargets: Set<String> = []
 	/// The orientation the monkey last turned the device to. `.rotate`
 	/// alternates from this rather than reading `XCUIDevice`, which does not
 	/// reliably report it after a relaunch or a trip to the home screen, so a
@@ -44,11 +61,16 @@ final class ChaosMonkey {
 	/// Buttons that dismiss a system alert without granting anything, in order of preference.
 	private static let alertDismissals = ["Don’t Allow", "Don't Allow", "Not Now", "Cancel", "OK"]
 
-	init(test: UITestCaseUnbooted, seed: UInt64, replay: Bool, faultRate: String) {
+	init(
+		test: UITestCaseUnbooted, seed: UInt64, replay: Bool, faultRate: String, rotate: Bool = false,
+		profile: ChaosProfile = .fuzz
+	) {
 		self.test = test
 		self.seed = seed
 		self.replay = replay
 		self.faultRate = faultRate
+		self.rotate = rotate
+		self.profile = profile
 		self.random = ChaosRandom(seed: seed)
 	}
 
@@ -63,7 +85,7 @@ final class ChaosMonkey {
 			self.attachLogs()
 			XCUIDevice.shared.orientation = .portrait
 		}
-		test.configureForChaos(seed: seed, launch: launch, replay: replay, faultRate: faultRate, resetState: true)
+		test.configureForChaos(seed: seed, launch: launch, replay: replay, faultRate: faultRate, resetState: true, profile: profile)
 		app.launch()
 		if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
 			return fail(stop, step: 0)
@@ -72,12 +94,17 @@ final class ChaosMonkey {
 		lastTargetsSeen = Date()
 
 		for step in 0..<budget where Date() < deadline {
-			let action = ChaosAction.pick(using: &random)
 			let observation: ChaosObservation
 			switch ChaosOracle(app: app).observe() {
 			case .failure(let stop): return fail(stop, step: step)
 			case .success(let observed): observation = observed
 			}
+			novelty.see(observation.title)
+			// The pick draws even when a teleport replaces it, so later steps do not shift.
+			var action = ChaosAction.pick(in: profile, rotate: rotate, using: &random)
+			// A session that keeps seeing the same screens goes somewhere new by URL.
+			if profile == .session && novelty.isStuck { action = .teleport }
+			lastTyped = ""
 			let target = perform(action, on: observation)
 			log(step: step, action: action, target: target)
 
@@ -95,7 +122,12 @@ final class ChaosMonkey {
 	private func perform(_ action: ChaosAction, on observation: ChaosObservation) -> ChaosTarget? {
 		switch action {
 		case .tap:
-			guard let target = pick(from: observation.targets) else { return nil }
+			let screen = observation.title
+			guard
+				let target = pickWeighted(
+					observation.targets, uses: { self.taps["\(screen)|\(targetKey($0))", default: 0] }, using: &random)
+			else { return nil }
+			taps["\(screen)|\(targetKey(target))", default: 0] += 1
 			tap(target.frame)
 			return target
 		case .scroll:
@@ -108,10 +140,18 @@ final class ChaosMonkey {
 			app.coordinate(withNormalizedOffset: from).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: to))
 			return nil
 		case .type:
-			let field = pick(from: observation.textFields)
-			let text = chaosStrings.randomElement(using: &random)!
+			let field = pickWeighted(observation.textFields, uses: { _ in 0 }, using: &random)
+			let text: String
+			if profile == .session {
+				let choice = Int.random(in: 0..<Int.max, using: &random)
+				let fraction = Double.random(in: 0..<1, using: &random)
+				text = sessionText(vocab: observation.vocab, choice: choice, fraction: fraction)
+			} else {
+				text = chaosStrings.randomElement(using: &random)!
+			}
 			let submit = Bool.random(using: &random)
 			guard let field else { return nil }
+			lastTyped = text
 			tap(field.frame)
 			pauseHangClock {
 				// typeText fails the whole test when nothing has focus.
@@ -124,18 +164,22 @@ final class ChaosMonkey {
 			goBack(on: observation)
 			return nil
 		case .openRoute:
-			let route = ChaosRoutes.all.randomElement(using: &random)!
+			let route = pickWeighted(ChaosRoutes.all, uses: { self.routeOpens[$0, default: 0] }, using: &random)!
+			routeOpens[route, default: 0] += 1
 			let filled = route.replacingOccurrences(
 				of: #"\[(\.\.\.)?[^\]]+\]"#,
 				with: chaosSegmentValues.randomElement(using: &random)!,
 				options: .regularExpression)
 			launch += 1
-			test.configureForChaos(seed: seed, launch: launch, replay: replay, faultRate: faultRate, resetState: false)
+			test.configureForChaos(seed: seed, launch: launch, replay: replay, faultRate: faultRate, resetState: false, profile: profile)
 			app.open(URL(string: "AllAboutOlaf://\(filled)") ?? URL(string: "AllAboutOlaf://")!)
 			return ChaosTarget(identifier: "route", label: filled, type: .any, frame: .zero)
 		case .background:
+			// A session stays away long enough for timers, polling and refetches to fire.
+			let away = profile == .session ? Double.random(in: 2...120, using: &random) : 0
 			pauseHangClock {
 				XCUIDevice.shared.press(.home)
+				if away > 0 { Thread.sleep(forTimeInterval: away) }
 				app.activate()
 				// activate() can return before the app is frontmost, which the
 				// check after this step would report as escaping the app.
@@ -143,11 +187,69 @@ final class ChaosMonkey {
 				applyOrientation()
 			}
 			return nil
+		case .kill:
+			launch += 1
+			pauseHangClock { kill() }
+			return ChaosTarget(identifier: "kill", label: "", type: .any, frame: .zero)
+		case .teleport:
+			let routes = teleportRoutes(ChaosRoutes.all)
+			let route = pickWeighted(routes, uses: { self.routeOpens[$0, default: 0] }, using: &random)!
+			routeOpens[route, default: 0] += 1
+			teleport(to: route)
+			novelty.moved()
+			return ChaosTarget(identifier: "teleport", label: route, type: .any, frame: .zero)
 		case .rotate:
+			guard rotate else {
+				return ChaosTarget(identifier: "", label: "off", type: .any, frame: .zero)
+			}
 			orientation = orientation == .portrait ? .landscapeLeft : .portrait
 			pauseHangClock { applyOrientation() }
 			return nil
 		}
+	}
+
+	/// Kills the app as iOS does overnight and launches it again with its
+	/// saved state, under the launch number its caller has set, so it gets
+	/// its own tape.
+	func kill() {
+		app.terminate()
+		test.configureForChaos(
+			seed: seed, launch: launch, replay: replay, faultRate: faultRate, resetState: false, profile: profile)
+		app.launch()
+	}
+
+	/// Opens `route` in the running app through the system, as a link from a
+	/// widget or a quick action arrives, accepting iOS's confirmation if it asks.
+	func teleport(to route: String) {
+		pauseHangClock {
+			XCUIDevice.shared.system.open(URL(string: "AllAboutOlaf://\(route)")!)
+			let open = springboard.buttons["Open"]
+			if open.waitForExistence(timeout: 3) { open.tap() }
+		}
+	}
+
+	/// Why a cold start after a kill failed, if it did: the bundle never
+	/// answered, it raised a finding, or nothing could be pressed within 30 s.
+	private func coldStartStop() -> ChaosStop? {
+		if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
+			return ChaosStop("cold start: \(stop.reason)")
+		}
+		let deadline = Date().addingTimeInterval(30)
+		while Date() < deadline {
+			switch ChaosOracle(app: app).observe() {
+			case .failure(let stop): return ChaosStop("cold start: \(stop.reason)")
+			case .success(let observation):
+				if let stop = ChaosOracle(app: app).stopReason(observation) {
+					return ChaosStop("cold start: \(stop.reason)")
+				}
+				if !observation.targets.isEmpty {
+					lastTargetsSeen = Date()
+					return nil
+				}
+			}
+			Thread.sleep(forTimeInterval: 0.5)
+		}
+		return ChaosStop("cold start: nothing to press for 30 seconds")
 	}
 
 	/// Leaves the screen as a person would: the bar's Back button, else the
@@ -298,12 +400,6 @@ final class ChaosMonkey {
 
 	private static func name(_ landscape: Bool) -> String { landscape ? "landscape" : "portrait" }
 
-	/// One of `items`, drawing from `random` even when there are none.
-	private func pick<Item>(from items: [Item]) -> Item? {
-		let choice = Int.random(in: 0..<Int.max, using: &random)
-		return items.isEmpty ? nil : items[choice % items.count]
-	}
-
 	/// Runs one of the monkey's own waits without counting it towards a hang.
 	private func pauseHangClock(_ wait: () -> Void) {
 		let start = Date()
@@ -311,8 +407,14 @@ final class ChaosMonkey {
 		lastTargetsSeen += Date().timeIntervalSince(start)
 	}
 
-	private func tap(_ frame: CGRect) {
-		app.coordinate(withNormalizedOffset: .zero)
+	/// Taps the middle of `frame` through SpringBoard. A tap on the app does not
+	/// return until the app goes quiet, which it cannot while a SpringBoard
+	/// alert, such as the one an icon change raises, is up: the tap would cost a
+	/// minute or more after it had landed. SpringBoard is quiet, and the screen
+	/// point is the same, so the tap returns at once and the check after the
+	/// step dismisses the alert.
+	func tap(_ frame: CGRect) {
+		springboard.coordinate(withNormalizedOffset: .zero)
 			.withOffset(CGVector(dx: frame.midX, dy: frame.midY))
 			.tap()
 	}
@@ -320,6 +422,9 @@ final class ChaosMonkey {
 	// MARK: - Oracles
 
 	private func checkAfter(_ action: ChaosAction) -> ChaosStop? {
+		if action == .kill, let stop = coldStartStop() {
+			return stop
+		}
 		// Opening a route relaunched the app; give its bundle time to run.
 		if action == .openRoute {
 			if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
@@ -353,6 +458,13 @@ final class ChaosMonkey {
 		if let stop = oracle.stopReason(observation) {
 			return stop
 		}
+		checkTargets(observation)
+		if profile == .session,
+			let warning = spinnerWatch.observe(
+				network: observation.network, hasSpinner: observation.hasSpinner, title: observation.title, at: Date())
+		{
+			warnings.append(warning)
+		}
 
 		if observation.targets.isEmpty {
 			if Date().timeIntervalSince(lastTargetsSeen) > 15 {
@@ -385,11 +497,18 @@ final class ChaosMonkey {
 		return nil
 	}
 
+	/// Warns once per run of each screen's target that `targetWarnings` calls out.
+	func checkTargets(_ observation: ChaosObservation) {
+		for (key, warning) in targetWarnings(observation) where reportedTargets.insert(key).inserted {
+			warnings.append(warning)
+		}
+	}
+
 	/// Dismisses a system alert, such as a permission prompt, that sits over
 	/// the app. Checked after every step rather than left to an interruption
 	/// monitor, which only runs when the test touches an element, and the
 	/// monkey taps by coordinate.
-	private func dismissSystemAlert() {
+	func dismissSystemAlert() {
 		let alert = springboard.alerts.firstMatch
 		guard alert.exists else { return }
 		warnings.append("system alert: \(alert.label)")
@@ -412,6 +531,11 @@ final class ChaosMonkey {
 			"orientation": Self.name(orientation.isLandscape),
 			"identifier": target?.identifier ?? "",
 			"label": target?.label ?? "",
+			"text": lastTyped,
+			"type": Int(target?.type.rawValue ?? 0),
+			"frame": target.map {
+				"\(Int($0.frame.minX)),\(Int($0.frame.minY)),\(Int($0.frame.width)),\(Int($0.frame.height))"
+			} ?? "",
 		]
 		if let data = try? JSONSerialization.data(withJSONObject: entry, options: [.sortedKeys]),
 			let line = String(data: data, encoding: .utf8)

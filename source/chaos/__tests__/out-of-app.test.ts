@@ -8,6 +8,7 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	chaosLaunch: 0,
 	chaosMode: 'record',
 	chaosFaultRate: 0,
+	chaosProfile: 'fuzz',
 }))
 
 // Neither is globally mocked; loading the real modules under Jest reaches

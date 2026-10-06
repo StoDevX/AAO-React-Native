@@ -3,12 +3,15 @@ import XCTest
 extension UITestCaseUnbooted {
 	/// Sets the next launch's arguments for a chaos run: no `--uitesting`, so
 	/// features fetch live rather than from their fixtures.
-	func configureForChaos(seed: UInt64, launch: Int, replay: Bool, faultRate: String, resetState: Bool) {
+	func configureForChaos(
+		seed: UInt64, launch: Int, replay: Bool, faultRate: String, resetState: Bool, profile: ChaosProfile = .fuzz
+	) {
 		var arguments = [
 			TestIdentifiers.Chaos.flag,
 			TestIdentifiers.Chaos.seed, String(seed),
 			TestIdentifiers.Chaos.launch, String(launch),
 			TestIdentifiers.Chaos.faultRate, faultRate,
+			TestIdentifiers.Chaos.profile, profile.rawValue,
 		]
 		if replay { arguments.append(TestIdentifiers.Chaos.replay) }
 		if resetState { arguments.append(TestIdentifiers.LaunchArguments.resetState) }
@@ -29,7 +32,9 @@ final class ChaosTests: UITestCaseUnbooted {
 			test: self,
 			seed: seed,
 			replay: env["AAO_CHAOS_REPLAY"] == "1",
-			faultRate: env["AAO_CHAOS_FAULT_RATE"] ?? "0.25")
+			faultRate: env["AAO_CHAOS_FAULT_RATE"] ?? "0.25",
+			rotate: env["AAO_CHAOS_ROTATE"] == "1",
+			profile: ChaosProfile(rawValue: env["AAO_CHAOS_PROFILE"] ?? "") ?? .fuzz)
 		monkey.run(
 			steps: env["AAO_CHAOS_STEPS"].flatMap(Int.init) ?? 500,
 			duration: env["AAO_CHAOS_DURATION"].flatMap(TimeInterval.init) ?? 600)
@@ -58,6 +63,105 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 			"Home should have mounted, so the beacon has had its chance to appear")
 		let silence = ChaosOracle(app: app).waitForProbe(timeout: 5)
 		XCTAssertEqual(silence?.reason, "probe silent: no \(TestIdentifiers.Chaos.beacon) element")
+	}
+
+	/// A session's teleport opens a screen in the running app, without the
+	/// relaunch that would throw the session's state away.
+	func testATeleportKeepsTheAppRunning() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true, profile: .session)
+		app.launch()
+		_ = HomeScreen(app: app).checkHomescreenExists()
+		let pid = { self.app.debugDescription.firstMatch(of: /pid: (\d+)/).map { String($0.1) } }
+		let before = pid()
+		XCTAssertNotNil(before, "the app's description should name its pid")
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0", profile: .session)
+		monkey.teleport(to: "menus")
+		XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10))
+		XCTAssertEqual(pid(), before, "the teleport should not relaunch the app")
+		XCTAssertFalse(XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.firstMatch.exists)
+	}
+
+	/// A kill keeps what the app saved, as iOS killing it overnight does.
+	func testAKillKeepsTheSavedSettings() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true, profile: .session)
+		app.launch()
+		let customize = HomeScreen(app: app).checkHomescreenExists().openCustomize()
+		customize.toggleRadioPlayer()
+		let toggle = app.switches[TestIdentifiers.StreamingMedia.showRadioPlayer]
+		let before = toggle.value as? String
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0", profile: .session)
+		monkey.kill()
+		_ = HomeScreen(app: app).checkHomescreenExists().openCustomize()
+		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Radio Player after the kill")
+		XCTAssertEqual(toggle.value as? String, before, "the setting should survive the kill")
+	}
+
+	/// The monkey taps through SpringBoard with frames read from the app, so
+	/// the two must agree on where a point is in landscape too, as under
+	/// `--rotate`: a tap on Customize's App Icon row should open the gallery.
+	func testTapsTheRightPlaceInLandscape() {
+		addTeardownBlock { XCUIDevice.shared.orientation = .portrait }
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
+		app.launch()
+		_ = HomeScreen(app: app).checkHomescreenExists().openCustomize()
+		XCUIDevice.shared.orientation = .landscapeLeft
+		let rotated = Date().addingTimeInterval(5)
+		while app.frame.width <= app.frame.height && Date() < rotated {
+			Thread.sleep(forTimeInterval: 0.25)
+		}
+		XCTAssertGreaterThan(app.frame.width, app.frame.height, "the app should have turned to landscape")
+		let row = app.buttons[TestIdentifiers.Customize.appIconRow].firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 10), "Customize should offer App Icon")
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		monkey.tap(row.frame)
+		XCTAssertTrue(
+			AppIconScreen(app: app).gallery.waitForExistence(timeout: 10),
+			"the monkey's tap on the App Icon row at \(row.frame) should have opened the gallery")
+	}
+
+	/// A screen with one tiny, unlabelled button: both oracles should warn,
+	/// once each, however often the monkey looks.
+	func testWarnsOfAnUnlabelledSmallTarget() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
+		app.open(URL(string: "AllAboutOlaf://\(TestIdentifiers.Chaos.targetsCanaryRoute)")!)
+		XCTAssertTrue(
+			app.descendants(matching: .any)[TestIdentifiers.Chaos.targetsCanaryButton].waitForExistence(timeout: 30),
+			"the canary screen never loaded")
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		for _ in 0..<3 {
+			guard case .success(let observation) = ChaosOracle(app: app).observe() else {
+				return XCTFail("the canary screen should give a snapshot")
+			}
+			monkey.checkTargets(observation)
+		}
+		let key = "id:\(TestIdentifiers.Chaos.targetsCanaryButton)"
+		XCTAssertEqual(monkey.warnings.filter { $0.hasPrefix("unlabelled: \(key) ") }.count, 1, "\(monkey.warnings)")
+		XCTAssertEqual(monkey.warnings.filter { $0.hasPrefix("small target: \(key) ") }.count, 1, "\(monkey.warnings)")
+	}
+
+	/// Changing the app icon raises SpringBoard's alert, which keeps the app
+	/// from going quiet: a tap that waits for the app costs a minute or more,
+	/// and the monkey sits on the screen. Its tap should return at once, and the
+	/// check after the step should dismiss the alert.
+	func testTapsPastTheIconChangeAlert() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
+		app.launch()
+		let gallery = AppIconScreen(app: app).navigate()
+		let name = gallery.icon(named: "Big Ole").isSelected ? "Old Main" : "Big Ole"
+		let tile = gallery.icon(named: name)
+		gallery.scrollIntoView(tile)
+		let frame = tile.frame
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+
+		let start = Date()
+		monkey.tap(frame)
+		XCTAssertLessThan(Date().timeIntervalSince(start), 15, "the tap should not wait for the app behind the alert")
+
+		let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		XCTAssertTrue(springboard.alerts.firstMatch.waitForExistence(timeout: 10), "the icon change should raise its alert")
+		monkey.dismissSystemAlert()
+		XCTAssertTrue(springboard.alerts.firstMatch.waitForNonExistence(timeout: 10), "the monkey should dismiss the alert")
+		XCTAssertTrue(monkey.warnings.contains { $0.hasPrefix("system alert: ") }, "\(monkey.warnings)")
 	}
 
 	/// In portrait the sheet's grabber is something to press, so it is no

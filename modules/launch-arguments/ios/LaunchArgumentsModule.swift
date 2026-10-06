@@ -20,6 +20,7 @@ public class LaunchArgumentsModule: Module {
 			"chaosLaunch": Int(Self.value(after: "--chaos-launch") ?? "") ?? 0,
 			"chaosMode": arguments.contains("--chaos-replay") ? "replay" : "record",
 			"chaosFaultRate": Double(Self.value(after: "--chaos-fault-rate") ?? "") ?? 0.25,
+			"chaosProfile": Self.value(after: "--chaos-profile") == "session" ? "session" : "fuzz",
 		])
 	}
 
