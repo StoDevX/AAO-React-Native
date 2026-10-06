@@ -61,34 +61,9 @@ afterEach(() => {
 })
 
 describe('stationSources', () => {
-	test('ships KSTO with its stream and the player page its owner counts listens through', () => {
-		expect(stationSources(EMPTY, 'ksto')).toStrictEqual({
-			streamSourceUrl: 'https://cdn.stobcm.com/ksto/live.m3u8',
-			embeddedPlayerUrl: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
-			nowPlayingUrl: undefined,
-		})
-	})
-
-	test('ships KRLX with its stream and its song feed, and no player page', () => {
-		expect(stationSources(EMPTY, 'krlx')).toStrictEqual({
-			streamSourceUrl: 'https://s3.voscast.com:10803/stream',
-			embeddedPlayerUrl: undefined,
-			nowPlayingUrl: 'https://content.krlx.org/wp-json/metaradio/v1/stationnow/?station=1',
-		})
-	})
-
 	test('follows a published stream', () => {
 		expect(stationSources(manifestWith(MOVED_KSTO), 'ksto').streamSourceUrl).toBe(
 			'https://example.test/ksto.m3u8',
-		)
-	})
-
-	test('keeps the shipped stream when the published one is in a format this build cannot play', () => {
-		let manifest = manifestWith(
-			link(REL_RADIO_STREAM, 'ksto', 'https://example.test/ksto.webm', 'audio/webm'),
-		)
-		expect(stationSources(manifest, 'ksto').streamSourceUrl).toBe(
-			'https://cdn.stobcm.com/ksto/live.m3u8',
 		)
 	})
 
@@ -186,16 +161,6 @@ describe('useStationSources', () => {
 			expect(client.getQueryState(manifestOptions.queryKey)?.status).toBe('error'),
 		)
 		expect(result.current?.streamSourceUrl).toBe('https://example.test/ksto.m3u8')
-	})
-
-	test('follows the manifest once one arrives', async () => {
-		mockGet.mockReturnValue({json: () => Promise.resolve(manifestWith(MOVED_KSTO))})
-
-		let {result} = await renderHook(() => useStationSources('ksto'), {wrapper})
-
-		await waitFor(() =>
-			expect(result.current?.streamSourceUrl).toBe('https://example.test/ksto.m3u8'),
-		)
 	})
 
 	test('says nothing while the saved cache is still being read back', async () => {

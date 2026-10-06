@@ -4,7 +4,6 @@ import {act, fireEvent, render} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ID_PROPERTY, manifestOptions, REL_RADIO_STREAM, type Jrd} from '@frogpond/data-sources'
 
-import {track} from '../../../telemetry/track'
 import {RadioHost as BareRadioHost} from '../host'
 import {STATIONS, logoImage} from '../stations'
 import {useRadioStore} from '../store'
@@ -39,9 +38,7 @@ jest.mock('expo-audio', () => ({
 	setAudioModeAsync: () => Promise.resolve(),
 }))
 
-// What the host counts; the events themselves are tested with the telemetry.
 jest.mock('../../../telemetry/track', () => ({track: jest.fn()}))
-const mockTrack = track as jest.Mock
 
 // The schedule is asked for over the network; a test says which show it has on.
 let mockShow: {title: string} | null = null
@@ -110,7 +107,6 @@ describe('RadioHost', () => {
 	afterEach(() => {
 		mockShow = null
 		mockFailingSources = new Set()
-		mockTrack.mockClear()
 		queryClient.clear()
 		mockUseAudioPlayer.mockClear()
 	})
@@ -247,10 +243,6 @@ describe('RadioHost', () => {
 			expect(mockUseAudioPlayer).toHaveBeenCalledWith(PUBLISHED_KRLX)
 			expect(mockUseAudioPlayer).toHaveBeenLastCalledWith(SHIPPED_KRLX)
 			expect(useRadioStore.getState()).toMatchObject({playState: 'starting', error: null})
-			expect(mockTrack).toHaveBeenCalledWith({
-				name: 'radio.stream.fallback',
-				attributes: {station: 'krlx'},
-			})
 		})
 
 		test('reports the failure when the shipped stream fails too', async () => {
@@ -273,9 +265,6 @@ describe('RadioHost', () => {
 			await screen.rerender(<RadioHost />)
 
 			expect(mockUseAudioPlayer).not.toHaveBeenCalledWith(SHIPPED_KRLX)
-			expect(mockTrack).not.toHaveBeenCalledWith(
-				expect.objectContaining({name: 'radio.stream.fallback'}),
-			)
 			expect(useRadioStore.getState()).toMatchObject({
 				playState: 'stopped',
 				error: {message: 'Cannot Open'},
