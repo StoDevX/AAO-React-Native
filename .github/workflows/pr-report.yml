@@ -83,8 +83,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          # The merge commit (or master commit) and its first parent: the
-          # diff between them is the whole change.
+          # A pull request's merge commit and its first parent: the diff
+          # between them is the whole change. A push fetches the commit it
+          # started from below, as it can hold more than one commit.
           fetch-depth: 2
       - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
@@ -93,9 +94,18 @@ jobs:
       - name: Decide
         id: decide
         if: always()
+        env:
+          # The tip of master before this push, or empty on a pull request.
+          BEFORE: ${{ github.event.before }}
         run: |
           needed_line=needed=true
-          if git diff --name-only HEAD^1 HEAD > changed.txt; then
+          base=HEAD^1
+          if [ -n "$BEFORE" ]; then
+            # A diff needs only the two commits' trees, not the history between.
+            base=$BEFORE
+            git fetch --quiet --depth=1 origin "$BEFORE" || base=""
+          fi
+          if [ -n "$base" ] && git diff --name-only "$base" HEAD > changed.txt; then
             cat changed.txt
             needed_line=$(node scripts/pr-report/app-size-paths.mjs changed.txt) \
               || { echo "app-size-paths.mjs failed; archiving."; needed_line=needed=true; }
