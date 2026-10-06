@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {describe, it} from 'node:test'
 
-import {diffGroups, diffPackages, diffReports} from './diff.mjs'
+import {diffApp, diffGroups, diffPackages, diffReports} from './diff.mjs'
 
 describe('diffGroups', () => {
 	it('orders by size of change, largest first, then by name', () => {
@@ -149,9 +149,9 @@ describe('diffPackages', () => {
 describe('diffReports', () => {
 	it('diffs the hermes total, both groupings and the dependencies', () => {
 		let report = (hermesBytes, nodeModulesBytes, packages, sizes) => ({
-			version: 3,
+			version: 4,
 			baseSha: null,
-			js: {hermesBytes, byPackage: {a: hermesBytes}, byFeature: {}},
+			js: {hermesBytes, assetsBytes: 0, byPackage: {a: hermesBytes}, byFeature: {}},
 			deps: {nodeModulesBytes, packages, sizes},
 		})
 		assert.deepEqual(
@@ -179,5 +179,25 @@ describe('diffReports', () => {
 				},
 			},
 		)
+	})
+})
+
+describe('diffApp', () => {
+	let app = (assets, binary, windmill, downloadBytes) => ({
+		installBytes: assets + binary,
+		downloadBytes,
+		byGroup: {'Assets.car': assets, AllAboutOlaf: binary},
+		byAsset: {windmill},
+	})
+
+	it('diffs both sizes, and the groups and assets as one list of rows', () => {
+		let diff = diffApp(app(100, 50, 80, 90), app(130, 50, 110, 100))
+		assert.deepEqual(diff.install, {name: 'install', before: 150, after: 180, delta: 30})
+		assert.deepEqual(diff.download, {name: 'download', before: 90, after: 100, delta: 10})
+		assert.deepEqual(diff.rows, [
+			{name: 'Assets.car', before: 100, after: 130, delta: 30},
+			{name: 'Assets.car › windmill', before: 80, after: 110, delta: 30},
+			{name: 'AllAboutOlaf', before: 50, after: 50, delta: 0},
+		])
 	})
 })

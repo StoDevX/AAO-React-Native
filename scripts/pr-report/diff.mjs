@@ -126,3 +126,30 @@ export function diffReports(baseline, head) {
 		},
 	}
 }
+
+/** One figure of two app reports, as a change. */
+function figure(name, baseline, head, key) {
+	return {name, before: baseline[key], after: head[key], delta: head[key] - baseline[key]}
+}
+
+/** An app report's groups and assets as one map, each asset named under the catalog that holds it. */
+function appRows(report) {
+	return {
+		...report.byGroup,
+		...Object.fromEntries(
+			Object.entries(report.byAsset).map(([name, bytes]) => [`Assets.car › ${name}`, bytes]),
+		),
+	}
+}
+
+/**
+ * Diffs two app reports: install and download size, and every group and
+ * asset as one list.
+ */
+export function diffApp(baseline, head) {
+	return {
+		install: figure('install', baseline, head, 'installBytes'),
+		download: figure('download', baseline, head, 'downloadBytes'),
+		rows: diffGroups(appRows(baseline), appRows(head)),
+	}
+}

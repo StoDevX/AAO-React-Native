@@ -1,7 +1,17 @@
 import assert from 'node:assert/strict'
+import {mkdirSync, mkdtempSync, writeFileSync} from 'node:fs'
+import {tmpdir} from 'node:os'
+import {join} from 'node:path'
 import {describe, it} from 'node:test'
 
-import {buildReport, bundledSizes, featureOf, groupBundle, groupOf} from './js-size.mjs'
+import {
+	buildReport,
+	bundledSizes,
+	directoryBytes,
+	featureOf,
+	groupBundle,
+	groupOf,
+} from './js-size.mjs'
 
 describe('groupOf', () => {
 	it('names a package from a pnpm store path', () => {
@@ -95,22 +105,37 @@ describe('buildReport', () => {
 
 	it('wraps the groups with the version, base commit, totals and dependencies', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
-		assert.deepEqual(buildReport({baseSha: 'def', hermesBytes: 90, explorer, deps}), {
-			version: 3,
-			baseSha: 'def',
-			js: {
-				hermesBytes: 90,
-				byPackage: {'(app)': 50},
-				byFeature: {'(other)': 50},
+		assert.deepEqual(
+			buildReport({baseSha: 'def', hermesBytes: 90, assetsBytes: 7, explorer, deps}),
+			{
+				version: 4,
+				baseSha: 'def',
+				js: {
+					hermesBytes: 90,
+					assetsBytes: 7,
+					byPackage: {'(app)': 50},
+					byFeature: {'(other)': 50},
+				},
+				deps,
 			},
-			deps,
-		})
+		)
 	})
 
 	it('records no base commit as null, for a push to master', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
 		let report = buildReport({baseSha: null, hermesBytes: 90, explorer, deps})
 		assert.equal(report.baseSha, null)
+	})
+})
+
+describe('directoryBytes', () => {
+	it('sums every file under a directory, and is 0 for one that does not exist', () => {
+		let dir = mkdtempSync(join(tmpdir(), 'js-size-'))
+		mkdirSync(join(dir, 'assets/images'), {recursive: true})
+		writeFileSync(join(dir, 'assets/images/a.png'), Buffer.alloc(5))
+		writeFileSync(join(dir, 'assets/b.png'), Buffer.alloc(3))
+		assert.equal(directoryBytes(join(dir, 'assets')), 8)
+		assert.equal(directoryBytes(join(dir, 'absent')), 0)
 	})
 })
 

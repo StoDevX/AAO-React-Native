@@ -59,6 +59,67 @@ function moversTable(heading, changes) {
 	]
 }
 
+/** A total with no baseline: just the size. A total with one: `total()`. */
+function sized(change, bold) {
+	if (change.before === undefined) {
+		return bold ? `**${formatBytes(change.after)}**` : formatBytes(change.after)
+	}
+	return total(change, bold)
+}
+
+/** The gate's line: ✅ passed, ⚠️ passed with a warning, ❌ failed. */
+function gateLine(gate) {
+	return `${gate.pass ? (gate.warn ? '⚠️' : '✅') : '❌'} ${gate.message}`
+}
+
+/**
+ * The app size section as its always-shown lines and its collapsed table,
+ * or nothing when there is no section. See `buildAppSection` in report.mjs
+ * for what each field holds.
+ */
+function appSize(app) {
+	if (app === null) {
+		return {top: [], tables: []}
+	}
+	let top = ['### App size']
+	if (!app.needed) {
+		let {baseline, total: sum} = app
+		top.push(
+			`No native changes. Measured at \`${baseline.measuredSha.slice(0, 7)}\`: install **${formatBytes(baseline.installBytes)}** · download ${formatBytes(baseline.downloadBytes)}`,
+		)
+		if (sum !== null) {
+			top.push(`With this PR's JS and bundled images: ${sized(sum, false)}`)
+		}
+	} else if (app.head === null) {
+		top.push(
+			`App size unavailable: no measurement for this commit yet. [The App size job](${app.runUrl}) failed, or has not finished.`,
+		)
+	} else {
+		let install = app.diff?.install ?? {after: app.head.installBytes}
+		let download = app.diff?.download ?? {after: app.head.downloadBytes}
+		top.push(
+			`${app.head.device}, native only: install ${sized(install, true)} · download ${sized(download, false)}`,
+		)
+		if (app.total !== null) {
+			top.push(`With JS and bundled images: ${sized(app.total, false)}`)
+		}
+	}
+	if (app.note) {
+		top.push('', app.note)
+	}
+	if (app.needed) {
+		top.push('', gateLine(app.gate))
+	}
+	top.push('')
+	if (app.diff === null) {
+		return {top, tables: []}
+	}
+	return {
+		top: [...top, ...moversTable('Changed most', app.diff.rows)],
+		tables: fullTable('All groups and assets', 'Group or asset', app.diff.rows),
+	}
+}
+
 /** What happened to a package, in a table cell: `added 4.1.0`, `19.2.2 → 19.2.3`. */
 function changeText({kind, before, after}) {
 	if (kind === 'added') {
@@ -182,9 +243,10 @@ function nativeNotice(nativeChanges) {
  * then says why. `limit` caps the rendered length, so the full tables can
  * be dropped from the PR comment but kept in the job summary (`Infinity`).
  * `nativeChanges` is what `findNativeChanges` found, or null/absent for none.
+ * `app` is the app size section from `buildAppSection`, or null for none.
  */
 export function renderComment(
-	{head, diff, baselineNote, gate, nativeChanges = null},
+	{head, diff, baselineNote, gate, nativeChanges = null, app = null},
 	limit = COMMENT_LIMIT,
 ) {
 	let lines = [MARKER, '### JS bundle']
@@ -219,13 +281,26 @@ export function renderComment(
 
 	// A commit that could not be measured has no dependencies to show.
 	let deps = head === null ? {top: [], tables: []} : dependencies(head, diff)
+	let appSection = appSize(app)
 	let native = nativeNotice(nativeChanges)
-	let full = [...lines, ...tables, ...deps.top, ...deps.tables, ...native].join('\n')
-	if (full.length <= limit || (tables.length === 0 && deps.tables.length === 0)) {
+	let full = [
+		...lines,
+		...tables,
+		...appSection.top,
+		...appSection.tables,
+		...deps.top,
+		...deps.tables,
+		...native,
+	].join('\n')
+	if (
+		full.length <= limit ||
+		(tables.length === 0 && appSection.tables.length === 0 && deps.tables.length === 0)
+	) {
 		return full
 	}
 	return [
 		...lines,
+		...appSection.top,
 		...deps.top,
 		"The full tables are in this run's job summary.",
 		'',

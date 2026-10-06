@@ -6,7 +6,8 @@
  * package or feature grew, not only that the bundle did.
  */
 
-import {readFileSync, statSync, writeFileSync} from 'node:fs'
+import {lstatSync, readdirSync, readFileSync, statSync, writeFileSync} from 'node:fs'
+import {join} from 'node:path'
 
 import {
 	combineSizes,
@@ -89,13 +90,33 @@ export function bundledSizes(files) {
 	return sizes
 }
 
+/**
+ * Bytes of every regular file under `dir`, or 0 when it does not exist.
+ * Metro's images go here; the app ships them beside the bundle.
+ */
+export function directoryBytes(dir) {
+	let stat
+	try {
+		stat = lstatSync(dir)
+	} catch {
+		return 0
+	}
+	if (stat.isFile()) {
+		return stat.size
+	}
+	if (!stat.isDirectory()) {
+		return 0
+	}
+	return readdirSync(dir).reduce((sum, name) => sum + directoryBytes(join(dir, name)), 0)
+}
+
 /** Builds `size-report.json` from the measured totals, source-map-explorer's output and the installed dependencies. */
-export function buildReport({baseSha, hermesBytes, explorer, deps}) {
+export function buildReport({baseSha, hermesBytes, assetsBytes, explorer, deps}) {
 	let {byPackage, byFeature} = groupBundle(explorer.results[0].files)
 	return {
 		version: REPORT_VERSION,
 		baseSha,
-		js: {hermesBytes, byPackage, byFeature},
+		js: {hermesBytes, assetsBytes, byPackage, byFeature},
 		deps,
 	}
 }
@@ -113,6 +134,8 @@ function main() {
 	let report = buildReport({
 		baseSha,
 		hermesBytes: statSync(`${dir}/main.hbc`).size,
+		// The unminified export's --assets-dest; the minified one writes the same images.
+		assetsBytes: directoryBytes(`${dir}/assets`),
 		explorer,
 		// Relative to the repo root, where the size-report task runs. `.pnpm`
 		// is pnpm's isolated layout, which this repo uses; a hoisted linker

@@ -7,10 +7,10 @@
  * Info.plist, entitlements and the privacy manifest, and the config plugins
  * that rewrite the project. A plugin's own test does not.
  */
-const CONFIG_FILE = /^(app\.config\.ts|plugins\/(?!.*\.test\.ts$).+)$/u
+export const CONFIG_FILE = /^(app\.config\.ts|plugins\/(?!.*\.test\.ts$).+)$/u
 
 /** Swift, Objective-C and podspec sources of the app's own native modules. */
-const CODE_FILE = /^modules\/[^/]+\/ios\//u
+export const CODE_FILE = /^modules\/[^/]+\/ios\//u
 
 /**
  * Packages that ship native code, and so add or change pods: Expo's and React

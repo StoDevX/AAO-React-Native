@@ -13,22 +13,33 @@ concurrency:
   # A push gets its own group (by commit), so a queued master run is never
   # cancelled by a later push landing while it waits; a pull request shares
   # one group per ref, so a stale run for the same PR is replaced. A label
-  # change reruns the measurement, so it replaces the run before it too.
-  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
+  # change archives nothing and reads the app size an earlier run measured,
+  # so it gets a group of its own, one per label: it must not cancel that
+  # run's archive, which a PR opened with a label would otherwise lose every
+  # time, and a label that runs nothing must not cancel one that does.
+  group: >-
+    ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{
+    (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+    && format('-label-{0}', github.event.label.name) || '' }}
   # Never cancel a push to master: a cancelled run uploads no report, and
   # every later PR needs one for each master commit to compare against.
   cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
   MISE_RUBY_COMPILE: 'false'
+  # The same Xcode as ios.yml's builds; keep the two in step.
+  xcode_version: 'Xcode_27.0'
 
 jobs:
   js-size:
     name: JS size
     runs-on: ubuntu-26.04
     # The merge queue has nothing to compare and no labels to read; the PR
-    # passed the gate already.
-    if: github.event_name != 'merge_group'
+    # passed the gate already. A label change measures nothing: the report
+    # job reuses what an earlier run measured for this commit.
+    if: >-
+      github.event_name != 'merge_group'
+      && github.event.action != 'labeled' && github.event.action != 'unlabeled'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -53,16 +64,164 @@ jobs:
           # Master's reports are every later PR's baseline.
           retention-days: ${{ github.event_name == 'push' && 90 || 7 }}
 
+  # Whether this change can change the native app. Only a confident "false"
+  # skips the archive: a failed checkout or script leaves needed=true, and so
+  # does a runner that never starts (the output is then empty, which the jobs
+  # below read the same way).
+  app-size-gate:
+    name: Decide whether to archive
+    runs-on: ubuntu-slim
+    # Not in the merge queue, nor for a label change but size/accepted
+    # (gate.mjs's ACCEPT_LABEL), the only label that changes the report.
+    if: >-
+      github.event_name != 'merge_group'
+      && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
+      || github.event.label.name == 'size/accepted')
+    outputs:
+      needed: ${{ steps.decide.outputs.needed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # A pull request's merge commit and its first parent: the diff
+          # between them is the whole change. A push fetches the commit it
+          # started from below, as it can hold more than one commit.
+          fetch-depth: 2
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+      - name: Decide
+        id: decide
+        if: always()
+        env:
+          # The tip of master before this push, or empty on a pull request,
+          # whose own `before` is its previous head and no base at all.
+          BEFORE: ${{ github.event_name == 'push' && github.event.before || '' }}
+        run: |
+          needed_line=needed=true
+          base=HEAD^1
+          if [ -n "$BEFORE" ]; then
+            # A diff needs only the two commits' trees, not the history between.
+            base=$BEFORE
+            git fetch --quiet --depth=1 origin "$BEFORE" || base=""
+          fi
+          if [ -n "$base" ] && git diff --name-only "$base" HEAD > changed.txt; then
+            cat changed.txt
+            needed_line=$(node scripts/pr-report/app-size-paths.mjs changed.txt) \
+              || { echo "app-size-paths.mjs failed; archiving."; needed_line=needed=true; }
+          else
+            echo "git diff failed; archiving."
+          fi
+          echo "$needed_line" | tee -a "$GITHUB_OUTPUT"
+
+  app-size:
+    name: App size
+    needs: [app-size-gate]
+    # !cancelled(), so a failed or never-started gate (empty output) still
+    # archives; the merge queue has nothing to compare, and a label change
+    # cannot change the app.
+    if: >-
+      ${{ !cancelled() && github.event_name != 'merge_group'
+      && github.event.action != 'labeled' && github.event.action != 'unlabeled'
+      && needs.app-size-gate.outputs.needed != 'false' }}
+    runs-on: xcode-27
+    timeout-minutes: 60
+    steps:
+      - name: Select ${{ env.xcode_version }}
+        run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+      - run: pnpm install --frozen-lockfile
+      - name: Archive and measure the native app
+        env:
+          # On a pull request, its head commit rather than the merge commit,
+          # which is on no branch: a PR stacked on this one compares with
+          # this report and expects the commit its base branch points at.
+          APP_SIZE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: mise run app-size
+      - name: Upload the app size report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: app-size
+          path: app-size/app-size.json
+          # Master's reports are every later PR's baseline.
+          retention-days: ${{ github.event_name == 'push' && 90 || 7 }}
+
+  # A master push that changed nothing native has the same native app as the
+  # commit before it, so its report copies that one's instead of archiving.
+  # It copies nothing when native files changed between the report it found
+  # and this commit: that happens when the previous push is still archiving
+  # and find-baseline.sh falls back to an older run, whose figures are stale.
+  # A later PR then reads "no baseline" until the next native push archives.
+  app-size-carry:
+    name: Carry the app size forward
+    needs: [app-size-gate]
+    if: github.event_name == 'push' && needs.app-size-gate.outputs.needed == 'false'
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # To diff this commit against whichever earlier one has a report.
+          fetch-depth: 0
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+      - name: Copy the last measured app size
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          found=$(scripts/pr-report/find-baseline.sh "$(git rev-parse HEAD^1)" master app-size)
+          if [ -z "$found" ]; then
+            echo "No earlier master report to carry forward."
+            exit 0
+          fi
+          run_id=${found%% *}
+          commit=${found#* }
+          git diff --name-only "$commit" HEAD > changed.txt
+          if [ "$(node scripts/pr-report/app-size-paths.mjs changed.txt)" != needed=false ]; then
+            echo "Native files changed since $commit; its figures would be stale, so nothing is carried."
+            exit 0
+          fi
+          if ! gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name app-size --dir carried/; then
+            echo "The run for $commit has no app size to carry."
+            exit 0
+          fi
+          mkdir -p app-size
+          jq --arg sha "$GITHUB_SHA" '.sha = $sha' carried/app-size.json > app-size/app-size.json
+      - name: Upload the app size report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: app-size
+          path: app-size/app-size.json
+          if-no-files-found: ignore
+          retention-days: 90
+
   # The check to require. On a pull request it compares with the base branch and
-  # posts the comment; in the merge queue it passes without measuring. `!cancelled()`
+  # posts the comment; in the merge queue it passes without measuring. It waits
+  # for the archive too, so on a pull request that changes native code the
+  # comment arrives only after the macOS job has had its turn on a runner. `!cancelled()`
   # keeps it running when js-size failed (so the PR says why) or was skipped
   # (the merge queue, where a skipped required check would otherwise count as
   # passing), but not when this run itself was cancelled — a superseded run
   # posts nothing, rather than a comment for a commit nobody cares about.
   report:
     name: PR report
-    needs: [js-size]
-    if: ${{ !cancelled() && github.event_name != 'push' }}
+    needs: [js-size, app-size-gate, app-size]
+    # As js-size, a label but size/accepted runs nothing.
+    if: >-
+      ${{ !cancelled() && github.event_name != 'push'
+      && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
+      || github.event.label.name == 'size/accepted') }}
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -72,6 +231,28 @@ jobs:
       - name: Pass in the merge queue
         if: github.event_name == 'merge_group'
         run: echo "The pull request passed the size gate before it was queued."
+
+      - name: Leave the comment to a run still measuring this commit
+        # A label change archives nothing, so another run for this commit
+        # that is still going (opening a PR with a label starts two) will
+        # measure the app and post the whole comment, reading the labels as
+        # they are by then. Posting here as well could land after it and put
+        # back a comment without the app size.
+        id: defer
+        if: >-
+          github.event_name == 'pull_request'
+          && (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          others=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+            --event pull_request --commit "$HEAD_SHA" --limit 20 --json databaseId,status \
+            --jq "[.[] | select(.status != \"completed\" and .databaseId != $GITHUB_RUN_ID)] | length")
+          if [ "${others:-0}" -gt 0 ]; then
+            echo "Another run for $HEAD_SHA is still going; it posts the comment."
+            echo "defer=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: github.event_name == 'pull_request'
@@ -91,10 +272,42 @@ jobs:
           name: size-report
           path: head/
 
+      - name: Download this commit's app size report
+        if: github.event_name == 'pull_request' && needs.app-size.result == 'success'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: app-size
+          path: app-head/
+
+      - name: Reuse this commit's reports from an earlier run
+        # A label change measures nothing; the run that last measured this
+        # commit has both reports. Both come from that one run, so they were
+        # built on the same master commit, the one the baselines are then
+        # found for: master may have moved since. Matched by commit alone,
+        # as a fork's branch can be named anything, master included.
+        if: >-
+          github.event_name == 'pull_request'
+          && (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+          && steps.defer.outputs.defer != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          found=$(scripts/pr-report/find-baseline.sh "$HEAD_SHA" --pull-request)
+          if [ -z "$found" ]; then
+            echo "No earlier run has a size report for $HEAD_SHA."
+            exit 0
+          fi
+          run_id=${found%% *}
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ \
+            || echo "The size report for $HEAD_SHA could not be downloaded."
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name app-size --dir app-head/ \
+            || echo "Run $run_id has no app size for $HEAD_SHA."
+
       - name: Find and download the base branch's baseline report
         # Master's run for the base commit, or for a PR stacked on another
         # branch, that branch's own PR run.
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           BASE_REF: ${{ github.base_ref }}
@@ -109,21 +322,31 @@ jobs:
             exit 0
           fi
           found=$(scripts/pr-report/find-baseline.sh "$base_sha" "$BASE_REF")
-          if [ -z "$found" ]; then
+          if [ -n "$found" ]; then
+            run_id=${found%% *}
+            commit=${found#* }
+            echo "COMPARED_SHA=$commit" >> "$GITHUB_ENV"
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
+              || echo "The report for $commit on $BASE_REF could not be downloaded."
+          else
             echo "No baseline found on $BASE_REF for $base_sha."
-            exit 0
           fi
-          run_id=${found%% *}
-          commit=${found#* }
-          echo "COMPARED_SHA=$commit" >> "$GITHUB_ENV"
-          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
-            || echo "The report for $commit on $BASE_REF could not be downloaded."
+          # Looked up on its own: the newest run with an app size can be
+          # older than the newest with a size report, as a master run with no
+          # native change, or one still archiving, may have none.
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha" "$BASE_REF" app-size)
+          if [ -n "$found" ]; then
+            gh run download "${found%% *}" --repo "$GITHUB_REPOSITORY" --name app-size --dir app-baseline/ \
+              || echo "The app size for ${found#* } on $BASE_REF could not be downloaded."
+          else
+            echo "No app size baseline found on $BASE_REF for $base_sha."
+          fi
 
       - name: Read the pull request's current labels
         # The event payload's labels are from when this run was triggered. A
         # label changed since then queues a run that replaces this one, but
         # until it does, the gate reads the labels the API has now.
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -131,7 +354,7 @@ jobs:
           gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '[.labels[].name]' > labels.json
 
       - name: List the files the pull request changes
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -141,9 +364,16 @@ jobs:
 
       - name: Build the report
         id: build
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           BASE_REF: ${{ github.base_ref }}
+          APP_NEEDED: ${{ needs.app-size-gate.outputs.needed != 'false' }}
+          # Where the App size job for this commit is: this run, or for a
+          # label change, which runs none, the pull request's checks.
+          APP_JOB_URL: >-
+            ${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+            && format('{0}/{1}/pull/{2}/checks', github.server_url, github.repository, github.event.pull_request.number)
+            || format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
         run: |
           status=0
           # Exit code 2 is a failed gate; any other non-zero is a crash,
@@ -155,6 +385,10 @@ jobs:
             --base-ref "$BASE_REF" \
             --labels labels.json \
             --files files.json \
+            --app-needed "$APP_NEEDED" \
+            --app-head app-head/app-size.json \
+            --app-baseline app-baseline/app-size.json \
+            --run-url "$APP_JOB_URL" \
             --comment-out comment.md \
             --summary-out summary.md || status=$?
           if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then
@@ -164,7 +398,7 @@ jobs:
           echo "status=$status" >> "$GITHUB_OUTPUT"
 
       - name: Post the comment
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -177,7 +411,7 @@ jobs:
         # step replaces it with a notice instead. It runs before "Size
         # gate", so that step's own deliberate failure on a failed gate —
         # after the real comment already posted — never reaches here.
-        if: failure() && github.event_name == 'pull_request'
+        if: failure() && github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -192,7 +426,9 @@ jobs:
           scripts/pr-report/upsert-comment.sh crash.md
 
       - name: Size gate
-        if: github.event_name == 'pull_request' && steps.build.outputs.status != '0'
+        if: >-
+          github.event_name == 'pull_request' && steps.defer.outputs.defer != 'true'
+          && steps.build.outputs.status != '0'
         run: |
           echo "::error::The size gate failed. See the PR report comment or this job's summary."
           exit 1
