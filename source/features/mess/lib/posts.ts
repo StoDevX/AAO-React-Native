@@ -1,6 +1,7 @@
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import {z} from 'zod'
 import {parseEach} from '@frogpond/data-sources/parse-each'
+import {readableAlt} from './alt'
 import {parseBlocks} from './blocks'
 import {chooseLayout} from './layout'
 import type {Byline, MessCategory, MessStory} from '../types'
@@ -27,6 +28,7 @@ const MediaSchema = z.object({
 	id: z.number(),
 	source_url: z.string(),
 	caption: z.object({rendered: z.string()}).optional(),
+	alt_text: z.string().optional(),
 	media_details: z.object({width: z.number(), height: z.number()}),
 })
 
@@ -129,11 +131,13 @@ function photoOf(post: Post): MessStory['photo'] {
 	// WordPress reports 0 for a size it does not know, such as an SVG's, and a
 	// zero size gives no aspect ratio to frame the photo by.
 	if (!(width > 0 && height > 0)) return null
+	let alt = readableAlt(media.data.alt_text)
 	return {
 		url: media.data.source_url,
 		width,
 		height,
 		caption: fastGetTrimmedText(media.data.caption?.rendered ?? ''),
+		...(alt ? {alt} : {}),
 	}
 }
 

@@ -107,7 +107,12 @@ const HOROSCOPES: MessStory = {
 	},
 }
 
-const COMIC_IMAGE = {url: 'https://olafmessenger.com/comic.png', width: 1000, height: 1400}
+const COMIC_IMAGE = {
+	url: 'https://olafmessenger.com/comic.png',
+	width: 1000,
+	height: 1400,
+	caption: '',
+}
 
 /** A Comic post: its image is the body, and a line of text follows it. */
 const COMIC: MessStory = {

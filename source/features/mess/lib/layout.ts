@@ -31,15 +31,18 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 		case 'Comic':
 		case 'Artwork': {
 			if (input.photo) {
-				let {url, width, height} = input.photo
-				return {layout: {kind: 'image', image: {url, width, height}}, blocks: input.blocks}
+				let {url, width, height, caption, alt} = input.photo
+				return {
+					layout: {kind: 'image', image: {url, width, height, caption, ...(alt ? {alt} : {})}},
+					blocks: input.blocks,
+				}
 			}
 			let index = input.blocks.findIndex((b) => b.type === 'figure')
 			let figure = input.blocks[index]
 			if (figure?.type !== 'figure') return {layout: {kind: 'article'}, blocks: input.blocks}
-			let {url, width, height} = figure
+			let {url, width, height, caption, alt} = figure
 			return {
-				layout: {kind: 'image', image: {url, width, height}},
+				layout: {kind: 'image', image: {url, width, height, caption, ...(alt ? {alt} : {})}},
 				blocks: input.blocks.filter((_, i) => i !== index),
 			}
 		}

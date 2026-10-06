@@ -353,7 +353,7 @@ export const messGalleryOptions = (photoIds: number[]) =>
 			// Assumes the resolved feed href is an absolute WordPress URL.
 			let origin = originOf(await feedHref())
 			let body = await messFetch(
-				`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption`,
+				`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption,alt_text`,
 				signal,
 				'Olaf Messenger gallery',
 			)

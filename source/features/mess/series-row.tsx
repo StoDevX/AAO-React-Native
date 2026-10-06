@@ -26,7 +26,7 @@ import {
 import {useQuery} from '@tanstack/react-query'
 import {RowAccessory} from '../../components/rows'
 import {FramedPhoto} from './image-view'
-import {TAP_TARGET} from './lib/glyph-grid'
+import {TAP_TARGET} from '../../lib/tap-target'
 import {faded, ink} from './palette'
 import {messSeriesOptions} from './query'
 import {SECTION_HEADING} from './story-blocks'
