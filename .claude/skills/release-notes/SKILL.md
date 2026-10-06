@@ -40,7 +40,7 @@ The project context for the user prompt:
 ```bash
 git fetch --tags origin
 git rev-parse --is-shallow-repository   # true: git fetch --unshallow origin
-git tag --merged <tag> --sort=-v:refname | grep -vx <tag>
+git tag --merged "<tag>" --sort=-v:refname | grep -vx "<tag>"
 ```
 
 The baseline is the first tag listed whose commit differs from the target's,
@@ -51,7 +51,7 @@ range you picked before going on.
 
 ## 3. Gather the context
 
-- **`git_log`**: `git log <prev>..<tag> --pretty=format:'%h %s' --reverse`
+- **`git_log`**: `git log "<prev>..<tag>" --pretty=format:'%H %s' --reverse`
 - **Referenced PRs**: each `#N` in a `(#N)` or a "Merge pull request #N from
   …" subject, in log order.
 - **Changelog entry**: the `CHANGELOG.md` section headed by the version, with
@@ -84,6 +84,7 @@ The system prompt names tools; use these:
 | `git_show` | `git show <ref>` |
 | `get_commits` | `git log <from>..<to> -- <path>` |
 | `get_pr`, `get_pr_diff`, `get_issue` | GitHub MCP `pull_request_read` (`get`, `get_diff`), `issue_read`, or `gh` |
+| `submit_release_notes` | Write `release.json` in the scratchpad (section 6) |
 
 Read each referenced PR's description, and its diff wherever the description
 and the changeset leave unclear what a user sees. A PR you cannot read gets an
@@ -94,8 +95,8 @@ more than the PR descriptions. Walk the first-parent merges oldest first and
 give each commit to the first one that brings it in:
 
 ```bash
-git log --first-parent --reverse --format=%H <prev>..<tag> | while read m; do
-	echo "M $m $(git show -s --format=%s "$m" | grep -oE '#[0-9]+' | head -1)"
+git log --first-parent --reverse --format=%H "<prev>..<tag>" | while read m; do
+	echo "M $m $(git show -s --format=%s "$m" | sed -nE 's/.*\(#([0-9]+)\)$/#\1/p; s/^Merge pull request #([0-9]+) .*/#\1/p')"
 	git rev-parse -q --verify "$m^2" >/dev/null && git rev-list --reverse "$m^1..$m^2" | sed 's/^/C /'
 done
 ```
@@ -106,8 +107,10 @@ of the base:
 - A "Merge pull request #N" commit inside a branch marks a stacked PR; the
   commits it merged belong to #N, not to the PR that carried the branch.
 - When one PR branched from another's unmerged branch, the earlier PR's
-  commits arrive with whichever merged first. Credit them to the PR whose
-  title they match.
+  commits arrive with whichever merged first. A commit subject need not match
+  its PR's title, so check membership instead: `gh pr view <N> --json commits`
+  lists the commits a PR holds. Credit a commit to the PR that holds it, and
+  when you cannot tell, mark it `uncertain` in coverage.
 - A PR named in the existing release body but in no log subject was stacked
   too. Find its commits by its title.
 
@@ -136,7 +139,8 @@ Write the answer to `release.json` in the scratchpad:
   Changelog link."
 - **`coverage`**: "When requested, assess every supplied commit against the
   final notes with an exact commit ID, status, and reason." Each entry is
-  `{"commit", "status": "included" | "omitted" | "uncertain", "reason"}`.
+  `{"commit": "<sha>", "status": "included", "reason": "…"}`, where `status` is
+  `included`, `omitted` or `uncertain`, and `coverage` is an array of them.
 - **`migration_guide`**: "When requested, standalone Markdown upgrade steps,
   affected users, and verified before/after examples. Explicitly state when no
   migration is needed."
