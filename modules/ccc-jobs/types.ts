@@ -25,9 +25,6 @@ export interface JobDetail {
 	location: string | undefined
 	postedDate: string | undefined
 	fields: JobField[]
-	/// The St. Olaf unit the posting's description names, as five digits, or
-	/// null when it names none. Never shown; Student Work sorts by it.
-	unit: string | null
 	/// Markdown, for `@frogpond/markdown`.
 	body: string
 	url: string
