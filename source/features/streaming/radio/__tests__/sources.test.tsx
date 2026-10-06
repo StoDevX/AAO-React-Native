@@ -10,7 +10,9 @@ import {
 	type Jrd,
 } from '@frogpond/data-sources'
 
+import {DEFAULT_URL} from '../../../../lib/constants'
 import {stationSources, useStationSources} from '../sources'
+import {STATIONS, type StationId} from '../stations'
 
 // The manifest is asked for over the network; each test says how that goes.
 const mockGet = jest.fn<() => {json: () => Promise<unknown>}>()
@@ -96,12 +98,49 @@ describe('stationSources', () => {
 		)
 	})
 
-	test('gives a station a player page the published manifest adds', () => {
+	// The player, the web view and `fetch` are all handed what they are given;
+	// none of them knows the server a relative address names.
+	test('makes a proxied stream an address on the server', () => {
+		let manifest = manifestWith(
+			link(REL_RADIO_STREAM, 'ksto', 'radio/ksto.m3u8', 'application/vnd.apple.mpegurl'),
+		)
+		expect(stationSources(manifest, 'ksto').streamSourceUrl).toBe(`${DEFAULT_URL}radio/ksto.m3u8`)
+	})
+
+	test("keeps KSTO's shipped player page when the published one is on another site", () => {
+		let manifest = manifestWith(
+			link(REL_RADIO_PLAYER_PAGE, 'ksto', 'https://example.test/ksto.html', 'text/html'),
+		)
+		expect(stationSources(manifest, 'ksto').embeddedPlayerUrl).toBe(
+			'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+		)
+	})
+
+	test('gives a station no player page the published manifest puts on another site', () => {
 		let manifest = manifestWith(
 			link(REL_RADIO_PLAYER_PAGE, 'krlx', 'https://example.test/krlx.html', 'text/html'),
 		)
+		expect(stationSources(manifest, 'krlx').embeddedPlayerUrl).toBeUndefined()
+	})
+
+	// Throwing here would take down the root layout, where the radio is mounted.
+	test.each(Object.keys(STATIONS) as StationId[])(
+		'ships %s with a stream it can play, and any page on a site a page may be',
+		(stationId) => {
+			let {streamSourceUrl, embeddedPlayerUrl} = stationSources(EMPTY, stationId)
+			expect(streamSourceUrl).toMatch(/^https:\/\//u)
+			if (embeddedPlayerUrl !== undefined) {
+				expect(new URL(embeddedPlayerUrl).host).toBe('www.stolaf.edu')
+			}
+		},
+	)
+
+	test('gives a station a player page the published manifest adds', () => {
+		let manifest = manifestWith(
+			link(REL_RADIO_PLAYER_PAGE, 'krlx', 'https://www.stolaf.edu/krlx.html', 'text/html'),
+		)
 		expect(stationSources(manifest, 'krlx').embeddedPlayerUrl).toBe(
-			'https://example.test/krlx.html',
+			'https://www.stolaf.edu/krlx.html',
 		)
 	})
 })

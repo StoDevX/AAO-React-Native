@@ -35,11 +35,9 @@ function NativeStation({
 	return <NativeStreamPlayer {...player} nowPlaying={nowPlaying} />
 }
 
-type PlayersProps = {
-	station: Station
+type PlayersProps = Omit<React.ComponentProps<typeof NativeStation>, 'streamSourceUrl'> & {
 	sources: StationSources
-	playState: PlayState
-} & Omit<React.ComponentProps<typeof NativeStation>, 'station' | 'streamSourceUrl' | 'playState'>
+}
 
 /**
  * One play of a station: its native player, and its player page where it has
@@ -47,19 +45,14 @@ type PlayersProps = {
  * with, so a manifest that arrives mid-play changes the next play rather than
  * restarting this one.
  */
-function StationPlayers({station, sources, playState, ...player}: PlayersProps): React.ReactNode {
+function StationPlayers({sources, ...player}: PlayersProps): React.ReactNode {
 	let [{streamSourceUrl, embeddedPlayerUrl}] = React.useState(sources)
 
 	// Every station plays natively, which iOS can put in Control Center. A station
 	// that also has a player page of its own gets it loaded beside, silent.
 	return (
 		<>
-			<NativeStation
-				{...player}
-				playState={playState}
-				station={station}
-				streamSourceUrl={streamSourceUrl}
-			/>
+			<NativeStation {...player} streamSourceUrl={streamSourceUrl} />
 			{embeddedPlayerUrl ? (
 				// DECISION (St. Olaf / KSTO): their player page's analytics count listens,
 				// and they asked that the app keep loading it. It plays with its sound
@@ -71,7 +64,7 @@ function StationPlayers({station, sources, playState, ...player}: PlayersProps):
 				<View pointerEvents="none" style={styles.hidden}>
 					<MutedStationPage
 						embeddedPlayerUrl={embeddedPlayerUrl}
-						playState={playState}
+						playState={player.playState}
 						style={styles.fill}
 					/>
 				</View>
