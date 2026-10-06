@@ -22,7 +22,7 @@ export const dataSources: Array<DataSource> = [
 	{
 		name: 'Presence',
 		provides: 'Student organization events',
-		url: 'https://presence.io/',
+		url: 'https://stolaf.presence.io/organizations',
 	},
 	{
 		name: 'Bon Appétit',
