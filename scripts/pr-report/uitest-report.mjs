@@ -29,6 +29,12 @@ export const CHANGE_SECONDS = 5
 /** ...and by at least this share of its time on master. */
 export const CHANGE_RATIO = 0.25
 
+/** What a suite's conclusion can be, which the block prints; anything else is not a report of ours. */
+const RESULTS = new Set(['success', 'failure', 'cancelled', 'skipped'])
+
+/** A commit as git prints it, which the block prints a prefix of. */
+const FULL_SHA = /^[0-9a-f]{40}$/u
+
 const TOP_ROWS = 10
 /** The collapsed table's rows, which keeps the block far under the comment limit. */
 const MAX_ROWS = 50
@@ -99,7 +105,8 @@ export function readUitestReport(path) {
 	let {shards, durations, flaky} = parsed
 	if (
 		typeof parsed.sha !== 'string' ||
-		typeof parsed.result !== 'string' ||
+		!RESULTS.has(parsed.result) ||
+		(parsed.baseSha !== null && !FULL_SHA.test(parsed.baseSha)) ||
 		!isMap(shards) ||
 		!Object.values(shards).every(
 			(s) => isMap(s) && Number.isFinite(s.wallSeconds) && Number.isFinite(s.testCount),

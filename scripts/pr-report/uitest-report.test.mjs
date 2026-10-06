@@ -18,12 +18,15 @@ import {
 	spliceBlock,
 } from './uitest-report.mjs'
 
+/** A master commit, as git prints one. */
+let BASE = 'abcdef1234567'.padEnd(40, '0')
+
 let report = ({
 	durations = {},
 	flaky = [],
 	shards = {1: {wallSeconds: 552, testCount: Object.keys(durations).length}},
 	result = 'success',
-	baseSha = 'abcdef1234567',
+	baseSha = BASE,
 } = {}) => ({version: 1, sha: 'head', baseSha, result, shards, durations, flaky})
 
 describe('buildShard', () => {
@@ -132,6 +135,10 @@ describe('readUitestReport', () => {
 			{...report(), durations: {a: 'x'}},
 			{...report(), flaky: [{identifier: 'a'}]},
 			{...report(), result: undefined},
+			{...report(), result: '**free text** @someone'},
+			{...report(), baseSha: 'abc'},
+			{...report(), baseSha: undefined},
+			{...report(), baseSha: 'A'.repeat(40)},
 		]) {
 			assert.equal(readUitestReport(write(bad)), null)
 		}
@@ -191,7 +198,7 @@ describe('buildBlock', () => {
 		})
 		let flakyBaseline = {...baseline, flaky: [{identifier: 'b', attempts: 2}]}
 		assert.equal(
-			buildBlock({head, baseline: flakyBaseline, comparedSha: 'abcdef1234567'}),
+			buildBlock({head, baseline: flakyBaseline, comparedSha: BASE}),
 			[
 				BLOCK_START,
 				'### UI tests',
