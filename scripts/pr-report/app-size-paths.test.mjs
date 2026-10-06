@@ -14,6 +14,7 @@ describe('isNativePath', () => {
 		'images/icons/windmill-light.png',
 		'modules/audio-route/ios/AudioRouteModule.swift',
 		'modules/audio-route/expo-module.config.json',
+		'react-native.config.js',
 		'plugins/with-alternate-icons.ts',
 		'app.config.ts',
 		'package.json',

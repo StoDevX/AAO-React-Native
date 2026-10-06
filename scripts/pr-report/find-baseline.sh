@@ -9,9 +9,11 @@
 #
 # A pull request stacked on another branch compares with that branch's own
 # pull request run for the base commit, which is the branch's tip. There is
-# no fallback: only master has a chain of runs to walk back along. The same
-# lookup, given a PR's own branch and head commit, finds an earlier run of
-# that PR.
+# no fallback: only master has a chain of runs to walk back along.
+#
+# With --pull-request in place of a branch, it finds an earlier pull request
+# run for the commit itself, matched by commit alone: a fork's branch can be
+# named anything, master included.
 #
 # For master, first choice: the exact commit's own push run. Otherwise, of
 # the 30 newest master push runs, the newest with the artifact whose commit
@@ -22,7 +24,7 @@
 # not a workflow failure, so no error here is fatal: anything that goes
 # wrong prints nothing.
 #
-# Usage: find-baseline.sh <base-sha> [<base-branch>] [<artifact>]
+# Usage: find-baseline.sh <base-sha> [<base-branch> | --pull-request] [<artifact>]
 set -uo pipefail
 
 base_sha=$1
@@ -56,6 +58,14 @@ first_with_artifact() {
 	done
 	return 1
 }
+
+if [ "$base_ref" = --pull-request ]; then
+	gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
+		--event pull_request --commit "$base_sha" \
+		--limit 10 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null \
+		| first_with_artifact
+	exit 0
+fi
 
 if [ "$base_ref" != master ]; then
 	gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \

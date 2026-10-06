@@ -25,7 +25,7 @@ let option = (name) => {
 let output
 if (args[0] === 'run' && args[1] === 'list') {
 	output = data.runs
-		.filter((run) => run.headBranch === option('--branch'))
+		.filter((run) => option('--branch') === undefined || run.headBranch === option('--branch'))
 		.filter((run) => run.event === option('--event'))
 		.filter((run) => option('--commit') === undefined || run.headSha === option('--commit'))
 		.filter((run) => option('--status') === undefined || run.status === option('--status'))

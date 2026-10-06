@@ -17,6 +17,8 @@ const NATIVE = [
 	/^images\//u,
 	// Autolinking reads it to decide which native code a module brings.
 	/^modules\/[^/]+\/expo-module\.config\.json$/u,
+	// Autolinking reads it too: it can leave a package's pods out of the app.
+	/^react-native\.config\.js$/u,
 	/^package\.json$/u,
 	/^pnpm-lock\.yaml$/u,
 	/^pnpm-workspace\.yaml$/u,

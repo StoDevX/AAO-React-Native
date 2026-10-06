@@ -125,3 +125,38 @@ describe('find-baseline.sh on another branch', () => {
 		assert.equal(out, '')
 	})
 })
+
+describe('find-baseline.sh --pull-request', () => {
+	let pr = (databaseId, headSha, headBranch) => ({
+		databaseId,
+		headSha,
+		headBranch,
+		event: 'pull_request',
+		status: 'success',
+	})
+
+	it("picks this commit's own pull request run with the artifact, whatever its branch is named", () => {
+		let out = findBaseline(
+			{
+				runs: [pr(6, base, 'master'), pr(5, base, 'master')],
+				artifacts: {5: reports('size-report')},
+			},
+			base,
+			'--pull-request',
+		)
+		assert.equal(out, `5 ${base}\n`)
+	})
+
+	it("never falls back to master's runs, even for a branch named master", () => {
+		let out = findBaseline(
+			{
+				runs: [push(3, older)],
+				artifacts: {3: reports('size-report')},
+				ancestors: {[base]: [base, older]},
+			},
+			base,
+			'--pull-request',
+		)
+		assert.equal(out, '')
+	})
+})

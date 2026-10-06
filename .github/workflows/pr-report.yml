@@ -35,12 +35,11 @@ jobs:
     name: JS size
     runs-on: ubuntu-26.04
     # The merge queue has nothing to compare and no labels to read; the PR
-    # passed the gate already. Of label changes, only size/accepted (gate.mjs's
-    # ACCEPT_LABEL) changes the report; any other label runs nothing.
+    # passed the gate already. A label change measures nothing: the report
+    # job reuses what an earlier run measured for this commit.
     if: >-
       github.event_name != 'merge_group'
-      && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
-      || github.event.label.name == 'size/accepted')
+      && github.event.action != 'labeled' && github.event.action != 'unlabeled'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -72,7 +71,8 @@ jobs:
   app-size-gate:
     name: Decide whether to archive
     runs-on: ubuntu-slim
-    # As js-size: not in the merge queue, nor for a label but size/accepted.
+    # Not in the merge queue, nor for a label change but size/accepted
+    # (gate.mjs's ACCEPT_LABEL), the only label that changes the report.
     if: >-
       github.event_name != 'merge_group'
       && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
@@ -95,8 +95,9 @@ jobs:
         id: decide
         if: always()
         env:
-          # The tip of master before this push, or empty on a pull request.
-          BEFORE: ${{ github.event.before }}
+          # The tip of master before this push, or empty on a pull request,
+          # whose own `before` is its previous head and no base at all.
+          BEFORE: ${{ github.event_name == 'push' && github.event.before || '' }}
         run: |
           needed_line=needed=true
           base=HEAD^1
@@ -278,10 +279,12 @@ jobs:
           name: app-size
           path: app-head/
 
-      - name: Reuse this commit's app size from an earlier run
-        # A label change archives nothing; the run that last measured this
-        # commit has the figures. With none (its archive failed), the section
-        # says the app size is unavailable.
+      - name: Reuse this commit's reports from an earlier run
+        # A label change measures nothing; the run that last measured this
+        # commit has both reports. Both come from that one run, so they were
+        # built on the same master commit, the one the baselines are then
+        # found for: master may have moved since. Matched by commit alone,
+        # as a fork's branch can be named anything, master included.
         if: >-
           github.event_name == 'pull_request'
           && (github.event.action == 'labeled' || github.event.action == 'unlabeled')
@@ -289,15 +292,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          HEAD_REF: ${{ github.head_ref }}
         run: |
-          found=$(scripts/pr-report/find-baseline.sh "$HEAD_SHA" "$HEAD_REF" app-size)
+          found=$(scripts/pr-report/find-baseline.sh "$HEAD_SHA" --pull-request)
           if [ -z "$found" ]; then
-            echo "No earlier run has an app size for $HEAD_SHA."
+            echo "No earlier run has a size report for $HEAD_SHA."
             exit 0
           fi
-          gh run download "${found%% *}" --repo "$GITHUB_REPOSITORY" --name app-size --dir app-head/ \
-            || echo "The app size for $HEAD_SHA could not be downloaded."
+          run_id=${found%% *}
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir head/ \
+            || echo "The size report for $HEAD_SHA could not be downloaded."
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name app-size --dir app-head/ \
+            || echo "Run $run_id has no app size for $HEAD_SHA."
 
       - name: Find and download the base branch's baseline report
         # Master's run for the base commit, or for a PR stacked on another
