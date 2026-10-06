@@ -94,7 +94,7 @@ export default function AboutPage(): React.ReactNode {
 
 					<SheetSection>
 						<LabeledContent
-							label="App Version"
+							label={versions[versionIndex].label}
 							modifiers={[
 								// The whole row takes the tap, not only its text.
 								contentShape(shapes.rectangle()),
@@ -103,7 +103,7 @@ export default function AboutPage(): React.ReactNode {
 								accessibilityHint('Shows the build number and commit'),
 							]}
 						>
-							<Text>{versions[versionIndex]}</Text>
+							<Text>{versions[versionIndex].value}</Text>
 						</LabeledContent>
 					</SheetSection>
 

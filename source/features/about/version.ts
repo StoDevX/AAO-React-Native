@@ -1,4 +1,13 @@
 /**
+ * One of the version row's readings: what the row is labelled while it shows
+ * this value, so the label says which one is on screen.
+ */
+export type VersionDetail = {
+	label: string
+	value: string
+}
+
+/**
  * What the About screen's version row can show, in the order a tap steps
  * through them, as iOS's own About rows do: the version, the build number, and
  * the commit the build came from.
@@ -15,13 +24,13 @@ export function versionDetails(
 	version: string | null,
 	build: string | null,
 	commit: string | undefined,
-): Array<string> {
-	let details = [version ?? 'unknown']
+): Array<VersionDetail> {
+	let details = [{label: 'App Version', value: version ?? 'unknown'}]
 	if (build) {
-		details.push(build)
+		details.push({label: 'App Build', value: build})
 	}
 	if (commit && commit !== build) {
-		details.push(commit)
+		details.push({label: 'App Commit', value: commit})
 	}
 	return details
 }
