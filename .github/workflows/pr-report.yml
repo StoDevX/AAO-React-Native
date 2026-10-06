@@ -14,9 +14,13 @@ concurrency:
   # cancelled by a later push landing while it waits; a pull request shares
   # one group per ref, so a stale run for the same PR is replaced. A label
   # change archives nothing and reads the app size an earlier run measured,
-  # so it gets a group of its own: it must not cancel that run's archive,
-  # which a PR opened with a label would otherwise lose every time.
-  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && '-labels' || '' }}
+  # so it gets a group of its own, one per label: it must not cancel that
+  # run's archive, which a PR opened with a label would otherwise lose every
+  # time, and a label that runs nothing must not cancel one that does.
+  group: >-
+    ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}${{
+    (github.event.action == 'labeled' || github.event.action == 'unlabeled')
+    && format('-label-{0}', github.event.label.name) || '' }}
   # Never cancel a push to master: a cancelled run uploads no report, and
   # every later PR needs one for each master commit to compare against.
   cancel-in-progress: ${{ github.event_name != 'push' }}
@@ -31,8 +35,12 @@ jobs:
     name: JS size
     runs-on: ubuntu-26.04
     # The merge queue has nothing to compare and no labels to read; the PR
-    # passed the gate already.
-    if: github.event_name != 'merge_group'
+    # passed the gate already. Of label changes, only size/accepted (gate.mjs's
+    # ACCEPT_LABEL) changes the report; any other label runs nothing.
+    if: >-
+      github.event_name != 'merge_group'
+      && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
+      || github.event.label.name == 'size/accepted')
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -64,7 +72,11 @@ jobs:
   app-size-gate:
     name: Decide whether to archive
     runs-on: ubuntu-slim
-    if: github.event_name != 'merge_group'
+    # As js-size: not in the merge queue, nor for a label but size/accepted.
+    if: >-
+      github.event_name != 'merge_group'
+      && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
+      || github.event.label.name == 'size/accepted')
     outputs:
       needed: ${{ steps.decide.outputs.needed }}
     steps:
@@ -194,7 +206,11 @@ jobs:
   report:
     name: PR report
     needs: [js-size, app-size-gate, app-size]
-    if: ${{ !cancelled() && github.event_name != 'push' }}
+    # As js-size, a label but size/accepted runs nothing.
+    if: >-
+      ${{ !cancelled() && github.event_name != 'push'
+      && (github.event.action != 'labeled' && github.event.action != 'unlabeled'
+      || github.event.label.name == 'size/accepted') }}
     runs-on: ubuntu-slim
     permissions:
       contents: read
