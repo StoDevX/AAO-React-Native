@@ -318,7 +318,7 @@ struct TestIdentifiers {
 		/// Each area row's identifier is this followed by the area's slug.
 		static let areaRowPrefix = "student-work-area:"
 		/// How many areas data/student-work-areas.yaml lists.
-		static let areaCount = 16
+		static let areaCount = 17
 		/// From data/student-work-areas.yaml: one area the fixtures fill, one
 		/// they leave empty. See FIXTURE_UNITS in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
