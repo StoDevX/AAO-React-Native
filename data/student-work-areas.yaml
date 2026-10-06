@@ -2,9 +2,9 @@
 # the St. Olaf unit numbers whose job postings belong to each. A posting is in
 # an area when the Unit Number in its description is one of the area's units,
 # five digits without any fund prefix, as ccc-server's /student-work/units
-# reads it; a unit listed nowhere here leaves its postings under "All job
-# postings" only. The unit `unknown` is what ccc-server publishes for a posting
-# whose description has no unit number it can read.
+# reads it. ccc-server publishes the unit `other` for a posting whose unit no
+# area lists, or that has none, so the last area, which lists `other`, collects
+# every posting the rest do not.
 #
 # Each unit is written with its name from the work-authorisation list, for
 # whoever edits this file next:
@@ -170,9 +170,9 @@
   units:
     - '45158' # Lilly End: Nourish Voc Chldrn
 
-- name: Unknown
-  slug: unknown
-  icon: questionmark.circle.fill
+- name: Other
+  slug: other
+  icon: ellipsis.circle.fill
   gradient: gray
   units:
-    - 'unknown' # postings whose Unit Number ccc-server cannot read
+    - 'other' # postings whose unit no area lists, or that name none

@@ -22,5 +22,5 @@ items:
       type: array
       minItems: 1
       uniqueItems: true
-      # `unknown` is what ccc-server publishes for a posting with no readable unit.
-      items: {type: string, pattern: '^([0-9]{5}|unknown)$'}
+      # `other` is what ccc-server publishes for a posting whose unit no area lists, or that has none.
+      items: {type: string, pattern: '^([0-9]{5}|other)$'}

@@ -27,15 +27,15 @@ describe('student-work-areas.yaml', () => {
 		expect(new Set(units).size).toBe(units.length)
 	})
 
-	test('uses only five-digit unit numbers, and the unknown unit', () => {
+	test('uses only five-digit unit numbers, and the other unit', () => {
 		for (let unit of areas.flatMap((area) => area.units)) {
-			expect(unit).toMatch(/^(\d{5}|unknown)$/u)
+			expect(unit).toMatch(/^(\d{5}|other)$/u)
 		}
 	})
 
-	// ccc-server publishes "unknown" for a posting with no unit number it can read.
-	test('collects the unknown unit in an Unknown area', () => {
-		expect(areas.find((area) => area.units.includes('unknown'))?.slug).toBe('unknown')
+	// ccc-server publishes "other" for a posting with no unit number it can read.
+	test('collects the other unit in an Other area', () => {
+		expect(areas.find((area) => area.units.includes('other'))?.slug).toBe('other')
 	})
 
 	test('uses only named gradients', () => {

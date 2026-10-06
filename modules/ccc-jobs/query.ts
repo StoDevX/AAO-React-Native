@@ -95,8 +95,8 @@ const UNITS_LABEL = 'Student Work units'
 const PostingUnitsSchema = z.record(z.string(), z.string().nullable())
 
 /// Each board posting's unit by posting ID, from ccc-server. A posting the
-/// server could not read is absent; one whose description names no unit is
-/// "unknown" (older servers sent null).
+/// server could not read is absent; one whose unit no area lists, or that
+/// names none, is "other" (older servers sent the unit, or null).
 export type PostingUnits = z.infer<typeof PostingUnitsSchema>
 
 /// One hour, as long as ccc-server caches its answer.
