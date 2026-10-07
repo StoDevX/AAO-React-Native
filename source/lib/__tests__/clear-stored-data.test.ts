@@ -50,4 +50,20 @@ describe('clearStoredData', () => {
 
 		expect(await AsyncStorage.getAllKeys()).toEqual([])
 	})
+
+	it('leaves behind no setting changed while it ran', async () => {
+		// Undo the pause the test before left behind. The store is already
+		// rehydrated, so this only resumes saving.
+		persistor.persist()
+
+		// A change made while the pending write drains would queue a fresh
+		// write, landing after the clear unless persistence is already paused.
+		let clearing = clearStoredData()
+		store.dispatch(setDevModeOverride(!store.getState().settings.devModeOverride))
+
+		await clearing
+		await new Promise((resolve) => setTimeout(resolve, 50))
+
+		expect(await AsyncStorage.getAllKeys()).toEqual([])
+	})
 })

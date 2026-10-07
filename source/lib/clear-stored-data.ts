@@ -10,10 +10,11 @@ import {persistor} from '../redux'
  */
 export async function clearStoredData(): Promise<void> {
 	// Redux-persist writes a change on a later tick, so a setting changed just
-	// before this would land after the wipe and survive it. Write what is
-	// pending now, then stop writing.
-	await persistor.flush()
+	// before this would land after the wipe and survive it. Stop queueing
+	// writes first, so nothing changed during the flush is queued behind it,
+	// then write what is already pending.
 	persistor.pause()
+	await persistor.flush()
 
 	// Empty the query cache at the source, then delete what it already wrote.
 	// Wiping storage alone leaves the cache in memory, and its writes are
