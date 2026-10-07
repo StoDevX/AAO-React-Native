@@ -17,10 +17,10 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func openPreset(_ title: String) -> Self {
 		let preset = app.elementWithLabel(startingWith: title)
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should load")
+		XCTAssertTrue(areaGrid.existsOrAppears(within: 30), "The landing should load")
 		// Below the tiles, and the list builds rows only as they near the screen.
 		scrollUntilExists(preset)
-		XCTAssertTrue(preset.waitForExistence(timeout: 10), "The landing should offer \(title)")
+		XCTAssertTrue(preset.existsOrAppears(within: 10), "The landing should offer \(title)")
 		preset.tap()
 		return waitForPostings()
 	}
@@ -34,14 +34,14 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func openArea(_ name: String) -> Self {
 		let tile = areaGrid.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
-		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The landing should have a \(name) tile")
+		XCTAssertTrue(tile.existsOrAppears(within: 30), "The landing should have a \(name) tile")
 		tile.tap()
 		return waitForPostings()
 	}
 
 	@discardableResult
 	func verifyAreaTileCount(_ count: Int) -> Self {
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should show its area tiles")
+		XCTAssertTrue(areaGrid.existsOrAppears(within: 30), "The landing should show its area tiles")
 		XCTAssertEqual(areaGrid.buttons.count, count, "The landing should have \(count) area tiles")
 		return self
 	}
@@ -159,7 +159,7 @@ struct StudentWorkScreen: Screen {
 			"The description should open on a screen of its own")
 		XCTAssertTrue(
 			app.elementWithLabel(startingWith: TestIdentifiers.StudentWork.fixtureJobDescriptionParagraph)
-				.waitForExistence(timeout: 10),
+				.existsOrAppears(within: 10),
 			"The description screen should hold the posting's text")
 		return self
 	}

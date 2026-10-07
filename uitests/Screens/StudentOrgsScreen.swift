@@ -29,7 +29,7 @@ struct StudentOrgsScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.existsOrAppears(within: 30),
 			"Student Orgs should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -125,7 +125,7 @@ struct StudentOrgsScreen: Screen {
 	@discardableResult
 	func verifyCategoriesShown() -> Self {
 		XCTAssertTrue(
-			firstCategoryRow.waitForExistence(timeout: 30),
+			firstCategoryRow.existsOrAppears(within: 30),
 			"The category list should hold at least one category before a search")
 		return self
 	}
@@ -146,7 +146,7 @@ struct StudentOrgsScreen: Screen {
 	func openFirstCategory() -> String {
 		let row = firstCategoryRow
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.existsOrAppears(within: 30),
 			"The category list should hold at least one category before a search")
 
 		let name = String(row.identifier.dropFirst(TestIdentifiers.StudentOrgs.categoryRowPrefix.count))

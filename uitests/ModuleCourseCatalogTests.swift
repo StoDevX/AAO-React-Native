@@ -11,7 +11,7 @@ class ModuleCourseCatalogTests: UITestCaseUnbooted {
 			.checkRecentSectionExists()
 
 		let field = app.searchFields.firstMatch
-		XCTAssertTrue(field.waitForExistence(timeout: 30), "Course search should offer a field")
+		XCTAssertTrue(field.existsOrAppears(within: 30), "Course search should offer a field")
 		field.tap()
 		field.typeText(TestIdentifiers.CourseCatalog.aCourse)
 

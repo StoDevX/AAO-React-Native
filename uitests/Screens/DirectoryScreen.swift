@@ -26,7 +26,7 @@ struct DirectoryScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.existsOrAppears(within: 30),
 			"Directory should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -73,7 +73,7 @@ struct DirectoryScreen: Screen {
 	func cancelSearch() -> Self {
 		let field = searchField
 		XCTAssertTrue(
-			field.waitForExistence(timeout: 30),
+			field.existsOrAppears(within: 30),
 			"Directory should offer a search field")
 
 		let cancel = app.buttonLabelled(TestIdentifiers.Search.cancelButton)
@@ -99,7 +99,7 @@ struct DirectoryScreen: Screen {
 	func verifyDepartmentHeading(_ department: String) -> Self {
 		let heading = app.staticTexts[department].firstMatch
 		XCTAssertTrue(
-			heading.waitForExistence(timeout: 30),
+			heading.existsOrAppears(within: 30),
 			"\(department) should be named above the results")
 		return self
 	}
@@ -110,7 +110,7 @@ struct DirectoryScreen: Screen {
 	func showAsList() -> Self {
 		let toggle = app.buttonLabelled(TestIdentifiers.Directory.showAsList)
 		XCTAssertTrue(
-			toggle.waitForExistence(timeout: 30),
+			toggle.existsOrAppears(within: 30),
 			"The results should offer a list/tiles toggle")
 		toggle.tap()
 		return self
@@ -121,7 +121,7 @@ struct DirectoryScreen: Screen {
 	func showAsTiles() -> Self {
 		let toggle = app.buttonLabelled(TestIdentifiers.Directory.showAsTiles)
 		XCTAssertTrue(
-			toggle.waitForExistence(timeout: 30),
+			toggle.existsOrAppears(within: 30),
 			"The results should offer a list/tiles toggle")
 		toggle.tap()
 		return self
@@ -159,7 +159,7 @@ struct DirectoryScreen: Screen {
 	func verifyResultsGalleried() -> Self {
 		let firstTile = app.element(matching: "\(TestIdentifiers.Directory.tilePrefix)0")
 		XCTAssertTrue(
-			firstTile.waitForExistence(timeout: 30),
+			firstTile.existsOrAppears(within: 30),
 			"The directory gallery should have tiles in it")
 		return self
 	}
@@ -173,7 +173,7 @@ struct DirectoryScreen: Screen {
 	func verifyContactTiles(count: Int) -> Self {
 		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
 		XCTAssertTrue(
-			grid.waitForExistence(timeout: 30),
+			grid.existsOrAppears(within: 30),
 			"The contact grid should be visible before a search")
 		XCTAssertEqual(
 			grid.buttons.count, count,
@@ -185,7 +185,7 @@ struct DirectoryScreen: Screen {
 	func openContact(_ title: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.existsOrAppears(within: 30),
 			"\(title) should have a tile in the grid")
 		tile.tap()
 		return self
@@ -214,7 +214,7 @@ struct DirectoryScreen: Screen {
 	func verifyContactTileIsSquare(_ title: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.existsOrAppears(within: 30),
 			"\(title) should have a tile in the grid")
 		let frame = tile.frame
 		XCTAssertLessThan(
@@ -267,7 +267,7 @@ struct DirectoryScreen: Screen {
 	func dismissContactSheet(titled title: String, waitingFor action: String) -> Self {
 		let bar = app.navigationBars[title]
 		XCTAssertTrue(
-			bar.waitForExistence(timeout: 30),
+			bar.existsOrAppears(within: 30),
 			"The \(title) sheet should have a navigation bar to drag from")
 
 		bar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
@@ -302,12 +302,12 @@ struct DirectoryScreen: Screen {
 	func attemptToTapContactBehindSheet(_ title: String, whileShowing sheetTitle: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.existsOrAppears(within: 30),
 			"\(title) should still have a tile behind the sheet")
 
 		let sheetBar = app.navigationBars[sheetTitle]
 		XCTAssertTrue(
-			sheetBar.waitForExistence(timeout: 30),
+			sheetBar.existsOrAppears(within: 30),
 			"The \(sheetTitle) sheet should have a navigation bar marking its top edge")
 
 		let point = tile.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
