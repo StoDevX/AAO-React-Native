@@ -442,6 +442,7 @@ jobs:
       - name: Install the flakiness CLI
         id: flakiness
         continue-on-error: true
+        timeout-minutes: 2
         run: mise install npm:flakiness
 
       - name: Fetch predicted durations from flakiness.io
