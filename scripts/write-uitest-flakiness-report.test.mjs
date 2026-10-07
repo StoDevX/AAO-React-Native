@@ -5,6 +5,7 @@ import {ReportUtils} from '@flakiness/sdk'
 
 import {
 	buildReport,
+	readRunnerLoad,
 	readSimulatorOsVersion,
 	readSimulatorWait,
 } from './write-uitest-flakiness-report.mjs'
@@ -318,6 +319,26 @@ describe('buildReport', () => {
 		assert.equal(onlyTest(report).attempts[0].parallelIndex, undefined)
 	})
 
+	it("carries the runner's load into the report", () => {
+		const runnerLoad = readRunnerLoad(
+			[
+				'{"cpuCount":3,"ramBytes":7000}',
+				'{"t":1000000,"cpuAvg":10,"cpuMax":20,"ram":50}',
+				'{"t":1002000,"cpuAvg":90,"cpuMax":95,"ram":60}',
+			].join('\n'),
+		)
+		const report = build(tree(suite('ModuleNewsTests', [testCase('testA()', 'Passed', 1)])), {
+			runnerLoad,
+		})
+
+		assert.equal(report.cpuCount, 3)
+		assert.equal(report.ramBytes, 7000)
+		assert.deepEqual(report.cpuAvg, [
+			[1_000_000, 10],
+			[2000, 90],
+		])
+	})
+
 	it('returns null when there is nothing to report', () => {
 		assert.equal(buildReport([], OPTIONS), null)
 	})
@@ -362,5 +383,65 @@ describe('readSimulatorOsVersion', () => {
 
 	it('gives nothing when neither is there', () => {
 		assert.equal(readSimulatorOsVersion({SIMULATOR_OS: ''}, undefined), undefined)
+	})
+})
+
+describe('readRunnerLoad', () => {
+	const header = '{"cpuCount":3,"ramBytes":7516192768}'
+	const sample = (t, cpuAvg, cpuMax, ram) => JSON.stringify({t, cpuAvg, cpuMax, ram})
+
+	it('turns the samples into time series, each point after the first a delta', () => {
+		const load = readRunnerLoad(
+			[header, sample(1000, 12.345, 50, 40), sample(3000, 80, 99, 45)].join('\n'),
+		)
+
+		assert.deepEqual(load, {
+			cpuCount: 3,
+			ramBytes: 7516192768,
+			cpuAvg: [
+				[1000, 12.35],
+				[2000, 80],
+			],
+			cpuMax: [
+				[1000, 50],
+				[2000, 99],
+			],
+			ram: [
+				[1000, 40],
+				[2000, 45],
+			],
+		})
+	})
+
+	it('folds a steady stretch into its last point, as flakiness.io does', () => {
+		const load = readRunnerLoad(
+			[
+				header,
+				sample(1000, 10, 10, 40),
+				sample(2000, 11, 11, 40.2),
+				sample(3000, 12, 12, 40.4),
+			].join('\n'),
+		)
+
+		// The stretch keeps the value it settled at and the time it ended.
+		assert.deepEqual(load.cpuAvg, [
+			[1000, 10],
+			[2000, 11],
+		])
+		assert.deepEqual(load.ram, [
+			[1000, 40],
+			[2000, 40.2],
+		])
+	})
+
+	it('skips a line the job cut short', () => {
+		const load = readRunnerLoad([header, sample(1000, 10, 10, 40), '{"t":20'].join('\n'))
+
+		assert.deepEqual(load.cpuAvg, [[1000, 10]])
+	})
+
+	it('gives nothing without a header or any samples', () => {
+		assert.equal(readRunnerLoad(''), undefined)
+		assert.equal(readRunnerLoad(header), undefined)
 	})
 })

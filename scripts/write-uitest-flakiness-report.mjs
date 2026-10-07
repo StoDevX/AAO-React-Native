@@ -72,6 +72,71 @@ export function readSimulatorOsVersion(env, devices) {
 	return devices?.[0]?.osVersion
 }
 
+/** How far a series may wander, in percent, before a new point is kept. */
+const PRECISION = {cpuAvg: 7, cpuMax: 7, ram: 1}
+
+/**
+ * Add a point, folding a steady stretch into its last point the way
+ * `@flakiness/sdk` does: when the last two points and the new one lie within
+ * `precision` of each other, the last point moves to the new time.
+ */
+function addPoint(series, point, precision) {
+	const last = series.at(-1)
+	const beforeLast = series.at(-2)
+	if (
+		last &&
+		beforeLast &&
+		Math.abs(last.value - beforeLast.value) < precision &&
+		Math.abs(last.value - point.value) < precision
+	) {
+		last.t = point.t
+	} else {
+		series.push(point)
+	}
+}
+
+/** The report's form: the first point's time is absolute, the rest deltas. */
+function toTelemetry(series) {
+	return series.map((point, index) => [
+		index === 0 ? point.t : point.t - series[index - 1].t,
+		Math.round(point.value * 100) / 100,
+	])
+}
+
+/**
+ * Turn what `sample-runner-load.mjs` wrote into the report's CPU and memory
+ * fields, or nothing without a header and at least one sample.
+ */
+export function readRunnerLoad(text) {
+	const lines = text.split('\n').flatMap((line) => {
+		try {
+			return [JSON.parse(line)]
+		} catch {
+			// The job's end can cut the last line short.
+			return []
+		}
+	})
+	const [header, ...samples] = lines
+	if (!header?.cpuCount || samples.length === 0) {
+		return
+	}
+
+	const series = {cpuAvg: [], cpuMax: [], ram: []}
+	for (const sample of samples) {
+		for (const key of Object.keys(series)) {
+			addPoint(series[key], {t: sample.t, value: sample[key]}, PRECISION[key])
+		}
+	}
+
+	return {
+		cpuCount: header.cpuCount,
+		ramBytes: header.ramBytes,
+		cpuAvg: toTelemetry(series.cpuAvg),
+		cpuMax: toTelemetry(series.cpuMax),
+		ram: toTelemetry(series.ram),
+	}
+}
+
 /**
  * Turn one test, or one of its repetitions, into a run attempt.
  *
@@ -182,6 +247,7 @@ export function buildReport(testNodes, options) {
 		testsStartedMs,
 		simulatorWait,
 		parallelIndex,
+		runnerLoad,
 	} = options
 
 	const clock = {now: testsStartedMs}
@@ -215,6 +281,7 @@ export function buildReport(testNodes, options) {
 		suites,
 		startTimestamp,
 		duration: Math.max(...ends) - startTimestamp,
+		...runnerLoad,
 	}
 	if (url) {
 		report.url = url
@@ -230,6 +297,19 @@ function readXcodeVersion() {
 	try {
 		return execFileSync('xcodebuild', ['-version'], {encoding: 'utf8'}).match(/^Xcode (\S+)/u)?.[1]
 	} catch {
+		return
+	}
+}
+
+/** The runner's load, if the sampler left a file to read. */
+function readRunnerLoadFile(filePath) {
+	if (!filePath) {
+		return
+	}
+	try {
+		return readRunnerLoad(fs.readFileSync(filePath, 'utf8'))
+	} catch (error) {
+		console.log(`Could not read ${filePath}: ${error.message}`)
 		return
 	}
 }
@@ -263,6 +343,7 @@ function main() {
 		xcodeVersion: readXcodeVersion(),
 		testsStartedMs: env.UITEST_STARTED ? Number(env.UITEST_STARTED) * 1000 : Date.now(),
 		simulatorWait: readSimulatorWait(env),
+		runnerLoad: readRunnerLoadFile(env.RUNNER_LOAD),
 		// Shards are numbered from 1; lanes from 0.
 		parallelIndex: Number.isInteger(Number(env.SHARD)) ? Number(env.SHARD) - 1 : undefined,
 	})
