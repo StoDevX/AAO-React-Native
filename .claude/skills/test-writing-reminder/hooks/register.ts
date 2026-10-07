@@ -50,8 +50,8 @@ export function editsInPlace(command: string): boolean {
 	return IN_PLACE_EDITS.some((edit) => edit.test(command))
 }
 
-/** Where a redirect sends output: `>` or `>>`, but not `2>&1`, `=>` or `->`. */
-const REDIRECT_TARGET = /(?:^|[^0-9&>=-])>>?\s*['"]?([^\s'"`<>|;&()]+)/g
+/** Where a redirect sends output: `>`, `>>` or `1>`, but not `2>&1`, `>&2`, `=>` or `->`. */
+const REDIRECT_TARGET = /(?:^|[^>=-])>>?(?!&)\s*['"]?([^\s'"`<>|;&()]+)/g
 
 /**
  * The files a shell command sends output to: redirect targets, `tee`'s files,

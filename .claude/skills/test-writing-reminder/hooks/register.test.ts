@@ -107,6 +107,7 @@ describe('Bash', () => {
 		'a node write': `node -e "require('fs').writeFileSync('scripts/node.test.mjs', '')"`,
 		'an append': 'echo "it.todo(\'x\')" >> source/__tests__/append.test.ts',
 		'git mv': 'git mv source/__tests__/old.test.ts source/__tests__/moved.test.ts',
+		'a numbered redirect': 'echo x 1>source/__tests__/numbered.test.ts',
 	}
 
 	for (const [name, command] of Object.entries(WRITES)) {
@@ -126,6 +127,7 @@ describe('Bash', () => {
 		'a commit message': 'jj commit -m "Fix source/__tests__/a.test.ts"',
 		'a Jest run piped through tee': 'pnpm jest source/__tests__/a.test.ts 2>&1 | tee /tmp/jest.log',
 		'a Jest run sent to /dev/null': 'pnpm jest source/__tests__/a.test.ts >/dev/null 2>&1; echo $?',
+		'a message to stderr': 'echo running >&2; pnpm jest source/__tests__/a.test.ts',
 		'a diff saved to a file': 'git diff master -- source/__tests__/a.test.ts > /tmp/a.patch',
 		'a grep for JSX': `grep -n '</Text>' source/features/x/__tests__/row.test.tsx`,
 		'a copy out of a test file': 'cp source/__tests__/a.test.ts /tmp/backup.ts',
