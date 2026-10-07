@@ -20,8 +20,8 @@ struct MessFrontPage: Screen {
 	/// paper's castle.
 	@discardableResult
 	func verifyByIssueShowsTheGrid() -> Self {
-		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "By Issue should lead with the newest issue")
-		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show older issues as tiles")
+		XCTAssertTrue(topTile.existsOrAppears(within: 30), "By Issue should lead with the newest issue")
+		XCTAssertTrue(tiles.firstMatch.existsOrAppears(within: 30), "By Issue should show older issues as tiles")
 		XCTAssertTrue(
 			viewMenu.waitForLabel(viewMenuLabel(TestIdentifiers.News.byIssue), timeout: 10),
 			"By Issue should be the view chosen (the menu reads \(viewMenu.label))")
@@ -87,7 +87,7 @@ struct MessFrontPage: Screen {
 	/// after page as its end comes into view.
 	@discardableResult
 	func scrollIssues(untilAnIssueFrom year: String) -> Self {
-		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show its tiles")
+		XCTAssertTrue(tiles.firstMatch.existsOrAppears(within: 30), "By Issue should show its tiles")
 		let older = tiles.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
 		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
@@ -99,7 +99,7 @@ struct MessFrontPage: Screen {
 		}
 		capture("The issue grid, paged back to \(year)")
 		XCTAssertTrue(
-			older.waitForExistence(timeout: 30),
+			older.existsOrAppears(within: 30),
 			"scrolling should keep loading older issues until it reaches \(year)")
 		return self
 	}
@@ -108,7 +108,7 @@ struct MessFrontPage: Screen {
 	@discardableResult
 	func openSecondIssue() -> Self {
 		let second = tiles.firstMatch
-		XCTAssertTrue(second.waitForExistence(timeout: 30), "By Issue should show a tile under the top one")
+		XCTAssertTrue(second.existsOrAppears(within: 30), "By Issue should show a tile under the top one")
 		XCTAssertTrue(second.waitForHittable(), "the tile should be ready to tap")
 		second.tap()
 		XCTAssertTrue(
@@ -189,7 +189,7 @@ struct MessFrontPage: Screen {
 		// first person does.
 		let bio = app.staticTexts[TestIdentifiers.News.staffBioHeading].firstMatch
 		capture("A staff member's page")
-		XCTAssertTrue(bio.waitForExistence(timeout: 10), "\(name)'s page should show their bio under About")
+		XCTAssertTrue(bio.existsOrAppears(within: 10), "\(name)'s page should show their bio under About")
 		return self
 	}
 

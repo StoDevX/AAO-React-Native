@@ -7,7 +7,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func verifyHeadlineAppears() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 30),
+			app.staticTexts[TestIdentifiers.News.storyHeadline].existsOrAppears(within: 30),
 			"the story's headline should be visible")
 		return self
 	}
@@ -96,7 +96,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func verifySelectionCrossesParagraphs() -> Self {
 		let body = app.element(matching: TestIdentifiers.News.storyBody)
-		XCTAssertTrue(body.waitForExistence(timeout: 30), "the story should have a body to select")
+		XCTAssertTrue(body.existsOrAppears(within: 30), "the story should have a body to select")
 		scrollIntoUpperHalf(body)
 		let start = body.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 40, dy: 10))
 		let end = start.withOffset(CGVector(dx: 120, dy: 200))
@@ -176,7 +176,7 @@ struct MessStoryScreen: Screen {
 	/// The link in the story's text with these words, scrolled into view.
 	private func storyLink(_ label: String) -> XCUIElement {
 		let link = app.links.matching(NSPredicate(format: "label == %@", label)).firstMatch
-		XCTAssertTrue(link.waitForExistence(timeout: 30), "the story should hold the link \"\(label)\"")
+		XCTAssertTrue(link.existsOrAppears(within: 30), "the story should hold the link \"\(label)\"")
 		scrollIntoUpperHalf(link)
 		return link
 	}
@@ -204,7 +204,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func pickSignFromList(_ sign: String) -> Self {
 		let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(sign), ")).firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "a Horoscopes post should list \(sign) to pick")
+		XCTAssertTrue(row.existsOrAppears(within: 30), "a Horoscopes post should list \(sign) to pick")
 		capture("Horoscopes before a sign is picked")
 		row.tap()
 		return self
@@ -227,7 +227,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func tapSignGlyph(_ sign: String) -> Self {
 		let glyph = app.buttons.matching(NSPredicate(format: "label == %@", sign)).firstMatch
-		XCTAssertTrue(glyph.waitForExistence(timeout: 30), "the glyph grid should offer \(sign)")
+		XCTAssertTrue(glyph.existsOrAppears(within: 30), "the glyph grid should offer \(sign)")
 		glyph.tap()
 		return self
 	}
@@ -240,8 +240,8 @@ struct MessStoryScreen: Screen {
 			NSPredicate(format: "label == %@", TestIdentifiers.News.signs[0])
 		).firstMatch
 		let bar = app.navigationBars.firstMatch
-		XCTAssertTrue(firstGlyph.waitForExistence(timeout: 30), "the glyph grid should be drawn")
-		XCTAssertTrue(bar.waitForExistence(timeout: 10), "the reader should have a navigation bar")
+		XCTAssertTrue(firstGlyph.existsOrAppears(within: 30), "the glyph grid should be drawn")
+		XCTAssertTrue(bar.existsOrAppears(within: 10), "the reader should have a navigation bar")
 		let before = firstGlyph.frame.minY
 		// A grid already at the bar's edge would stay put whether the page scrolled or not.
 		XCTAssertGreaterThan(
@@ -284,7 +284,7 @@ struct MessStoryScreen: Screen {
 		let firstSign = TestIdentifiers.News.signs[0]
 		let glyph = app.buttons.matching(NSPredicate(format: "label == %@", firstSign)).firstMatch
 		let bar = app.navigationBars.firstMatch
-		XCTAssertTrue(bar.waitForExistence(timeout: 10), "the reader should have a navigation bar")
+		XCTAssertTrue(bar.existsOrAppears(within: 10), "the reader should have a navigation bar")
 		let landed = NSPredicate { _, _ in
 			glyph.exists && abs(glyph.frame.minY - bar.frame.maxY) <= 1
 		}
@@ -301,7 +301,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func openImageViewer() -> Self {
 		let image = app.element(matching: TestIdentifiers.News.storyImage)
-		XCTAssertTrue(image.waitForExistence(timeout: 30), "the story should draw its picture framed")
+		XCTAssertTrue(image.existsOrAppears(within: 30), "the story should draw its picture framed")
 		capture("A framed picture in the reader")
 		XCTAssertTrue(image.waitForHittable(), "the picture should be ready to tap")
 		image.tap()
@@ -341,7 +341,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func verifyViewerShowsImage() -> Self {
 		XCTAssertTrue(
-			viewerImage.waitForExistence(timeout: 30),
+			viewerImage.existsOrAppears(within: 30),
 			"the zoom viewer should show the picture that was tapped")
 		return self
 	}
@@ -378,7 +378,7 @@ struct MessStoryScreen: Screen {
 		closeButton.tap()
 		XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), "Close should dismiss the zoom viewer")
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
+			app.staticTexts[TestIdentifiers.News.storyHeadline].existsOrAppears(within: 10),
 			"closing the viewer should return to the story")
 		return self
 	}
@@ -387,7 +387,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func doubleTapViewerImage() -> Self {
 		let image = viewerImage
-		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
+		XCTAssertTrue(image.existsOrAppears(within: 30), "the zoom viewer should show the picture")
 		image.doubleTap()
 		return self
 	}
@@ -405,7 +405,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func dragViewerImage(_ drag: ViewerDrag) -> Self {
 		let image = viewerImage
-		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
+		XCTAssertTrue(image.existsOrAppears(within: 30), "the zoom viewer should show the picture")
 		let window = app.windows.firstMatch
 		let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 		let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5 + drag.rawValue))
@@ -425,7 +425,7 @@ struct MessStoryScreen: Screen {
 		} else {
 			XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), message)
 			XCTAssertTrue(
-				app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
+				app.staticTexts[TestIdentifiers.News.storyHeadline].existsOrAppears(within: 10),
 				"closing the viewer should return to the story")
 			capture("The story after the viewer closed")
 		}
@@ -436,7 +436,7 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func pinchOutViewerImage() -> Self {
 		let image = viewerImage
-		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
+		XCTAssertTrue(image.existsOrAppears(within: 30), "the zoom viewer should show the picture")
 		image.pinch(withScale: 3, velocity: 1)
 		return self
 	}
@@ -472,7 +472,7 @@ struct MessStoryScreen: Screen {
 				format: "identifier == %@ AND label == %@",
 				TestIdentifiers.News.puzzleSolve, TestIdentifiers.News.crosswordSolveLabel)
 		).firstMatch
-		XCTAssertTrue(solve.waitForExistence(timeout: 30), "a Crossword post should offer to solve its puzzle")
+		XCTAssertTrue(solve.existsOrAppears(within: 30), "a Crossword post should offer to solve its puzzle")
 		capture("A Crossword post")
 		XCTAssertTrue(solve.waitForHittable(), "the Solve button should be ready to tap")
 		solve.tap()

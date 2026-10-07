@@ -15,7 +15,7 @@ struct MessCustomizeScreen: Screen {
 	func checkOpen() -> Self {
 		XCTAssertTrue(sheet.waitForExistence(timeout: 10), "the Messenger's Customize should open")
 		XCTAssertTrue(
-			issueStains.waitForExistence(timeout: 10), "Customize should offer Paper Stains")
+			issueStains.existsOrAppears(within: 10), "Customize should offer Paper Stains")
 		return self
 	}
 
@@ -30,7 +30,7 @@ struct MessCustomizeScreen: Screen {
 	@discardableResult
 	func keepPhotoStoriesDark(_ on: Bool) -> Self {
 		let toggle = sheet.switches[TestIdentifiers.MessCustomize.keepPhotoStoriesDark]
-		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Dark page for Photo stories")
+		XCTAssertTrue(toggle.existsOrAppears(within: 10), "Customize should offer Dark page for Photo stories")
 		let wanted = on ? "1" : "0"
 		if toggle.value as? String != wanted {
 			toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
@@ -44,7 +44,7 @@ struct MessCustomizeScreen: Screen {
 	@discardableResult
 	func close() -> Self {
 		let button = app.buttons[TestIdentifiers.Customize.close].firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Customize should have a close button")
+		XCTAssertTrue(button.existsOrAppears(within: 10), "Customize should have a close button")
 		button.tap()
 		XCTAssertTrue(sheet.waitForNonExistence(timeout: 10), "Customize should close")
 		return self
