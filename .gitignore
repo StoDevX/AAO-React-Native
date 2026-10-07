@@ -100,3 +100,7 @@ images/icons/logos.html
 
 # Output of `mise run app-size`
 /app-size/
+
+# Flakiness reports, written by the CI test reporters before upload
+flakiness-report/
+node-test-flakiness-report/

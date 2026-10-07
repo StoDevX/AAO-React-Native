@@ -79,19 +79,24 @@ export function formatReport(flaky) {
 }
 
 /**
- * Ask xcresulttool for the test tree.
+ * Ask xcresulttool for the test tree and the devices it ran on.
  *
  * The bundle holds every attempt of every test, so the JSON outgrows the
  * default 1 MB pipe buffer on a full shard.
  */
-export function readTestNodes(bundlePath) {
+export function readTestResults(bundlePath) {
 	const stdout = execFileSync(
 		'xcrun',
 		['xcresulttool', 'get', 'test-results', 'tests', '--path', bundlePath],
 		{encoding: 'utf8', maxBuffer: 64 * 1024 * 1024},
 	)
 
-	return JSON.parse(stdout).testNodes ?? []
+	return JSON.parse(stdout)
+}
+
+/** Ask xcresulttool for the test tree alone. */
+export function readTestNodes(bundlePath) {
+	return readTestResults(bundlePath).testNodes ?? []
 }
 
 /** Append a line to one of the files GitHub hands us through the environment. */

@@ -439,6 +439,10 @@ jobs:
     name: Native UITest for iOS (${{ matrix.shard }})
     needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check]
     runs-on: xcode-27
+    # id-token lets the flakiness CLI sign in to flakiness.io with GitHub OIDC.
+    permissions:
+      contents: read
+      id-token: write
     # A job-level `if:` replaces GitHub's implicit success()-of-needs gate, so
     # each dependency this job actually relies on is checked explicitly rather
     # than through !failure(), which would also depend on undocumented
@@ -465,6 +469,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      # Only node: the scripts below need nothing else, and installing every
+      # tool would cost each shard more than it saves.
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      # The CLI only uploads to flakiness.io, so a failed install must not stop
+      # the tests; the upload step then fails on its own, and is let off too.
+      - name: Install the flakiness CLI
+        continue-on-error: true
+        run: mise install npm:flakiness
 
       # Always an artifact now: ios-build publishes what it built, and
       # ios-cache-check republishes what the cache held when the build was
@@ -554,10 +571,22 @@ jobs:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
         run: xcrun simctl boot "$SIMULATOR_UDID"
 
+      # Timed for flakiness.io, which keeps it as the CI/waitForSimulator test.
+      # The step still fails exactly when bootstatus does.
       - name: Wait for the simulator to be ready
         env:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
-        run: xcrun simctl bootstatus "$SIMULATOR_UDID" -b
+        run: |
+          started=$(node -p 'Date.now()')
+          status=0
+          xcrun simctl bootstatus "$SIMULATOR_UDID" -b || status=$?
+          finished=$(node -p 'Date.now()')
+          {
+            echo "SIMULATOR_WAIT_STARTED_MS=$started"
+            echo "SIMULATOR_WAIT_DURATION_MS=$((finished - started))"
+            echo "SIMULATOR_WAIT_EXIT=$status"
+          } >> "$GITHUB_ENV"
+          exit "$status"
 
       # A re-run with "Enable debug logging" ticked sets runner.debug, and this
       # step then keeps what an ordinary run throws away: every test's
@@ -656,6 +685,21 @@ jobs:
         env:
           SHARD: ${{ matrix.shard }}
         run: node scripts/pr-report/uitest-report.mjs shard uitest-results.xcresult uitest-shard.json --shard "$SHARD" --started "${UITEST_STARTED:-0}"
+
+      # `if: always()`: a red shard, or one whose simulator never came up, is
+      # the history most worth keeping.
+      - name: Write the flakiness.io report
+        if: always()
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: node scripts/write-uitest-flakiness-report.mjs uitest-results.xcresult flakiness-report
+
+      # flakiness.io keeps the history; it does not gate anything, so an upload
+      # that fails leaves the shard as it was.
+      - name: Upload to flakiness.io
+        if: always() && hashFiles('flakiness-report/report.json') != ''
+        continue-on-error: true
+        run: '"$(mise which flakiness)" upload flakiness-report'
 
       # `if: always()`: the stalls this is for mostly happen in tests that pass.
       # Only the default level and above are kept, so this costs nothing while

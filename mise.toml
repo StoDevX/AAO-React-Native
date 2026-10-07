@@ -8,6 +8,12 @@ ruby = "3.4.11"
 "gem:bundler" = "4.0.22"
 "npm:@changesets/cli" = "3.0.3"
 "npm:source-map-explorer" = "2.5.3"
+# Uploads the UI-test shards' results to flakiness.io; those jobs run no
+# pnpm install. Its weekly downloads sit under aube's 1000 floor, so it is
+# approved by hand: one maintainer, aslushnikov, who also publishes the
+# @flakiness/* reporters, and its dependencies are the @flakiness packages
+# and common CLI libraries.
+"npm:flakiness" = { version = "0.311.0", allow_low_downloads = true }
 
 # Taps and types on a simulator, which simctl cannot do -- see the
 # run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
