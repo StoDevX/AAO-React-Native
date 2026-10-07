@@ -18,15 +18,6 @@ struct FilterScreen: Screen {
 		app.buttons[TestIdentifiers.Filter.trigger(key)].firstMatch
 	}
 
-	/// A row in an open sheet.
-	///
-	/// Queried across every element type rather than as a button: a row in a
-	/// selection list is plain content carrying a tag, so the list itself owns
-	/// the tap and the row surfaces as a cell rather than a control.
-	func option(_ title: String) -> XCUIElement {
-		app.descendants(matching: .any)[TestIdentifiers.Filter.option(title)].firstMatch
-	}
-
 	/// An item in an open menu.
 	///
 	/// A `Toggle` inside a SwiftUI `Menu` becomes a UIKit menu action, which
@@ -117,25 +108,6 @@ struct FilterScreen: Screen {
 		XCTAssertTrue(
 			trigger(key).waitForSelected(expected),
 			"the \(key) trigger should\(expected ? "" : " not") report itself selected")
-		return self
-	}
-
-	/// Swipe the sheet away.
-	///
-	/// The header's Done button commits too, so this is one of two paths a
-	/// selection can take -- the gestural one, which no code of ours drives.
-	/// The drag starts just below the sheet's top edge and runs to the bottom
-	/// of the screen.
-	@discardableResult
-	func dismissSheet(waitingFor row: String) -> Self {
-		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
-		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97))
-		start.press(
-			forDuration: 0.15, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 0.1)
-
-		XCTAssertTrue(
-			option(row).waitForNonExistence(timeout: 30),
-			"the sheet should be gone after a swipe down")
 		return self
 	}
 }

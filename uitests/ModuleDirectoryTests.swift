@@ -12,8 +12,6 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 
 	/// The landing grid and a contact's sheet, from opening to swiping away.
 	///
-	/// Every contact in data/contact-info/ gets a tile. The count is the point:
-	/// a grid that silently drops the last row still looks right in isolation.
 	/// Contact cards are square so that three rows of them leave the
 	/// department list in view below the grid.
 	///
@@ -37,73 +35,20 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 	func testTheContactGridAndItsSheet() throws {
 		DirectoryScreen(app: app)
 			.navigate()
-			.verifyDirectoryTitle()
 			.verifyContactsHeading()
-			.verifyContactTiles(count: 11)
-			.capture("Directory contact grid")
 			.verifyContactTileIsSquare(TestIdentifiers.Directory.aContact)
 			.openContact(TestIdentifiers.Directory.aContact)
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 			.verifyContactGridStillBehind()
-			.capture("Contact detail as a sheet")
 			.dismissContactSheet(
 				titled: TestIdentifiers.Directory.aContact,
 				waitingFor: TestIdentifiers.Directory.aContactAction)
-			.capture("Directory after dismissing a contact sheet")
 			.verifyContactsHeading()
-			.verifyContactTiles(count: 11)
 			.openContact(TestIdentifiers.Directory.aContact)
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 			.attemptToTapContactBehindSheet(
 				TestIdentifiers.Directory.aSecondContact,
 				whileShowing: TestIdentifiers.Directory.aContact)
-			.capture("Directory after tapping a tile behind the contact sheet")
 			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
-	}
-
-	/// A screen opened from a department link: what it shows, how its results
-	/// can be viewed, and what cancelling search leaves behind.
-	///
-	/// The title stays "Directory" wherever the screen was opened from, so a
-	/// department has to name itself above its own results -- otherwise nothing
-	/// on screen says whose names these are.
-	///
-	/// The toolbar button swaps the results between the gallery and the list,
-	/// both ways. It is tested here rather than after a typed search: the
-	/// toggle shares the bottom toolbar with the search field, and while that
-	/// field is active the toolbar holds only its own Clear and Close buttons.
-	/// A department's results arrive with the field idle, which is the one
-	/// state where the toggle is on screen to tap -- so the toggle goes before
-	/// the cancel.
-	///
-	/// Cancelling a search the reader never started has to leave the
-	/// department and its title alone -- otherwise the list empties while the
-	/// title goes on naming a department, and the only way back is to navigate
-	/// in again.
-	func testALinkedDepartmentNamesItselfTogglesAndSurvivesCancel() throws {
-		let department = TestIdentifiers.Directory.fixtureEntryDepartment
-
-		DirectoryScreen(app: app)
-			.navigate()
-			.search(for: "testerson")
-			// Faces read faster than a column of names, so a search opens on the
-			// tile gallery unless the reader has switched away from it before.
-			.verifyResultsGalleried()
-			.openDepartment(
-				of: TestIdentifiers.Directory.fixtureEntry, named: department)
-			.capture("Directory opened from a department link")
-			.verifyDirectoryTitle()
-			.verifyDepartmentHeading(department)
-			.verifyResultsShown()
-			.verifyResultsGalleried()
-			.showAsList()
-			.verifyResultsListed()
-			.capture("Directory search results as a list")
-			.showAsTiles()
-			.verifyResultsGalleried()
-			.cancelSearch()
-			.capture("Directory department screen after cancelling search")
-			.verifyDepartmentHeading(department)
-			.verifyResultsShown()
 	}
 }

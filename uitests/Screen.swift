@@ -63,18 +63,7 @@ extension Screen {
 	/// element it is sent to, so once a keyboard is showing it begins on the
 	/// keyboard, the keyboard takes it, and this returns quietly having scrolled
 	/// nothing. Every caller scrolls with the keyboard down; one that cannot
-	/// wants the press-and-drag `CampusDictionaryScreen.revealInForm` uses.
-	/// Swipe a scrolling container back to its top. `scrollUntilExists` only
-	/// ever swipes one way, so a sweep meant to rule an element out has to
-	/// start from the top or it never sees what is above it.
-	@discardableResult
-	func scrollToTop(_ container: XCUIElement, swipes: Int = 8) -> Self {
-		for _ in 0..<swipes {
-			container.swipeDown()
-		}
-		return self
-	}
-
+	/// wants a press-and-drag between two points inside the scrolling content.
 	@discardableResult
 	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8, in container: XCUIElement? = nil) -> Self {
 		let scrollTarget = container ?? app
@@ -101,15 +90,57 @@ extension Screen {
 		return self
 	}
 
+	/// Tap `element` until `marker` appears, up to three times.
+	///
+	/// A row is hittable as soon as its host mounts, but its action has to
+	/// reach JavaScript, and a tap synthesized in between lands natively and
+	/// does nothing. Waiting longer never fixes a dropped tap, so tap again.
+	///
+	/// `marker` must appear only once the tap has worked -- the next screen, or
+	/// the control's new label. The first tap always goes; a retry goes only
+	/// while `element` can still be hit, since a tap that did land on a slow
+	/// screen leaves it covered, and tapping it again would open it twice.
+	/// `wait` is how long each attempt gives `marker`, for a screen that is
+	/// slow to mount rather than a tap that was dropped.
+	@discardableResult
+	func tap(
+		_ element: XCUIElement, until marker: XCUIElement, named name: String, wait: TimeInterval = 10
+	) -> Self {
+		// `waitForExistence` polls for a second even for an element already
+		// there, and this runs before every tap.
+		if !element.exists {
+			XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
+		}
+		for attempt in 1...3 {
+			// The marker can arrive just after the last wait gave up; tapping
+			// again then would undo what the first tap did.
+			if attempt > 1 && marker.exists {
+				return self
+			}
+			if attempt == 1 || element.isHittable {
+				element.tap()
+			}
+			if marker.waitForExistence(timeout: wait) {
+				return self
+			}
+			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }
+		}
+		XCTFail("Tapping \(name) never brought up \(marker)")
+		return self
+	}
+
+	/// Report a Problem's navigation bar, drawn only while the form is up.
+	var problemForm: XCUIElement {
+		app.navigationBars[TestIdentifiers.Support.reportProblemTitle]
+	}
+
 	/// Close Report a Problem with its own close button, and wait for it to go.
 	@discardableResult
 	func closeProblemForm() -> Self {
 		let close = app.buttons[TestIdentifiers.Support.closeProblemForm].firstMatch
 		XCTAssertTrue(close.waitForHittable(timeout: 10), "Report a Problem should have a close button")
 		close.tap()
-		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForNonExistence(timeout: 10),
-			"Report a Problem should close")
+		XCTAssertTrue(problemForm.waitForNonExistence(timeout: 10), "Report a Problem should close")
 		return self
 	}
 
@@ -161,11 +192,9 @@ extension Screen {
 	/// screen that offers one.
 	@discardableResult
 	func chooseLayout(_ layout: String) -> Self {
-		let menu = app.buttons[TestIdentifiers.Layout.menu].firstMatch
-		XCTAssertTrue(menu.waitForExistence(timeout: 30), "The screen should offer a layout menu")
-		menu.tap()
 		let item = app.buttons[layout].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "The layout menu should offer \(layout)")
+		tap(app.buttons[TestIdentifiers.Layout.menu].firstMatch, until: item, named: "the layout menu")
+		// A native menu item: its tap is UIKit's to deliver, not JavaScript's.
 		item.tap()
 		return self
 	}

@@ -4,7 +4,7 @@ import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useDebounce} from '@frogpond/use-debounce'
 import {useQuery} from '@tanstack/react-query'
-import {orgsInCategory} from '../../../source/features/student-orgs/categories'
+import {orgsForCategory} from '../../../source/features/student-orgs/categories'
 import {categoryMembershipsOptions} from '../../../source/features/student-orgs/category-memberships-query'
 import {OrgResultsList} from '../../../source/features/student-orgs/org-results-list'
 import {studentOrgsOptions} from '../../../source/features/student-orgs/query'
@@ -28,10 +28,10 @@ function CategoryOrgsView(): React.ReactNode {
 		isLoading: isMembershipsLoading,
 	} = useQuery(categoryMembershipsOptions)
 
-	let categoryOrgs = React.useMemo(() => {
-		let membership = memberships.find((entry) => entry.name === category)
-		return membership ? orgsInCategory(orgs, membership) : []
-	}, [orgs, memberships, category])
+	let categoryOrgs = React.useMemo(
+		() => orgsForCategory(orgs, memberships, category),
+		[orgs, memberships, category],
+	)
 
 	let sections = React.useMemo(
 		() => filterAndGroupOrgs(categoryOrgs, searchQuery),

@@ -57,7 +57,6 @@ struct MessStoryScreen: Screen {
 				format: "identifier == %@ AND label == %@", TestIdentifiers.News.storyHeadline, expected))
 			.firstMatch
 		let drawn = headline.waitForExistence(timeout: 30)
-		capture("The story on top, expecting \(expected)")
 		let found = headlineTexts.allElementsBoundByIndex.map { "\"\($0.label)\"" }
 		XCTAssertTrue(
 			drawn,
@@ -80,7 +79,6 @@ struct MessStoryScreen: Screen {
 		XCTAssertTrue(
 			thumbnail.waitForHittable(timeout: 10),
 			title.map { "the series row should offer \"\($0)\"" } ?? "the story should have a series row")
-		capture("A story's series row")
 		thumbnail.tap()
 		return self
 	}
@@ -101,9 +99,8 @@ struct MessStoryScreen: Screen {
 		let start = body.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 40, dy: 10))
 		let end = start.withOffset(CGVector(dx: 120, dy: 200))
 		start.press(forDuration: 1.0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
+		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.EditMenu.copy)).firstMatch
 		let offered = copy.waitForExistence(timeout: 5)
-		capture("A selection dragged from a story's first paragraph into its second")
 		XCTAssertTrue(offered, "a drag across the story's text should select some of it, and offer Copy")
 
 		guard let pixels = ScreenPixels(app.screenshot().image) else {
@@ -141,9 +138,8 @@ struct MessStoryScreen: Screen {
 		let link = storyLink(label)
 		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to tap")
 		link.tap()
-		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
+		let done = app.buttons[TestIdentifiers.Browser.done].firstMatch
 		XCTAssertTrue(done.waitForExistence(timeout: 30), "tapping a story's link should open the in-app browser")
-		capture("A story's link in the in-app browser")
 		done.tap()
 		XCTAssertTrue(done.waitForNonExistence(timeout: 10), "Done should close the in-app browser")
 		return self
@@ -161,14 +157,13 @@ struct MessStoryScreen: Screen {
 		// waits out XCUITest's full 60s quiescence timeout after landing.
 		// SpringBoard is quiet, and the point is the same point.
 		let target = link.frame
-		XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		XCUIApplication(bundleIdentifier: TestIdentifiers.SpringBoard.bundleIdentifier)
 			.coordinate(withNormalizedOffset: .zero)
 			.withOffset(CGVector(dx: target.midX, dy: target.midY))
 			.press(forDuration: 1.5)
 		let copyLink = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copyLink)).firstMatch
 		let offered = copyLink.waitForExistence(timeout: 5)
-		capture("A long press on a story's link")
 		XCTAssertTrue(offered, "holding a link in a story should offer \(TestIdentifiers.News.copyLink)")
 		return self
 	}
@@ -205,7 +200,6 @@ struct MessStoryScreen: Screen {
 	func pickSignFromList(_ sign: String) -> Self {
 		let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(sign), ")).firstMatch
 		XCTAssertTrue(row.waitForExistence(timeout: 30), "a Horoscopes post should list \(sign) to pick")
-		capture("Horoscopes before a sign is picked")
 		row.tap()
 		return self
 	}
@@ -252,7 +246,6 @@ struct MessStoryScreen: Screen {
 		let moved = NSPredicate { _, _ in abs(firstGlyph.frame.minY - before) > 1 }
 		let result = XCTWaiter().wait(
 			for: [XCTNSPredicateExpectation(predicate: moved, object: nil)], timeout: 3)
-		capture("Horoscopes after \(sign) was picked from the grid")
 		XCTAssertEqual(
 			result, .timedOut,
 			"picking \(sign) from the grid should leave the grid at \(before), not move it to \(firstGlyph.frame.minY)")
@@ -266,7 +259,6 @@ struct MessStoryScreen: Screen {
 			NSPredicate(format: "label == %@ AND isSelected == true", sign)
 		).firstMatch
 		XCTAssertTrue(chosen.waitForExistence(timeout: 30), "\(sign) should be the chosen sign")
-		capture("Horoscopes open on \(sign)")
 		let selectedSigns = app.buttons.matching(
 			NSPredicate(format: "label IN %@ AND isSelected == true", TestIdentifiers.News.signs))
 		XCTAssertEqual(selectedSigns.count, 1, "only \(sign) should be marked as chosen")
@@ -290,7 +282,6 @@ struct MessStoryScreen: Screen {
 		}
 		let settled = XCTWaiter().wait(
 			for: [XCTNSPredicateExpectation(predicate: landed, object: nil)], timeout: 10)
-		capture("Horoscopes scrolled to \(sign)")
 		XCTAssertEqual(
 			settled, .completed,
 			"the grid should sit just below the navigation bar at \(bar.frame.maxY), not at \(glyph.frame.minY)")
@@ -302,12 +293,10 @@ struct MessStoryScreen: Screen {
 	func openImageViewer() -> Self {
 		let image = app.element(matching: TestIdentifiers.News.storyImage)
 		XCTAssertTrue(image.waitForExistence(timeout: 30), "the story should draw its picture framed")
-		capture("A framed picture in the reader")
 		XCTAssertTrue(image.waitForHittable(), "the picture should be ready to tap")
 		image.tap()
 		let close = closeButton
 		XCTAssertTrue(close.waitForExistence(timeout: 30), "tapping the picture should open the zoom viewer")
-		capture("The zoom viewer")
 		return self
 	}
 
@@ -315,72 +304,6 @@ struct MessStoryScreen: Screen {
 	@discardableResult
 	func navigate(to route: String) -> Self {
 		open(route: route, mountedWhen: app.staticTexts[TestIdentifiers.News.storyHeadline])
-	}
-
-	/// Scroll to the story's photo whose label, its caption, matches `caption`, tap it, and wait
-	/// for the zoom viewer.
-	@discardableResult
-	func openPhotoInViewer(captioned caption: NSPredicate, _ description: String) -> Self {
-		let photo = app.buttons
-			.matching(identifier: TestIdentifiers.News.storyPhoto)
-			.matching(caption)
-			.firstMatch
-		for _ in 0..<20 {
-			if photo.exists && photo.isHittable { break }
-			app.swipeUp()
-		}
-		XCTAssertTrue(photo.waitForHittable(timeout: 10), "the story should draw \(description) to tap")
-		capture("\(description) in the reader")
-		photo.tap()
-		XCTAssertTrue(closeButton.waitForExistence(timeout: 30), "tapping \(description) should open the zoom viewer")
-		capture("The zoom viewer on \(description)")
-		return self
-	}
-
-	/// Assert the zoom viewer drew a picture, not its "Image unavailable" notice.
-	@discardableResult
-	func verifyViewerShowsImage() -> Self {
-		XCTAssertTrue(
-			viewerImage.waitForExistence(timeout: 30),
-			"the zoom viewer should show the picture that was tapped")
-		return self
-	}
-
-	/// Tap Share and assert the share sheet holds the picture itself: Save Image and Print are
-	/// offered for an image file, never for a link to one. Then dismiss the sheet.
-	@discardableResult
-	func shareViewerImage() -> Self {
-		XCTAssertTrue(shareButton.waitForHittable(), "Share should be ready to tap")
-		shareButton.tap()
-		// The share sheet's actions are cells, drawn by the system's share service.
-		let saveImage = app.cells["Save Image"]
-		let opened = saveImage.waitForExistence(timeout: 30)
-		capture("The share sheet for the zoom viewer's picture")
-		XCTAssertTrue(opened, "Share should offer Save Image, which it does only for the picture itself")
-		// Print sits below the first row of actions.
-		app.cells["View More"].tap()
-		let print = app.cells["Print"]
-		let expanded = print.waitForExistence(timeout: 10)
-		capture("The share sheet's every action for the zoom viewer's picture")
-		XCTAssertTrue(expanded, "Share should offer Print for the picture")
-		// The expanded sheet's own close button.
-		let close = app.buttons["header.closeButton"]
-		XCTAssertTrue(close.waitForHittable(), "the expanded share sheet should have a close button")
-		close.tap()
-		XCTAssertTrue(saveImage.waitForNonExistence(timeout: 10), "Close should dismiss the share sheet")
-		return self
-	}
-
-	/// Close the zoom viewer and wait to be back on the story.
-	@discardableResult
-	func closeImageViewer() -> Self {
-		XCTAssertTrue(closeButton.waitForHittable(), "Close should be ready to tap")
-		closeButton.tap()
-		XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), "Close should dismiss the zoom viewer")
-		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
-			"closing the viewer should return to the story")
-		return self
 	}
 
 	/// Double-tap the middle of the picture in the zoom viewer.
@@ -421,13 +344,11 @@ struct MessStoryScreen: Screen {
 			// counts the viewer as staying.
 			XCTAssertFalse(closeButton.waitForNonExistence(timeout: 3), message)
 			XCTAssertTrue(closeButton.waitForHittable(), message)
-			capture("The zoom viewer after a drag")
 		} else {
 			XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), message)
 			XCTAssertTrue(
 				app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
 				"closing the viewer should return to the story")
-			capture("The story after the viewer closed")
 		}
 		return self
 	}
@@ -453,53 +374,11 @@ struct MessStoryScreen: Screen {
 		}
 		let settled = XCTWaiter().wait(
 			for: [XCTNSPredicateExpectation(predicate: landed, object: nil)], timeout: 10)
-		capture(zoomed ? "The zoom viewer zoomed in" : "The zoom viewer back at fit")
 		XCTAssertEqual(
 			settled, .completed,
 			zoomed
 				? "a double tap should zoom the picture in past the window's width of \(window), but it is \(image.frame.width) wide"
 				: "a double tap when zoomed in should fit the picture back to the window's width of \(window), but it is \(image.frame.width) wide")
-		return self
-	}
-
-	/// Tap a Crossword post's Solve button and assert the in-app browser opened. Its Done
-	/// button is drawn before PuzzleMe's page loads, so this holds whatever the network does.
-	/// The in-app browser is the default link setting, which a reset launch keeps.
-	@discardableResult
-	func solveCrossword() -> Self {
-		let solve = app.buttons.matching(
-			NSPredicate(
-				format: "identifier == %@ AND label == %@",
-				TestIdentifiers.News.puzzleSolve, TestIdentifiers.News.crosswordSolveLabel)
-		).firstMatch
-		XCTAssertTrue(solve.waitForExistence(timeout: 30), "a Crossword post should offer to solve its puzzle")
-		capture("A Crossword post")
-		XCTAssertTrue(solve.waitForHittable(), "the Solve button should be ready to tap")
-		solve.tap()
-		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
-		XCTAssertTrue(
-			done.waitForExistence(timeout: 30),
-			"Solve the crossword should open the puzzle in the in-app browser")
-		capture("The crossword in the in-app browser")
-		return self
-	}
-
-	/// Scroll a recipe page to its first ingredient, tick it, and assert it reads as selected.
-	/// A lazy stack builds a row only near the screen, so the row may not exist until the
-	/// page scrolls to it.
-	@discardableResult
-	func tickFirstIngredient() -> Self {
-		let ingredient = app.buttons.matching(identifier: TestIdentifiers.News.recipeIngredient).firstMatch
-		for _ in 0..<20 {
-			if ingredient.exists && ingredient.isHittable { break }
-			app.swipeUp()
-		}
-		XCTAssertTrue(ingredient.waitForHittable(timeout: 10), "a recipe should list an ingredient to tick")
-		XCTAssertTrue(ingredient.waitForSelected(false, timeout: 5), "an ingredient should start unticked")
-		capture("A recipe before an ingredient is ticked")
-		ingredient.tap()
-		XCTAssertTrue(ingredient.waitForSelected(true), "tapping an ingredient should tick it")
-		capture("A recipe with its first ingredient ticked")
 		return self
 	}
 
@@ -520,15 +399,6 @@ struct MessStoryScreen: Screen {
 			NSPredicate(
 				format: "identifier == %@ AND label == %@",
 				TestIdentifiers.News.imageViewerClose, TestIdentifiers.News.imageViewerCloseLabel)
-		).firstMatch
-	}
-
-	/// The viewer's share button, by its identifier and the label VoiceOver reads.
-	private var shareButton: XCUIElement {
-		app.buttons.matching(
-			NSPredicate(
-				format: "identifier == %@ AND label == %@",
-				TestIdentifiers.News.imageViewerShare, TestIdentifiers.News.imageViewerShareLabel)
 		).firstMatch
 	}
 }

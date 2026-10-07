@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import {goldGradient, grayGradient} from '@frogpond/colors'
 
-import {buildCategoryRows, orgsInCategory} from '../categories'
+import {buildCategoryRows, orgsForCategory, orgsInCategory} from '../categories'
 import type {OrgCategoryMembership, OrgCategoryType, StudentOrgType} from '../types'
 
 function makeOrg(overrides: Partial<StudentOrgType> = {}): StudentOrgType {
@@ -87,5 +87,22 @@ describe('orgsInCategory', () => {
 	test('an empty org list returns nothing', () => {
 		let membership = makeMembership({organizationUris: ['a']})
 		expect(orgsInCategory([], membership)).toEqual([])
+	})
+})
+
+describe('orgsForCategory', () => {
+	let a = makeOrg({name: 'A', organizationUri: 'a'})
+	let b = makeOrg({name: 'B', organizationUri: 'b'})
+	let memberships = [
+		makeMembership({name: 'Academic', organizationUris: ['a']}),
+		makeMembership({name: 'Service', organizationUris: ['b']}),
+	]
+
+	test("lists the orgs in the named category's membership", () => {
+		expect(orgsForCategory([a, b], memberships, 'Service')).toEqual([b])
+	})
+
+	test('lists nothing for a category no membership names', () => {
+		expect(orgsForCategory([a, b], memberships, 'No Such Category')).toEqual([])
 	})
 })

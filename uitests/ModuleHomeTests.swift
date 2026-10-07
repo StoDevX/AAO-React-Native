@@ -1,15 +1,16 @@
 import XCTest
 
 class ModuleHomeTests: UITestCase {
-	/// Every tile that opens a screen in the app opens its own screen.
+	/// Every tile and every item in Home's ⋯ menu opens its own screen.
 	///
 	/// The feature tests open their screens by deep link, so this is the one
-	/// test that taps the tiles. One launch covers them all: each tile is
-	/// tapped, its screen checked by an element only that screen draws, and
-	/// Back taken to the next tile.
+	/// test that taps the tiles and the menu. One launch covers them all: each
+	/// is tapped, its screen checked by an element only that screen draws, and
+	/// Back taken to the next.
 	///
-	/// Listed in the home screen's order, since the grid is only ever scrolled
-	/// down. Balances opens SIS in the browser, so it has no screen to check.
+	/// Tiles are listed in the home screen's order, since the grid is only ever
+	/// scrolled down. Balances opens SIS in the browser, so it has no screen to
+	/// check.
 	///
 	/// Dev mode, turned on by a long press on the notice, adds the dev-only
 	/// tiles and the Developer tile, which is opened last.
@@ -17,6 +18,19 @@ class ModuleHomeTests: UITestCase {
 		let home = HomeScreen(app: app)
 		// Athletics and Carleton Campus are dev-only tiles.
 		home.checkHomescreenExists().longPressNotice().tapEnableDevMode()
+
+		let nav = TestIdentifiers.Navigation.self
+		let menuItems: [(item: String, mounted: XCUIElement)] = [
+			(nav.supportMenuItem, SupportScreen(app: app).host),
+			(nav.aboutMenuItem, AboutScreen(app: app).host),
+			(nav.contributingMenuItem, ContributingScreen(app: app).host),
+		]
+		for (item, mounted) in menuItems {
+			home.chooseFromHomeMenu(item, opening: mounted).goBack()
+		}
+		home
+			.chooseFromHomeMenu(nav.feedbackMenuItem, opening: home.problemForm)
+			.closeProblemForm()
 
 		let buttons = TestIdentifiers.Buttons.self
 		let tiles: [(tile: String, mounted: XCUIElement)] = [
@@ -36,29 +50,16 @@ class ModuleHomeTests: UITestCase {
 			(buttons.studentWork, StudentWorkScreen(app: app).mounted),
 			(
 				buttons.stOlafNews,
-				NewsScreen(app: app, tile: buttons.stOlafNews, title: "St. Olaf News").mounted
+				NewsScreen(app: app, tile: buttons.stOlafNews, title: TestIdentifiers.News.stOlafTitle)
+					.mounted
 			),
 			(buttons.athletics, AthleticsScreen(app: app).mounted),
 			(buttons.carletonCampus, HoursScreen(app: app).carletonMounted),
 		]
-
-		// One wait per tile: each wait polls for a second at least, and
-		// seventeen tiles add up. Dev mode turning on has already shown that
-		// taps reach JavaScript.
-		let backButton = app.navigationBars.buttons[TestIdentifiers.Navigation.systemBackButton].firstMatch
 		for (tile, mounted) in tiles {
-			let button = app.buttons[tile].firstMatch
-			home.scrollUntilExists(button)
-			button.tap()
-			// The Map's sheet can take most of a minute on a loaded runner.
-			XCTAssertTrue(mounted.waitForExistence(timeout: 60), "The \(tile) tile should open its own screen")
-			backButton.tap()
+			home.openTile(tile, expecting: mounted).goBack()
 		}
 
 		home.openDeveloper()
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitForExistence(timeout: 10),
-			"Developer should hold the tools Settings' Developer section held")
-		home.capture("developer")
 	}
 }

@@ -1,7 +1,9 @@
 import {client} from '@frogpond/api'
+import {isUITesting} from '@frogpond/launch-arguments'
 import {isHTTPError} from 'ky'
 import {queryOptions} from '@tanstack/react-query'
 import type {StudentOrgDetailType, StudentOrgType} from './types'
+import uitestOrgs from './fixtures/uitest-orgs.json'
 
 export const keys = {
 	all: ['orgs'] as const,
@@ -14,6 +16,11 @@ export const keys = {
 const staleTime = 1000 * 60 * 5
 
 async function fetchStudentOrgs({signal}: {signal: AbortSignal}) {
+	// UI tests read a recorded list, so a search's results are as long, and
+	// in the order, the tests expect, whatever Presence.io holds today.
+	if (isUITesting) {
+		return uitestOrgs as StudentOrgType[]
+	}
 	let response = await client.get('orgs', {signal}).json()
 	return response as StudentOrgType[]
 }

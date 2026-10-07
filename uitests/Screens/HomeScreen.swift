@@ -12,6 +12,35 @@ struct HomeScreen: Screen {
 		return self
 	}
 
+	/// Check Home draws its tiles as a grid, not a list.
+	@discardableResult
+	func verifyTiled() -> Self {
+		verifyLayout(shown: tileGrid, hidden: list, named: "the tile grid")
+	}
+
+	/// Check Home draws its tiles as a list, not a grid.
+	@discardableResult
+	func verifyListed() -> Self {
+		verifyLayout(shown: list, hidden: tileGrid, named: "the list")
+	}
+
+	private var tileGrid: XCUIElement {
+		app.element(matching: TestIdentifiers.Home.tileGrid)
+	}
+
+	/// The list layout's `List`. The screen's `Host` gives its own identifier
+	/// to the collection view the list draws, overriding any the list sets, so
+	/// the element type is what tells the list from the host's other views.
+	private var list: XCUIElement {
+		app.collectionViews.matching(identifier: TestIdentifiers.Home.screen).firstMatch
+	}
+
+	private func verifyLayout(shown: XCUIElement, hidden: XCUIElement, named name: String) -> Self {
+		XCTAssertTrue(shown.waitForExistence(timeout: 10), "Home should draw \(name)")
+		XCTAssertTrue(hidden.waitForNonExistence(timeout: 10), "Home should draw only \(name)")
+		return self
+	}
+
 	@discardableResult
 	func longPressNotice() -> Self {
 		let notice = app.element(matching: TestIdentifiers.Home.notice)
@@ -34,64 +63,44 @@ struct HomeScreen: Screen {
 
 	@discardableResult
 	func openCustomize() -> CustomizeScreen {
-		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Home should have a Customize button")
-		button.tap()
-		return CustomizeScreen(app: app).checkOpen()
+		let customize = CustomizeScreen(app: app)
+		tap(app.buttons[TestIdentifiers.Navigation.customizeButton], until: customize.sheet, named: "Customize")
+		return customize
 	}
 
-	/// Open the ⋯ menu and leave it open.
+	/// Open the ⋯ menu and choose `item`, which should open `mounted`.
 	@discardableResult
-	func openHomeMenu() -> Self {
+	func chooseFromHomeMenu(_ item: String, opening mounted: XCUIElement) -> Self {
 		let menu = app.buttons[TestIdentifiers.Navigation.homeMenu]
-		XCTAssertTrue(
-			menu.waitForExistence(timeout: 10),
-			"Home menu should appear on home screen")
-		menu.tap()
-		return self
-	}
-
-	/// Open the ⋯ menu and choose `item`.
-	@discardableResult
-	func chooseFromHomeMenu(_ item: String) -> Self {
-		openHomeMenu()
 		let entry = app.buttons[item].firstMatch
-		XCTAssertTrue(
-			entry.waitForExistence(timeout: 10),
-			"Home menu should offer \(item)")
-		entry.tap()
-		return self
-	}
-
-	@discardableResult
-	func openSupport() -> SupportScreen {
-		chooseFromHomeMenu(TestIdentifiers.Navigation.supportMenuItem)
-		return SupportScreen(app: app).checkOpen()
-	}
-
-	@discardableResult
-	func openContributing() -> ContributingScreen {
-		chooseFromHomeMenu(TestIdentifiers.Navigation.contributingMenuItem)
-		return ContributingScreen(app: app).checkOpen()
+		tap(menu, until: entry, named: "Home's menu")
+		return tap(entry, until: mounted, named: "\(item) in Home's menu")
 	}
 
 	@discardableResult
 	func openAbout() -> AboutScreen {
-		chooseFromHomeMenu(TestIdentifiers.Navigation.aboutMenuItem)
-		return AboutScreen(app: app).checkOpen()
+		let about = AboutScreen(app: app)
+		chooseFromHomeMenu(TestIdentifiers.Navigation.aboutMenuItem, opening: about.host)
+		return about
+	}
+
+	/// Scroll to `tile` and open it, checking it opened its own screen.
+	@discardableResult
+	func openTile(_ tile: String, expecting mounted: XCUIElement) -> Self {
+		let button = app.buttons[tile].firstMatch
+		scrollUntilExists(button)
+		// The Map's sheet can take most of a minute on a loaded runner.
+		return tap(button, until: mounted, named: "the \(tile) tile", wait: 20)
 	}
 
 	/// Scroll to the Developer tile and open what it holds. Dev mode must be on.
 	@discardableResult
 	func openDeveloper() -> Self {
-		let tile = app.buttons[TestIdentifiers.Buttons.developer].firstMatch
-		scrollUntilExists(tile)
-		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
-			"Home should show a Developer tile after enabling dev mode")
-		tile.tap()
 		let screen = app.element(matching: TestIdentifiers.Developer.screen)
-		XCTAssertTrue(screen.waitForExistence(timeout: 30), "The Developer tile should open Developer")
+		openTile(TestIdentifiers.Buttons.developer, expecting: screen)
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitForExistence(timeout: 10),
+			"Developer should hold the tools Settings' Developer section held")
 		return self
 	}
 }

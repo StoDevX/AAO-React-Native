@@ -6,14 +6,40 @@ struct AppIconScreen: Screen {
 
 	var gallery: XCUIElement { app.element(matching: TestIdentifiers.Customize.appIconScreen) }
 
+	/// The icon-change alert belongs to SpringBoard. It blocks the app from
+	/// reaching idle, so UIInterruptionMonitor never fires -- that handler only
+	/// runs during synthesize, which app.tap()'s wait-for-idle never reaches --
+	/// and it is dismissed through SpringBoard instead.
+	private let springboard = XCUIApplication(bundleIdentifier: TestIdentifiers.SpringBoard.bundleIdentifier)
+
 	/// Open the gallery the way a user does, from the Customize sheet.
 	@discardableResult
 	func navigate() -> Self {
 		HomeScreen(app: app).checkHomescreenExists().openCustomize()
-		let row = app.buttons[TestIdentifiers.Customize.appIconRow].firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 10), "Customize should offer App Icon")
-		row.tap()
-		XCTAssertTrue(gallery.waitForExistence(timeout: 10), "the icon gallery should open")
+		return tap(
+			app.buttons[TestIdentifiers.Customize.appIconRow].firstMatch, until: gallery,
+			named: "Customize's App Icon row")
+	}
+
+	/// Put the default icon back if an earlier run left an alternate on.
+	///
+	/// The alternate icon belongs to SpringBoard, so it survives the
+	/// `--reset-state` launch that clears UserDefaults and AsyncStorage. Only
+	/// then can an earlier run's alert still be up, so SpringBoard is asked
+	/// about it only then: a query there can stall on a debug-information
+	/// collection that costs far more than the check.
+	@discardableResult
+	func restoreDefaultIcon(_ iconName: String) -> Self {
+		let tile = icon(named: iconName)
+		scrollIntoView(tile)
+		XCTAssertTrue(tile.exists, "\(iconName) should be offered as an icon")
+		if !tile.isSelected {
+			let strayAlert = springboard.buttons[TestIdentifiers.SpringBoard.iconChangedOK]
+			if strayAlert.waitForExistence(timeout: 2) {
+				strayAlert.tap()
+			}
+			select(iconName)
+		}
 		return self
 	}
 
@@ -89,7 +115,7 @@ struct AppIconScreen: Screen {
 	}
 
 	@discardableResult
-	func select(_ iconName: String, springboard: XCUIApplication) -> Self {
+	func select(_ iconName: String) -> Self {
 		let tile = icon(named: iconName)
 		scrollIntoView(tile)
 		XCTAssertTrue(
@@ -114,7 +140,7 @@ struct AppIconScreen: Screen {
 			.withOffset(CGVector(dx: target.midX, dy: target.midY))
 			.tap()
 
-		let iconChangeOK = springboard.buttons["OK"]
+		let iconChangeOK = springboard.buttons[TestIdentifiers.SpringBoard.iconChangedOK]
 		XCTAssertTrue(
 			iconChangeOK.waitForExistence(timeout: 10),
 			"Icon change alert should appear")

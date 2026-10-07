@@ -20,11 +20,10 @@ struct MenusScreen: Screen {
 	/// again on the one it lands on.
 	@discardableResult
 	func revealFilters() -> Self {
-		let button = app.navigationBars.buttons[TestIdentifiers.Menus.filtersButton].firstMatch
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			mounted.waitForExistence(timeout: 30),
 			"the Filters button should be in the navigation bar")
-		button.tap()
+		mounted.tap()
 		return self
 	}
 
@@ -48,21 +47,38 @@ struct MenusScreen: Screen {
 	/// Open the title's menu and choose another meal.
 	@discardableResult
 	func chooseMeal(_ meal: String, at cafe: String, from current: String) -> Self {
-		let picker = mealPicker(cafe, showing: current)
-		XCTAssertTrue(
-			picker.waitForExistence(timeout: 30),
-			"the title should name \(current) and open the meal picker")
-		picker.tap()
-
 		// The menu presents above the bar rather than inside it. Matched on a
 		// prefix: each row now carries the meal over the window it is served
 		// in, so its label reads `Dinner, 2:30PM - 6PM` rather than `Dinner`.
 		let option = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", meal))
 			.firstMatch
-		XCTAssertTrue(
-			option.waitForExistence(timeout: 30),
-			"\(meal) should be offered in the meal menu")
+		tap(mealPicker(cafe, showing: current), until: option, named: "the meal picker naming \(current)")
+		// A native menu item: its tap is UIKit's to deliver, not JavaScript's.
 		option.tap()
+		return self
+	}
+
+	/// The title names `meal`, as it does whichever meal is on screen.
+	@discardableResult
+	func verifyTitleNames(_ meal: String, at cafe: String) -> Self {
+		XCTAssertTrue(
+			mealPicker(cafe, showing: meal).waitForExistence(timeout: 30),
+			"the title should now name \(meal)")
+		return self
+	}
+
+	/// A food row, by the identifier the menu gives it, is on screen.
+	@discardableResult
+	func verifyItemShown(_ item: String) -> Self {
+		XCTAssertTrue(app.buttons[item].waitForExistence(timeout: 30), "the menu should list \(item)")
+		return self
+	}
+
+	/// A food row is on screen with nothing presented over it to stop a touch.
+	@discardableResult
+	func verifyItemUncovered(_ item: String) -> Self {
+		verifyItemShown(item)
+		XCTAssertTrue(app.buttons[item].isHittable, "nothing should have been presented over \(item)")
 		return self
 	}
 

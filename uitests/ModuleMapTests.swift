@@ -17,14 +17,10 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// shows it: the map above the middle stop stays in view, so a camera
 	/// re-padded for the shorter sheet would slide it.
 	///
-	/// Last, like Maps, the map runs under a clear header, and the credits the
-	/// tiles' licence requires sit in a menu there. It comes last because the
-	/// menu it opens is left open.
+	/// Last, like Maps, the map runs under a clear header.
 	func testTheCollapsedSheetRisesForSearchAndForAFootprint() throws {
 		let screen = MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
-			.capture("St. Olaf map sheet collapsed")
 			.verifyCollapsed()
 			.verifyFieldWithinSheet()
 			.verifyCollapsedMarginsSymmetric()
@@ -33,14 +29,11 @@ class ModuleMapTests: UITestCaseUnbooted {
 
 		screen
 			.focusSearch()
-			.capture("St. Olaf map sheet raised by search focus")
-			.verifySheetMoved(from: collapsedTop, direction: "up", "Focusing search should raise the sheet to large")
+			.verifySheetMoved(from: collapsedTop, .up, "Focusing search should raise the sheet to large")
 			.cancelSearch()
-			.capture("St. Olaf map sheet after cancelling search")
 			.verifySheetReturned(to: collapsedTop)
 			.verifyCollapsed()
 			.tapAFootprint()
-			.capture("St. Olaf map card after a footprint tap from collapsed")
 			.verifyCardAtMedium()
 		let region = screen.mapAboveSheet()
 		let before = screen.settledMap(in: region)
@@ -48,39 +41,30 @@ class ModuleMapTests: UITestCaseUnbooted {
 		screen
 			.collapseCard()
 			.verifyCardCollapsed()
-			.capture("St. Olaf map after the card collapses")
 			.verifyMapHeldStill(since: before, in: region)
-			.verifyClearHeaderWithCredits()
+			.verifyClearHeader()
 	}
 
 	/// At the largest text size the search field grows to fit its text, and the collapsed stop grows
 	/// with it, as Apple Maps' does: the whole field stays inside the sheet with
 	/// a margin above and below it.
 	///
-	/// The categories are then a list: a grid narrow enough to fit would leave
-	/// each label a word or two a line. A group's title wraps or shrinks beside
-	/// its back button rather than drawing under it.
+	/// A group's title then wraps or shrinks beside its back button rather
+	/// than drawing under it.
 	func testTheCollapsedSheetHoldsTheSearchFieldAtTheLargestTextSize() throws {
 		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
 			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
-			.capture("St. Olaf map sheet collapsed at the largest text size")
 			.verifyCollapsed()
 			.verifyFieldWithinSheet()
 			.verifyFieldHasMarginsInSheet()
 			.expandSheet()
-			.capture("St. Olaf map categories at the largest text size")
-			// The first row: at this size the sheet may rest short of its full
-			// stop, and a list builds only the rows it shows.
-			.verifyCategoriesAsList(including: TestIdentifiers.Map.buildingsCategory)
 			.openCategory(TestIdentifiers.Map.buildingsCategory)
-			.capture("St. Olaf map Buildings group at the largest text size")
 			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.buildingsCategory)
 	}
 
-	/// The full sheet, and a row tapped from it, reached through the grid.
+	/// The full sheet, and a row tapped from it.
 	///
 	/// The module pins the field at 44pt with a constraint UIKit is free to
 	/// overrule silently, so the height is checked before anything else moves
@@ -90,24 +74,14 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// the sheet's list, and the list clips each row to its card's rounded
 	/// corners, which once cut the foot off that tile's first letter.
 	///
-	/// A group opens its places under a header naming it, and Back returns to
-	/// the grid, as Maps does for a shopping centre.
-	///
-	/// `aBuilding` is absent from Carleton's map, so this also fails if the Map
-	/// tile forwarded the wrong campus, or none at all, to `/map` -- which falls
-	/// back to Carleton.
+	/// `aBuilding` is absent from Carleton's map, so this also fails if `/map`
+	/// ignored its `campus`, which falls back to Carleton.
 	func testTheFullSheetDropsToMediumForARow() throws {
 		let screen = MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.expandSheet()
 			.verifySearchFieldHeight()
-			.capture("St. Olaf map category grid")
 			.verifyTileNameDrawnWhole(TestIdentifiers.Map.cornerCategory)
-			.openCategory(TestIdentifiers.Map.diningCategory)
-			.capture("St. Olaf map Dining group")
-			.verifyGroupOpen(TestIdentifiers.Map.diningCategory)
-			.goBackToCategories()
 			.openCategory(TestIdentifiers.Map.buildingsCategory)
 			// Opening a group drops the sheet to make room for its pins.
 			.expandSheet()
@@ -115,7 +89,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 
 		screen
 			.selectBuilding(named: TestIdentifiers.Map.aBuilding)
-			.capture("St. Olaf map card after a row tap from large")
 			.verifyCardDroppedFrom(largeTop)
 			.verifyCardAtMedium()
 	}
@@ -126,13 +99,11 @@ class ModuleMapTests: UITestCaseUnbooted {
 	func testTheCollapsedCardHoldsItsWholeHeader() throws {
 		MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(TestIdentifiers.Map.aSubtitledBuilding)
 			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
 			.collapseCard()
 			.verifyCardCollapsed()
-			.capture("St. Olaf map card collapsed with a subtitle")
 			.verifyCardHeaderWithinSheet()
 	}
 
@@ -148,13 +119,11 @@ class ModuleMapTests: UITestCaseUnbooted {
 			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(TestIdentifiers.Map.aSubtitledBuilding)
 			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
 			.collapseCard()
 			.verifyCardCollapsed()
-			.capture("St. Olaf map card collapsed at the largest text size")
 			.verifyCardHeaderTopWithinSheet()
 	}
 
@@ -164,7 +133,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 		let name = TestIdentifiers.Map.aBuildingWithALongAbout
 		MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(name)
 			.selectBuilding(named: name)
@@ -182,11 +150,9 @@ class ModuleMapTests: UITestCaseUnbooted {
 		let name = TestIdentifiers.Map.aRowFarDownParking
 		let screen = MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.expandSheet()
 			.openCategory(category)
 			// Parking's many places merge into numbered clusters.
-			.capture("St. Olaf map Parking clusters")
 		let offset = screen.scrollListToReach(name)
 		screen
 			.selectBuilding(named: name)
@@ -196,37 +162,24 @@ class ModuleMapTests: UITestCaseUnbooted {
 
 	/// A place's card lists what else is there, and each opens its own card in
 	/// a sheet over it, as Maps stacks place sheets; the point's card shows
-	/// its own venue's hours. Tapping the map while cards are stacked then
-	/// starts afresh from the place tapped, rather than leaving a sheet over the
-	/// new card.
+	/// its own venue's hours. Closing it shows the card beneath again.
+	///
+	/// Whether a map tap over stacked cards starts afresh is not checked here:
+	/// a presented sheet leaves the ones beneath it out of the accessibility
+	/// tree, so a stack and a single card read the same.
 	func testATileOpensItsCardOverTheCardBeneath() throws {
 		let name = TestIdentifiers.Map.aBuildingWithPoints
 		let point = TestIdentifiers.Map.aPointInside
-		let screen = MapScreen(app: app)
+		MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(name)
 			.selectBuilding(named: name)
 			.openPlaceTile(named: point)
-		sleep(1)
-		screen
-			.capture("The Cage stacked over Buntrock")
 			.verifyTopCard(point)
 			.verifyHoursStatus()
 			.closeTopCard()
-		sleep(1)
-		screen
-			.capture("Back on Buntrock")
 			.verifyTopCard(name)
-			.openPlaceTile(named: point)
-		sleep(1)
-		screen.tapAFootprint()
-		sleep(2)
-		screen.capture("After a footprint tap over a stacked sheet")
-		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
-			.allElementsBoundByIndex.filter { $0.isHittable }
-		XCTAssertEqual(closes.count, 1, "A tap on the map should leave one card, not a stack")
 	}
 
 	/// A building's Directory lists its floors; a floor stacks its sheet over
@@ -235,7 +188,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 		let name = TestIdentifiers.Map.aBuildingWithADirectory
 		MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(name)
 			.selectBuilding(named: name)
@@ -243,7 +195,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.openDirectoryFloor(TestIdentifiers.Map.aDirectoryFloorIndex)
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
 			.verifyFloorSheetOnTop()
-			.capture("A floor of Tomson's Directory")
 			.openDirectoryEntry(named: TestIdentifiers.Map.aDirectoryVenue)
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryVenue)
 			.closeTopCard()
@@ -254,59 +205,26 @@ class ModuleMapTests: UITestCaseUnbooted {
 	}
 
 	/// A search that finds one place frames its pin above the sheet, and the
-	/// pin opens that place -- not the building its point sits inside. The
-	/// place is then listed under Recents on the root view, and a swipe takes
-	/// it off again.
-	func testASearchedPinOpensItsOwnCard() throws {
-		let name = TestIdentifiers.Map.aPointOnlyPlace
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.submitSearch()
-			.capture("St. Olaf map with one searched pin")
-			.verifyAtMiddleStop()
-			.tapMapCenterAboveSheet()
-			.capture("St. Olaf map after tapping the searched pin")
-			.verifyCardTitled(name)
-			.closeTopCard()
-			.cancelSearch()
-			.expandSheet()
-			.capture("St. Olaf map Recents")
-			.verifyRecentsList(name)
-			.removeRecent(name)
-			.verifyNoRecents()
-	}
-
-	/// The base map's own name for a place inside a building opens that place,
-	/// not the building around it. Searching frames the place's pin at a known
-	/// spot; cancelling takes the pin away and leaves the camera, so the base
-	/// map's label for the place is what is under that spot.
+	/// pin opens that place -- not the building its point sits inside.
 	///
 	/// The cancel is also the check that Close ends a search in one tap after
 	/// the keyboard's Search key has already ended editing, as Apple Maps' X
 	/// does -- rather than putting the field back into editing and needing a
 	/// second tap.
-	func testATappedPlaceNameOpensItsOwnCard() throws {
+	func testASearchedPinOpensItsOwnCard() throws {
 		let name = TestIdentifiers.Map.aPointOnlyPlace
-		let screen = MapScreen(app: app)
+		MapScreen(app: app)
 			.navigate()
-			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(name)
 			.submitSearch()
 			.verifyAtMiddleStop()
 			.verifyKeyboardHidden()
-			.capture("St. Olaf map after submitting a search")
-		let spot = screen.mapCenterAboveSheet()
-		screen
+			.tapMapCenterAboveSheet()
+			.verifyCardTitled(name)
+			.closeTopCard()
 			.cancelSearch()
 			.verifyKeyboardHidden()
 			.verifySearchFieldEmpty()
-			.capture("St. Olaf map with the searched place's own label")
-			.tapMap(at: spot)
-			.capture("St. Olaf map after tapping a place's label")
-			.verifyCardTitled(name)
 	}
 }

@@ -13,56 +13,6 @@ struct StreamingMediaScreen: Screen {
 		open(route: "/streaming-media", mountedWhen: mounted)
 	}
 
-	@discardableResult
-	func checkStreamListExists() -> Self {
-		let streamList = app.element(matching: TestIdentifiers.Streaming.list)
-		XCTAssertTrue(
-			streamList.waitForExistence(timeout: 30),
-			"stream-list should be visible")
-		return self
-	}
-
-	@discardableResult
-	func checkTabs() -> Self {
-		for tab in TestIdentifiers.StreamingMedia.tabs {
-			XCTContext.runActivity(named: tab) { _ in
-				let tabButton = app.tabButton(tab)
-				XCTAssertTrue(
-					tabButton.waitForExistence(timeout: 30),
-					"\(tab) tab button should be visible")
-			}
-		}
-		return self
-	}
-
-	/// Tap `element` until `marker` appears, up to three times.
-	///
-	/// A native tab switch or a first tap after launch can be dropped, and
-	/// waiting longer on a dropped one achieves nothing. Each attempt looks the
-	/// element up again and stops if it has gone: a tap that did land may have
-	/// changed it.
-	private func tap(_ element: XCUIElement, until marker: XCUIElement, named name: String) {
-		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
-		for attempt in 1...3 {
-			if element.exists {
-				element.tap()
-			}
-			if marker.waitForExistence(timeout: 10) {
-				return
-			}
-			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }
-		}
-		XCTFail("Tapping \(name) never brought up what it should")
-	}
-
-	/// Open Streaming Media from its Home tile rather than by URL. Opening a URL
-	/// relaunches the app, which resets state a test has just set up.
-	@discardableResult
-	func openFromHome() -> Self {
-		tap(app.buttons["Streaming Media"], until: mounted, named: "the Streaming Media tile")
-		return self
-	}
-
 
 
 	/// Pick a station in the player's segmented control, and wait for its Play.
@@ -127,15 +77,6 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Tap the button labelled `label`, once it shows.
-	@discardableResult
-	func tapButton(_ label: String) -> Self {
-		let button = app.buttonLabelled(label)
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "A button labelled \"\(label)\" should exist")
-		button.tap()
-		return self
-	}
-
 	/// Check something labelled `label` is on screen. A check that a thing has
 	/// gone proves nothing unless it was there first.
 	@discardableResult
@@ -170,30 +111,9 @@ struct StreamingMediaScreen: Screen {
 	}
 
 	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
-		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist")
+		XCTAssertTrue(element.waitForExistence(timeout: 10), "\(name) should exist")
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")
 		XCTAssertGreaterThanOrEqual(element.frame.width, 44, "\(name) should be at least 44pt wide")
-	}
-
-	/// Tap the logo through every one of `labels`, capturing each, and check
-	/// the tap after the last one comes back to the first.
-	@discardableResult
-	func checkLogoCycles(_ labels: [String]) -> Self {
-		for (index, label) in labels.enumerated() {
-			XCTContext.runActivity(named: label) { _ in
-				let logo = app.buttonLabelled(label)
-				XCTAssertTrue(
-					logo.waitForExistence(timeout: 10),
-					"Logo \(index + 1) should be a button labelled \"\(label)\"")
-				capture(label)
-				logo.tap()
-			}
-		}
-
-		XCTAssertTrue(
-			app.buttonLabelled(labels[0]).waitForExistence(timeout: 10),
-			"Tapping the last logo should come back to \"\(labels[0])\"")
-		return self
 	}
 
 	/// Check a station with one logo leaves it as a picture, not a button.
@@ -201,21 +121,6 @@ struct StreamingMediaScreen: Screen {
 	func checkLogoIsNotAButton(_ labelPrefix: String) -> Self {
 		let logoButtons = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", labelPrefix))
 		XCTAssertEqual(logoButtons.count, 0, "No button should be labelled \"\(labelPrefix)…\"")
-		return self
-	}
-
-	/// Tap the logo whose label begins `prefix` until it reads `target`.
-	@discardableResult
-	func tapLogo(labelled prefix: String, until target: String) -> Self {
-		let logo = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", prefix)).firstMatch
-		XCTAssertTrue(logo.waitForExistence(timeout: 10), "A logo labelled \"\(prefix)…\" should be a button")
-		for _ in 0..<5 {
-			if app.buttonLabelled(target).waitForExistence(timeout: 2) {
-				break
-			}
-			logo.tap()
-		}
-		XCTAssertTrue(app.buttonLabelled(target).waitForExistence(timeout: 5), "Tapping the logo should reach \"\(target)\"")
 		return self
 	}
 
@@ -229,7 +134,6 @@ struct StreamingMediaScreen: Screen {
 		let start = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.25))
 		let end = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.2))
 		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
-		capture("\(label) after a scrub")
 
 		XCTAssertTrue(
 			app.buttonLabelled(label).waitForExistence(timeout: 5),

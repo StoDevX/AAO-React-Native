@@ -4,7 +4,19 @@ import XCTest
 struct SpringBoardScreen: Screen {
 	let app: XCUIApplication
 
-	private let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+	private let springboard = XCUIApplication(bundleIdentifier: TestIdentifiers.SpringBoard.bundleIdentifier)
+
+	/// The app icon's label, which `chooseQuickAction` finds the icon by. Read
+	/// while the app runs.
+	var appIconName: String { app.label }
+
+	/// The app has come to the foreground, as a quick action from a cold start
+	/// should bring it.
+	@discardableResult
+	func verifyAppLaunched() -> Self {
+		XCTAssertTrue(app.wait(for: .runningForeground, timeout: 30), "the app should launch")
+		return self
+	}
 
 	/// Go to the Home Screen, long-press the app's icon, and choose `action`
 	/// from its menu. `appName` is the icon's label, read from `app.label`

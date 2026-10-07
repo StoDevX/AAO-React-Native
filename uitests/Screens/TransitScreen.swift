@@ -5,7 +5,7 @@ struct TransitScreen: Screen {
 
 	/// Drawn by this screen alone, so its presence says the screen has mounted.
 	var mounted: XCUIElement {
-		app.navigationBars["Transit"]
+		app.navigationBars[TestIdentifiers.Transit.title]
 	}
 
 	@discardableResult
@@ -19,52 +19,10 @@ struct TransitScreen: Screen {
 		app.elementWithLabel(startingWith: line)
 	}
 
-	/// The screen's `@expo/ui` `List`, which lands as a `CollectionView` rather
-	/// than the `UITableView` a plain SwiftUI `List` would give -- so a swipe
-	/// aimed at `app.tables` finds nothing to scroll.
-	private var list: XCUIElement {
-		app.collectionViews.firstMatch
-	}
-
-	/// A line's widget is a `Section` in that list, which builds its rows
-	/// lazily: one below the fold is absent from the tree entirely, not merely
-	/// offscreen, so waiting longer never surfaces it. This scrolls until the
-	/// header appears rather than trusting `waitForExistence` alone, which is
-	/// only good for a header already on screen.
-	@discardableResult
-	func verifyLineWidgetShown(_ line: String) -> Self {
-		let header = lineHeader(line)
-		scrollUntilExists(header, in: list)
-		XCTAssertTrue(
-			header.exists,
-			"\(line) should have a widget on the Transportation screen")
-		return self
-	}
-
-	/// A line has no widget anywhere on the screen. Sweeps the whole list from
-	/// the top looking for its header rather than trusting one glance: the
-	/// sections build lazily, so a widget below the fold is absent from the
-	/// tree and would read as missing without ever having been ruled out.
-	@discardableResult
-	func verifyLineWidgetAbsent(_ line: String) -> Self {
-		scrollToTop(list)
-		let header = lineHeader(line)
-		scrollUntilExists(header, in: list)
-		XCTAssertFalse(
-			header.exists,
-			"\(line) is hidden in the feed and should have no widget on the Transportation screen")
-		return self
-	}
-
 	/// Open a line's full timetable by pressing its widget header.
 	@discardableResult
 	func openLine(_ line: String) -> Self {
-		let header = lineHeader(line)
-		XCTAssertTrue(
-			header.waitForExistence(timeout: 30),
-			"\(line) should have a widget to open")
-		header.tap()
-		return self
+		tap(lineHeader(line), until: dayMenu, named: "\(line)'s widget")
 	}
 
 	/// Press a stop cell in a widget's strip. Every cell opens the line's full
@@ -73,18 +31,13 @@ struct TransitScreen: Screen {
 	/// "St. Olaf College, 1:05 PM" -- so the name is a prefix.
 	@discardableResult
 	func openTimetableFromStrip(_ stop: String) -> Self {
-		let cell = app.elementWithLabel(startingWith: stop)
-		XCTAssertTrue(
-			cell.waitForExistence(timeout: 30),
-			"The strip should show \(stop)")
-		cell.tap()
-		return self
+		tap(app.elementWithLabel(startingWith: stop), until: dayMenu, named: "\(stop) in the strip")
 	}
 
 	/// The first line's strip, which a swipe is aimed at and a stop is looked
 	/// for inside.
 	private var stopStrip: XCUIElement {
-		app.scrollViews[TestIdentifiers.Transit.stopStrip].firstMatch
+		app.element(matching: TestIdentifiers.Transit.stopStrip)
 	}
 
 	/// Whether a stop cell has actually been scrolled into the strip's window.
@@ -153,56 +106,18 @@ struct TransitScreen: Screen {
 	}
 
 	/// The day menu lives only in the timetable sheet's navigation bar, so
-	/// its presence is sheet-unique -- unlike the footer text, which all three
-	/// screens in this feature render and which only ever discriminated
-	/// because a presented sheet makes the screen behind it accessibility-inert.
-	@discardableResult
-	func verifyTimetableShown() -> Self {
-		let menu = app.buttons[TestIdentifiers.Transit.dayMenuDefaultLabel].firstMatch
-		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
-			"The sheet should show the line's full timetable, day menu and all")
-		return self
-	}
-
-	/// Open a stop's own schedule from inside the sheet's timetable.
-	@discardableResult
-	func openFirstStop() -> Self {
-		let stop = app.elementWithLabel(startingWith: TestIdentifiers.Transit.aStop)
-		XCTAssertTrue(
-			stop.waitForExistence(timeout: 30),
-			"The route should list \(TestIdentifiers.Transit.aStop) as a stop")
-		stop.tap()
-		return self
-	}
-
-	@discardableResult
-	func verifyStopScheduleShown() -> Self {
-		// The heading carries the stop's name and when its next bus is, as one
-		// element -- "ST. OLAF COLLEGE — STARTS IN 3 HOURS", drawn in caps --
-		// so the match is both a prefix and case-insensitive.
-		let heading = app.staticTexts.matching(
-			NSPredicate(format: "label BEGINSWITH[c] %@", TestIdentifiers.Transit.aStop)
-		).firstMatch
-		XCTAssertTrue(
-			heading.waitForExistence(timeout: 30),
-			"Tapping a stop should open its own schedule, headed by its name")
-		return self
+	/// its presence says the sheet is up -- unlike the footer text, which all
+	/// three screens in this feature render.
+	private var dayMenu: XCUIElement {
+		app.buttons[TestIdentifiers.Transit.dayMenuDefaultLabel].firstMatch
 	}
 
 	/// Pick a day from the sheet's navigation bar menu.
 	@discardableResult
 	func pickDay(_ day: String) -> Self {
-		let menu = app.buttons[TestIdentifiers.Transit.dayMenuDefaultLabel].firstMatch
-		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
-			"The sheet's navigation bar should offer a day menu labelled Today")
-		menu.tap()
-
 		let option = app.buttons[day].firstMatch
-		XCTAssertTrue(
-			option.waitForExistence(timeout: 30),
-			"The day menu should offer \(day)")
+		tap(dayMenu, until: option, named: "the day menu")
+		// A native menu item: its tap is UIKit's to deliver, not JavaScript's.
 		option.tap()
 		return self
 	}
@@ -236,20 +151,6 @@ struct TransitScreen: Screen {
 		XCTAssertTrue(
 			emptyState.waitForExistence(timeout: 30),
 			"Picking \(day) should redraw the timetable as a line that is not running")
-		return self
-	}
-
-	/// Other Modes sits below the widgets on this screen, not behind its own
-	/// tab. This scrolls all the way to the last row on the screen, which lives
-	/// in Other Modes' final, headerless section -- proving the list scrolls
-	/// past the widgets and that the unlabelled section is actually reached.
-	@discardableResult
-	func scrollToOtherModes() -> Self {
-		let row = app.elementWithLabel(startingWith: TestIdentifiers.Transit.lastOtherModesRow)
-		scrollUntilExists(row, in: list)
-		XCTAssertTrue(
-			row.exists,
-			"Scrolling past the widgets should reach \(TestIdentifiers.Transit.lastOtherModesRow), the last row in Other Modes' unlabelled section")
 		return self
 	}
 }
