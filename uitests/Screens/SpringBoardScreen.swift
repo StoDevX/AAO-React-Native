@@ -52,11 +52,15 @@ struct SpringBoardScreen: Screen {
 
 	/// Wait for `icon` to be hittable and wholly on screen. An icon on the
 	/// next Home Screen page reads as hittable from just past the screen's
-	/// edge, so a press there finds nothing to press.
+	/// edge, so a press there finds nothing to press. The frame is checked
+	/// first: asking an icon with no frame yet whether it is hittable fails
+	/// the test outright.
 	private func waitForOnScreen(_ icon: XCUIElement, timeout: TimeInterval) -> Bool {
 		let screen = springboard.frame
 		return waitUntil("Waiting \(timeout)s for \(icon) to be on screen", timeout: timeout) {
-			icon.exists && icon.isHittable && screen.contains(icon.frame)
+			guard icon.exists else { return false }
+			let frame = icon.frame
+			return !frame.isEmpty && screen.contains(frame) && icon.isHittable
 		}
 	}
 }
