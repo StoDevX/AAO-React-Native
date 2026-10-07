@@ -32,12 +32,16 @@ export function useAppIcon(): {
 			if (type === current.type) {
 				return
 			}
-			if (type === DEFAULT_ICON) {
-				await resetIcon()
-			} else {
-				await changeIcon(type)
+			try {
+				if (type === DEFAULT_ICON) {
+					await resetIcon()
+				} else {
+					await changeIcon(type)
+				}
+				reportIconChange(type)
+			} catch {
+				// iOS refused the change; the reload below shows the icon it kept.
 			}
-			reportIconChange(type)
 			await reload()
 		},
 		[current.type, reload],
