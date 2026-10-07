@@ -385,7 +385,7 @@ struct HoursScreen: Screen {
 	}
 
 	private var discardChangesAlert: XCUIElement {
-		app.alerts[TestIdentifiers.Hours.discardChangesAlert]
+		app.alerts[TestIdentifiers.UnsavedChanges.alert]
 	}
 
 	@discardableResult
@@ -407,14 +407,14 @@ struct HoursScreen: Screen {
 	/// Cancels the discard, staying on the screen with edits intact.
 	@discardableResult
 	func chooseToKeepEditing() -> Self {
-		discardChangesAlert.buttons[TestIdentifiers.Hours.keepEditing].tap()
+		discardChangesAlert.buttons[TestIdentifiers.UnsavedChanges.keepEditing].tap()
 		return self
 	}
 
 	/// Confirms the discard, letting the pending navigation go through.
 	@discardableResult
 	func chooseToDiscardChanges() -> Self {
-		discardChangesAlert.buttons[TestIdentifiers.Hours.discard].tap()
+		discardChangesAlert.buttons[TestIdentifiers.UnsavedChanges.discard].tap()
 		return self
 	}
 

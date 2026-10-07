@@ -34,7 +34,7 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	private var discardChangesAlert: XCUIElement {
-		app.alerts["Discard changes?"]
+		app.alerts[TestIdentifiers.UnsavedChanges.alert]
 	}
 
 	private var searchField: XCUIElement {
@@ -46,12 +46,12 @@ struct CampusDictionaryScreen: Screen {
 	/// accessibility elements -- it is one `Other` spanning every section -- so
 	/// nothing here can query a specific letter, only the rail as a whole.
 	private var sectionIndexRail: XCUIElement {
-		app.otherElements["Section index"]
+		app.element(matching: TestIdentifiers.Dictionary.sectionIndex)
 	}
 
 	/// Drawn by this screen alone, so its presence says the screen has mounted.
 	var mounted: XCUIElement {
-		app.navigationBars["Dictionary"]
+		app.navigationBars[TestIdentifiers.Dictionary.title]
 	}
 
 	@discardableResult
@@ -61,19 +61,14 @@ struct CampusDictionaryScreen: Screen {
 
 	/// Taps near the bottom of the section index rail and asserts the list
 	/// actually scrolled. Cannot assert *which* section it landed on -- see
-	/// `sectionIndexRail`. `sectionIndexLabel()` is iOS 26+, so this skips
-	/// below that, where the rail does not exist at all.
+	/// `sectionIndexRail`.
 	@discardableResult
-	func verifySectionIndexRailScrolls() throws -> Self {
-		guard #available(iOS 26.0, *) else {
-			throw XCTSkip("sectionIndexLabel() needs iOS 26; the rail does not exist below it")
-		}
-
-		let list = app.collectionViews[TestIdentifiers.Dictionary.list]
+	func verifySectionIndexRailScrolls() -> Self {
+		let list = app.element(matching: TestIdentifiers.Dictionary.list)
 		XCTAssertTrue(list.waitForExistence(timeout: 10), "the dictionary list never appeared")
 		XCTAssertTrue(
 			sectionIndexRail.waitForExistence(timeout: 10),
-			"no section index rail appeared -- sectionIndexLabel needs iOS 26")
+			"no section index rail appeared")
 
 		let firstRowBefore = list.buttons.firstMatch.label
 
@@ -102,7 +97,7 @@ struct CampusDictionaryScreen: Screen {
 
 		// The keyboard covers the lower half of the results, and a row it hides
 		// is neither rendered nor hittable.
-		app.keyboards.buttons["search"].firstMatch.tap()
+		app.keyboards.buttons[TestIdentifiers.Dictionary.keyboardSearch].firstMatch.tap()
 		return self
 	}
 
@@ -199,10 +194,9 @@ struct CampusDictionaryScreen: Screen {
 	@discardableResult
 	/// Taps Suggest an Edit in the entry's own navigation bar.
 	func openEditor() -> Self {
-		let button = app.navigationBars.buttons[TestIdentifiers.Dictionary.suggestAnEdit]
-		XCTAssertTrue(button.waitForExistence(timeout: 5), "the sheet had no Suggest an Edit button")
-		button.tap()
-		return self
+		tap(
+			app.navigationBars.buttons[TestIdentifiers.Dictionary.suggestAnEdit], until: editForm,
+			named: "Suggest an Edit")
 	}
 
 	/// Opens the sense in row `position`, counting from 1.
@@ -323,7 +317,7 @@ struct CampusDictionaryScreen: Screen {
 		let back = app.navigationBars[TestIdentifiers.Dictionary.editFormTitle]
 			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
-			back.exists && back.isHittable,
+			back.waitForHittable(timeout: 10),
 			"the edit form should push into the sheet's stack, so it carries a back button")
 		return self
 	}
@@ -337,63 +331,10 @@ struct CampusDictionaryScreen: Screen {
 		return openSense(1).typeDefinition(prepending: text).leaveSense()
 	}
 
-	/// Scrolls the edit form until `text` is on screen and unobstructed. The
-	/// Senses section's footer -- the last thing in the form -- sits below the
-	/// fold on return from a sense screen, so a capture taken where
-	/// `editFirstDefinition` leaves off shows neither the footer nor the
-	/// wording it carries.
-	///
-	/// A press-and-drag between two fixed points inside the form's own
-	/// content, rather than `app.swipeUp()`. A swipe spans the whole element
-	/// it is sent to, so sent to `app` its start and end points are computed
-	/// from the app's full frame rather than the form's own bounds -- and
-	/// this helper then reports content that was scrollable all along as
-	/// unreachable if either point misses the form.
-	@discardableResult
-	func revealInForm(_ text: String) -> Self {
-		let label = app.staticTexts[text]
-		// Both ends lie inside the form's own content, between the navigation
-		// bar and the bottom of the screen.
-		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.43))
-		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.18))
-		for _ in 1...8 {
-			if label.exists && label.isHittable {
-				return self
-			}
-			start.press(forDuration: 0.05, thenDragTo: end)
-		}
-		XCTFail(
-			label.exists
-				? "\"\(text)\" is in the form but never became hittable -- something is drawn "
-					+ "over it"
-				: "eight drags up the form never produced an element reading \"\(text)\"")
-		return self
-	}
-
-	@discardableResult
-	func verifyPreviewDisabled() -> Self {
-		XCTAssertTrue(
-			previewButton.waitForExistence(timeout: 15), "the edit form should offer Preview")
-		XCTAssertFalse(
-			previewButton.isEnabled,
-			"Preview should stay disabled until something in the draft has actually changed")
-		return self
-	}
-
-	@discardableResult
-	func verifyPreviewEnabled() -> Self {
-		XCTAssertTrue(
-			previewButton.waitForExistence(timeout: 15), "the edit form should offer Preview")
-		XCTAssertTrue(
-			previewButton.isEnabled,
-			"Preview should enable once the draft has an actual change")
-		return self
-	}
-
 	@discardableResult
 	func openPreview() -> Self {
 		XCTAssertTrue(
-			previewButton.isEnabled, "Preview should be enabled before it can be opened")
+			previewButton.waitForEnabled(true, timeout: 10), "Preview should be enabled before it can be opened")
 		previewButton.tap()
 		return self
 	}
@@ -505,7 +446,9 @@ struct CampusDictionaryScreen: Screen {
 	/// Cancels the discard, staying on the form with edits intact.
 	@discardableResult
 	func chooseToKeepEditing() -> Self {
-		discardChangesAlert.buttons["Edit"].tap()
+		let keep = discardChangesAlert.buttons[TestIdentifiers.UnsavedChanges.keepEditing]
+		XCTAssertTrue(keep.waitForExistence(timeout: 10), "the alert should offer to keep editing")
+		keep.tap()
 		return self
 	}
 

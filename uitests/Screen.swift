@@ -63,7 +63,7 @@ extension Screen {
 	/// element it is sent to, so once a keyboard is showing it begins on the
 	/// keyboard, the keyboard takes it, and this returns quietly having scrolled
 	/// nothing. Every caller scrolls with the keyboard down; one that cannot
-	/// wants the press-and-drag `CampusDictionaryScreen.revealInForm` uses.
+	/// wants a press-and-drag between two points inside the scrolling content.
 	@discardableResult
 	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8, in container: XCUIElement? = nil) -> Self {
 		let scrollTarget = container ?? app

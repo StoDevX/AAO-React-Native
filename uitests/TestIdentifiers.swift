@@ -157,6 +157,16 @@ struct TestIdentifiers {
 	// MARK: - Dictionary
 
 	enum Dictionary {
+		/// The screen's title.
+		static let title = "Dictionary"
+		/// The section index rail's accessibility label.
+		static let sectionIndex = "Section index"
+		/// The keyboard's Search key.
+		static let keyboardSearch = "search"
+		/// A word the edit test adds to a definition, and a word already in it;
+		/// the preview has to show both.
+		static let addedWord = "indeed"
+		static let aWordOfTheDefinition = "something"
 		static let list = "dictionary-list"
 		static let definitionSheet = "dictionary-definition-sheet"
 		static let suggestAnEdit = "Suggest an Edit"
@@ -619,6 +629,16 @@ struct TestIdentifiers {
 		static let anExtra = "Calendar"
 	}
 
+	// MARK: - Unsaved changes
+
+	/// The alert a form with unsaved edits raises on the way out, and its two
+	/// choices: Hours' report and the Dictionary's suggested edit share it.
+	enum UnsavedChanges {
+		static let alert = "Discard changes?"
+		static let keepEditing = "Edit"
+		static let discard = "Discard"
+	}
+
 	// MARK: - In-app browser
 
 	enum Browser {
@@ -717,6 +737,8 @@ struct TestIdentifiers {
 	// MARK: - Directory
 
 	enum Directory {
+		/// The screen's title, whichever screen opened it.
+		static let title = "Directory"
 		/// The heading below the contact tiles on the Directory screen.
 		static let importantContacts = "Departments"
 		/// Matches CONTACT_GRID_ID in app/directory/index.tsx.
@@ -778,11 +800,6 @@ struct TestIdentifiers {
 		static let footnote = "Building hours subject to change"
 		/// The report screen's keyboard's Done key.
 		static let keyboardDone = "done"
-		/// The unsaved-changes guard's alert and its two choices, in
-		/// app/hours/detail/report.tsx.
-		static let discardChangesAlert = "Discard changes?"
-		static let keepEditing = "Edit"
-		static let discard = "Discard"
 		/// The start of `anExcludedBuilding`'s editable hours row.
 		static let weekdaysRow = "Weekdays"
 		/// The schedule editor's title.

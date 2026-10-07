@@ -15,7 +15,7 @@ struct DirectoryScreen: Screen {
 
 	/// Drawn by this screen alone, so its presence says the screen has mounted.
 	var mounted: XCUIElement {
-		app.navigationBars["Directory"]
+		app.navigationBars[TestIdentifiers.Directory.title]
 	}
 
 	@discardableResult
@@ -24,25 +24,8 @@ struct DirectoryScreen: Screen {
 	}
 
 	@discardableResult
-	func verifyDirectoryTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.directory)
-	}
-
-	@discardableResult
 	func verifyContactsHeading() -> Self {
 		verifyTitle(TestIdentifiers.Directory.importantContacts)
-	}
-
-	@discardableResult
-	func verifyContactTiles(count: Int) -> Self {
-		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
-		XCTAssertTrue(
-			grid.waitForExistence(timeout: 30),
-			"The contact grid should be visible before a search")
-		XCTAssertEqual(
-			grid.buttons.count, count,
-			"The grid should hold \(count) contact tiles")
-		return self
 	}
 
 	@discardableResult

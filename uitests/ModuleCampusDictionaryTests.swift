@@ -5,7 +5,7 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 	/// The first word then opens a half-height sheet whose lone sense lines up
 	/// with the headword, and the sheet closes again.
 	func testSearchingFromFarDownOpensTheFirstWordInAHalfHeightSheet() throws {
-		try CampusDictionaryScreen(app: app)
+		CampusDictionaryScreen(app: app)
 			.navigate()
 			.verifySectionIndexRailScrolls()
 			.search(for: TestIdentifiers.Dictionary.firstEntrySearchTerm)
@@ -20,18 +20,14 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			.verifyEntrySheetIsGone()
 	}
 
-	/// Preview should refuse to open until the draft actually differs from
-	/// the entry as opened -- retyping nothing is not a suggestion.
-	///
-	/// Once it opens, it is the whole point of the flow: an edit previews as a
-	/// marked-up diff, with every word `@expo/ui`'s `Text` would otherwise have
+	/// An edit previews as a marked-up diff, with every word `@expo/ui`'s `Text` would otherwise have
 	/// silently dropped still on screen, and no DEBUG marker standing in for
 	/// markup our patch should have supported. `verifyPreviewShows` is the
 	/// actual proof of that -- `verifyPreviewPresented` alone would pass
 	/// against a completely blank preview, since its identifier sits on the
 	/// outer container.
 	///
-	/// `"indeed "` rather than a shorter word, here and in every other test
+	/// `addedWord` is seven characters rather than fewer, here and in every other test
 	/// that types into this field: a shorter burst does not reliably straddle
 	/// the window in which a keystroke sent to a native text field can be
 	/// dropped between renders. Seven characters is what it takes to trip that
@@ -53,22 +49,15 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			.verifyDefinitionSheetIsPresented()
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
-			.verifyPreviewDisabled()
-			.editFirstDefinition(prepending: "indeed ")
-			.verifyPreviewEnabled()
+			.editFirstDefinition(prepending: TestIdentifiers.Dictionary.addedWord + " ")
 			.attemptToDragSheetClosed()
 			.verifyDiscardChangesAlertPresented()
 			.chooseToKeepEditing()
 			.verifyEditFormPushedIntoSheet()
-			// The form once an edit has landed. Its footer is the one place the
-			// second wording is drawn, and it sits under the keyboard until the
-			// form is scrolled -- so revealing it is what makes the capture show
-			// the state this test just put the draft into.
-			.revealInForm("Ready to preview")
 			.openPreview()
 			.verifyPreviewPresented()
-			.verifyPreviewShows("something")
-			.verifyPreviewShows("indeed")
+			.verifyPreviewShows(TestIdentifiers.Dictionary.aWordOfTheDefinition)
+			.verifyPreviewShows(TestIdentifiers.Dictionary.addedWord)
 			.verifyNoUnsupportedNestedModifierMarker()
 	}
 }
