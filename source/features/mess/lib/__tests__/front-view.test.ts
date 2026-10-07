@@ -52,6 +52,7 @@ describe('linkedView', () => {
 		['latest', undefined],
 		['Latest', 'Horoscopes'],
 		['Latest:Variety', undefined],
+		['Latest', ''],
 	])('ignores view %p, section %p', (view, section) => {
 		expect(linkedView(view, section)).toBeNull()
 	})

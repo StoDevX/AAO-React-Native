@@ -34,7 +34,7 @@ export function viewOf(saved: string | null): MessView {
  */
 export function linkedView(view: string | undefined, section: string | undefined): MessView | null {
 	if (view !== MODES.issues && view !== MODES.latest) return null
-	let key = section ? `${view}:${section}` : view
+	let key = section === undefined ? view : `${view}:${section}`
 	let linked = viewOf(key)
 	return viewKey(linked) === key ? linked : null
 }
