@@ -5,6 +5,7 @@ import {Section} from '@expo/ui/swift-ui'
 import {useRouter} from 'expo-router'
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
+import {DebugSwiftSection} from './debugswift-section'
 import {ActionRow, NavigationRow} from '../../components/rows'
 import {refreshApp} from '../../lib/refresh'
 
@@ -62,6 +63,8 @@ export const DeveloperSection = (): React.ReactElement => {
 				<ActionRow onPress={sendSentryMessage} title="Send a Sentry Message" />
 				<ActionRow onPress={sendSentryException} title="Send a Sentry Exception" />
 			</Section>
+
+			<DebugSwiftSection />
 
 			<ServerUrlSection />
 		</>

@@ -104,6 +104,16 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	isSimulator: true,
 	isDebugNativeBuild: true,
 }))
+// DebugSwift is reached through a native module Jest does not have. Absent,
+// as in a Release build; a test of the Debug-only paths replaces this.
+jest.mock('@frogpond/debug-tools', () => ({
+	isDebugSwiftAvailable: false,
+	isDebugSwiftEnabled: jest.fn(() => false),
+	isDebugSwiftRunning: jest.fn(() => Promise.resolve(false)),
+	setDebugSwiftEnabled: jest.fn(() => Promise.resolve()),
+	openDebugSwift: jest.fn(() => Promise.resolve()),
+	setFloatingButtonEnabled: jest.fn(() => Promise.resolve()),
+}))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({
 	setQuickActions: jest.fn(() => Promise.resolve()),

@@ -334,6 +334,8 @@ const config: ExpoConfig = {
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
 		// its options now live in the `enriched-markdown` block of package.json.
 		'./plugins/with-app-delegate-customizations',
+		// DebugSwift, in Debug builds only; Release never links it.
+		'./plugins/with-debug-swift',
 		'./plugins/with-alternate-icons',
 		'./plugins/with-custom-symbols',
 		'./plugins/with-xcuitest-target',
