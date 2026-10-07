@@ -72,6 +72,14 @@ These patterns are especially important in this codebase:
 - Descriptive test names; group with `describe` blocks
 - `beforeEach`/`afterEach` for setup/cleanup
 - **XCUITest debugging:** iOS UI tests live in `uitests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity. Every shard, passing or not, also uploads `uitest-evidence-{shard}`: the runner's busiest processes every five seconds (`runner-cpu.log`) and the simulator's log for the run (`simulator.log.gz`), for a test that ran far slower than usual without failing.
+- **Test history:** CI uploads every Jest, node:test and UI-test run to
+  [flakiness.io](https://flakiness.io/frogpond/all-about-olaf) through GitHub
+  OIDC. Jest uses `@flakiness/jest`; node:test and the UI tests write their
+  reports with `scripts/flakiness-node-test-reporter.mjs` and
+  `scripts/write-uitest-flakiness-report.mjs`, and the mise tool
+  `npm:flakiness` uploads them. Each UI-test retry is its own attempt, and the
+  simulator wait before the tests is reported as `CI/waitForSimulator`. Local
+  runs upload nothing.
 
 **Jest cannot see what a view looks like.** The test environment has no layout
 pass, no compositor, and no hit testing. A rendered view there is a tree of the
