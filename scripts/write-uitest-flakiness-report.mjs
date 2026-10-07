@@ -9,8 +9,15 @@
  * is reported as a test of its own, `CI/waitForSimulator`, to keep its
  * timing beside theirs.
  *
- * The UI-test job installs no packages, so this imports nothing but Node.
+ * The UI-test job installs no packages, so this imports nothing beyond Node
+ * and the scripts beside it.
  */
+
+import {execFileSync} from 'node:child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+
+import {readTestResults} from './report-flaky-uitests.mjs'
 
 /** The flakiness.io project these results belong to. */
 export const FLAKINESS_PROJECT = 'frogpond/all-about-olaf'
@@ -175,4 +182,63 @@ export function buildReport(testNodes, options) {
 		report.testRunner = {name: 'xcodebuild', version: xcodeVersion}
 	}
 	return report
+}
+
+/** The Xcode version, as `xcodebuild -version` prints it, if it can be read. */
+function readXcodeVersion() {
+	try {
+		return execFileSync('xcodebuild', ['-version'], {encoding: 'utf8'}).match(/^Xcode (\S+)/u)?.[1]
+	} catch {
+		return
+	}
+}
+
+function main() {
+	const [bundlePath, outputDir] = process.argv.slice(2)
+
+	if (!bundlePath || !outputDir) {
+		console.error('usage: write-uitest-flakiness-report.mjs <path to .xcresult> <output folder>')
+		// A workflow that calls this wrongly is a bug in the workflow.
+		process.exit(2)
+	}
+
+	let results = {}
+	try {
+		results = readTestResults(bundlePath)
+	} catch (error) {
+		// A shard whose simulator never came up has no bundle; its wait is
+		// still worth reporting.
+		console.log(`Could not read ${bundlePath}: ${error.message}`)
+	}
+
+	const env = process.env
+	const report = buildReport(results.testNodes ?? [], {
+		shard: env.SHARD ?? 'unknown',
+		commitId: env.GITHUB_SHA,
+		url: env.GITHUB_RUN_ID
+			? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`
+			: undefined,
+		osVersion: results.devices?.[0]?.osVersion,
+		xcodeVersion: readXcodeVersion(),
+		testsStartedMs: env.UITEST_STARTED ? Number(env.UITEST_STARTED) * 1000 : Date.now(),
+		simulatorWait: readSimulatorWait(env),
+	})
+
+	if (!report) {
+		console.log('Nothing to report.')
+		return
+	}
+
+	try {
+		fs.mkdirSync(outputDir, {recursive: true})
+		fs.writeFileSync(path.join(outputDir, 'report.json'), JSON.stringify(report))
+		console.log(`Wrote ${path.join(outputDir, 'report.json')}`)
+	} catch (error) {
+		// Losing the report must not fail a shard whose tests passed.
+		console.log(`Could not write the report: ${error.message}`)
+	}
+}
+
+if (import.meta.main) {
+	main()
 }
