@@ -241,10 +241,10 @@ enum ResetChannel {
 			nil, nil, true)
 
 		let answerURL = directoryURL.appendingPathComponent(id)
-		let answered = XCTNSPredicateExpectation(
-			predicate: NSPredicate { _, _ in FileManager.default.fileExists(atPath: answerURL.path) },
-			object: nil)
-		guard XCTWaiter().wait(for: [answered], timeout: answerTimeout) == .completed else {
+		let answered = waitUntil("Waiting \(answerTimeout)s for the app to answer", timeout: answerTimeout) {
+			FileManager.default.fileExists(atPath: answerURL.path)
+		}
+		guard answered else {
 			isBroken = !hasAnswered
 			return false
 		}
