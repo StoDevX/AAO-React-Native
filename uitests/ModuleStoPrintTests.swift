@@ -35,7 +35,7 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 		let sent = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "test.pdf"))
 			.firstMatch
-		XCTAssertTrue(sent.waitForExistence(timeout: 30), "A sent job should be listed")
+		XCTAssertTrue(sent.existsOrAppears(within: 30), "A sent job should be listed")
 		sent.tap()
 		XCTAssertTrue(
 			app.staticTexts["Job Info"].firstMatch.waitForExistence(timeout: 30),
@@ -45,7 +45,7 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 		let job = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))
 			.firstMatch
-		XCTAssertTrue(job.waitForExistence(timeout: 30), "A pending job should be listed")
+		XCTAssertTrue(job.existsOrAppears(within: 30), "A pending job should be listed")
 		job.tap()
 
 		// Every printer in the fixtures is named mfc-<something>; their location

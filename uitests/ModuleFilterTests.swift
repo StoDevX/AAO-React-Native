@@ -79,7 +79,7 @@ class ModuleFilterTests: UITestCaseUnbooted {
 			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
 			"the first station's items should show")
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].existsOrAppears(within: 30),
 			"the second station's items should show, chosen without reopening the menu")
 
 		// Unticking one narrows the list to the station left.
@@ -89,11 +89,11 @@ class ModuleFilterTests: UITestCaseUnbooted {
 			.dismissMenu(waitingFor: pizza)
 
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
-			"the chosen station's items should stay")
-		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForNonExistence(timeout: 30),
 			"the other stations' items should be gone")
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.pizzaItem].existsOrAppears(within: 30),
+			"the chosen station's items should stay")
 		XCTAssertFalse(
 			app.staticTexts[TestIdentifiers.Menus.specialtyPizzaStation].exists,
 			"the other stations' headers should be gone")

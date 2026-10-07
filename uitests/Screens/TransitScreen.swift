@@ -61,7 +61,7 @@ struct TransitScreen: Screen {
 	func openLine(_ line: String) -> Self {
 		let header = lineHeader(line)
 		XCTAssertTrue(
-			header.waitForExistence(timeout: 30),
+			header.existsOrAppears(within: 30),
 			"\(line) should have a widget to open")
 		header.tap()
 		return self
@@ -75,7 +75,7 @@ struct TransitScreen: Screen {
 	func openTimetableFromStrip(_ stop: String) -> Self {
 		let cell = app.elementWithLabel(startingWith: stop)
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 30),
+			cell.existsOrAppears(within: 30),
 			"The strip should show \(stop)")
 		cell.tap()
 		return self
@@ -112,7 +112,7 @@ struct TransitScreen: Screen {
 	@discardableResult
 	func verifyStripHasNotReached(_ stop: String) -> Self {
 		XCTAssertTrue(
-			stopStrip.waitForExistence(timeout: 30),
+			stopStrip.existsOrAppears(within: 30),
 			"The first line's widget should show its stop strip")
 		XCTAssertFalse(
 			stripShows(stop),
@@ -128,7 +128,7 @@ struct TransitScreen: Screen {
 	@discardableResult
 	func swipeStripLeft() -> Self {
 		XCTAssertTrue(
-			stopStrip.waitForExistence(timeout: 30),
+			stopStrip.existsOrAppears(within: 30),
 			"The first line's widget should show its stop strip")
 		stopStrip.swipeLeft()
 		stopStrip.swipeLeft()
@@ -195,7 +195,7 @@ struct TransitScreen: Screen {
 	func pickDay(_ day: String) -> Self {
 		let menu = app.buttons[TestIdentifiers.Transit.dayMenuDefaultLabel].firstMatch
 		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
+			menu.existsOrAppears(within: 30),
 			"The sheet's navigation bar should offer a day menu labelled Today")
 		menu.tap()
 
@@ -214,7 +214,7 @@ struct TransitScreen: Screen {
 	func verifyStopListsDepartures(_ stop: String) -> Self {
 		let row = app.elementWithLabel(startingWith: "\(stop), ")
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.existsOrAppears(within: 30),
 			"The timetable should list \(stop)")
 		XCTAssertFalse(
 			row.label.hasPrefix("\(stop), \(TestIdentifiers.Transit.skippedDeparture)"),
@@ -227,15 +227,16 @@ struct TransitScreen: Screen {
 	/// menu button, which relabels itself whether or not the list redrew.
 	@discardableResult
 	func verifyLineNotRunning(on day: String) -> Self {
-		XCTAssertTrue(
-			app.buttons[day].waitForExistence(timeout: 30),
-			"The day menu should relabel itself to \(day)")
-
 		let emptyState = app.elementWithLabel(
 			startingWith: TestIdentifiers.Transit.lineNotRunning)
 		XCTAssertTrue(
 			emptyState.waitForExistence(timeout: 30),
 			"Picking \(day) should redraw the timetable as a line that is not running")
+
+		// The menu relabels itself from the same choice that redrew the list.
+		XCTAssertTrue(
+			app.buttons[day].existsOrAppears(within: 30),
+			"The day menu should relabel itself to \(day)")
 		return self
 	}
 

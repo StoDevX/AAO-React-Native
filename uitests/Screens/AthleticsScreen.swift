@@ -21,7 +21,7 @@ struct AthleticsScreen: Screen {
 	func openSportsMenu() -> Self {
 		let menu = app.buttons[TestIdentifiers.Athletics.sportsMenu]
 		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
+			menu.existsOrAppears(within: 30),
 			"the sports menu should be in the toolbar")
 		menu.tap()
 		return self
@@ -33,7 +33,7 @@ struct AthleticsScreen: Screen {
 	func tapMenuItem(_ title: String) -> Self {
 		let item = app.buttons[title]
 		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
+			item.existsOrAppears(within: 30),
 			"\(title) should be offered in the sports menu")
 		item.tap()
 		return self

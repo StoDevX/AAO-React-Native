@@ -42,7 +42,7 @@ struct FilterScreen: Screen {
 	@discardableResult
 	func tapMenuItem(_ label: String) -> Self {
 		let item = menuItem(label)
-		XCTAssertTrue(item.waitForExistence(timeout: 30), "the menu should offer a \(label) item")
+		XCTAssertTrue(item.existsOrAppears(within: 30), "the menu should offer a \(label) item")
 		item.tap()
 		return self
 	}
@@ -62,7 +62,7 @@ struct FilterScreen: Screen {
 	@discardableResult
 	func waitForTrigger(_ key: String) -> Self {
 		XCTAssertTrue(
-			trigger(key).waitForExistence(timeout: 30),
+			trigger(key).existsOrAppears(within: 30),
 			"the \(key) filter should offer a trigger")
 		return self
 	}

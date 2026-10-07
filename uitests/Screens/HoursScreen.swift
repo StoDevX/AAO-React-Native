@@ -28,7 +28,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.existsOrAppears(within: 30),
 			"Hours should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -102,7 +102,7 @@ struct HoursScreen: Screen {
 	func revealSwipeAction(on name: String) -> Self {
 		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.existsOrAppears(within: 30),
 			"\(name) should be listed before it can be swiped")
 
 		scrollUntilHittable(row)
@@ -197,20 +197,22 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyDetailSheetTitled(_ name: String) -> Self {
 		XCTAssertTrue(
-			app.navigationBars.staticTexts[name].waitForExistence(timeout: 30),
+			app.navigationBars.staticTexts[name].existsOrAppears(within: 30),
 			"The detail sheet should be titled \(name)")
 		return self
 	}
 
 	@discardableResult
 	func verifyDetailSheetPresented(for name: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts[name].waitForExistence(timeout: 30),
-			"The detail sheet should be titled \(name)")
+		// The status row first: the name is also the label of the building's
+		// own row in the list behind, which is there all along.
 		XCTAssertTrue(
 			app.descendants(matching: .any)[TestIdentifiers.Hours.status]
 				.waitForExistence(timeout: 30),
 			"The detail sheet should show \(name)'s schedule")
+		XCTAssertTrue(
+			app.staticTexts[name].existsOrAppears(within: 30),
+			"The detail sheet should be titled \(name)")
 		return self
 	}
 
@@ -231,7 +233,7 @@ struct HoursScreen: Screen {
 	func attemptToTapRowBehindSheet(_ name: String) -> Self {
 		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.existsOrAppears(within: 30),
 			"\(name) should still be in the list behind the sheet")
 		row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 		return self
@@ -326,7 +328,7 @@ struct HoursScreen: Screen {
 	func tapReportAction() -> Self {
 		let action = app.buttons[TestIdentifiers.Hours.reportAction]
 		XCTAssertTrue(
-			action.waitForExistence(timeout: 30),
+			action.existsOrAppears(within: 30),
 			"The detail sheet should offer Report a Problem")
 		action.tap()
 		return self
@@ -359,7 +361,7 @@ struct HoursScreen: Screen {
 	func verifySubmitReportReachable() -> Self {
 		let submit = app.navigationBars.buttons[TestIdentifiers.Hours.submitReportAction]
 		XCTAssertTrue(
-			submit.waitForExistence(timeout: 30),
+			submit.existsOrAppears(within: 30),
 			"The report screen should offer Submit Report")
 		XCTAssertTrue(
 			submit.isHittable,
@@ -380,7 +382,7 @@ struct HoursScreen: Screen {
 	func verifyReportPushedIntoSheet() -> Self {
 		XCTAssertTrue(
 			app.staticTexts[TestIdentifiers.Hours.reportScreenPrompt]
-				.waitForExistence(timeout: 30),
+				.existsOrAppears(within: 30),
 			"The report screen should be up")
 
 		let back = app.navigationBars[TestIdentifiers.Hours.reportScreenTitle]
@@ -399,7 +401,7 @@ struct HoursScreen: Screen {
 		let back = app.navigationBars[TestIdentifiers.Hours.reportScreenTitle]
 			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
-			back.waitForExistence(timeout: 30),
+			back.existsOrAppears(within: 30),
 			"The report screen should offer a way to go back")
 		back.tap()
 		return self
@@ -410,7 +412,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func makeUnsavedEditOnReportScreen() -> Self {
 		let nameField = app.textFields.firstMatch
-		XCTAssertTrue(nameField.waitForExistence(timeout: 30), "The report screen should have a Name field")
+		XCTAssertTrue(nameField.existsOrAppears(within: 30), "The report screen should have a Name field")
 		nameField.tap()
 		nameField.typeText(" edited")
 
@@ -513,7 +515,7 @@ struct HoursScreen: Screen {
 		let weekdaysRow = app.elementWithLabel(startingWith: "Weekdays")
 		scrollSheetUntilHittable(weekdaysRow)
 		XCTAssertTrue(
-			weekdaysRow.waitForExistence(timeout: 15),
+			weekdaysRow.existsOrAppears(within: 15),
 			"The report screen should list an editable Weekdays row")
 		weekdaysRow.tap()
 		return self

@@ -16,7 +16,7 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 		XCTAssertTrue(found, "Athletics should show a Today section")
 
 		let yesterday = app.staticTexts["Yesterday"].firstMatch
-		XCTAssertTrue(yesterday.waitForExistence(timeout: 10), "Athletics should show a Yesterday section")
+		XCTAssertTrue(yesterday.existsOrAppears(within: 10), "Athletics should show a Yesterday section")
 		XCTAssertTrue(yesterday.isHittable, "the list should open at its top, with Yesterday in view")
 		XCTAssertLessThan(
 			yesterday.frame.minY, today.frame.minY, "Yesterday should sit above Today")

@@ -22,7 +22,7 @@ struct MenusScreen: Screen {
 	func revealFilters() -> Self {
 		let button = app.navigationBars.buttons[TestIdentifiers.Menus.filtersButton].firstMatch
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			button.existsOrAppears(within: 30),
 			"the Filters button should be in the navigation bar")
 		button.tap()
 		return self
@@ -50,7 +50,7 @@ struct MenusScreen: Screen {
 	func chooseMeal(_ meal: String, at cafe: String, from current: String) -> Self {
 		let picker = mealPicker(cafe, showing: current)
 		XCTAssertTrue(
-			picker.waitForExistence(timeout: 30),
+			picker.existsOrAppears(within: 30),
 			"the title should name \(current) and open the meal picker")
 		picker.tap()
 
@@ -90,7 +90,7 @@ struct MenusScreen: Screen {
 	@discardableResult
 	func openCafe(_ cafe: String) -> Self {
 		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitForExistence(timeout: 30), "\(cafe) tab should be visible")
+		XCTAssertTrue(tab.existsOrAppears(within: 30), "\(cafe) tab should be visible")
 		tab.tap()
 		return verifyFoodRowsAppear()
 	}
