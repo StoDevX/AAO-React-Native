@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useWindowDimensions} from 'react-native'
-import {Stack, useRouter} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {Host, Image} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
@@ -17,7 +17,7 @@ import {OLAF_MESSENGER} from '../news/sources'
 import {useNewsFilterStore} from '../news/store'
 import {IssueGrid} from './issue-grid'
 import {LatestPage} from './latest-page'
-import {viewKey, viewOf, type MessView} from './lib/front-view'
+import {linkedView, viewKey, viewOf, type MessView} from './lib/front-view'
 import {messKeys} from './lib/keys'
 import {MAIN_SECTIONS} from './lib/posts'
 import {MessPage, PAPER_BAR} from './mess-page'
@@ -159,7 +159,8 @@ function SavedLatestStories(): React.ReactNode {
 /**
  * The Mess's front page: a navigation bar on the paper, titled with the paper's castle, with the
  * paintbrush and the view menu at its right, over the view's page. The view and the section are
- * remembered in the news filter store.
+ * remembered in the news filter store. A link can name the view to open on, and the section to
+ * narrow Latest to: `/messenger?view=Latest&section=Variety`.
  */
 export function FrontPageScreen(): React.ReactNode {
 	let router = useRouter()
@@ -168,6 +169,14 @@ export function FrontPageScreen(): React.ReactNode {
 	let select = useNewsFilterStore((state) => state.select)
 	let view = viewOf(saved)
 	let choose = (next: MessView) => select(OLAF_MESSENGER.id, viewKey(next))
+
+	let link = useLocalSearchParams<{view?: string; section?: string}>()
+	React.useEffect(() => {
+		let linked = linkedView(link.view, link.section)
+		if (linked) {
+			select(OLAF_MESSENGER.id, viewKey(linked))
+		}
+	}, [link.view, link.section, select])
 
 	return (
 		<>
