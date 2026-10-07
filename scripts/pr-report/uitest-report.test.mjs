@@ -157,7 +157,7 @@ describe('diffUitests', () => {
 			flaky: [{identifier: 'steady', attempts: 2}],
 		})
 		let head = report({durations: {slow: 31.4, tiny: 4, steady: 104, fresh: 70, quicker: 20}})
-		let diff = diffUitests(baseline, head)
+		let diff = diffUitests([baseline], head)
 		assert.equal(diff.commonCount, 4)
 		assert.equal(diff.before, 153)
 		assert.equal(diff.after, 159.4)
@@ -169,6 +169,39 @@ describe('diffUitests', () => {
 			],
 		)
 		assert.deepEqual([...diff.flakyOnBaseline], ['steady'])
+	})
+
+	it('flags a test only outside the range master ran it in, and compares with its median', () => {
+		let baselines = [
+			report({
+				durations: {noisy: 30, steady: 10, slower: 10},
+				flaky: [{identifier: 'a', attempts: 2}],
+			}),
+			report({durations: {noisy: 90, steady: 11, slower: 12}}),
+			report({
+				durations: {noisy: 60, steady: 12, slower: 11, newer: 20},
+				flaky: [{identifier: 'b', attempts: 2}],
+			}),
+		]
+		let head = report({durations: {noisy: 85, steady: 11, slower: 40, newer: 2}})
+		let diff = diffUitests(baselines, head)
+		assert.equal(diff.runs, 3)
+		assert.equal(diff.commonCount, 4)
+		assert.equal(diff.before, 60 + 11 + 11 + 20)
+		assert.equal(diff.after, 85 + 11 + 40 + 2)
+		assert.deepEqual(
+			diff.rows.map((row) => [row.name, row.before, row.min, row.max, row.delta]),
+			[
+				['slower', 11, 10, 12, 29],
+				['newer', 20, 20, 20, -18],
+			],
+		)
+		assert.deepEqual(diff.flakyOnBaseline, new Set(['a', 'b']))
+	})
+
+	it('takes the median of an even number of runs as the mean of the middle two', () => {
+		let baselines = [10, 20, 30, 40].map((t) => report({durations: {t}}))
+		assert.equal(diffUitests(baselines, report({durations: {t: 25}})).before, 25)
 	})
 })
 
@@ -198,7 +231,7 @@ describe('buildBlock', () => {
 		})
 		let flakyBaseline = {...baseline, flaky: [{identifier: 'b', attempts: 2}]}
 		assert.equal(
-			buildBlock({head, baseline: flakyBaseline, comparedSha: BASE}),
+			buildBlock({head, baselines: [flakyBaseline], comparedSha: BASE}),
 			[
 				BLOCK_START,
 				'### UI tests',
@@ -206,20 +239,28 @@ describe('buildBlock', () => {
 				'',
 				'Passed only after a retry (2): `a` (2 attempts), `b` (3 attempts, also flaky on master)',
 				'',
-				'| Slower or faster than master | Before | After | Δ |',
-				'| --- | --- | --- | --- |',
-				'| `c` | 30.0 s | 61.4 s | +31.4 s |',
+				"| Outside master's range | Master | Range | After | Δ |",
+				'| --- | --- | --- | --- | --- |',
+				'| `c` | 30.0 s | 30.0–30.0 s | 61.4 s | +31.4 s |',
 				'',
 				BLOCK_END,
 			].join('\n'),
 		)
 	})
 
+	it('names how many master runs the median comes from, and their range', () => {
+		let runs = [10, 30, 20].map((c) => report({durations: {a: 10, b: 20, c}}))
+		let head = report({durations: {a: 10, b: 20, c: 61.4}})
+		let block = buildBlock({head, baselines: runs, comparedSha: BASE})
+		assert.match(block, /\(master median of 3 runs: 50s on the same 3, \+41s\)/u)
+		assert.match(block, /^\| `c` \| 20\.0 s \| 10\.0–30\.0 s \| 61\.4 s \| \+41\.4 s \|$/mu)
+	})
+
 	it('keeps ten rows on top and the rest, to fifty, under details', () => {
 		let names = Array.from({length: 60}, (_, i) => `t${String(i).padStart(2, '0')}`)
 		let slow = report({durations: Object.fromEntries(names.map((n, i) => [n, 100 + i]))})
 		let fast = report({durations: Object.fromEntries(names.map((n) => [n, 10]))})
-		let block = buildBlock({head: slow, baseline: fast, comparedSha: slow.baseSha})
+		let block = buildBlock({head: slow, baselines: [fast], comparedSha: slow.baseSha})
 		let [top, rest] = block.split('<details>')
 		assert.equal(top.match(/^\| `t\d\d`/gmu).length, 10)
 		assert.equal(rest.match(/^\| `t\d\d`/gmu).length, 40)
@@ -227,31 +268,39 @@ describe('buildBlock', () => {
 	})
 
 	it('says so when no test needed a retry and nothing moved', () => {
-		let block = buildBlock({head: baseline, baseline, comparedSha: baseline.baseSha})
+		let block = buildBlock({head: baseline, baselines: [baseline], comparedSha: baseline.baseSha})
 		assert.match(block, /No test needed a retry\./u)
 		assert.doesNotMatch(block, /\| Slower/u)
 	})
 
 	it('says the suite did not pass when it did not', () => {
-		let block = buildBlock({head: report({result: 'failure'}), baseline: null, comparedSha: ''})
+		let block = buildBlock({head: report({result: 'failure'}), baselines: [], comparedSha: ''})
 		assert.match(block, /The suite did not pass \(failure\)/u)
 		assert.match(block, /No master UI-test report to compare with\./u)
 	})
 
 	it('says the format changed, and names an older master commit', () => {
 		assert.match(
-			buildBlock({head: report(), baseline: {version: 2}, comparedSha: 'x'}),
+			buildBlock({head: report(), baselines: [{version: 2}], comparedSha: 'x'}),
 			/Baseline format changed \(master's report is version 2\)/u,
 		)
 		assert.match(
-			buildBlock({head: report(), baseline, comparedSha: '1234567890abc'}),
+			buildBlock({
+				head: report({durations: {a: 10}}),
+				baselines: [{version: 2}, baseline],
+				comparedSha: BASE,
+			}),
+			/test time 10s \(master: 10s on the same 1, 0s\)/u,
+		)
+		assert.match(
+			buildBlock({head: report(), baselines: [baseline], comparedSha: '1234567890abc'}),
 			/Compared with master at `1234567`, older than this PR's base `abcdef1`\./u,
 		)
 	})
 
 	it('renders nothing without a current-version report', () => {
-		assert.equal(buildBlock({head: null, baseline, comparedSha: ''}), null)
-		assert.equal(buildBlock({head: {version: 2}, baseline, comparedSha: ''}), null)
+		assert.equal(buildBlock({head: null, baselines: [baseline], comparedSha: ''}), null)
+		assert.equal(buildBlock({head: {version: 2}, baselines: [baseline], comparedSha: ''}), null)
 	})
 })
 

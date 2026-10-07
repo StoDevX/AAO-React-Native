@@ -52,22 +52,31 @@ jobs:
             exit 0
           fi
           base_sha=$(jq -r '.baseSha // empty' head/uitest-report.json 2>/dev/null || true)
-          found=$(scripts/pr-report/find-baseline.sh "$base_sha" master uitest-report ios.yml)
+          # Several master runs, since one test's time swings twice over from
+          # one run to the next with no change.
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha" master uitest-report ios.yml 5)
           if [ -z "$found" ]; then
             echo "No master UI-test report at or before ${base_sha:-the base commit}."
             exit 0
           fi
-          echo "compared=${found#* }" >> "$GITHUB_OUTPUT"
-          gh run download "${found%% *}" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir baseline/ \
-            || echo "The report for ${found#* } could not be downloaded."
+          newest=$(head -n 1 <<<"$found")
+          echo "compared=${newest#* }" >> "$GITHUB_OUTPUT"
+          while IFS=' ' read -r run_id commit; do
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir "baseline/$run_id/" \
+              || echo "The report for $commit could not be downloaded."
+          done <<<"$found"
 
       - name: Render the block
         env:
           COMPARED_SHA: ${{ steps.download.outputs.compared }}
         run: |
+          baselines=()
+          for report in baseline/*/uitest-report.json; do
+            [ -f "$report" ] && baselines+=(--baseline "$report")
+          done
           node scripts/pr-report/uitest-report.mjs render \
             --head head/uitest-report.json \
-            --baseline baseline/uitest-report.json \
+            "${baselines[@]}" \
             --compared-sha "$COMPARED_SHA" \
             --out block.md
           if [ -f block.md ]; then
