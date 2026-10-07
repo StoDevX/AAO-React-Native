@@ -41,10 +41,11 @@ struct SpringBoardScreen: Screen {
 
 		icon.press(forDuration: 1.0)
 
-		// SpringBoard does not go idle while this menu is up, so the press and
-		// the tap each sit through XCUITest's full quiescence timeout, about a
-		// minute apiece. Sending them through `app` instead never reaches
-		// SpringBoard, so the wait is the price of driving it at all.
+		// With the app just sent to the background, SpringBoard does not go
+		// idle, so the press and the tap each sit through XCUITest's full
+		// quiescence timeout, about a minute apiece. From a cold start the same
+		// two took two seconds and one. Sending them through `app` instead
+		// never reaches SpringBoard.
 		let item = springboard.buttons[action]
 		XCTAssertTrue(item.waitForExistence(timeout: 5), "\(action) should be in the icon's menu")
 		item.tap()

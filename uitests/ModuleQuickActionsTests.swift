@@ -21,20 +21,24 @@ class ModuleQuickActionsTests: UITestCase {
 			.verifyPicked(ids.anExtra, false)
 	}
 
-	/// A quick action opens its screen whether the app is running or not.
-	///
+	/// A quick action opens its screen in the app that is already running.
+	func testQuickActionOpensItsScreenWhileRunning() throws {
+		let ids = TestIdentifiers.QuickActions.self
+		HomeScreen(app: app).checkHomescreenExists()
+		let springBoard = SpringBoardScreen(app: app)
+		springBoard.chooseQuickAction(ids.cageMenu, appName: springBoard.appIconName)
+		MenusScreen(app: app).verifyShowing(ids.cageTab)
+	}
+
 	/// From a cold start, SpringBoard starts the app on the action's screen.
 	/// That launch has none of the test's arguments: no --uitesting, and so
 	/// live menus rather than fixtures. It asserts only which cafe is showing,
 	/// which the data cannot change.
-	func testQuickActionOpensItsScreenWarmAndCold() throws {
+	func testQuickActionOpensItsScreenFromAColdStart() throws {
 		let ids = TestIdentifiers.QuickActions.self
 		HomeScreen(app: app).checkHomescreenExists()
 		let springBoard = SpringBoardScreen(app: app)
 		let appName = springBoard.appIconName
-
-		springBoard.chooseQuickAction(ids.cageMenu, appName: appName)
-		MenusScreen(app: app).verifyShowing(ids.cageTab)
 
 		app.terminate()
 		springBoard
