@@ -137,13 +137,77 @@ export function readRunnerLoad(text) {
 	}
 }
 
+/** The bundle's nodes that become annotations, by the annotation's type. */
+const ANNOTATION_TYPES = {
+	'Runtime Warning': 'runtime-warning',
+	'Skip Message': 'skip',
+	'Expected Failure': 'fail',
+}
+
+/** Each annotation the nodes hold, once: a warning can repeat many times. */
+function toAnnotations(nodes) {
+	const seen = new Set()
+	return nodes.flatMap((node) => {
+		const type = ANNOTATION_TYPES[node.nodeType]
+		const key = `${type}\n${node.name}`
+		if (!type || seen.has(key)) {
+			return []
+		}
+		seen.add(key)
+		return [{type, description: node.name}]
+	})
+}
+
+/**
+ * Find the `/// Tags: a, b` markers in the UI tests' Swift sources, keyed by
+ * class (`ModuleMapTests`) or class and method (`ModuleMapTests/testSearch`).
+ *
+ * XCTest has no tags of its own. A marker belongs to the class or test
+ * function it sits above; other comments and attributes may come between,
+ * but anything else orphans it.
+ */
+export function parseTestTags(sources) {
+	const tags = new Map()
+	for (const source of sources) {
+		let currentClass
+		let pending
+		for (const line of source.split('\n')) {
+			const marker = line.match(/^\s*\/\/\/\s*Tags:\s*(.+)$/u)
+			if (marker) {
+				pending = marker[1]
+					.split(',')
+					.map((tag) => tag.trim())
+					.filter(Boolean)
+				continue
+			}
+
+			const classMatch = line.match(/^\s*(?:(?:final|public|open)\s+)*class\s+(\w+)/u)
+			const funcMatch = line.match(/^\s*(?:(?:override|public)\s+)*func\s+(test\w*)/u)
+			if (classMatch) {
+				currentClass = classMatch[1]
+				if (pending) {
+					tags.set(currentClass, pending)
+				}
+			} else if (funcMatch && currentClass) {
+				if (pending) {
+					tags.set(`${currentClass}/${funcMatch[1]}`, pending)
+				}
+			} else if (/^\s*(?:\/\/|@|$)/u.test(line)) {
+				continue
+			}
+			pending = undefined
+		}
+	}
+	return tags
+}
+
 /**
  * Turn one test, or one of its repetitions, into a run attempt.
  *
  * Attempts are laid end to end on `clock`, since the bundle records how long
  * each took but not when it started.
  */
-function toAttempt(run, clock) {
+function toAttempt(run, clock, testLevelNodes) {
 	const duration = Math.round((run.durationInSeconds ?? 0) * 1000)
 	const attempt = {
 		environmentIdx: 0,
@@ -162,22 +226,47 @@ function toAttempt(run, clock) {
 		attempt.errors = errors
 	}
 
+	const annotations = toAnnotations([...(run.children ?? []), ...testLevelNodes])
+	if (annotations.length > 0) {
+		attempt.annotations = annotations
+	}
+
 	clock.now += duration
 	return attempt
 }
 
-/** A test has one attempt per repetition, or one of its own when it never retried. */
-function toTest(testCase, clock) {
+/**
+ * A test has one attempt per repetition, or one of its own when it never
+ * retried. Its tags are its class's and its own.
+ */
+function toTest(testCase, suiteName, clock, tags) {
 	const repetitions = (testCase.children ?? []).filter((child) => child.nodeType === 'Repetition')
 	const runs = repetitions.length > 0 ? repetitions : [testCase]
-	return {title: testCase.name, attempts: runs.map((run) => toAttempt(run, clock))}
+	// A retried test's own nodes, beside its repetitions, belong to every attempt.
+	const testLevelNodes =
+		repetitions.length > 0
+			? (testCase.children ?? []).filter((child) => child.nodeType !== 'Repetition')
+			: []
+	const test = {
+		title: testCase.name,
+		attempts: runs.map((run) => toAttempt(run, clock, testLevelNodes)),
+	}
+
+	const method = testCase.name.replace(/\(\)$/u, '')
+	const testTags = [
+		...new Set([...(tags.get(suiteName) ?? []), ...(tags.get(`${suiteName}/${method}`) ?? [])]),
+	]
+	if (testTags.length > 0) {
+		test.tags = testTags
+	}
+	return test
 }
 
 /**
  * Turn the tree into suites. Plan and bundle nodes are walked through, since
  * every test in a shard shares them.
  */
-function toSuites(nodes, clock) {
+function toSuites(nodes, clock, tags) {
 	return (nodes ?? []).flatMap((node) => {
 		if (node.nodeType === 'Test Case') {
 			return []
@@ -185,8 +274,8 @@ function toSuites(nodes, clock) {
 
 		const tests = (node.children ?? [])
 			.filter((child) => child.nodeType === 'Test Case')
-			.map((child) => toTest(child, clock))
-		const nested = toSuites(node.children, clock)
+			.map((child) => toTest(child, node.name, clock, tags))
+		const nested = toSuites(node.children, clock, tags)
 
 		if (node.nodeType !== 'Test Suite') {
 			return nested
@@ -249,10 +338,11 @@ export function buildReport(testNodes, options) {
 		simulatorWait,
 		parallelIndex,
 		runnerLoad,
+		tags = new Map(),
 	} = options
 
 	const clock = {now: testsStartedMs}
-	const suites = toSuites(testNodes, clock)
+	const suites = toSuites(testNodes, clock, tags)
 	const hasTests = suites.length > 0
 	if (simulatorWait) {
 		suites.unshift(simulatorWaitSuite(simulatorWait))
@@ -302,6 +392,19 @@ function readXcodeVersion() {
 	}
 }
 
+/** The tag markers in the UI tests' sources, or none if they cannot be read. */
+function readTestTags(directory) {
+	try {
+		const files = fs
+			.readdirSync(directory, {recursive: true})
+			.filter((file) => file.endsWith('.swift'))
+		return parseTestTags(files.map((file) => fs.readFileSync(path.join(directory, file), 'utf8')))
+	} catch (error) {
+		console.log(`Could not read the tags in ${directory}: ${error.message}`)
+		return new Map()
+	}
+}
+
 /** The runner's load, if the sampler left a file to read. */
 function readRunnerLoadFile(filePath) {
 	if (!filePath) {
@@ -345,6 +448,7 @@ function main() {
 		testsStartedMs: env.UITEST_STARTED ? Number(env.UITEST_STARTED) * 1000 : Date.now(),
 		simulatorWait: readSimulatorWait(env),
 		runnerLoad: readRunnerLoadFile(env.RUNNER_LOAD),
+		tags: readTestTags('uitests'),
 		// Each shard runs on its own machine, one test at a time: one worker.
 		parallelIndex: 0,
 	})
