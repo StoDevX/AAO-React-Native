@@ -21,10 +21,8 @@ class ModuleNewsTests: UITestCaseUnbooted {
 	func testOlafMessengerCustomizeTurnsOffDarkPhotoStories() throws {
 		let front = MessFrontPage(app: app).navigate()
 		let customize = front.openCustomize()
-		customize.capture("Messenger Customize, before")
 		customize
 			.chooseStain("Tea")
-			.capture("Messenger Customize, Tea chosen")
 			.keepPhotoStoriesDark(false)
 			.close()
 		let story = front
@@ -32,7 +30,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openFirstStory()
 			.verifyHeadlineAppears()
 		story.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
-		story.capture("Photo story, setting off")
 	}
 
 	/// A shelf's "All ›" lists the section's stories from its issue, and Back keeps the issue's
@@ -199,7 +196,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		story.verifyPage(dark: true, "a Photo story should open in Dark Mode")
 		// An error screen is dark too, so the story must still be the page on show.
 		story.verifyHeadlineAppears()
-		story.capture("Photo story, kept dark")
 		story
 			.openImageViewer()
 			.verifyViewerShowsImage()
@@ -209,6 +205,5 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		XCTAssertTrue(
 			front.storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the Photo list")
 		story.verifyPage(dark: false, "the Photo list should be light again after Back")
-		front.capture("Photo list after Back")
 	}
 }

@@ -29,6 +29,5 @@ class ModuleCourseCatalogTests: UITestCaseUnbooted {
 			prerequisites.waitForExistence(timeout: 30),
 			"The course detail screen should be shown")
 
-		screen.capture("Course detail")
 	}
 }

@@ -9,7 +9,6 @@ class ModuleCustomizeTests: UITestCase {
 		let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
 		let gallery = AppIconScreen(app: app).navigate()
-		gallery.capture("app-icon-gallery")
 
 		let bigOle = gallery.icon(named: "Big Ole")
 		gallery.scrollIntoView(bigOle)
@@ -42,11 +41,10 @@ class ModuleCustomizeTests: UITestCase {
 		XCTAssertTrue(grid.waitForExistence(timeout: 10), "Home should start tiled")
 
 		let ids = TestIdentifiers.Customize.self
-		home.openCustomize().chooseHomeLayout(ids.listLayout).capture("customize-layout-list").close()
+		home.openCustomize().chooseHomeLayout(ids.listLayout).close()
 		XCTAssertTrue(grid.waitForNonExistence(timeout: 10), "List should replace the tile grid")
 		XCTAssertTrue(
 			app.collectionViews.firstMatch.waitForExistence(timeout: 10), "Home should show a list")
-		home.capture("home-list")
 
 		home.openCustomize().chooseHomeLayout(ids.tiledLayout).close()
 		XCTAssertTrue(grid.waitForExistence(timeout: 10), "Tiled should bring the tile grid back")

@@ -15,14 +15,12 @@ class ModuleAboutTests: UITestCase {
 		about.reveal(
 			app.descendants(matching: .any)
 				.matching(NSPredicate(format: "label BEGINSWITH %@", ids.version)).firstMatch)
-		about.capture("about")
 		about.reveal(about.text(ids.storyHeading))
 
 		let first = about.text(ids.firstEra)
 		let second = about.text(ids.secondEra)
 		about.reveal(first)
 		XCTAssertTrue(about.isOnScreen(first), "The timeline should open on its newest era")
-		about.capture("about-timeline-first")
 
 		about.reveal(about.pageDots)
 		XCTAssertEqual(about.pageDots.value as? String, "1 of 3", "The dots should mark the first era")
@@ -34,7 +32,6 @@ class ModuleAboutTests: UITestCase {
 		XCTAssertEqual(
 			XCTWaiter().wait(for: [onSecond], timeout: 5), .completed,
 			"The dots should follow the swipe to the second era")
-		about.capture("about-timeline-second")
 
 		let contributors = about.text(ids.contributors)
 		let acknowledgements = about.text(ids.acknowledgements)
@@ -44,14 +41,13 @@ class ModuleAboutTests: UITestCase {
 		XCTAssertGreaterThan(
 			acknowledgements.frame.minY, contributors.frame.maxY,
 			"Acknowledgements should sit below Contributors")
-		about.capture("about-credits")
 
 		for page in [ids.privacy, ids.legal] {
 			about.reveal(about.row(page))
 			about.row(page).tap()
 			XCTAssertTrue(
 				app.navigationBars[page].waitForExistence(timeout: 30), "\(page) should open its own screen")
-			about.capture("about-\(page.lowercased())").goBack()
+			about.goBack()
 			XCTAssertTrue(about.host.waitForExistence(timeout: 10), "Back should return to About")
 		}
 	}

@@ -20,13 +20,10 @@ class ModuleTransitTests: UITestCaseUnbooted {
 			.verifyStripHasNotReached(TestIdentifiers.Transit.aStopFartherAlongTheRoute)
 			.swipeStripLeft()
 			.verifyStripAdvancedTo(TestIdentifiers.Transit.aStopFartherAlongTheRoute)
-			.capture("Transit - strip scrolled")
 			.verifyLineWidgetShown(TestIdentifiers.Transit.aLine)
 			.verifyLineWidgetShown("Red Line")
-			.capture("Transit - widgets")
 			.verifyLineWidgetAbsent(TestIdentifiers.Transit.aHiddenLine)
 			.scrollToOtherModes()
-			.capture("Transit - Other Modes")
 	}
 
 	/// Every cell in the strip is a shortcut to the same sheet the header opens
@@ -36,7 +33,6 @@ class ModuleTransitTests: UITestCaseUnbooted {
 			.navigate()
 			.openTimetableFromStrip(TestIdentifiers.Transit.aStop)
 			.verifyTimetableShown()
-			.capture("Transit - timetable from strip")
 	}
 
 	/// Picking a day from the sheet's navigation bar has to redraw the
@@ -53,11 +49,9 @@ class ModuleTransitTests: UITestCaseUnbooted {
 			.openLine(TestIdentifiers.Transit.aLine)
 			.openFirstStop()
 			.verifyStopScheduleShown()
-			.capture("stop schedule")
 			.goBack()
 			.verifyStopListsDepartures(TestIdentifiers.Transit.aStopOnEveryRunningDay)
 			.pickDay(TestIdentifiers.Transit.aDay)
-			.capture("Transit - Sunday schedule")
 			.verifyLineNotRunning(on: TestIdentifiers.Transit.aDay)
 	}
 }

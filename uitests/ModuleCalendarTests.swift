@@ -33,7 +33,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 
     screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 
-    screen.capture("before filtering")
 
     let rows = screen.visibleRows()
     let expectation = expectation(for: rows.count >= 1)
@@ -58,7 +57,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
         app.buttons[TestIdentifiers.Calendar.resetFilters].waitForNonExistence(timeout: 10),
         "\(TestIdentifiers.Calendar.resetFilters) should be absent while the list is unfiltered")
 
-      screen.capture("30-picker-rows")
       screen.dismissMenu()
     }
 
@@ -66,10 +64,8 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     screen
       .openPicker()
       .openSubmenu(TestIdentifiers.Calendar.categoryMenu)
-      .capture("31-category-choices")
       .tapMenuItem(TestIdentifiers.Calendar.categories[0])
       .dismissMenu()
-    screen.capture("after filtering")
 
     XCTAssertLessThan(
       rows.count, unfilteredCount,
@@ -80,7 +76,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     screen
       .openPicker()
       .tapMenuItem(TestIdentifiers.Calendar.resetFilters)
-    screen.capture("filters cleared")
 
     XCTAssertEqual(
       rows.count, unfilteredCount,
@@ -102,7 +97,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
       .openSubmenu(TestIdentifiers.Calendar.organizationMenu)
       .tapMenuItem(TestIdentifiers.Calendar.organization)
       .dismissMenu()
-      .capture("34-filtered-by-organization")
 
     let filteredUpcoming = upcomingRows.count
 
@@ -135,7 +129,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     XCTAssertEqual(selectedDay, todayDayCell)
 
     screen.verifyStripIsPresent()
-    screen.capture("strip-this-week")
 
     let initialWeekDates = screen.datePickerDayIdentifiers()
 
@@ -149,7 +142,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 
     // swiping the day picker should not, by itself, change the displayed day
     screen.swipeStripToNextWeek()
-    screen.capture("strip-next-week")
     XCTAssertEqual(
       screen.selectedDay(), selectedDay,
       "Scrolling the strip should show another week, not choose a day in it")
@@ -170,7 +162,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     // AND highlight the day in the picker
     // TODO: disabled due to auto-swipe bugs
     // eventRows.firstMatch.swipeLeft()
-    // screen.capture("strip-tomorrow")
     // XCTAssertNotEqual(
     //   initialEventCount, eventRows.count,
     //   "event count should change between days in the fixture")
@@ -204,7 +195,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
       "\(empty) should carry no events in the fixture calendar")
 
     screen.tapDay(empty)
-    screen.capture("empty-day")
     XCTAssertEqual(
       screen.selectedDay(), TestIdentifiers.Calendar.dayCell(empty),
       "Tapping an empty day should select it rather than skip past it")
@@ -215,7 +205,6 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     // (use the fact that we're on next week to also assert that the picker strip
     //  changes weeks with us when we push the Today button)
     screen.tapToday()
-    screen.capture("today-from-a-week-ahead")
     XCTAssertEqual(
       screen.selectedDay(), todayDayCell,
       "Today should choose the frozen day")

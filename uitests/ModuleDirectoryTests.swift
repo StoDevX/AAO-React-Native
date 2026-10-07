@@ -40,16 +40,13 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 			.verifyDirectoryTitle()
 			.verifyContactsHeading()
 			.verifyContactTiles(count: 11)
-			.capture("Directory contact grid")
 			.verifyContactTileIsSquare(TestIdentifiers.Directory.aContact)
 			.openContact(TestIdentifiers.Directory.aContact)
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 			.verifyContactGridStillBehind()
-			.capture("Contact detail as a sheet")
 			.dismissContactSheet(
 				titled: TestIdentifiers.Directory.aContact,
 				waitingFor: TestIdentifiers.Directory.aContactAction)
-			.capture("Directory after dismissing a contact sheet")
 			.verifyContactsHeading()
 			.verifyContactTiles(count: 11)
 			.openContact(TestIdentifiers.Directory.aContact)
@@ -57,7 +54,6 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 			.attemptToTapContactBehindSheet(
 				TestIdentifiers.Directory.aSecondContact,
 				whileShowing: TestIdentifiers.Directory.aContact)
-			.capture("Directory after tapping a tile behind the contact sheet")
 			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
 	}
 
@@ -91,18 +87,15 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 			.verifyResultsGalleried()
 			.openDepartment(
 				of: TestIdentifiers.Directory.fixtureEntry, named: department)
-			.capture("Directory opened from a department link")
 			.verifyDirectoryTitle()
 			.verifyDepartmentHeading(department)
 			.verifyResultsShown()
 			.verifyResultsGalleried()
 			.showAsList()
 			.verifyResultsListed()
-			.capture("Directory search results as a list")
 			.showAsTiles()
 			.verifyResultsGalleried()
 			.cancelSearch()
-			.capture("Directory department screen after cancelling search")
 			.verifyDepartmentHeading(department)
 			.verifyResultsShown()
 	}

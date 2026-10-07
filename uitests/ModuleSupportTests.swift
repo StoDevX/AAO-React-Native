@@ -13,7 +13,7 @@ class ModuleSupportTests: UITestCase {
 		home.closeProblemForm().checkHomescreenExists()
 
 		let support = home.openSupport()
-		support.checkOffersEveryRow().capture("support")
+		support.checkOffersEveryRow()
 
 		let backButton = app.navigationBars.buttons[TestIdentifiers.Navigation.systemBackButton].firstMatch
 		let ids = TestIdentifiers.Support.self

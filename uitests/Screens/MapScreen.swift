@@ -441,7 +441,6 @@ struct MapScreen: Screen {
 		XCTAssertTrue(
 			credit.waitForExistence(timeout: 10),
 			"The About menu should credit OpenStreetMap, as the tiles' licence requires")
-		capture("The map's About menu")
 		return self
 	}
 
@@ -745,7 +744,6 @@ struct MapScreen: Screen {
 	@discardableResult
 	func verifyListKeptItsPlace(category: String, row name: String, offset: CGFloat) -> Self {
 		settle { searchField.frame.minY }
-		capture("The list after closing the card")
 		XCTAssertTrue(
 			app.staticTexts[category].exists && groupBackButton.exists,
 			"\(category) should still be open after closing a card")
@@ -1015,7 +1013,6 @@ struct MapScreen: Screen {
 		// Proving Copy absent needs a wait too, but a short one: the menu shows
 		// in well under a second when it shows at all.
 		let offered = copy.waitForExistence(timeout: expected ? 5 : 1.5)
-		capture("Long press on the card's About text")
 		XCTAssertEqual(
 			offered, expected,
 			expected

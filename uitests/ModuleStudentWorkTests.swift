@@ -9,7 +9,6 @@ class ModuleStudentWorkTests: UITestCaseUnbooted {
 			.verifyAreaTileCount(IDs.areaCount)
 			.chooseLayout(TestIdentifiers.Layout.list)
 			.verifyAreaRowsShown()
-			.capture("Student Work area rows")
 	}
 
 	/// An area's tile opens the postings filtered to that area. An empty
@@ -34,7 +33,6 @@ class ModuleStudentWorkTests: UITestCaseUnbooted {
 			.openAllPostings()
 			.openJobPosting(TestIdentifiers.StudentWork.fixtureJobWithWrappingField)
 			.openJobDescription()
-			.capture("Job description screen")
 			.checkJobDescriptionShown()
 	}
 }

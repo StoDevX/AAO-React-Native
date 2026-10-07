@@ -15,7 +15,6 @@ class ModuleContributingTests: UITestCase {
 			XCTAssertTrue(row.exists, "\(title) should be on screen when Contributing opens")
 			XCTAssertLessThan(row.frame.minY, appSource.frame.minY, "\(title) should sit above the source code")
 		}
-		contributing.capture("contributing")
 
 		contributing.openReportAProblem().closeProblemForm()
 		XCTAssertTrue(
@@ -24,9 +23,7 @@ class ModuleContributingTests: UITestCase {
 		for title in [ids.cccServer, ids.openStreetMap, ids.firstDataSource] {
 			contributing.reveal(title)
 		}
-		contributing.capture("contributing-middle")
 
 		contributing.reveal(ids.email)
-		contributing.capture("contributing-email")
 	}
 }

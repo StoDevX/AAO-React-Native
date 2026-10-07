@@ -155,7 +155,7 @@ struct StreamingMediaScreen: Screen {
 		XCTAssertGreaterThanOrEqual(element.frame.width, 44, "\(name) should be at least 44pt wide")
 	}
 
-	/// Tap the logo through every one of `labels`, capturing each, and check
+	/// Tap the logo through every one of `labels`, and check
 	/// the tap after the last one comes back to the first.
 	@discardableResult
 	func checkLogoCycles(_ labels: [String]) -> Self {
@@ -165,7 +165,6 @@ struct StreamingMediaScreen: Screen {
 				XCTAssertTrue(
 					logo.waitForExistence(timeout: 10),
 					"Logo \(index + 1) should be a button labelled \"\(label)\"")
-				capture(label)
 				logo.tap()
 			}
 		}
@@ -209,7 +208,6 @@ struct StreamingMediaScreen: Screen {
 		let start = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.25))
 		let end = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.2))
 		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
-		capture("\(label) after a scrub")
 
 		XCTAssertTrue(
 			app.buttonLabelled(label).waitForExistence(timeout: 5),

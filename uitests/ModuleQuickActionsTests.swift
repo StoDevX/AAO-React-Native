@@ -8,7 +8,6 @@ class ModuleQuickActionsTests: UITestCase {
 		}
 
 		picker
-			.capture("Quick actions with the defaults picked")
 			// All four slots are taken, so nothing else can be added.
 			.verifyAvailable("Calendar", false)
 			.toggle("Transit")

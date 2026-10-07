@@ -23,14 +23,13 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 	func testAPendingJobReleasesThroughThePrinterList() throws {
 		let screen = StoPrintScreen(app: app).navigate()
 
-		// A section header from the mocked jobs, so the capture waits for the
+		// A section header from the mocked jobs, so the test waits for the
 		// list rather than the spinner that precedes it.
 		let pendingRelease = app.staticTexts["Pending Release"].firstMatch
 		XCTAssertTrue(
 			pendingRelease.waitForExistence(timeout: 30),
 			"Print Jobs should list the mocked jobs")
 
-		screen.capture("Print Jobs")
 
 		let sent = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "test.pdf"))
@@ -40,7 +39,7 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 		XCTAssertTrue(
 			app.staticTexts["Job Info"].firstMatch.waitForExistence(timeout: 30),
 			"A sent job should open the release screen")
-		screen.capture("Print release").goBack()
+		screen.goBack()
 
 		let job = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))
@@ -54,12 +53,10 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "mfc-"))
 			.firstMatch
 		XCTAssertTrue(printer.waitForExistence(timeout: 30), "A printer should be listed")
-		screen.capture("Printers")
 		printer.tap()
 
 		let print = app.buttons["Print"].firstMatch
 		XCTAssertTrue(print.waitForExistence(timeout: 30), "Print should be offered")
 
-		screen.capture("Print release - actions")
 	}
 }

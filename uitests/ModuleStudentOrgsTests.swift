@@ -15,7 +15,6 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 			.navigate()
 			.verifyStudentOrgsTitle()
 			.verifyCategoriesShown()
-			.capture("Student Orgs categories")
 		let category = screen.openFirstCategory()
 
 		screen
@@ -24,7 +23,6 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 			.verifyCategoriesShown()
 			.chooseLayout(TestIdentifiers.Layout.grid)
 			.verifyCategoryGridShown()
-			.capture("Student Orgs category grid")
 	}
 
 	/// The landing search bar searches every org, so it has to be able to
@@ -36,11 +34,9 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 		StudentOrgsScreen(app: app)
 			.navigate()
 			.search(for: "a")
-			.capture("Student Orgs search results")
 			.scrollResultsDown()
 			.refineSearch(appending: "n")
 			.verifyResultsStartAtTheTop()
 			.openFirstResult()
-			.capture("Student Orgs - detail")
 	}
 }

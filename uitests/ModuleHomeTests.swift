@@ -59,6 +59,5 @@ class ModuleHomeTests: UITestCase {
 		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitForExistence(timeout: 10),
 			"Developer should hold the tools Settings' Developer section held")
-		home.capture("developer")
 	}
 }

@@ -25,7 +25,6 @@ struct MessFrontPage: Screen {
 		XCTAssertTrue(
 			viewMenu.waitForLabel(viewMenuLabel(TestIdentifiers.News.byIssue), timeout: 10),
 			"By Issue should be the view chosen (the menu reads \(viewMenu.label))")
-		capture("The Messenger's By Issue grid")
 		verifyPaperNamedOnce()
 		return self
 	}
@@ -35,7 +34,6 @@ struct MessFrontPage: Screen {
 	func openCustomize() -> MessCustomizeScreen {
 		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
 		XCTAssertTrue(button.waitForHittable(timeout: 30), "the front page should have a Customize button")
-		capture("The Messenger's front page, with its paintbrush")
 		button.tap()
 		return MessCustomizeScreen(app: app).checkOpen()
 	}
@@ -79,7 +77,6 @@ struct MessFrontPage: Screen {
 	func filterLatest(to section: String) -> Self {
 		choose(view: TestIdentifiers.News.latest)
 		pickFromViewMenu(section)
-		capture("Latest narrowed to \(section)")
 		return self
 	}
 
@@ -97,7 +94,6 @@ struct MessFrontPage: Screen {
 			}
 			bottom.press(forDuration: 0.05, thenDragTo: top)
 		}
-		capture("The issue grid, paged back to \(year)")
 		XCTAssertTrue(
 			older.waitForExistence(timeout: 30),
 			"scrolling should keep loading older issues until it reaches \(year)")
@@ -115,7 +111,6 @@ struct MessFrontPage: Screen {
 			viewMenu.waitForNonExistence(timeout: 30),
 			"tapping a tile should open its issue on a page of its own")
 		XCTAssertTrue(lead.waitForExistence(timeout: 30), "an opened issue should lead with a story")
-		capture("An older issue of the Messenger")
 		return self
 	}
 
@@ -137,7 +132,6 @@ struct MessFrontPage: Screen {
 		XCTAssertTrue(button.waitForExistence(timeout: 30), "\(section) should offer its \(column) column")
 		scrollRow(columns, toReveal: button)
 		XCTAssertTrue(button.waitForHittable(timeout: 10), "the \(column) chip should be ready to tap")
-		capture("\(section) and its columns")
 		button.tap()
 		XCTAssertTrue(
 			viewMenu.waitForNonExistence(timeout: 30),
@@ -176,7 +170,6 @@ struct MessFrontPage: Screen {
 			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.staffTilePrefix))
 			.firstMatch
 		XCTAssertTrue(tile.waitForExistence(timeout: 30), "the directory should show the staff as tiles")
-		capture("The Messenger's staff directory")
 		XCTAssertTrue(tile.waitForHittable(), "a person's tile should be ready to tap")
 		// A tile reads its person's name alone; their role waits for their page.
 		let name = tile.label
@@ -188,7 +181,6 @@ struct MessFrontPage: Screen {
 		// The page decides to draw its About section when the person has a bio, as the fixture's
 		// first person does.
 		let bio = app.staticTexts[TestIdentifiers.News.staffBioHeading].firstMatch
-		capture("A staff member's page")
 		XCTAssertTrue(bio.waitForExistence(timeout: 10), "\(name)'s page should show their bio under About")
 		return self
 	}

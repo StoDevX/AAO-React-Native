@@ -27,7 +27,6 @@ struct MessIssueScreen: Screen {
 		let all = app.buttons.matching(NSPredicate(format: "label == %@", "All \(section)")).firstMatch
 		XCTAssertTrue(all.waitForHittable(timeout: 30), "the \(section) shelf should offer All")
 		let before = all.frame
-		capture("An issue, scrolled to its \(section) shelf")
 		all.tap()
 
 		let bar = app.navigationBars[section]
@@ -36,7 +35,6 @@ struct MessIssueScreen: Screen {
 		XCTAssertTrue(
 			leadRow.waitForExistence(timeout: 30),
 			"the \(section) list should hold the issue's lead story, \"\(headline)\"")
-		capture("The issue's \(section) stories")
 
 		bar.buttons[TestIdentifiers.Navigation.systemBackButton].tap()
 		XCTAssertTrue(all.waitForHittable(timeout: 30), "Back should return to the issue")
@@ -57,7 +55,6 @@ struct MessIssueScreen: Screen {
 		XCTAssertEqual(cards.count, 2, "a row of the More grid should hold two cards")
 		let first = cards.element(boundBy: 0).frame
 		let second = cards.element(boundBy: 1).frame
-		capture("The More grid")
 		XCTAssertEqual(first.minY, second.minY, accuracy: 1, "a row's two cards should sit side by side")
 		XCTAssertGreaterThan(second.minX, first.maxX, "a row's second card should follow its first")
 		XCTAssertTrue(

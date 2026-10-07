@@ -12,7 +12,6 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			.verifyFirstEntryIsOnScreen()
 			.openFirstWord()
 			.verifyDefinitionSheetIsPresented()
-			.capture("Dictionary definition sheet")
 			.verifySheetIsHalfHeight()
 			.verifySenseAlignsWithHeadword(
 				TestIdentifiers.Dictionary.firstEntry,
@@ -54,7 +53,6 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			.verifyDefinitionSheetIsPresented()
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
-			.capture("Dictionary edit form")
 			.verifyPreviewDisabled()
 			.editFirstDefinition(prepending: "indeed ")
 			.verifyPreviewEnabled()
@@ -67,10 +65,8 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			// form is scrolled -- so revealing it is what makes the capture show
 			// the state this test just put the draft into.
 			.revealInForm("Ready to preview")
-			.capture("Dictionary edit form with a change made")
 			.openPreview()
 			.verifyPreviewPresented()
-			.capture("Dictionary suggestion diff")
 			.verifyPreviewShows("something")
 			.verifyPreviewShows("indeed")
 			.verifyNoUnsupportedNestedModifierMarker()

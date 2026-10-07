@@ -13,7 +13,6 @@ class ModuleHoursTests: UITestCaseUnbooted {
 		let query = screen.refineSearch(adding: TestIdentifiers.Hours.unmatchedQuery)
 		screen
 			.verifyNoResultsShown(for: query)
-			.capture("Hours no-results state")
 	}
 
 	/// The favourite action lives in a SwiftUI `swipeActions` group, which is
@@ -27,9 +26,7 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.verifyRowShown(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyFavoritesSectionAbsent()
 			.revealSwipeAction(on: TestIdentifiers.Hours.anExcludedBuilding)
-			.capture("Hours row swiped to reveal its favorite action")
 			.tapAddToFavorites()
-			.capture("Hours list with a Favorites section")
 			.verifyFavoritesSectionShown()
 	}
 
@@ -59,12 +56,10 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyListStillBehind()
-			.capture("Hours detail sheet at the smaller detent")
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.verifyReportPushedIntoSheet()
 			.verifySubmitReportReachable()
-			.capture("Hours report screen")
 			.dismissReportScreen()
 			.verifyNoDiscardChangesAlertPresented()
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
@@ -73,7 +68,6 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
 			.attemptToTapRowBehindSheet(TestIdentifiers.Hours.aSecondBuilding)
-			.capture("Hours after tapping a row behind the sheet")
 			.verifyNoSecondSheetForStavHall()
 	}
 
@@ -87,14 +81,12 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.navigate()
 			.tapRow(TestIdentifiers.Hours.aBuildingWithLongSchedule)
 			.verifyDetailSheetTitled(TestIdentifiers.Hours.aBuildingWithLongSchedule)
-			.capture("Hours detail sheet before dragging to the larger detent")
 
 		let titleBefore = screen.detailTitleFrame(
 			for: TestIdentifiers.Hours.aBuildingWithLongSchedule)
 
 		screen
 			.expandDetailSheet()
-			.capture("Hours detail sheet after dragging to the larger detent")
 			.verifyDetailSheetFullyLaidOut(
 				for: TestIdentifiers.Hours.aBuildingWithLongSchedule, titleBefore: titleBefore)
 	}
@@ -127,7 +119,6 @@ class ModuleHoursTests: UITestCaseUnbooted {
 		screen
 			.attemptToDragSheetClosed()
 			.verifyDiscardChangesAlertPresented()
-			.capture("Hours guard blocks a sheet drag")
 			.chooseToKeepEditing()
 			.verifyReportScreenPresented()
 
@@ -159,7 +150,6 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.openScheduleEditorFromReportScreen()
-			.capture("Hours schedule editor opened from the report screen")
 			.verifyScheduleEditorPresented()
 	}
 }

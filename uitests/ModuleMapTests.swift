@@ -24,7 +24,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 		let screen = MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
-			.capture("St. Olaf map sheet collapsed")
 			.verifyCollapsed()
 			.verifyFieldWithinSheet()
 			.verifyCollapsedMarginsSymmetric()
@@ -33,14 +32,11 @@ class ModuleMapTests: UITestCaseUnbooted {
 
 		screen
 			.focusSearch()
-			.capture("St. Olaf map sheet raised by search focus")
 			.verifySheetMoved(from: collapsedTop, direction: "up", "Focusing search should raise the sheet to large")
 			.cancelSearch()
-			.capture("St. Olaf map sheet after cancelling search")
 			.verifySheetReturned(to: collapsedTop)
 			.verifyCollapsed()
 			.tapAFootprint()
-			.capture("St. Olaf map card after a footprint tap from collapsed")
 			.verifyCardAtMedium()
 		let region = screen.mapAboveSheet()
 		let before = screen.settledMap(in: region)
@@ -48,7 +44,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 		screen
 			.collapseCard()
 			.verifyCardCollapsed()
-			.capture("St. Olaf map after the card collapses")
 			.verifyMapHeldStill(since: before, in: region)
 			.verifyClearHeaderWithCredits()
 	}
@@ -66,17 +61,14 @@ class ModuleMapTests: UITestCaseUnbooted {
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
-			.capture("St. Olaf map sheet collapsed at the largest text size")
 			.verifyCollapsed()
 			.verifyFieldWithinSheet()
 			.verifyFieldHasMarginsInSheet()
 			.expandSheet()
-			.capture("St. Olaf map categories at the largest text size")
 			// The first row: at this size the sheet may rest short of its full
 			// stop, and a list builds only the rows it shows.
 			.verifyCategoriesAsList(including: TestIdentifiers.Map.buildingsCategory)
 			.openCategory(TestIdentifiers.Map.buildingsCategory)
-			.capture("St. Olaf map Buildings group at the largest text size")
 			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.buildingsCategory)
 	}
 
@@ -102,10 +94,8 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.checkSheetPresented()
 			.expandSheet()
 			.verifySearchFieldHeight()
-			.capture("St. Olaf map category grid")
 			.verifyTileNameDrawnWhole(TestIdentifiers.Map.cornerCategory)
 			.openCategory(TestIdentifiers.Map.diningCategory)
-			.capture("St. Olaf map Dining group")
 			.verifyGroupOpen(TestIdentifiers.Map.diningCategory)
 			.goBackToCategories()
 			.openCategory(TestIdentifiers.Map.buildingsCategory)
@@ -115,7 +105,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 
 		screen
 			.selectBuilding(named: TestIdentifiers.Map.aBuilding)
-			.capture("St. Olaf map card after a row tap from large")
 			.verifyCardDroppedFrom(largeTop)
 			.verifyCardAtMedium()
 	}
@@ -132,7 +121,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
 			.collapseCard()
 			.verifyCardCollapsed()
-			.capture("St. Olaf map card collapsed with a subtitle")
 			.verifyCardHeaderWithinSheet()
 	}
 
@@ -154,7 +142,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
 			.collapseCard()
 			.verifyCardCollapsed()
-			.capture("St. Olaf map card collapsed at the largest text size")
 			.verifyCardHeaderTopWithinSheet()
 	}
 
@@ -186,7 +173,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.expandSheet()
 			.openCategory(category)
 			// Parking's many places merge into numbered clusters.
-			.capture("St. Olaf map Parking clusters")
 		let offset = screen.scrollListToReach(name)
 		screen
 			.selectBuilding(named: name)
@@ -211,19 +197,16 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.openPlaceTile(named: point)
 		sleep(1)
 		screen
-			.capture("The Cage stacked over Buntrock")
 			.verifyTopCard(point)
 			.verifyHoursStatus()
 			.closeTopCard()
 		sleep(1)
 		screen
-			.capture("Back on Buntrock")
 			.verifyTopCard(name)
 			.openPlaceTile(named: point)
 		sleep(1)
 		screen.tapAFootprint()
 		sleep(2)
-		screen.capture("After a footprint tap over a stacked sheet")
 		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
 			.allElementsBoundByIndex.filter { $0.isHittable }
 		XCTAssertEqual(closes.count, 1, "A tap on the map should leave one card, not a stack")
@@ -243,7 +226,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.openDirectoryFloor(TestIdentifiers.Map.aDirectoryFloorIndex)
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
 			.verifyFloorSheetOnTop()
-			.capture("A floor of Tomson's Directory")
 			.openDirectoryEntry(named: TestIdentifiers.Map.aDirectoryVenue)
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryVenue)
 			.closeTopCard()
@@ -265,15 +247,12 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.focusSearch()
 			.typeIntoSearch(name)
 			.submitSearch()
-			.capture("St. Olaf map with one searched pin")
 			.verifyAtMiddleStop()
 			.tapMapCenterAboveSheet()
-			.capture("St. Olaf map after tapping the searched pin")
 			.verifyCardTitled(name)
 			.closeTopCard()
 			.cancelSearch()
 			.expandSheet()
-			.capture("St. Olaf map Recents")
 			.verifyRecentsList(name)
 			.removeRecent(name)
 			.verifyNoRecents()
@@ -298,15 +277,12 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.submitSearch()
 			.verifyAtMiddleStop()
 			.verifyKeyboardHidden()
-			.capture("St. Olaf map after submitting a search")
 		let spot = screen.mapCenterAboveSheet()
 		screen
 			.cancelSearch()
 			.verifyKeyboardHidden()
 			.verifySearchFieldEmpty()
-			.capture("St. Olaf map with the searched place's own label")
 			.tapMap(at: spot)
-			.capture("St. Olaf map after tapping a place's label")
 			.verifyCardTitled(name)
 	}
 }

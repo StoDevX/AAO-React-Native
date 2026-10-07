@@ -96,7 +96,6 @@ struct StudentOrgsScreen: Screen {
 			timeout: 5)
 
 		let top = resultsList.buttons.firstMatch.label
-		capture("Student Orgs refined search results")
 		resultsList.swipeDown()
 		XCTAssertEqual(
 			resultsList.buttons.firstMatch.label, top,

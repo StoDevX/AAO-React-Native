@@ -74,7 +74,6 @@ struct CampusDictionaryScreen: Screen {
 		XCTAssertTrue(
 			sectionIndexRail.waitForExistence(timeout: 10),
 			"no section index rail appeared -- sectionIndexLabel needs iOS 26")
-		capture("Dictionary with a section index rail")
 
 		let firstRowBefore = list.buttons.firstMatch.label
 
@@ -114,7 +113,6 @@ struct CampusDictionaryScreen: Screen {
 	func verifyFirstEntryIsOnScreen() -> Self {
 		let row = app.elementWithLabel(startingWith: TestIdentifiers.Dictionary.firstEntry)
 		_ = row.waitForExistence(timeout: 5)
-		capture("Dictionary search results")
 		XCTAssertTrue(
 			row.exists && row.isHittable,
 			"the results should start at \(TestIdentifiers.Dictionary.firstEntry), not wherever the list was scrolled before the search")

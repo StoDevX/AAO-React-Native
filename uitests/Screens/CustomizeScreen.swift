@@ -32,7 +32,6 @@ struct CustomizeScreen: Screen {
 		// bar on Home.
 		let flipped = XCTNSPredicateExpectation(
 			predicate: NSPredicate(format: "value != %@", before ?? ""), object: toggle)
-		capture("Customize, Radio Player tapped")
 		XCTAssertEqual(
 			XCTWaiter().wait(for: [flipped], timeout: 5), .completed,
 			"Radio Player should change from \(before ?? "nil")")

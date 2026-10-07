@@ -12,7 +12,6 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 
 		// Captured before the assertion: Athletics draws no list at all when the
 		// feed has no scores, and the screenshot is what tells the two apart.
-		screen.capture("Athletics - after navigate")
 		XCTAssertTrue(found, "Athletics should show a Today section")
 
 		let yesterday = app.staticTexts["Yesterday"].firstMatch
@@ -37,7 +36,6 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 		XCTAssertTrue(
 			app.buttons[reset].waitForNonExistence(timeout: 10),
 			"Reset Filters should be absent while every sport shows")
-		screen.capture("Athletics - sports menu")
 
 		screen.tapMenuItem("Volleyball").dismissMenu(waitingFor: "Volleyball")
 
@@ -45,7 +43,6 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 		XCTAssertTrue(
 			app.buttons[reset].waitForExistence(timeout: 30),
 			"Reset Filters should be offered once a sport is chosen")
-		screen.capture("Athletics - sports menu with a sport chosen")
 
 		screen.tapMenuItem(reset)
 		screen.openSportsMenu()
