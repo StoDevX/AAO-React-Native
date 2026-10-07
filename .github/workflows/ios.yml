@@ -608,11 +608,12 @@ jobs:
       # app reports itself idle, and a test that still passes leaves no
       # spindump behind. The runner's busiest processes every five seconds,
       # beside the simulator's log, tell a starved runner from a stuck app.
-      # The job's end stops the loop.
+      # -c prints each executable's name, not its path, which for a simulator
+      # process runs out of room before the name. The job's end stops the loop.
       - name: Sample the runner's busiest processes
         run: |
           mkdir -p uitest-evidence
-          nohup bash -c 'while :; do date -u +%FT%TZ; ps -Aro pcpu,pid,comm | head -n 9; sleep 5; done' \
+          nohup bash -c 'while :; do date -u +%FT%TZ; ps -Acro pcpu,pid,comm | head -n 9; sleep 5; done' \
             > uitest-evidence/runner-cpu.log 2>&1 &
 
       - name: Run UITests
