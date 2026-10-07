@@ -29,30 +29,54 @@ export function isTestFile(path: string): boolean {
 	return TEST_FILE_PATTERNS.some((pattern) => pattern.test(path))
 }
 
+/** A word of a shell command, as far as the mod needs: a path, a flag or a command name. */
+const WORD = /[^\s'"`<>|;&()=,]+/g
+
 /**
- * Signs that a shell command writes a file. Loose on purpose: a false alarm
- * costs one resend, a miss costs the reminder.
+ * Signs that a command edits files in place, where any test file it names may
+ * be the one written. Loose on purpose: a false alarm costs one resend, a miss
+ * costs the reminder.
  */
-const WRITE_MARKERS = [
+const IN_PLACE_EDITS = [
 	/open\([^)]*['"][wa]\+?['"]/,
 	/\bwrite_text\b/,
 	/\bwriteFile(Sync)?\(/,
 	/\bsed\s+(-\w+\s+)*-i\b/,
 	/\bperl\s+(-\w+\s+)*-\w*i/,
-	// A redirect, but not `2>&1`, `=>` or `->`
-	/(^|[^0-9&>=-])>>?\s*[^\s&>]/,
-	/\btee\b/,
-	/(^|[;&|\n]\s*)(cp|mv)\s/,
 ]
 
-/** Whether a shell command looks like it writes a file. */
-export function hasWriteMarker(command: string): boolean {
-	return WRITE_MARKERS.some((marker) => marker.test(command))
+/** Whether a shell command looks like it edits files in place. */
+export function editsInPlace(command: string): boolean {
+	return IN_PLACE_EDITS.some((edit) => edit.test(command))
+}
+
+/** Where a redirect sends output: `>` or `>>`, but not `2>&1`, `=>` or `->`. */
+const REDIRECT_TARGET = /(?:^|[^0-9&>=-])>>?\s*['"]?([^\s'"`<>|;&()]+)/g
+
+/**
+ * The files a shell command sends output to: redirect targets, `tee`'s files,
+ * and the last argument of `cp` or `mv`. Only these count for such commands,
+ * so a test run piped through `tee` or a copy out of a test file is no write.
+ */
+export function destinationsIn(command: string): string[] {
+	const redirected = [...command.matchAll(REDIRECT_TARGET)].flatMap((match) => match[1] ?? [])
+	const written = command.split(/[|;&\n]/).flatMap((segment) => {
+		const words = segment.match(WORD) ?? []
+		const [name, ...args] = words[0] === 'git' ? words.slice(1) : words
+		if (name === 'tee') {
+			return args.filter((arg) => !arg.startsWith('-'))
+		}
+		if (name === 'cp' || name === 'mv') {
+			return args.slice(-1)
+		}
+		return []
+	})
+	return [...redirected, ...written]
 }
 
 /** The test files a shell command names, each once. */
 export function testFilesIn(command: string): string[] {
-	const words = command.match(/[^\s'"`<>|;&()=,]+/g) ?? []
+	const words = command.match(WORD) ?? []
 	return [...new Set(words.filter(isTestFile))]
 }
 
@@ -95,7 +119,8 @@ export const register: Register = (on) => {
 	)
 
 	on('tool.call', {tool: 'Bash'}, async ($, e, next) => {
-		const paths = hasWriteMarker(e.command) ? testFilesIn(e.command) : []
+		const edited = editsInPlace(e.command) ? testFilesIn(e.command) : []
+		const paths = [...edited, ...destinationsIn(e.command).filter(isTestFile)]
 		return (await shouldRemind($, e.agentId, paths)) ? {deny: REMINDER} : next(e)
 	})
 }

@@ -105,6 +105,8 @@ describe('Bash', () => {
 		'perl -pi': `perl -pi -e 's/a/b/' uitests/PerlTests.swift`,
 		cp: 'cp /tmp/draft.ts source/__tests__/cp.test.ts',
 		'a node write': `node -e "require('fs').writeFileSync('scripts/node.test.mjs', '')"`,
+		'an append': 'echo "it.todo(\'x\')" >> source/__tests__/append.test.ts',
+		'git mv': 'git mv source/__tests__/old.test.ts source/__tests__/moved.test.ts',
 	}
 
 	for (const [name, command] of Object.entries(WRITES)) {
@@ -122,6 +124,13 @@ describe('Bash', () => {
 		grep: 'grep -n describe source/__tests__/a.test.ts',
 		'an arrow function': `node -e "const f = x => x" source/__tests__/a.test.ts`,
 		'a commit message': 'jj commit -m "Fix source/__tests__/a.test.ts"',
+		'a Jest run piped through tee': 'pnpm jest source/__tests__/a.test.ts 2>&1 | tee /tmp/jest.log',
+		'a Jest run sent to /dev/null': 'pnpm jest source/__tests__/a.test.ts >/dev/null 2>&1; echo $?',
+		'a diff saved to a file': 'git diff master -- source/__tests__/a.test.ts > /tmp/a.patch',
+		'a grep for JSX': `grep -n '</Text>' source/features/x/__tests__/row.test.tsx`,
+		'a copy out of a test file': 'cp source/__tests__/a.test.ts /tmp/backup.ts',
+		'a script that compares': `python3 - <<'EOF'\np='source/__tests__/a.test.ts'\ns=open(p).read()\nprint(s.count('it(') > 3)\nEOF`,
+		'a commit with an attribution line': `jj commit -m "$(cat <<'EOF'\nFix uitests/Calendar/ModuleCalendarTests.swift\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)"`,
 	}
 
 	for (const [name, command] of Object.entries(READS)) {
