@@ -14,7 +14,9 @@
  */
 
 import {execFileSync} from 'node:child_process'
+import {createHash} from 'node:crypto'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 
 import {readTestResults} from './report-flaky-uitests.mjs'
@@ -206,7 +208,12 @@ export function parseTestTags(sources) {
  * not how long it took, so each lasts until the next one starts, and the last
  * until its parent ends.
  */
-function toSteps(activities, endMs) {
+/** A screenshot as the report lists it; its file goes in `attachments/<id>`. */
+function toAttachment(screenshot) {
+	return {name: screenshot.name, contentType: screenshot.contentType, id: screenshot.id}
+}
+
+function toSteps(activities, endMs, screenshots, claimed) {
 	// xcresulttool sometimes lists an activity with no title and nothing in it.
 	const shown = activities.filter((activity) => activity.title || activity.childActivities?.length)
 	return shown.map((activity, index) => {
@@ -224,7 +231,20 @@ function toSteps(activities, endMs) {
 			step.error = {message: activity.title}
 		}
 		if (activity.childActivities?.length) {
-			step.steps = toSteps(activity.childActivities, stepEndMs)
+			step.steps = toSteps(activity.childActivities, stepEndMs, screenshots, claimed)
+		}
+
+		// An activity lists the attachments of everything inside it too, so a
+		// screenshot goes on the deepest step that holds it: the children,
+		// handled first, have already claimed theirs.
+		const own = screenshots.filter(
+			(shot) =>
+				!claimed.has(shot) &&
+				activity.attachments?.some((attachment) => attachment.timestamp === shot.timestamp),
+		)
+		if (own.length > 0) {
+			own.forEach((shot) => claimed.add(shot))
+			step.attachments = own.map(toAttachment)
 		}
 		return step
 	})
@@ -250,7 +270,7 @@ function toError(failureMessage, workspace) {
  * the bundle records how long
  * each took but not when it started.
  */
-function toAttempt(run, context, testLevelNodes, activities = []) {
+function toAttempt(run, context, testLevelNodes, activities = [], screenshots = []) {
 	const {clock, workspace} = context
 	const duration = Math.round((run.durationInSeconds ?? 0) * 1000)
 	// The first activity says when the attempt really began; without one,
@@ -274,8 +294,13 @@ function toAttempt(run, context, testLevelNodes, activities = []) {
 		attempt.errors = errors
 	}
 
+	const claimed = new Set()
 	if (activities.length > 0) {
-		attempt.steps = toSteps(activities, startTimestamp + duration)
+		attempt.steps = toSteps(activities, startTimestamp + duration, screenshots, claimed)
+	}
+	const unclaimed = screenshots.filter((shot) => !claimed.has(shot))
+	if (unclaimed.length > 0) {
+		attempt.attachments = unclaimed.map(toAttachment)
 	}
 
 	const annotations = toAnnotations([...(run.children ?? []), ...testLevelNodes])
@@ -292,7 +317,7 @@ function toAttempt(run, context, testLevelNodes, activities = []) {
  * retried. Its tags are its class's and its own.
  */
 function toTest(testCase, suiteName, context) {
-	const {tags, activities} = context
+	const {tags, activities, screenshots} = context
 	const repetitions = (testCase.children ?? []).filter((child) => child.nodeType === 'Repetition')
 	const runs = repetitions.length > 0 ? repetitions : [testCase]
 	// A retried test's own nodes, beside its repetitions, belong to every attempt.
@@ -300,12 +325,20 @@ function toTest(testCase, suiteName, context) {
 		repetitions.length > 0
 			? (testCase.children ?? []).filter((child) => child.nodeType !== 'Repetition')
 			: []
+	const testScreenshots = screenshots.get(testCase.nodeIdentifier) ?? []
 	// xcresulttool lists a test's activity runs one per attempt, in order.
 	const activityRuns = activities.get(testCase.nodeIdentifier) ?? []
 	const test = {
 		title: testCase.name,
 		attempts: runs.map((run, index) =>
-			toAttempt(run, context, testLevelNodes, activityRuns[index]),
+			toAttempt(
+				run,
+				context,
+				testLevelNodes,
+				activityRuns[index],
+				// xcresulttool numbers repetitions from 1.
+				testScreenshots.filter((shot) => shot.repetition === index + 1),
+			),
 		),
 	}
 
@@ -400,10 +433,17 @@ export function buildReport(testNodes, options) {
 		runnerLoad,
 		tags = new Map(),
 		activities = new Map(),
+		screenshots = new Map(),
 		workspace,
 	} = options
 
-	const suites = toSuites(testNodes, {clock: {now: testsStartedMs}, tags, activities, workspace})
+	const suites = toSuites(testNodes, {
+		clock: {now: testsStartedMs},
+		tags,
+		activities,
+		screenshots,
+		workspace,
+	})
 	if (simulatorWait) {
 		suites.unshift(simulatorWaitSuite(simulatorWait))
 	}
@@ -498,6 +538,60 @@ function readActivities(bundlePath, testNodes) {
 	return activities
 }
 
+/** Screenshot types, by file extension. Screen recordings are left out for size. */
+const IMAGE_TYPES = {png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', heic: 'image/heic'}
+
+/**
+ * Export the bundle's screenshots: each test's, keyed by its identifier, and
+ * the exported file behind each attachment id. The id is the file's SHA-1,
+ * the name flakiness.io's report folder stores it under.
+ */
+function readScreenshots(bundlePath) {
+	const screenshots = new Map()
+	const files = new Map()
+	try {
+		const exportDir = fs.mkdtempSync(path.join(os.tmpdir(), 'uitest-attachments-'))
+		execFileSync(
+			'xcrun',
+			['xcresulttool', 'export', 'attachments', '--path', bundlePath, '--output-path', exportDir],
+			{
+				stdio: 'ignore',
+			},
+		)
+		const manifest = JSON.parse(fs.readFileSync(path.join(exportDir, 'manifest.json'), 'utf8'))
+		for (const {testIdentifier, attachments = []} of manifest) {
+			for (const attachment of attachments) {
+				const contentType =
+					IMAGE_TYPES[
+						path
+							.extname(attachment.exportedFileName ?? '')
+							.slice(1)
+							.toLowerCase()
+					]
+				if (!contentType) {
+					continue
+				}
+				const filePath = path.join(exportDir, attachment.exportedFileName)
+				const id = createHash('sha1').update(fs.readFileSync(filePath)).digest('hex')
+				files.set(id, filePath)
+				screenshots.set(testIdentifier, [
+					...(screenshots.get(testIdentifier) ?? []),
+					{
+						repetition: attachment.repetitionNumber,
+						timestamp: attachment.timestamp,
+						name: attachment.suggestedHumanReadableName ?? attachment.exportedFileName,
+						contentType,
+						id,
+					},
+				])
+			}
+		}
+	} catch (error) {
+		console.log(`Could not export the screenshots: ${error.message}`)
+	}
+	return {screenshots, files}
+}
+
 /** The tag markers in the UI tests' sources, or none if they cannot be read. */
 function readTestTags(directory) {
 	try {
@@ -543,6 +637,7 @@ function main() {
 	}
 
 	const env = process.env
+	const {screenshots, files} = readScreenshots(bundlePath)
 	const report = buildReport(results.testNodes ?? [], {
 		shard: env.SHARD ?? 'unknown',
 		commitId: env.GITHUB_SHA,
@@ -557,6 +652,7 @@ function main() {
 		tags: readTestTags('uitests'),
 		activities: readActivities(bundlePath, results.testNodes),
 		workspace: env.GITHUB_WORKSPACE,
+		screenshots,
 		// Each shard runs on its own machine, one test at a time: one worker.
 		parallelIndex: 0,
 	})
@@ -569,6 +665,12 @@ function main() {
 	try {
 		fs.mkdirSync(outputDir, {recursive: true})
 		fs.writeFileSync(path.join(outputDir, 'report.json'), JSON.stringify(report))
+		if (files.size > 0) {
+			fs.mkdirSync(path.join(outputDir, 'attachments'), {recursive: true})
+			for (const [id, filePath] of files) {
+				fs.copyFileSync(filePath, path.join(outputDir, 'attachments', id))
+			}
+		}
 		console.log(`Wrote ${path.join(outputDir, 'report.json')}`)
 	} catch (error) {
 		// Losing the report must not fail a shard whose tests passed.
