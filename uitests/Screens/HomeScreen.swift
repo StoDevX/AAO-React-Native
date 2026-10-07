@@ -15,20 +15,29 @@ struct HomeScreen: Screen {
 	/// Check Home draws its tiles as a grid, not a list.
 	@discardableResult
 	func verifyTiled() -> Self {
-		verifyLayout(shown: TestIdentifiers.Home.tileGrid, hidden: TestIdentifiers.Home.list, named: "the tile grid")
+		verifyLayout(shown: tileGrid, hidden: list, named: "the tile grid")
 	}
 
 	/// Check Home draws its tiles as a list, not a grid.
 	@discardableResult
 	func verifyListed() -> Self {
-		verifyLayout(shown: TestIdentifiers.Home.list, hidden: TestIdentifiers.Home.tileGrid, named: "the list")
+		verifyLayout(shown: list, hidden: tileGrid, named: "the list")
 	}
 
-	private func verifyLayout(shown: String, hidden: String, named name: String) -> Self {
-		XCTAssertTrue(
-			app.element(matching: shown).waitForExistence(timeout: 10), "Home should draw \(name)")
-		XCTAssertTrue(
-			app.element(matching: hidden).waitForNonExistence(timeout: 10), "Home should draw only \(name)")
+	private var tileGrid: XCUIElement {
+		app.element(matching: TestIdentifiers.Home.tileGrid)
+	}
+
+	/// The list layout's `List`. The screen's `Host` gives its own identifier
+	/// to the collection view the list draws, overriding any the list sets, so
+	/// the element type is what tells the list from the host's other views.
+	private var list: XCUIElement {
+		app.collectionViews.matching(identifier: TestIdentifiers.Home.screen).firstMatch
+	}
+
+	private func verifyLayout(shown: XCUIElement, hidden: XCUIElement, named name: String) -> Self {
+		XCTAssertTrue(shown.waitForExistence(timeout: 10), "Home should draw \(name)")
+		XCTAssertTrue(hidden.waitForNonExistence(timeout: 10), "Home should draw only \(name)")
 		return self
 	}
 

@@ -160,10 +160,14 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		front.verifyStoryListShown()
 		story.verifyPage(dark: false, "the Photo list should be light again after Back")
 
+		// The column is a screen of its own; the paintbrush is on the one below.
+		front.goBack()
 		front.openCustomize()
 			.keepPhotoStoriesDark(false)
 			.close()
-		front.openFirstStory()
+		front
+			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
 			.verifyHeadlineAppears()
 			.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
 	}

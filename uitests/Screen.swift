@@ -106,7 +106,11 @@ extension Screen {
 	func tap(
 		_ element: XCUIElement, until marker: XCUIElement, named name: String, wait: TimeInterval = 10
 	) -> Self {
-		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
+		// `waitForExistence` polls for a second even for an element already
+		// there, and this runs before every tap.
+		if !element.exists {
+			XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
+		}
 		for attempt in 1...3 {
 			if attempt == 1 || element.isHittable {
 				element.tap()

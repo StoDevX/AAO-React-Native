@@ -160,8 +160,6 @@ const NOTICE_FOOTER_MODIFIERS = [
 
 /// Names the home's tile grid.
 const HOME_GRID_ID = 'home-tile-grid'
-/// Names the home's list, drawn in place of the grid in the list layout.
-const HOME_LIST_ID = 'home-list'
 /// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
 const HOME_MENU_LABEL = 'Home menu'
 
@@ -248,7 +246,7 @@ export default function HomePage(): React.ReactNode {
 							style={styles.banner}
 							target={FAQ_TARGETS.HOME}
 						/>
-						<List modifiers={[listStyle('insetGrouped'), accessibilityIdentifier(HOME_LIST_ID)]}>
+						<List modifiers={[listStyle('insetGrouped')]}>
 							<HomeListRows
 								footer={
 									<VStack modifiers={NOTICE_FOOTER_MODIFIERS}>

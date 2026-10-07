@@ -76,9 +76,8 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func openJobDescription() -> Self {
 		let row = app.buttonLabelled(TestIdentifiers.StudentWork.jobDescriptionRow)
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "The posting should offer its description as a row")
-		// Scrolled to until tappable, not merely present: a form builds rows
-		// before they are on screen.
+		// Scrolled to until tappable: a form builds a row only once it nears
+		// the screen, and may build it before it is on screen.
 		for _ in 0..<6 {
 			if row.isHittable {
 				break
