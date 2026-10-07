@@ -5,6 +5,7 @@ import {ReportUtils} from '@flakiness/sdk'
 
 import {
 	buildReport,
+	parseTestTags,
 	readRunnerLoad,
 	readSimulatorOsVersion,
 	readSimulatorWait,
@@ -23,7 +24,7 @@ function failure(message) {
 	}
 }
 
-/** xcresulttool lists these under almost every attempt; they are not failures. */
+/** xcresulttool lists these under almost every attempt. */
 const RUNTIME_WARNING = {
 	name: '[Internal] Thread running at User-interactive quality-of-service class waiting on a thread without a QoS class specified',
 	nodeType: 'Runtime Warning',
@@ -97,9 +98,7 @@ function onlyTest(report) {
 
 describe('buildReport', () => {
 	it('gives a clean pass one passing attempt', () => {
-		const report = build(
-			tree(suite('ModuleNewsTests', [testCase('testOpens()', 'Passed', 12.5, [RUNTIME_WARNING])])),
-		)
+		const report = build(tree(suite('ModuleNewsTests', [testCase('testOpens()', 'Passed', 12.5)])))
 
 		assert.equal(report.suites[0].title, 'ModuleNewsTests')
 		const test = onlyTest(report)
@@ -339,6 +338,90 @@ describe('buildReport', () => {
 		])
 	})
 
+	it('annotates an attempt with its runtime warnings, each once', () => {
+		const report = build(
+			tree(
+				suite('ModuleNewsTests', [
+					testCase('testA()', 'Passed', 1, [RUNTIME_WARNING, RUNTIME_WARNING]),
+				]),
+			),
+		)
+
+		assert.deepEqual(onlyTest(report).attempts[0].annotations, [
+			{type: 'runtime-warning', description: RUNTIME_WARNING.name},
+		])
+	})
+
+	it('annotates each retry with its own runtime warnings', () => {
+		const report = build(
+			tree(
+				suite('ModuleNewsTests', [
+					testCase('testB()', 'Passed', 4, [
+						repetition(0, 'Failed', 2, [failure('flaked'), RUNTIME_WARNING]),
+						repetition(1, 'Passed', 2),
+					]),
+				]),
+			),
+		)
+
+		const [first, retry] = onlyTest(report).attempts
+		assert.deepEqual(first.annotations, [
+			{type: 'runtime-warning', description: RUNTIME_WARNING.name},
+		])
+		assert.equal(retry.annotations, undefined)
+	})
+
+	it("annotates a skip and an expected failure with Xcode's reason", () => {
+		const report = build(
+			tree(
+				suite('ModuleNewsTests', [
+					testCase('testSkipped()', 'Skipped', 0, [
+						{name: 'a chaos run needs AAO_CHAOS_SEED', nodeType: 'Skip Message'},
+					]),
+					testCase('testKnown()', 'Expected Failure', 1, [
+						{name: 'the map tiles 404 until the next publish', nodeType: 'Expected Failure'},
+					]),
+				]),
+			),
+		)
+
+		const [skipped, known] = report.suites[0].tests
+		assert.deepEqual(skipped.attempts[0].annotations, [
+			{type: 'skip', description: 'a chaos run needs AAO_CHAOS_SEED'},
+		])
+		assert.deepEqual(known.attempts[0].annotations, [
+			{type: 'fail', description: 'the map tiles 404 until the next publish'},
+		])
+	})
+
+	it('tags a test by its own marker and its class marker', () => {
+		const tags = new Map([
+			['ModuleNewsTests', ['live-data']],
+			['ModuleNewsTests/testA', ['slow-network']],
+		])
+		const report = build(
+			tree(
+				suite('ModuleNewsTests', [
+					testCase('testA()', 'Passed', 1),
+					testCase('testB()', 'Passed', 1),
+				]),
+			),
+			{tags},
+		)
+
+		const [a, b] = report.suites[0].tests
+		assert.deepEqual(a.tags, ['live-data', 'slow-network'])
+		assert.deepEqual(b.tags, ['live-data'])
+	})
+
+	it('leaves tags out of an untagged test', () => {
+		const report = build(tree(suite('ModuleNewsTests', [testCase('testA()', 'Passed', 1)])), {
+			tags: new Map(),
+		})
+
+		assert.equal(onlyTest(report).tags, undefined)
+	})
+
 	it('returns null when there is nothing to report', () => {
 		assert.equal(buildReport([], OPTIONS), null)
 	})
@@ -443,5 +526,44 @@ describe('readRunnerLoad', () => {
 	it('gives nothing without a header or any samples', () => {
 		assert.equal(readRunnerLoad(''), undefined)
 		assert.equal(readRunnerLoad(header), undefined)
+	})
+})
+
+describe('parseTestTags', () => {
+	it('reads a marker above a class and above a test method', () => {
+		const source = [
+			'import XCTest',
+			'',
+			'/// Tags: live-data',
+			'class ModuleMapTests: UITestCase {',
+			'\t/// Opens the map and searches.',
+			'\t/// Tags: slow-network, search',
+			'\t@MainActor',
+			'\tfunc testSearch() throws {',
+			'\t}',
+			'',
+			'\tfunc testUntagged() throws {}',
+			'}',
+		].join('\n')
+
+		assert.deepEqual(
+			parseTestTags([source]),
+			new Map([
+				['ModuleMapTests', ['live-data']],
+				['ModuleMapTests/testSearch', ['slow-network', 'search']],
+			]),
+		)
+	})
+
+	it('drops a marker that something other than a comment or attribute separates from its declaration', () => {
+		const source = [
+			'class ModuleMapTests: UITestCase {',
+			'\t/// Tags: orphan',
+			'\tlet screen = MapScreen()',
+			'\tfunc testA() {}',
+			'}',
+		].join('\n')
+
+		assert.deepEqual(parseTestTags([source]), new Map())
 	})
 })
