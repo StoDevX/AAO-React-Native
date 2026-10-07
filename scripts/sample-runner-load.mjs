@@ -13,6 +13,7 @@
 import {execFileSync} from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
+import {setTimeout as sleep} from 'node:timers/promises'
 
 const INTERVAL_MS = 2000
 
@@ -69,7 +70,7 @@ function freeBytes() {
 	}
 }
 
-function main() {
+async function main() {
 	const outputPath = process.argv[2]
 	if (!outputPath) {
 		console.error('usage: sample-runner-load.mjs <output.jsonl>')
@@ -83,12 +84,15 @@ function main() {
 	)
 
 	let before = readCpus()
-	setInterval(() => {
+	for (;;) {
+		// Each reading waits on the last: the gap between them is the sample.
+		// oxlint-disable-next-line no-await-in-loop
+		await sleep(INTERVAL_MS)
 		const after = readCpus()
 		const load = cpuLoad(before, after)
 		before = after
 		if (!load) {
-			return
+			continue
 		}
 
 		const ram = ((totalBytes - freeBytes()) / totalBytes) * 100
@@ -96,7 +100,7 @@ function main() {
 			outputPath,
 			`${JSON.stringify({t: Date.now(), cpuAvg: load.avg, cpuMax: load.max, ram})}\n`,
 		)
-	}, INTERVAL_MS)
+	}
 }
 
 if (import.meta.main) {
