@@ -462,6 +462,14 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
+      # Two simulators share this runner, so the shard's speed depends on its
+      # cores and memory. Logged and summarized so each run says what it had.
+      - name: Report the runner's hardware
+        run: |
+          hardware=$(sysctl -n hw.ncpu hw.memsize machdep.cpu.brand_string | paste -sd ' ' -)
+          echo "$hardware"
+          echo "Runner hardware (cores, memory bytes, CPU): \`$hardware\`" >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -612,12 +620,20 @@ jobs:
           # last test, and nothing reads them unless someone asked for a debug
           # run. The test plan already turns them off; the flag says so here too,
           # and turns them on for a debug run.
+          #
+          # Two workers run the shard's test classes side by side. Xcode shuts
+          # the booted simulator down and runs each worker on a clone of it. It
+          # hands out whole classes, even from a list of methods, and a retry
+          # reruns on the same clone. The result bundle names the original
+          # device and keeps the tree the report scripts below read.
           cat > "$RUNNER_TEMP/run-uitests.sh" <<'SCRIPT'
           set -o pipefail
           NSUnbufferedIO=YES xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             $MATRIX_TESTS \
+            -parallel-testing-enabled YES \
+            -parallel-testing-worker-count 2 \
             -retry-tests-on-failure \
             -collect-test-diagnostics ${{ runner.debug == '1' && 'on-failure' || 'never' }} \
             -resultBundlePath uitest-results \
