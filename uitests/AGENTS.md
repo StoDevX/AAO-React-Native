@@ -63,6 +63,13 @@ button carries no identifier and, on iOS 26, the label `Close` — which the
 building card's own dismiss button also has — so query it inside the bar rather
 than across the whole screen.
 
+**Wait with `waitUntilExists`, `waitUntilGone` or `waitUntil`,** from
+`XCUITestHelpers.swift`, not XCTest's `waitForExistence`, `waitForNonExistence`
+or `XCTWaiter`. XCTest's waits check about once a second, so even an element
+already there costs a second; ours check at once, then back off from 0.2s to
+1s. A check that needs a pause between reads, like a frame holding still, is
+the exception.
+
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized
 in between lands natively and does nothing. Waiting longer never fixes a tap
@@ -75,11 +82,15 @@ UIKit's to deliver, so it needs no retry.
 `open(route:mountedWhen:)`, and waits for the screen's `mounted` element --
 something only that screen draws. The wait is not optional: a relaunched app
 has no home screen while it is still blank, so "Home has gone" is true before
-anything has mounted. `XCUIApplication.open(_:)` relaunches an already running
-app, so a URL always takes the cold-launch path. To relaunch mid-test
+anything has mounted. When the app is already running with the same launch
+arguments, `open` resets it in place instead -- it unmounts every screen,
+clears AsyncStorage, the database and UserDefaults, and reloads its JavaScript
+at the route (`ResetChannel` in `UITestCase.swift`). Otherwise
+`XCUIApplication.open(_:)` relaunches it. To relaunch mid-test
 with state kept, call `keepStateForNextLaunch(adding:)` and then `navigate()`;
 set launch arguments on `app` before the first `navigate()` for anything the
-first launch needs, such as a text size.
+first launch needs, such as a text size. Either changes the arguments, so the
+app is relaunched.
 
 **The home tiles and Home's ⋯ menu are tapped by `ModuleHomeTests`,** which
 checks each against its screen's `mounted` element. A new menu item goes in
@@ -143,8 +154,9 @@ A reachability test is still worth keeping when it is a class's *only* test —
 writes one `PBXFileReference` per file, so a file added afterwards is invisible
 to the build and nothing warns you. Editing an existing file is fine.
 
-**Every test cold-launches the app** with `--uitesting` and `--reset-state`, so
-UserDefaults and AsyncStorage start empty each time. Anything a test needs
+**Every test starts from a cleared app**: cold-launched with `--uitesting` and
+`--reset-state`, or reset in place to the same effect, so UserDefaults,
+AsyncStorage and the database start empty each time. Anything a test needs
 turned on — dev mode, a persisted setting — it has to turn on itself.
 
 ## Checking VoiceOver

@@ -24,10 +24,10 @@ class ModuleAboutTests: UITestCase {
 
 		about.swipeToNextCard(from: first, toShow: second)
 		XCTAssertFalse(about.isOnScreen(first), "The newest era should scroll off to the side")
-		let onSecond = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value == %@", ids.page(2)), object: about.pageDots)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [onSecond], timeout: 5), .completed,
+		XCTAssertTrue(
+			about.pageDots.waitUntilSnapshot("to read \(ids.page(2))", timeout: 5) {
+				$0.value as? String == ids.page(2)
+			},
 			"The dots should follow the swipe to the second era")
 
 		let contributors = about.text(ids.contributors)

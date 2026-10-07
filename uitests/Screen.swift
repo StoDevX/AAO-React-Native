@@ -30,19 +30,32 @@ extension Screen {
 	/// route's screen draws.
 	///
 	/// `route` is an Expo Router path: `app/calendar/index.tsx` is `/calendar`.
-	/// `XCUIApplication.open(_:)` relaunches the app and raises no "Open in…?"
-	/// sheet, unlike `simctl openurl`.
+	/// When the app is already running with this launch's arguments, it is
+	/// reset in place and reloads its JavaScript at the route; see
+	/// `ResetChannel`. Otherwise `XCUIApplication.open(_:)` relaunches the app
+	/// and raises no "Open in…?" sheet, unlike `simctl openurl`.
 	///
 	/// The wait is what makes this safe: the relaunched app has no home screen
 	/// while it is still blank, so "Home has gone" is true before anything has
-	/// mounted, and a test's first action could land on nothing.
+	/// mounted, and a test's first action could land on nothing. A reset app
+	/// answers only once every screen of the last test has unmounted, so
+	/// `mounted` cannot be found on what the last test left.
 	@discardableResult
 	func open(route: String, mountedWhen mounted: XCUIElement, timeout: TimeInterval = 30) -> Self {
+		let url = URL(string: "AllAboutOlaf://\(route)")!
 		// No wait for Home to go: `mounted` belongs to the route alone, and
-		// each wait costs a second of polling.
-		app.open(URL(string: "AllAboutOlaf://\(route)")!)
+		// each wait reads the accessibility tree at least once.
+		// Named activities, so a result bundle shows which way each test began.
+		let reset = XCTContext.runActivity(named: "Try a reset in place to \(route)") { _ in
+			ResetChannel.reset(app, opening: url)
+		}
+		if !reset {
+			XCTContext.runActivity(named: "Cold launch to \(route)") { _ in
+				app.open(url)
+			}
+		}
 		XCTAssertTrue(
-			mounted.waitForExistence(timeout: timeout),
+			mounted.waitUntilExists(timeout: timeout),
 			"\(route) should mount \(mounted)")
 		return self
 	}
@@ -82,10 +95,9 @@ extension Screen {
 	func goBack() -> Self {
 		let backs = app.navigationBars.buttons.matching(identifier: TestIdentifiers.Navigation.systemBackButton)
 		let reachable = { backs.allElementsBoundByIndex.first { $0.isHittable } }
-		let offered = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in reachable() != nil }, object: nil)],
-			timeout: 10)
-		XCTAssertEqual(offered, .completed, "the screen should offer a way back")
+		XCTAssertTrue(
+			waitUntil("Waiting 10.0s for a hittable Back button", timeout: 10) { reachable() != nil },
+			"the screen should offer a way back")
 		reachable()?.tap()
 		return self
 	}
@@ -101,16 +113,15 @@ extension Screen {
 	/// while `element` can still be hit, since a tap that did land on a slow
 	/// screen leaves it covered, and tapping it again would open it twice.
 	/// `wait` is how long each attempt gives `marker`, for a screen that is
-	/// slow to mount rather than a tap that was dropped.
+	/// slow to mount rather than a tap that was dropped. `point`, as a
+	/// fraction of `element`'s frame, is where to tap when its centre is the
+	/// wrong place.
 	@discardableResult
 	func tap(
-		_ element: XCUIElement, until marker: XCUIElement, named name: String, wait: TimeInterval = 10
+		_ element: XCUIElement, until marker: XCUIElement, named name: String, wait: TimeInterval = 10,
+		at point: CGVector? = nil
 	) -> Self {
-		// `waitForExistence` polls for a second even for an element already
-		// there, and this runs before every tap.
-		if !element.exists {
-			XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
-		}
+		XCTAssertTrue(element.waitUntilExists(timeout: 30), "\(name) should exist before it is tapped")
 		for attempt in 1...3 {
 			// The marker can arrive just after the last wait gave up; tapping
 			// again then would undo what the first tap did.
@@ -118,9 +129,13 @@ extension Screen {
 				return self
 			}
 			if attempt == 1 || element.isHittable {
-				element.tap()
+				if let point {
+					element.coordinate(withNormalizedOffset: point).tap()
+				} else {
+					element.tap()
+				}
 			}
-			if marker.waitForExistence(timeout: wait) {
+			if marker.waitUntilExists(timeout: wait) {
 				return self
 			}
 			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }
@@ -140,7 +155,7 @@ extension Screen {
 		let close = app.buttons[TestIdentifiers.Support.closeProblemForm].firstMatch
 		XCTAssertTrue(close.waitForHittable(timeout: 10), "Report a Problem should have a close button")
 		close.tap()
-		XCTAssertTrue(problemForm.waitForNonExistence(timeout: 10), "Report a Problem should close")
+		XCTAssertTrue(problemForm.waitUntilGone(timeout: 10), "Report a Problem should close")
 		return self
 	}
 
@@ -174,16 +189,15 @@ extension Screen {
 	/// Choose `name` from a menu picker and wait for the picker to show it.
 	@discardableResult
 	func choose(_ name: String, from picker: XCUIElement) -> Self {
-		XCTAssertTrue(picker.waitForExistence(timeout: 10), "the screen should offer the picker for \(name)")
+		XCTAssertTrue(picker.waitUntilExists(timeout: 10), "the screen should offer the picker for \(name)")
 		picker.tap()
 		let item = app.buttons[name].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "the menu should offer \(name)")
+		XCTAssertTrue(item.waitUntilExists(timeout: 10), "the menu should offer \(name)")
 		item.tap()
-		let chosen = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value == %@ OR label CONTAINS %@", name, name),
-			object: picker)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [chosen], timeout: 10), .completed,
+		XCTAssertTrue(
+			picker.waitUntilSnapshot("to show \(name)", timeout: 10) {
+				$0.value as? String == name || $0.label.contains(name)
+			},
 			"the picker should show \(name) (it reads \(picker.label), \(String(describing: picker.value)))")
 		return self
 	}
@@ -204,7 +218,7 @@ extension Screen {
 	func verifyTitle(_ title: String) -> Self {
 		let titleElement = app.staticTexts[title].firstMatch
 		XCTAssertTrue(
-			titleElement.waitForExistence(timeout: 30),
+			titleElement.waitUntilExists(timeout: 30),
 			"\(title) title should be visible")
 		return self
 	}
