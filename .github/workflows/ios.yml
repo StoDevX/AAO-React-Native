@@ -559,6 +559,24 @@ jobs:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
         run: xcrun simctl bootstatus "$SIMULATOR_UDID" -b
 
+      # iOS services the app never uses, each a measured cost on CI's three
+      # cores: apsd retries Apple's push server some seventeen times a second
+      # there, and its log lines keep diagnosticd busy as well; PosterBoard
+      # renders every wallpaper and chronod every widget after the first boot;
+      # intelligenceplatformd and photoanalysisd index for Apple Intelligence
+      # and Photos. The UI tests pass with all five off.
+      - name: Turn off iOS services the tests do not use
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: |
+          for service in com.apple.apsd com.apple.PosterBoard com.apple.chronod \
+            com.apple.intelligenceplatformd com.apple.photoanalysisd; do
+            xcrun simctl spawn "$SIMULATOR_UDID" launchctl disable "user/foreground/$service"
+            # Booting out a service that is not running fails; that is fine.
+            xcrun simctl spawn "$SIMULATOR_UDID" launchctl bootout "user/foreground/$service" || true
+          done
+          xcrun simctl spawn "$SIMULATOR_UDID" launchctl print-disabled user/foreground
+
       # A freshly booted simulator spends its first six or seven minutes
       # rendering wallpapers and widgets and running Apple Intelligence and
       # Health setup, at up to two of the runner's three cores. Tests run
