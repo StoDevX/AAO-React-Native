@@ -115,6 +115,9 @@ importers:
       '@frogpond/data-sources':
         specifier: workspace:*
         version: link:modules/data-sources
+      '@frogpond/debug-tools':
+        specifier: workspace:*
+        version: link:modules/debug-tools
       '@frogpond/double-tap':
         specifier: workspace:*
         version: link:modules/double-tap
@@ -727,6 +730,12 @@ importers:
       '@jest/globals':
         specifier: 30.5.2
         version: 30.5.2(supports-color@8.1.1)
+
+  modules/debug-tools:
+    dependencies:
+      expo-modules-core:
+        specifier: ~57.0.20
+        version: 57.0.20(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
 
   modules/double-tap:
     dependencies:

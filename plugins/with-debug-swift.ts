@@ -139,20 +139,36 @@ export function addDebugSwiftPackage(project: XcodeProject, targetName: string):
 const LAUNCH_ANCHOR = /^[ \t]*let delegate = ReactNativeDelegate\(\)/mu
 const IMPORT_ANCHOR = 'internal import Expo'
 
-const IMPORT = '#if DEBUG\nimport DebugSwift\n#endif\n'
+// Internal, as Expo's generated module provider imports DebugTools, since
+// Swift rejects one module imported at two access levels.
+const IMPORT = '#if DEBUG\nimport DebugSwift\ninternal import DebugTools\n#endif\n'
 
-// UI tests and chaos runs launch Debug builds too, and the floating button
-// would sit over what they tap and screenshot.
+// UI tests and chaos runs launch Debug builds too. DebugSwift's network
+// capture would see their fixtures' traffic, and its button would sit over
+// what they tap and screenshot.
+//
+// The Developer screen turns DebugSwift on, opens it and shows its floating
+// button through the DebugTools module's hooks: JavaScript calls that module,
+// which is a pod and cannot import a Swift package linked into the app target
+// alone. `launch()` sets DebugSwift up only if the Developer screen's switch
+// was left on.
 const START = `    #if DEBUG
     let launchArguments = ProcessInfo.processInfo.arguments
     if !launchArguments.contains("--uitesting") && !launchArguments.contains("--chaos") {
-      DebugSwift().setup().show()
+      let debugSwift = DebugSwift()
+      DebugTools.setUp = { debugSwift.setup() }
+      DebugTools.makeDebugger = { DebugSwift.debugViewController() }
+      DebugTools.debuggerWillPresent = { DebugSwift.debugViewControllerWillPresent() }
+      DebugTools.debuggerDidDismiss = { DebugSwift.debugViewControllerDidDismiss() }
+      DebugTools.showFloatingButton = { debugSwift.show() }
+      DebugTools.hideFloatingButton = { debugSwift.hide() }
+      DebugTools.launch()
     }
     #endif
 `
 
 /**
- * Start DebugSwift at launch in Debug builds, as its README sets it up.
+ * Hand DebugSwift to DebugTools at launch in Debug builds.
  * Idempotent: prebuild runs this on an already-patched file whenever the native
  * project is regenerated in place.
  */

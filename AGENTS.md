@@ -227,9 +227,22 @@ empty frame.
 
 ### DebugSwift
 
-A Debug build shows [DebugSwift](https://github.com/DebugSwift/DebugSwift)'s
-floating button, which opens its network log, view inspector and the rest. It
-stays away under `--uitesting` and `--chaos`, whose runs are Debug builds too.
+A Debug build carries [DebugSwift](https://github.com/DebugSwift/DebugSwift)'s
+network log, view inspector and the rest, switched off: Developer → Enable
+DebugSwift sets it up, and every launch after until it is switched off again.
+Off means its `setup()` never runs, so nothing is swizzled or captured. Its
+instrumentation cannot be undone, so switching it off takes effect at the next
+launch. Its floating button has a switch of its own. It stays away under
+`--uitesting` and `--chaos`, whose runs are Debug builds too.
+
+JavaScript reaches it through `modules/debug-tools`. That module is a pod, and
+a pod cannot import a Swift package linked into the app target alone, so it
+holds hooks that AppDelegate fills in under `#if DEBUG`, and keeps the switch
+in `UserDefaults`, where launch can read it before JavaScript loads. It also draws the
+floating button as the Old Main Retro icon, without the request count:
+DebugSwift has no API for either, so it finds the button by its class name,
+`FloatBallView`. A DebugSwift update that renames it brings back the stock
+button, and nothing worse.
 
 It is a Swift package, added by `plugins/with-debug-swift.ts`. Xcode links a
 package product into every configuration, so outside Debug the plugin drops

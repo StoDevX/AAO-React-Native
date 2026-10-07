@@ -170,22 +170,56 @@ describe('addDebugSwiftPackage', () => {
 	})
 })
 
+/** What the patch runs at launch, before React Native starts. */
+function launchBlock(appDelegate: string): string {
+	return appDelegate.slice(
+		appDelegate.indexOf('    #if DEBUG'),
+		appDelegate.indexOf('let delegate'),
+	)
+}
+
 describe('startDebugSwift', () => {
-	it('imports DebugSwift only in Debug builds', () => {
-		assert.match(startDebugSwift(STOCK_APP_DELEGATE), /#if DEBUG\nimport DebugSwift\n#endif\n/u)
+	it('imports DebugSwift and its hooks only in Debug builds', () => {
+		assert.match(
+			startDebugSwift(STOCK_APP_DELEGATE),
+			/#if DEBUG\nimport DebugSwift\ninternal import DebugTools\n#endif\n/u,
+		)
 	})
 
-	it('sets up and shows DebugSwift at launch in Debug builds', () => {
-		let result = startDebugSwift(STOCK_APP_DELEGATE)
-		let start = result.slice(result.indexOf('    #if DEBUG'), result.indexOf('let delegate'))
-		assert.match(start, /DebugSwift\(\)\.setup\(\)\.show\(\)/u)
+	// Whether DebugSwift instruments the app is the Developer screen's switch,
+	// which DebugTools reads at launch.
+	it('leaves setting DebugSwift up to DebugTools', () => {
+		let start = launchBlock(startDebugSwift(STOCK_APP_DELEGATE))
+		assert.match(start, /DebugTools\.setUp = \{ debugSwift\.setup\(\) \}/u)
+		assert.match(start, /DebugTools\.launch\(\)\n/u)
+		assert.doesNotMatch(start, /DebugSwift\(\)\.setup\(\)/u)
+		assert.doesNotMatch(start, /\.show\(\)\n/u)
 		assert.match(start, /#endif/u)
 	})
 
-	// The floating button would sit over what the tests tap and screenshot.
+	// The Developer screen reaches DebugSwift through these, since the module
+	// that JavaScript calls is a pod and cannot import a Swift package.
+	it('hands DebugSwift to the DebugTools hooks', () => {
+		let start = launchBlock(startDebugSwift(STOCK_APP_DELEGATE))
+		assert.match(start, /let debugSwift = DebugSwift\(\)\n/u)
+		assert.match(start, /DebugTools\.makeDebugger = \{ DebugSwift\.debugViewController\(\) \}/u)
+		assert.match(
+			start,
+			/DebugTools\.debuggerWillPresent = \{ DebugSwift\.debugViewControllerWillPresent\(\) \}/u,
+		)
+		assert.match(
+			start,
+			/DebugTools\.debuggerDidDismiss = \{ DebugSwift\.debugViewControllerDidDismiss\(\) \}/u,
+		)
+		assert.doesNotMatch(start, /presentDebugger/u)
+		assert.match(start, /DebugTools\.showFloatingButton = \{ debugSwift\.show\(\) \}/u)
+		assert.match(start, /DebugTools\.hideFloatingButton = \{ debugSwift\.hide\(\) \}/u)
+	})
+
+	// Its network capture would see the fixtures' traffic, and its button
+	// would sit over what the tests tap and screenshot.
 	it('stays out of UI test and chaos launches', () => {
-		let result = startDebugSwift(STOCK_APP_DELEGATE)
-		let start = result.slice(result.indexOf('    #if DEBUG'), result.indexOf('let delegate'))
+		let start = launchBlock(startDebugSwift(STOCK_APP_DELEGATE))
 		assert.match(start, /"--uitesting"/u)
 		assert.match(start, /"--chaos"/u)
 	})

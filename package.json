@@ -19,6 +19,7 @@
     "@frogpond/colors": "workspace:*",
     "@frogpond/constants": "workspace:*",
     "@frogpond/data-sources": "workspace:*",
+    "@frogpond/debug-tools": "workspace:*",
     "@frogpond/double-tap": "workspace:*",
     "@frogpond/drag-to-dismiss": "workspace:*",
     "@frogpond/event-list": "workspace:*",
