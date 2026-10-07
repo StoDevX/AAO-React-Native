@@ -225,6 +225,18 @@ picture under a new name and point the data at it. Draw a fetched picture with
 `useImageFailure`, so one that cannot load leaves its row out instead of an
 empty frame.
 
+### DebugSwift
+
+A Debug build shows [DebugSwift](https://github.com/DebugSwift/DebugSwift)'s
+floating button, which opens its network log, view inspector and the rest. It
+stays away under `--uitesting` and `--chaos`, whose runs are Debug builds too.
+
+It is a Swift package, added by `plugins/with-debug-swift.ts`. Xcode links a
+package product into every configuration, so outside Debug the plugin drops
+`DebugSwift.o` from the link with `EXCLUDED_SOURCE_FILE_NAMES` and a script
+phase deletes the resource bundle Xcode copies into the app. A Release build
+still compiles the package, and contains none of it.
+
 ### Custom Symbols
 
 A glyph iOS does not ship, like the Olaf Messenger's castle, is a custom SF
