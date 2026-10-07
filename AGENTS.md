@@ -94,6 +94,29 @@ menu and sheet presentation, safe-area behaviour — belong in an XCUITest under
 If something cannot be checked on the simulator, say so. The failure mode is not
 a weak test; it is a weak test that makes a broken feature look covered.
 
+Six more kinds of test cost upkeep and catch nothing:
+
+- **A test of a mock.** Asserting that a stub returned what the test told it
+  to return checks the test, not the app.
+- **A test that needs heavy mocking to run.** When most of a test is stand-ins,
+  it checks how the stand-ins fit together. Move the decision into a pure
+  function and test that, or leave it to an XCUITest.
+- **A test of platform behavior.** What iOS, React Native, Hermes or a library
+  does is their concern. Test what this app decides with it.
+- **A test that a metric or Sentry call is sent.** Stub `track` and Sentry so
+  they stay quiet; never assert on them.
+- **A test that restates config.** Checking `app.config.ts` or a plugin's
+  settings for the values just written there catches nothing; prebuild and the
+  UI tests check the result.
+- **A data-flow UI test.** An XCUITest whose point is that feed data reaches
+  the screen (a tile is offered, a card shows a field) breaks on data, not on
+  the app. Test the decision in Jest and put simulator screenshots on the PR.
+
+In Claude Code, the `test-writing-reminder` mod in
+`.claude/skills/test-writing-reminder/` refuses the first write to each test
+file in a session and lists these kinds. Send the write again once the test is
+none of them.
+
 ## Development Commands
 
 pnpm is the package manager. npm and yarn both choke on the `workspace:*`
