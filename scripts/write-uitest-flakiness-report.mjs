@@ -59,6 +59,20 @@ export function readSimulatorWait(env) {
 }
 
 /**
+ * The iOS version for the report's environment.
+ *
+ * flakiness.io merges shards only when their environments match, so the
+ * runtime the job chose (`SIMULATOR_OS`, like `27-0`) comes first: a shard
+ * whose simulator never came up has no bundle to read a device from.
+ */
+export function readSimulatorOsVersion(env, devices) {
+	if (env.SIMULATOR_OS) {
+		return env.SIMULATOR_OS.replaceAll('-', '.')
+	}
+	return devices?.[0]?.osVersion
+}
+
+/**
  * Turn one test, or one of its repetitions, into a run attempt.
  *
  * Attempts are laid end to end on `clock`, since the bundle records how long
@@ -218,7 +232,7 @@ function main() {
 		url: env.GITHUB_RUN_ID
 			? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`
 			: undefined,
-		osVersion: results.devices?.[0]?.osVersion,
+		osVersion: readSimulatorOsVersion(env, results.devices),
 		xcodeVersion: readXcodeVersion(),
 		testsStartedMs: env.UITEST_STARTED ? Number(env.UITEST_STARTED) * 1000 : Date.now(),
 		simulatorWait: readSimulatorWait(env),

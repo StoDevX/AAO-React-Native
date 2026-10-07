@@ -3,7 +3,11 @@ import {describe, it} from 'node:test'
 
 import {ReportUtils} from '@flakiness/sdk'
 
-import {buildReport, readSimulatorWait} from './write-uitest-flakiness-report.mjs'
+import {
+	buildReport,
+	readSimulatorOsVersion,
+	readSimulatorWait,
+} from './write-uitest-flakiness-report.mjs'
 
 /** A failure as xcresulttool reports it under an attempt. */
 function failure(message) {
@@ -319,5 +323,19 @@ describe('readSimulatorWait', () => {
 			}),
 			undefined,
 		)
+	})
+})
+
+describe('readSimulatorOsVersion', () => {
+	it('prefers the runtime the job chose, so every shard shares one environment', () => {
+		assert.equal(readSimulatorOsVersion({SIMULATOR_OS: '27-0'}, [{osVersion: '27.0.1'}]), '27.0')
+	})
+
+	it("falls back to the bundle's device when the job chose none", () => {
+		assert.equal(readSimulatorOsVersion({}, [{osVersion: '27.0'}]), '27.0')
+	})
+
+	it('gives nothing when neither is there', () => {
+		assert.equal(readSimulatorOsVersion({SIMULATOR_OS: ''}, undefined), undefined)
 	})
 })
