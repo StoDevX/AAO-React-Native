@@ -692,6 +692,7 @@ jobs:
         if: always()
         env:
           SHARD: ${{ matrix.shard }}
+          SIMULATOR_OS: ${{ steps.simulator-device.outputs.os }}
         run: node scripts/write-uitest-flakiness-report.mjs uitest-results.xcresult flakiness-report
 
       # flakiness.io keeps the history; it does not gate anything, so an upload
