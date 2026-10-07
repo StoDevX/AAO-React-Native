@@ -665,6 +665,8 @@ jobs:
         env:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
         run: |
+          # Without pipefail a failed read goes unreported, its empty archive uploaded as the log.
+          set -o pipefail
           mkdir -p uitest-evidence
           started=$(date -r "${UITEST_STARTED:-0}" '+%Y-%m-%d %H:%M:%S')
           xcrun simctl spawn "$SIMULATOR_UDID" log show --start "$started" --style compact \
