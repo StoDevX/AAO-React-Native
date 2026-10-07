@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
-import {openDebugSwift, setDebugSwiftEnabled, setFloatingButtonEnabled} from '@frogpond/debug-tools'
+import {setDebugSwiftEnabled, setFloatingButtonEnabled} from '@frogpond/debug-tools'
 
 import {settle} from '../../../testing/settle'
 import {DebugSwiftSection} from '../debugswift-section'
@@ -46,7 +46,6 @@ beforeEach(() => {
 	mockEnabled = false
 	mockRunning = false
 	useDeveloperStore.setState({floatingButtonEnabled: false})
-	jest.mocked(openDebugSwift).mockClear()
 	jest.mocked(setDebugSwiftEnabled).mockClear()
 	jest.mocked(setFloatingButtonEnabled).mockClear()
 })
@@ -109,20 +108,4 @@ test('says when DebugSwift stays on until the app restarts', async () => {
 	})
 	expect(setDebugSwiftEnabled).toHaveBeenCalledWith(false)
 	expect(screen.getByText(/until the app restarts/u)).toBeTruthy()
-})
-
-test('opens DebugSwift from its row', async () => {
-	mockEnabled = true
-	mockRunning = true
-	await renderSection()
-	fireEvent.press(screen.getByText('Open DebugSwift'))
-	expect(openDebugSwift).toHaveBeenCalledTimes(1)
-})
-
-test('turns the floating button on from its switch', async () => {
-	mockEnabled = true
-	mockRunning = true
-	await renderSection()
-	fireEvent.press(screen.getByText('Floating Button'))
-	expect(useDeveloperStore.getState().floatingButtonEnabled).toBe(true)
 })

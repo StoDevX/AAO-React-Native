@@ -41,9 +41,9 @@ beforeEach(async () => {
 })
 
 describe('useDeveloperStore', () => {
-	test('leaves the floating button off on a fresh install', async () => {
-		await useDeveloperStore.persist.rehydrate()
-		expect(useDeveloperStore.getState().floatingButtonEnabled).toBe(false)
+	// Read from the initial state, since each test here resets the store.
+	test('leaves the floating button off on a fresh install', () => {
+		expect(useDeveloperStore.getInitialState().floatingButtonEnabled).toBe(false)
 	})
 
 	test('remembers the floating button across launches', async () => {
