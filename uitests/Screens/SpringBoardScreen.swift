@@ -27,13 +27,12 @@ struct SpringBoardScreen: Screen {
 
 		// A freshly installed app lands past the first page, so page through
 		// until its icon is on screen. Each page is given a moment to settle:
-		// mid-slide the icon is not yet hittable, and swiping again then
-		// carries straight past it. The first page gets longer, since the Home
-		// Screen is still sliding in from the app: two seconds there swiped
-		// past the icon and on into the App Library.
+		// swiping mid-slide carries straight past the icon. The first page gets
+		// longer, since the Home Screen is still sliding in from the app: two
+		// seconds there swiped past the icon and on into the App Library.
 		let icon = springboard.icons[appName].firstMatch
 		var pages = 0
-		while !icon.waitForHittable(timeout: pages == 0 ? 10 : 4) && pages < 3 {
+		while !waitForOnScreen(icon, timeout: pages == 0 ? 10 : 4) && pages < 3 {
 			springboard.swipeLeft()
 			pages += 1
 		}
@@ -49,5 +48,15 @@ struct SpringBoardScreen: Screen {
 		XCTAssertTrue(item.waitUntilExists(timeout: 5), "\(action) should be in the icon's menu")
 		item.tap()
 		return self
+	}
+
+	/// Wait for `icon` to be hittable and wholly on screen. An icon on the
+	/// next Home Screen page reads as hittable from just past the screen's
+	/// edge, so a press there finds nothing to press.
+	private func waitForOnScreen(_ icon: XCUIElement, timeout: TimeInterval) -> Bool {
+		let screen = springboard.frame
+		return waitUntil("Waiting \(timeout)s for \(icon) to be on screen", timeout: timeout) {
+			icon.exists && icon.isHittable && screen.contains(icon.frame)
+		}
 	}
 }
