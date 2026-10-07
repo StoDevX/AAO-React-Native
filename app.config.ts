@@ -225,6 +225,10 @@ const config: ExpoConfig = {
 				NSAllowsArbitraryLoadsInWebContent: true,
 				NSExceptionDomains: {
 					localhost: {NSTemporaryExceptionAllowsInsecureHTTPLoads: true},
+					// KRLX's stream server offers no forward-secret cipher. A device
+					// loads the stream in mediaplaybackd, outside the app's ATS, but
+					// the simulator loads it in the app, where ATS refuses it.
+					's3.voscast.com': {NSExceptionRequiresForwardSecrecy: false},
 				},
 			},
 			NSBonjourServices: ['_ccc-server._tcp.'],
