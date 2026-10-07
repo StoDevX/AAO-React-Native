@@ -24,7 +24,7 @@ class UITestCaseUnbooted: XCTestCase {
 		// Reset persisted state for every test. Without this, UserDefaults and
 		// AsyncStorage carry over between tests in a run, so a test's result can
 		// depend on what ran before it -- the long press that turns dev mode on
-		// in testEveryTileOpensItsScreen turns it off if it is already on, and
+		// in testTheLowerTilesOpenTheirScreens turns it off if it is already on, and
 		// failed only in long runs.
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		appendJsLocationIfProvided()

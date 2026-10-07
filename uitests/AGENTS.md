@@ -81,9 +81,11 @@ with state kept, call `keepStateForNextLaunch(adding:)` and then `navigate()`;
 set launch arguments on `app` before the first `navigate()` for anything the
 first launch needs, such as a text size.
 
-**The home tiles and Home's ⋯ menu are tapped by one test,**
-`testEveryTileOpensItsScreen` in `ModuleHomeTests`, which checks each against its screen's
-`mounted` element. A new tile or menu item goes in its list.
+**The home tiles and Home's ⋯ menu are tapped by `ModuleHomeTests`,** which
+checks each against its screen's `mounted` element. A new menu item goes in
+`testEveryHomeMenuItemOpensItsScreen`'s list, and a new tile in the list of the
+test that covers its place in the grid: `testTheUpperTilesOpenTheirScreens` or
+`testTheLowerTilesOpenTheirScreens`.
 
 **Assert the precondition before the action.** Read a field's text back after
 typing it; confirm a row exists before tapping. A test that silently did nothing
@@ -113,7 +115,7 @@ Four disqualifiers, each of which has removed a test here:
    way — it photographed a light screen, called it dark, and could not fail at
    the one thing it was for.
 2. **Reachability is already asserted elsewhere.**
-   `testEveryTileOpensItsScreen` taps every tile, and `navigate()` asserts its
+   `ModuleHomeTests` taps every tile, and `navigate()` asserts its
    screen mounted. A capture-only test is therefore a second copy of both at
    the price of a full cold launch.
 3. **The defect would be in iOS or a library, not in us.**
