@@ -63,19 +63,14 @@ class ModuleNewsTests: UITestCaseUnbooted {
 	/// At the largest text size the chosen sign's section sits a long way above
 	/// the last rows, so the page has to scroll to a section it has not yet drawn.
 	///
-	/// The app is relaunched at AX5 before the column is opened.
+	/// The page opens at AX5 on Latest already narrowed to Variety, by link: at the largest size
+	/// the section menu scrolls to its chosen row as it opens, and XCUITest reads the rows' frames
+	/// from before that scroll, so a tap there lands on the wrong section.
 	func testHoroscopesScrollToASignPickedFromTheLastRow() throws {
-		// Latest is narrowed to Variety at the usual text size and kept across the relaunch: at the
-		// largest size the section menu scrolls to its chosen row as it opens, and XCUITest reads the
-		// rows' frames from before that scroll, so a tap there lands on the wrong section.
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MessFrontPage(app: app)
-			.navigate()
-			.filterLatest(to: TestIdentifiers.News.varietySection)
-		keepStateForNextLaunch(
-			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
-				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
-		MessFrontPage(app: app)
-			.navigate()
+			.navigate(latestNarrowedTo: TestIdentifiers.News.varietySection)
 			.openColumn(TestIdentifiers.News.horoscopesColumn, inShown: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.scrollToSignRow(TestIdentifiers.News.pisces)

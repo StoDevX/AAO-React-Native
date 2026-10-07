@@ -16,6 +16,16 @@ struct MessFrontPage: Screen {
 		open(route: "/messenger", mountedWhen: mounted)
 	}
 
+	/// Open the front page on Latest narrowed to `section`, by the link's `view`, rather than from
+	/// the menu.
+	@discardableResult
+	func navigate(latestNarrowedTo section: String) -> Self {
+		var allowed = CharacterSet.urlQueryAllowed
+		allowed.remove(charactersIn: "&+=")
+		let view = "\(TestIdentifiers.News.latest):\(section)".addingPercentEncoding(withAllowedCharacters: allowed)!
+		return open(route: "/messenger?view=\(view)", mountedWhen: mounted)
+	}
+
 	/// Tap the paintbrush at the top right and wait for the Customize sheet.
 	@discardableResult
 	func openCustomize() -> MessCustomizeScreen {
