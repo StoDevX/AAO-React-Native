@@ -103,6 +103,9 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	chaosProfile: 'fuzz',
 	isSimulator: true,
 	isDebugNativeBuild: true,
+	addResetListener: jest.fn(() => () => {}),
+	finishReset: jest.fn(() => Promise.resolve()),
+	takePendingResetURL: jest.fn(() => null),
 }))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({

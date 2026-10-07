@@ -1,3 +1,5 @@
+import {takePendingResetURL} from '@frogpond/launch-arguments'
+
 import {useRadioStore} from '../source/features/streaming/radio'
 import {dismissSheets} from '../source/lib/sheet-dismissal'
 
@@ -14,6 +16,10 @@ const DISMISS_SETTLE_MS = 50
  * Popping is dispatched, not immediate, and the link is routed as soon as
  * this returns. On a warm app the path comes back late, once the pop has run;
  * routed at once, the destination would open first and leave the sheet under it.
+ *
+ * After a UI test resets the app in place, the reloaded JavaScript opens the
+ * route the test asked for, as a cold launch with that link would. expo-linking
+ * would otherwise hand it the link the process was first launched with.
  */
 export function redirectSystemPath({
 	path,
@@ -23,7 +29,7 @@ export function redirectSystemPath({
 	initial: boolean
 }): string | Promise<string> {
 	if (initial) {
-		return path
+		return takePendingResetURL() ?? path
 	}
 
 	// The radio's player is a sheet of its own, not a route, so the router cannot close it.
