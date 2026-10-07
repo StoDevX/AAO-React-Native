@@ -298,7 +298,7 @@ describe('FrontPageScreen', () => {
 	test('opens on the view a link names, and remembers it', async () => {
 		seedTop()
 		saveChoice('Issues')
-		mockParams = {view: 'Latest:Opinions'}
+		mockParams = {view: 'Latest', section: 'Opinions'}
 		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		queryClient.setQueryData(messKeys.categories, categories)
 		queryClient.setQueryData(messKeys.category(OPINIONS), onePage([WATERS]))

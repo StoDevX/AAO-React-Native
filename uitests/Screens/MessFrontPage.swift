@@ -22,8 +22,8 @@ struct MessFrontPage: Screen {
 	func navigate(latestNarrowedTo section: String) -> Self {
 		var allowed = CharacterSet.urlQueryAllowed
 		allowed.remove(charactersIn: "&+=")
-		let view = "\(TestIdentifiers.News.latest):\(section)".addingPercentEncoding(withAllowedCharacters: allowed)!
-		return open(route: "/messenger?view=\(view)", mountedWhen: mounted)
+		let section = section.addingPercentEncoding(withAllowedCharacters: allowed)!
+		return open(route: "/messenger?view=\(TestIdentifiers.News.latest)&section=\(section)", mountedWhen: mounted)
 	}
 
 	/// Tap the paintbrush at the top right and wait for the Customize sheet.

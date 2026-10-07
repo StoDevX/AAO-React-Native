@@ -28,11 +28,13 @@ export function viewOf(saved: string | null): MessView {
 }
 
 /**
- * The view a link to the front page names, in `viewKey`'s form, such as `Latest:Variety`. Null for
- * a link that names no view, so a stray one leaves the remembered view alone.
+ * The view a link to the front page names by its `view`, `Issues` or `Latest`, and its `section`,
+ * one of the paper's main sections. Null for a link that names no view, so a stray one leaves the
+ * remembered view alone.
  */
-export function linkedView(link: string | undefined): MessView | null {
-	if (link === undefined) return null
-	let view = viewOf(link)
-	return viewKey(view) === link ? view : null
+export function linkedView(view: string | undefined, section: string | undefined): MessView | null {
+	if (view !== MODES.issues && view !== MODES.latest) return null
+	let key = section ? `${view}:${section}` : view
+	let linked = viewOf(key)
+	return viewKey(linked) === key ? linked : null
 }

@@ -35,15 +35,24 @@ test('viewKey writes what viewOf reads', () => {
 
 describe('linkedView', () => {
 	test.each([
-		['Issues', {mode: 'issues', section: null}],
-		['Latest', {mode: 'latest', section: null}],
-		['Latest:Variety', {mode: 'latest', section: 'Variety'}],
-	])('opens %p as %p', (link, view) => {
-		expect(linkedView(link)).toStrictEqual(view)
+		['Issues', undefined, {mode: 'issues', section: null}],
+		['Latest', undefined, {mode: 'latest', section: null}],
+		['Latest', 'Variety', {mode: 'latest', section: 'Variety'}],
+		['Latest', 'Arts & Entertainment', {mode: 'latest', section: 'Arts & Entertainment'}],
+	])('opens view %p, section %p, as %p', (view, section, expected) => {
+		expect(linkedView(view, section)).toStrictEqual(expected)
 	})
 
 	// A link that names no view leaves the remembered one alone, rather than opening By Issue.
-	test.each([undefined, '', 'Top', 'Latest:Horoscopes', 'latest'])('ignores %p', (link) => {
-		expect(linkedView(link)).toBeNull()
+	test.each([
+		[undefined, undefined],
+		[undefined, 'Variety'],
+		['', undefined],
+		['Top', undefined],
+		['latest', undefined],
+		['Latest', 'Horoscopes'],
+		['Latest:Variety', undefined],
+	])('ignores view %p, section %p', (view, section) => {
+		expect(linkedView(view, section)).toBeNull()
 	})
 })
