@@ -157,7 +157,7 @@ struct MessStoryScreen: Screen {
 		// waits out XCUITest's full 60s quiescence timeout after landing.
 		// SpringBoard is quiet, and the point is the same point.
 		let target = link.frame
-		XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		XCUIApplication(bundleIdentifier: TestIdentifiers.SpringBoard.bundleIdentifier)
 			.coordinate(withNormalizedOffset: .zero)
 			.withOffset(CGVector(dx: target.midX, dy: target.midY))
 			.press(forDuration: 1.5)

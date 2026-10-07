@@ -402,6 +402,10 @@ struct TestIdentifiers {
 	// MARK: - Calendar
 
 	enum Calendar {
+		/// Days in the fixture calendar: one with events in the week after
+		/// `frozenNow`'s, and one with none in the week after that.
+		static let aDayWithEvents = "2026-09-07"
+		static let anEmptyDay = "2026-09-19"
 		static let picker = "Calendar filter"
 		/// Categories the picker offers, written as the menu draws them: the
 		/// name, then how many events carry it. The counts come from
@@ -421,18 +425,9 @@ struct TestIdentifiers {
 		/// Clears whichever axis is filtered, from the bottom of the picker.
 		/// Present only while something is filtered, and it dismisses the menu.
 		static let resetFilters = "Reset Filters"
-		/// A sponsoring organisation named by the fixture calendar's events,
-		/// written as the menu draws it. It sponsors three of them, so filtering
-		/// to it leaves the list narrowed rather than empty.
-		static let organization = "Music Organizations (3)"
-		/// An event on the frozen day that carries neither of the values the
-		/// two filter tests choose -- Academic Year rather than Music, and no
-		/// sponsor at all. Day mode's own filter test watches it leave the list
-		/// and come back.
+		/// An event on the frozen day that is Academic Year rather than Music,
+		/// so the filter test watches it leave the list and come back.
 		static let unfilteredDayRow = "Welcome Convocation"
-		/// The same, for the Upcoming list: two days past the frozen one, so it
-		/// sits well inside the rows the list has built either side of today.
-		static let unfilteredUpcomingRow = "First Day of Classes"
 		/// Returns the list to the top. A bar item, so its title is its
 		/// identifier.
 		static let today = "Today"
@@ -444,14 +439,6 @@ struct TestIdentifiers {
 		/// day has no events. Mirrors the literal in `modules/event-list/day-view.tsx`.
 		/// An empty day names itself, so only the opening is fixed.
 		static let emptyDayNotice = "Nothing on "
-
-		/// The top-right menu that chooses how the calendar draws itself.
-		/// Mirrors `accessibilityLabel('Calendar view')` in
-		/// `modules/ccc-calendar/mode-picker.tsx`.
-		static let modePicker = "Calendar view"
-		static let upcomingMode = "Upcoming"
-		/// The mode that is committed commented out, and so must not appear.
-		static let timelineMode = "Timeline"
 
 		/// Each event row is identified by `event-row-<title>`.
 		/// Mirrored by `EVENT_ROW_PREFIX` in `modules/event-list/event-list-row.tsx`.
@@ -640,11 +627,25 @@ struct TestIdentifiers {
 		static let cageMenu = "Cage Menu"
 		/// The tab Cage Menu opens, as Menus labels it.
 		static let cageTab = "The Cage"
+		/// One of `defaults`, and an action outside them.
+		static let aDefault = "Transit"
+		static let anExtra = "Calendar"
+	}
+
+	// MARK: - SpringBoard
+
+	enum SpringBoard {
+		static let bundleIdentifier = "com.apple.springboard"
+		/// The button on the alert iOS shows once the app's icon changes.
+		static let iconChangedOK = "OK"
 	}
 
 	// MARK: - Customize
 
 	enum Customize {
+		/// The gallery's default icon, and an alternate, as the gallery titles them.
+		static let defaultIcon = "Big Ole"
+		static let anAlternateIcon = "Old Main"
 		/// The sheet's host, set in app/customize/index.tsx.
 		static let screen = "screen-customize"
 		static let quickActionsRow = "Quick Actions"
@@ -777,27 +778,32 @@ struct TestIdentifiers {
 	// MARK: - Hours
 
 	enum Hours {
-		/// A St. Olaf venue. Under test the app reads St. Olaf's hours from this
-		/// repository's bundled copy rather than a server, so this is whatever
-		/// `data/building-hours/` says today.
-		static let aBuilding = "Rølvaag Library"
-		/// A query that matches `aBuilding` only through deburring, so the test
-		/// fails if the filter stops stripping diacritics.
-		static let deburredQuery = "rolvaag"
-		/// A building that must fall out of the list when `deburredQuery` is
-		/// typed, so the test proves narrowing rather than mere survival. Also
-		/// the name shown as the detail sheet's own title once tapped. Its
-		/// schedule is a single short section that already fits the sheet's
-		/// smaller detent -- see `aBuildingWithLongSchedule` for the one that
-		/// overflows it.
+		/// The screen's title, in app/hours/index.tsx.
+		static let title = "Hours"
+		/// What the list says when a search matches nothing, in
+		/// source/features/building-hours/list/building-list.tsx.
+		static func noResults(for query: String) -> String { "No results found for \"\(query)\"." }
+		/// The start of the detail sheet's footnote, below its schedule.
+		static let footnote = "Building hours subject to change"
+		/// The report screen's keyboard's Done key.
+		static let keyboardDone = "done"
+		/// The unsaved-changes guard's alert and its two choices, in
+		/// app/hours/detail/report.tsx.
+		static let discardChangesAlert = "Discard changes?"
+		static let keepEditing = "Edit"
+		static let discard = "Discard"
+		/// The start of `anExcludedBuilding`'s editable hours row.
+		static let weekdaysRow = "Weekdays"
+		/// The schedule editor's title.
+		static let scheduleEditorTitle = "Edit Schedule"
+		/// A building that must fall out of the list when a search is typed, so
+		/// the test proves narrowing rather than an empty list. Under test the
+		/// app reads St. Olaf's hours from this repository's bundled copy, so
+		/// this is whatever `data/building-hours/` says today. Also the name
+		/// shown as the detail sheet's own title once tapped. Its schedule is a
+		/// single short section that already fits the sheet's smaller detent --
+		/// see `aBuildingWithLongSchedule` for the one that overflows it.
 		static let anExcludedBuilding = "The Cage"
-		/// Another Food-category building, in the same unscrolled viewport as
-		/// `anExcludedBuilding` -- so a tap aimed at it while a sheet is up lands
-		/// on the dimmed list behind the sheet rather than on content the sheet
-		/// itself covers. Its schedule sections are titled Breakfast/Lunch/Dinner,
-		/// never "Hours", which is what makes its detail content an unambiguous
-		/// tell for a second sheet: nothing else on this screen shows those words.
-		static let aSecondBuilding = "Stav Hall"
 		/// A building with three schedule sections -- enough combined content to
 		/// overflow the sheet's smaller detent, unlike `anExcludedBuilding`'s
 		/// single short section.

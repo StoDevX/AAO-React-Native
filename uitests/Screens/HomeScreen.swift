@@ -54,10 +54,9 @@ struct HomeScreen: Screen {
 
 	@discardableResult
 	func openCustomize() -> CustomizeScreen {
-		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Home should have a Customize button")
-		button.tap()
-		return CustomizeScreen(app: app).checkOpen()
+		let customize = CustomizeScreen(app: app)
+		tap(app.buttons[TestIdentifiers.Navigation.customizeButton], until: customize.sheet, named: "Customize")
+		return customize
 	}
 
 	/// Open the ⋯ menu and choose `item`, which should open `mounted`.

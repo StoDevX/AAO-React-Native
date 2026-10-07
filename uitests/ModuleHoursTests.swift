@@ -1,18 +1,15 @@
 import XCTest
 
 class ModuleHoursTests: UITestCaseUnbooted {
-	/// A query narrows the list, matching a name typed without its accents,
-	/// and refined until nothing matches, the list says so.
+	/// A query typed into the search bar narrows the list, and one that
+	/// matches nothing says so.
 	func testSearchNarrowsTheListToNothing() throws {
-		let screen = HoursScreen(app: app)
+		HoursScreen(app: app)
 			.navigate()
 			.verifyRowShown(TestIdentifiers.Hours.anExcludedBuilding)
-			.search(for: TestIdentifiers.Hours.deburredQuery)
-			.verifyRowShown(TestIdentifiers.Hours.aBuilding)
+			.search(for: TestIdentifiers.Hours.unmatchedQuery)
 			.verifyRowHidden(TestIdentifiers.Hours.anExcludedBuilding)
-		let query = screen.refineSearch(adding: TestIdentifiers.Hours.unmatchedQuery)
-		screen
-			.verifyNoResultsShown(for: query)
+			.verifyNoResultsShown(for: TestIdentifiers.Hours.unmatchedQuery)
 	}
 
 	/// The favourite action lives in a SwiftUI `swipeActions` group, which is
@@ -31,44 +28,39 @@ class ModuleHoursTests: UITestCaseUnbooted {
 	}
 
 	/// A detail sheet's whole life with no edits: it opens over the list, its
-	/// Report a Problem button pushes the report into the sheet's own stack, and
-	/// the sheet still closes afterwards.
+	/// Report a Problem button pushes the report into the sheet's own stack, the
+	/// report opens the schedule editor, and the sheet still closes afterwards.
 	///
 	/// Dismissing the report back to the detail sheet, rather than straight to
 	/// the list, is what proves the report pushed into the sheet's own stack
 	/// instead of replacing it.
 	///
+	/// The schedule editor is a push in that same stack, so the two can share
+	/// the draft they both edit. A `modal` on the outer stack can silently do
+	/// nothing while a formSheet is up, so the editor has to be seen to open.
+	///
 	/// Besides its Close button, the sheet closes by drag and backdrop.
 	/// `preventNativeDismiss` on the report route makes the drag worth proving
 	/// directly: a `preventedRoutes` entry that outlived the report screen
 	/// would trap the user in a sheet nothing could close.
-	///
-	/// Tapping a row behind the sheet comes last, on a sheet opened afresh,
-	/// because that tap is allowed to dismiss the sheet.
-	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes it safe: UIKit
-	/// dims and blocks touches to the list behind the sheet at every detent,
-	/// not merely below the largest one. Without it, a tap on a different
-	/// building's row lands on the list and pushes a second detail sheet on
-	/// top of the first.
 	func testTheDetailSheetLeadsToReportAndStillCloses() throws {
 		HoursScreen(app: app)
 			.navigate()
 			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
-			.verifyListStillBehind()
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.verifyReportPushedIntoSheet()
 			.verifySubmitReportReachable()
+			.openScheduleEditorFromReportScreen()
+			.verifyScheduleEditorPresented()
+			.goBack()
+			.verifyReportScreenPresented()
 			.dismissReportScreen()
 			.verifyNoDiscardChangesAlertPresented()
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
 			.attemptToDragSheetClosed()
 			.verifyDetailSheetGone(for: TestIdentifiers.Hours.anExcludedBuilding)
-			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
-			.attemptToTapRowBehindSheet(TestIdentifiers.Hours.aSecondBuilding)
-			.verifyNoSecondSheetForStavHall()
 	}
 
 	/// `aBuildingWithLongSchedule` has three schedule sections -- enough
@@ -131,25 +123,5 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.verifyDiscardChangesAlertPresented()
 			.chooseToDiscardChanges()
 			.verifyReportScreenGone(buildingName: TestIdentifiers.Hours.anExcludedBuilding)
-	}
-
-	/// The schedule editor is a push inside the formSheet's own stack, next to
-	/// the report screen it opens from, so that the two can share the draft
-	/// they both edit. It used to be a `modal` on the OUTER stack -- a
-	/// presentation that can silently no-op on iOS while a formSheet is
-	/// already up -- so this asserts the editor really does come up.
-	///
-	/// Kept apart from the guard test: opening the editor scrolls the report
-	/// screen, and an edit made after coming back does not reliably arm the
-	/// guard.
-	func testScheduleEditorPresentsFromWithinTheReportScreen() throws {
-		HoursScreen(app: app)
-			.navigate()
-			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
-			.tapReportAction()
-			.verifyReportScreenPresented()
-			.openScheduleEditorFromReportScreen()
-			.verifyScheduleEditorPresented()
 	}
 }

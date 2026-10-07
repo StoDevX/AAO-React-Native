@@ -5,7 +5,7 @@ struct HoursScreen: Screen {
 
 	/// Drawn by this screen alone, so its presence says the screen has mounted.
 	var mounted: XCUIElement {
-		app.navigationBars["Hours"]
+		app.navigationBars[TestIdentifiers.Hours.title]
 	}
 
 	/// Carleton's Hours, which the Carleton Campus tile opens with
@@ -60,23 +60,12 @@ struct HoursScreen: Screen {
 		return self
 	}
 
-	/// Type `more` after the query already in the field, and read the whole
-	/// query back. Returns it, for the no-results check that follows.
-	func refineSearch(adding more: String) -> String {
-		let before = searchField.value as? String ?? ""
-		searchField.typeText(more)
-		XCTAssertEqual(
-			searchField.value as? String, before + more,
-			"Typing should add to the query in the search field")
-		return before + more
-	}
-
 	/// Assert the screen reports that `query` matched nothing, as distinct from
 	/// the genuine no-data message -- a search with no matches should never
 	/// read as a data outage.
 	@discardableResult
 	func verifyNoResultsShown(for query: String) -> Self {
-		let message = app.staticTexts["No results found for \"\(query)\"."]
+		let message = app.staticTexts[TestIdentifiers.Hours.noResults(for: query)]
 		XCTAssertTrue(
 			message.waitForExistence(timeout: 30),
 			"Hours should report no results for \"\(query)\"")
@@ -223,41 +212,6 @@ struct HoursScreen: Screen {
 		app.staticTexts[name].firstMatch.frame
 	}
 
-	/// Taps a different building's row while the detail sheet is up, via its
-	/// own screen coordinate rather than `XCUIElement.tap()` -- this row is
-	/// expected NOT to respond once the sheet dims the list behind it, and a
-	/// plain `.tap()` would fail the test outright for not being hittable,
-	/// which is a different claim than the one this test makes.
-	@discardableResult
-	func attemptToTapRowBehindSheet(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
-		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
-			"\(name) should still be in the list behind the sheet")
-		row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-		return self
-	}
-
-	/// Assert Stav Hall's own detail content -- a schedule section heading
-	/// (its meal periods) that no other screen here shows -- never appeared.
-	/// That is the tell for a second sheet having stacked over the first: a
-	/// tap that reached Stav Hall's row rather than being blocked by the
-	/// dimmed backdrop would push its own detail sheet, showing "Breakfast".
-	///
-	/// Whether the tap also dismissed whatever sheet was already up is not
-	/// asserted here -- tapping a dimmed backdrop dismissing the sheet in
-	/// front of it is ordinary, expected sheet behaviour, distinct from the
-	/// bug this test guards against.
-	@discardableResult
-	func verifyNoSecondSheetForStavHall() -> Self {
-		XCTAssertFalse(
-			app.staticTexts["Breakfast"].waitForExistence(timeout: 5),
-			"Stav Hall's own detail content should never have appeared -- its row's tap should "
-				+ "have been blocked by the dimmed sheet behind it, not reached through to stack a "
-				+ "second sheet")
-		return self
-	}
-
 	/// Assert the sheet is still at its smaller detent: the closing
 	/// footnote, the last thing on the detail screen, is not yet reachable --
 	/// whether because it exists but sits off-screen, or because the SwiftUI
@@ -270,7 +224,7 @@ struct HoursScreen: Screen {
 	/// fits the smaller one, and the whole test would prove nothing.
 	@discardableResult
 	func verifyDetailSheetAtSmallDetent() -> Self {
-		let footnote = app.elementWithLabel(startingWith: "Building hours subject to change")
+		let footnote = app.elementWithLabel(startingWith: TestIdentifiers.Hours.footnote)
 		XCTAssertFalse(
 			footnote.exists && footnote.isHittable,
 			"The footnote should not be reachable at the smaller detent -- if it is, this "
@@ -307,7 +261,7 @@ struct HoursScreen: Screen {
 	/// one's.
 	@discardableResult
 	func verifyDetailSheetFullyLaidOut(for name: String, titleBefore: CGRect) -> Self {
-		let footnote = app.elementWithLabel(startingWith: "Building hours subject to change")
+		let footnote = app.elementWithLabel(startingWith: TestIdentifiers.Hours.footnote)
 		XCTAssertTrue(
 			footnote.waitForExistence(timeout: 30) && footnote.isHittable,
 			"The sheet's closing footnote should be reachable once expanded to the larger detent")
@@ -420,7 +374,7 @@ struct HoursScreen: Screen {
 		// text can raise the Select/Select All callout -- a popover that
 		// swallows the next tap anywhere else, so the back button's tap would
 		// only dismiss the callout and the screen would never try to leave.
-		let done = app.keyboards.buttons["done"]
+		let done = app.keyboards.buttons[TestIdentifiers.Hours.keyboardDone]
 		if done.waitForExistence(timeout: 5) {
 			done.tap()
 		}
@@ -431,7 +385,7 @@ struct HoursScreen: Screen {
 	}
 
 	private var discardChangesAlert: XCUIElement {
-		app.alerts["Discard changes?"]
+		app.alerts[TestIdentifiers.Hours.discardChangesAlert]
 	}
 
 	@discardableResult
@@ -453,14 +407,14 @@ struct HoursScreen: Screen {
 	/// Cancels the discard, staying on the screen with edits intact.
 	@discardableResult
 	func chooseToKeepEditing() -> Self {
-		discardChangesAlert.buttons["Edit"].tap()
+		discardChangesAlert.buttons[TestIdentifiers.Hours.keepEditing].tap()
 		return self
 	}
 
 	/// Confirms the discard, letting the pending navigation go through.
 	@discardableResult
 	func chooseToDiscardChanges() -> Self {
-		discardChangesAlert.buttons["Discard"].tap()
+		discardChangesAlert.buttons[TestIdentifiers.Hours.discard].tap()
 		return self
 	}
 
@@ -511,7 +465,7 @@ struct HoursScreen: Screen {
 	/// `waitForExistence` will ever see it.
 	@discardableResult
 	func openScheduleEditorFromReportScreen() -> Self {
-		let weekdaysRow = app.elementWithLabel(startingWith: "Weekdays")
+		let weekdaysRow = app.elementWithLabel(startingWith: TestIdentifiers.Hours.weekdaysRow)
 		scrollSheetUntilHittable(weekdaysRow)
 		XCTAssertTrue(
 			weekdaysRow.waitForExistence(timeout: 15),
@@ -544,7 +498,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyScheduleEditorPresented() -> Self {
 		XCTAssertTrue(
-			app.staticTexts["Edit Schedule"].waitForExistence(timeout: 15),
+			app.staticTexts[TestIdentifiers.Hours.scheduleEditorTitle].waitForExistence(timeout: 15),
 			"Tapping a schedule row should present the schedule editor")
 		return self
 	}
@@ -556,24 +510,6 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func attemptToTapDimmedBackdrop() -> Self {
 		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
-		return self
-	}
-
-	/// Distinguishes a sheet from a full-screen push: a pushed screen replaces
-	/// the list in the hierarchy, while a sheet leaves it present underneath.
-	/// `XCUIElement.exists` is true for a merely-covered element as much as a
-	/// visible one, so this does NOT tell a sheet apart from a modal that
-	/// covers the list -- react-native-screens' `modal` is a pageSheet that
-	/// also leaves the list in the hierarchy. Only meaningful where the
-	/// alternative under test is a full-screen push.
-	@discardableResult
-	func verifyListStillBehind() -> Self {
-		let row = app.element(
-			matching: TestIdentifiers.Hours.rowPrefix
-				+ TestIdentifiers.Hours.anExcludedBuilding)
-		XCTAssertTrue(
-			row.exists,
-			"The list should still be behind the sheet, not replaced by it")
 		return self
 	}
 

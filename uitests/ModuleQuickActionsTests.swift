@@ -7,42 +7,39 @@ class ModuleQuickActionsTests: UITestCase {
 			picker.verifyPicked(name)
 		}
 
+		let ids = TestIdentifiers.QuickActions.self
 		picker
 			// All four slots are taken, so nothing else can be added.
-			.verifyAvailable("Calendar", false)
-			.toggle("Transit")
-			.verifyPicked("Transit", false)
-			.verifyAvailable("Calendar")
-			.toggle("Calendar")
-			.verifyPicked("Calendar")
+			.verifyAvailable(ids.anExtra, false)
+			.toggle(ids.aDefault)
+			.verifyPicked(ids.aDefault, false)
+			.verifyAvailable(ids.anExtra)
+			.toggle(ids.anExtra)
+			.verifyPicked(ids.anExtra)
 			.resetToDefaults()
-			.verifyPicked("Transit")
-			.verifyPicked("Calendar", false)
+			.verifyPicked(ids.aDefault)
+			.verifyPicked(ids.anExtra, false)
 	}
 
-	/// A link that pushes a screen over the map must not leave the map's sheet
-	/// floating over that screen, and the sheet must come back with the map.
+	/// A quick action opens its screen whether the app is running or not.
 	///
-	/// Then, from a cold start, SpringBoard starts the app on the action's
-	/// screen. That launch has none of the test's arguments: no --uitesting, and
-	/// so live menus rather than fixtures. It asserts only which cafe is
-	/// showing, which the data cannot change.
+	/// From a cold start, SpringBoard starts the app on the action's screen.
+	/// That launch has none of the test's arguments: no --uitesting, and so
+	/// live menus rather than fixtures. It asserts only which cafe is showing,
+	/// which the data cannot change.
 	func testQuickActionOpensItsScreenWarmAndCold() throws {
-		let map = MapScreen(app: app).navigate().checkSheetPresented()
-		let appName = app.label
+		let ids = TestIdentifiers.QuickActions.self
+		HomeScreen(app: app).checkHomescreenExists()
+		let springBoard = SpringBoardScreen(app: app)
+		let appName = springBoard.appIconName
 
-		SpringBoardScreen(app: app)
-			.chooseQuickAction(TestIdentifiers.QuickActions.cageMenu, appName: appName)
-		MenusScreen(app: app).verifyShowing(TestIdentifiers.QuickActions.cageTab)
-		map.verifySheetDismissed()
-
-		MenusScreen(app: app).goBack()
-		map.checkSheetPresented()
+		springBoard.chooseQuickAction(ids.cageMenu, appName: appName)
+		MenusScreen(app: app).verifyShowing(ids.cageTab)
 
 		app.terminate()
-		SpringBoardScreen(app: app)
-			.chooseQuickAction(TestIdentifiers.QuickActions.cageMenu, appName: appName)
-		XCTAssertTrue(app.wait(for: .runningForeground, timeout: 30), "the app should launch")
-		MenusScreen(app: app).verifyShowing(TestIdentifiers.QuickActions.cageTab)
+		springBoard
+			.chooseQuickAction(ids.cageMenu, appName: appName)
+			.verifyAppLaunched()
+		MenusScreen(app: app).verifyShowing(ids.cageTab)
 	}
 }

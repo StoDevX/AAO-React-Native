@@ -6,12 +6,6 @@ struct CustomizeScreen: Screen {
 
 	var sheet: XCUIElement { app.element(matching: TestIdentifiers.Customize.screen) }
 
-	@discardableResult
-	func checkOpen() -> Self {
-		XCTAssertTrue(sheet.waitForExistence(timeout: 10), "Customize should open")
-		return self
-	}
-
 	/// Choose how Home lays out its tiles, by the name the Layout menu gives it.
 	@discardableResult
 	func chooseHomeLayout(_ name: String) -> Self {
@@ -40,10 +34,10 @@ struct CustomizeScreen: Screen {
 
 	@discardableResult
 	func openQuickActions() -> Self {
-		let row = sheet.buttons[TestIdentifiers.Customize.quickActionsRow].firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 10), "Customize should offer Quick Actions")
-		row.tap()
-		return self
+		tap(
+			sheet.buttons[TestIdentifiers.Customize.quickActionsRow].firstMatch,
+			until: app.element(matching: TestIdentifiers.QuickActions.screen),
+			named: "Customize's Quick Actions row")
 	}
 
 	/// Close the sheet with its close button.
