@@ -462,41 +462,6 @@ jobs:
     steps:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      # Always an artifact now: ios-build publishes what it built, and
-      # ios-cache-check republishes what the cache held when the build was
-      # skipped. Neither can be evicted while this job waits for a runner.
-      - name: Download the iOS app and UITest bundle
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: ios-app
-
-      - name: Unpack the app and UITest bundle
-        run: |
-          mkdir -p ios/build/Build/Products
-          tar -C ios/build/Build/Products -xf ios-app.tar
-
-      - name: Download the iOS jsbundle
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: ios-jsbundle
-          # The upload's three paths share ios/ as their closest common
-          # ancestor, so that is the artifact's root and where it unpacks to:
-          # ios/AllAboutOlaf/main.jsbundle and ios/assets/, which is the layout
-          # the move below expects.
-          path: ios/
-
-      - name: Move cached jsbundle into place
-        run: |
-          mkdir -p ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
-          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
-          rm -rf ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/assets || true
-          mv ios/assets ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
-
       - name: Discover target simulator device
         id: simulator-device
         run: |
@@ -549,11 +514,51 @@ jobs:
           set -o pipefail
           jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
+      # Booting comes before the checkout and downloads, which need no
+      # simulator: `simctl boot` returns once the boot has begun, and the
+      # simulator settles while they run. The wait for it comes after them.
       - name: Boot the simulator
         env:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
         run: xcrun simctl boot "$SIMULATOR_UDID"
 
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Always an artifact now: ios-build publishes what it built, and
+      # ios-cache-check republishes what the cache held when the build was
+      # skipped. Neither can be evicted while this job waits for a runner.
+      - name: Download the iOS app and UITest bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ios-app
+
+      - name: Unpack the app and UITest bundle
+        run: |
+          mkdir -p ios/build/Build/Products
+          tar -C ios/build/Build/Products -xf ios-app.tar
+
+      - name: Download the iOS jsbundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ios-jsbundle
+          # The upload's three paths share ios/ as their closest common
+          # ancestor, so that is the artifact's root and where it unpacks to:
+          # ios/AllAboutOlaf/main.jsbundle and ios/assets/, which is the layout
+          # the move below expects.
+          path: ios/
+
+      - name: Move cached jsbundle into place
+        run: |
+          mkdir -p ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/assets || true
+          mv ios/assets ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+
+      # The simulator began booting before the checkout; see "Boot the
+      # simulator" above.
       - name: Wait for the simulator to be ready
         env:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
