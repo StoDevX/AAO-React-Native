@@ -9,17 +9,12 @@ struct StudentOrgsScreen: Screen {
 
 	/// Drawn by this screen alone, so its presence says the screen has mounted.
 	var mounted: XCUIElement {
-		app.navigationBars["Student Orgs"]
+		app.navigationBars[TestIdentifiers.StudentOrgs.title]
 	}
 
 	@discardableResult
 	func navigate() -> Self {
 		open(route: "/student-orgs", mountedWhen: mounted)
-	}
-
-	@discardableResult
-	func verifyStudentOrgsTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.studentOrgs)
 	}
 
 	/// Search across every category. The landing screen shows categories until
@@ -76,86 +71,24 @@ struct StudentOrgsScreen: Screen {
 		return self
 	}
 
-	/// Asserts the results begin at their first row: pulling the list down
-	/// reveals nothing above the row already first. A list that kept its old
-	/// scroll offset when the query changed leaves earlier results above the
-	/// top of the screen. The org list is live data, so this cannot name the
-	/// row that should be first.
+	/// Asserts the refined results begin at their first row, `first`: it is
+	/// on screen, and pulling the list down reveals nothing above it. A list
+	/// that kept its old scroll offset when the query changed leaves it above
+	/// the top of the screen.
 	@discardableResult
-	func verifyResultsStartAtTheTop() -> Self {
-		// The query applies after a 200ms debounce. Wait for the rows to change
-		// so the reading below is of the new results; a list that wrongly kept
-		// its place may leave the same row first, so a timeout is not a failure.
-		let firstRow = resultsList.buttons.firstMatch
-		let stale = firstRow.label
-		_ = XCTWaiter.wait(
-			for: [
-				XCTNSPredicateExpectation(
-					predicate: NSPredicate(format: "label != %@", stale), object: firstRow)
-			],
-			timeout: 5)
-
-		let top = resultsList.buttons.firstMatch.label
-		resultsList.swipeDown()
-		XCTAssertEqual(
-			resultsList.buttons.firstMatch.label, top,
-			"The refined results should start at their first row, not wherever the list was scrolled before")
-		return self
-	}
-
-	/// Taps the first org in the search results and waits for its detail to
-	/// show a section of its own: a capture taken straight after the tap lands
-	/// mid-animation, with both screens on it.
-	@discardableResult
-	func openFirstResult() -> Self {
-		let firstOrg = resultsList.buttons.firstMatch
-		XCTAssertTrue(firstOrg.waitForHittable(timeout: 30), "An org should be listed")
-		firstOrg.tap()
+	func verifyResultsStartAtTheTop(with first: String) -> Self {
+		let firstRow = resultsList.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", first)).firstMatch
 		XCTAssertTrue(
-			app.staticTexts["Category"].firstMatch.waitForExistence(timeout: 30),
-			"The org detail should be shown")
+			firstRow.waitForHittable(timeout: 10),
+			"The refined results should start with \(first), on screen, not wherever the list was scrolled before")
+		resultsList.swipeDown()
+		XCTAssertTrue(
+			resultsList.buttons.firstMatch.label.hasPrefix(first),
+			"Nothing should sit above \(first) in the refined results")
 		return self
 	}
 
 	private var resultsList: XCUIElement {
-		app.collectionViews[TestIdentifiers.StudentOrgs.resultsList]
-	}
-
-	@discardableResult
-	func verifyCategoriesShown() -> Self {
-		XCTAssertTrue(
-			firstCategoryRow.waitForExistence(timeout: 30),
-			"The category list should hold at least one category before a search")
-		return self
-	}
-
-	@discardableResult
-	func verifyCategoryGridShown() -> Self {
-		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
-		XCTAssertTrue(grid.waitForExistence(timeout: 30), "The categories should be drawn as tiles")
-		XCTAssertFalse(firstCategoryRow.exists, "No category should still be drawn as a row")
-		return self
-	}
-
-	/// Taps whichever category row is first in the list and returns its name,
-	/// so the caller can assert the next screen is titled for it without this
-	/// test naming a category that Presence.io could rename or remove. The
-	/// name comes from the row's identifier, not its label, which ends in the
-	/// org count.
-	func openFirstCategory() -> String {
-		let row = firstCategoryRow
-		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
-			"The category list should hold at least one category before a search")
-
-		let name = String(row.identifier.dropFirst(TestIdentifiers.StudentOrgs.categoryRowPrefix.count))
-		row.tap()
-		return name
-	}
-
-	private var firstCategoryRow: XCUIElement {
-		app.collectionViews[TestIdentifiers.StudentOrgs.categoryList].buttons
-			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.StudentOrgs.categoryRowPrefix))
-			.firstMatch
+		app.element(matching: TestIdentifiers.StudentOrgs.resultsList)
 	}
 }

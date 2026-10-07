@@ -30,6 +30,28 @@ struct StudentWorkScreen: Screen {
 		openPreset(TestIdentifiers.StudentWork.allPostingsPreset)
 	}
 
+	/// Check the areas are drawn as rows, with the tiles gone.
+	@discardableResult
+	func verifyAreaRowsShown() -> Self {
+		XCTAssertTrue(firstAreaRow.waitForExistence(timeout: 30), "The areas should be drawn as rows")
+		XCTAssertTrue(areaGrid.waitForNonExistence(timeout: 10), "The area tiles should be gone")
+		return self
+	}
+
+	/// Check the areas are drawn as tiles, with the rows gone.
+	@discardableResult
+	func verifyAreaTilesShown() -> Self {
+		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The areas should be drawn as tiles")
+		XCTAssertTrue(firstAreaRow.waitForNonExistence(timeout: 10), "The area rows should be gone")
+		return self
+	}
+
+	private var firstAreaRow: XCUIElement {
+		app.buttons
+			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.StudentWork.areaRowPrefix))
+			.firstMatch
+	}
+
 	private var areaGrid: XCUIElement {
 		app.element(matching: TestIdentifiers.StudentWork.areaGrid)
 	}

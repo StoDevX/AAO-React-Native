@@ -300,6 +300,9 @@ struct TestIdentifiers {
 	// MARK: - Student Work
 
 	enum StudentWork {
+		/// Matches AREA_ROW_ID_PREFIX in source/features/sis/student-work/area-section.tsx.
+		/// Each area row's identifier is this followed by the area's slug.
+		static let areaRowPrefix = "student-work-area:"
 		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
 		/// a field long enough to wrap, one with only short fields.
 		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
@@ -785,6 +788,14 @@ struct TestIdentifiers {
 		static let categoryRowPrefix = "student-orgs-category:"
 		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
 		static let resultsList = "student-orgs-results-list"
+		/// The landing's title, in app/student-orgs/index.tsx.
+		static let title = "Student Orgs"
+		/// A search whose results, from source/features/student-orgs/fixtures/uitest-orgs.json,
+		/// run several screens long, and the letter that refines it.
+		static let firstQuery = "a"
+		static let refinement = "n"
+		/// The first org the refined search lists, from the same fixture.
+		static let firstRefinedResult = "Academic Success Center"
 	}
 
 	// MARK: - Hours
