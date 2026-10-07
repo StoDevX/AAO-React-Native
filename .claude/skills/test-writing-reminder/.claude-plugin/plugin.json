@@ -1,0 +1,7 @@
+{
+  "name": "test-writing-reminder",
+  "version": "0.1.0",
+  "description": "Refuses the first write to each test file with the kinds of test this repo does not want",
+  "author": {"name": "StoDevX"},
+  "types": "./types/index.d.ts"
+}
