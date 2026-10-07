@@ -29,6 +29,33 @@ export function isTestFile(path: string): boolean {
 	return TEST_FILE_PATTERNS.some((pattern) => pattern.test(path))
 }
 
+/**
+ * Signs that a shell command writes a file. Loose on purpose: a false alarm
+ * costs one resend, a miss costs the reminder.
+ */
+const WRITE_MARKERS = [
+	/open\([^)]*['"][wa]\+?['"]/,
+	/\bwrite_text\b/,
+	/\bwriteFile(Sync)?\(/,
+	/\bsed\s+(-\w+\s+)*-i\b/,
+	/\bperl\s+(-\w+\s+)*-\w*i/,
+	// A redirect, but not `2>&1`, `=>` or `->`
+	/(^|[^0-9&>=-])>>?\s*[^\s&>]/,
+	/\btee\b/,
+	/(^|[;&|\n]\s*)(cp|mv)\s/,
+]
+
+/** Whether a shell command looks like it writes a file. */
+export function hasWriteMarker(command: string): boolean {
+	return WRITE_MARKERS.some((marker) => marker.test(command))
+}
+
+/** The test files a shell command names, each once. */
+export function testFilesIn(command: string): string[] {
+	const words = command.match(/[^\s'"`<>|;&()=,]+/g) ?? []
+	return [...new Set(words.filter(isTestFile))]
+}
+
 /** The test files each agent has already been reminded about this session. */
 const reminded = atom(
 	{plugin: 'test-writing-reminder', key: 'reminded'} as const,
@@ -66,4 +93,9 @@ export const register: Register = (on) => {
 			? {deny: REMINDER}
 			: next(e),
 	)
+
+	on('tool.call', {tool: 'Bash'}, async ($, e, next) => {
+		const paths = hasWriteMarker(e.command) ? testFilesIn(e.command) : []
+		return (await shouldRemind($, e.agentId, paths)) ? {deny: REMINDER} : next(e)
+	})
 }

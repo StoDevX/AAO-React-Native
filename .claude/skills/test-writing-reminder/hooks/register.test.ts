@@ -96,3 +96,59 @@ describe('subagents', () => {
 		expect(fromSubagent).toEqual({deny: REMINDER})
 	})
 })
+
+describe('Bash', () => {
+	const WRITES = {
+		'an inline Python edit': `python3 - <<'EOF'\np='source/__tests__/python.test.ts'\ns=open(p).read()\nopen(p,'w').write(s.replace('a','b'))\nEOF`,
+		'sed -i': `sed -i '' 's/a/b/' source/__tests__/sed.test.ts`,
+		'a heredoc': `cat > source/__tests__/heredoc.test.ts <<'EOF'\nimport x from 'y'\nEOF`,
+		'perl -pi': `perl -pi -e 's/a/b/' uitests/PerlTests.swift`,
+		cp: 'cp /tmp/draft.ts source/__tests__/cp.test.ts',
+		'a node write': `node -e "require('fs').writeFileSync('scripts/node.test.mjs', '')"`,
+	}
+
+	for (const [name, command] of Object.entries(WRITES)) {
+		test(`refuses ${name} into a test file once`, async ($, on) => {
+			toolsSucceed(on)
+			expect(await $.tool.call({tool: 'Bash', command})).toEqual({deny: REMINDER})
+			expect(await $.tool.call({tool: 'Bash', command})).toEqual({result: 'ok'})
+		})
+	}
+
+	const READS = {
+		'a Jest run': 'pnpm jest source/__tests__/a.test.ts',
+		'a Jest run with stderr merged': 'pnpm jest source/__tests__/a.test.ts 2>&1 | tail -20',
+		'sed -n': 'sed -n 1,40p source/__tests__/a.test.ts',
+		grep: 'grep -n describe source/__tests__/a.test.ts',
+		'an arrow function': `node -e "const f = x => x" source/__tests__/a.test.ts`,
+		'a commit message': 'jj commit -m "Fix source/__tests__/a.test.ts"',
+	}
+
+	for (const [name, command] of Object.entries(READS)) {
+		test(`lets ${name} through`, async ($, on) => {
+			toolsSucceed(on)
+			expect(await $.tool.call({tool: 'Bash', command})).toEqual({result: 'ok'})
+		})
+	}
+
+	test('lets a write to a file that is not a test through', async ($, on) => {
+		toolsSucceed(on)
+		const command = `sed -i '' 's/a/b/' source/lib/a.ts`
+		expect(await $.tool.call({tool: 'Bash', command})).toEqual({result: 'ok'})
+	})
+
+	test('refuses a command naming two test files once, and marks both', async ($, on) => {
+		toolsSucceed(on)
+		const both = `sed -i '' 's/a/b/' source/__tests__/a.test.ts source/__tests__/b.test.ts`
+		expect(await $.tool.call({tool: 'Bash', command: both})).toEqual({deny: REMINDER})
+		const second = `sed -i '' 's/a/b/' source/__tests__/b.test.ts`
+		expect(await $.tool.call({tool: 'Bash', command: second})).toEqual({result: 'ok'})
+	})
+
+	test('refuses a command when only one of its test files is new', async ($, on) => {
+		toolsSucceed(on)
+		await $.tool.call({tool: 'Bash', command: `sed -i '' 's/a/b/' source/__tests__/a.test.ts`})
+		const both = `sed -i '' 's/a/b/' source/__tests__/a.test.ts source/__tests__/b.test.ts`
+		expect(await $.tool.call({tool: 'Bash', command: both})).toEqual({deny: REMINDER})
+	})
+})
