@@ -63,7 +63,15 @@ const config = {
 	// name -- without letting that through, the negative lookahead trips on
 	// ".pnpm" itself and every pnpm-installed package gets ignored, ESM or not.
 	transformIgnorePatterns: [`node_modules/(?!\\.pnpm|${esmPackages.join('|')})`],
-	reporters: [['github-actions', {silent: false}], 'summary'],
+	// testLocationInResults gives flakiness.io each test's file and line.
+	testLocationInResults: true,
+	reporters: [
+		['github-actions', {silent: false}],
+		'summary',
+		// CI keeps each test's history at flakiness.io. A local run has nothing
+		// to upload, so it writes no report either.
+		...(process.env.CI ? [['@flakiness/jest', {flakinessProject: 'frogpond/all-about-olaf'}]] : []),
+	],
 }
 
 module.exports = config

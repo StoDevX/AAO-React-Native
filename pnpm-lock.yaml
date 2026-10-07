@@ -407,6 +407,9 @@ importers:
       '@expo/metro-config':
         specifier: 57.0.12
         version: 57.0.12(expo@57.0.26)(supports-color@8.1.1)(typescript@7.0.2)
+      '@flakiness/jest':
+        specifier: 1.4.0
+        version: 1.4.0
       '@flakiness/sdk':
         specifier: 3.6.0
         version: 3.6.0(@flakiness/flakiness-report@0.36.0)(supports-color@8.1.1)
@@ -1872,6 +1875,10 @@ packages:
     resolution: {integrity: sha512-Ngawf/P6nvYnhFjI86ipAygkl897dyzRvQYWJ4X8UKScP0kYGcDGdnvdMD9YTd9Ahk7fSE2vnTNQJjiz1WBtDw==}
     peerDependencies:
       zod: ^4.1.12
+
+  '@flakiness/jest@1.4.0':
+    resolution: {integrity: sha512-TcUBXIMKVQ+OPNo4zJoTurOxlhr3tHtNoN+uHQlIDJ5oa5rlTO4SnE0EqGIn1UtDf5Govz0uFuSlhu2fGY5jKQ==}
+    engines: {node: ^20.17.0 || >=22.9.0}
 
   '@flakiness/sdk@3.6.0':
     resolution: {integrity: sha512-CdGdr09ySWUY6WwbZ/3vmevMvnVZB0PSf7ctkeltidy4zTg/8yy/n+G8Qh/OCFzw5kHz0TjGkybKSyf3fG7tKQ==}
@@ -6702,6 +6709,8 @@ snapshots:
   '@flakiness/flakiness-report@0.36.0(zod@4.6.5)':
     dependencies:
       zod: 4.6.5
+
+  '@flakiness/jest@1.4.0': {}
 
   '@flakiness/sdk@3.6.0(@flakiness/flakiness-report@0.36.0)(supports-color@8.1.1)':
     dependencies:
