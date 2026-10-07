@@ -33,7 +33,6 @@ func testSearchResultsOpenAsTiles() throws {
         .navigate()
         .search(for: "olaf")
         .verifyResultsGalleried()
-        .capture("Directory search results as a tile gallery")
 }
 ```
 
@@ -63,7 +62,10 @@ than across the whole screen.
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized
 in between lands natively and does nothing. Waiting longer never fixes a tap
-that was dropped, so tap again.
+that was dropped, so tap again: `tap(_:until:named:)` in `Screen.swift` taps
+until a marker appears — the next screen, or the control's new label — and
+retries only while the element can still be hit. A native menu item's tap is
+UIKit's to deliver, so it needs no retry.
 
 **A screen's `navigate()` opens its route by URL,** through
 `open(route:mountedWhen:)`, and waits for the screen's `mounted` element --
@@ -75,9 +77,9 @@ with state kept, call `keepStateForNextLaunch(adding:)` and then `navigate()`;
 set launch arguments on `app` before the first `navigate()` for anything the
 first launch needs, such as a text size.
 
-**The home tiles are tapped by one test,**
-`testEveryTileOpensItsScreen` in `ModuleHomeTests`, which checks each tile against its screen's
-`mounted` element. A new tile goes in its list.
+**The home tiles and Home's ⋯ menu are tapped by one test,**
+`testEveryTileOpensItsScreen` in `ModuleHomeTests`, which checks each against its screen's
+`mounted` element. A new tile or menu item goes in its list.
 
 **Assert the precondition before the action.** Read a field's text back after
 typing it; confirm a row exists before tapping. A test that silently did nothing
