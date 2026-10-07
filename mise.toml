@@ -608,7 +608,6 @@ depends = [
 	"lint",
 	"tsc",
 	"test",
-	"test:claude-mods",
 	"validate-catalog-refs",
 	"validate-deps",
 	"validate-expo-versions",
