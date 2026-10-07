@@ -32,7 +32,7 @@ struct DirectoryScreen: Screen {
 	func openContact(_ title: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.waitUntilExists(timeout: 30),
 			"\(title) should have a tile in the grid")
 		tile.tap()
 		return self
@@ -47,7 +47,7 @@ struct DirectoryScreen: Screen {
 	func verifyDetailAction(_ action: String) -> Self {
 		let button = app.buttons[action].firstMatch
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			button.waitUntilExists(timeout: 30),
 			"\(action) should be on the contact's detail screen")
 		return self
 	}
@@ -61,7 +61,7 @@ struct DirectoryScreen: Screen {
 	func verifyContactTileIsSquare(_ title: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.waitUntilExists(timeout: 30),
 			"\(title) should have a tile in the grid")
 		let frame = tile.frame
 		XCTAssertLessThan(
@@ -88,7 +88,7 @@ struct DirectoryScreen: Screen {
 	func verifyContactGridStillBehind() -> Self {
 		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
 		XCTAssertFalse(
-			grid.waitForNonExistence(timeout: GRID_REMOVAL_GRACE),
+			grid.waitUntilGone(timeout: GRID_REMOVAL_GRACE),
 			"The contact grid should still be behind the sheet, not replaced by it")
 		return self
 	}
@@ -113,7 +113,7 @@ struct DirectoryScreen: Screen {
 	func dismissContactSheet(titled title: String, waitingFor action: String) -> Self {
 		let bar = app.navigationBars[title]
 		XCTAssertTrue(
-			bar.waitForExistence(timeout: 30),
+			bar.waitUntilExists(timeout: 30),
 			"The \(title) sheet should have a navigation bar to drag from")
 
 		bar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
@@ -124,7 +124,7 @@ struct DirectoryScreen: Screen {
 				thenHoldForDuration: 0.1)
 
 		XCTAssertTrue(
-			app.buttons[action].firstMatch.waitForNonExistence(timeout: 30),
+			app.buttons[action].firstMatch.waitUntilGone(timeout: 30),
 			"The contact sheet should be gone after a swipe down")
 		return self
 	}
@@ -148,12 +148,12 @@ struct DirectoryScreen: Screen {
 	func attemptToTapContactBehindSheet(_ title: String, whileShowing sheetTitle: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.waitUntilExists(timeout: 30),
 			"\(title) should still have a tile behind the sheet")
 
 		let sheetBar = app.navigationBars[sheetTitle]
 		XCTAssertTrue(
-			sheetBar.waitForExistence(timeout: 30),
+			sheetBar.waitUntilExists(timeout: 30),
 			"The \(sheetTitle) sheet should have a navigation bar marking its top edge")
 
 		let point = tile.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
@@ -178,7 +178,7 @@ struct DirectoryScreen: Screen {
 	@discardableResult
 	func verifyNoSecondContactSheet(_ action: String) -> Self {
 		XCTAssertFalse(
-			app.buttons[action].firstMatch.waitForExistence(timeout: 5),
+			app.buttons[action].firstMatch.waitUntilExists(timeout: 5),
 			"\(action) should never have appeared -- the tap should have been blocked by "
 				+ "the dimmed grid behind the sheet, not reached through to stack a second one")
 		return self

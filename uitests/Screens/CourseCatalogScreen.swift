@@ -17,7 +17,7 @@ struct CourseCatalogScreen: Screen {
 	func checkRecentSectionExists() -> Self {
 		let recent = app.staticTexts[TestIdentifiers.CourseCatalog.recent].firstMatch
 		XCTAssertTrue(
-			recent.waitForExistence(timeout: 30),
+			recent.waitUntilExists(timeout: 30),
 			"Recent section should be visible")
 		return self
 	}
@@ -27,7 +27,7 @@ struct CourseCatalogScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		let field = app.searchFields.firstMatch
-		XCTAssertTrue(field.waitForExistence(timeout: 30), "Course search should offer a field")
+		XCTAssertTrue(field.waitUntilExists(timeout: 30), "Course search should offer a field")
 		field.tap()
 		field.typeText(text)
 		XCTAssertEqual(field.value as? String, text, "Typing should put the query in the search field")
@@ -44,7 +44,7 @@ struct CourseCatalogScreen: Screen {
 		let result = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label CONTAINS %@", course))
 			.firstMatch
-		XCTAssertTrue(result.waitForExistence(timeout: 30), "\(course) should be found")
+		XCTAssertTrue(result.waitUntilExists(timeout: 30), "\(course) should be found")
 		return tap(
 			result, until: app.staticTexts[TestIdentifiers.CourseCatalog.prerequisites].firstMatch,
 			named: "\(course)'s result")

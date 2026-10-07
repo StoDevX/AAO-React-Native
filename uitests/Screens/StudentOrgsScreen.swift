@@ -24,7 +24,7 @@ struct StudentOrgsScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.waitUntilExists(timeout: 30),
 			"Student Orgs should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -55,7 +55,7 @@ struct StudentOrgsScreen: Screen {
 	/// Scrolls the search results a few screens down, and asserts they moved.
 	@discardableResult
 	func scrollResultsDown() -> Self {
-		XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "No search results appeared")
+		XCTAssertTrue(resultsList.waitUntilExists(timeout: 30), "No search results appeared")
 		let firstRowBefore = resultsList.buttons.firstMatch.label
 		// A deliberate drag rather than `swipeUp()`: the results mount while the
 		// keyboard is animating back in, and in that window the quick flicks

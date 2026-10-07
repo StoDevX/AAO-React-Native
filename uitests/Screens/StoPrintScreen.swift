@@ -18,7 +18,7 @@ struct StoPrintScreen: Screen {
 	@discardableResult
 	func verifyJobsListed() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.StoPrint.pendingRelease].firstMatch.waitForExistence(timeout: 30),
+			app.staticTexts[TestIdentifiers.StoPrint.pendingRelease].firstMatch.waitUntilExists(timeout: 30),
 			"Print Jobs should list the mocked jobs")
 		return self
 	}

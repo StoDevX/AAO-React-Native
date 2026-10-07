@@ -17,10 +17,10 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func openPreset(_ title: String) -> Self {
 		let preset = app.elementWithLabel(startingWith: title)
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should load")
+		XCTAssertTrue(areaGrid.waitUntilExists(timeout: 30), "The landing should load")
 		// Below the tiles, and the list builds rows only as they near the screen.
 		scrollUntilExists(preset)
-		XCTAssertTrue(preset.waitForExistence(timeout: 10), "The landing should offer \(title)")
+		XCTAssertTrue(preset.waitUntilExists(timeout: 10), "The landing should offer \(title)")
 		return tap(preset, until: postingsTitle, named: "the \(title) preset")
 	}
 
@@ -32,16 +32,16 @@ struct StudentWorkScreen: Screen {
 	/// Check the areas are drawn as rows, with the tiles gone.
 	@discardableResult
 	func verifyAreaRowsShown() -> Self {
-		XCTAssertTrue(firstAreaRow.waitForExistence(timeout: 30), "The areas should be drawn as rows")
-		XCTAssertTrue(areaGrid.waitForNonExistence(timeout: 10), "The area tiles should be gone")
+		XCTAssertTrue(firstAreaRow.waitUntilExists(timeout: 30), "The areas should be drawn as rows")
+		XCTAssertTrue(areaGrid.waitUntilGone(timeout: 10), "The area tiles should be gone")
 		return self
 	}
 
 	/// Check the areas are drawn as tiles, with the rows gone.
 	@discardableResult
 	func verifyAreaTilesShown() -> Self {
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The areas should be drawn as tiles")
-		XCTAssertTrue(firstAreaRow.waitForNonExistence(timeout: 10), "The area rows should be gone")
+		XCTAssertTrue(areaGrid.waitUntilExists(timeout: 30), "The areas should be drawn as tiles")
+		XCTAssertTrue(firstAreaRow.waitUntilGone(timeout: 10), "The area rows should be gone")
 		return self
 	}
 
@@ -93,7 +93,7 @@ struct StudentWorkScreen: Screen {
 	func checkJobDescriptionShown() -> Self {
 		XCTAssertTrue(
 			app.elementWithLabel(startingWith: TestIdentifiers.StudentWork.fixtureJobDescriptionParagraph)
-				.waitForExistence(timeout: 10),
+				.waitUntilExists(timeout: 10),
 			"The description screen should hold the posting's text")
 		return self
 	}
