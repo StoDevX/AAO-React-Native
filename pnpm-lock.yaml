@@ -60,7 +60,7 @@ overrides:
 
 patchedDependencies:
   '@expo/ui@57.0.21': 7ccceafb06c870f7ef3c74995e3433df4575031a1459d07460cd7bf1bb9b0e08
-  react-native-change-icon@5.0.0: 7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff
+  react-native-change-icon@5.0.0: 5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306
   react-native@0.86.3: 6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191
 
 importers:
@@ -339,7 +339,7 @@ importers:
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       react-native-change-icon:
         specifier: 5.0.0
-        version: 5.0.0(patch_hash=7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff)(react-native@0.86.3)
+        version: 5.0.0(patch_hash=5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306)(react-native@0.86.3)
       react-native-enriched-markdown:
         specifier: 1.1.0
         version: 1.1.0(react-native@0.86.3)(react@19.2.3)
@@ -9835,7 +9835,7 @@ snapshots:
 
   react-is@19.3.0: {}
 
-  react-native-change-icon@5.0.0(patch_hash=7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff)(react-native@0.86.3):
+  react-native-change-icon@5.0.0(patch_hash=5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306)(react-native@0.86.3):
     dependencies:
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
