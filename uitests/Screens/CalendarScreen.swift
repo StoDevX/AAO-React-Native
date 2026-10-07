@@ -22,7 +22,7 @@ struct CalendarScreen: Screen {
 	func openPicker() -> Self {
 		let picker = app.buttons[TestIdentifiers.Calendar.picker]
     XCTAssertTrue(
-      picker.waitForExistence(timeout: 30),
+      picker.existsOrAppears(within: 30),
       "Calendar picker should be in the toolbar")
 		picker.tap()
 		return self
@@ -124,15 +124,13 @@ struct CalendarScreen: Screen {
 	func dismissMenu() -> Self {
 		if menuIsPresented() || pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
-			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
-				.waitForNonExistence(timeout: 10)
+			XCTAssertTrue(
+				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForNonExistence(timeout: 10),
+				"Tapping away from the picker should close its CALENDARS section too")
 			_ = axisRow().waitForNonExistence(timeout: 10)
 			XCTAssertFalse(
 				pickerIsPresented(),
 				"Tapping away from the picker should close it, submenu and all")
-			XCTAssertTrue(
-				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForNonExistence(timeout: 10),
-				"Tapping away from the picker should close its CALENDARS section too")
 		}
 		return self
 	}
@@ -145,7 +143,7 @@ struct CalendarScreen: Screen {
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
 		).firstMatch
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 30),
+			cell.existsOrAppears(within: 30),
 			"The day picker strip should be above the list")
 		return self
 	}
@@ -216,7 +214,7 @@ struct CalendarScreen: Screen {
 	func tapDay(_ isoDay: String) -> Self {
 		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 10),
+			cell.existsOrAppears(within: 10),
 			"The strip should offer \(isoDay)")
 		cell.tap()
 		return self
@@ -266,7 +264,7 @@ struct CalendarScreen: Screen {
 	func tapToday() -> Self {
 		let button = app.buttons[TestIdentifiers.Calendar.today]
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			button.existsOrAppears(within: 30),
 			"Today should be in the bottom bar")
 		button.tap()
 		return self
@@ -295,7 +293,7 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func verifyRowPresent(_ title: String) -> Self {
 		XCTAssertTrue(
-			row(title).waitForExistence(timeout: 10),
+			row(title).existsOrAppears(within: 10),
 			"\(title) should be in the list")
 		return self
 	}
@@ -320,7 +318,7 @@ struct CalendarScreen: Screen {
 	func openModeMenu() -> Self {
 		let menu = app.buttons[TestIdentifiers.Calendar.modePicker]
 		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
+			menu.existsOrAppears(within: 30),
 			"The calendar should offer a view menu in the navigation bar")
 		menu.tap()
 		return self

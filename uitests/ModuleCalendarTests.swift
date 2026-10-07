@@ -47,11 +47,11 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
         "\(TestIdentifiers.Calendar.calendarsSection) should be a section of the open menu")
 
       XCTAssertTrue(
-        app.buttons[TestIdentifiers.Calendar.categoryMenu].waitForExistence(timeout: 30),
+        app.buttons[TestIdentifiers.Calendar.categoryMenu].existsOrAppears(within: 30),
         "\(TestIdentifiers.Calendar.categoryMenu) should be a row of the open picker")
 
       XCTAssertTrue(
-        app.buttons[TestIdentifiers.Calendar.organizationMenu].waitForExistence(timeout: 30),
+        app.buttons[TestIdentifiers.Calendar.organizationMenu].existsOrAppears(within: 30),
         "\(TestIdentifiers.Calendar.organizationMenu) should be a row of the open picker")
 
       XCTAssertTrue(
