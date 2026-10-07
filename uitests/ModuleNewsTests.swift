@@ -117,8 +117,8 @@ class ModuleNewsTests: UITestCaseUnbooted {
 	/// Mode.
 	func testPhotoStoriesOpenDarkUnlessTurnedOff() throws {
 		let front = MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+			.navigate(latestNarrowedTo: TestIdentifiers.News.varietySection)
+			.openColumn(TestIdentifiers.News.photoColumn, inShown: TestIdentifiers.News.varietySection)
 		let story = front.openFirstStory().verifyHeadlineAppears()
 		story.verifyPage(dark: true, "a Photo story should open in Dark Mode")
 		// An error screen is dark too, so the story must still be the page on show.
@@ -133,8 +133,9 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		front.openCustomize()
 			.keepPhotoStoriesDark(false)
 			.close()
+		// Latest is still narrowed to Variety, as it was left.
 		front
-			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+			.openColumn(TestIdentifiers.News.photoColumn, inShown: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.verifyHeadlineAppears()
 			.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
