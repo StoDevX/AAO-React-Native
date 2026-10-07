@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native'
 import {useQueries} from '@tanstack/react-query'
 import {ZoomImageViewer} from '../../components/zoom-image-viewer'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
+import {shownCaption} from './lib/alt'
 import {galleryPhotoLabel, imageLabel, photoLabel, picturePlace} from './lib/byline'
 import {shownPhotos} from './lib/gallery'
 import {messGalleryOptions} from './query'
@@ -10,8 +11,8 @@ import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
 import type {Block, CaptionedPhoto, MessStory} from './types'
 
-/** A picture to show, and what VoiceOver reads for it. */
-type Picture = {url: string; label: string}
+/** A picture to show, what VoiceOver reads for it, and the caption drawn over it; empty when it has none. */
+type Picture = {url: string; label: string; caption: string}
 
 type Gallery = Extract<Block, {type: 'gallery'}>
 
@@ -26,7 +27,7 @@ function galleryPictureAt(
 		let photo = photos[index]
 		if (!photo) continue
 		let label = galleryPhotoLabel(story, gallery.credit, {index, count: photos.length})
-		return {url: photo.largeUrl ?? photo.url, label}
+		return {url: photo.largeUrl ?? photo.url, label, caption: shownCaption(photo)}
 	}
 	return null
 }
@@ -50,14 +51,24 @@ function pictureOf(
 		let figures = story.blocks.flatMap((block) => (block.type === 'figure' ? [block] : []))
 		let photos: Array<CaptionedPhoto | null> = [story.photo, ...figures]
 		let photo = photos.find((candidate) => candidate?.url === url)
-		if (photo) return {url: photo.largeUrl ?? photo.url, label: photoLabel(story, photo.caption)}
+		if (photo) {
+			return {
+				url: photo.largeUrl ?? photo.url,
+				label: photoLabel(story, photo.caption),
+				caption: shownCaption(photo),
+			}
+		}
 		return galleryPictureAt(story, galleries, url)
 	}
 	let label = imageLabel(story, picturePlace(story, index))
-	if (story.layout.kind === 'image') return {url: story.layout.image.url, label}
+	if (story.layout.kind === 'image') {
+		let {image} = story.layout
+		return {url: image.url, label, caption: shownCaption(image)}
+	}
 	if (story.layout.kind === 'feature') {
 		let image = story.layout.images[index]
-		return image ? {url: image.largeUrl ?? image.url, label} : null
+		if (!image) return null
+		return {url: image.largeUrl ?? image.url, label, caption: shownCaption(image)}
 	}
 	return null
 }
@@ -92,7 +103,12 @@ export function ImageViewer({id, index = 0, url}: Props): React.ReactNode {
 			closeTestID="mess-image-viewer-close"
 			image={
 				image
-					? {uri: image.url, accessibilityLabel: image.label, testID: 'mess-image-viewer-image'}
+					? {
+							uri: image.url,
+							accessibilityLabel: image.label,
+							caption: image.caption,
+							testID: 'mess-image-viewer-image',
+						}
 					: null
 			}
 			onClose={close}

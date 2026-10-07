@@ -342,7 +342,7 @@ export const messGalleryOptions = (photoIds: number[]) =>
 		queryFn: async ({signal}): Promise<CaptionedPhoto[]> => {
 			let root = wpRoot(await feedHref())
 			let body = await messFetch(
-				`${root}/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption`,
+				`${root}/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption,alt_text`,
 				signal,
 				'Olaf Messenger gallery',
 			)

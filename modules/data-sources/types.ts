@@ -11,6 +11,9 @@ export const REL_STUDENT_WAGES = 'https://frogpond.tech/rel/student-wages'
 export const REL_STUDENT_WORK_UNITS = 'https://frogpond.tech/rel/student-work-units'
 export const REL_MAP_STYLE = 'https://frogpond.tech/rel/map-style'
 export const REL_COURSE_CATALOG = 'https://frogpond.tech/rel/course-catalog'
+export const REL_RADIO_STREAM = 'https://frogpond.tech/rel/radio-stream'
+export const REL_RADIO_PLAYER_PAGE = 'https://frogpond.tech/rel/radio-player-page'
+export const REL_RADIO_NOW_PLAYING = 'https://frogpond.tech/rel/radio-now-playing'
 
 /// JRD `properties` member names are URIs (RFC 7033 §4.4.4.5), so the source
 /// id is keyed by one rather than a bare string.

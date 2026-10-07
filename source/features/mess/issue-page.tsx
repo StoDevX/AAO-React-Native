@@ -26,7 +26,7 @@ import {
 import {useQuery} from '@tanstack/react-query'
 import {splitCarousel} from '../../lib/split-carousel'
 import {cardKicker, sectionCredit} from './lib/byline'
-import {TAP_TARGET} from './lib/glyph-grid'
+import {TAP_TARGET} from '../../lib/tap-target'
 import {rowsOf} from './lib/issue-grid'
 import {keepsDarkMode} from './lib/photo-story'
 import {leadStory, shelvesOf} from './lib/shelves'

@@ -1,5 +1,4 @@
-/** Apple's smallest comfortable tap target, in points. */
-export const TAP_TARGET = 44
+import {TAP_TARGET} from '../../../lib/tap-target'
 
 /** The gap between glyph cells, across and down. */
 export const GLYPH_SPACING = 4

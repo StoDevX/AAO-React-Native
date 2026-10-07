@@ -108,3 +108,41 @@ links:
     type: application/vnd.sqlite3
     titles: {und: Course Catalog}
     properties: {'https://frogpond.tech/ns/id': stolaf}
+
+  # DECISION (St. Olaf / KSTO): KSTO counts its listeners through the analytics
+  # in its own web player, and asked that the app keep loading that page. So
+  # the app loads the page, muted, AND plays the stream the page plays, itself.
+  # Keep both: without the page KSTO's count drops, and without our own stream
+  # there is no Control Center, lock screen or AirPlay. Two copies of the stream
+  # play at once; that is accepted. Moving one of the two means checking the
+  # other still matches it.
+  #
+  # The stream is the HLS URL that page passes to its player (read from its
+  # source, 2026-10-03). If KSTO changes the page, or the stream stops, read the
+  # page again and update it. The page's commented-out
+  # `.../radio/ksto1.stream/master.m3u8` answers 403; do not use it.
+  - rel: https://frogpond.tech/rel/radio-stream
+    href: 'https://cdn.stobcm.com/ksto/live.m3u8'
+    type: application/vnd.apple.mpegurl
+    titles: {und: KSTO 93.1 FM}
+    properties: {'https://frogpond.tech/ns/id': ksto}
+
+  - rel: https://frogpond.tech/rel/radio-player-page
+    href: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
+    type: text/html
+    titles: {und: KSTO Player}
+    properties: {'https://frogpond.tech/ns/id': ksto}
+
+  # Icecast 2.4.4, answering audio/mpeg at 128 kbps (checked 2026-10-06).
+  - rel: https://frogpond.tech/rel/radio-stream
+    href: 'https://s3.voscast.com:10803/stream'
+    type: audio/mpeg
+    titles: {und: 88.1 KRLX-FM}
+    properties: {'https://frogpond.tech/ns/id': krlx}
+
+  # The metaradio plugin krlx.org's own player reads; station 1 is KRLX.
+  - rel: https://frogpond.tech/rel/radio-now-playing
+    href: 'https://content.krlx.org/wp-json/metaradio/v1/stationnow/?station=1'
+    type: application/vnd.metaradio.stationnow+json
+    titles: {und: KRLX Now Playing}
+    properties: {'https://frogpond.tech/ns/id': krlx}

@@ -1,6 +1,7 @@
 import {parseHtml, textContent} from '@frogpond/html-lib'
 import {z} from 'zod'
 import type {Block, CaptionedPhoto} from '../types'
+import {readableAlt} from './alt'
 import {secureUrl} from './blocks'
 
 const SizeSchema = z.object({source_url: z.string(), width: z.number(), height: z.number()})
@@ -9,6 +10,7 @@ const GalleryMediaSchema = z.object({
 	id: z.number(),
 	source_url: z.string(),
 	caption: z.object({rendered: z.string()}),
+	alt_text: z.string().optional(),
 	media_details: z.object({
 		width: z.number(),
 		height: z.number(),
@@ -41,13 +43,15 @@ export function parseGalleryPhotos(body: unknown, photoIds: number[]): Captioned
 		if (!media) return []
 		let full = secureUrl(media.source_url)
 		let caption = captionText(media.caption.rendered)
+		let alt = readableAlt(media.alt_text)
+		let words = alt ? {caption, alt} : {caption}
 		let large = SizeSchema.safeParse(media.media_details.sizes.large)
 		if (!large.success || secureUrl(large.data.source_url) === full) {
 			let {width, height} = media.media_details
-			return [{url: full, width, height, caption}]
+			return [{url: full, width, height, ...words}]
 		}
 		let {width, height} = large.data
-		return [{url: secureUrl(large.data.source_url), largeUrl: full, width, height, caption}]
+		return [{url: secureUrl(large.data.source_url), largeUrl: full, width, height, ...words}]
 	})
 }
 

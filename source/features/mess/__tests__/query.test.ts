@@ -487,7 +487,7 @@ describe('messGalleryOptions', () => {
 			'OliviaAmschler_5-905x1200.png',
 		])
 		expect(mockBody).toHaveBeenCalledWith(
-			'https://olafmessenger.com/wp-json/wp/v2/media?include=36255,36256,36257,36258,36259&per_page=100&_fields=id,source_url,media_details,caption',
+			'https://olafmessenger.com/wp-json/wp/v2/media?include=36255,36256,36257,36258,36259&per_page=100&_fields=id,source_url,media_details,caption,alt_text',
 			expect.any(AbortSignal),
 			'Olaf Messenger gallery',
 			'json',
