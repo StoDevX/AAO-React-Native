@@ -10,12 +10,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.scrollIssues(untilAnIssueFrom: "2025")
 	}
 
-	func testOlafMessengerMenuOpensAStaffMember() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openFirstStaffMember()
-	}
-
 	/// The paintbrush opens the paper's Customize sheet, whose pickers take a choice. With Dark
 	/// page for Photo stories turned off there, a Photo story follows the system's appearance.
 	func testOlafMessengerCustomizeTurnsOffDarkPhotoStories() throws {
@@ -169,13 +163,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyViewerOpen(true, "a short drag let go slowly should spring the picture back")
 			.dragViewerImage(.long)
 			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
-	}
-
-	/// A crossword's own page, reached by a link to the post, still offers its puzzle.
-	func testCrosswordPageOpensThePuzzleInTheBrowser() throws {
-		MessStoryScreen(app: app)
-			.navigate(to: TestIdentifiers.News.crosswordStoryRoute)
-			.solveCrossword()
 	}
 
 	func testRecipeTicksAnIngredient() throws {

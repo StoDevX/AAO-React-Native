@@ -124,10 +124,6 @@ struct TestIdentifiers {
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
 	/// placement this app uses, the cancel button is the round one beside the
 	/// field, and UIKit labels it "close" rather than "Cancel".
-	enum Search {
-		static let cancelButton = "close"
-	}
-
 	enum Streaming {
 		static let list = "stream-list"
 		static let webcams = "screen-streaming-webcams"
@@ -305,8 +301,6 @@ struct TestIdentifiers {
 		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
 		/// a field long enough to wrap, one with only short fields.
 		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
-		static let fixtureJobWithShortFields = "Library Circulation Desk Assistant"
-		static let jobsSiteLink = "View on the St. Olaf jobs site"
 		/// Matches JOB_DESCRIPTION_TITLE in source/features/sis/student-work/lib.ts,
 		/// the title of both the row and the screen it opens.
 		static let jobDescriptionRow = "Description"
@@ -314,28 +308,11 @@ struct TestIdentifiers {
 		static let fixtureJobDescriptionParagraph = "Transferable Skills:"
 		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-section.tsx.
 		static let areaGrid = "student-work-area-grid"
-		/// Matches AREA_ROW_ID_PREFIX in source/features/sis/student-work/area-section.tsx.
-		/// Each area row's identifier is this followed by the area's slug.
-		static let areaRowPrefix = "student-work-area:"
-		/// How many areas data/student-work-areas.yaml lists.
-		static let areaCount = 17
-		/// From data/student-work-areas.yaml: one area the fixtures fill, one
-		/// they leave empty. See FIXTURE_UNITS in
-		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
-		static let researchArea = "Research (CURI)"
-		static let emptyArea = "Faith & Vocation"
-		/// The list's empty state once a search or filter leaves nothing, from
-		/// source/features/sis/student-work/postings-list.tsx.
-		static let noMatchingJobs = "No matching jobs."
 		/// From PRESETS in source/features/sis/student-work/presets.ts.
 		static let allPostingsPreset = "All job postings"
 		/// The postings screen's title, whatever it was opened with. Matches
 		/// TITLE in app/student-work/postings.tsx.
 		static let postingsTitle = "Job Postings"
-		/// The Area filter's key, from `buildJobFilters`.
-		static let areaFilter = "area"
-		/// Matches POSTINGS_LIST_ID in source/features/sis/student-work/postings-list.tsx.
-		static let postingsList = "student-work-postings"
 	}
 
 	// MARK: - Menus
@@ -428,14 +405,6 @@ struct TestIdentifiers {
 
 	// MARK: - Calendar
 
-	enum Athletics {
-		/// The bottom-toolbar sports menu. Matches LABEL in
-		/// source/features/athletics/sports-menu.tsx.
-		static let sportsMenu = "Sports filter"
-		/// Shown at the foot of the menu once any sport is chosen.
-		static let resetFilters = "Reset Filters"
-	}
-
 	enum Calendar {
 		static let picker = "Calendar filter"
 		/// Categories the picker offers, written as the menu draws them: the
@@ -524,17 +493,13 @@ struct TestIdentifiers {
 	// MARK: - News
 
 	enum News {
+		/// St. Olaf News's navigation bar title, in app/st-olaf-news.tsx.
+		static let stOlafTitle = "St. Olaf News"
 		/// The views the front page's menu offers, and the start of the menu button's label, which
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let byIssue = "By Issue"
 		static let latest = "Latest"
 		static let viewMenuPrefix = "More, "
-		/// The view menu's way to the staff directory, in source/features/mess/front-page-screen.tsx.
-		static let staffMenuItem = "Staff"
-		/// The start of each staff tile's name, which ends in its profile's id, in source/features/mess/staff-screen.tsx.
-		static let staffTilePrefix = "mess-staff-tile-"
-		/// The heading over a staff member's bio, in source/features/mess/staff-screen.tsx.
-		static let staffBioHeading = "About"
 
 		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
 		static let topTile = "mess-top-tile"
@@ -630,13 +595,6 @@ struct TestIdentifiers {
 		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
 		static let seriesStory = "mess-series-story"
 
-		/// A Crossword or Puzzle post's button that opens its puzzle, in
-		/// source/features/mess/story-screen.tsx.
-		static let puzzleSolve = "mess-puzzle-solve"
-		static let crosswordSolveLabel = "Solve the crossword"
-		/// A Crossword post, from the recorded Mess fixtures, opened by route: its row and its
-		/// card open the puzzle without the page.
-		static let crosswordStoryRoute = "/messenger/story?id=36814"
 
 		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
 		static let recipeIngredient = "mess-recipe-ingredient"
@@ -646,8 +604,7 @@ struct TestIdentifiers {
 
 	enum StreamingMedia {
 		static let tabs = ["Webcams"]
-		/// The station picker's segments, at the top of the sheet.
-		static let kstoSegment = "KSTO"
+		/// The station picker's KRLX segment, at the top of the sheet.
 		static let krlxSegment = "KRLX"
 		/// Play and Stop, in source/features/streaming/radio/player-view and the
 		/// mini-player; each names its station.
@@ -732,13 +689,6 @@ struct TestIdentifiers {
 	enum Contributing {
 		/// The Contributing screen's host, set in app/contributing/index.tsx.
 		static let screen = "screen-contributing"
-		static let appSource = "All About Olaf"
-		static let cccServer = "ccc-server"
-		static let reportProblem = "Report a Problem"
-		static let openStreetMap = "OpenStreetMap"
-		/// The first entry of `dataSources` in source/features/contributing/data-sources.ts.
-		static let firstDataSource = "St. Olaf College"
-		static let email = "Email us"
 	}
 
 	// MARK: - About
@@ -766,10 +716,6 @@ struct TestIdentifiers {
 	enum Support {
 		/// The Support screen's host, set in app/support/index.tsx.
 		static let screen = "screen-support"
-		static let faqs = "FAQs"
-		static let sendFeedback = "Send Feedback"
-		/// ShareTelemetryToggle's label, in source/features/telemetry/consent-toggle.tsx.
-		static let telemetryToggle = "Share anonymous usage and crash data"
 		/// The title of the Report a Problem form, in app/report-problem.tsx.
 		static let reportProblemTitle = "Report a Problem"
 		/// The form's close button, labelled in app/report-problem.tsx.
@@ -813,18 +759,7 @@ struct TestIdentifiers {
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
 		/// DIRECTORY_ROW_PREFIX in app/directory/index.tsx.
 		static let rowPrefix = "directory-row-"
-		/// Search results in the tile gallery: `directory-tile-<index>`. Mirrors
-		/// TILE_PREFIX in source/features/directory/directory-results-grid.tsx.
-		static let tilePrefix = "directory-tile-"
-		/// The bottom-toolbar button's accessibilityLabel in each direction.
-		static let showAsList = "Show as list"
-		static let showAsTiles = "Show as tiles"
 
-		/// The one entry a UI-test run's directory holds, carrying every field
-		/// the detail screen draws. Mirrors `UITEST_ENTRY_NAME` in
-		/// `source/features/directory/__fixtures__/entries.ts`.
-		static let fixtureEntry = "Kari Testerson"
-		static let fixtureEntryDepartment = "Computer Science"
 	}
 
 	// MARK: - Layout menu

@@ -7,12 +7,6 @@ struct AboutScreen: Screen {
 
 	var host: XCUIElement { app.element(matching: TestIdentifiers.About.screen) }
 
-	@discardableResult
-	func checkOpen() -> Self {
-		XCTAssertTrue(host.waitForExistence(timeout: 10), "About should open")
-		return self
-	}
-
 	/// A text in the screen, found by its label: the host's identifier reaches
 	/// every element in it.
 	func text(_ label: String) -> XCUIElement {

@@ -276,15 +276,6 @@ struct CalendarScreen: Screen {
     app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.eventRowPrefix))
   }
 
-	/// How many event rows are on screen.
-	///
-	/// A count of what is rendered, not of what the calendar holds -- the list
-	/// is lazy. Enough to tell "some rows" from "none", and to tell a narrowed
-	/// list from an unnarrowed one, which is all any assertion here claims.
-	func visibleRowCount() -> Int {
-		visibleRows().count
-	}
-
 	/// A row for `title` is in the list, found by its own identifier.
 	///
 	/// This, not `visibleRowCount()`, is how a test asks whether a filter let an

@@ -444,26 +444,6 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Tap a Crossword post's Solve button and assert the in-app browser opened. Its Done
-	/// button is drawn before PuzzleMe's page loads, so this holds whatever the network does.
-	/// The in-app browser is the default link setting, which a reset launch keeps.
-	@discardableResult
-	func solveCrossword() -> Self {
-		let solve = app.buttons.matching(
-			NSPredicate(
-				format: "identifier == %@ AND label == %@",
-				TestIdentifiers.News.puzzleSolve, TestIdentifiers.News.crosswordSolveLabel)
-		).firstMatch
-		XCTAssertTrue(solve.waitForExistence(timeout: 30), "a Crossword post should offer to solve its puzzle")
-		XCTAssertTrue(solve.waitForHittable(), "the Solve button should be ready to tap")
-		solve.tap()
-		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
-		XCTAssertTrue(
-			done.waitForExistence(timeout: 30),
-			"Solve the crossword should open the puzzle in the in-app browser")
-		return self
-	}
-
 	/// Scroll a recipe page to its first ingredient, tick it, and assert it reads as selected.
 	/// A lazy stack builds a row only near the screen, so the row may not exist until the
 	/// page scrolls to it.

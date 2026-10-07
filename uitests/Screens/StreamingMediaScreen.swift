@@ -107,15 +107,6 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Tap the button labelled `label`, once it shows.
-	@discardableResult
-	func tapButton(_ label: String) -> Self {
-		let button = app.buttonLabelled(label)
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "A button labelled \"\(label)\" should exist")
-		button.tap()
-		return self
-	}
-
 	/// Check something labelled `label` is on screen. A check that a thing has
 	/// gone proves nothing unless it was there first.
 	@discardableResult

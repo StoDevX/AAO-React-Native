@@ -108,16 +108,21 @@ extension Screen {
 	/// does nothing. Waiting longer never fixes a dropped tap, so tap again.
 	///
 	/// `marker` must appear only once the tap has worked -- the next screen, or
-	/// the control's new label. Each attempt looks the element up again and
-	/// taps only if it is still there: a tap that landed late may have moved it.
+	/// the control's new label. The first tap always goes; a retry goes only
+	/// while `element` can still be hit, since a tap that did land on a slow
+	/// screen leaves it covered, and tapping it again would open it twice.
+	/// `wait` is how long each attempt gives `marker`, for a screen that is
+	/// slow to mount rather than a tap that was dropped.
 	@discardableResult
-	func tap(_ element: XCUIElement, until marker: XCUIElement, named name: String) -> Self {
+	func tap(
+		_ element: XCUIElement, until marker: XCUIElement, named name: String, wait: TimeInterval = 10
+	) -> Self {
 		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
 		for attempt in 1...3 {
-			if element.exists {
+			if attempt == 1 || element.isHittable {
 				element.tap()
 			}
-			if marker.waitForExistence(timeout: 10) {
+			if marker.waitForExistence(timeout: wait) {
 				return self
 			}
 			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }

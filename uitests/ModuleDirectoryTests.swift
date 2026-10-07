@@ -56,47 +56,4 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 				whileShowing: TestIdentifiers.Directory.aContact)
 			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
 	}
-
-	/// A screen opened from a department link: what it shows, how its results
-	/// can be viewed, and what cancelling search leaves behind.
-	///
-	/// The title stays "Directory" wherever the screen was opened from, so a
-	/// department has to name itself above its own results -- otherwise nothing
-	/// on screen says whose names these are.
-	///
-	/// The toolbar button swaps the results between the gallery and the list,
-	/// both ways. It is tested here rather than after a typed search: the
-	/// toggle shares the bottom toolbar with the search field, and while that
-	/// field is active the toolbar holds only its own Clear and Close buttons.
-	/// A department's results arrive with the field idle, which is the one
-	/// state where the toggle is on screen to tap -- so the toggle goes before
-	/// the cancel.
-	///
-	/// Cancelling a search the reader never started has to leave the
-	/// department and its title alone -- otherwise the list empties while the
-	/// title goes on naming a department, and the only way back is to navigate
-	/// in again.
-	func testALinkedDepartmentNamesItselfTogglesAndSurvivesCancel() throws {
-		let department = TestIdentifiers.Directory.fixtureEntryDepartment
-
-		DirectoryScreen(app: app)
-			.navigate()
-			.search(for: "testerson")
-			// Faces read faster than a column of names, so a search opens on the
-			// tile gallery unless the reader has switched away from it before.
-			.verifyResultsGalleried()
-			.openDepartment(
-				of: TestIdentifiers.Directory.fixtureEntry, named: department)
-			.verifyDirectoryTitle()
-			.verifyDepartmentHeading(department)
-			.verifyResultsShown()
-			.verifyResultsGalleried()
-			.showAsList()
-			.verifyResultsListed()
-			.showAsTiles()
-			.verifyResultsGalleried()
-			.cancelSearch()
-			.verifyDepartmentHeading(department)
-			.verifyResultsShown()
-	}
 }

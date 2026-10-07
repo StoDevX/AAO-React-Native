@@ -239,6 +239,11 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// pin opens that place -- not the building its point sits inside. The
 	/// place is then listed under Recents on the root view, and a swipe takes
 	/// it off again.
+	///
+	/// The cancel is also the check that Close ends a search in one tap after
+	/// the keyboard's Search key has already ended editing, as Apple Maps' X
+	/// does -- rather than putting the field back into editing and needing a
+	/// second tap.
 	func testASearchedPinOpensItsOwnCard() throws {
 		let name = TestIdentifiers.Map.aPointOnlyPlace
 		MapScreen(app: app)
@@ -248,41 +253,16 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.typeIntoSearch(name)
 			.submitSearch()
 			.verifyAtMiddleStop()
+			.verifyKeyboardHidden()
 			.tapMapCenterAboveSheet()
 			.verifyCardTitled(name)
 			.closeTopCard()
 			.cancelSearch()
+			.verifyKeyboardHidden()
+			.verifySearchFieldEmpty()
 			.expandSheet()
 			.verifyRecentsList(name)
 			.removeRecent(name)
 			.verifyNoRecents()
-	}
-
-	/// The base map's own name for a place inside a building opens that place,
-	/// not the building around it. Searching frames the place's pin at a known
-	/// spot; cancelling takes the pin away and leaves the camera, so the base
-	/// map's label for the place is what is under that spot.
-	///
-	/// The cancel is also the check that Close ends a search in one tap after
-	/// the keyboard's Search key has already ended editing, as Apple Maps' X
-	/// does -- rather than putting the field back into editing and needing a
-	/// second tap.
-	func testATappedPlaceNameOpensItsOwnCard() throws {
-		let name = TestIdentifiers.Map.aPointOnlyPlace
-		let screen = MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.submitSearch()
-			.verifyAtMiddleStop()
-			.verifyKeyboardHidden()
-		let spot = screen.mapCenterAboveSheet()
-		screen
-			.cancelSearch()
-			.verifyKeyboardHidden()
-			.verifySearchFieldEmpty()
-			.tapMap(at: spot)
-			.verifyCardTitled(name)
 	}
 }

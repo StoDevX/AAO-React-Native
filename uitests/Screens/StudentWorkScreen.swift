@@ -30,47 +30,6 @@ struct StudentWorkScreen: Screen {
 		openPreset(TestIdentifiers.StudentWork.allPostingsPreset)
 	}
 
-	/// Opens an area's tile, whose label leads with the area's name.
-	@discardableResult
-	func openArea(_ name: String) -> Self {
-		let tile = areaGrid.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
-		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The landing should have a \(name) tile")
-		tile.tap()
-		return waitForPostings()
-	}
-
-	@discardableResult
-	func verifyAreaTileCount(_ count: Int) -> Self {
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should show its area tiles")
-		XCTAssertEqual(areaGrid.buttons.count, count, "The landing should have \(count) area tiles")
-		return self
-	}
-
-	@discardableResult
-	func verifyAreaRowsShown() -> Self {
-		let row = app.buttons
-			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.StudentWork.areaRowPrefix))
-			.firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "The areas should be drawn as rows")
-		XCTAssertFalse(areaGrid.exists, "The area tiles should be gone")
-		return self
-	}
-
-	/// The list says it has nothing, rather than showing an empty screen.
-	@discardableResult
-	func verifyNoMatchingJobs() -> Self {
-		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.StudentWork.noMatchingJobs].waitForExistence(timeout: 30),
-			"The list should say no jobs match")
-		return self
-	}
-
-	@discardableResult
-	func verifyTrigger(_ key: String, isSelected expected: Bool) -> Self {
-		FilterScreen(app: app).verifyTrigger(key, isSelected: expected)
-		return self
-	}
-
 	private var areaGrid: XCUIElement {
 		app.element(matching: TestIdentifiers.StudentWork.areaGrid)
 	}
@@ -85,41 +44,6 @@ struct StudentWorkScreen: Screen {
 	/// A posting's row, found by the title it leads with.
 	private func row(_ title: String) -> XCUIElement {
 		app.elementWithLabel(startingWith: title)
-	}
-
-	@discardableResult
-	func verifyPostingListed(_ title: String) -> Self {
-		XCTAssertTrue(row(title).waitForExistence(timeout: 30), "Student Work should list \(title)")
-		return self
-	}
-
-	@discardableResult
-	func verifyPostingHidden(_ title: String) -> Self {
-		XCTAssertTrue(row(title).waitForNonExistence(timeout: 10), "Student Work should hide \(title)")
-		return self
-	}
-
-	/// Chooses one option in a filter's pull-down menu, then closes it.
-	@discardableResult
-	func choose(_ option: String, inFilter key: String) -> Self {
-		let filters = FilterScreen(app: app)
-		filters
-			.openFilter(key, until: filters.menuItem(option))
-			.tapMenuItem(option)
-			.dismissMenu(waitingFor: option)
-		return self
-	}
-
-	@discardableResult
-	func search(for text: String) -> Self {
-		let field = app.searchFields.firstMatch
-		XCTAssertTrue(field.waitForExistence(timeout: 30), "Student Work should offer a search field")
-		field.tap()
-		field.typeText(text)
-		// A test that searched nothing would pass no matter what the list did.
-		XCTAssertEqual(
-			field.value as? String, text, "Typing should put the query in the search field")
-		return self
 	}
 
 	/// Opens a fixture posting by its title, which leads its row's label.
@@ -164,7 +88,4 @@ struct StudentWorkScreen: Screen {
 		return self
 	}
 
-	private var jobsSiteLink: XCUIElement {
-		app.linkLabelled(TestIdentifiers.StudentWork.jobsSiteLink)
-	}
 }

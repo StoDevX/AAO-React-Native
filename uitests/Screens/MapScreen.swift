@@ -537,14 +537,6 @@ struct MapScreen: Screen {
 			.withOffset(CGVector(dx: app.frame.midX, dy: sheet.minY / 2))
 	}
 
-	/// Taps a spot on the map found earlier, which stays put while the sheet
-	/// moves, since the camera does not follow the sheet.
-	@discardableResult
-	func tapMap(at spot: XCUICoordinate) -> Self {
-		spot.tap()
-		return self
-	}
-
 	/// The card on top is `name`'s own, read from its title rather than any
 	/// label beginning with the name: a building's card lists what is inside
 	/// it, so `name` can be on screen in someone else's card.
