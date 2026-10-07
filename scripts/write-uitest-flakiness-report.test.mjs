@@ -293,6 +293,31 @@ describe('buildReport', () => {
 		})
 	})
 
+	it("puts every attempt, the simulator wait's too, in the shard's lane", () => {
+		const report = build(
+			tree(
+				suite('ModuleNewsTests', [
+					testCase('testB()', 'Passed', 4, [
+						repetition(0, 'Failed', 2),
+						repetition(1, 'Passed', 3),
+					]),
+				]),
+			),
+			{parallelIndex: 1, simulatorWait: {startedMs: 900_000, durationMs: 45_000, exitCode: 0}},
+		)
+
+		const lanes = report.suites.flatMap((s) =>
+			s.tests.flatMap((test) => test.attempts.map((a) => a.parallelIndex)),
+		)
+		assert.deepEqual(lanes, [1, 1, 1])
+	})
+
+	it('leaves the lane out when the shard is unknown', () => {
+		const report = build(tree(suite('ModuleNewsTests', [testCase('testA()', 'Passed', 1)])))
+
+		assert.equal(onlyTest(report).attempts[0].parallelIndex, undefined)
+	})
+
 	it('returns null when there is nothing to report', () => {
 		assert.equal(buildReport([], OPTIONS), null)
 	})

@@ -155,10 +155,34 @@ function simulatorWaitSuite(wait) {
 }
 
 /**
+ * Put every attempt in one lane of flakiness.io's waterfall. Shards run side
+ * by side, so each is a lane, as a parallel worker would be.
+ */
+function setLane(suites, parallelIndex) {
+	for (const suite of suites) {
+		for (const test of suite.tests ?? []) {
+			for (const attempt of test.attempts) {
+				attempt.parallelIndex = parallelIndex
+			}
+		}
+		setLane(suite.suites ?? [], parallelIndex)
+	}
+}
+
+/**
  * Build the report for one shard, or null when there is nothing in it.
  */
 export function buildReport(testNodes, options) {
-	const {shard, commitId, url, osVersion, xcodeVersion, testsStartedMs, simulatorWait} = options
+	const {
+		shard,
+		commitId,
+		url,
+		osVersion,
+		xcodeVersion,
+		testsStartedMs,
+		simulatorWait,
+		parallelIndex,
+	} = options
 
 	const clock = {now: testsStartedMs}
 	const suites = toSuites(testNodes, clock)
@@ -168,6 +192,9 @@ export function buildReport(testNodes, options) {
 	}
 	if (suites.length === 0) {
 		return null
+	}
+	if (parallelIndex !== undefined) {
+		setLane(suites, parallelIndex)
 	}
 
 	const starts = [hasTests ? testsStartedMs : undefined, simulatorWait?.startedMs].filter(
@@ -236,6 +263,8 @@ function main() {
 		xcodeVersion: readXcodeVersion(),
 		testsStartedMs: env.UITEST_STARTED ? Number(env.UITEST_STARTED) * 1000 : Date.now(),
 		simulatorWait: readSimulatorWait(env),
+		// Shards are numbered from 1; lanes from 0.
+		parallelIndex: Number.isInteger(Number(env.SHARD)) ? Number(env.SHARD) - 1 : undefined,
 	})
 
 	if (!report) {
