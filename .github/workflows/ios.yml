@@ -692,6 +692,12 @@ jobs:
           # than wait longer -- a stalled launch is not a slow one, and setUp gives
           # each attempt a fresh app.
           #
+          # No test should need more than two minutes. One that runs past them --
+          # most often a query stalled on an app that stopped answering -- is
+          # stopped with a spindump attached and retried, rather than holding the
+          # shard for as long as XCUITest's own retries take. XCTest rounds the
+          # allowance up to whole minutes.
+          #
           # Leave -test-repetition-relaunch-enabled off. It repeats the whole bundle
           # instead of just the failures, which would run every passing test three
           # times over and take the shard past its timeout.
@@ -719,6 +725,8 @@ jobs:
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             $MATRIX_TESTS \
             -retry-tests-on-failure \
+            -test-timeouts-enabled YES \
+            -default-test-execution-time-allowance 120 \
             -collect-test-diagnostics ${{ runner.debug == '1' && 'on-failure' || 'never' }} \
             -resultBundlePath uitest-results \
             2>&1 | xcbeautify --renderer github-actions
