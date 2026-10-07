@@ -59,12 +59,16 @@ jobs:
             echo "No master UI-test report at or before ${base_sha:-the base commit}."
             exit 0
           fi
-          newest=$(head -n 1 <<<"$found")
-          echo "compared=${newest#* }" >> "$GITHUB_OUTPUT"
+          # The note names the newest report the comparison actually read.
+          compared=
           while IFS=' ' read -r run_id commit; do
-            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir "baseline/$run_id/" \
-              || echo "The report for $commit could not be downloaded."
+            if gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name uitest-report --dir "baseline/$run_id/"; then
+              compared=${compared:-$commit}
+            else
+              echo "The report for $commit could not be downloaded."
+            fi
           done <<<"$found"
+          echo "compared=$compared" >> "$GITHUB_OUTPUT"
 
       - name: Render the block
         env:

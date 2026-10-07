@@ -157,7 +157,7 @@ describe('diffUitests', () => {
 			flaky: [{identifier: 'steady', attempts: 2}],
 		})
 		let head = report({durations: {slow: 31.4, tiny: 4, steady: 104, fresh: 70, quicker: 20}})
-		let diff = diffUitests([baseline], head)
+		let diff = diffUitests([baseline, baseline], head)
 		assert.equal(diff.commonCount, 4)
 		assert.equal(diff.before, 153)
 		assert.equal(diff.after, 159.4)
@@ -191,12 +191,20 @@ describe('diffUitests', () => {
 		assert.equal(diff.after, 85 + 11 + 40 + 2)
 		assert.deepEqual(
 			diff.rows.map((row) => [row.name, row.before, row.min, row.max, row.delta]),
-			[
-				['slower', 11, 10, 12, 29],
-				['newer', 20, 20, 20, -18],
-			],
+			[['slower', 11, 10, 12, 29]],
 		)
 		assert.deepEqual(diff.flakyOnBaseline, new Set(['a', 'b']))
+	})
+
+	it('lists no test master ran only once, though it counts towards the totals', () => {
+		let baselines = [
+			report({durations: {steady: 10}}),
+			report({durations: {steady: 10, newer: 20}}),
+		]
+		let diff = diffUitests(baselines, report({durations: {steady: 10, newer: 90}}))
+		assert.equal(diff.commonCount, 2)
+		assert.equal(diff.after, 100)
+		assert.deepEqual(diff.rows, [])
 	})
 
 	it('takes the median of an even number of runs as the mean of the middle two', () => {
@@ -231,11 +239,11 @@ describe('buildBlock', () => {
 		})
 		let flakyBaseline = {...baseline, flaky: [{identifier: 'b', attempts: 2}]}
 		assert.equal(
-			buildBlock({head, baselines: [flakyBaseline], comparedSha: BASE}),
+			buildBlock({head, baselines: [flakyBaseline, flakyBaseline], comparedSha: BASE}),
 			[
 				BLOCK_START,
 				'### UI tests',
-				'Slowest shard **9m 12s** · 3 tests, 1 shard · test time 1m 31s (master: 1m 0s on the same 3, +31s)',
+				'Slowest shard **9m 12s** · 3 tests, 1 shard · test time 1m 31s (master median of 2 runs: 1m 0s on the same 3, +31s)',
 				'',
 				'Passed only after a retry (2): `a` (2 attempts), `b` (3 attempts, also flaky on master)',
 				'',
@@ -260,7 +268,7 @@ describe('buildBlock', () => {
 		let names = Array.from({length: 60}, (_, i) => `t${String(i).padStart(2, '0')}`)
 		let slow = report({durations: Object.fromEntries(names.map((n, i) => [n, 100 + i]))})
 		let fast = report({durations: Object.fromEntries(names.map((n) => [n, 10]))})
-		let block = buildBlock({head: slow, baselines: [fast], comparedSha: slow.baseSha})
+		let block = buildBlock({head: slow, baselines: [fast, fast], comparedSha: slow.baseSha})
 		let [top, rest] = block.split('<details>')
 		assert.equal(top.match(/^\| `t\d\d`/gmu).length, 10)
 		assert.equal(rest.match(/^\| `t\d\d`/gmu).length, 40)

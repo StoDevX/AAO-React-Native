@@ -148,8 +148,9 @@ const isOutsideMastersRange = (row) => {
  * Compares a pull request's tests with several of master's runs. A test's
  * time swings by twice or more from one master run to the next with no
  * change, so one run is too noisy to compare with: a test is set against its
- * median on master, and moved only when it fell outside the range master ran
- * it in, by `CHANGE_SECONDS` and `CHANGE_RATIO` of the nearer end. Only tests
+ * median on master, and moved only when master ran it at least twice and it
+ * fell outside that range, by `CHANGE_SECONDS` and `CHANGE_RATIO` of the
+ * nearer end. Only tests
  * that both ran count towards the totals and the rows: a pull request skips
  * the chaos canaries and the shards balance differently, so shard times and
  * whole-suite totals would differ for reasons no change made. Rows come
@@ -169,6 +170,7 @@ export function diffUitests(baselines, head) {
 				before,
 				min: Math.min(...times),
 				max: Math.max(...times),
+				timesOnMaster: times.length,
 				after,
 				delta: after - before,
 			}
@@ -179,7 +181,7 @@ export function diffUitests(baselines, head) {
 		before: rows.reduce((total, row) => total + row.before, 0),
 		after: rows.reduce((total, row) => total + row.after, 0),
 		rows: rows
-			.filter(isOutsideMastersRange)
+			.filter((row) => row.timesOnMaster >= 2 && isOutsideMastersRange(row))
 			.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || a.name.localeCompare(b.name)),
 		flakyOnBaseline: new Set(baselines.flatMap((report) => report.flaky.map((t) => t.identifier))),
 	}
