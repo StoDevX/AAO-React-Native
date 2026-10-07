@@ -7,14 +7,17 @@ import {resetInternetCredentials} from 'react-native-keychain'
 export async function refreshApp(): Promise<void> {
 	await clearStoredData()
 
-	// Clear the Keychain items
-	await resetInternetCredentials({server: SIS_LOGIN_KEY})
+	// Restart even if a step below fails: the clear has already paused
+	// persistence, so a store left running would never save another change.
+	try {
+		// Clear the Keychain items
+		await resetInternetCredentials({server: SIS_LOGIN_KEY})
 
-	// Reset the app icon
-	if ((await getIcon()) !== 'Default') {
-		await resetIcon()
+		// Reset the app icon
+		if ((await getIcon()) !== 'Default') {
+			await resetIcon()
+		}
+	} finally {
+		Restart()
 	}
-
-	// Restart the app
-	Restart()
 }
