@@ -418,8 +418,9 @@ jobs:
         with:
           persist-credentials: false
 
-      # A miss is not a failure: the planner falls back to one unit per test,
-      # giving every test an equal share of the split.
+      # A miss is not a failure: flakiness.io's predictions below fill what they
+      # can, and the planner gives any test with no figure at all the p90 of
+      # those that have one -- or, with no figures anywhere, one unit each.
       - name: Restore the UITest duration table
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:

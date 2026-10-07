@@ -1,7 +1,23 @@
 import assert from 'node:assert/strict'
 import {describe, it} from 'node:test'
 
-import {buildDurationsRequest, readPredictedDurations} from './fetch-uitest-durations.mjs'
+import {ReportUtils} from '@flakiness/sdk'
+
+import {
+	buildDurationsRequest,
+	parseCachedTable,
+	readPredictedDurations,
+} from './fetch-uitest-durations.mjs'
+import {discoverTests} from './split-uitests.mjs'
+import {buildReport} from './write-uitest-flakiness-report.mjs'
+
+/** Every test in a report, as `suite/title`, wherever its suite is nested. */
+function testNames(suites = []) {
+	return suites.flatMap((suite) => [
+		...(suite.tests ?? []).map((test) => `${suite.title}/${test.title}`),
+		...testNames(suite.suites),
+	])
+}
 
 /** Stand in for flakiness.io by giving each named test one predicted attempt. */
 function answer(request, predictions) {
@@ -28,7 +44,6 @@ describe('buildDurationsRequest', () => {
 		)
 
 		assert.equal(request.commitId, 'abc123')
-		assert.equal(request.category, 'xcuitest')
 		assert.deepEqual(request.suites, [
 			{
 				type: 'suite',
@@ -39,6 +54,78 @@ describe('buildDurationsRequest', () => {
 				],
 			},
 		])
+	})
+
+	it('names each test exactly as a shard uploads it', () => {
+		const classes = discoverTests([
+			{
+				name: 'ModuleNewsTests.swift',
+				text: 'class ModuleNewsTests: UITestCase {\n\tfunc testOne() throws {}\n}\n',
+			},
+		])
+		const uploaded = buildReport(
+			[
+				{
+					name: 'AllAboutOlaf',
+					nodeType: 'Test Plan',
+					children: [
+						{
+							name: 'AllAboutOlafUITests',
+							nodeType: 'UI test bundle',
+							children: [
+								{
+									name: 'ModuleNewsTests',
+									nodeType: 'Test Suite',
+									children: [
+										{
+											name: 'testOne()',
+											nodeType: 'Test Case',
+											result: 'Passed',
+											durationInSeconds: 1,
+										},
+									],
+								},
+							],
+						},
+					],
+				},
+			],
+			{shard: '1', commitId: 'a'.repeat(40), osVersion: '27.0', testsStartedMs: 1000},
+		)
+		const request = buildDurationsRequest(classes, {commitId: 'a'.repeat(40), now: 1000})
+
+		assert.equal(request.category, uploaded.category)
+		assert.equal(request.environments[0].name, uploaded.environments[0].name)
+		assert.deepEqual(testNames(request.suites), testNames(uploaded.suites))
+	})
+
+	it('passes flakiness.io’s own report schema', () => {
+		const request = buildDurationsRequest([{className: 'ModuleHomeTests', methods: ['testOne']}], {
+			commitId: 'a'.repeat(40),
+			now: 1000,
+		})
+
+		assert.equal(ReportUtils.validateReport(request), undefined)
+	})
+})
+
+describe('parseCachedTable', () => {
+	it('keeps the durations of a well-formed table', () => {
+		assert.deepEqual(parseCachedTable('{"ModuleHomeTests/testOne()": 12.5}'), {
+			'ModuleHomeTests/testOne()': 12.5,
+		})
+	})
+
+	it('drops an entry that is not a finite number', () => {
+		assert.deepEqual(parseCachedTable('{"A/one()": 3, "A/two()": "slow", "A/three()": null}'), {
+			'A/one()': 3,
+		})
+	})
+
+	it('reads anything other than a JSON object as an empty table', () => {
+		for (const text of ['[1, 2]', '7', 'null', '{"truncated', '']) {
+			assert.deepEqual(parseCachedTable(text), {}, text)
+		}
 	})
 })
 

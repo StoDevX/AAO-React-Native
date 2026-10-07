@@ -161,12 +161,15 @@ export function readTestDir(dir, {skipDirs = []} = {}) {
 	)
 }
 
+/** The value after `flag` on a command line, or `fallback` when it is absent. */
+export function flagValue(args, flag, fallback = null) {
+	const index = args.indexOf(flag)
+	return index === -1 ? fallback : args[index + 1]
+}
+
 function main() {
 	const args = process.argv.slice(2)
-	const valueOf = (flag, fallback) => {
-		const index = args.indexOf(flag)
-		return index === -1 ? fallback : args[index + 1]
-	}
+	const valueOf = (flag, fallback) => flagValue(args, flag, fallback)
 
 	const testDir = valueOf('--test-dir', null)
 	const shardCount = Number(valueOf('--shards', '2'))
