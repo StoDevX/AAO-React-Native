@@ -121,9 +121,6 @@ struct TestIdentifiers {
 		static let sheetGrabber = "Sheet Grabber"
 	}
 
-	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
-	/// placement this app uses, the cancel button is the round one beside the
-	/// field, and UIKit labels it "close" rather than "Cancel".
 	enum Streaming {
 		static let list = "stream-list"
 		static let webcams = "screen-streaming-webcams"
@@ -386,7 +383,6 @@ struct TestIdentifiers {
 		/// Matches FILTER_CLEAR_ID in modules/filter/filter-sheet.tsx.
 		static let clear = "filter-clear"
 
-
 		/// A trigger is identified by its filter's key, from the `buildFilters`
 		/// of whichever screen drew it.
 		static func trigger(_ key: String) -> String {
@@ -505,7 +501,6 @@ struct TestIdentifiers {
 		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
 		static let storyCard = "mess-story-card"
@@ -534,7 +529,6 @@ struct TestIdentifiers {
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
-		static let recipesColumn = "Recipes"
 		static let photoColumn = "Photo"
 
 		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
@@ -553,7 +547,6 @@ struct TestIdentifiers {
 		/// The framed comic or artwork that opens the zoom viewer, in
 		/// source/features/mess/image-view.tsx.
 		static let storyImage = "mess-story-image"
-
 
 		/// An article with a captioned lead photo, three short paragraphs, then captioned figures
 		/// in its body: "Finding peace on campus", from the recorded Mess fixtures. Recording them
@@ -577,10 +570,6 @@ struct TestIdentifiers {
 
 		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
 		static let seriesStory = "mess-series-story"
-
-
-		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
-		static let recipeIngredient = "mess-recipe-ingredient"
 	}
 
 	// MARK: - Streaming Media

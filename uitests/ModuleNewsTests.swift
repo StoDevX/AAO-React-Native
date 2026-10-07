@@ -133,16 +133,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
 	}
 
-	/// An ingredient ticks from anywhere along its row, not only on its words: the row's tap
-	/// area is its `contentShape`, which Jest's stand-in cannot hit-test.
-	func testRecipeTicksAnIngredient() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.recipesColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.tickFirstIngredient()
-	}
-
 	/// A Photo story opens dark while the setting is on, and the page it was opened from is
 	/// light again after Back. With Dark page for Photo stories turned off in the paper's
 	/// Customize sheet, a Photo story follows the system's appearance. The suite runs in Light

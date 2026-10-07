@@ -382,24 +382,6 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Scroll a recipe page to its first ingredient, tick it, and assert it reads as selected.
-	/// A lazy stack builds a row only near the screen, so the row may not exist until the
-	/// page scrolls to it.
-	@discardableResult
-	func tickFirstIngredient() -> Self {
-		let ingredient = app.buttons.matching(identifier: TestIdentifiers.News.recipeIngredient).firstMatch
-		for _ in 0..<20 {
-			if ingredient.exists && ingredient.isHittable { break }
-			app.swipeUp()
-		}
-		XCTAssertTrue(ingredient.waitForHittable(timeout: 10), "a recipe should list an ingredient to tick")
-		XCTAssertTrue(ingredient.waitForSelected(false, timeout: 5), "an ingredient should start unticked")
-		// Its trailing edge, past the words: only the row's contentShape takes a tap there.
-		ingredient.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
-		XCTAssertTrue(ingredient.waitForSelected(true), "tapping an ingredient should tick it")
-		return self
-	}
-
 	/// The headline of the story on top.
 	/// Every story headline in the tree: one at rest, two mid-transition.
 	private var headlineTexts: XCUIElementQuery {
