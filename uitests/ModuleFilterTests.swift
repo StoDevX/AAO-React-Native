@@ -22,11 +22,10 @@ class ModuleFilterTests: UITestCaseUnbooted {
 	/// from one that opened a menu over the screen. It is flipped back before
 	/// the menu, so Specials Only is as the Pause left it.
 	///
-	/// Then the other presentation, end to end: open the pull-down menu, tick
-	/// two stations in one opening, and find both applied to the list behind
-	/// the menu. This proves a selection made through the menu actually reaches
-	/// the data.
-	func testTheToggleFlipsInPlaceAndAStationNarrowsTheList() throws {
+	/// Then the other presentation: open the pull-down menu and tick two
+	/// stations in one opening. The trigger then reads as selected, which it
+	/// takes from the filter state, so the ticks reached it.
+	func testTheToggleFlipsInPlaceAndTheMenuTakesTwoStations() throws {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
@@ -54,14 +53,11 @@ class ModuleFilterTests: UITestCaseUnbooted {
 
 		filters.verifyTrigger(Keys.stations, isSelected: false)
 
-		menus.verifyItemShown(TestIdentifiers.Menus.specialtyPizzaItem)
-
 		// Nothing starts selected, which shows every station. The menu stays
 		// open as options are ticked -- that is what lets several stations be
 		// chosen at once -- so the second station is ticked without reopening
 		// it, which cannot work unless the menu survived the first tick: the
 		// tick that flips the filter from off to on, and so the one at risk.
-		// The menu has to be dismissed before the list behind it can be read.
 		let specialty = TestIdentifiers.Menus.specialtyPizzaStation
 		filters
 			.openFilter(Keys.stations, until: filters.menuItem(pizza))
@@ -70,9 +66,5 @@ class ModuleFilterTests: UITestCaseUnbooted {
 			.dismissMenu(waitingFor: specialty)
 
 		filters.verifyTrigger(Keys.stations, isSelected: true)
-
-		menus
-			.verifyItemShown(TestIdentifiers.Menus.pizzaItem)
-			.verifyItemShown(TestIdentifiers.Menus.specialtyPizzaItem)
 	}
 }

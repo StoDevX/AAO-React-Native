@@ -2,8 +2,6 @@ import XCTest
 
 class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 
-	// MARK: - Day picker strip
-
 	/// Choosing a category from the toolbar picker narrows the day's list, and
 	/// Reset Filters brings it back. The picker is an `@expo/ui` Menu of
 	/// Toggles, so this is the round trip from a native menu to the filter

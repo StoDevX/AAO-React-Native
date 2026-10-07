@@ -162,9 +162,11 @@ class ModuleMapTests: UITestCaseUnbooted {
 
 	/// A place's card lists what else is there, and each opens its own card in
 	/// a sheet over it, as Maps stacks place sheets; the point's card shows
-	/// its own venue's hours. Tapping the map while cards are stacked then
-	/// starts afresh from the place tapped, rather than leaving a sheet over the
-	/// new card.
+	/// its own venue's hours. Closing it shows the card beneath again.
+	///
+	/// Whether a map tap over stacked cards starts afresh is not checked here:
+	/// a presented sheet leaves the ones beneath it out of the accessibility
+	/// tree, so a stack and a single card read the same.
 	func testATileOpensItsCardOverTheCardBeneath() throws {
 		let name = TestIdentifiers.Map.aBuildingWithPoints
 		let point = TestIdentifiers.Map.aPointInside
@@ -178,10 +180,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.verifyHoursStatus()
 			.closeTopCard()
 			.verifyTopCard(name)
-			.openPlaceTile(named: point)
-			.verifyTopCard(point)
-			.tapAFootprint()
-			.verifyOneCardOpen("A tap on the map should leave one card, not a stack")
 	}
 
 	/// A building's Directory lists its floors; a floor stacks its sheet over

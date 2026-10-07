@@ -401,5 +401,4 @@ struct MessStoryScreen: Screen {
 				TestIdentifiers.News.imageViewerClose, TestIdentifiers.News.imageViewerCloseLabel)
 		).firstMatch
 	}
-
 }

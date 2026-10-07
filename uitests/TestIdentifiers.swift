@@ -333,7 +333,6 @@ struct TestIdentifiers {
 		static let pizzaStation = "Pizza"
 		static let specialtyPizzaStation = "Specialty Pizza"
 		static let pizzaItem = "food-row-Single Slice"
-		static let specialtyPizzaItem = "food-row-BBQ Chicken"
 
 		/// The day the app's frozen clock sits on, as the header writes it under
 		/// the cafe's name -- the weekday alone. `UITEST_FROZEN_DATE` in
@@ -776,7 +775,6 @@ struct TestIdentifiers {
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
 		/// DIRECTORY_ROW_PREFIX in app/directory/index.tsx.
 		static let rowPrefix = "directory-row-"
-
 	}
 
 	// MARK: - Layout menu

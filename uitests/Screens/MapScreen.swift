@@ -364,13 +364,6 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// Exactly one card is open: one close button can be tapped.
-	@discardableResult
-	func verifyOneCardOpen(_ message: String) -> Self {
-		XCTAssertEqual(hittableCloseButtons(settlingOn: 1), 1, message)
-		return self
-	}
-
 	/// How many cards' close buttons can be tapped, once that number is
 	/// `expected` or five seconds have passed: a sheet takes a moment to leave.
 	private func hittableCloseButtons(settlingOn expected: Int) -> Int {
@@ -431,12 +424,12 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	enum SheetDirection { case up, down }
+
 	/// A move is a change of at least a hundred points: the collapsed stop
 	/// renders at about 65pt, the middle stop at `MAP_MIDDLE_FRACTION` of
 	/// the screen, and large at nearly all of it, so anything smaller is a
 	/// scroll or a wobble, not a detent change.
-	enum SheetDirection { case up, down }
-
 	@discardableResult
 	func verifySheetMoved(from before: CGFloat, _ direction: SheetDirection, _ message: String) -> Self {
 		let after = searchFieldTop()

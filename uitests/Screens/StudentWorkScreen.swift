@@ -97,5 +97,4 @@ struct StudentWorkScreen: Screen {
 			"The description screen should hold the posting's text")
 		return self
 	}
-
 }

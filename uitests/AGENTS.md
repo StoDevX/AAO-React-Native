@@ -28,11 +28,15 @@ bundle. To drive the app by hand instead of asserting on it, see
 as a chain of named steps, with no `app.buttons[...]` in it:
 
 ```swift
-func testSearchResultsOpenAsTiles() throws {
-    DirectoryScreen(app: app)
+func testACategoryNarrowsTheListAndResetBringsItBack() throws {
+    CalendarScreen(app: app)
         .navigate()
-        .search(for: "olaf")
-        .verifyResultsGalleried()
+        .verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
+        .openPicker()
+        .openSubmenu(TestIdentifiers.Calendar.categoryMenu)
+        .tapMenuItem(TestIdentifiers.Calendar.categories[0])
+        .dismissMenu()
+        .verifyRowAbsent(TestIdentifiers.Calendar.unfilteredDayRow)
 }
 ```
 

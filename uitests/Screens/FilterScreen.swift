@@ -110,5 +110,4 @@ struct FilterScreen: Screen {
 			"the \(key) trigger should\(expected ? "" : " not") report itself selected")
 		return self
 	}
-
 }

@@ -270,7 +270,7 @@ struct CalendarScreen: Screen {
 
 	/// A row for `title` is in the list, found by its own identifier.
 	///
-	/// This, not `visibleRowCount()`, is how a test asks whether a filter let an
+	/// This, not a count of rows, is how a test asks whether a filter let an
 	/// event through: the list is a lazy stack, so its row count is how far
 	/// ahead SwiftUI has built rather than how many events the list holds, and
 	/// two counts taken at different scroll offsets differ without anything

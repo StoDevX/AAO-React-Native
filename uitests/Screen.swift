@@ -112,6 +112,11 @@ extension Screen {
 			XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
 		}
 		for attempt in 1...3 {
+			// The marker can arrive just after the last wait gave up; tapping
+			// again then would undo what the first tap did.
+			if attempt > 1 && marker.exists {
+				return self
+			}
 			if attempt == 1 || element.isHittable {
 				element.tap()
 			}
