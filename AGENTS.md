@@ -113,9 +113,10 @@ Six more kinds of test cost upkeep and catch nothing:
   the app. Test the decision in Jest and put simulator screenshots on the PR.
 
 In Claude Code, the `test-writing-reminder` mod in
-`.claude/skills/test-writing-reminder/` refuses the first write to each test
-file in a session and lists these kinds. Send the write again once the test is
-none of them.
+`.claude/skills/test-writing-reminder/` refuses each agent's first write to
+each test file and lists these kinds; a subagent gets its own reminder, and so
+does a path written once absolute and once relative. Send the write again once
+the test is none of them.
 
 ## Development Commands
 
