@@ -513,15 +513,28 @@ wait_for = ["prebuild"]
 env = { KEEP_UITEST_FIXTURES = "1", EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH = "1", EXPO_UNSTABLE_TREE_SHAKING = "1" }
 # --reset-cache: Metro caches in $TMPDIR, which neither a pnpm install nor
 # deleting ios/ clears, so a bundle can embed a package copy pnpm has replaced.
+#
+# Compiled to Hermes bytecode as Xcode's Release build does
+# (react-native-xcode.sh): unminified, then hermesc -O, with the two source
+# maps composed into one. Bytecode spares Hermes parsing and compiling the
+# whole bundle at every launch, which every UI test pays. It keeps the name
+# main.jsbundle, which AppDelegate.bundleURL() and the UI tests look for.
 run = """
+set -euo pipefail
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
 expo export:embed \
   --reset-cache \
   --entry-file index.js \
   --dev false \
+  --minify false \
   --platform ios \
-  --bundle-output ./ios/AllAboutOlaf/main.jsbundle \
-  --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map \
+  --bundle-output "$tmp/main.jsbundle" \
+  --sourcemap-output "$tmp/main.jsbundle.map" \
   --assets-dest ./ios
+scripts/hermesc.sh -emit-binary -max-diagnostic-width=80 -O -output-source-map -out "$tmp/main.hbc" "$tmp/main.jsbundle" 2>"$tmp/hermesc.log" || { cat "$tmp/hermesc.log" >&2; exit 1; }
+node node_modules/react-native/scripts/compose-source-maps.js "$tmp/main.jsbundle.map" "$tmp/main.hbc.map" -o ./ios/AllAboutOlaf/main.jsbundle.map
+mv "$tmp/main.hbc" ./ios/AllAboutOlaf/main.jsbundle
 """
 
 # Measures what ships: no UI-test fixtures and no mocked mode, unlike
@@ -562,12 +575,7 @@ expo export:embed \
   --bundle-output "$out/minified/main.jsbundle" \
   --sourcemap-output "$out/minified/main.jsbundle.map" \
   --assets-dest "$out/minified/assets"
-hermes=$(node -p "require('path').dirname(require.resolve('hermes-compiler/package.json', {paths: [require('path').dirname(require.resolve('react-native/package.json'))]}))")
-case "$(uname -s)" in
-  Darwin) bin="$hermes/hermesc/osx-bin/hermesc" ;;
-  *) bin="$hermes/hermesc/linux64-bin/hermesc" ;;
-esac
-"$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log" || { cat "$out/hermesc.log" >&2; exit 1; }
+scripts/hermesc.sh -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log" || { cat "$out/hermesc.log" >&2; exit 1; }
 source-map-explorer "$out/minified/main.jsbundle" "$out/minified/main.jsbundle.map" --json --no-border-checks --no-root > "$out/explorer.json"
 node scripts/pr-report/js-size.mjs "$out"
 """

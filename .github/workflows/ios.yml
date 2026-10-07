@@ -46,9 +46,9 @@ jobs:
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json') }}
+          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/format=hbc/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json', 'scripts/hermesc.sh') }}
           restore-keys: |
-            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json') }}
+            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/format=hbc/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json', 'scripts/hermesc.sh') }}
 
       - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:

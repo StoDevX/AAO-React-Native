@@ -53,13 +53,13 @@ complete anyway. That call belongs to the person whose phone this is.
 and `embed-jsbundle:ios` copies it in, along with `ios/assets/` — images resolve
 from there.
 
-Two steps you can skip:
+`bundle:ios` compiles the bundle to Hermes bytecode, as a Release build does,
+and keeps the name `main.jsbundle`. CI feeds the same file to simulator
+UITests, so leave the task as it is.
 
-- **Hermes bytecode.** `bundle:ios` emits plain JavaScript and a device runs it.
-  Leave that task as it is; CI feeds its output to simulator UITests.
-- **Re-signing after injection.** Copying files in breaks the seal — `codesign
-  -v` reports `a sealed resource is missing or invalid` — and it installs and
-  runs regardless.
+One step you can skip: re-signing after injection. Copying files in breaks the
+seal — `codesign -v` reports `a sealed resource is missing or invalid` — and it
+installs and runs regardless.
 
 ## Verifying it worked, without touching the phone
 
