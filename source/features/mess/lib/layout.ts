@@ -40,9 +40,19 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 			let index = input.blocks.findIndex((b) => b.type === 'figure')
 			let figure = input.blocks[index]
 			if (figure?.type !== 'figure') return {layout: {kind: 'article'}, blocks: input.blocks}
-			let {url, width, height, caption, alt} = figure
+			let {url, largeUrl, width, height, caption, alt} = figure
 			return {
-				layout: {kind: 'image', image: {url, width, height, caption, ...(alt ? {alt} : {})}},
+				layout: {
+					kind: 'image',
+					image: {
+						url,
+						...(largeUrl ? {largeUrl} : {}),
+						width,
+						height,
+						caption,
+						...(alt ? {alt} : {}),
+					},
+				},
 				blocks: input.blocks.filter((_, i) => i !== index),
 			}
 		}

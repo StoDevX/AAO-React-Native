@@ -63,7 +63,7 @@ function pictureOf(
 	let label = imageLabel(story, picturePlace(story, index))
 	if (story.layout.kind === 'image') {
 		let {image} = story.layout
-		return {url: image.url, label, caption: shownCaption(image)}
+		return {url: image.largeUrl ?? image.url, label, caption: shownCaption(image)}
 	}
 	if (story.layout.kind === 'feature') {
 		let image = story.layout.images[index]

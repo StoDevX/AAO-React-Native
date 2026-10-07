@@ -183,6 +183,28 @@ describe('chooseLayout', () => {
 		expect(chosen.blocks).toStrictEqual([paragraph])
 	})
 
+	it('keeps the largest copy of a comic’s inline image', () => {
+		let figure: Block = {
+			type: 'figure',
+			url: 'https://example.com/c-600x400.png',
+			largeUrl: 'https://example.com/c.png',
+			width: 600,
+			height: 400,
+			caption: 'A comic',
+		}
+		let chosen = chooseLayout({column: 'Comic', blocks: [figure], photo: null, html: ''})
+		expect(chosen.layout).toStrictEqual({
+			kind: 'image',
+			image: {
+				url: 'https://example.com/c-600x400.png',
+				largeUrl: 'https://example.com/c.png',
+				width: 600,
+				height: 400,
+				caption: 'A comic',
+			},
+		})
+	})
+
 	it("keeps a comic's alt text beside its figcaption", () => {
 		let figure: Block = {
 			type: 'figure',

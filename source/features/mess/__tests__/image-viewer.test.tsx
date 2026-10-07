@@ -164,6 +164,23 @@ const GALLERY: MessStory = {
 	layout: {kind: 'feature', images: []},
 }
 
+/** A comic whose inline figure offers a larger copy than the one the article draws. */
+const LARGE_COMIC = 'https://olafmessenger.com/c-1536x1024.png'
+const SHARP_COMIC: MessStory = {
+	...COMIC,
+	id: 36830,
+	layout: {
+		kind: 'image',
+		image: {
+			url: 'https://olafmessenger.com/c.png',
+			largeUrl: LARGE_COMIC,
+			width: 800,
+			height: 600,
+			caption: '',
+		},
+	},
+}
+
 let queryClient: QueryClient
 
 beforeEach(() => {
@@ -172,6 +189,7 @@ beforeEach(() => {
 		messKeys.feed,
 		onePage([
 			COMIC,
+			SHARP_COMIC,
 			CAPTIONED_COMIC,
 			DESCRIBED,
 			ARTICLE,
@@ -204,6 +222,13 @@ describe('ImageViewer', () => {
 		await renderViewer(33129, 1)
 		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({
 			uri: LARGE_CUP,
+		})
+	})
+
+	test("shows the largest copy of a comic's picture", async () => {
+		await renderViewer(36830)
+		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({
+			uri: LARGE_COMIC,
 		})
 	})
 
