@@ -409,6 +409,11 @@ struct TestIdentifiers {
 
 	// MARK: - Calendar
 
+	enum Athletics {
+		/// The screen's title.
+		static let title = "Athletics"
+	}
+
 	enum Calendar {
 		/// Days in the fixture calendar: one with events in the week after
 		/// `frozenNow`'s, and one with none in the week after that.
@@ -647,6 +652,23 @@ struct TestIdentifiers {
 		static let done = "Done"
 	}
 
+	// MARK: - stoPrint
+
+	/// From the mocked jobs and printers in source/lib/stoprint/__mocks__.
+	enum StoPrint {
+		static let title = "Print Jobs"
+		/// A section header of the job list.
+		static let pendingRelease = "Pending Release"
+		/// A job already sent, and one pending release.
+		static let aSentJob = "test.pdf"
+		static let aPendingJob = "IMG_2259-COLLAGE.jpg"
+		/// A heading only the release screen draws.
+		static let jobInfo = "Job Info"
+		/// How every printer's name starts.
+		static let printerPrefix = "mfc-"
+		static let print = "Print"
+	}
+
 	// MARK: - SpringBoard
 
 	enum SpringBoard {
@@ -698,8 +720,10 @@ struct TestIdentifiers {
 	// MARK: - About
 
 	enum About {
-		/// The story's page dots, labelled in source/features/about/card-carousel.tsx.
+		/// The story's page dots, labelled in source/features/about/card-carousel.tsx,
+		/// and the value they read on each of its three eras.
 		static let pageDots = "Page"
+		static func page(_ number: Int) -> String { "\(number) of 3" }
 		/// The About screen's host, set in app/about/index.tsx.
 		static let screen = "screen-about"
 		static let version = "App Version"
@@ -853,6 +877,10 @@ struct TestIdentifiers {
 	// MARK: - Course Catalog
 
 	enum CourseCatalog {
+		/// The screen's title.
+		static let title = "Course Catalog"
+		/// A row every course's detail screen draws.
+		static let prerequisites = "Prerequisites"
 		static let recent = "Recent"
 		/// The one course a UI-test run's catalogue holds. Mirrors
 		/// `UITEST_COURSE_NAME` in

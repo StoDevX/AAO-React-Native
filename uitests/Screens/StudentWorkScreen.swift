@@ -21,8 +21,7 @@ struct StudentWorkScreen: Screen {
 		// Below the tiles, and the list builds rows only as they near the screen.
 		scrollUntilExists(preset)
 		XCTAssertTrue(preset.waitForExistence(timeout: 10), "The landing should offer \(title)")
-		preset.tap()
-		return waitForPostings()
+		return tap(preset, until: postingsTitle, named: "the \(title) preset")
 	}
 
 	@discardableResult
@@ -56,11 +55,9 @@ struct StudentWorkScreen: Screen {
 		app.element(matching: TestIdentifiers.StudentWork.areaGrid)
 	}
 
-	private func waitForPostings() -> Self {
-		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.StudentWork.postingsTitle].waitForExistence(timeout: 30),
-			"The postings should open")
-		return self
+	/// The postings list's title, which only that screen draws.
+	private var postingsTitle: XCUIElement {
+		app.navigationBars[TestIdentifiers.StudentWork.postingsTitle]
 	}
 
 	/// A posting's row, found by the title it leads with.
@@ -71,20 +68,15 @@ struct StudentWorkScreen: Screen {
 	/// Opens a fixture posting by its title, which leads its row's label.
 	@discardableResult
 	func openJobPosting(_ title: String) -> Self {
-		let job = app.elementWithLabel(startingWith: title)
-		XCTAssertTrue(job.waitForExistence(timeout: 30), "Student Work should list \(title)")
-		job.tap()
-		// The posting's own title, not a row in it: a form builds rows only as
-		// they near the screen, so its last rows may not exist yet.
-		XCTAssertTrue(
-			app.navigationBars[title].waitForExistence(timeout: 30),
-			"Tapping \(title) should open its posting")
-		return self
+		// Marked by the posting's own title, not a row in it: a form builds rows
+		// only as they near the screen, so its last rows may not exist yet.
+		tap(app.elementWithLabel(startingWith: title), until: app.navigationBars[title], named: "\(title)'s row")
 	}
 
 	@discardableResult
 	func openJobDescription() -> Self {
 		let row = app.buttonLabelled(TestIdentifiers.StudentWork.jobDescriptionRow)
+		XCTAssertTrue(row.waitForExistence(timeout: 30), "The posting should offer its description as a row")
 		// Scrolled to until tappable, not merely present: a form builds rows
 		// before they are on screen.
 		for _ in 0..<6 {
@@ -93,16 +85,13 @@ struct StudentWorkScreen: Screen {
 			}
 			app.swipeUp()
 		}
-		XCTAssertTrue(row.isHittable, "The posting should offer its description as a row")
-		row.tap()
-		return self
+		return tap(
+			row, until: app.navigationBars[TestIdentifiers.StudentWork.jobDescriptionRow],
+			named: "the Description row")
 	}
 
 	@discardableResult
 	func checkJobDescriptionShown() -> Self {
-		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.StudentWork.jobDescriptionRow].waitForExistence(timeout: 10),
-			"The description should open on a screen of its own")
 		XCTAssertTrue(
 			app.elementWithLabel(startingWith: TestIdentifiers.StudentWork.fixtureJobDescriptionParagraph)
 				.waitForExistence(timeout: 10),

@@ -29,9 +29,7 @@ class ModuleHomeTests: UITestCase {
 			home.chooseFromHomeMenu(item, opening: mounted).goBack()
 		}
 		home
-			.chooseFromHomeMenu(
-				nav.feedbackMenuItem,
-				opening: app.navigationBars[TestIdentifiers.Support.reportProblemTitle])
+			.chooseFromHomeMenu(nav.feedbackMenuItem, opening: home.problemForm)
 			.closeProblemForm()
 
 		let buttons = TestIdentifiers.Buttons.self

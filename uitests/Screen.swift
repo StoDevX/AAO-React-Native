@@ -120,15 +120,18 @@ extension Screen {
 		return self
 	}
 
+	/// Report a Problem's navigation bar, drawn only while the form is up.
+	var problemForm: XCUIElement {
+		app.navigationBars[TestIdentifiers.Support.reportProblemTitle]
+	}
+
 	/// Close Report a Problem with its own close button, and wait for it to go.
 	@discardableResult
 	func closeProblemForm() -> Self {
 		let close = app.buttons[TestIdentifiers.Support.closeProblemForm].firstMatch
 		XCTAssertTrue(close.waitForHittable(timeout: 10), "Report a Problem should have a close button")
 		close.tap()
-		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForNonExistence(timeout: 10),
-			"Report a Problem should close")
+		XCTAssertTrue(problemForm.waitForNonExistence(timeout: 10), "Report a Problem should close")
 		return self
 	}
 
@@ -180,11 +183,9 @@ extension Screen {
 	/// screen that offers one.
 	@discardableResult
 	func chooseLayout(_ layout: String) -> Self {
-		let menu = app.buttons[TestIdentifiers.Layout.menu].firstMatch
-		XCTAssertTrue(menu.waitForExistence(timeout: 30), "The screen should offer a layout menu")
-		menu.tap()
 		let item = app.buttons[layout].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "The layout menu should offer \(layout)")
+		tap(app.buttons[TestIdentifiers.Layout.menu].firstMatch, until: item, named: "the layout menu")
+		// A native menu item: its tap is UIKit's to deliver, not JavaScript's.
 		item.tap()
 		return self
 	}

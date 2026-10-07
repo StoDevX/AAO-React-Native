@@ -11,10 +11,7 @@ class ModuleAboutTests: UITestCase {
 		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
 		let ids = TestIdentifiers.About.self
 
-		// LabeledContent reads its label and value as one element, so match its start.
-		about.reveal(
-			app.descendants(matching: .any)
-				.matching(NSPredicate(format: "label BEGINSWITH %@", ids.version)).firstMatch)
+		about.reveal(about.version)
 		about.reveal(about.text(ids.storyHeading))
 
 		let first = about.text(ids.firstEra)
@@ -23,12 +20,12 @@ class ModuleAboutTests: UITestCase {
 		XCTAssertTrue(about.isOnScreen(first), "The timeline should open on its newest era")
 
 		about.reveal(about.pageDots)
-		XCTAssertEqual(about.pageDots.value as? String, "1 of 3", "The dots should mark the first era")
+		XCTAssertEqual(about.pageDots.value as? String, ids.page(1), "The dots should mark the first era")
 
 		about.swipeToNextCard(from: first, toShow: second)
 		XCTAssertFalse(about.isOnScreen(first), "The newest era should scroll off to the side")
 		let onSecond = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value == %@", "2 of 3"), object: about.pageDots)
+			predicate: NSPredicate(format: "value == %@", ids.page(2)), object: about.pageDots)
 		XCTAssertEqual(
 			XCTWaiter().wait(for: [onSecond], timeout: 5), .completed,
 			"The dots should follow the swipe to the second era")
@@ -43,12 +40,7 @@ class ModuleAboutTests: UITestCase {
 			"Acknowledgements should sit below Contributors")
 
 		for page in [ids.privacy, ids.legal] {
-			about.reveal(about.row(page))
-			about.row(page).tap()
-			XCTAssertTrue(
-				app.navigationBars[page].waitForExistence(timeout: 30), "\(page) should open its own screen")
-			about.goBack()
-			XCTAssertTrue(about.host.waitForExistence(timeout: 10), "Back should return to About")
+			about.openPageAndComeBack(page)
 		}
 	}
 }

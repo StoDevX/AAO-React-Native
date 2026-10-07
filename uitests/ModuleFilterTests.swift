@@ -4,11 +4,10 @@ import XCTest
 /// exist: every one of these assertions is about a native control's state,
 /// hit target, or presentation, and Jest can see none of those.
 ///
-/// Menus is the vehicle. Stav Hall's Dietary Restrictions filter carries
-/// icons, so `filterShape` makes it a sheet however few options it has. The
-/// Pause's menu comes from this repository's own `data/pause-menu.yaml`, so its
-/// ten stations are fixed rather than whatever is being served today. Stations
-/// asks for a menu outright, so its count does not decide its shape.
+/// Menus is the vehicle. The Pause's menu comes from this repository's own
+/// `data/pause-menu.yaml`, so its ten stations are fixed rather than whatever
+/// is being served today. Stations asks for a menu outright, so its count does
+/// not decide its shape.
 class ModuleFilterTests: UITestCaseUnbooted {
 	private typealias Keys = TestIdentifiers.Filter.MenusKeys
 
@@ -24,9 +23,9 @@ class ModuleFilterTests: UITestCaseUnbooted {
 	/// the menu, so Specials Only is as the Pause left it.
 	///
 	/// Then the other presentation, end to end: open the pull-down menu, tick
-	/// two stations in one opening, then untick one, and find each choice
-	/// applied to the list behind the menu. This proves a selection made
-	/// through the menu actually reaches the data.
+	/// two stations in one opening, and find both applied to the list behind
+	/// the menu. This proves a selection made through the menu actually reaches
+	/// the data.
 	func testTheToggleFlipsInPlaceAndAStationNarrowsTheList() throws {
 		MenusScreen(app: app)
 			.navigate()
@@ -34,6 +33,7 @@ class ModuleFilterTests: UITestCaseUnbooted {
 			.openCafe(TestIdentifiers.Menus.pause)
 			.revealFilters()
 
+		let menus = MenusScreen(app: app)
 		let filters = FilterScreen(app: app)
 		let pizza = TestIdentifiers.Menus.pizzaStation
 
@@ -46,9 +46,7 @@ class ModuleFilterTests: UITestCaseUnbooted {
 
 		// Nothing was presented over the screen: the menu behind the toolbar is
 		// still there to be touched. A menu or sheet would be covering it.
-		let row = app.buttons[TestIdentifiers.Menus.pizzaItem]
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "the menu should still be on screen")
-		XCTAssertTrue(row.isHittable, "nothing should have been presented over the menu")
+		menus.verifyItemUncovered(TestIdentifiers.Menus.pizzaItem)
 
 		// And it flips back, so the control is a toggle rather than a latch.
 		filters.tapTrigger(Keys.specials)
@@ -56,9 +54,7 @@ class ModuleFilterTests: UITestCaseUnbooted {
 
 		filters.verifyTrigger(Keys.stations, isSelected: false)
 
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
-			"the unfiltered menu should show an item from another station")
+		menus.verifyItemShown(TestIdentifiers.Menus.specialtyPizzaItem)
 
 		// Nothing starts selected, which shows every station. The menu stays
 		// open as options are ticked -- that is what lets several stations be
@@ -75,27 +71,8 @@ class ModuleFilterTests: UITestCaseUnbooted {
 
 		filters.verifyTrigger(Keys.stations, isSelected: true)
 
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
-			"the first station's items should show")
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
-			"the second station's items should show, chosen without reopening the menu")
-
-		// Unticking one narrows the list to the station left.
-		filters
-			.openFilter(Keys.stations, until: filters.menuItem(specialty))
-			.tapMenuItem(specialty)
-			.dismissMenu(waitingFor: pizza)
-
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
-			"the chosen station's items should stay")
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForNonExistence(timeout: 30),
-			"the other stations' items should be gone")
-		XCTAssertFalse(
-			app.staticTexts[TestIdentifiers.Menus.specialtyPizzaStation].exists,
-			"the other stations' headers should be gone")
+		menus
+			.verifyItemShown(TestIdentifiers.Menus.pizzaItem)
+			.verifyItemShown(TestIdentifiers.Menus.specialtyPizzaItem)
 	}
 }

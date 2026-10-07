@@ -21,11 +21,6 @@ class ModuleMenusTests: UITestCaseUnbooted {
 				from: TestIdentifiers.Menus.openingMeal
 			)
 			.verifyFoodRowsAppear()
-
-		// The title names the meal on screen, so the switch shows up in it.
-		XCTAssertTrue(
-			menus.mealPicker(stav, showing: TestIdentifiers.Menus.otherMeal)
-				.waitForExistence(timeout: 30),
-			"the title should now name \(TestIdentifiers.Menus.otherMeal)")
+			.verifyTitleNames(TestIdentifiers.Menus.otherMeal, at: stav)
 	}
 }

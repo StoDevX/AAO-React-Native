@@ -20,9 +20,22 @@ struct AboutScreen: Screen {
 			.matching(NSPredicate(format: "label == %@", TestIdentifiers.About.pageDots)).firstMatch
 	}
 
-	/// A row, found by its label.
-	func row(_ title: String) -> XCUIElement {
-		host.buttons[title].firstMatch
+	/// The version row. LabeledContent reads its label and value as one
+	/// element, so it is matched by its start.
+	var version: XCUIElement {
+		app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.About.version)).firstMatch
+	}
+
+	/// Open `page`'s row, check it opens a screen of its own, and come back.
+	@discardableResult
+	func openPageAndComeBack(_ page: String) -> Self {
+		let row = host.buttons[page].firstMatch
+		reveal(row)
+		tap(row, until: app.navigationBars[page], named: "About's \(page) row")
+		goBack()
+		XCTAssertTrue(host.waitForExistence(timeout: 10), "Back should return to About")
+		return self
 	}
 
 	/// Scroll the screen until `element` is on it.

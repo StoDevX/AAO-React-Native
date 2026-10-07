@@ -5,6 +5,6 @@ struct AthleticsScreen: Screen {
 
 	/// Drawn by this screen alone, so its presence says the screen has mounted.
 	var mounted: XCUIElement {
-		app.navigationBars["Athletics"]
+		app.navigationBars[TestIdentifiers.Athletics.title]
 	}
 }
