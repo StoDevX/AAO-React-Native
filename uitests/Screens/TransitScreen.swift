@@ -65,7 +65,7 @@ struct TransitScreen: Screen {
 	@discardableResult
 	func verifyStripHasNotReached(_ stop: String) -> Self {
 		XCTAssertTrue(
-			stopStrip.waitForExistence(timeout: 30),
+			stopStrip.waitUntilExists(timeout: 30),
 			"The first line's widget should show its stop strip")
 		XCTAssertFalse(
 			stripShows(stop),
@@ -81,7 +81,7 @@ struct TransitScreen: Screen {
 	@discardableResult
 	func swipeStripLeft() -> Self {
 		XCTAssertTrue(
-			stopStrip.waitForExistence(timeout: 30),
+			stopStrip.waitUntilExists(timeout: 30),
 			"The first line's widget should show its stop strip")
 		stopStrip.swipeLeft()
 		stopStrip.swipeLeft()
@@ -97,7 +97,7 @@ struct TransitScreen: Screen {
 	func verifyStripAdvancedTo(_ stop: String) -> Self {
 		let cell = app.elementWithLabel(startingWith: stop)
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 30),
+			cell.waitUntilExists(timeout: 30),
 			"Swiping the strip should scroll far enough to reveal \(stop)")
 		XCTAssertTrue(
 			stripShows(stop),
@@ -129,7 +129,7 @@ struct TransitScreen: Screen {
 	func verifyStopListsDepartures(_ stop: String) -> Self {
 		let row = app.elementWithLabel(startingWith: "\(stop), ")
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"The timetable should list \(stop)")
 		XCTAssertFalse(
 			row.label.hasPrefix("\(stop), \(TestIdentifiers.Transit.skippedDeparture)"),
@@ -143,13 +143,13 @@ struct TransitScreen: Screen {
 	@discardableResult
 	func verifyLineNotRunning(on day: String) -> Self {
 		XCTAssertTrue(
-			app.buttons[day].waitForExistence(timeout: 30),
+			app.buttons[day].waitUntilExists(timeout: 30),
 			"The day menu should relabel itself to \(day)")
 
 		let emptyState = app.elementWithLabel(
 			startingWith: TestIdentifiers.Transit.lineNotRunning)
 		XCTAssertTrue(
-			emptyState.waitForExistence(timeout: 30),
+			emptyState.waitUntilExists(timeout: 30),
 			"Picking \(day) should redraw the timetable as a line that is not running")
 		return self
 	}

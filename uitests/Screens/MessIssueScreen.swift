@@ -42,7 +42,7 @@ struct MessIssueScreen: Screen {
 	func verifyMoreGridsItsStories() -> Self {
 		let row = app.element(matching: TestIdentifiers.News.moreGridRow)
 		scrollUntilExists(row, swipes: 10)
-		XCTAssertTrue(row.waitForExistence(timeout: 10), "the issue should end with the More grid")
+		XCTAssertTrue(row.waitUntilExists(timeout: 10), "the issue should end with the More grid")
 		let cards = row.descendants(matching: .any).matching(identifier: TestIdentifiers.News.storyCard)
 		XCTAssertEqual(cards.count, 2, "a row of the More grid should hold two cards")
 		let first = cards.element(boundBy: 0).frame

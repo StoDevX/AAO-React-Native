@@ -15,7 +15,7 @@ struct CustomizeScreen: Screen {
 	@discardableResult
 	func toggleRadioPlayer() -> Self {
 		let toggle = sheet.switches[TestIdentifiers.StreamingMedia.showRadioPlayer]
-		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Radio Player")
+		XCTAssertTrue(toggle.waitUntilExists(timeout: 10), "Customize should offer Radio Player")
 		let before = toggle.value as? String
 		// The element spans the whole row, and a tap at its centre lands on the
 		// label, which flips nothing in a Form -- as for a person. Tap the
@@ -24,10 +24,10 @@ struct CustomizeScreen: Screen {
 		// Wait for the switch to report the other value, so a tap that landed
 		// on the label and flipped nothing fails here rather than as a missing
 		// bar on Home.
-		let flipped = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value != %@", before ?? ""), object: toggle)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [flipped], timeout: 5), .completed,
+		XCTAssertTrue(
+			toggle.waitUntilSnapshot("to change from \(before ?? "nil")", timeout: 5) {
+				$0.value as? String != (before ?? "")
+			},
 			"Radio Player should change from \(before ?? "nil")")
 		return self
 	}
@@ -44,9 +44,9 @@ struct CustomizeScreen: Screen {
 	@discardableResult
 	func close() -> Self {
 		let button = app.buttons[TestIdentifiers.Customize.close].firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Customize should have a close button")
+		XCTAssertTrue(button.waitUntilExists(timeout: 10), "Customize should have a close button")
 		button.tap()
-		XCTAssertTrue(sheet.waitForNonExistence(timeout: 10), "Customize should close")
+		XCTAssertTrue(sheet.waitUntilGone(timeout: 10), "Customize should close")
 		return self
 	}
 }

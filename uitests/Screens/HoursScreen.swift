@@ -28,7 +28,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.waitUntilExists(timeout: 30),
 			"Hours should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -46,7 +46,7 @@ struct HoursScreen: Screen {
 	func verifyRowShown(_ name: String) -> Self {
 		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"\(name) should be listed")
 		return self
 	}
@@ -55,7 +55,7 @@ struct HoursScreen: Screen {
 	func verifyRowHidden(_ name: String) -> Self {
 		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
-			row.waitForNonExistence(timeout: 30),
+			row.waitUntilGone(timeout: 30),
 			"\(name) should have been filtered out")
 		return self
 	}
@@ -67,7 +67,7 @@ struct HoursScreen: Screen {
 	func verifyNoResultsShown(for query: String) -> Self {
 		let message = app.staticTexts[TestIdentifiers.Hours.noResults(for: query)]
 		XCTAssertTrue(
-			message.waitForExistence(timeout: 30),
+			message.waitUntilExists(timeout: 30),
 			"Hours should report no results for \"\(query)\"")
 		return self
 	}
@@ -91,7 +91,7 @@ struct HoursScreen: Screen {
 	func revealSwipeAction(on name: String) -> Self {
 		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"\(name) should be listed before it can be swiped")
 
 		scrollUntilHittable(row)
@@ -121,7 +121,7 @@ struct HoursScreen: Screen {
 		// Matched on label across every element type: what a SwiftUI swipe
 		// action lands as in the XCUITest tree is not something to assume.
 		let action = app.elementWithLabel(startingWith: TestIdentifiers.Hours.addToFavorites)
-		if !action.waitForExistence(timeout: 10) {
+		if !action.waitUntilExists(timeout: 10) {
 			XCTFail(
 				"""
 				Swiping a row should reveal its Add to Favorites action.
@@ -137,7 +137,7 @@ struct HoursScreen: Screen {
 	func verifyFavoritesSectionShown() -> Self {
 		let heading = app.staticTexts[TestIdentifiers.Hours.favoritesSection].firstMatch
 		XCTAssertTrue(
-			heading.waitForExistence(timeout: 30),
+			heading.waitUntilExists(timeout: 30),
 			"Favouriting a building should grow a Favorites section at the top of the list")
 		return self
 	}
@@ -155,7 +155,7 @@ struct HoursScreen: Screen {
 	func tapRow(_ name: String) -> Self {
 		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"\(name) should be listed before it can be tapped")
 
 		// Tapped by coordinate, not `row.tap()`: XCUITest's own hittability
@@ -172,7 +172,7 @@ struct HoursScreen: Screen {
 		// a venue with no hours listed has no status row.
 		for _ in 1...3 {
 			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-			if app.navigationBars.staticTexts[name].waitForExistence(timeout: 10) {
+			if app.navigationBars.staticTexts[name].waitUntilExists(timeout: 10) {
 				return self
 			}
 		}
@@ -187,7 +187,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyDetailSheetTitled(_ name: String) -> Self {
 		XCTAssertTrue(
-			app.navigationBars.staticTexts[name].waitForExistence(timeout: 30),
+			app.navigationBars.staticTexts[name].waitUntilExists(timeout: 30),
 			"The detail sheet should be titled \(name)")
 		return self
 	}
@@ -195,11 +195,11 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyDetailSheetPresented(for name: String) -> Self {
 		XCTAssertTrue(
-			app.staticTexts[name].waitForExistence(timeout: 30),
+			app.staticTexts[name].waitUntilExists(timeout: 30),
 			"The detail sheet should be titled \(name)")
 		XCTAssertTrue(
 			app.descendants(matching: .any)[TestIdentifiers.Hours.status]
-				.waitForExistence(timeout: 30),
+				.waitUntilExists(timeout: 30),
 			"The detail sheet should show \(name)'s schedule")
 		return self
 	}
@@ -263,7 +263,7 @@ struct HoursScreen: Screen {
 	func verifyDetailSheetFullyLaidOut(for name: String, titleBefore: CGRect) -> Self {
 		let footnote = app.elementWithLabel(startingWith: TestIdentifiers.Hours.footnote)
 		XCTAssertTrue(
-			footnote.waitForExistence(timeout: 30) && footnote.isHittable,
+			footnote.waitUntilExists(timeout: 30) && footnote.isHittable,
 			"The sheet's closing footnote should be reachable once expanded to the larger detent")
 
 		let titleAfter = detailTitleFrame(for: name)
@@ -281,7 +281,7 @@ struct HoursScreen: Screen {
 	func tapReportAction() -> Self {
 		let action = app.buttons[TestIdentifiers.Hours.reportAction]
 		XCTAssertTrue(
-			action.waitForExistence(timeout: 30),
+			action.waitUntilExists(timeout: 30),
 			"The detail sheet should offer Report a Problem")
 		action.tap()
 		return self
@@ -295,7 +295,7 @@ struct HoursScreen: Screen {
 	func verifyReportScreenPresented() -> Self {
 		XCTAssertTrue(
 			app.staticTexts[TestIdentifiers.Hours.reportScreenPrompt]
-				.waitForExistence(timeout: 30),
+				.waitUntilExists(timeout: 30),
 			"Report a Problem should present the report screen")
 		return self
 	}
@@ -314,7 +314,7 @@ struct HoursScreen: Screen {
 	func verifySubmitReportReachable() -> Self {
 		let submit = app.navigationBars.buttons[TestIdentifiers.Hours.submitReportAction]
 		XCTAssertTrue(
-			submit.waitForExistence(timeout: 30),
+			submit.waitUntilExists(timeout: 30),
 			"The report screen should offer Submit Report")
 		XCTAssertTrue(
 			submit.isHittable,
@@ -335,7 +335,7 @@ struct HoursScreen: Screen {
 	func verifyReportPushedIntoSheet() -> Self {
 		XCTAssertTrue(
 			app.staticTexts[TestIdentifiers.Hours.reportScreenPrompt]
-				.waitForExistence(timeout: 30),
+				.waitUntilExists(timeout: 30),
 			"The report screen should be up")
 
 		let back = app.navigationBars[TestIdentifiers.Hours.reportScreenTitle]
@@ -354,7 +354,7 @@ struct HoursScreen: Screen {
 		let back = app.navigationBars[TestIdentifiers.Hours.reportScreenTitle]
 			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
-			back.waitForExistence(timeout: 30),
+			back.waitUntilExists(timeout: 30),
 			"The report screen should offer a way to go back")
 		back.tap()
 		return self
@@ -365,7 +365,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func makeUnsavedEditOnReportScreen() -> Self {
 		let nameField = app.textFields.firstMatch
-		XCTAssertTrue(nameField.waitForExistence(timeout: 30), "The report screen should have a Name field")
+		XCTAssertTrue(nameField.waitUntilExists(timeout: 30), "The report screen should have a Name field")
 		nameField.tap()
 		nameField.typeText(" edited")
 
@@ -375,11 +375,11 @@ struct HoursScreen: Screen {
 		// swallows the next tap anywhere else, so the back button's tap would
 		// only dismiss the callout and the screen would never try to leave.
 		let done = app.keyboards.buttons[TestIdentifiers.Hours.keyboardDone]
-		if done.waitForExistence(timeout: 5) {
+		if done.waitUntilExists(timeout: 5) {
 			done.tap()
 		}
 		XCTAssertTrue(
-			app.keyboards.firstMatch.waitForNonExistence(timeout: 15),
+			app.keyboards.firstMatch.waitUntilGone(timeout: 15),
 			"The keyboard should be gone before leaving the report screen")
 		return self
 	}
@@ -391,7 +391,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyDiscardChangesAlertPresented() -> Self {
 		XCTAssertTrue(
-			discardChangesAlert.waitForExistence(timeout: 15),
+			discardChangesAlert.waitUntilExists(timeout: 15),
 			"The unsaved-changes guard should have raised its alert")
 		return self
 	}
@@ -399,7 +399,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyNoDiscardChangesAlertPresented() -> Self {
 		XCTAssertFalse(
-			discardChangesAlert.waitForExistence(timeout: 5),
+			discardChangesAlert.waitUntilExists(timeout: 5),
 			"No alert should appear -- this gesture should have been a no-op")
 		return self
 	}
@@ -443,10 +443,10 @@ struct HoursScreen: Screen {
 	func verifyReportScreenGone(buildingName: String) -> Self {
 		XCTAssertTrue(
 			app.staticTexts[TestIdentifiers.Hours.reportScreenPrompt]
-				.waitForNonExistence(timeout: 15),
+				.waitUntilGone(timeout: 15),
 			"Confirming the discard should have let the dismissal go through")
 		XCTAssertTrue(
-			app.navigationBars.staticTexts[buildingName].waitForNonExistence(timeout: 15),
+			app.navigationBars.staticTexts[buildingName].waitUntilGone(timeout: 15),
 			"The sheet itself, titled \(buildingName), should have closed too, not just popped "
 				+ "back to it")
 		return self
@@ -462,13 +462,13 @@ struct HoursScreen: Screen {
 	/// the schedules, so a venue's first Weekdays row starts below the sheet's
 	/// resting height. A SwiftUI `List` builds its rows lazily, so a row below
 	/// the fold is absent from the tree rather than merely offscreen, and no
-	/// `waitForExistence` will ever see it.
+	/// `waitUntilExists` will ever see it.
 	@discardableResult
 	func openScheduleEditorFromReportScreen() -> Self {
 		let weekdaysRow = app.elementWithLabel(startingWith: TestIdentifiers.Hours.weekdaysRow)
 		scrollSheetUntilHittable(weekdaysRow)
 		XCTAssertTrue(
-			weekdaysRow.waitForExistence(timeout: 15),
+			weekdaysRow.waitUntilExists(timeout: 15),
 			"The report screen should list an editable Weekdays row")
 		weekdaysRow.tap()
 		return self
@@ -498,7 +498,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyScheduleEditorPresented() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Hours.scheduleEditorTitle].waitForExistence(timeout: 15),
+			app.staticTexts[TestIdentifiers.Hours.scheduleEditorTitle].waitUntilExists(timeout: 15),
 			"Tapping a schedule row should present the schedule editor")
 		return self
 	}
@@ -520,7 +520,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyDetailSheetGone(for name: String) -> Self {
 		XCTAssertTrue(
-			app.navigationBars.staticTexts[name].waitForNonExistence(timeout: 15),
+			app.navigationBars.staticTexts[name].waitUntilGone(timeout: 15),
 			"The detail sheet, titled \(name), should have closed")
 		return self
 	}

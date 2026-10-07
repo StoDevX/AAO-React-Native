@@ -46,7 +46,7 @@ struct SpringBoardScreen: Screen {
 		// quiescence timeout, about a minute apiece. From a cold start, with
 		// the app not running, the same two take seconds.
 		let item = springboard.buttons[action]
-		XCTAssertTrue(item.waitForExistence(timeout: 5), "\(action) should be in the icon's menu")
+		XCTAssertTrue(item.waitUntilExists(timeout: 5), "\(action) should be in the icon's menu")
 		item.tap()
 		return self
 	}
