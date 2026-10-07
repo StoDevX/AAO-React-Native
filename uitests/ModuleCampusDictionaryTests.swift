@@ -27,7 +27,7 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 	/// against a completely blank preview, since its identifier sits on the
 	/// outer container.
 	///
-	/// `addedWord` is seven characters rather than fewer, here and in every other test
+	/// `addedWord` and the space after it make seven characters, here and in every other test
 	/// that types into this field: a shorter burst does not reliably straddle
 	/// the window in which a keystroke sent to a native text field can be
 	/// dropped between renders. Seven characters is what it takes to trip that

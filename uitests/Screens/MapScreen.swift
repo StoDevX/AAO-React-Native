@@ -913,7 +913,7 @@ struct MapScreen: Screen {
 		aboutText().coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0))
 			.withOffset(CGVector(dx: 0, dy: 30))
 			.press(forDuration: 1.0)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.Map.copy)).firstMatch
+		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.EditMenu.copy)).firstMatch
 		// Proving Copy absent needs a wait too, but a short one: the menu shows
 		// in well under a second when it shows at all.
 		let offered = copy.waitForExistence(timeout: expected ? 5 : 1.5)

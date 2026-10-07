@@ -284,8 +284,6 @@ struct TestIdentifiers {
 		static let attribution = "About this map"
 		/// The map screen's title, which its header no longer draws.
 		static let stolafTitle = "St. Olaf Map"
-		/// The edit menu's Copy, which iOS offers only for selectable text.
-		static let copy = "Copy"
 		/// A St. Olaf-only building near the top of the list, so the expanded
 		/// sheet shows it without scrolling -- and absent from Carleton's map
 		/// data, so selecting it is what would fail if the map's campus parameter
@@ -483,8 +481,6 @@ struct TestIdentifiers {
 	// MARK: - News
 
 	enum News {
-		/// The edit menu's Copy, which iOS offers once text is selected.
-		static let copy = "Copy"
 		/// A print section's shelf's "All ›", by the label VoiceOver reads.
 		static func allStories(in section: String) -> String { "All \(section)" }
 		/// St. Olaf News's navigation bar title, in app/st-olaf-news.tsx.
@@ -629,6 +625,14 @@ struct TestIdentifiers {
 		static let alert = "Discard changes?"
 		static let keepEditing = "Edit"
 		static let discard = "Discard"
+	}
+
+	// MARK: - Edit menu
+
+	enum EditMenu {
+		/// The edit menu's Copy, which iOS offers only for text that can be,
+		/// or has been, selected.
+		static let copy = "Copy"
 	}
 
 	// MARK: - In-app browser

@@ -99,7 +99,7 @@ struct MessStoryScreen: Screen {
 		let start = body.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 40, dy: 10))
 		let end = start.withOffset(CGVector(dx: 120, dy: 200))
 		start.press(forDuration: 1.0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copy)).firstMatch
+		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.EditMenu.copy)).firstMatch
 		let offered = copy.waitForExistence(timeout: 5)
 		XCTAssertTrue(offered, "a drag across the story's text should select some of it, and offer Copy")
 
