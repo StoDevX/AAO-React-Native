@@ -559,6 +559,28 @@ jobs:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
         run: xcrun simctl bootstatus "$SIMULATOR_UDID" -b
 
+      # A freshly booted simulator spends its first six or seven minutes
+      # rendering wallpapers and widgets and running Apple Intelligence and
+      # Health setup, at up to two of the runner's three cores. Tests run
+      # through that stall: an XCUITest query that takes a millisecond takes
+      # half a second, and a test can sit for minutes. So wait until the
+      # simulator's own processes have used under 40% of a core for 30 seconds
+      # running, or eight minutes have gone. Each sample is kept with the
+      # shard's evidence.
+      - name: Wait for the simulator to settle
+        run: |
+          mkdir -p uitest-evidence
+          start=$(date +%s)
+          calm=0
+          while [ $(( $(date +%s) - start )) -lt 480 ]; do
+            busy=$(ps -Ao pcpu=,command= | awk 'index($0, "simruntime") { total += $1 } END { printf "%.0f", total }')
+            echo "$(( $(date +%s) - start ))s ${busy}%" | tee -a uitest-evidence/settle.log
+            if [ "$busy" -lt 40 ]; then calm=$((calm + 1)); else calm=0; fi
+            [ "$calm" -ge 6 ] && break
+            sleep 5
+          done
+          echo "Settled after $(( $(date +%s) - start ))s." | tee -a uitest-evidence/settle.log
+
       # A re-run with "Enable debug logging" ticked sets runner.debug, and this
       # step then keeps what an ordinary run throws away: every test's
       # screenshots, and the simulator diagnostics xcodebuild gathers after a
