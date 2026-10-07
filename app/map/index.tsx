@@ -98,10 +98,9 @@ const HEADER_CLEARANCE = 44
 /// The footprints are drawn by the tileset, so this layer paints only the open
 /// place's building, tinted under its dot. It stays for every building
 /// because it is the tap target, and the source's only child: MapLibre
-/// resolves a source press against a *rendered* layer. If a device shows taps
-/// landing nowhere, a hair above zero for the rest is the fix -- zero opacity
-/// should still hit-test, since it is `visibility: none` rather than opacity
-/// that drops a layer from the tree.
+/// resolves a source press against a *rendered* layer. Zero opacity still
+/// hit-tests, since it is `visibility: none` rather than opacity that drops a
+/// layer from the tree.
 const SELECTED_FOOTPRINT_OPACITY = 0.3
 
 export default function MapPage(): React.ReactNode {
@@ -319,10 +318,14 @@ export default function MapPage(): React.ReactNode {
 		() => new Set(footprints.features.map((footprint) => footprint.id)),
 		[footprints],
 	)
+	// A source takes no feature state until its style has loaded, so each load
+	// sets the highlight again, as new footprints do.
+	let [styleLoads, countStyleLoad] = React.useReducer((count: number) => count + 1, 0)
+	let footprintsResetKey = React.useMemo(() => ({footprints, styleLoads}), [footprints, styleLoads])
 	useFootprintHighlight(
 		footprintsRef,
 		selectedPlace ? highlightedFootprint(selectedPlace, footprintIds) : null,
-		footprints,
+		footprintsResetKey,
 	)
 
 	// Reads the sheet's height at the moment of selection without depending on
@@ -379,6 +382,7 @@ export default function MapPage(): React.ReactNode {
 				ref={mapRef}
 				attribution={false}
 				logo={false}
+				onDidFinishLoadingStyle={countStyleLoad}
 				onPress={handleMapPress}
 				mapStyle={mapStyleUrl}
 				style={StyleSheet.absoluteFill}

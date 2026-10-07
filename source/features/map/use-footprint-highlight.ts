@@ -6,7 +6,7 @@ export const SELECTED = 'selected'
 
 /// Runs a feature-state call and drops its failure, whether it rejects or
 /// throws: `removeFeatureState` is not async, so a source whose native view is
-/// already gone -- the screen closing with a place open -- throws on the spot.
+/// already gone throws on the spot.
 function quietly(call: () => Promise<void>): void {
 	try {
 		call().catch(() => undefined)
@@ -17,23 +17,35 @@ function quietly(call: () => Promise<void>): void {
 }
 
 /// Marks one footprint selected in the source's feature state, and unmarks it
-/// when the id changes or the screen goes. `data` is the source's data: when it
-/// changes the state is set again, as new data may arrive without it.
+/// when the id changes or the screen goes.
+///
+/// `resetKey` is never read, only compared: give it a new value whenever
+/// something may have left the source without the mark -- new data, or a
+/// style load, before which the source takes no feature state at all -- and
+/// the mark is set again.
 ///
 /// Unmarking follows the id alone. MapLibre applies a removal on the next
-/// frame, so removing and re-setting the same id for new data would leave it
-/// unmarked.
+/// frame, so removing and re-setting the same id on a reset would leave it
+/// unmarked. The source is looked up when unmarking rather than when marking,
+/// since a place can open before the source has mounted.
 export function useFootprintHighlight(
 	sourceRef: React.RefObject<GeoJSONSourceRef | null>,
 	id: string | null,
-	data: unknown,
+	resetKey: unknown,
 ): void {
 	React.useEffect(() => {
-		let source = sourceRef.current
-		if (!source || id === null) {
+		if (id === null) {
 			return
 		}
-		return () => quietly(() => source.removeFeatureState({id}, SELECTED))
+		return () => {
+			// The source as it is now, which is the point: it may have mounted
+			// after this place opened, and has gone when the screen closes.
+			// oxlint-disable-next-line react-hooks/exhaustive-deps
+			let source = sourceRef.current
+			if (source) {
+				quietly(() => source.removeFeatureState({id}, SELECTED))
+			}
+		}
 	}, [sourceRef, id])
 
 	React.useEffect(() => {
@@ -42,5 +54,5 @@ export function useFootprintHighlight(
 			return
 		}
 		quietly(() => source.setFeatureState({id}, {[SELECTED]: true}))
-	}, [sourceRef, id, data])
+	}, [sourceRef, id, resetKey])
 }
