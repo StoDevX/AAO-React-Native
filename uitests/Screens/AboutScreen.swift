@@ -35,8 +35,12 @@ struct AboutScreen: Screen {
 	@discardableResult
 	func reveal(_ element: XCUIElement) -> Self {
 		// The screen draws a moment after it opens; swiping before then scrolls
-		// past rows that are about to appear.
-		_ = element.waitForExistence(timeout: 10)
+		// past rows that are about to appear. Wait for the screen's first text,
+		// not for `element`: a row further down is built only once it is
+		// scrolled to, so waiting for it spends the whole timeout.
+		if !element.exists {
+			_ = host.staticTexts.firstMatch.waitForExistence(timeout: 10)
+		}
 		// Enough swipes for the whole page at the largest text sizes.
 		for _ in 0..<20 {
 			if element.exists && element.isHittable { break }
