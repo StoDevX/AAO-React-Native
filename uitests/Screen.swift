@@ -143,7 +143,7 @@ extension Screen {
 	/// Choose `name` from a menu picker and wait for the picker to show it.
 	@discardableResult
 	func choose(_ name: String, from picker: XCUIElement) -> Self {
-		XCTAssertTrue(picker.waitForExistence(timeout: 10), "the screen should offer the picker for \(name)")
+		XCTAssertTrue(picker.existsOrAppears(within: 10), "the screen should offer the picker for \(name)")
 		picker.tap()
 		let item = app.buttons[name].firstMatch
 		XCTAssertTrue(item.waitForExistence(timeout: 10), "the menu should offer \(name)")
@@ -162,7 +162,7 @@ extension Screen {
 	@discardableResult
 	func chooseLayout(_ layout: String) -> Self {
 		let menu = app.buttons[TestIdentifiers.Layout.menu].firstMatch
-		XCTAssertTrue(menu.waitForExistence(timeout: 30), "The screen should offer a layout menu")
+		XCTAssertTrue(menu.existsOrAppears(within: 30), "The screen should offer a layout menu")
 		menu.tap()
 		let item = app.buttons[layout].firstMatch
 		XCTAssertTrue(item.waitForExistence(timeout: 10), "The layout menu should offer \(layout)")
@@ -171,11 +171,14 @@ extension Screen {
 	}
 
 	/// Assert that a navigation-bar or section title is visible.
+	///
+	/// Most callers ask once the screen holding the title has mounted, so the
+	/// title is almost always drawn already.
 	@discardableResult
 	func verifyTitle(_ title: String) -> Self {
 		let titleElement = app.staticTexts[title].firstMatch
 		XCTAssertTrue(
-			titleElement.waitForExistence(timeout: 30),
+			titleElement.existsOrAppears(within: 30),
 			"\(title) title should be visible")
 		return self
 	}

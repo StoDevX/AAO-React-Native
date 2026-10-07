@@ -48,6 +48,16 @@ extension XCUIApplication {
 }
 
 extension XCUIElement {
+	/// Whether this element is in the tree now, or arrives within `timeout`.
+	///
+	/// For an element an earlier step has already drawn. `waitForExistence`
+	/// polls for over a second even when its element is there from the start,
+	/// where a look at `exists` takes a few tenths; this looks first, and waits
+	/// only when it has to.
+	func existsOrAppears(within timeout: TimeInterval) -> Bool {
+		exists || waitForExistence(timeout: timeout)
+	}
+
 	/// Wait for this element to report the given selection state.
 	///
 	/// A selection is the far end of a round trip -- a tap reaches JavaScript,
