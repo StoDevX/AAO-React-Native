@@ -54,7 +54,10 @@ function pictureOf(
 		return galleryPictureAt(story, galleries, url)
 	}
 	let label = imageLabel(story, picturePlace(story, index))
-	if (story.layout.kind === 'image') return {url: story.layout.image.url, label}
+	if (story.layout.kind === 'image') {
+		let {image} = story.layout
+		return {url: image.largeUrl ?? image.url, label}
+	}
 	if (story.layout.kind === 'feature') {
 		let image = story.layout.images[index]
 		return image ? {url: image.largeUrl ?? image.url, label} : null

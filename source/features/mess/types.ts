@@ -164,7 +164,7 @@ export type Puzzle = {
 export type StoryLayout =
 	| {kind: 'article'}
 	| {kind: 'horoscopes'; intro: Run[][]; signs: Array<{sign: ZodiacSign; reading: Run[][]}>}
-	| {kind: 'image'; image: Photo}
+	| {kind: 'image'; image: Photo & {largeUrl?: string}}
 	| {kind: 'poem'; stanzas: PoemLine[][]}
 	| {kind: 'puzzle'; puzzle: Puzzle}
 	| {kind: 'playlist'; spotify: SpotifyRef | null}
