@@ -102,6 +102,15 @@ aube = { path = ".mise/locks/npm-changesets-cli/3.0.3", digest = "sha256:d4d3059
 backend = "npm:@changesets/cli"
 specifiers = ["3.0.3"]
 
+[[tools."npm:flakiness"]]
+version = "0.311.0"
+aube = { path = ".mise/locks/npm-flakiness/0.311.0~da344f14", digest = "sha256:03b3cd57f3b540944019420e540fb72a632405fcb3f35a44a71c2a71c4c7aa48" }
+backend = "npm:flakiness"
+specifiers = ["0.311.0"]
+
+[tools."npm:flakiness".options]
+allow_low_downloads = "true"
+
 [[tools."npm:source-map-explorer"]]
 version = "2.5.3"
 aube = { path = ".mise/locks/npm-source-map-explorer/2.5.3", digest = "sha256:d1c1f8e7a6161cca34f163f604343fcb7228cae76d3ead6f77a94c7a7beb631a" }
