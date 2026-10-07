@@ -580,11 +580,21 @@ jobs:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
         run: |
           xcrun simctl boot "$SIMULATOR_UDID"
+          # Each service at once, since every call waits on the booting
+          # simulator. A service is disabled before it is booted out, and a
+          # disable that fails fails the step.
+          pids=()
           for service in com.apple.apsd com.apple.PosterBoard com.apple.chronod \
             com.apple.intelligenceplatformd com.apple.photoanalysisd; do
-            xcrun simctl spawn "$SIMULATOR_UDID" launchctl disable "user/foreground/$service"
-            # Stops one that started all the same; one that has not fails, which is fine.
-            xcrun simctl spawn "$SIMULATOR_UDID" launchctl bootout "user/foreground/$service" || true
+            (
+              xcrun simctl spawn "$SIMULATOR_UDID" launchctl disable "user/foreground/$service"
+              # Stops one that started all the same; one that has not fails, which is fine.
+              xcrun simctl spawn "$SIMULATOR_UDID" launchctl bootout "user/foreground/$service" || true
+            ) &
+            pids+=("$!")
+          done
+          for pid in "${pids[@]}"; do
+            wait "$pid"
           done
           xcrun simctl spawn "$SIMULATOR_UDID" launchctl print-disabled user/foreground
 
