@@ -550,6 +550,81 @@ describe('buildReport', () => {
 			])
 		})
 
+		it('hang a screenshot on the deepest step that took it, in its own attempt', () => {
+			const shot = {timestamp: 2003.5, name: 'Failure screenshot'}
+			const activities = new Map([
+				[
+					'ModuleNewsTests/testB()',
+					[
+						[activity('Set Up', 2000)],
+						[
+							activity('Set Up', 2010),
+							activity(
+								'Tear Down',
+								2012,
+								[
+									activity("Added attachment named 'Failure'", 2013, undefined, {
+										attachments: [shot],
+									}),
+								],
+								{
+									attachments: [shot],
+								},
+							),
+						],
+					],
+				],
+			])
+			const screenshots = new Map([
+				[
+					'ModuleNewsTests/testB()',
+					[
+						{
+							repetition: 2,
+							timestamp: 2003.5,
+							name: 'Failure screenshot',
+							contentType: 'image/png',
+							id: 'abc123',
+						},
+					],
+				],
+			])
+			const report = build(tree(suite('ModuleNewsTests', [flake])), {activities, screenshots})
+
+			const [first, retry] = onlyTest(report).attempts
+			const tearDown = retry.steps[1]
+			assert.equal(first.attachments, undefined)
+			assert.equal(tearDown.attachments, undefined)
+			assert.deepEqual(tearDown.steps[0].attachments, [
+				{name: 'Failure screenshot', contentType: 'image/png', id: 'abc123'},
+			])
+			assert.equal(retry.attachments, undefined)
+		})
+
+		it('hang a screenshot no step took on its attempt', () => {
+			const screenshots = new Map([
+				[
+					'ModuleNewsTests/testA()',
+					[
+						{
+							repetition: 1,
+							timestamp: 9999,
+							name: 'Screenshot',
+							contentType: 'image/png',
+							id: 'def456',
+						},
+					],
+				],
+			])
+			const report = build(tree(suite('ModuleNewsTests', [testCase('testA()', 'Failed', 1)])), {
+				screenshots,
+			})
+
+			assert.deepEqual(onlyTest(report).attempts[0].attachments, [
+				{name: 'Screenshot', contentType: 'image/png', id: 'def456'},
+			])
+		})
+
 		it('mark the step where an assertion failed', () => {
 			const activities = new Map([
 				[
