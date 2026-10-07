@@ -127,34 +127,63 @@ export function readUitestReport(path) {
 	}
 }
 
+/** The middle of `values`, or the mean of the middle two. */
+const median = (values) => {
+	let sorted = [...values].sort((a, b) => a - b)
+	let middle = Math.floor(sorted.length / 2)
+	return sorted.length % 2 === 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2
+}
+
 /**
- * Compares a pull request's tests with master's. Only tests both ran count
- * towards the totals and the rows: a pull request skips the chaos canaries
- * and the shards balance differently, so shard times and whole-suite totals
- * would differ for reasons no change made. A test moved when it differs by
- * `CHANGE_SECONDS` and `CHANGE_RATIO` of its time on master; rows come
+ * Whether a row's time fell outside the range master ran its test in, by
+ * `CHANGE_SECONDS` and `CHANGE_RATIO` of the nearer end.
+ */
+const isOutsideMastersRange = (row) => {
+	let edge = row.after > row.max ? row.max : row.min
+	let beyond = row.after > row.max ? row.after - row.max : row.min - row.after
+	return beyond >= CHANGE_SECONDS && beyond >= CHANGE_RATIO * edge
+}
+
+/**
+ * Compares a pull request's tests with several of master's runs. A test's
+ * time swings by twice or more from one master run to the next with no
+ * change, so one run is too noisy to compare with: a test is set against its
+ * median on master, and moved only when master ran it at least twice and it
+ * fell outside that range, by `CHANGE_SECONDS` and `CHANGE_RATIO` of the
+ * nearer end. Only tests
+ * that both ran count towards the totals and the rows: a pull request skips
+ * the chaos canaries and the shards balance differently, so shard times and
+ * whole-suite totals would differ for reasons no change made. Rows come
  * biggest change first.
  */
-export function diffUitests(baseline, head) {
-	let common = Object.keys(head.durations).filter((name) => name in baseline.durations)
-	let sum = (report) => common.reduce((total, name) => total + report.durations[name], 0)
-	let rows = common
-		.map((name) => {
-			let before = baseline.durations[name]
+export function diffUitests(baselines, head) {
+	let timesOnMaster = (name) =>
+		baselines.filter((report) => name in report.durations).map((report) => report.durations[name])
+	let rows = Object.keys(head.durations)
+		.map((name) => ({name, times: timesOnMaster(name)}))
+		.filter(({times}) => times.length > 0)
+		.map(({name, times}) => {
+			let before = median(times)
 			let after = head.durations[name]
-			return {name, before, after, delta: after - before}
+			return {
+				name,
+				before,
+				min: Math.min(...times),
+				max: Math.max(...times),
+				timesOnMaster: times.length,
+				after,
+				delta: after - before,
+			}
 		})
-		.filter(
-			(row) =>
-				Math.abs(row.delta) >= CHANGE_SECONDS && Math.abs(row.delta) >= CHANGE_RATIO * row.before,
-		)
-		.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || a.name.localeCompare(b.name))
 	return {
-		commonCount: common.length,
-		before: sum(baseline),
-		after: sum(head),
-		rows,
-		flakyOnBaseline: new Set(baseline.flaky.map((t) => t.identifier)),
+		runs: baselines.length,
+		commonCount: rows.length,
+		before: rows.reduce((total, row) => total + row.before, 0),
+		after: rows.reduce((total, row) => total + row.after, 0),
+		rows: rows
+			.filter((row) => row.timesOnMaster >= 2 && isOutsideMastersRange(row))
+			.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || a.name.localeCompare(b.name)),
+		flakyOnBaseline: new Set(baselines.flatMap((report) => report.flaky.map((t) => t.identifier))),
 	}
 }
 
@@ -183,13 +212,13 @@ const tenthsChange = (seconds) => (seconds > 0 ? `+${tenths(seconds)}` : tenths(
 
 const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`
 
-/** One table row: a test's time before and after. */
+/** One table row: a test's time on master and after. */
 const testRow = (row) =>
-	`| \`${row.name}\` | ${tenths(row.before)} | ${tenths(row.after)} | ${tenthsChange(row.delta)} |`
+	`| \`${row.name}\` | ${tenths(row.before)} | ${row.min.toFixed(1)}–${tenths(row.max)} | ${tenths(row.after)} | ${tenthsChange(row.delta)} |`
 
 /**
- * Renders the block. `baseline` is null with no usable comparison, and
- * `note` then says why; `diff` is `diffUitests`'s result, or null.
+ * Renders the block. `diff` is `diffUitests`'s result, or null with no
+ * usable comparison, and `note` then says why.
  */
 export function renderBlock({head, diff, note}) {
 	let shardList = Object.values(head.shards)
@@ -197,7 +226,8 @@ export function renderBlock({head, diff, note}) {
 	let tests = shardList.reduce((total, s) => total + s.testCount, 0)
 	let headline = `Slowest shard **${formatSeconds(slowest)}** · ${plural(tests, 'test')}, ${plural(shardList.length, 'shard')}`
 	if (diff !== null) {
-		headline += ` · test time ${formatSeconds(diff.after)} (master: ${formatSeconds(diff.before)} on the same ${diff.commonCount}, ${formatChange(diff.after - diff.before)})`
+		let master = diff.runs > 1 ? `master median of ${diff.runs} runs` : 'master'
+		headline += ` · test time ${formatSeconds(diff.after)} (${master}: ${formatSeconds(diff.before)} on the same ${diff.commonCount}, ${formatChange(diff.after - diff.before)})`
 	}
 	let lines = [BLOCK_START, '### UI tests', headline, '']
 	if (head.result !== 'success') {
@@ -220,8 +250,8 @@ export function renderBlock({head, diff, note}) {
 	}
 	if (diff !== null && diff.rows.length > 0) {
 		let header = [
-			'| Slower or faster than master | Before | After | Δ |',
-			'| --- | --- | --- | --- |',
+			"| Outside master's range | Master | Range | After | Δ |",
+			'| --- | --- | --- | --- | --- |',
 		]
 		lines.push(...header, ...diff.rows.slice(0, TOP_ROWS).map(testRow), '')
 		if (diff.rows.length > TOP_ROWS) {
@@ -244,32 +274,35 @@ export function renderBlock({head, diff, note}) {
 }
 
 /**
- * The block for a head report and master's, with a note on what the
- * comparison is: none, an older format, or an older master commit.
- * `comparedSha` is the commit `baseline` came from.
+ * The block for a head report and master's, newest first, with a note on
+ * what the comparison is: none, an older format, or an older master commit.
+ * A master report at another version is left out. `comparedSha` is the
+ * commit the newest of `baselines` came from.
  */
-export function buildBlock({head, baseline, comparedSha}) {
+export function buildBlock({head, baselines, comparedSha}) {
 	if (head === null) {
 		return null
 	}
 	if (head.version !== UITEST_REPORT_VERSION) {
 		return null
 	}
-	if (baseline === null) {
+	let found = baselines.filter((report) => report !== null)
+	if (found.length === 0) {
 		return renderBlock({head, diff: null, note: 'No master UI-test report to compare with.'})
 	}
-	if (baseline.version !== UITEST_REPORT_VERSION) {
+	let current = found.filter((report) => report.version === UITEST_REPORT_VERSION)
+	if (current.length === 0) {
 		return renderBlock({
 			head,
 			diff: null,
-			note: `Baseline format changed (master's report is version ${baseline.version}), so there is nothing to compare.`,
+			note: `Baseline format changed (master's report is version ${found[0].version}), so there is nothing to compare.`,
 		})
 	}
 	let note =
 		comparedSha && head.baseSha && comparedSha !== head.baseSha
 			? `Compared with master at \`${comparedSha.slice(0, 7)}\`, older than this PR's base \`${head.baseSha.slice(0, 7)}\`.`
 			: null
-	return renderBlock({head, diff: diffUitests(baseline, head), note})
+	return renderBlock({head, diff: diffUitests(current, head), note})
 }
 
 /** The block inside `comment`, or null when it has none. */
@@ -366,14 +399,14 @@ function mainRender(args) {
 		args,
 		options: {
 			head: {type: 'string'},
-			baseline: {type: 'string'},
+			baseline: {type: 'string', multiple: true, default: []},
 			'compared-sha': {type: 'string'},
 			out: {type: 'string'},
 		},
 	})
 	let block = buildBlock({
 		head: readUitestReport(values.head),
-		baseline: readUitestReport(values.baseline),
+		baselines: values.baseline.map(readUitestReport),
 		comparedSha: values['compared-sha'],
 	})
 	if (block === null) {

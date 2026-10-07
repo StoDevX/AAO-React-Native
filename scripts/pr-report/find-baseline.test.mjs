@@ -82,6 +82,27 @@ describe('find-baseline.sh on master', () => {
 		assert.equal(out, `1 ${oldest}\n`)
 	})
 
+	it("lists up to the count asked for, newest first, the base commit's own run once", () => {
+		let data = {
+			runs: [push(4, sha('c')), push(3, base), push(2, older), push(1, oldest)],
+			artifacts: {
+				4: reports('size-report'),
+				3: reports('size-report'),
+				2: reports('size-report'),
+				1: reports('size-report'),
+			},
+			ancestors: {[base]: [base, older, oldest]},
+		}
+		assert.equal(
+			findBaseline(data, base, 'master', 'size-report', 'pr-report.yml', '2'),
+			`3 ${base}\n2 ${older}\n`,
+		)
+		assert.equal(
+			findBaseline(data, base, 'master', 'size-report', 'pr-report.yml', '5'),
+			`3 ${base}\n2 ${older}\n1 ${oldest}\n`,
+		)
+	})
+
 	it('skips an expired artifact', () => {
 		let out = findBaseline(
 			{

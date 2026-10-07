@@ -20,6 +20,10 @@
 # is among the base commit's 100 newest ancestors — covers a base commit
 # whose own run was cancelled, expired, or uploaded no such artifact.
 #
+# A count after the workflow lists up to that many master runs, one per
+# line, best first, so a noisy figure can be compared with a spread of runs.
+# The other branches stay at one.
+#
 # A missing baseline is normal (the comment says so and the gate passes),
 # not a workflow failure, so no error here is fatal: anything that goes
 # wrong prints nothing.
@@ -28,13 +32,14 @@
 # report comes from ios.yml, whose master runs are cancelled by the next push
 # more often, which the ancestor walk below absorbs.
 #
-# Usage: find-baseline.sh <base-sha> [<base-branch> | --pull-request] [<artifact>] [<workflow>]
+# Usage: find-baseline.sh <base-sha> [<base-branch> | --pull-request] [<artifact>] [<workflow>] [<count>]
 set -uo pipefail
 
 base_sha=$1
 base_ref=${2:-master}
 artifact=${3:-size-report}
 workflow=${4:-pr-report.yml}
+count=${5:-1}
 
 # A SHA that doesn't look like one (empty, truncated, mixed case) is never a
 # valid commit to look up; print nothing rather than pass it to gh/git.
@@ -50,18 +55,21 @@ has_artifact() {
 	[ "${found:-0}" -gt 0 ]
 }
 
-# Prints the first run listed on stdin ("<run-id> <commit>" lines) that has
-# the artifact, and whether it found one.
+# Prints the first $1 (default 1) runs listed on stdin ("<run-id> <commit>"
+# lines) that have the artifact, each once, and whether it found any.
 first_with_artifact() {
-	local run_id commit
+	local limit=${1:-1} found=0 seen=' ' run_id commit
 	while IFS=' ' read -r run_id commit; do
 		[ -n "$run_id" ] || continue
+		[[ $seen == *" $run_id "* ]] && continue
+		seen+="$run_id "
 		if has_artifact "$run_id"; then
 			echo "$run_id $commit"
-			return 0
+			found=$((found + 1))
+			[ "$found" -lt "$limit" ] || return 0
 		fi
 	done
-	return 1
+	[ "$found" -gt 0 ]
 }
 
 if [ "$base_ref" = --pull-request ]; then
@@ -81,21 +89,26 @@ if [ "$base_ref" != master ]; then
 	exit 0
 fi
 
-gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
-	--branch master --event push --commit "$base_sha" \
-	--limit 10 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null \
-	| first_with_artifact && exit 0
+# The newest master push runs whose commits are among the base commit's
+# ancestors, newest first.
+ancestor_runs() {
+	local runs ancestors run_id commit
+	runs=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
+		--branch master --event push \
+		--limit 30 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null)
+	[ -n "$runs" ] || return 0
+	ancestors=$(gh api "repos/$GITHUB_REPOSITORY/commits?sha=$base_sha&per_page=100" --jq '.[].sha' 2>/dev/null)
+	[ -n "$ancestors" ] || return 0
+	while IFS=' ' read -r run_id commit; do
+		[ -n "$run_id" ] || continue
+		grep -qx "$commit" <<<"$ancestors" && echo "$run_id $commit"
+	done <<<"$runs"
+}
 
-runs=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
-	--branch master --event push \
-	--limit 30 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null)
-[ -n "$runs" ] || exit 0
-
-ancestors=$(gh api "repos/$GITHUB_REPOSITORY/commits?sha=$base_sha&per_page=100" --jq '.[].sha' 2>/dev/null)
-[ -n "$ancestors" ] || exit 0
-
-while IFS=' ' read -r run_id commit; do
-	[ -n "$run_id" ] || continue
-	grep -qx "$commit" <<<"$ancestors" && echo "$run_id $commit"
-done <<<"$runs" | first_with_artifact
+{
+	gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" \
+		--branch master --event push --commit "$base_sha" \
+		--limit 10 --json databaseId,headSha --jq '.[] | "\(.databaseId) \(.headSha)"' 2>/dev/null
+	ancestor_runs
+} | first_with_artifact "$count"
 exit 0
