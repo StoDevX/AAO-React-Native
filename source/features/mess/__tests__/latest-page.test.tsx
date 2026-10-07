@@ -123,7 +123,11 @@ describe('LatestPage', () => {
 		serve((href) =>
 			href.endsWith('&page=2')
 				? postsJson.slice(0, 2)
-				: Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)),
+				: Promise.reject(
+						new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+							code: 'rest_post_invalid_page_number',
+						}),
+					),
 		)
 		await renderLatest(null)
 

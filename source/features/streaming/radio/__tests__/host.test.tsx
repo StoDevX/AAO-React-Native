@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render} from '@testing-library/react-native'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {ID_PROPERTY, manifestOptions, REL_RADIO_STREAM, type Jrd} from '@frogpond/data-sources'
 
-import {RadioHost} from '../host'
+import {RadioHost as BareRadioHost} from '../host'
 import {STATIONS, logoImage} from '../stations'
 import {useRadioStore} from '../store'
 
@@ -22,11 +24,21 @@ let mockStatus = {
 	error: null as string | null,
 }
 const mockUseAudioPlayer = jest.fn((_source: string) => mockPlayer)
+// Streams that fail to load. A player's status is asked for straight after its
+// source, so the last source given is the one whose status is wanted.
+let mockFailingSources = new Set<string>()
+let mockLastSource = ''
 jest.mock('expo-audio', () => ({
-	useAudioPlayer: (source: string) => mockUseAudioPlayer(source),
-	useAudioPlayerStatus: () => mockStatus,
+	useAudioPlayer: (source: string) => {
+		mockLastSource = source
+		return mockUseAudioPlayer(source)
+	},
+	useAudioPlayerStatus: () =>
+		mockFailingSources.has(mockLastSource) ? {...mockStatus, error: 'Cannot Open'} : mockStatus,
 	setAudioModeAsync: () => Promise.resolve(),
 }))
+
+jest.mock('../../../telemetry/track', () => ({track: jest.fn()}))
 
 // The schedule is asked for over the network; a test says which show it has on.
 let mockShow: {title: string} | null = null
@@ -46,6 +58,24 @@ jest.mock('../use-now-playing', () => ({
 		return presentNowPlaying(null, station, station.logos[0], show)
 	},
 }))
+
+// The manifest is asked for over the network; here it cannot be had, so the
+// stations play from the shipped entries unless a test caches one.
+jest.mock('@frogpond/api', () => ({
+	...(jest.requireActual('@frogpond/api') as object),
+	client: {get: () => ({json: () => Promise.reject(new Error('offline'))})},
+}))
+
+let queryClient: QueryClient
+
+/** The host, with the query cache it reads the stations' sources from. */
+function RadioHost(): React.ReactNode {
+	return (
+		<QueryClientProvider client={queryClient}>
+			<BareRadioHost />
+		</QueryClientProvider>
+	)
+}
 
 /** Renders the host and returns a way to post a message from the station's page. */
 async function renderHost() {
@@ -68,6 +98,7 @@ async function renderHost() {
 
 describe('RadioHost', () => {
 	beforeEach(() => {
+		queryClient = new QueryClient()
 		useRadioStore.setState({stationId: null, playState: 'stopped', error: null, playerKey: 0})
 		useRadioStore.getState().play('ksto')
 		useRadioStore.getState().reportPlaying(1)
@@ -75,6 +106,9 @@ describe('RadioHost', () => {
 
 	afterEach(() => {
 		mockShow = null
+		mockFailingSources = new Set()
+		queryClient.clear()
+		mockUseAudioPlayer.mockClear()
 	})
 
 	test('plays KSTO natively from its stream, and loads its player page beside it', async () => {
@@ -149,5 +183,93 @@ describe('RadioHost', () => {
 			expect.objectContaining({title: 'Pitch Perfect', artist: '88.1 KRLX-FM'}),
 			{isLiveStream: true},
 		)
+	})
+
+	test('plays on from the stream it started with when a manifest moves the station mid-play', async () => {
+		useRadioStore.getState().stop()
+		useRadioStore.getState().play('krlx')
+		let screen = await render(<RadioHost />)
+
+		let moved: Jrd = {
+			subject: 'https://stolaf.edu',
+			links: [
+				{
+					rel: REL_RADIO_STREAM,
+					href: 'https://example.test/krlx.mp3',
+					type: 'audio/mpeg',
+					properties: {[ID_PROPERTY]: 'krlx'},
+				},
+			],
+		}
+		await act(() => {
+			queryClient.setQueryData(manifestOptions.queryKey, moved)
+		})
+		await screen.rerender(<RadioHost />)
+
+		expect(mockUseAudioPlayer).not.toHaveBeenCalledWith('https://example.test/krlx.mp3')
+
+		// The next play takes the station from where the manifest now says it is.
+		await act(() => useRadioStore.getState().play('krlx'))
+		await screen.rerender(<RadioHost />)
+
+		expect(mockUseAudioPlayer).toHaveBeenLastCalledWith('https://example.test/krlx.mp3')
+	})
+
+	describe('when the published stream fails to load', () => {
+		const SHIPPED_KRLX = 'https://s3.voscast.com:10803/stream'
+		const PUBLISHED_KRLX = 'https://example.test/krlx.mp3'
+
+		beforeEach(() => {
+			let published: Jrd = {
+				subject: 'https://stolaf.edu',
+				links: [
+					{
+						rel: REL_RADIO_STREAM,
+						href: PUBLISHED_KRLX,
+						type: 'audio/mpeg',
+						properties: {[ID_PROPERTY]: 'krlx'},
+					},
+				],
+			}
+			queryClient.setQueryData(manifestOptions.queryKey, published)
+			useRadioStore.getState().stop()
+			useRadioStore.getState().play('krlx')
+		})
+
+		test('plays the shipped stream instead, without reporting a failure', async () => {
+			mockFailingSources = new Set([PUBLISHED_KRLX])
+			await render(<RadioHost />)
+
+			expect(mockUseAudioPlayer).toHaveBeenCalledWith(PUBLISHED_KRLX)
+			expect(mockUseAudioPlayer).toHaveBeenLastCalledWith(SHIPPED_KRLX)
+			expect(useRadioStore.getState()).toMatchObject({playState: 'starting', error: null})
+		})
+
+		test('reports the failure when the shipped stream fails too', async () => {
+			mockFailingSources = new Set([PUBLISHED_KRLX, SHIPPED_KRLX])
+			await render(<RadioHost />)
+
+			expect(useRadioStore.getState()).toMatchObject({
+				stationId: 'krlx',
+				playState: 'stopped',
+				error: {message: 'Cannot Open'},
+			})
+		})
+
+		test('reports a failure after audio has played, rather than switching streams', async () => {
+			mockStatus = {playing: true, isBuffering: false, didJustFinish: false, error: null}
+			let screen = await render(<RadioHost />)
+			expect(useRadioStore.getState().playState).toBe('playing')
+
+			mockFailingSources = new Set([PUBLISHED_KRLX])
+			await screen.rerender(<RadioHost />)
+
+			expect(mockUseAudioPlayer).not.toHaveBeenCalledWith(SHIPPED_KRLX)
+			expect(useRadioStore.getState()).toMatchObject({
+				playState: 'stopped',
+				error: {message: 'Cannot Open'},
+			})
+			mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
+		})
 	})
 })

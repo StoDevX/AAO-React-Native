@@ -26,6 +26,10 @@ export const manifestOptions = queryOptions({
 	// immediately rather than wait offline for a retry that can't run.
 	networkMode: 'offlineFirst',
 	retry: false,
+	// A failed refetch leaves the last manifest in the cache, and it is written
+	// to storage as it is, so a failure on one launch does not leave the next
+	// one with nothing cached. The radio plays from it however old it is.
+	meta: {persistAfterFailure: true},
 	queryFn: async ({signal}): Promise<Jrd> => {
 		let response = await client.get('sources', {signal}).json()
 		return JrdSchema.parse(response)
@@ -56,6 +60,13 @@ function find(manifest: Jrd, rel: string, id: string): ResolvedSource | undefine
 		(entry) => entry.rel === rel && entry.properties[ID_PROPERTY] === id,
 	)
 	return link ? toResolved(link) : undefined
+}
+
+/// Whether the bundled manifest has an entry for `rel` and `id`, of any type.
+/// A source the build ships with is one the app relies on; one it does not is
+/// optional, and only the published manifest may name it.
+export function hasBundledSource(rel: string, id: string): boolean {
+	return find(bundled, rel, id) !== undefined
 }
 
 /// Rules 2 and 3. A source that is missing, or that names a format this build

@@ -1,4 +1,5 @@
 import {useQuery} from '@tanstack/react-query'
+import {fetchSourceBody} from '@frogpond/data-sources'
 
 import {
 	parseStationNow,
@@ -7,15 +8,13 @@ import {
 	type StationNow,
 } from './now-playing'
 import {useSelectedLogo} from './player-view/use-logo-cycle'
+import {useNowPlayingHref} from './sources'
 import type {Station} from './stations'
 import {useRadioStore} from './store'
 
-async function fetchStationNow(url: string): Promise<StationNow> {
-	let response = await fetch(url)
-	if (!response.ok) {
-		throw new Error(`${url} answered ${response.status}`)
-	}
-	return parseStationNow(await response.json())
+/** The station-now feed at `href`, relative to ccc-server when it proxies the feed. */
+async function fetchStationNow(href: string, signal: AbortSignal): Promise<StationNow> {
+	return parseStationNow(await fetchSourceBody(href, signal, 'now playing'))
 }
 
 /**
@@ -34,10 +33,10 @@ export function useNowPlaying(
 			state.stationId === station.id &&
 			(state.playState === 'playing' || state.playState === 'starting'),
 	)
-	let url = station.nowPlayingUrl
+	let url = useNowPlayingHref(station.id)
 	let query = useQuery({
 		queryKey: ['radio-now-playing', station.id, url],
-		queryFn: () => fetchStationNow(url ?? ''),
+		queryFn: ({signal}) => fetchStationNow(url ?? '', signal),
 		enabled: playing && url !== undefined,
 		refetchInterval: (current) => current.state.data?.refreshMs ?? 60_000,
 		// A song that was on air before a relaunch says nothing now.

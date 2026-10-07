@@ -185,6 +185,54 @@ describe('parseFeature', () => {
 		])
 	})
 
+	it("keeps a body picture's alt text, and lends it to the featured photo's copy with no alt of its own", () => {
+		let figure: Block = {
+			type: 'figure',
+			url: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees.jpg',
+			width: 600,
+			height: 400,
+			caption: '',
+			alt: 'Bees at the cup',
+		}
+		expect(parseFeature(null, [figure]).images).toStrictEqual([
+			{
+				url: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees.jpg',
+				width: 600,
+				height: 400,
+				caption: '',
+				alt: 'Bees at the cup',
+			},
+		])
+		let featured: CaptionedPhoto = {
+			url: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees.jpg',
+			width: 600,
+			height: 400,
+			caption: '',
+		}
+		expect(parseFeature(featured, [figure]).images).toStrictEqual([
+			{...featured, alt: 'Bees at the cup'},
+		])
+	})
+
+	it("keeps the featured photo's own alt text over its copy's", () => {
+		let featured: CaptionedPhoto = {
+			url: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees.jpg',
+			width: 600,
+			height: 400,
+			caption: '',
+			alt: 'Bees drinking lemonade',
+		}
+		let copy: Block = {
+			type: 'figure',
+			url: featured.url,
+			width: 600,
+			height: 400,
+			caption: '',
+			alt: 'A different description',
+		}
+		expect(parseFeature(featured, [copy]).images).toStrictEqual([featured])
+	})
+
 	it('gives a story with no picture none, and leaves its words (36835)', () => {
 		let [photo, blocks] = post(36835)
 		expect(parseFeature(photo, blocks)).toStrictEqual({images: [], blocks})

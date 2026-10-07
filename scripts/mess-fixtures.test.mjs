@@ -18,6 +18,20 @@ test('mergeRecordings keeps a failure as its status', () => {
 	assert.deepEqual(table, {'json https://x/p9': {status: 400}})
 })
 
+test("mergeRecordings keeps a failure's WordPress code with its status", () => {
+	let table = mergeRecordings([
+		line({
+			href: 'https://x/p9',
+			format: 'json',
+			status: 400,
+			code: 'rest_post_invalid_page_number',
+		}),
+	])
+	assert.deepEqual(table, {
+		'json https://x/p9': {status: 400, code: 'rest_post_invalid_page_number'},
+	})
+})
+
 test('mergeRecordings keeps the last answer for a URL fetched twice', () => {
 	let table = mergeRecordings([
 		line({href: 'https://x/a', format: 'json', body: [1]}),

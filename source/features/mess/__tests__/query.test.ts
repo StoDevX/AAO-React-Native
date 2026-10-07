@@ -147,7 +147,13 @@ describe('messFeedOptions', () => {
 	})
 
 	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
-		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+		serve(() =>
+			Promise.reject(
+				new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+					code: 'rest_post_invalid_page_number',
+				}),
+			),
+		)
 
 		let page = await runPage<MessStory[]>(messFeedOptions, 7)
 
@@ -306,7 +312,13 @@ describe('messCategoryOptions', () => {
 	})
 
 	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
-		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+		serve(() =>
+			Promise.reject(
+				new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+					code: 'rest_post_invalid_page_number',
+				}),
+			),
+		)
 
 		expect(await runPage(messCategoryOptions(23), 4)).toStrictEqual([])
 	})
@@ -475,7 +487,7 @@ describe('messGalleryOptions', () => {
 			'OliviaAmschler_5-905x1200.png',
 		])
 		expect(mockBody).toHaveBeenCalledWith(
-			'https://olafmessenger.com/wp-json/wp/v2/media?include=36255,36256,36257,36258,36259&per_page=100&_fields=id,source_url,media_details,caption',
+			'https://olafmessenger.com/wp-json/wp/v2/media?include=36255,36256,36257,36258,36259&per_page=100&_fields=id,source_url,media_details,caption,alt_text',
 			expect.any(AbortSignal),
 			'Olaf Messenger gallery',
 			'json',
@@ -590,7 +602,11 @@ describe('messIssuesOptions', () => {
 	// multiple of a hundred, since the last page is then full.
 	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
 		serve(() =>
-			Promise.reject(new SourceFetchError('Olaf Messenger issues fetch failed: 400', 400)),
+			Promise.reject(
+				new SourceFetchError('Olaf Messenger issues fetch failed: 400', 400, {
+					code: 'rest_post_invalid_page_number',
+				}),
+			),
 		)
 
 		let page = await runPage<LightPost[]>(messIssuesOptions, 54)

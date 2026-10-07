@@ -1,7 +1,15 @@
 import {onlineManager, QueryClient} from '@tanstack/react-query'
 import bundled from '../bundled.json'
-import {fetchManifest, resolveSource, resolveSources} from '../resolve'
-import {ID_PROPERTY, JrdSchema, REL_A_TO_Z, REL_JOBS, REL_NEWS} from '../types'
+import {fetchManifest, hasBundledSource, resolveSource, resolveSources} from '../resolve'
+import {
+	ID_PROPERTY,
+	JrdSchema,
+	REL_A_TO_Z,
+	REL_JOBS,
+	REL_NEWS,
+	REL_RADIO_NOW_PLAYING,
+	REL_RADIO_PLAYER_PAGE,
+} from '../types'
 
 const ALL_NEWS_TYPES = [
 	'application/vnd.wordpress.v2.posts+json',
@@ -35,6 +43,13 @@ test('the bundled manifest carries the St. Olaf jobs site', () => {
 	)
 	expect(source.type).toBe('application/vnd.oracle.recruiting-ce+json')
 	expect(source.title).toBe('Student Work')
+})
+
+test('knows which sources the build ships with, whatever their type', () => {
+	expect(hasBundledSource(REL_RADIO_PLAYER_PAGE, 'ksto')).toBe(true)
+	expect(hasBundledSource(REL_RADIO_NOW_PLAYING, 'krlx')).toBe(true)
+	expect(hasBundledSource(REL_RADIO_PLAYER_PAGE, 'krlx')).toBe(false)
+	expect(hasBundledSource(REL_NEWS, 'no-such-source')).toBe(false)
 })
 
 test('a-to-z has both the upstream and the extras', () => {

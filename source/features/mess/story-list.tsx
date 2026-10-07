@@ -19,7 +19,7 @@ import {
 } from '@tanstack/react-query'
 import {destinationTraits, RowAccessory} from '../../components/rows'
 import {creditLine} from './lib/byline'
-import {TAP_TARGET} from './lib/glyph-grid'
+import {TAP_TARGET} from '../../lib/tap-target'
 import {rowGlyph} from './lib/row-glyph'
 import {NextPageRow} from './next-page-row'
 import {PageLoading, PageNotice} from './page-notice'

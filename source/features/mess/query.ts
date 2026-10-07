@@ -11,6 +11,7 @@ import {newestStaffYear} from './lib/staff'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
 import {messFetch} from './lib/fixtures'
+import {wpRoot} from './lib/wp-root'
 import {messKeys} from './lib/keys'
 import {emptyPastLastPage, nextPage, pageHref} from './lib/paging'
 import type {
@@ -31,11 +32,6 @@ const FIVE_MINUTES_IN_MS = 5 * 60 * 1000
 /** Other stories to read after one, under a heading such as `More Mouse Friends`. */
 export type MessSeries = {title: string; stories: MessStory[]}
 
-/** The site root a WordPress REST URL belongs to, such as `https://olafmessenger.com`. */
-function originOf(href: string): string {
-	return new URL(href).origin
-}
-
 /** The Mess's feed href. Accepting only WordPress sends an older manifest's feed-items entry to the bundled one. */
 async function feedHref(): Promise<string> {
 	let manifest = await fetchManifest(queryClient)
@@ -48,10 +44,9 @@ export const messCategoriesOptions = queryOptions({
 	// The paper adds a category a few times a year.
 	staleTime: ONE_DAY_IN_MS,
 	queryFn: async ({signal}): Promise<MessCategory[]> => {
-		// Assumes the resolved feed href is an absolute WordPress URL.
-		let origin = originOf(await feedHref())
+		let root = wpRoot(await feedHref())
 		let body = await messFetch(
-			`${origin}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,parent`,
+			`${root}/categories?per_page=100&_fields=id,name,parent`,
 			signal,
 			'Olaf Messenger categories',
 		)
@@ -69,13 +64,10 @@ async function storiesAt(
 	label: string,
 	page = 1,
 ): Promise<MessStory[]> {
-	// Assumes the resolved feed href is an absolute WordPress URL.
-	let origin = originOf(await feedHref())
+	let root = wpRoot(await feedHref())
 	// A failed categories fetch fails the stories on purpose: sections come from it.
 	let [body, categories] = await Promise.all([
-		messFetch(pageHref(`${origin}/wp-json/wp/v2/${path}`, page), signal, label).catch(
-			emptyPastLastPage(page),
-		),
+		messFetch(pageHref(`${root}/${path}`, page), signal, label).catch(emptyPastLastPage(page)),
 		queryClient.query(messCategoriesOptions),
 	])
 	// A single post comes back as an object rather than a list.
@@ -160,10 +152,9 @@ export const messLeadTextOptions = (id: number) =>
 		staleTime: ONE_DAY_IN_MS,
 		meta: {persist: false},
 		queryFn: async ({signal}): Promise<string[]> => {
-			// Assumes the resolved feed href is an absolute WordPress URL.
-			let origin = originOf(await feedHref())
+			let root = wpRoot(await feedHref())
 			let body = await messFetch(
-				`${origin}/wp-json/wp/v2/posts/${id}?_fields=content`,
+				`${root}/posts/${id}?_fields=content`,
 				signal,
 				'Olaf Messenger story text',
 			)
@@ -197,12 +188,11 @@ export const messIssuesOptions = infiniteQueryOptions({
 	meta: {persistPages: 1},
 	initialPageParam: 1,
 	queryFn: async ({pageParam, signal}): Promise<LightPost[]> => {
-		// Assumes the resolved feed href is an absolute WordPress URL.
-		let origin = originOf(await feedHref())
+		let root = wpRoot(await feedHref())
 		// A failed categories fetch fails the page on purpose: sections come from it.
 		let [body, categories] = await Promise.all([
 			messFetch(
-				`${origin}/wp-json/wp/v2/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
+				`${root}/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
 				signal,
 				'Olaf Messenger issues',
 			).catch(emptyPastLastPage(pageParam)),
@@ -213,7 +203,7 @@ export const messIssuesOptions = infiniteQueryOptions({
 		if (photoIds.length === 0) return posts
 		// A row without its photo draws a tinted square, so a failed lookup leaves the page whole.
 		let urls = await messFetch(
-			`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_fields=id,source_url`,
+			`${root}/media?include=${photoIds.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_fields=id,source_url`,
 			signal,
 			'Olaf Messenger photos',
 		)
@@ -350,10 +340,9 @@ export const messGalleryOptions = (photoIds: number[]) =>
 		// A published gallery's photos do not change.
 		staleTime: ONE_DAY_IN_MS,
 		queryFn: async ({signal}): Promise<CaptionedPhoto[]> => {
-			// Assumes the resolved feed href is an absolute WordPress URL.
-			let origin = originOf(await feedHref())
+			let root = wpRoot(await feedHref())
 			let body = await messFetch(
-				`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption`,
+				`${root}/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption,alt_text`,
 				signal,
 				'Olaf Messenger gallery',
 			)
@@ -368,10 +357,9 @@ export const staffProfileOptions = (staffId: number) =>
 		queryKey: messKeys.profile(staffId),
 		staleTime: ONE_DAY_IN_MS,
 		queryFn: async ({signal}): Promise<StaffProfile | null> => {
-			// Assumes the resolved feed href is an absolute WordPress URL.
-			let origin = originOf(await feedHref())
+			let root = wpRoot(await feedHref())
 			let body = await messFetch(
-				`${origin}/wp-json/wp/v2/staff_profile?staff_name=${staffId}&_embed=true`,
+				`${root}/staff_profile?staff_name=${staffId}&_embed=true`,
 				signal,
 				'Olaf Messenger staff profile',
 			)
@@ -385,10 +373,9 @@ export const messAboutOptions = queryOptions({
 	// The paper edits the page when its staff changes, about once a year.
 	staleTime: ONE_DAY_IN_MS,
 	queryFn: async ({signal}): Promise<AboutSection[]> => {
-		// Assumes the resolved feed href is an absolute WordPress URL.
-		let origin = originOf(await feedHref())
+		let root = wpRoot(await feedHref())
 		let body = await messFetch(
-			`${origin}/wp-json/wp/v2/pages?slug=about&_fields=content`,
+			`${root}/pages?slug=about&_fields=content`,
 			signal,
 			'Olaf Messenger About page',
 		)
@@ -405,13 +392,12 @@ export const messStaffOptions = queryOptions({
 	// The paper adds its staff at the start of a year, and a new hire or two after.
 	staleTime: ONE_DAY_IN_MS,
 	queryFn: async ({signal}): Promise<StaffProfile[]> => {
-		// Assumes the resolved feed href is an absolute WordPress URL.
-		let origin = originOf(await feedHref())
+		let root = wpRoot(await feedHref())
 		// The newest year with anyone on it: a year the paper has made but not yet filled would
 		// otherwise hide last year's staff behind an empty page. Every year is asked for, not just
 		// the first by name, so a term not named as a year cannot stand in for the newest.
 		let years = await messFetch(
-			`${origin}/wp-json/wp/v2/staff_year?hide_empty=true&per_page=100&_fields=id,name`,
+			`${root}/staff_year?hide_empty=true&per_page=100&_fields=id,name`,
 			signal,
 			'Olaf Messenger staff years',
 		)
@@ -419,7 +405,7 @@ export const messStaffOptions = queryOptions({
 		// No year with anyone on it lists nobody, which the directory says, rather than an error.
 		if (!year) return []
 		// _fields must name featured_media, _links and _embedded, or WordPress embeds no photo.
-		let href = `${origin}/wp-json/wp/v2/staff_profile?staff_year=${year.id}&per_page=${STAFF_PAGE_SIZE}&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded`
+		let href = `${root}/staff_profile?staff_year=${year.id}&per_page=${STAFF_PAGE_SIZE}&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded`
 		let people: StaffProfile[] = []
 		for (let page: number | undefined = 1; page !== undefined;) {
 			// Each page says whether there is another, so the pages are fetched one after another.

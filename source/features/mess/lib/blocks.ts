@@ -7,6 +7,7 @@ import {
 	type Element,
 } from '@frogpond/html-lib'
 import type {Block, Run} from '../types'
+import {readableAlt} from './alt'
 import {largestSource} from './srcset'
 
 /** The formatting a run carries, without its text. */
@@ -161,9 +162,16 @@ function figureFrom(img: Element, caption: string): Block | null {
 	// The article draws the size the HTML asks for; the viewer, where a reader zooms, the largest.
 	let largest = largestSource(img.attribs.srcset, url)
 	let largeUrl = largest && secureUrl(largest)
-	return largeUrl && largeUrl !== url
-		? {type: 'figure', url, largeUrl, width, height, caption}
-		: {type: 'figure', url, width, height, caption}
+	let alt = readableAlt(img.attribs.alt)
+	return {
+		type: 'figure',
+		url,
+		...(largeUrl && largeUrl !== url ? {largeUrl} : {}),
+		width,
+		height,
+		caption,
+		...(alt ? {alt} : {}),
+	}
 }
 
 /**

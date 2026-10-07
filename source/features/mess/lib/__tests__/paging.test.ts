@@ -37,7 +37,9 @@ describe('nextPage', () => {
 })
 
 describe('emptyPastLastPage', () => {
-	const pastTheEnd = new SourceFetchError('Olaf Messenger fetch failed: 400', 400)
+	const pastTheEnd = new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+		code: 'rest_post_invalid_page_number',
+	})
 
 	it('reads a 400 for a later page as an empty page', () => {
 		expect(emptyPastLastPage(2)(pastTheEnd)).toStrictEqual([])
@@ -45,6 +47,18 @@ describe('emptyPastLastPage', () => {
 
 	it('still fails the first page on a 400', () => {
 		expect(() => emptyPastLastPage(1)(pastTheEnd)).toThrow(pastTheEnd)
+	})
+
+	it('still fails a later page on a 400 for anything else, such as a bad parameter', () => {
+		let badParameter = new SourceFetchError('Olaf Messenger fetch failed: 400', 400, {
+			code: 'rest_invalid_param',
+		})
+		expect(() => emptyPastLastPage(2)(badParameter)).toThrow(badParameter)
+	})
+
+	it('still fails a later page on a 400 that names no WordPress code, such as a proxy refusal', () => {
+		let refusal = new SourceFetchError('Olaf Messenger fetch failed: 400', 400)
+		expect(() => emptyPastLastPage(2)(refusal)).toThrow(refusal)
 	})
 
 	it('still fails a later page on any other error', () => {

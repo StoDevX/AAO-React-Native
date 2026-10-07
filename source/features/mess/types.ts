@@ -28,6 +28,8 @@ export type Block =
 			width: number
 			height: number
 			caption: string
+			/** The image's alt text, kept only when it reads as words rather than a file name */
+			alt?: string
 	  }
 	| {type: 'embed'; url: string}
 
@@ -45,6 +47,8 @@ export type Photo = {url: string; width: number; height: number}
 /** A photo with the caption or credit printed under it. */
 export type CaptionedPhoto = Photo & {
 	caption: string
+	/** The picture's alt text, kept only when it reads as words rather than a file name */
+	alt?: string
 	/** The largest copy a body picture's srcset offers, for the zoom viewer; none when it offers no larger one */
 	largeUrl?: string
 }
@@ -164,7 +168,7 @@ export type Puzzle = {
 export type StoryLayout =
 	| {kind: 'article'}
 	| {kind: 'horoscopes'; intro: Run[][]; signs: Array<{sign: ZodiacSign; reading: Run[][]}>}
-	| {kind: 'image'; image: Photo & {largeUrl?: string}}
+	| {kind: 'image'; image: CaptionedPhoto}
 	| {kind: 'poem'; stanzas: PoemLine[][]}
 	| {kind: 'puzzle'; puzzle: Puzzle}
 	| {kind: 'playlist'; spotify: SpotifyRef | null}
