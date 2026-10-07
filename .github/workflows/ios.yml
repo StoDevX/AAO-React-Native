@@ -428,6 +428,27 @@ jobs:
           restore-keys: |
             uitest-durations/e=${{ env.cache_epoch }}/ref=master/
 
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          # -node: this job only runs scripts.
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      # flakiness.io predicts each test's duration from master's history, which
+      # balances the shards better than the cached table's single run. It only
+      # tunes the split, so neither a failed install nor a slow or failed fetch
+      # may stop the tests; the cached table stands in.
+      - name: Install the flakiness CLI
+        id: flakiness
+        continue-on-error: true
+        run: mise install npm:flakiness
+
+      - name: Fetch predicted durations from flakiness.io
+        if: steps.flakiness.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 3
+        run: node scripts/fetch-uitest-durations.mjs --test-dir uitests --durations uitest-durations.json --flakiness "$(mise where npm:flakiness)"
+
       # The chaos canaries test the chaos tool rather than the app, so a pull
       # request leaves them to the merge queue and master.
       - name: Split tests across shards
