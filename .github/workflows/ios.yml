@@ -568,6 +568,17 @@ jobs:
         # The shard's report says how long the tests took, not the job.
         run: echo "UITEST_STARTED=$(date +%s)" >> "$GITHUB_ENV"
 
+      # A test now and then stalls for half a minute on each query while the
+      # app reports itself idle, and a test that still passes leaves no
+      # spindump behind. The runner's busiest processes every five seconds,
+      # beside the simulator's log, tell a starved runner from a stuck app.
+      # The job's end stops the loop.
+      - name: Sample the runner's busiest processes
+        run: |
+          mkdir -p uitest-evidence
+          nohup bash -c 'while :; do date -u +%FT%TZ; ps -Aro pcpu,pid,comm | head -n 9; sleep 5; done' \
+            > uitest-evidence/runner-cpu.log 2>&1 &
+
       - name: Run UITests
         timeout-minutes: ${{ runner.debug == '1' && 60 || 45 }}
         # Tells Screen.capture it is in CI, so a passing test's screenshots are
@@ -645,6 +656,31 @@ jobs:
         env:
           SHARD: ${{ matrix.shard }}
         run: node scripts/pr-report/uitest-report.mjs shard uitest-results.xcresult uitest-shard.json --shard "$SHARD" --started "${UITEST_STARTED:-0}"
+
+      # `if: always()`: the stalls this is for mostly happen in tests that pass.
+      # Only the default level and above are kept, so this costs nothing while
+      # the tests run.
+      - name: Save the simulator's log
+        if: always()
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: |
+          # Without pipefail a failed read goes unreported, its empty archive uploaded as the log.
+          set -o pipefail
+          mkdir -p uitest-evidence
+          started=$(date -r "${UITEST_STARTED:-0}" '+%Y-%m-%d %H:%M:%S')
+          xcrun simctl spawn "$SIMULATOR_UDID" log show --start "$started" --style compact \
+            | gzip > uitest-evidence/simulator.log.gz \
+            || echo "Could not read the simulator's log."
+
+      - name: Upload the stall evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: uitest-evidence-${{ matrix.shard }}
+          path: uitest-evidence/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload the shard's report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
