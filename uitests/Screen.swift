@@ -101,6 +101,31 @@ extension Screen {
 		return self
 	}
 
+	/// Tap `element` until `marker` appears, up to three times.
+	///
+	/// A row is hittable as soon as its host mounts, but its action has to
+	/// reach JavaScript, and a tap synthesized in between lands natively and
+	/// does nothing. Waiting longer never fixes a dropped tap, so tap again.
+	///
+	/// `marker` must appear only once the tap has worked -- the next screen, or
+	/// the control's new label. Each attempt looks the element up again and
+	/// taps only if it is still there: a tap that landed late may have moved it.
+	@discardableResult
+	func tap(_ element: XCUIElement, until marker: XCUIElement, named name: String) -> Self {
+		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
+		for attempt in 1...3 {
+			if element.exists {
+				element.tap()
+			}
+			if marker.waitForExistence(timeout: 10) {
+				return self
+			}
+			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }
+		}
+		XCTFail("Tapping \(name) never brought up \(marker)")
+		return self
+	}
+
 	/// Close Report a Problem with its own close button, and wait for it to go.
 	@discardableResult
 	func closeProblemForm() -> Self {

@@ -184,9 +184,10 @@ struct HoursScreen: Screen {
 		for _ in 1...3 {
 			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 			if app.navigationBars.staticTexts[name].waitForExistence(timeout: 10) {
-				break
+				return self
 			}
 		}
+		XCTFail("Tapping \(name)'s row never opened its sheet")
 		return self
 	}
 

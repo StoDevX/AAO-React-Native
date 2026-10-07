@@ -35,26 +35,6 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Tap `element` until `marker` appears, up to three times.
-	///
-	/// A native tab switch or a first tap after launch can be dropped, and
-	/// waiting longer on a dropped one achieves nothing. Each attempt looks the
-	/// element up again and stops if it has gone: a tap that did land may have
-	/// changed it.
-	private func tap(_ element: XCUIElement, until marker: XCUIElement, named name: String) {
-		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
-		for attempt in 1...3 {
-			if element.exists {
-				element.tap()
-			}
-			if marker.waitForExistence(timeout: 10) {
-				return
-			}
-			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }
-		}
-		XCTFail("Tapping \(name) never brought up what it should")
-	}
-
 	/// Open Streaming Media from its Home tile rather than by URL. Opening a URL
 	/// relaunches the app, which resets state a test has just set up.
 	@discardableResult
