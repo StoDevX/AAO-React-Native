@@ -101,13 +101,26 @@ struct MapScreen: Screen {
 
 	/// Drags the sheet from its collapsed detent up to full height, where the
 	/// building list is.
+	///
+	/// A drag that starts just after the sheet mounts can leave it at a lower
+	/// detent, so this drags again, up to three times, until the search field
+	/// sits in the top quarter of the screen, where only the full detent puts it.
 	@discardableResult
 	func expandSheet() -> Self {
-		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.93))
-			.press(
-				forDuration: 0.1,
-				thenDragTo: app.coordinate(
-					withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08)))
+		let fullTop = app.frame.height / 4
+		for _ in 1...3 {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.93))
+				.press(
+					forDuration: 0.1,
+					thenDragTo: app.coordinate(
+						withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08)))
+			if waitUntil("Waiting 3.0s for the sheet to reach full height", timeout: 3, {
+				searchField.exists && searchField.frame.minY < fullTop
+			}) {
+				return self
+			}
+		}
+		XCTFail("The sheet should reach full height")
 		return self
 	}
 
