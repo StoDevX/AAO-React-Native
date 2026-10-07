@@ -117,6 +117,16 @@ describe('appendSceneDelegate', () => {
 		assert.ok(result.includes('"\\(scheme)://\\(href.'))
 	})
 
+	// Only a UI test may run the window's animations fast: a user, or a chaos
+	// run hunting for timing bugs, needs them at their real speed.
+	it('speeds up the window only under --uitesting', () => {
+		assert.match(
+			result,
+			/if ProcessInfo\.processInfo\.arguments\.contains\("--uitesting"\) \{\s*existing\.layer\.speed = \d+\s*\}/u,
+		)
+		assert.equal(result.match(/layer\.speed/gu)?.length, 1)
+	})
+
 	it('hard-codes no scheme', () => {
 		assert.doesNotMatch(result, /AllAboutOlaf(Dev)?:\/\//u)
 	})

@@ -131,6 +131,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     self.window = existing
     existing.makeKeyAndVisible()
 
+    // XCUITest waits for the app to go idle after every gesture, and a running
+    // UIKit or Core Animation animation holds that back. At 10x a push or a
+    // sheet's half second takes 50ms; a higher speed saves little more. Chaos
+    // runs leave this off: they hunt for timing bugs at a user's speed.
+    if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+      existing.layer.speed = 10
+    }
+
     for context in connectionOptions.urlContexts {
       open(context.url)
     }
