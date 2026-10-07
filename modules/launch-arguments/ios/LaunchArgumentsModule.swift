@@ -1,8 +1,37 @@
 import ExpoModulesCore
 
 public class LaunchArgumentsModule: Module {
+	/// The UI tests' way to reset this app between tests without relaunching
+	/// it, when the launch was given one. See UITestResetChannel.swift.
+	private var resetChannel: UITestResetChannel?
+
 	public func definition() -> ModuleDefinition {
 		Name("LaunchArguments")
+
+		Events("onResetRequested")
+
+		OnCreate {
+			self.resetChannel = UITestResetChannel.open { [weak self] request in
+				self?.sendEvent("onResetRequested", ["id": request.id, "url": request.url])
+			}
+		}
+
+		OnDestroy {
+			self.resetChannel?.close()
+			self.resetChannel = nil
+		}
+
+		// Clears what JavaScript cannot and answers the runner; JavaScript
+		// reloads itself once this resolves.
+		AsyncFunction("finishReset") { (id: String, url: String) in
+			MainActor.assumeIsolated {
+				self.resetChannel?.finish(id: id, url: url)
+			}
+		}.runOnQueue(.main)
+
+		Function("takePendingResetURL") { () -> String? in
+			UITestResetChannel.takePendingURL()
+		}
 
 		let arguments = ProcessInfo.processInfo.arguments
 
