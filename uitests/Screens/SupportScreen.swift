@@ -22,10 +22,10 @@ struct SupportScreen: Screen {
 	func checkOffersEveryRow() -> Self {
 		let support = TestIdentifiers.Support.self
 		for title in [support.faqs, support.sendFeedback] {
-			XCTAssertTrue(row(title).waitForExistence(timeout: 10), "Support should offer \(title)")
+			XCTAssertTrue(row(title).existsOrAppears(within: 10), "Support should offer \(title)")
 		}
 		let toggle = host.switches[support.telemetryToggle].firstMatch
-		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Support should offer the telemetry switch")
+		XCTAssertTrue(toggle.existsOrAppears(within: 10), "Support should offer the telemetry switch")
 		return self
 	}
 
@@ -33,7 +33,7 @@ struct SupportScreen: Screen {
 	@discardableResult
 	func open(_ title: String, mountedWhen mounted: XCUIElement) -> Self {
 		let target = row(title)
-		XCTAssertTrue(target.waitForExistence(timeout: 10), "Support should offer \(title)")
+		XCTAssertTrue(target.existsOrAppears(within: 10), "Support should offer \(title)")
 		target.tap()
 		XCTAssertTrue(mounted.waitForExistence(timeout: 30), "\(title) should open its own screen")
 		return self

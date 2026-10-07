@@ -36,7 +36,7 @@ struct AboutScreen: Screen {
 	func reveal(_ element: XCUIElement) -> Self {
 		// The screen draws a moment after it opens; swiping before then scrolls
 		// past rows that are about to appear.
-		_ = element.waitForExistence(timeout: 10)
+		_ = element.existsOrAppears(within: 10)
 		// Enough swipes for the whole page at the largest text sizes.
 		for _ in 0..<20 {
 			if element.exists && element.isHittable { break }

@@ -16,7 +16,7 @@ struct HomeScreen: Screen {
 	func longPressNotice() -> Self {
 		let notice = app.element(matching: TestIdentifiers.Home.notice)
 		XCTAssertTrue(
-			notice.waitForExistence(timeout: 30),
+			notice.existsOrAppears(within: 30),
 			"Home notice widget should be visible")
 		notice.press(forDuration: 1.0)
 		return self
@@ -35,7 +35,7 @@ struct HomeScreen: Screen {
 	@discardableResult
 	func openCustomize() -> CustomizeScreen {
 		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Home should have a Customize button")
+		XCTAssertTrue(button.existsOrAppears(within: 10), "Home should have a Customize button")
 		button.tap()
 		return CustomizeScreen(app: app).checkOpen()
 	}
@@ -45,7 +45,7 @@ struct HomeScreen: Screen {
 	func openHomeMenu() -> Self {
 		let menu = app.buttons[TestIdentifiers.Navigation.homeMenu]
 		XCTAssertTrue(
-			menu.waitForExistence(timeout: 10),
+			menu.existsOrAppears(within: 10),
 			"Home menu should appear on home screen")
 		menu.tap()
 		return self
@@ -87,7 +87,7 @@ struct HomeScreen: Screen {
 		let tile = app.buttons[TestIdentifiers.Buttons.developer].firstMatch
 		scrollUntilExists(tile)
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.existsOrAppears(within: 30),
 			"Home should show a Developer tile after enabling dev mode")
 		tile.tap()
 		let screen = app.element(matching: TestIdentifiers.Developer.screen)

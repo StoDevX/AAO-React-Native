@@ -9,7 +9,7 @@ class ModuleContributingTests: UITestCase {
 		let ids = TestIdentifiers.Contributing.self
 
 		let appSource = contributing.row(ids.appSource)
-		XCTAssertTrue(appSource.waitForExistence(timeout: 10), "Contributing should offer the app's source")
+		XCTAssertTrue(appSource.existsOrAppears(within: 10), "Contributing should offer the app's source")
 		for title in [ids.reportProblem, ids.email] {
 			let row = contributing.row(title)
 			XCTAssertTrue(row.exists, "\(title) should be on screen when Contributing opens")
@@ -19,7 +19,7 @@ class ModuleContributingTests: UITestCase {
 
 		contributing.openReportAProblem().closeProblemForm()
 		XCTAssertTrue(
-			contributing.host.waitForExistence(timeout: 10), "Closing the form should return to Contributing")
+			contributing.host.existsOrAppears(within: 10), "Closing the form should return to Contributing")
 
 		for title in [ids.cccServer, ids.openStreetMap, ids.firstDataSource] {
 			contributing.reveal(title)

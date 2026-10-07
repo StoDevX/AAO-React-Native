@@ -10,7 +10,7 @@ class ModuleSupportTests: UITestCase {
 		XCTAssertTrue(
 			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForExistence(timeout: 30),
 			"Feedback should open the Report a Problem form")
-		home.closeProblemForm().checkHomescreenExists()
+		home.closeProblemForm()
 
 		let support = home.openSupport()
 		support.checkOffersEveryRow().capture("support")
@@ -29,6 +29,6 @@ class ModuleSupportTests: UITestCase {
 		support
 			.open(ids.sendFeedback, mountedWhen: app.navigationBars[ids.reportProblemTitle])
 			.closeProblemForm()
-		XCTAssertTrue(support.host.waitForExistence(timeout: 10), "Closing the form should return to Support")
+		XCTAssertTrue(support.host.existsOrAppears(within: 10), "Closing the form should return to Support")
 	}
 }

@@ -93,7 +93,7 @@ struct AppIconScreen: Screen {
 		let tile = icon(named: iconName)
 		scrollIntoView(tile)
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 10),
+			tile.existsOrAppears(within: 10),
 			"\(iconName) should be in the gallery before tapping it")
 		// A coordinate tap goes to a screen point and asks no questions, so it
 		// would happily land on whatever covers a tile that is present in the

@@ -42,7 +42,7 @@ struct CustomizeScreen: Screen {
 	@discardableResult
 	func openQuickActions() -> Self {
 		let row = sheet.buttons[TestIdentifiers.Customize.quickActionsRow].firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 10), "Customize should offer Quick Actions")
+		XCTAssertTrue(row.existsOrAppears(within: 10), "Customize should offer Quick Actions")
 		row.tap()
 		return self
 	}
@@ -51,7 +51,7 @@ struct CustomizeScreen: Screen {
 	@discardableResult
 	func close() -> Self {
 		let button = app.buttons[TestIdentifiers.Customize.close].firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Customize should have a close button")
+		XCTAssertTrue(button.existsOrAppears(within: 10), "Customize should have a close button")
 		button.tap()
 		XCTAssertTrue(sheet.waitForNonExistence(timeout: 10), "Customize should close")
 		return self

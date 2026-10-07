@@ -39,13 +39,13 @@ class ModuleCustomizeTests: UITestCase {
 	func testChoosesHomeLayout() throws {
 		let home = HomeScreen(app: app).checkHomescreenExists()
 		let grid = app.descendants(matching: .any)[TestIdentifiers.Home.tileGrid]
-		XCTAssertTrue(grid.waitForExistence(timeout: 10), "Home should start tiled")
+		XCTAssertTrue(grid.existsOrAppears(within: 10), "Home should start tiled")
 
 		let ids = TestIdentifiers.Customize.self
 		home.openCustomize().chooseHomeLayout(ids.listLayout).capture("customize-layout-list").close()
 		XCTAssertTrue(grid.waitForNonExistence(timeout: 10), "List should replace the tile grid")
 		XCTAssertTrue(
-			app.collectionViews.firstMatch.waitForExistence(timeout: 10), "Home should show a list")
+			app.collectionViews.firstMatch.existsOrAppears(within: 10), "Home should show a list")
 		home.capture("home-list")
 
 		home.openCustomize().chooseHomeLayout(ids.tiledLayout).close()
