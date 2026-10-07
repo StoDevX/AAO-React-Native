@@ -29,10 +29,8 @@ class ModuleAboutTests: UITestCase {
 
 		about.swipeToNextCard(from: first, toShow: second)
 		XCTAssertFalse(about.isOnScreen(first), "The newest era should scroll off to the side")
-		let onSecond = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value == %@", "2 of 3"), object: about.pageDots)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [onSecond], timeout: 5), .completed,
+		XCTAssertTrue(
+			about.pageDots.waitUntilSnapshot("to read 2 of 3", timeout: 5) { $0.value as? String == "2 of 3" },
 			"The dots should follow the swipe to the second era")
 		about.capture("about-timeline-second")
 
@@ -50,9 +48,9 @@ class ModuleAboutTests: UITestCase {
 			about.reveal(about.row(page))
 			about.row(page).tap()
 			XCTAssertTrue(
-				app.navigationBars[page].waitForExistence(timeout: 30), "\(page) should open its own screen")
+				app.navigationBars[page].waitUntilExists(timeout: 30), "\(page) should open its own screen")
 			about.capture("about-\(page.lowercased())").goBack()
-			XCTAssertTrue(about.host.waitForExistence(timeout: 10), "Back should return to About")
+			XCTAssertTrue(about.host.waitUntilExists(timeout: 10), "Back should return to About")
 		}
 	}
 }

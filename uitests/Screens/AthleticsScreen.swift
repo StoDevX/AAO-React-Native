@@ -21,7 +21,7 @@ struct AthleticsScreen: Screen {
 	func openSportsMenu() -> Self {
 		let menu = app.buttons[TestIdentifiers.Athletics.sportsMenu]
 		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
+			menu.waitUntilExists(timeout: 30),
 			"the sports menu should be in the toolbar")
 		menu.tap()
 		return self
@@ -33,7 +33,7 @@ struct AthleticsScreen: Screen {
 	func tapMenuItem(_ title: String) -> Self {
 		let item = app.buttons[title]
 		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
+			item.waitUntilExists(timeout: 30),
 			"\(title) should be offered in the sports menu")
 		item.tap()
 		return self
@@ -44,7 +44,7 @@ struct AthleticsScreen: Screen {
 	func dismissMenu(waitingFor title: String) -> Self {
 		app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
 		XCTAssertTrue(
-			app.buttons[title].waitForNonExistence(timeout: 10),
+			app.buttons[title].waitUntilGone(timeout: 10),
 			"tapping away from the sports menu should close it")
 		return self
 	}

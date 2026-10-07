@@ -42,7 +42,7 @@ struct FilterScreen: Screen {
 	@discardableResult
 	func tapMenuItem(_ label: String) -> Self {
 		let item = menuItem(label)
-		XCTAssertTrue(item.waitForExistence(timeout: 30), "the menu should offer a \(label) item")
+		XCTAssertTrue(item.waitUntilExists(timeout: 30), "the menu should offer a \(label) item")
 		item.tap()
 		return self
 	}
@@ -54,7 +54,7 @@ struct FilterScreen: Screen {
 	func dismissMenu(waitingFor label: String) -> Self {
 		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.93)).tap()
 		XCTAssertTrue(
-			menuItem(label).waitForNonExistence(timeout: 30),
+			menuItem(label).waitUntilGone(timeout: 30),
 			"the menu should be gone after tapping outside it")
 		return self
 	}
@@ -62,7 +62,7 @@ struct FilterScreen: Screen {
 	@discardableResult
 	func waitForTrigger(_ key: String) -> Self {
 		XCTAssertTrue(
-			trigger(key).waitForExistence(timeout: 30),
+			trigger(key).waitUntilExists(timeout: 30),
 			"the \(key) filter should offer a trigger")
 		return self
 	}
@@ -97,7 +97,7 @@ struct FilterScreen: Screen {
 
 		for attempt in 1...3 {
 			trigger(key).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-			if element.waitForExistence(timeout: 15) {
+			if element.waitUntilExists(timeout: 15) {
 				return self
 			}
 			XCTContext.runActivity(named: "Tap \(attempt) on \(key) did not open it; retrying") { _ in
@@ -134,7 +134,7 @@ struct FilterScreen: Screen {
 			forDuration: 0.15, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 0.1)
 
 		XCTAssertTrue(
-			option(row).waitForNonExistence(timeout: 30),
+			option(row).waitUntilGone(timeout: 30),
 			"the sheet should be gone after a swipe down")
 		return self
 	}

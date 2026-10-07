@@ -9,7 +9,7 @@ struct ContributingScreen: Screen {
 
 	@discardableResult
 	func checkOpen() -> Self {
-		XCTAssertTrue(host.waitForExistence(timeout: 10), "Contributing should open")
+		XCTAssertTrue(host.waitUntilExists(timeout: 10), "Contributing should open")
 		return self
 	}
 
@@ -52,7 +52,7 @@ struct ContributingScreen: Screen {
 		let form = app.navigationBars[TestIdentifiers.Support.reportProblemTitle]
 		for _ in 0..<3 {
 			target.tap()
-			if form.waitForExistence(timeout: 10) { break }
+			if form.waitUntilExists(timeout: 10) { break }
 		}
 		XCTAssertTrue(form.exists, "Report a Problem should open its form")
 		return self

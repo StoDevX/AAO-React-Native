@@ -17,10 +17,10 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func openPreset(_ title: String) -> Self {
 		let preset = app.elementWithLabel(startingWith: title)
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should load")
+		XCTAssertTrue(areaGrid.waitUntilExists(timeout: 30), "The landing should load")
 		// Below the tiles, and the list builds rows only as they near the screen.
 		scrollUntilExists(preset)
-		XCTAssertTrue(preset.waitForExistence(timeout: 10), "The landing should offer \(title)")
+		XCTAssertTrue(preset.waitUntilExists(timeout: 10), "The landing should offer \(title)")
 		preset.tap()
 		return waitForPostings()
 	}
@@ -34,14 +34,14 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func openArea(_ name: String) -> Self {
 		let tile = areaGrid.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
-		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The landing should have a \(name) tile")
+		XCTAssertTrue(tile.waitUntilExists(timeout: 30), "The landing should have a \(name) tile")
 		tile.tap()
 		return waitForPostings()
 	}
 
 	@discardableResult
 	func verifyAreaTileCount(_ count: Int) -> Self {
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should show its area tiles")
+		XCTAssertTrue(areaGrid.waitUntilExists(timeout: 30), "The landing should show its area tiles")
 		XCTAssertEqual(areaGrid.buttons.count, count, "The landing should have \(count) area tiles")
 		return self
 	}
@@ -51,7 +51,7 @@ struct StudentWorkScreen: Screen {
 		let row = app.buttons
 			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.StudentWork.areaRowPrefix))
 			.firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "The areas should be drawn as rows")
+		XCTAssertTrue(row.waitUntilExists(timeout: 30), "The areas should be drawn as rows")
 		XCTAssertFalse(areaGrid.exists, "The area tiles should be gone")
 		return self
 	}
@@ -60,7 +60,7 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func verifyNoMatchingJobs() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.StudentWork.noMatchingJobs].waitForExistence(timeout: 30),
+			app.staticTexts[TestIdentifiers.StudentWork.noMatchingJobs].waitUntilExists(timeout: 30),
 			"The list should say no jobs match")
 		return self
 	}
@@ -77,7 +77,7 @@ struct StudentWorkScreen: Screen {
 
 	private func waitForPostings() -> Self {
 		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.StudentWork.postingsTitle].waitForExistence(timeout: 30),
+			app.navigationBars[TestIdentifiers.StudentWork.postingsTitle].waitUntilExists(timeout: 30),
 			"The postings should open")
 		return self
 	}
@@ -89,13 +89,13 @@ struct StudentWorkScreen: Screen {
 
 	@discardableResult
 	func verifyPostingListed(_ title: String) -> Self {
-		XCTAssertTrue(row(title).waitForExistence(timeout: 30), "Student Work should list \(title)")
+		XCTAssertTrue(row(title).waitUntilExists(timeout: 30), "Student Work should list \(title)")
 		return self
 	}
 
 	@discardableResult
 	func verifyPostingHidden(_ title: String) -> Self {
-		XCTAssertTrue(row(title).waitForNonExistence(timeout: 10), "Student Work should hide \(title)")
+		XCTAssertTrue(row(title).waitUntilGone(timeout: 10), "Student Work should hide \(title)")
 		return self
 	}
 
@@ -113,7 +113,7 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		let field = app.searchFields.firstMatch
-		XCTAssertTrue(field.waitForExistence(timeout: 30), "Student Work should offer a search field")
+		XCTAssertTrue(field.waitUntilExists(timeout: 30), "Student Work should offer a search field")
 		field.tap()
 		field.typeText(text)
 		// A test that searched nothing would pass no matter what the list did.
@@ -126,12 +126,12 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func openJobPosting(_ title: String) -> Self {
 		let job = app.elementWithLabel(startingWith: title)
-		XCTAssertTrue(job.waitForExistence(timeout: 30), "Student Work should list \(title)")
+		XCTAssertTrue(job.waitUntilExists(timeout: 30), "Student Work should list \(title)")
 		job.tap()
 		// The posting's own title, not a row in it: a form builds rows only as
 		// they near the screen, so its last rows may not exist yet.
 		XCTAssertTrue(
-			app.navigationBars[title].waitForExistence(timeout: 30),
+			app.navigationBars[title].waitUntilExists(timeout: 30),
 			"Tapping \(title) should open its posting")
 		return self
 	}
@@ -155,11 +155,11 @@ struct StudentWorkScreen: Screen {
 	@discardableResult
 	func checkJobDescriptionShown() -> Self {
 		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.StudentWork.jobDescriptionRow].waitForExistence(timeout: 10),
+			app.navigationBars[TestIdentifiers.StudentWork.jobDescriptionRow].waitUntilExists(timeout: 10),
 			"The description should open on a screen of its own")
 		XCTAssertTrue(
 			app.elementWithLabel(startingWith: TestIdentifiers.StudentWork.fixtureJobDescriptionParagraph)
-				.waitForExistence(timeout: 10),
+				.waitUntilExists(timeout: 10),
 			"The description screen should hold the posting's text")
 		return self
 	}

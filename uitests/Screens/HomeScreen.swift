@@ -7,7 +7,7 @@ struct HomeScreen: Screen {
 	func checkHomescreenExists() -> Self {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(
-			homescreen.waitForExistence(timeout: 30),
+			homescreen.waitUntilExists(timeout: 30),
 			"Home screen should be visible")
 		return self
 	}
@@ -16,7 +16,7 @@ struct HomeScreen: Screen {
 	func longPressNotice() -> Self {
 		let notice = app.element(matching: TestIdentifiers.Home.notice)
 		XCTAssertTrue(
-			notice.waitForExistence(timeout: 30),
+			notice.waitUntilExists(timeout: 30),
 			"Home notice widget should be visible")
 		notice.press(forDuration: 1.0)
 		return self
@@ -26,7 +26,7 @@ struct HomeScreen: Screen {
 	func tapEnableDevMode() -> Self {
 		let enableDevMode = app.buttons[TestIdentifiers.Home.enableDevMode]
 		XCTAssertTrue(
-			enableDevMode.waitForExistence(timeout: 10),
+			enableDevMode.waitUntilExists(timeout: 10),
 			"Context menu should show 'Enable dev mode' option")
 		enableDevMode.tap()
 		return self
@@ -35,7 +35,7 @@ struct HomeScreen: Screen {
 	@discardableResult
 	func openCustomize() -> CustomizeScreen {
 		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Home should have a Customize button")
+		XCTAssertTrue(button.waitUntilExists(timeout: 10), "Home should have a Customize button")
 		button.tap()
 		return CustomizeScreen(app: app).checkOpen()
 	}
@@ -45,7 +45,7 @@ struct HomeScreen: Screen {
 	func openHomeMenu() -> Self {
 		let menu = app.buttons[TestIdentifiers.Navigation.homeMenu]
 		XCTAssertTrue(
-			menu.waitForExistence(timeout: 10),
+			menu.waitUntilExists(timeout: 10),
 			"Home menu should appear on home screen")
 		menu.tap()
 		return self
@@ -57,7 +57,7 @@ struct HomeScreen: Screen {
 		openHomeMenu()
 		let entry = app.buttons[item].firstMatch
 		XCTAssertTrue(
-			entry.waitForExistence(timeout: 10),
+			entry.waitUntilExists(timeout: 10),
 			"Home menu should offer \(item)")
 		entry.tap()
 		return self
@@ -87,11 +87,11 @@ struct HomeScreen: Screen {
 		let tile = app.buttons[TestIdentifiers.Buttons.developer].firstMatch
 		scrollUntilExists(tile)
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.waitUntilExists(timeout: 30),
 			"Home should show a Developer tile after enabling dev mode")
 		tile.tap()
 		let screen = app.element(matching: TestIdentifiers.Developer.screen)
-		XCTAssertTrue(screen.waitForExistence(timeout: 30), "The Developer tile should open Developer")
+		XCTAssertTrue(screen.waitUntilExists(timeout: 30), "The Developer tile should open Developer")
 		return self
 	}
 }

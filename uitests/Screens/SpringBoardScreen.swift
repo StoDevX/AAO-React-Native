@@ -34,7 +34,7 @@ struct SpringBoardScreen: Screen {
 		// minute apiece. Sending them through `app` instead never reaches
 		// SpringBoard, so the wait is the price of driving it at all.
 		let item = springboard.buttons[action]
-		XCTAssertTrue(item.waitForExistence(timeout: 5), "\(action) should be in the icon's menu")
+		XCTAssertTrue(item.waitUntilExists(timeout: 5), "\(action) should be in the icon's menu")
 		item.tap()
 		return self
 	}

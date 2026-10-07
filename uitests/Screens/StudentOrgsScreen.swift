@@ -29,7 +29,7 @@ struct StudentOrgsScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.waitUntilExists(timeout: 30),
 			"Student Orgs should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -60,7 +60,7 @@ struct StudentOrgsScreen: Screen {
 	/// Scrolls the search results a few screens down, and asserts they moved.
 	@discardableResult
 	func scrollResultsDown() -> Self {
-		XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "No search results appeared")
+		XCTAssertTrue(resultsList.waitUntilExists(timeout: 30), "No search results appeared")
 		let firstRowBefore = resultsList.buttons.firstMatch.label
 		// A deliberate drag rather than `swipeUp()`: the results mount while the
 		// keyboard is animating back in, and in that window the quick flicks
@@ -88,12 +88,7 @@ struct StudentOrgsScreen: Screen {
 		// its place may leave the same row first, so a timeout is not a failure.
 		let firstRow = resultsList.buttons.firstMatch
 		let stale = firstRow.label
-		_ = XCTWaiter.wait(
-			for: [
-				XCTNSPredicateExpectation(
-					predicate: NSPredicate(format: "label != %@", stale), object: firstRow)
-			],
-			timeout: 5)
+		_ = firstRow.waitUntilSnapshot("to stop reading \(stale)", timeout: 5) { $0.label != stale }
 
 		let top = resultsList.buttons.firstMatch.label
 		capture("Student Orgs refined search results")
@@ -113,7 +108,7 @@ struct StudentOrgsScreen: Screen {
 		XCTAssertTrue(firstOrg.waitForHittable(timeout: 30), "An org should be listed")
 		firstOrg.tap()
 		XCTAssertTrue(
-			app.staticTexts["Category"].firstMatch.waitForExistence(timeout: 30),
+			app.staticTexts["Category"].firstMatch.waitUntilExists(timeout: 30),
 			"The org detail should be shown")
 		return self
 	}
@@ -125,7 +120,7 @@ struct StudentOrgsScreen: Screen {
 	@discardableResult
 	func verifyCategoriesShown() -> Self {
 		XCTAssertTrue(
-			firstCategoryRow.waitForExistence(timeout: 30),
+			firstCategoryRow.waitUntilExists(timeout: 30),
 			"The category list should hold at least one category before a search")
 		return self
 	}
@@ -133,7 +128,7 @@ struct StudentOrgsScreen: Screen {
 	@discardableResult
 	func verifyCategoryGridShown() -> Self {
 		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
-		XCTAssertTrue(grid.waitForExistence(timeout: 30), "The categories should be drawn as tiles")
+		XCTAssertTrue(grid.waitUntilExists(timeout: 30), "The categories should be drawn as tiles")
 		XCTAssertFalse(firstCategoryRow.exists, "No category should still be drawn as a row")
 		return self
 	}
@@ -146,7 +141,7 @@ struct StudentOrgsScreen: Screen {
 	func openFirstCategory() -> String {
 		let row = firstCategoryRow
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"The category list should hold at least one category before a search")
 
 		let name = String(row.identifier.dropFirst(TestIdentifiers.StudentOrgs.categoryRowPrefix.count))

@@ -47,7 +47,7 @@ struct QuickActionsScreen: Screen {
 	@discardableResult
 	func navigate() -> Self {
 		HomeScreen(app: app).checkHomescreenExists().openCustomize().openQuickActions()
-		XCTAssertTrue(picker.waitForExistence(timeout: 10), "the quick-action picker should open")
+		XCTAssertTrue(picker.waitUntilExists(timeout: 10), "the quick-action picker should open")
 		return self
 	}
 

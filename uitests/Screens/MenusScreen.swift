@@ -22,7 +22,7 @@ struct MenusScreen: Screen {
 	func revealFilters() -> Self {
 		let button = app.navigationBars.buttons[TestIdentifiers.Menus.filtersButton].firstMatch
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			button.waitUntilExists(timeout: 30),
 			"the Filters button should be in the navigation bar")
 		button.tap()
 		return self
@@ -50,7 +50,7 @@ struct MenusScreen: Screen {
 	func chooseMeal(_ meal: String, at cafe: String, from current: String) -> Self {
 		let picker = mealPicker(cafe, showing: current)
 		XCTAssertTrue(
-			picker.waitForExistence(timeout: 30),
+			picker.waitUntilExists(timeout: 30),
 			"the title should name \(current) and open the meal picker")
 		picker.tap()
 
@@ -60,7 +60,7 @@ struct MenusScreen: Screen {
 		let option = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", meal))
 			.firstMatch
 		XCTAssertTrue(
-			option.waitForExistence(timeout: 30),
+			option.waitUntilExists(timeout: 30),
 			"\(meal) should be offered in the meal menu")
 		option.tap()
 		return self
@@ -72,7 +72,7 @@ struct MenusScreen: Screen {
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Menus.foodRowPrefix)
 		).firstMatch
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"at least one food row should be visible")
 		return self
 	}
@@ -81,7 +81,7 @@ struct MenusScreen: Screen {
 	@discardableResult
 	func verifyShowing(_ cafe: String) -> Self {
 		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitForExistence(timeout: 30), "\(cafe) tab should be visible")
+		XCTAssertTrue(tab.waitUntilExists(timeout: 30), "\(cafe) tab should be visible")
 		XCTAssertTrue(tab.waitForSelected(true), "\(cafe) should be the selected cafe")
 		return self
 	}
@@ -90,7 +90,7 @@ struct MenusScreen: Screen {
 	@discardableResult
 	func openCafe(_ cafe: String) -> Self {
 		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitForExistence(timeout: 30), "\(cafe) tab should be visible")
+		XCTAssertTrue(tab.waitUntilExists(timeout: 30), "\(cafe) tab should be visible")
 		tab.tap()
 		return verifyFoodRowsAppear()
 	}

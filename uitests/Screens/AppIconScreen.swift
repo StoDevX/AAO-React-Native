@@ -11,9 +11,9 @@ struct AppIconScreen: Screen {
 	func navigate() -> Self {
 		HomeScreen(app: app).checkHomescreenExists().openCustomize()
 		let row = app.buttons[TestIdentifiers.Customize.appIconRow].firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 10), "Customize should offer App Icon")
+		XCTAssertTrue(row.waitUntilExists(timeout: 10), "Customize should offer App Icon")
 		row.tap()
-		XCTAssertTrue(gallery.waitForExistence(timeout: 10), "the icon gallery should open")
+		XCTAssertTrue(gallery.waitUntilExists(timeout: 10), "the icon gallery should open")
 		return self
 	}
 
@@ -93,7 +93,7 @@ struct AppIconScreen: Screen {
 		let tile = icon(named: iconName)
 		scrollIntoView(tile)
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 10),
+			tile.waitUntilExists(timeout: 10),
 			"\(iconName) should be in the gallery before tapping it")
 		// A coordinate tap goes to a screen point and asks no questions, so it
 		// would happily land on whatever covers a tile that is present in the
@@ -116,7 +116,7 @@ struct AppIconScreen: Screen {
 
 		let iconChangeOK = springboard.buttons["OK"]
 		XCTAssertTrue(
-			iconChangeOK.waitForExistence(timeout: 10),
+			iconChangeOK.waitUntilExists(timeout: 10),
 			"Icon change alert should appear")
 		iconChangeOK.tap()
 
@@ -127,7 +127,7 @@ struct AppIconScreen: Screen {
 			.matching(NSPredicate(format: "label == %@ AND isSelected == true", iconName))
 			.firstMatch
 		XCTAssertTrue(
-			selected.waitForExistence(timeout: 10),
+			selected.waitUntilExists(timeout: 10),
 			"\(iconName) should be selected after tapping it")
 
 		return self

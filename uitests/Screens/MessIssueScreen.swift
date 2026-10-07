@@ -21,7 +21,7 @@ struct MessIssueScreen: Screen {
 	/// among the section's, then go Back, and check the issue is where it was left.
 	@discardableResult
 	func openSectionHoldingTheLead(_ section: String) -> Self {
-		XCTAssertTrue(lead.waitForExistence(timeout: 30), "the issue should lead with a story")
+		XCTAssertTrue(lead.waitUntilExists(timeout: 30), "the issue should lead with a story")
 		// The lead's label is its headline, then its section and writers.
 		let headline = lead.label.components(separatedBy: ", \(section)").first ?? lead.label
 		let all = app.buttons.matching(NSPredicate(format: "label == %@", "All \(section)")).firstMatch
@@ -31,10 +31,10 @@ struct MessIssueScreen: Screen {
 		all.tap()
 
 		let bar = app.navigationBars[section]
-		XCTAssertTrue(bar.waitForExistence(timeout: 30), "All should open a page titled \(section)")
+		XCTAssertTrue(bar.waitUntilExists(timeout: 30), "All should open a page titled \(section)")
 		let leadRow = storyRows.matching(NSPredicate(format: "label BEGINSWITH %@", headline)).firstMatch
 		XCTAssertTrue(
-			leadRow.waitForExistence(timeout: 30),
+			leadRow.waitUntilExists(timeout: 30),
 			"the \(section) list should hold the issue's lead story, \"\(headline)\"")
 		capture("The issue's \(section) stories")
 
@@ -52,7 +52,7 @@ struct MessIssueScreen: Screen {
 	func verifyMoreGridsItsStories() -> Self {
 		let row = app.otherElements.matching(identifier: TestIdentifiers.News.moreGridRow).firstMatch
 		scrollUntilExists(row, swipes: 10)
-		XCTAssertTrue(row.waitForExistence(timeout: 10), "the issue should end with the More grid")
+		XCTAssertTrue(row.waitUntilExists(timeout: 10), "the issue should end with the More grid")
 		let cards = row.buttons.matching(identifier: TestIdentifiers.News.storyCard)
 		XCTAssertEqual(cards.count, 2, "a row of the More grid should hold two cards")
 		let first = cards.element(boundBy: 0).frame

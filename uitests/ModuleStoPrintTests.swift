@@ -27,7 +27,7 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 		// list rather than the spinner that precedes it.
 		let pendingRelease = app.staticTexts["Pending Release"].firstMatch
 		XCTAssertTrue(
-			pendingRelease.waitForExistence(timeout: 30),
+			pendingRelease.waitUntilExists(timeout: 30),
 			"Print Jobs should list the mocked jobs")
 
 		screen.capture("Print Jobs")
@@ -35,17 +35,17 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 		let sent = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "test.pdf"))
 			.firstMatch
-		XCTAssertTrue(sent.waitForExistence(timeout: 30), "A sent job should be listed")
+		XCTAssertTrue(sent.waitUntilExists(timeout: 30), "A sent job should be listed")
 		sent.tap()
 		XCTAssertTrue(
-			app.staticTexts["Job Info"].firstMatch.waitForExistence(timeout: 30),
+			app.staticTexts["Job Info"].firstMatch.waitUntilExists(timeout: 30),
 			"A sent job should open the release screen")
 		screen.capture("Print release").goBack()
 
 		let job = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))
 			.firstMatch
-		XCTAssertTrue(job.waitForExistence(timeout: 30), "A pending job should be listed")
+		XCTAssertTrue(job.waitUntilExists(timeout: 30), "A pending job should be listed")
 		job.tap()
 
 		// Every printer in the fixtures is named mfc-<something>; their location
@@ -53,12 +53,12 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 		let printer = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "mfc-"))
 			.firstMatch
-		XCTAssertTrue(printer.waitForExistence(timeout: 30), "A printer should be listed")
+		XCTAssertTrue(printer.waitUntilExists(timeout: 30), "A printer should be listed")
 		screen.capture("Printers")
 		printer.tap()
 
 		let print = app.buttons["Print"].firstMatch
-		XCTAssertTrue(print.waitForExistence(timeout: 30), "Print should be offered")
+		XCTAssertTrue(print.waitUntilExists(timeout: 30), "Print should be offered")
 
 		screen.capture("Print release - actions")
 	}

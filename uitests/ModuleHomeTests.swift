@@ -42,7 +42,7 @@ class ModuleHomeTests: UITestCase {
 			(buttons.carletonCampus, HoursScreen(app: app).carletonMounted),
 		]
 
-		// One wait per tile: each wait polls for a second at least, and
+		// One wait per tile: each wait reads the accessibility tree at least once, and
 		// seventeen tiles add up. Dev mode turning on has already shown that
 		// taps reach JavaScript.
 		let backButton = app.navigationBars.buttons[TestIdentifiers.Navigation.systemBackButton].firstMatch
@@ -51,13 +51,13 @@ class ModuleHomeTests: UITestCase {
 			home.scrollUntilExists(button)
 			button.tap()
 			// The Map's sheet can take most of a minute on a loaded runner.
-			XCTAssertTrue(mounted.waitForExistence(timeout: 60), "The \(tile) tile should open its own screen")
+			XCTAssertTrue(mounted.waitUntilExists(timeout: 60), "The \(tile) tile should open its own screen")
 			backButton.tap()
 		}
 
 		home.openDeveloper()
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitForExistence(timeout: 10),
+			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitUntilExists(timeout: 10),
 			"Developer should hold the tools Settings' Developer section held")
 		home.capture("developer")
 	}

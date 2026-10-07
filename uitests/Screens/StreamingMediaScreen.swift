@@ -17,7 +17,7 @@ struct StreamingMediaScreen: Screen {
 	func checkStreamListExists() -> Self {
 		let streamList = app.element(matching: TestIdentifiers.Streaming.list)
 		XCTAssertTrue(
-			streamList.waitForExistence(timeout: 30),
+			streamList.waitUntilExists(timeout: 30),
 			"stream-list should be visible")
 		return self
 	}
@@ -28,7 +28,7 @@ struct StreamingMediaScreen: Screen {
 			XCTContext.runActivity(named: tab) { _ in
 				let tabButton = app.tabButton(tab)
 				XCTAssertTrue(
-					tabButton.waitForExistence(timeout: 30),
+					tabButton.waitUntilExists(timeout: 30),
 					"\(tab) tab button should be visible")
 			}
 		}
@@ -42,12 +42,12 @@ struct StreamingMediaScreen: Screen {
 	/// element up again and stops if it has gone: a tap that did land may have
 	/// changed it.
 	private func tap(_ element: XCUIElement, until marker: XCUIElement, named name: String) {
-		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
+		XCTAssertTrue(element.waitUntilExists(timeout: 30), "\(name) should exist before it is tapped")
 		for attempt in 1...3 {
 			if element.exists {
 				element.tap()
 			}
-			if marker.waitForExistence(timeout: 10) {
+			if marker.waitUntilExists(timeout: 10) {
 				return
 			}
 			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }
@@ -116,7 +116,7 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func closeSheet(expectingBar label: String) -> Self {
 		let airStatus = app.element(matching: TestIdentifiers.StreamingMedia.airStatus)
-		XCTAssertTrue(airStatus.waitForExistence(timeout: 10), "The sheet should be open before it is closed")
+		XCTAssertTrue(airStatus.waitUntilExists(timeout: 10), "The sheet should be open before it is closed")
 		// By the grabber, above the station picker: a drag that starts on the
 		// picker or the record goes to them instead.
 		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.075))
@@ -131,7 +131,7 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func tapButton(_ label: String) -> Self {
 		let button = app.buttonLabelled(label)
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "A button labelled \"\(label)\" should exist")
+		XCTAssertTrue(button.waitUntilExists(timeout: 10), "A button labelled \"\(label)\" should exist")
 		button.tap()
 		return self
 	}
@@ -141,7 +141,7 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func checkShows(_ label: String) -> Self {
 		XCTAssertTrue(
-			app.elementWithLabel(startingWith: label).waitForExistence(timeout: 10),
+			app.elementWithLabel(startingWith: label).waitUntilExists(timeout: 10),
 			"Something labelled \"\(label)\" should be showing")
 		return self
 	}
@@ -155,10 +155,7 @@ struct StreamingMediaScreen: Screen {
 	/// Check `element` is not on screen, waiting for it to go.
 	@discardableResult
 	func checkGone(_ element: XCUIElement, named name: String) -> Self {
-		let gone = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: element)],
-			timeout: 10)
-		XCTAssertEqual(gone, .completed, "\(name) should be gone")
+		XCTAssertTrue(element.waitUntilGone(timeout: 10), "\(name) should be gone")
 		return self
 	}
 
@@ -170,7 +167,7 @@ struct StreamingMediaScreen: Screen {
 	}
 
 	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
-		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist")
+		XCTAssertTrue(element.waitUntilExists(timeout: 30), "\(name) should exist")
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")
 		XCTAssertGreaterThanOrEqual(element.frame.width, 44, "\(name) should be at least 44pt wide")
 	}
@@ -183,7 +180,7 @@ struct StreamingMediaScreen: Screen {
 			XCTContext.runActivity(named: label) { _ in
 				let logo = app.buttonLabelled(label)
 				XCTAssertTrue(
-					logo.waitForExistence(timeout: 10),
+					logo.waitUntilExists(timeout: 10),
 					"Logo \(index + 1) should be a button labelled \"\(label)\"")
 				capture(label)
 				logo.tap()
@@ -191,7 +188,7 @@ struct StreamingMediaScreen: Screen {
 		}
 
 		XCTAssertTrue(
-			app.buttonLabelled(labels[0]).waitForExistence(timeout: 10),
+			app.buttonLabelled(labels[0]).waitUntilExists(timeout: 10),
 			"Tapping the last logo should come back to \"\(labels[0])\"")
 		return self
 	}
@@ -208,14 +205,14 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func tapLogo(labelled prefix: String, until target: String) -> Self {
 		let logo = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", prefix)).firstMatch
-		XCTAssertTrue(logo.waitForExistence(timeout: 10), "A logo labelled \"\(prefix)…\" should be a button")
+		XCTAssertTrue(logo.waitUntilExists(timeout: 10), "A logo labelled \"\(prefix)…\" should be a button")
 		for _ in 0..<5 {
-			if app.buttonLabelled(target).waitForExistence(timeout: 2) {
+			if app.buttonLabelled(target).waitUntilExists(timeout: 2) {
 				break
 			}
 			logo.tap()
 		}
-		XCTAssertTrue(app.buttonLabelled(target).waitForExistence(timeout: 5), "Tapping the logo should reach \"\(target)\"")
+		XCTAssertTrue(app.buttonLabelled(target).waitUntilExists(timeout: 5), "Tapping the logo should reach \"\(target)\"")
 		return self
 	}
 
@@ -224,7 +221,7 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func checkScrubKeepsLogo(_ label: String) -> Self {
 		let logo = app.buttonLabelled(label)
-		XCTAssertTrue(logo.waitForExistence(timeout: 10), "\"\(label)\" should be showing before the scrub")
+		XCTAssertTrue(logo.waitUntilExists(timeout: 10), "\"\(label)\" should be showing before the scrub")
 
 		let start = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.25))
 		let end = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.2))
@@ -232,7 +229,7 @@ struct StreamingMediaScreen: Screen {
 		capture("\(label) after a scrub")
 
 		XCTAssertTrue(
-			app.buttonLabelled(label).waitForExistence(timeout: 5),
+			app.buttonLabelled(label).waitUntilExists(timeout: 5),
 			"A scrub should leave the logo as \"\(label)\"")
 		return self
 	}

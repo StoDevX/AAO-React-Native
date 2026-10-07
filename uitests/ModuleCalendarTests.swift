@@ -36,26 +36,27 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     screen.capture("before filtering")
 
     let rows = screen.visibleRows()
-    let expectation = expectation(for: rows.count >= 1)
-    wait(for: [expectation], timeout: 10)
+    XCTAssertTrue(
+      waitUntil("Waiting 10.0s for an event row", timeout: 10) { rows.count >= 1 },
+      "the day should list an event")
     let unfilteredCount = rows.count
 
     XCTContext.runActivity(named: "Verify the picker rows") { _ in
       screen.openPicker()
       XCTAssertTrue(
-        app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForExistence(timeout: 30),
+        app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitUntilExists(timeout: 30),
         "\(TestIdentifiers.Calendar.calendarsSection) should be a section of the open menu")
 
       XCTAssertTrue(
-        app.buttons[TestIdentifiers.Calendar.categoryMenu].waitForExistence(timeout: 30),
+        app.buttons[TestIdentifiers.Calendar.categoryMenu].waitUntilExists(timeout: 30),
         "\(TestIdentifiers.Calendar.categoryMenu) should be a row of the open picker")
 
       XCTAssertTrue(
-        app.buttons[TestIdentifiers.Calendar.organizationMenu].waitForExistence(timeout: 30),
+        app.buttons[TestIdentifiers.Calendar.organizationMenu].waitUntilExists(timeout: 30),
         "\(TestIdentifiers.Calendar.organizationMenu) should be a row of the open picker")
 
       XCTAssertTrue(
-        app.buttons[TestIdentifiers.Calendar.resetFilters].waitForNonExistence(timeout: 10),
+        app.buttons[TestIdentifiers.Calendar.resetFilters].waitUntilGone(timeout: 10),
         "\(TestIdentifiers.Calendar.resetFilters) should be absent while the list is unfiltered")
 
       screen.capture("30-picker-rows")
@@ -94,7 +95,9 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     screen.verifyStripAbsent()
 
     let upcomingRows = app.buttons.matching(.beginsWith("event-row-"))
-    wait(for: [self.expectation(for: upcomingRows.count >= 1)], timeout: 10)
+    XCTAssertTrue(
+      waitUntil("Waiting 10.0s for an upcoming event row", timeout: 10) { upcomingRows.count >= 1 },
+      "Upcoming should list an event")
     let unfilteredUpcoming = upcomingRows.count
 
     screen
@@ -140,8 +143,9 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     let initialWeekDates = screen.datePickerDayIdentifiers()
 
     let eventRows = screen.visibleRows()
-    let expectation = expectation(for: eventRows.count >= 1)
-    wait(for: [expectation], timeout: 10)
+    XCTAssertTrue(
+      waitUntil("Waiting 10.0s for an event row", timeout: 10) { eventRows.count >= 1 },
+      "the week should list an event")
     let initialEventCount = eventRows.count
     let initialEventIdentifiers = eventRows.identifiers()
 

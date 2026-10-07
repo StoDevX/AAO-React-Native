@@ -8,7 +8,7 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 		let screen = AthleticsScreen(app: app).navigate()
 
 		let today = app.staticTexts["Today"].firstMatch
-		let found = today.waitForExistence(timeout: 30)
+		let found = today.waitUntilExists(timeout: 30)
 
 		// Captured before the assertion: Athletics draws no list at all when the
 		// feed has no scores, and the screenshot is what tells the two apart.
@@ -16,7 +16,7 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 		XCTAssertTrue(found, "Athletics should show a Today section")
 
 		let yesterday = app.staticTexts["Yesterday"].firstMatch
-		XCTAssertTrue(yesterday.waitForExistence(timeout: 10), "Athletics should show a Yesterday section")
+		XCTAssertTrue(yesterday.waitUntilExists(timeout: 10), "Athletics should show a Yesterday section")
 		XCTAssertTrue(yesterday.isHittable, "the list should open at its top, with Yesterday in view")
 		XCTAssertLessThan(
 			yesterday.frame.minY, today.frame.minY, "Yesterday should sit above Today")
@@ -32,10 +32,10 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 
 		screen.openSportsMenu()
 		XCTAssertTrue(
-			app.buttons["Volleyball"].waitForExistence(timeout: 30),
+			app.buttons["Volleyball"].waitUntilExists(timeout: 30),
 			"Volleyball should be offered in the sports menu")
 		XCTAssertTrue(
-			app.buttons[reset].waitForNonExistence(timeout: 10),
+			app.buttons[reset].waitUntilGone(timeout: 10),
 			"Reset Filters should be absent while every sport shows")
 		screen.capture("Athletics - sports menu")
 
@@ -43,14 +43,14 @@ class ModuleAthleticsTests: UITestCaseUnbooted {
 
 		screen.openSportsMenu()
 		XCTAssertTrue(
-			app.buttons[reset].waitForExistence(timeout: 30),
+			app.buttons[reset].waitUntilExists(timeout: 30),
 			"Reset Filters should be offered once a sport is chosen")
 		screen.capture("Athletics - sports menu with a sport chosen")
 
 		screen.tapMenuItem(reset)
 		screen.openSportsMenu()
 		XCTAssertTrue(
-			app.buttons[reset].waitForNonExistence(timeout: 10),
+			app.buttons[reset].waitUntilGone(timeout: 10),
 			"Reset Filters should clear the choice")
 	}
 }

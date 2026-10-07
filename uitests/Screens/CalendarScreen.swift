@@ -22,7 +22,7 @@ struct CalendarScreen: Screen {
 	func openPicker() -> Self {
 		let picker = app.buttons[TestIdentifiers.Calendar.picker]
     XCTAssertTrue(
-      picker.waitForExistence(timeout: 30),
+      picker.waitUntilExists(timeout: 30),
       "Calendar picker should be in the toolbar")
 		picker.tap()
 		return self
@@ -35,7 +35,7 @@ struct CalendarScreen: Screen {
 	func tapMenuItem(_ title: String) -> Self {
 		let item = app.buttons[title]
 		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
+			item.waitUntilExists(timeout: 30),
 			"\(title) should be offered in the picker")
 		item.tap()
 		return self
@@ -53,7 +53,7 @@ struct CalendarScreen: Screen {
 			NSPredicate(format: "label BEGINSWITH %@", title)
 		).firstMatch
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"\(title) should be a row of the open picker")
 		row.tap()
 		return self
@@ -66,7 +66,7 @@ struct CalendarScreen: Screen {
 		tapMenuItem(TestIdentifiers.Calendar.resetFilters)
 		XCTAssertTrue(
       app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
-        .waitForNonExistence(timeout: 10)
+        .waitUntilGone(timeout: 10)
     )
 		return self
 	}
@@ -125,13 +125,13 @@ struct CalendarScreen: Screen {
 		if menuIsPresented() || pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
 			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
-				.waitForNonExistence(timeout: 10)
-			_ = axisRow().waitForNonExistence(timeout: 10)
+				.waitUntilGone(timeout: 10)
+			_ = axisRow().waitUntilGone(timeout: 10)
 			XCTAssertFalse(
 				pickerIsPresented(),
 				"Tapping away from the picker should close it, submenu and all")
 			XCTAssertTrue(
-				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForNonExistence(timeout: 10),
+				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitUntilGone(timeout: 10),
 				"Tapping away from the picker should close its CALENDARS section too")
 		}
 		return self
@@ -145,7 +145,7 @@ struct CalendarScreen: Screen {
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
 		).firstMatch
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 30),
+			cell.waitUntilExists(timeout: 30),
 			"The day picker strip should be above the list")
 		return self
 	}
@@ -216,7 +216,7 @@ struct CalendarScreen: Screen {
 	func tapDay(_ isoDay: String) -> Self {
 		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 10),
+			cell.waitUntilExists(timeout: 10),
 			"The strip should offer \(isoDay)")
 		cell.tap()
 		return self
@@ -232,7 +232,7 @@ struct CalendarScreen: Screen {
 				format: "identifier BEGINSWITH %@ AND isSelected == true",
 				TestIdentifiers.Calendar.dayCellPrefix)
 		).firstMatch
-		guard selected.waitForExistence(timeout: 5) else {
+		guard selected.waitUntilExists(timeout: 5) else {
 			return nil
 		}
 		return selected.identifier
@@ -251,12 +251,10 @@ struct CalendarScreen: Screen {
   @discardableResult
   func verifyStripShows(_ expected: [String], _ message: String, timeout: TimeInterval = 10) -> Self {
     var last: [String] = []
-    let arrived = NSPredicate { _, _ in
-      last = self.datePickerDayIdentifiers()
+    _ = waitUntil("Waiting \(timeout)s for the strip to show \(expected)", timeout: timeout) {
+      last = datePickerDayIdentifiers()
       return last == expected
     }
-    let expectation = XCTNSPredicateExpectation(predicate: arrived, object: nil)
-    _ = XCTWaiter().wait(for: [expectation], timeout: timeout)
     XCTAssertEqual(last, expected, message)
     return self
   }
@@ -266,7 +264,7 @@ struct CalendarScreen: Screen {
 	func tapToday() -> Self {
 		let button = app.buttons[TestIdentifiers.Calendar.today]
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			button.waitUntilExists(timeout: 30),
 			"Today should be in the bottom bar")
 		button.tap()
 		return self
@@ -295,7 +293,7 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func verifyRowPresent(_ title: String) -> Self {
 		XCTAssertTrue(
-			row(title).waitForExistence(timeout: 10),
+			row(title).waitUntilExists(timeout: 10),
 			"\(title) should be in the list")
 		return self
 	}
@@ -304,7 +302,7 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func verifyRowAbsent(_ title: String) -> Self {
 		XCTAssertTrue(
-			row(title).waitForNonExistence(timeout: 10),
+			row(title).waitUntilGone(timeout: 10),
 			"\(title) should have been filtered out of the list")
 		return self
 	}
@@ -320,7 +318,7 @@ struct CalendarScreen: Screen {
 	func openModeMenu() -> Self {
 		let menu = app.buttons[TestIdentifiers.Calendar.modePicker]
 		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
+			menu.waitUntilExists(timeout: 30),
 			"The calendar should offer a view menu in the navigation bar")
 		menu.tap()
 		return self
@@ -332,7 +330,7 @@ struct CalendarScreen: Screen {
 	func selectMode(_ title: String) -> Self {
 		let item = app.buttons[title]
 		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
+			item.waitUntilExists(timeout: 30),
 			"\(title) should be offered in the view menu")
 		item.tap()
 		return self
@@ -356,7 +354,7 @@ struct CalendarScreen: Screen {
 	/// actually matters.
 	func dayHasEvents(_ isoDay: String) -> Bool {
 		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
-		guard cell.waitForExistence(timeout: 10) else { return false }
+		guard cell.waitUntilExists(timeout: 10) else { return false }
 		return cell.label.hasSuffix("has events")
 	}
 
@@ -366,7 +364,7 @@ struct CalendarScreen: Screen {
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
 		).firstMatch
 		XCTAssertTrue(
-			cell.waitForNonExistence(timeout: 10),
+			cell.waitUntilGone(timeout: 10),
 			"Upcoming should draw no day picker")
 		return self
 	}
@@ -395,7 +393,7 @@ struct CalendarScreen: Screen {
 		// see this collapse at all.
 		let notice = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", titlePart)).firstMatch
 		XCTAssertTrue(
-			notice.waitForExistence(timeout: 10),
+			notice.waitUntilExists(timeout: 10),
 			"\"\(titlePart)\" should be on screen")
 		XCTContext.runActivity(named: "\"\(titlePart)\" frame is \(notice.frame), isHittable \(notice.isHittable)") {
 			_ in

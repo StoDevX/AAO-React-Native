@@ -207,7 +207,7 @@ class ModuleNewsTests: UITestCaseUnbooted {
 
 		story.goBack()
 		XCTAssertTrue(
-			front.storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the Photo list")
+			front.storyRows.firstMatch.waitUntilExists(timeout: 10), "Back should return to the Photo list")
 		story.verifyPage(dark: false, "the Photo list should be light again after Back")
 		front.capture("Photo list after Back")
 	}

@@ -20,8 +20,8 @@ struct MessFrontPage: Screen {
 	/// paper's castle.
 	@discardableResult
 	func verifyByIssueShowsTheGrid() -> Self {
-		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "By Issue should lead with the newest issue")
-		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show older issues as tiles")
+		XCTAssertTrue(topTile.waitUntilExists(timeout: 30), "By Issue should lead with the newest issue")
+		XCTAssertTrue(tiles.firstMatch.waitUntilExists(timeout: 30), "By Issue should show older issues as tiles")
 		XCTAssertTrue(
 			viewMenu.waitForLabel(viewMenuLabel(TestIdentifiers.News.byIssue), timeout: 10),
 			"By Issue should be the view chosen (the menu reads \(viewMenu.label))")
@@ -87,7 +87,7 @@ struct MessFrontPage: Screen {
 	/// after page as its end comes into view.
 	@discardableResult
 	func scrollIssues(untilAnIssueFrom year: String) -> Self {
-		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show its tiles")
+		XCTAssertTrue(tiles.firstMatch.waitUntilExists(timeout: 30), "By Issue should show its tiles")
 		let older = tiles.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
 		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
@@ -99,7 +99,7 @@ struct MessFrontPage: Screen {
 		}
 		capture("The issue grid, paged back to \(year)")
 		XCTAssertTrue(
-			older.waitForExistence(timeout: 30),
+			older.waitUntilExists(timeout: 30),
 			"scrolling should keep loading older issues until it reaches \(year)")
 		return self
 	}
@@ -108,13 +108,13 @@ struct MessFrontPage: Screen {
 	@discardableResult
 	func openSecondIssue() -> Self {
 		let second = tiles.firstMatch
-		XCTAssertTrue(second.waitForExistence(timeout: 30), "By Issue should show a tile under the top one")
+		XCTAssertTrue(second.waitUntilExists(timeout: 30), "By Issue should show a tile under the top one")
 		XCTAssertTrue(second.waitForHittable(), "the tile should be ready to tap")
 		second.tap()
 		XCTAssertTrue(
-			viewMenu.waitForNonExistence(timeout: 30),
+			viewMenu.waitUntilGone(timeout: 30),
 			"tapping a tile should open its issue on a page of its own")
-		XCTAssertTrue(lead.waitForExistence(timeout: 30), "an opened issue should lead with a story")
+		XCTAssertTrue(lead.waitUntilExists(timeout: 30), "an opened issue should lead with a story")
 		capture("An older issue of the Messenger")
 		return self
 	}
@@ -134,15 +134,15 @@ struct MessFrontPage: Screen {
 		choose(view: TestIdentifiers.News.latest)
 		let columns = app.buttons.matching(identifier: TestIdentifiers.News.columnChip)
 		let button = columns.matching(NSPredicate(format: "label == %@", column)).firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 30), "\(section) should offer its \(column) column")
+		XCTAssertTrue(button.waitUntilExists(timeout: 30), "\(section) should offer its \(column) column")
 		scrollRow(columns, toReveal: button)
 		XCTAssertTrue(button.waitForHittable(timeout: 10), "the \(column) chip should be ready to tap")
 		capture("\(section) and its columns")
 		button.tap()
 		XCTAssertTrue(
-			viewMenu.waitForNonExistence(timeout: 30),
+			viewMenu.waitUntilGone(timeout: 30),
 			"tapping a column should open its list on a page of its own")
-		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 30), "the \(column) list should show its stories")
+		XCTAssertTrue(storyRows.firstMatch.waitUntilExists(timeout: 30), "the \(column) list should show its stories")
 		return self
 	}
 
@@ -151,7 +151,7 @@ struct MessFrontPage: Screen {
 	func openNewestIssue() -> MessIssueScreen {
 		XCTAssertTrue(topTile.waitForHittable(), "the newest issue's tile should be ready to tap")
 		topTile.tap()
-		XCTAssertTrue(lead.waitForExistence(timeout: 30), "the newest issue should lead with a story")
+		XCTAssertTrue(lead.waitUntilExists(timeout: 30), "the newest issue should lead with a story")
 		return MessIssueScreen(app: app)
 	}
 
@@ -170,26 +170,26 @@ struct MessFrontPage: Screen {
 	func openFirstStaffMember() -> Self {
 		pickFromViewMenu(TestIdentifiers.News.staffMenuItem)
 		XCTAssertTrue(
-			viewMenu.waitForNonExistence(timeout: 30),
+			viewMenu.waitUntilGone(timeout: 30),
 			"Staff should open the directory on a page of its own")
 		let tile = app.buttons
 			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.staffTilePrefix))
 			.firstMatch
-		XCTAssertTrue(tile.waitForExistence(timeout: 30), "the directory should show the staff as tiles")
+		XCTAssertTrue(tile.waitUntilExists(timeout: 30), "the directory should show the staff as tiles")
 		capture("The Messenger's staff directory")
 		XCTAssertTrue(tile.waitForHittable(), "a person's tile should be ready to tap")
 		// A tile reads its person's name alone; their role waits for their page.
 		let name = tile.label
 		XCTAssertFalse(name.isEmpty, "a person's tile should name them")
 		tile.tap()
-		XCTAssertTrue(tile.waitForNonExistence(timeout: 30), "tapping \(name) should open their page")
+		XCTAssertTrue(tile.waitUntilGone(timeout: 30), "tapping \(name) should open their page")
 		XCTAssertTrue(
-			app.staticTexts[name].firstMatch.waitForExistence(timeout: 30), "\(name)'s page should name them")
+			app.staticTexts[name].firstMatch.waitUntilExists(timeout: 30), "\(name)'s page should name them")
 		// The page decides to draw its About section when the person has a bio, as the fixture's
 		// first person does.
 		let bio = app.staticTexts[TestIdentifiers.News.staffBioHeading].firstMatch
 		capture("A staff member's page")
-		XCTAssertTrue(bio.waitForExistence(timeout: 10), "\(name)'s page should show their bio under About")
+		XCTAssertTrue(bio.waitUntilExists(timeout: 10), "\(name)'s page should show their bio under About")
 		return self
 	}
 
@@ -214,8 +214,10 @@ struct MessFrontPage: Screen {
 	/// rows move while the menu opens, so a frame read too soon lands a tap on the row next to the
 	/// one meant.
 	private func waitForOnScreen(_ element: XCUIElement, timeout: TimeInterval = 30) -> Bool {
-		guard element.waitForExistence(timeout: timeout) else { return false }
+		guard element.waitUntilExists(timeout: timeout) else { return false }
 		var last = CGRect.null
+		// XCTWaiter, not `waitUntil`: "holding still" means the same frame at two
+		// checks about a second apart, and `waitUntil` checks 0.2s apart at first.
 		let settled = NSPredicate { _, _ in
 			let frame = element.frame
 			defer { last = frame }

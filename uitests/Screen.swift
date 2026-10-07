@@ -39,10 +39,10 @@ extension Screen {
 	@discardableResult
 	func open(route: String, mountedWhen mounted: XCUIElement, timeout: TimeInterval = 30) -> Self {
 		// No wait for Home to go: `mounted` belongs to the route alone, and
-		// each wait costs a second of polling.
+		// each wait reads the accessibility tree at least once.
 		app.open(URL(string: "AllAboutOlaf://\(route)")!)
 		XCTAssertTrue(
-			mounted.waitForExistence(timeout: timeout),
+			mounted.waitUntilExists(timeout: timeout),
 			"\(route) should mount \(mounted)")
 		return self
 	}
@@ -93,10 +93,9 @@ extension Screen {
 	func goBack() -> Self {
 		let backs = app.navigationBars.buttons.matching(identifier: TestIdentifiers.Navigation.systemBackButton)
 		let reachable = { backs.allElementsBoundByIndex.first { $0.isHittable } }
-		let offered = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in reachable() != nil }, object: nil)],
-			timeout: 10)
-		XCTAssertEqual(offered, .completed, "the screen should offer a way back")
+		XCTAssertTrue(
+			waitUntil("Waiting 10.0s for a hittable Back button", timeout: 10) { reachable() != nil },
+			"the screen should offer a way back")
 		reachable()?.tap()
 		return self
 	}
@@ -108,7 +107,7 @@ extension Screen {
 		XCTAssertTrue(close.waitForHittable(timeout: 10), "Report a Problem should have a close button")
 		close.tap()
 		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForNonExistence(timeout: 10),
+			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitUntilGone(timeout: 10),
 			"Report a Problem should close")
 		return self
 	}
@@ -143,16 +142,15 @@ extension Screen {
 	/// Choose `name` from a menu picker and wait for the picker to show it.
 	@discardableResult
 	func choose(_ name: String, from picker: XCUIElement) -> Self {
-		XCTAssertTrue(picker.waitForExistence(timeout: 10), "the screen should offer the picker for \(name)")
+		XCTAssertTrue(picker.waitUntilExists(timeout: 10), "the screen should offer the picker for \(name)")
 		picker.tap()
 		let item = app.buttons[name].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "the menu should offer \(name)")
+		XCTAssertTrue(item.waitUntilExists(timeout: 10), "the menu should offer \(name)")
 		item.tap()
-		let chosen = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value == %@ OR label CONTAINS %@", name, name),
-			object: picker)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [chosen], timeout: 10), .completed,
+		XCTAssertTrue(
+			picker.waitUntilSnapshot("to show \(name)", timeout: 10) {
+				$0.value as? String == name || $0.label.contains(name)
+			},
 			"the picker should show \(name) (it reads \(picker.label), \(String(describing: picker.value)))")
 		return self
 	}
@@ -162,10 +160,10 @@ extension Screen {
 	@discardableResult
 	func chooseLayout(_ layout: String) -> Self {
 		let menu = app.buttons[TestIdentifiers.Layout.menu].firstMatch
-		XCTAssertTrue(menu.waitForExistence(timeout: 30), "The screen should offer a layout menu")
+		XCTAssertTrue(menu.waitUntilExists(timeout: 30), "The screen should offer a layout menu")
 		menu.tap()
 		let item = app.buttons[layout].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "The layout menu should offer \(layout)")
+		XCTAssertTrue(item.waitUntilExists(timeout: 10), "The layout menu should offer \(layout)")
 		item.tap()
 		return self
 	}
@@ -175,7 +173,7 @@ extension Screen {
 	func verifyTitle(_ title: String) -> Self {
 		let titleElement = app.staticTexts[title].firstMatch
 		XCTAssertTrue(
-			titleElement.waitForExistence(timeout: 30),
+			titleElement.waitUntilExists(timeout: 30),
 			"\(title) title should be visible")
 		return self
 	}

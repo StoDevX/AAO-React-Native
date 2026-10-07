@@ -8,7 +8,7 @@ class ModuleSupportTests: UITestCase {
 		let home = HomeScreen(app: app).checkHomescreenExists()
 		home.chooseFromHomeMenu(TestIdentifiers.Navigation.feedbackMenuItem)
 		XCTAssertTrue(
-			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForExistence(timeout: 30),
+			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitUntilExists(timeout: 30),
 			"Feedback should open the Report a Problem form")
 		home.closeProblemForm().checkHomescreenExists()
 
@@ -23,12 +23,12 @@ class ModuleSupportTests: UITestCase {
 		for (row, mounted) in screens {
 			support.open(row, mountedWhen: mounted)
 			backButton.tap()
-			XCTAssertTrue(support.host.waitForExistence(timeout: 10), "Back should return to Support")
+			XCTAssertTrue(support.host.waitUntilExists(timeout: 10), "Back should return to Support")
 		}
 
 		support
 			.open(ids.sendFeedback, mountedWhen: app.navigationBars[ids.reportProblemTitle])
 			.closeProblemForm()
-		XCTAssertTrue(support.host.waitForExistence(timeout: 10), "Closing the form should return to Support")
+		XCTAssertTrue(support.host.waitUntilExists(timeout: 10), "Closing the form should return to Support")
 	}
 }

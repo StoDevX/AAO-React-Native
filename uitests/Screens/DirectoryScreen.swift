@@ -26,7 +26,7 @@ struct DirectoryScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.waitUntilExists(timeout: 30),
 			"Directory should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -51,13 +51,13 @@ struct DirectoryScreen: Screen {
 	func openDepartment(of name: String, named department: String) -> Self {
 		let entry = app.elementWithLabel(startingWith: name)
 		XCTAssertTrue(
-			entry.waitForExistence(timeout: 30),
+			entry.waitUntilExists(timeout: 30),
 			"\(name) should be among the results")
 		entry.tap()
 
 		let departmentCell = app.elementWithLabel(startingWith: department)
 		XCTAssertTrue(
-			departmentCell.waitForExistence(timeout: 30),
+			departmentCell.waitUntilExists(timeout: 30),
 			"\(name) should list \(department) as its department")
 		departmentCell.tap()
 		return self
@@ -73,15 +73,15 @@ struct DirectoryScreen: Screen {
 	func cancelSearch() -> Self {
 		let field = searchField
 		XCTAssertTrue(
-			field.waitForExistence(timeout: 30),
+			field.waitUntilExists(timeout: 30),
 			"Directory should offer a search field")
 
 		let cancel = app.buttonLabelled(TestIdentifiers.Search.cancelButton)
 		for _ in 1...3 {
 			field.tap()
-			if cancel.waitForExistence(timeout: 5) { break }
+			if cancel.waitUntilExists(timeout: 5) { break }
 			field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-			if cancel.waitForExistence(timeout: 5) { break }
+			if cancel.waitUntilExists(timeout: 5) { break }
 		}
 
 		XCTAssertTrue(
@@ -99,7 +99,7 @@ struct DirectoryScreen: Screen {
 	func verifyDepartmentHeading(_ department: String) -> Self {
 		let heading = app.staticTexts[department].firstMatch
 		XCTAssertTrue(
-			heading.waitForExistence(timeout: 30),
+			heading.waitUntilExists(timeout: 30),
 			"\(department) should be named above the results")
 		return self
 	}
@@ -110,7 +110,7 @@ struct DirectoryScreen: Screen {
 	func showAsList() -> Self {
 		let toggle = app.buttonLabelled(TestIdentifiers.Directory.showAsList)
 		XCTAssertTrue(
-			toggle.waitForExistence(timeout: 30),
+			toggle.waitUntilExists(timeout: 30),
 			"The results should offer a list/tiles toggle")
 		toggle.tap()
 		return self
@@ -121,7 +121,7 @@ struct DirectoryScreen: Screen {
 	func showAsTiles() -> Self {
 		let toggle = app.buttonLabelled(TestIdentifiers.Directory.showAsTiles)
 		XCTAssertTrue(
-			toggle.waitForExistence(timeout: 30),
+			toggle.waitUntilExists(timeout: 30),
 			"The results should offer a list/tiles toggle")
 		toggle.tap()
 		return self
@@ -149,7 +149,7 @@ struct DirectoryScreen: Screen {
 	func verifyResultsListed() -> Self {
 		let firstRow = app.element(matching: "\(TestIdentifiers.Directory.rowPrefix)0")
 		XCTAssertTrue(
-			firstRow.waitForExistence(timeout: 30),
+			firstRow.waitUntilExists(timeout: 30),
 			"The directory list should have results in it")
 		return self
 	}
@@ -159,7 +159,7 @@ struct DirectoryScreen: Screen {
 	func verifyResultsGalleried() -> Self {
 		let firstTile = app.element(matching: "\(TestIdentifiers.Directory.tilePrefix)0")
 		XCTAssertTrue(
-			firstTile.waitForExistence(timeout: 30),
+			firstTile.waitUntilExists(timeout: 30),
 			"The directory gallery should have tiles in it")
 		return self
 	}
@@ -173,7 +173,7 @@ struct DirectoryScreen: Screen {
 	func verifyContactTiles(count: Int) -> Self {
 		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
 		XCTAssertTrue(
-			grid.waitForExistence(timeout: 30),
+			grid.waitUntilExists(timeout: 30),
 			"The contact grid should be visible before a search")
 		XCTAssertEqual(
 			grid.buttons.count, count,
@@ -185,7 +185,7 @@ struct DirectoryScreen: Screen {
 	func openContact(_ title: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.waitUntilExists(timeout: 30),
 			"\(title) should have a tile in the grid")
 		tile.tap()
 		return self
@@ -200,7 +200,7 @@ struct DirectoryScreen: Screen {
 	func verifyDetailAction(_ action: String) -> Self {
 		let button = app.buttons[action].firstMatch
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			button.waitUntilExists(timeout: 30),
 			"\(action) should be on the contact's detail screen")
 		return self
 	}
@@ -214,7 +214,7 @@ struct DirectoryScreen: Screen {
 	func verifyContactTileIsSquare(_ title: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.waitUntilExists(timeout: 30),
 			"\(title) should have a tile in the grid")
 		let frame = tile.frame
 		XCTAssertLessThan(
@@ -241,7 +241,7 @@ struct DirectoryScreen: Screen {
 	func verifyContactGridStillBehind() -> Self {
 		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
 		XCTAssertFalse(
-			grid.waitForNonExistence(timeout: GRID_REMOVAL_GRACE),
+			grid.waitUntilGone(timeout: GRID_REMOVAL_GRACE),
 			"The contact grid should still be behind the sheet, not replaced by it")
 		return self
 	}
@@ -267,7 +267,7 @@ struct DirectoryScreen: Screen {
 	func dismissContactSheet(titled title: String, waitingFor action: String) -> Self {
 		let bar = app.navigationBars[title]
 		XCTAssertTrue(
-			bar.waitForExistence(timeout: 30),
+			bar.waitUntilExists(timeout: 30),
 			"The \(title) sheet should have a navigation bar to drag from")
 
 		bar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
@@ -278,7 +278,7 @@ struct DirectoryScreen: Screen {
 				thenHoldForDuration: 0.1)
 
 		XCTAssertTrue(
-			app.buttons[action].firstMatch.waitForNonExistence(timeout: 30),
+			app.buttons[action].firstMatch.waitUntilGone(timeout: 30),
 			"The contact sheet should be gone after a swipe down")
 		return self
 	}
@@ -302,12 +302,12 @@ struct DirectoryScreen: Screen {
 	func attemptToTapContactBehindSheet(_ title: String, whileShowing sheetTitle: String) -> Self {
 		let tile = app.buttons[title].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+			tile.waitUntilExists(timeout: 30),
 			"\(title) should still have a tile behind the sheet")
 
 		let sheetBar = app.navigationBars[sheetTitle]
 		XCTAssertTrue(
-			sheetBar.waitForExistence(timeout: 30),
+			sheetBar.waitUntilExists(timeout: 30),
 			"The \(sheetTitle) sheet should have a navigation bar marking its top edge")
 
 		let point = tile.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
@@ -332,7 +332,7 @@ struct DirectoryScreen: Screen {
 	@discardableResult
 	func verifyNoSecondContactSheet(_ action: String) -> Self {
 		XCTAssertFalse(
-			app.buttons[action].firstMatch.waitForExistence(timeout: 5),
+			app.buttons[action].firstMatch.waitUntilExists(timeout: 5),
 			"\(action) should never have appeared -- the tap should have been blocked by "
 				+ "the dimmed grid behind the sheet, not reached through to stack a second one")
 		return self

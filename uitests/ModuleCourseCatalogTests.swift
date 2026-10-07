@@ -11,7 +11,7 @@ class ModuleCourseCatalogTests: UITestCaseUnbooted {
 			.checkRecentSectionExists()
 
 		let field = app.searchFields.firstMatch
-		XCTAssertTrue(field.waitForExistence(timeout: 30), "Course search should offer a field")
+		XCTAssertTrue(field.waitUntilExists(timeout: 30), "Course search should offer a field")
 		field.tap()
 		field.typeText(TestIdentifiers.CourseCatalog.aCourse)
 
@@ -21,12 +21,12 @@ class ModuleCourseCatalogTests: UITestCaseUnbooted {
 		let result = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label CONTAINS %@", TestIdentifiers.CourseCatalog.aCourse))
 			.firstMatch
-		XCTAssertTrue(result.waitForExistence(timeout: 30), "The fixture course should be found")
+		XCTAssertTrue(result.waitUntilExists(timeout: 30), "The fixture course should be found")
 		result.tap()
 
 		let prerequisites = app.staticTexts["Prerequisites"].firstMatch
 		XCTAssertTrue(
-			prerequisites.waitForExistence(timeout: 30),
+			prerequisites.waitUntilExists(timeout: 30),
 			"The course detail screen should be shown")
 
 		screen.capture("Course detail")

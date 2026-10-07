@@ -9,7 +9,7 @@ struct AboutScreen: Screen {
 
 	@discardableResult
 	func checkOpen() -> Self {
-		XCTAssertTrue(host.waitForExistence(timeout: 10), "About should open")
+		XCTAssertTrue(host.waitUntilExists(timeout: 10), "About should open")
 		return self
 	}
 
@@ -36,7 +36,7 @@ struct AboutScreen: Screen {
 	func reveal(_ element: XCUIElement) -> Self {
 		// The screen draws a moment after it opens; swiping before then scrolls
 		// past rows that are about to appear.
-		_ = element.waitForExistence(timeout: 10)
+		_ = element.waitUntilExists(timeout: 10)
 		// Enough swipes for the whole page at the largest text sizes.
 		for _ in 0..<20 {
 			if element.exists && element.isHittable { break }
@@ -59,10 +59,8 @@ struct AboutScreen: Screen {
 		let start = card.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
 		let end = card.coordinate(withNormalizedOffset: CGVector(dx: -0.2, dy: 0.5))
 		start.press(forDuration: 0.1, thenDragTo: end)
-		let arrived = XCTNSPredicateExpectation(
-			predicate: NSPredicate { _, _ in isOnScreen(next) }, object: nil)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [arrived], timeout: 10), .completed,
+		XCTAssertTrue(
+			waitUntil("Waiting 10.0s for \(next) to come on screen", timeout: 10) { isOnScreen(next) },
 			"Swiping should bring \(next.label) onto the screen")
 		return self
 	}

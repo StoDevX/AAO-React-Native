@@ -47,7 +47,7 @@ class ModuleFilterTests: UITestCaseUnbooted {
 		// Nothing was presented over the screen: the menu behind the toolbar is
 		// still there to be touched. A menu or sheet would be covering it.
 		let row = app.buttons[TestIdentifiers.Menus.pizzaItem]
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "the menu should still be on screen")
+		XCTAssertTrue(row.waitUntilExists(timeout: 30), "the menu should still be on screen")
 		XCTAssertTrue(row.isHittable, "nothing should have been presented over the menu")
 
 		// And it flips back, so the control is a toggle rather than a latch.
@@ -57,7 +57,7 @@ class ModuleFilterTests: UITestCaseUnbooted {
 		filters.verifyTrigger(Keys.stations, isSelected: false)
 
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitUntilExists(timeout: 30),
 			"the unfiltered menu should show an item from another station")
 
 		// Nothing starts selected, which shows every station. The menu stays
@@ -76,10 +76,10 @@ class ModuleFilterTests: UITestCaseUnbooted {
 		filters.verifyTrigger(Keys.stations, isSelected: true)
 
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
+			app.buttons[TestIdentifiers.Menus.pizzaItem].waitUntilExists(timeout: 30),
 			"the first station's items should show")
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitUntilExists(timeout: 30),
 			"the second station's items should show, chosen without reopening the menu")
 
 		// Unticking one narrows the list to the station left.
@@ -89,10 +89,10 @@ class ModuleFilterTests: UITestCaseUnbooted {
 			.dismissMenu(waitingFor: pizza)
 
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
+			app.buttons[TestIdentifiers.Menus.pizzaItem].waitUntilExists(timeout: 30),
 			"the chosen station's items should stay")
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForNonExistence(timeout: 30),
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitUntilGone(timeout: 30),
 			"the other stations' items should be gone")
 		XCTAssertFalse(
 			app.staticTexts[TestIdentifiers.Menus.specialtyPizzaStation].exists,
