@@ -100,10 +100,13 @@ extension Screen {
 	/// while `element` can still be hit, since a tap that did land on a slow
 	/// screen leaves it covered, and tapping it again would open it twice.
 	/// `wait` is how long each attempt gives `marker`, for a screen that is
-	/// slow to mount rather than a tap that was dropped.
+	/// slow to mount rather than a tap that was dropped. `point`, as a
+	/// fraction of `element`'s frame, is where to tap when its centre is the
+	/// wrong place.
 	@discardableResult
 	func tap(
-		_ element: XCUIElement, until marker: XCUIElement, named name: String, wait: TimeInterval = 10
+		_ element: XCUIElement, until marker: XCUIElement, named name: String, wait: TimeInterval = 10,
+		at point: CGVector? = nil
 	) -> Self {
 		XCTAssertTrue(element.waitUntilExists(timeout: 30), "\(name) should exist before it is tapped")
 		for attempt in 1...3 {
@@ -113,7 +116,11 @@ extension Screen {
 				return self
 			}
 			if attempt == 1 || element.isHittable {
-				element.tap()
+				if let point {
+					element.coordinate(withNormalizedOffset: point).tap()
+				} else {
+					element.tap()
+				}
 			}
 			if marker.waitUntilExists(timeout: wait) {
 				return self

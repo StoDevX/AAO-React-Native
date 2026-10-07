@@ -23,15 +23,15 @@ struct MessCustomizeScreen: Screen {
 	/// row's centre lands on the label, which flips nothing in a Form.
 	@discardableResult
 	func keepPhotoStoriesDark(_ on: Bool) -> Self {
-		let toggle = sheet.switches[TestIdentifiers.MessCustomize.keepPhotoStoriesDark]
+		let id = TestIdentifiers.MessCustomize.keepPhotoStoriesDark
+		let toggle = sheet.switches[id]
 		XCTAssertTrue(toggle.waitUntilExists(timeout: 10), "Customize should offer Dark page for Photo stories")
 		let wanted = on ? "1" : "0"
 		if toggle.value as? String != wanted {
-			toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+			let flipped = sheet.switches
+				.matching(NSPredicate(format: "identifier == %@ AND value == %@", id, wanted)).firstMatch
+			tap(toggle, until: flipped, named: "Dark page for Photo stories", wait: 5, at: CGVector(dx: 0.92, dy: 0.5))
 		}
-		XCTAssertTrue(
-			toggle.waitUntilSnapshot("to read \(wanted)", timeout: 5) { $0.value as? String == wanted },
-			"the switch should read \(wanted)")
 		return self
 	}
 
