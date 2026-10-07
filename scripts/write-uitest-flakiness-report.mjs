@@ -59,6 +59,85 @@ export function readSimulatorWait(env) {
 }
 
 /**
+ * The iOS version for the report's environment.
+ *
+ * flakiness.io merges shards only when their environments match, so the
+ * runtime the job chose (`SIMULATOR_OS`, like `27-0`) comes first: a shard
+ * whose simulator never came up has no bundle to read a device from.
+ */
+export function readSimulatorOsVersion(env, devices) {
+	if (env.SIMULATOR_OS) {
+		return env.SIMULATOR_OS.replaceAll('-', '.')
+	}
+	return devices?.[0]?.osVersion
+}
+
+/** How far a series may wander, in percent, before a new point is kept. */
+const PRECISION = {cpuAvg: 7, cpuMax: 7, ram: 1}
+
+/**
+ * Add a point, folding a steady stretch into its last point the way
+ * `@flakiness/sdk` does: when the last two points and the new one lie within
+ * `precision` of each other, the last point moves to the new time.
+ */
+function addPoint(series, point, precision) {
+	const last = series.at(-1)
+	const beforeLast = series.at(-2)
+	if (
+		last &&
+		beforeLast &&
+		Math.abs(last.value - beforeLast.value) < precision &&
+		Math.abs(last.value - point.value) < precision
+	) {
+		last.t = point.t
+	} else {
+		series.push(point)
+	}
+}
+
+/** The report's form: the first point's time is absolute, the rest deltas. */
+function toTelemetry(series) {
+	return series.map((point, index) => [
+		index === 0 ? point.t : point.t - series[index - 1].t,
+		Math.round(point.value * 100) / 100,
+	])
+}
+
+/**
+ * Turn what `sample-runner-load.mjs` wrote into the report's CPU and memory
+ * fields, or nothing without a header and at least one sample.
+ */
+export function readRunnerLoad(text) {
+	const lines = text.split('\n').flatMap((line) => {
+		try {
+			return [JSON.parse(line)]
+		} catch {
+			// The job's end can cut the last line short.
+			return []
+		}
+	})
+	const [header, ...samples] = lines
+	if (!header?.cpuCount || samples.length === 0) {
+		return
+	}
+
+	const series = {cpuAvg: [], cpuMax: [], ram: []}
+	for (const sample of samples) {
+		for (const key of Object.keys(series)) {
+			addPoint(series[key], {t: sample.t, value: sample[key]}, PRECISION[key])
+		}
+	}
+
+	return {
+		cpuCount: header.cpuCount,
+		ramBytes: header.ramBytes,
+		cpuAvg: toTelemetry(series.cpuAvg),
+		cpuMax: toTelemetry(series.cpuMax),
+		ram: toTelemetry(series.ram),
+	}
+}
+
+/**
  * Turn one test, or one of its repetitions, into a run attempt.
  *
  * Attempts are laid end to end on `clock`, since the bundle records how long
@@ -141,10 +220,36 @@ function simulatorWaitSuite(wait) {
 }
 
 /**
+ * Put every attempt in one lane of flakiness.io's test timeline. A lane is a
+ * worker on one machine, and the timeline draws nothing for a report with no
+ * attempt in lane 0.
+ */
+function setLane(suites, parallelIndex) {
+	for (const suite of suites) {
+		for (const test of suite.tests ?? []) {
+			for (const attempt of test.attempts) {
+				attempt.parallelIndex = parallelIndex
+			}
+		}
+		setLane(suite.suites ?? [], parallelIndex)
+	}
+}
+
+/**
  * Build the report for one shard, or null when there is nothing in it.
  */
 export function buildReport(testNodes, options) {
-	const {shard, commitId, url, osVersion, xcodeVersion, testsStartedMs, simulatorWait} = options
+	const {
+		shard,
+		commitId,
+		url,
+		osVersion,
+		xcodeVersion,
+		testsStartedMs,
+		simulatorWait,
+		parallelIndex,
+		runnerLoad,
+	} = options
 
 	const clock = {now: testsStartedMs}
 	const suites = toSuites(testNodes, clock)
@@ -154,6 +259,9 @@ export function buildReport(testNodes, options) {
 	}
 	if (suites.length === 0) {
 		return null
+	}
+	if (parallelIndex !== undefined) {
+		setLane(suites, parallelIndex)
 	}
 
 	const starts = [hasTests ? testsStartedMs : undefined, simulatorWait?.startedMs].filter(
@@ -174,6 +282,7 @@ export function buildReport(testNodes, options) {
 		suites,
 		startTimestamp,
 		duration: Math.max(...ends) - startTimestamp,
+		...runnerLoad,
 	}
 	if (url) {
 		report.url = url
@@ -189,6 +298,19 @@ function readXcodeVersion() {
 	try {
 		return execFileSync('xcodebuild', ['-version'], {encoding: 'utf8'}).match(/^Xcode (\S+)/u)?.[1]
 	} catch {
+		return
+	}
+}
+
+/** The runner's load, if the sampler left a file to read. */
+function readRunnerLoadFile(filePath) {
+	if (!filePath) {
+		return
+	}
+	try {
+		return readRunnerLoad(fs.readFileSync(filePath, 'utf8'))
+	} catch (error) {
+		console.log(`Could not read ${filePath}: ${error.message}`)
 		return
 	}
 }
@@ -218,10 +340,13 @@ function main() {
 		url: env.GITHUB_RUN_ID
 			? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`
 			: undefined,
-		osVersion: results.devices?.[0]?.osVersion,
+		osVersion: readSimulatorOsVersion(env, results.devices),
 		xcodeVersion: readXcodeVersion(),
 		testsStartedMs: env.UITEST_STARTED ? Number(env.UITEST_STARTED) * 1000 : Date.now(),
 		simulatorWait: readSimulatorWait(env),
+		runnerLoad: readRunnerLoadFile(env.RUNNER_LOAD),
+		// Each shard runs on its own machine, one test at a time: one worker.
+		parallelIndex: 0,
 	})
 
 	if (!report) {

@@ -566,6 +566,13 @@ jobs:
           set -o pipefail
           jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
+      # CPU and memory every two seconds, from before the simulator boots, for
+      # the shard's report in flakiness.io. The job's end stops it.
+      - name: Sample the runner's load
+        run: |
+          mkdir -p uitest-evidence
+          nohup node scripts/sample-runner-load.mjs uitest-evidence/runner-load.jsonl > /dev/null 2>&1 &
+
       - name: Boot the simulator
         env:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
@@ -692,6 +699,8 @@ jobs:
         if: always()
         env:
           SHARD: ${{ matrix.shard }}
+          SIMULATOR_OS: ${{ steps.simulator-device.outputs.os }}
+          RUNNER_LOAD: uitest-evidence/runner-load.jsonl
         run: node scripts/write-uitest-flakiness-report.mjs uitest-results.xcresult flakiness-report
 
       # flakiness.io keeps the history; it does not gate anything, so an upload
