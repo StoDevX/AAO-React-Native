@@ -220,8 +220,9 @@ function simulatorWaitSuite(wait) {
 }
 
 /**
- * Put every attempt in one lane of flakiness.io's waterfall. Shards run side
- * by side, so each is a lane, as a parallel worker would be.
+ * Put every attempt in one lane of flakiness.io's test timeline. A lane is a
+ * worker on one machine, and the timeline draws nothing for a report with no
+ * attempt in lane 0.
  */
 function setLane(suites, parallelIndex) {
 	for (const suite of suites) {
@@ -344,8 +345,8 @@ function main() {
 		testsStartedMs: env.UITEST_STARTED ? Number(env.UITEST_STARTED) * 1000 : Date.now(),
 		simulatorWait: readSimulatorWait(env),
 		runnerLoad: readRunnerLoadFile(env.RUNNER_LOAD),
-		// Shards are numbered from 1; lanes from 0.
-		parallelIndex: Number.isInteger(Number(env.SHARD)) ? Number(env.SHARD) - 1 : undefined,
+		// Each shard runs on its own machine, one test at a time: one worker.
+		parallelIndex: 0,
 	})
 
 	if (!report) {
