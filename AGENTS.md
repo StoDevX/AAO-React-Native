@@ -79,10 +79,14 @@ These patterns are especially important in this codebase:
   `scripts/write-uitest-flakiness-report.mjs`, and the mise tool
   `npm:flakiness` uploads them. Each UI-test retry is its own attempt, and the
   simulator wait before the tests is reported as `CI/waitForSimulator`. Local
-  runs upload nothing. The UI-test planner asks flakiness.io for each test's
-  predicted duration (`scripts/fetch-uitest-durations.mjs`), drawn from
-  master's history alone, and packs the shards with those; a test without one
-  keeps the cached table's figure.
+  runs upload nothing. Runtime warnings, `XCTSkip` and `XCTExpectFailure`
+  reasons become annotations. XCTest has no tags, so a `/// Tags: live-data`
+  comment above a UI-test class or `func test…` tags it; other comments and
+  attributes may sit between, but any other line orphans the marker. The
+  UI-test planner asks flakiness.io for each test's predicted duration
+  (`scripts/fetch-uitest-durations.mjs`), drawn from master's history alone,
+  and packs the shards with those; a test without one keeps the cached table's
+  figure.
 
 **Jest cannot see what a view looks like.** The test environment has no layout
 pass, no compositor, and no hit testing. A rendered view there is a tree of the
