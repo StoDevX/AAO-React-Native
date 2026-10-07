@@ -37,10 +37,13 @@ jest.mock('@frogpond/data-sources', () => ({
 	fetchSourceBody: jest.fn(),
 }))
 const mockNavigate = jest.fn()
+/** The route's query, as a link to the front page sets it. */
+let mockParams: Record<string, string> = {}
 jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
 	...(require('../../../testing/expo-router-mock') as object),
 	useRouter: () => ({navigate: mockNavigate}),
+	useLocalSearchParams: () => mockParams,
 }))
 
 const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
@@ -144,6 +147,7 @@ async function pullToRefresh(): Promise<void> {
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	useNewsFilterStore.setState({selectedCategories: {}})
+	mockParams = {}
 })
 
 afterEach(() => {
@@ -288,6 +292,30 @@ describe('FrontPageScreen', () => {
 		expect(savedChoice()).toBe('Latest:Opinions')
 
 		await fireEvent.press(menuItem('All Stories'))
+		expect(savedChoice()).toBe('Latest')
+	})
+
+	test('opens on the view a link names, and remembers it', async () => {
+		seedTop()
+		saveChoice('Issues')
+		mockParams = {view: 'Latest:Opinions'}
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.category(OPINIONS), onePage([WATERS]))
+		await renderScreen()
+
+		expect(isChecked('Opinions')).toBe(true)
+		expect(savedChoice()).toBe('Latest:Opinions')
+	})
+
+	test('keeps the remembered view when a link names none', async () => {
+		seedTop()
+		saveChoice('Latest')
+		mockParams = {view: 'Top'}
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+		await renderScreen()
+
+		expect(isChecked('Latest')).toBe(true)
 		expect(savedChoice()).toBe('Latest')
 	})
 

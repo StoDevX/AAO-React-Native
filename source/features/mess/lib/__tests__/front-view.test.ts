@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {viewKey, viewOf} from '../front-view'
+import {linkedView, viewKey, viewOf} from '../front-view'
 
 describe('viewOf', () => {
 	test.each([
@@ -31,4 +31,19 @@ test('viewKey writes what viewOf reads', () => {
 	] as const) {
 		expect(viewOf(viewKey(view))).toStrictEqual(view)
 	}
+})
+
+describe('linkedView', () => {
+	test.each([
+		['Issues', {mode: 'issues', section: null}],
+		['Latest', {mode: 'latest', section: null}],
+		['Latest:Variety', {mode: 'latest', section: 'Variety'}],
+	])('opens %p as %p', (link, view) => {
+		expect(linkedView(link)).toStrictEqual(view)
+	})
+
+	// A link that names no view leaves the remembered one alone, rather than opening By Issue.
+	test.each([undefined, '', 'Top', 'Latest:Horoscopes', 'latest'])('ignores %p', (link) => {
+		expect(linkedView(link)).toBeNull()
+	})
 })

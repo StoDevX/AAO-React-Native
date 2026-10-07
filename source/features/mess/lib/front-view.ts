@@ -26,3 +26,13 @@ export function viewOf(saved: string | null): MessView {
 	if (mode === MODES.issues && known !== undefined) return {mode: 'issues', section: known}
 	return {mode: 'issues', section: null}
 }
+
+/**
+ * The view a link to the front page names, in `viewKey`'s form, such as `Latest:Variety`. Null for
+ * a link that names no view, so a stray one leaves the remembered view alone.
+ */
+export function linkedView(link: string | undefined): MessView | null {
+	if (link === undefined) return null
+	let view = viewOf(link)
+	return viewKey(view) === link ? view : null
+}
