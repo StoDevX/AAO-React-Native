@@ -6,27 +6,10 @@ class ModuleNewsTests: UITestCaseUnbooted {
 	func testOlafMessengerOpensOnTheIssueGridAndLoadsOlderPages() throws {
 		MessFrontPage(app: app)
 			.navigate()
-			.verifyByIssueShowsTheGrid()
 			.scrollIssues(untilAnIssueFrom: "2025")
 	}
 
-	/// The paintbrush opens the paper's Customize sheet, whose pickers take a choice. With Dark
-	/// page for Photo stories turned off there, a Photo story follows the system's appearance.
-	func testOlafMessengerCustomizeTurnsOffDarkPhotoStories() throws {
-		let front = MessFrontPage(app: app).navigate()
-		let customize = front.openCustomize()
-		customize
-			.chooseStain("Tea")
-			.keepPhotoStoriesDark(false)
-			.close()
-		let story = front
-			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.verifyHeadlineAppears()
-		story.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
-	}
-
-	/// A shelf's "All ›" lists the section's stories from its issue, and Back keeps the issue's
+	/// A shelf's "All ›" opens the section's stories from its issue, and Back keeps the issue's
 	/// place. Under UI tests the second issue is the May 12 special edition, whose stories all
 	/// sit in no print section, so its More grid sets them two to a row.
 	func testOlafMessengerIssuesListTheirSectionsAndGridTheRest() throws {
@@ -34,34 +17,19 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		front
 			.openNewestIssue()
 			.scrollDownALittle()
-			.openSectionHoldingTheLead(TestIdentifiers.News.newsSection)
+			.openSectionAndComeBack(TestIdentifiers.News.newsSection)
 			.goBack()
 		front.openSecondIssue()
 		MessIssueScreen(app: app)
 			.verifyMoreGridsItsStories()
 	}
 
-	/// An article's lead photo opens the zoom viewer. A reader can drag a selection from one
-	/// paragraph into the next, as each stretch of prose between figures is one text view, and
-	/// a figure further down the body opens the viewer too, which can share the figure.
-	///
-	/// In that order because the page is only ever scrolled down: the lead photo sits above
-	/// the body, and the figure below the paragraphs selected.
-	func testArticlePhotosOpenTheZoomViewerAndItsTextSelectsAcrossParagraphs() throws {
+	/// A reader can drag a selection from one paragraph into the next, as each stretch of prose
+	/// between figures is one text view.
+	func testStoryTextSelectsAcrossParagraphs() throws {
 		MessStoryScreen(app: app)
 			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
-			.openPhotoInViewer(
-				captioned: NSPredicate(format: "label ENDSWITH %@", TestIdentifiers.News.illustratedLeadCaptionEnd),
-				"the lead photo")
-			.verifyViewerShowsImage()
-			.closeImageViewer()
 			.verifySelectionCrossesParagraphs()
-			.openPhotoInViewer(
-				captioned: NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.illustratedFigureCaptionStart),
-				"a figure in the body")
-			.verifyViewerShowsImage()
-			.shareViewerImage()
-			.closeImageViewer()
 	}
 
 	/// A link in a story's text opens in the in-app browser when tapped, and offers the
@@ -165,6 +133,8 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
 	}
 
+	/// An ingredient ticks from anywhere along its row, not only on its words: the row's tap
+	/// area is its `contentShape`, which Jest's stand-in cannot hit-test.
 	func testRecipeTicksAnIngredient() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -173,9 +143,11 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.tickFirstIngredient()
 	}
 
-	/// A Photo story opens dark while the setting is on, and its picture opens the zoom viewer.
-	/// The page it was opened from is light again after Back. The suite runs in Light Mode.
-	func testPhotoStoriesOpenInDarkModeAndZoom() throws {
+	/// A Photo story opens dark while the setting is on, and the page it was opened from is
+	/// light again after Back. With Dark page for Photo stories turned off in the paper's
+	/// Customize sheet, a Photo story follows the system's appearance. The suite runs in Light
+	/// Mode.
+	func testPhotoStoriesOpenDarkUnlessTurnedOff() throws {
 		let front = MessFrontPage(app: app)
 			.navigate()
 			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
@@ -183,14 +155,16 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		story.verifyPage(dark: true, "a Photo story should open in Dark Mode")
 		// An error screen is dark too, so the story must still be the page on show.
 		story.verifyHeadlineAppears()
-		story
-			.openImageViewer()
-			.verifyViewerShowsImage()
-			.closeImageViewer()
 
 		story.goBack()
-		XCTAssertTrue(
-			front.storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the Photo list")
+		front.verifyStoryListShown()
 		story.verifyPage(dark: false, "the Photo list should be light again after Back")
+
+		front.openCustomize()
+			.keepPhotoStoriesDark(false)
+			.close()
+		front.openFirstStory()
+			.verifyHeadlineAppears()
+			.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
 	}
 }

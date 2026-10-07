@@ -19,12 +19,6 @@ struct MessCustomizeScreen: Screen {
 		return self
 	}
 
-	/// Choose a stain kind from the picker's menu and wait for the picker to show it.
-	@discardableResult
-	func chooseStain(_ name: String) -> Self {
-		choose(name, from: issueStains)
-	}
-
 	/// Turn Dark page for Photo stories on or off, tapping the switch itself: a tap at the
 	/// row's centre lands on the label, which flips nothing in a Form.
 	@discardableResult

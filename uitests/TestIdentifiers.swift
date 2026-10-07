@@ -378,8 +378,6 @@ struct TestIdentifiers {
 		/// Matches FILTER_CLEAR_ID in modules/filter/filter-sheet.tsx.
 		static let clear = "filter-clear"
 
-		/// Matches FILTER_CLOSE_BUTTON_ID in modules/filter/filter-sheet.tsx.
-		static let closeButton = "filter-close"
 
 		/// A trigger is identified by its filter's key, from the `buildFilters`
 		/// of whichever screen drew it.
@@ -476,11 +474,14 @@ struct TestIdentifiers {
 	// MARK: - News
 
 	enum News {
+		/// The edit menu's Copy, which iOS offers once text is selected.
+		static let copy = "Copy"
+		/// A print section's shelf's "All ›", by the label VoiceOver reads.
+		static func allStories(in section: String) -> String { "All \(section)" }
 		/// St. Olaf News's navigation bar title, in app/st-olaf-news.tsx.
 		static let stOlafTitle = "St. Olaf News"
 		/// The views the front page's menu offers, and the start of the menu button's label, which
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
-		static let byIssue = "By Issue"
 		static let latest = "Latest"
 		static let viewMenuPrefix = "More, "
 
@@ -491,9 +492,6 @@ struct TestIdentifiers {
 		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The paper's name: the first line of the front page's title, in
-		/// source/features/mess/front-page-screen.tsx, and each issue tile's nameplate.
-		static let paperName = "The Olaf Messenger"
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
@@ -543,18 +541,11 @@ struct TestIdentifiers {
 		/// source/features/mess/image-view.tsx.
 		static let storyImage = "mess-story-image"
 
-		/// A story's lead photo or a figure in its body, which opens the zoom viewer, in
-		/// source/features/mess/story-blocks.tsx. Each is labelled by its caption.
-		static let storyPhoto = "mess-story-photo"
 
 		/// An article with a captioned lead photo, three short paragraphs, then captioned figures
 		/// in its body: "Finding peace on campus", from the recorded Mess fixtures. Recording them
 		/// again can drop it from the feed, which these tests read it from.
 		static let illustratedStoryRoute = "/messenger/story?id=36948"
-		/// How its lead photo's caption ends; the first figure's caption repeats its opening.
-		static let illustratedLeadCaptionEnd = "Rolvaag Memorial Library"
-		/// How the caption of its second figure, below the fold, begins.
-		static let illustratedFigureCaptionStart = "Statue (1984)"
 
 		/// An article whose first paragraph holds a link: "The true cost of convenience: AI in
 		/// the classroom", from the same recorded issue as the illustrated story.
@@ -567,10 +558,6 @@ struct TestIdentifiers {
 		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
-
-		/// The zoom viewer's share button, in source/features/mess/image-viewer.tsx.
-		static let imageViewerShare = "mess-image-viewer-share"
-		static let imageViewerShareLabel = "Share"
 
 		/// The picture inside the zoom viewer, in source/features/mess/image-viewer.tsx.
 		static let imageViewerImage = "mess-image-viewer-image"
@@ -630,6 +617,14 @@ struct TestIdentifiers {
 		/// One of `defaults`, and an action outside them.
 		static let aDefault = "Transit"
 		static let anExtra = "Calendar"
+	}
+
+	// MARK: - In-app browser
+
+	enum Browser {
+		/// The in-app browser's own close button, which only the browser
+		/// sheet draws.
+		static let done = "Done"
 	}
 
 	// MARK: - SpringBoard
@@ -740,10 +735,6 @@ struct TestIdentifiers {
 		/// string, so finding it can only mean HOPE Center's detail is on
 		/// screen.
 		static let aSecondContactAction = "Call 24-Hour Hotline"
-
-		/// The in-app browser's own close button, which only the browser
-		/// sheet draws.
-		static let inAppBrowserDone = "Done"
 
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
 		/// DIRECTORY_ROW_PREFIX in app/directory/index.tsx.

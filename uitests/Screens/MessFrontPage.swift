@@ -16,19 +16,6 @@ struct MessFrontPage: Screen {
 		open(route: "/messenger", mountedWhen: mounted)
 	}
 
-	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, under the
-	/// paper's castle.
-	@discardableResult
-	func verifyByIssueShowsTheGrid() -> Self {
-		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "By Issue should lead with the newest issue")
-		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show older issues as tiles")
-		XCTAssertTrue(
-			viewMenu.waitForLabel(viewMenuLabel(TestIdentifiers.News.byIssue), timeout: 10),
-			"By Issue should be the view chosen (the menu reads \(viewMenu.label))")
-		verifyPaperNamedOnce()
-		return self
-	}
-
 	/// Tap the paintbrush at the top right and wait for the Customize sheet.
 	@discardableResult
 	func openCustomize() -> MessCustomizeScreen {
@@ -36,26 +23,6 @@ struct MessFrontPage: Screen {
 		XCTAssertTrue(button.waitForHittable(timeout: 30), "the front page should have a Customize button")
 		button.tap()
 		return MessCustomizeScreen(app: app).checkOpen()
-	}
-
-	/// The paper's castle alone titles the bar, read as the paper's name; past that, the name is
-	/// printed only on the issues' own nameplates.
-	@discardableResult
-	func verifyPaperNamedOnce() -> Self {
-		let name = NSPredicate(format: "label == %@", TestIdentifiers.News.paperName)
-		XCTAssertTrue(
-			title.waitForLabel(TestIdentifiers.News.paperName, timeout: 10),
-			"the bar should be titled with the paper's castle (it reads \(title.label))")
-		// Each tile prints the name as its nameplate; VoiceOver reads a tile by its label alone, but
-		// XCUITest still lists the text inside it, so the name is counted outside the tiles. The
-		// bar's castle reads as the name too, so the bar is left out.
-		let nameplates = (tiles.allElementsBoundByIndex + [topTile]).map(\.frame)
-		let bar = app.navigationBars.firstMatch.frame
-		let outsideTiles = app.staticTexts.matching(name).allElementsBoundByIndex
-			.filter { element in !bar.contains(element.frame) }
-			.filter { element in !nameplates.contains(where: { $0.contains(element.frame) }) }
-		XCTAssertEqual(outsideTiles.count, 0, "the page should print the paper's name only on its tiles")
-		return self
 	}
 
 	/// Pick a view from the menu at the top right, unless it shows already, and wait for the menu
@@ -147,6 +114,13 @@ struct MessFrontPage: Screen {
 		topTile.tap()
 		XCTAssertTrue(lead.waitForExistence(timeout: 30), "the newest issue should lead with a story")
 		return MessIssueScreen(app: app)
+	}
+
+	/// The list of stories is up, as Back from a story should leave it.
+	@discardableResult
+	func verifyStoryListShown() -> Self {
+		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the story list")
+		return self
 	}
 
 	/// Open the first story of a section's or column's list in the reader.

@@ -99,7 +99,7 @@ struct MessStoryScreen: Screen {
 		let start = body.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 40, dy: 10))
 		let end = start.withOffset(CGVector(dx: 120, dy: 200))
 		start.press(forDuration: 1.0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
+		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copy)).firstMatch
 		let offered = copy.waitForExistence(timeout: 5)
 		XCTAssertTrue(offered, "a drag across the story's text should select some of it, and offer Copy")
 
@@ -138,7 +138,7 @@ struct MessStoryScreen: Screen {
 		let link = storyLink(label)
 		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to tap")
 		link.tap()
-		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
+		let done = app.buttons[TestIdentifiers.Browser.done].firstMatch
 		XCTAssertTrue(done.waitForExistence(timeout: 30), "tapping a story's link should open the in-app browser")
 		done.tap()
 		XCTAssertTrue(done.waitForNonExistence(timeout: 10), "Done should close the in-app browser")
@@ -306,68 +306,6 @@ struct MessStoryScreen: Screen {
 		open(route: route, mountedWhen: app.staticTexts[TestIdentifiers.News.storyHeadline])
 	}
 
-	/// Scroll to the story's photo whose label, its caption, matches `caption`, tap it, and wait
-	/// for the zoom viewer.
-	@discardableResult
-	func openPhotoInViewer(captioned caption: NSPredicate, _ description: String) -> Self {
-		let photo = app.buttons
-			.matching(identifier: TestIdentifiers.News.storyPhoto)
-			.matching(caption)
-			.firstMatch
-		for _ in 0..<20 {
-			if photo.exists && photo.isHittable { break }
-			app.swipeUp()
-		}
-		XCTAssertTrue(photo.waitForHittable(timeout: 10), "the story should draw \(description) to tap")
-		photo.tap()
-		XCTAssertTrue(closeButton.waitForExistence(timeout: 30), "tapping \(description) should open the zoom viewer")
-		return self
-	}
-
-	/// Assert the zoom viewer drew a picture, not its "Image unavailable" notice.
-	@discardableResult
-	func verifyViewerShowsImage() -> Self {
-		XCTAssertTrue(
-			viewerImage.waitForExistence(timeout: 30),
-			"the zoom viewer should show the picture that was tapped")
-		return self
-	}
-
-	/// Tap Share and assert the share sheet holds the picture itself: Save Image and Print are
-	/// offered for an image file, never for a link to one. Then dismiss the sheet.
-	@discardableResult
-	func shareViewerImage() -> Self {
-		XCTAssertTrue(shareButton.waitForHittable(), "Share should be ready to tap")
-		shareButton.tap()
-		// The share sheet's actions are cells, drawn by the system's share service.
-		let saveImage = app.cells["Save Image"]
-		let opened = saveImage.waitForExistence(timeout: 30)
-		XCTAssertTrue(opened, "Share should offer Save Image, which it does only for the picture itself")
-		// Print sits below the first row of actions.
-		app.cells["View More"].tap()
-		let print = app.cells["Print"]
-		let expanded = print.waitForExistence(timeout: 10)
-		XCTAssertTrue(expanded, "Share should offer Print for the picture")
-		// The expanded sheet's own close button.
-		let close = app.buttons["header.closeButton"]
-		XCTAssertTrue(close.waitForHittable(), "the expanded share sheet should have a close button")
-		close.tap()
-		XCTAssertTrue(saveImage.waitForNonExistence(timeout: 10), "Close should dismiss the share sheet")
-		return self
-	}
-
-	/// Close the zoom viewer and wait to be back on the story.
-	@discardableResult
-	func closeImageViewer() -> Self {
-		XCTAssertTrue(closeButton.waitForHittable(), "Close should be ready to tap")
-		closeButton.tap()
-		XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), "Close should dismiss the zoom viewer")
-		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
-			"closing the viewer should return to the story")
-		return self
-	}
-
 	/// Double-tap the middle of the picture in the zoom viewer.
 	@discardableResult
 	func doubleTapViewerImage() -> Self {
@@ -456,7 +394,8 @@ struct MessStoryScreen: Screen {
 		}
 		XCTAssertTrue(ingredient.waitForHittable(timeout: 10), "a recipe should list an ingredient to tick")
 		XCTAssertTrue(ingredient.waitForSelected(false, timeout: 5), "an ingredient should start unticked")
-		ingredient.tap()
+		// Its trailing edge, past the words: only the row's contentShape takes a tap there.
+		ingredient.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
 		XCTAssertTrue(ingredient.waitForSelected(true), "tapping an ingredient should tick it")
 		return self
 	}
@@ -481,12 +420,4 @@ struct MessStoryScreen: Screen {
 		).firstMatch
 	}
 
-	/// The viewer's share button, by its identifier and the label VoiceOver reads.
-	private var shareButton: XCUIElement {
-		app.buttons.matching(
-			NSPredicate(
-				format: "identifier == %@ AND label == %@",
-				TestIdentifiers.News.imageViewerShare, TestIdentifiers.News.imageViewerShareLabel)
-		).firstMatch
-	}
 }

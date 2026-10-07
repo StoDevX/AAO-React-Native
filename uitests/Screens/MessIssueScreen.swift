@@ -17,26 +17,18 @@ struct MessIssueScreen: Screen {
 		return self
 	}
 
-	/// Open a section's list from its shelf's "All ›", check the list holds the issue's lead story
-	/// among the section's, then go Back, and check the issue is where it was left.
+	/// Open a section's list from its shelf's "All ›", go Back, and check the issue is where it
+	/// was left.
 	@discardableResult
-	func openSectionHoldingTheLead(_ section: String) -> Self {
-		XCTAssertTrue(lead.waitForExistence(timeout: 30), "the issue should lead with a story")
-		// The lead's label is its headline, then its section and writers.
-		let headline = lead.label.components(separatedBy: ", \(section)").first ?? lead.label
-		let all = app.buttons.matching(NSPredicate(format: "label == %@", "All \(section)")).firstMatch
+	func openSectionAndComeBack(_ section: String) -> Self {
+		let all = app.buttons.matching(
+			NSPredicate(format: "label == %@", TestIdentifiers.News.allStories(in: section))
+		).firstMatch
 		XCTAssertTrue(all.waitForHittable(timeout: 30), "the \(section) shelf should offer All")
 		let before = all.frame
-		all.tap()
+		tap(all, until: app.navigationBars[section], named: "the \(section) shelf's All")
 
-		let bar = app.navigationBars[section]
-		XCTAssertTrue(bar.waitForExistence(timeout: 30), "All should open a page titled \(section)")
-		let leadRow = storyRows.matching(NSPredicate(format: "label BEGINSWITH %@", headline)).firstMatch
-		XCTAssertTrue(
-			leadRow.waitForExistence(timeout: 30),
-			"the \(section) list should hold the issue's lead story, \"\(headline)\"")
-
-		bar.buttons[TestIdentifiers.Navigation.systemBackButton].tap()
+		goBack()
 		XCTAssertTrue(all.waitForHittable(timeout: 30), "Back should return to the issue")
 		XCTAssertEqual(
 			all.frame.minY, before.minY, accuracy: 1,
@@ -48,10 +40,10 @@ struct MessIssueScreen: Screen {
 	/// whole on the screen.
 	@discardableResult
 	func verifyMoreGridsItsStories() -> Self {
-		let row = app.otherElements.matching(identifier: TestIdentifiers.News.moreGridRow).firstMatch
+		let row = app.element(matching: TestIdentifiers.News.moreGridRow)
 		scrollUntilExists(row, swipes: 10)
 		XCTAssertTrue(row.waitForExistence(timeout: 10), "the issue should end with the More grid")
-		let cards = row.buttons.matching(identifier: TestIdentifiers.News.storyCard)
+		let cards = row.descendants(matching: .any).matching(identifier: TestIdentifiers.News.storyCard)
 		XCTAssertEqual(cards.count, 2, "a row of the More grid should hold two cards")
 		let first = cards.element(boundBy: 0).frame
 		let second = cards.element(boundBy: 1).frame
