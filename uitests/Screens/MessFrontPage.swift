@@ -171,20 +171,30 @@ struct MessFrontPage: Screen {
 
 	/// Drag a row of chips sideways until `button` is on screen. A row scrolls on its own, and a
 	/// chip past its edge is in the tree but cannot take a tap. Its frame is read rather than
-	/// `isHittable`, which fails the test outright for a chip off screen. Each drag heads toward
-	/// the chip, slowly and with a hold before release, so the row does not coast past it at large
-	/// text sizes; press-then-drag, as a plain swipe can be taken for a tap on the chip under it.
+	/// `isHittable`, which fails the test outright for a chip off screen. Each drag moves the chip
+	/// toward the middle of the screen by as far as it is from there, slowly and with a hold before
+	/// release, so the row does not coast: a drag of a fixed length carries a wide chip at a large
+	/// text size from one edge past the other, and back again. Press-then-drag, as a plain swipe
+	/// can be taken for a tap on the chip under it, and never shorter than `minimumDrag` for the
+	/// same reason: a chip that close to the middle is as far on screen as it will come.
 	private func scrollRow(_ row: XCUIElementQuery, toReveal button: XCUIElement) {
+		let minimumDrag: CGFloat = 40
 		let rowY = row.firstMatch.frame.midY
 		let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
-		let right = origin.withOffset(CGVector(dx: app.frame.width * 0.8, dy: rowY))
-		let left = origin.withOffset(CGVector(dx: app.frame.width * 0.2, dy: rowY))
+		let screen = app.frame
+		let reach = screen.width * 0.6
 		for _ in 0..<10 {
-			if app.frame.contains(button.frame) {
+			let chip = button.frame
+			// Positive moves the row right, bringing a chip off the left edge on screen.
+			let shift = screen.midX - chip.midX
+			if screen.contains(chip) || abs(shift) < minimumDrag {
 				break
 			}
-			let (start, end) = button.frame.midX > app.frame.midX ? (right, left) : (left, right)
-			start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
+			let distance = (shift < 0 ? -1 : 1) * min(reach, abs(shift))
+			let start = origin.withOffset(CGVector(dx: screen.width * (distance < 0 ? 0.8 : 0.2), dy: rowY))
+			start.press(
+				forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: distance, dy: 0)), withVelocity: .slow,
+				thenHoldForDuration: 0.2)
 		}
 	}
 
