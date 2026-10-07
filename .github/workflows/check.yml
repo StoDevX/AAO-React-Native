@@ -92,8 +92,17 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Run tests
         run: mise run test:jest -- --coverage
+      # node --test ignores flags after its file globs, so the flakiness
+      # reporter rides in NODE_OPTIONS rather than the mise task's arguments.
       - name: Run node:test tests
+        env:
+          NODE_OPTIONS: --test-reporter=spec --test-reporter-destination=stdout --test-reporter=./scripts/flakiness-node-test-reporter.mjs --test-reporter-destination=stdout
         run: mise run test:node
+      # flakiness.io keeps the history; it does not gate anything.
+      - name: Upload node:test results to flakiness.io
+        if: always() && hashFiles('node-test-flakiness-report/report.json') != ''
+        continue-on-error: true
+        run: flakiness upload node-test-flakiness-report
       - name: Upload coverage
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
 

@@ -103,3 +103,4 @@ images/icons/logos.html
 
 # Flakiness reports, written by the CI test reporters before upload
 flakiness-report/
+node-test-flakiness-report/
