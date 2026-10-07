@@ -86,6 +86,8 @@ struct TestIdentifiers {
 		static let screen = "screen-homescreen"
 		/// The tiled layout's grid, HOME_GRID_ID in app/index.tsx.
 		static let tileGrid = "home-tile-grid"
+		/// The list layout's list, HOME_LIST_ID in app/index.tsx.
+		static let list = "home-list"
 		static let notice = "home-notice"
 		static let enableDevMode = "Enable dev mode"
 	}

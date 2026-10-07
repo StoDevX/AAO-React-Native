@@ -36,17 +36,11 @@ class ModuleCustomizeTests: UITestCase {
 	/// Home's layout is chosen in Customize: List swaps the tile grid for a
 	/// list, and Tiled brings the grid back.
 	func testChoosesHomeLayout() throws {
-		let home = HomeScreen(app: app).checkHomescreenExists()
-		let grid = app.descendants(matching: .any)[TestIdentifiers.Home.tileGrid]
-		XCTAssertTrue(grid.waitForExistence(timeout: 10), "Home should start tiled")
-
 		let ids = TestIdentifiers.Customize.self
+		let home = HomeScreen(app: app).checkHomescreenExists().verifyTiled()
 		home.openCustomize().chooseHomeLayout(ids.listLayout).close()
-		XCTAssertTrue(grid.waitForNonExistence(timeout: 10), "List should replace the tile grid")
-		XCTAssertTrue(
-			app.collectionViews.firstMatch.waitForExistence(timeout: 10), "Home should show a list")
-
+		home.verifyListed()
 		home.openCustomize().chooseHomeLayout(ids.tiledLayout).close()
-		XCTAssertTrue(grid.waitForExistence(timeout: 10), "Tiled should bring the tile grid back")
+		home.verifyTiled()
 	}
 }

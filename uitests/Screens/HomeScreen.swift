@@ -12,6 +12,26 @@ struct HomeScreen: Screen {
 		return self
 	}
 
+	/// Check Home draws its tiles as a grid, not a list.
+	@discardableResult
+	func verifyTiled() -> Self {
+		verifyLayout(shown: TestIdentifiers.Home.tileGrid, hidden: TestIdentifiers.Home.list, named: "the tile grid")
+	}
+
+	/// Check Home draws its tiles as a list, not a grid.
+	@discardableResult
+	func verifyListed() -> Self {
+		verifyLayout(shown: TestIdentifiers.Home.list, hidden: TestIdentifiers.Home.tileGrid, named: "the list")
+	}
+
+	private func verifyLayout(shown: String, hidden: String, named name: String) -> Self {
+		XCTAssertTrue(
+			app.element(matching: shown).waitForExistence(timeout: 10), "Home should draw \(name)")
+		XCTAssertTrue(
+			app.element(matching: hidden).waitForNonExistence(timeout: 10), "Home should draw only \(name)")
+		return self
+	}
+
 	@discardableResult
 	func longPressNotice() -> Self {
 		let notice = app.element(matching: TestIdentifiers.Home.notice)

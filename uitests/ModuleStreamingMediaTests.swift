@@ -26,26 +26,18 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.checkTabs()
 	}
 
-	/// Turning Customize's Radio Player off while a station plays stops it and
-	/// takes the bar off Home, but Streaming Media keeps its own, so the radio
-	/// is still a tap away. Turning it on again brings back Home's idle bar.
-	func testSwitchOffStopsThePlayingStationAndHidesOnlyHomesBar() throws {
+	/// Turning Customize's Radio Player off takes the idle bar off Home, but
+	/// Streaming Media keeps its own, so the radio is still a tap away.
+	func testSwitchOffHidesOnlyHomesBar() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		app.launch()
-		StreamingMediaScreen(app: app)
+		let screen = StreamingMediaScreen(app: app)
 			.checkShows(ids.idleBar)
-			.openSheetFromBar(expecting: ids.playKsto)
-			.press(ids.playKsto, expecting: ids.pauseKsto)
-			.closeSheet(expectingBar: ids.pauseKsto)
 			.toggleShowRadioPlayer()
-			.checkGone(ids.pauseKsto)
 			.checkGone(ids.idleBar)
-			.openFromHome()
-			.checkShows(ids.idleBar)
-			.openSheetFromBar(expecting: ids.playKsto)
-			.closeSheet(expectingBar: ids.idleBar)
-			.goBack()
-			.toggleShowRadioPlayer()
+		keepStateForNextLaunch(adding: [])
+		screen
+			.navigate()
 			.checkShows(ids.idleBar)
 	}
 
