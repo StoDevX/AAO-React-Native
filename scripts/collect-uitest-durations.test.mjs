@@ -49,6 +49,17 @@ describe('collectDurations', () => {
 		assert.deepEqual(collectDurations(tree(testCase('testOne', 'Passed', 0))), {})
 	})
 
+	it("takes a retried test's passing attempt, not the mean Xcode reports over its attempts", () => {
+		let retried = {
+			...testCase('testOne', 'Passed', 143.08),
+			children: [
+				{nodeType: 'Repetition', name: 'First Run', result: 'Failed', durationInSeconds: 236.59},
+				{nodeType: 'Repetition', name: 'Retry 1', result: 'Passed', durationInSeconds: 49.57},
+			],
+		}
+		assert.deepEqual(collectDurations(tree(retried)), {'SomeTests/testOne()': 49.57})
+	})
+
 	it('returns an empty table for an empty tree', () => {
 		assert.deepEqual(collectDurations([]), {})
 		assert.deepEqual(collectDurations(undefined), {})

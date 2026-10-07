@@ -38,8 +38,8 @@ describe('buildShard', () => {
 				result: 'Passed',
 				durationInSeconds: 12.5,
 				children: [
-					{nodeType: 'Repetition', result: 'Failed'},
-					{nodeType: 'Repetition', result: 'Passed'},
+					{nodeType: 'Repetition', result: 'Failed', durationInSeconds: 20},
+					{nodeType: 'Repetition', result: 'Passed', durationInSeconds: 5},
 				],
 			},
 			{
@@ -52,7 +52,7 @@ describe('buildShard', () => {
 		assert.deepEqual(buildShard({shard: '2', wallSeconds: 90, testNodes}), {
 			shard: '2',
 			wallSeconds: 90,
-			durations: {'FooTests/testA()': 12.5},
+			durations: {'FooTests/testA()': 5},
 			flaky: [{identifier: 'FooTests/testA()', attempts: 2}],
 		})
 	})

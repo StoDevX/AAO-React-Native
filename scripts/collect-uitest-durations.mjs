@@ -15,7 +15,9 @@ import fs from 'node:fs'
  *
  * Only passing tests count. A skipped test reports a fraction of a second and a
  * failed one stops early, so either would drag its class's weight down and
- * unbalance the next run's shards.
+ * unbalance the next run's shards. A retried test reports the mean of its
+ * attempts, a failed one included, so its passing attempt's time is taken
+ * instead.
  * @param {object[] | undefined} testNodes
  * @returns {Record<string, number>}
  */
@@ -24,7 +26,10 @@ export function collectDurations(testNodes) {
 
 	const visit = (node) => {
 		if (node.nodeType === 'Test Case') {
-			const seconds = node.durationInSeconds ?? 0
+			const passingAttempt = node.children?.findLast(
+				(child) => child.nodeType === 'Repetition' && child.result === 'Passed',
+			)
+			const seconds = (passingAttempt ?? node).durationInSeconds ?? 0
 			if (node.result === 'Passed' && seconds > 0) {
 				durations[node.nodeIdentifier ?? node.name] = seconds
 			}
