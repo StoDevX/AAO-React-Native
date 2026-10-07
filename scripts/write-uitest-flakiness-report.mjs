@@ -202,20 +202,53 @@ export function parseTestTags(sources) {
 }
 
 /**
+ * Turn XCTest activities into steps. An activity records when it started but
+ * not how long it took, so each lasts until the next one starts, and the last
+ * until its parent ends.
+ */
+function toSteps(activities, endMs) {
+	// xcresulttool sometimes lists an activity with no title and nothing in it.
+	const shown = activities.filter((activity) => activity.title || activity.childActivities?.length)
+	return shown.map((activity, index) => {
+		const startMs = activity.startTime * 1000
+		// An activity can lack a start time; the next one that has one ends this.
+		const next = shown.slice(index + 1).find((later) => Number.isFinite(later.startTime))
+		const stepEndMs = next ? next.startTime * 1000 : endMs
+		const step = {title: activity.title}
+		if (Number.isFinite(startMs)) {
+			step.duration = Math.max(0, Math.round(stepEndMs - startMs))
+		}
+
+		// An assertion's own activity has no type, and is the one that failed.
+		if (activity.isAssociatedWithFailure && !activity.activityType) {
+			step.error = {message: activity.title}
+		}
+		if (activity.childActivities?.length) {
+			step.steps = toSteps(activity.childActivities, stepEndMs)
+		}
+		return step
+	})
+}
+
+/**
  * Turn one test, or one of its repetitions, into a run attempt.
  *
  * Attempts are laid end to end on `clock`, since the bundle records how long
  * each took but not when it started.
  */
-function toAttempt(run, clock, testLevelNodes) {
+function toAttempt(run, clock, testLevelNodes, activities = []) {
 	const duration = Math.round((run.durationInSeconds ?? 0) * 1000)
+	// The first activity says when the attempt really began; without one,
+	// attempts are laid end to end.
+	const firstStart = activities[0]?.startTime
+	const startTimestamp = Number.isFinite(firstStart) ? Math.round(firstStart * 1000) : clock.now
 	const attempt = {
 		environmentIdx: 0,
 		expectedStatus: EXPECTED_STATUSES[run.result] ?? 'passed',
 		// An unknown result is a failure, so a new kind of outcome shows up
 		// rather than passing unseen.
 		status: STATUSES[run.result] ?? 'failed',
-		startTimestamp: clock.now,
+		startTimestamp,
 		duration,
 	}
 
@@ -224,6 +257,10 @@ function toAttempt(run, clock, testLevelNodes) {
 		.map((child) => ({message: child.name}))
 	if (errors.length > 0) {
 		attempt.errors = errors
+	}
+
+	if (activities.length > 0) {
+		attempt.steps = toSteps(activities, startTimestamp + duration)
 	}
 
 	const annotations = toAnnotations([...(run.children ?? []), ...testLevelNodes])
@@ -239,7 +276,7 @@ function toAttempt(run, clock, testLevelNodes) {
  * A test has one attempt per repetition, or one of its own when it never
  * retried. Its tags are its class's and its own.
  */
-function toTest(testCase, suiteName, clock, tags) {
+function toTest(testCase, suiteName, clock, tags, activities) {
 	const repetitions = (testCase.children ?? []).filter((child) => child.nodeType === 'Repetition')
 	const runs = repetitions.length > 0 ? repetitions : [testCase]
 	// A retried test's own nodes, beside its repetitions, belong to every attempt.
@@ -247,9 +284,11 @@ function toTest(testCase, suiteName, clock, tags) {
 		repetitions.length > 0
 			? (testCase.children ?? []).filter((child) => child.nodeType !== 'Repetition')
 			: []
+	// xcresulttool lists a test's activity runs one per attempt, in order.
+	const activityRuns = activities.get(testCase.nodeIdentifier) ?? []
 	const test = {
 		title: testCase.name,
-		attempts: runs.map((run) => toAttempt(run, clock, testLevelNodes)),
+		attempts: runs.map((run, index) => toAttempt(run, clock, testLevelNodes, activityRuns[index])),
 	}
 
 	const method = testCase.name.replace(/\(\)$/u, '')
@@ -266,7 +305,7 @@ function toTest(testCase, suiteName, clock, tags) {
  * Turn the tree into suites. Plan and bundle nodes are walked through, since
  * every test in a shard shares them.
  */
-function toSuites(nodes, clock, tags) {
+function toSuites(nodes, clock, tags, activities) {
 	return (nodes ?? []).flatMap((node) => {
 		if (node.nodeType === 'Test Case') {
 			return []
@@ -274,8 +313,8 @@ function toSuites(nodes, clock, tags) {
 
 		const tests = (node.children ?? [])
 			.filter((child) => child.nodeType === 'Test Case')
-			.map((child) => toTest(child, node.name, clock, tags))
-		const nested = toSuites(node.children, clock, tags)
+			.map((child) => toTest(child, node.name, clock, tags, activities))
+		const nested = toSuites(node.children, clock, tags, activities)
 
 		if (node.nodeType !== 'Test Suite') {
 			return nested
@@ -313,14 +352,17 @@ function simulatorWaitSuite(wait) {
  * worker on one machine, and the timeline draws nothing for a report with no
  * attempt in lane 0.
  */
+/** Every attempt in the suites, however deeply nested. */
+function allAttempts(suites) {
+	return suites.flatMap((suite) => [
+		...(suite.tests ?? []).flatMap((test) => test.attempts),
+		...allAttempts(suite.suites ?? []),
+	])
+}
+
 function setLane(suites, parallelIndex) {
-	for (const suite of suites) {
-		for (const test of suite.tests ?? []) {
-			for (const attempt of test.attempts) {
-				attempt.parallelIndex = parallelIndex
-			}
-		}
-		setLane(suite.suites ?? [], parallelIndex)
+	for (const attempt of allAttempts(suites)) {
+		attempt.parallelIndex = parallelIndex
 	}
 }
 
@@ -339,11 +381,11 @@ export function buildReport(testNodes, options) {
 		parallelIndex,
 		runnerLoad,
 		tags = new Map(),
+		activities = new Map(),
 	} = options
 
 	const clock = {now: testsStartedMs}
-	const suites = toSuites(testNodes, clock, tags)
-	const hasTests = suites.length > 0
+	const suites = toSuites(testNodes, clock, tags, activities)
 	if (simulatorWait) {
 		suites.unshift(simulatorWaitSuite(simulatorWait))
 	}
@@ -354,14 +396,12 @@ export function buildReport(testNodes, options) {
 		setLane(suites, parallelIndex)
 	}
 
-	const starts = [hasTests ? testsStartedMs : undefined, simulatorWait?.startedMs].filter(
-		(ms) => ms !== undefined,
+	// The run spans its attempts, the simulator wait's among them.
+	const attempts = allAttempts(suites)
+	const startTimestamp = Math.min(...attempts.map((attempt) => attempt.startTimestamp))
+	const endTimestamp = Math.max(
+		...attempts.map((attempt) => attempt.startTimestamp + attempt.duration),
 	)
-	const ends = [
-		hasTests ? clock.now : undefined,
-		simulatorWait && simulatorWait.startedMs + simulatorWait.durationMs,
-	].filter((ms) => ms !== undefined)
-	const startTimestamp = Math.min(...starts)
 
 	const report = {
 		flakinessProject: FLAKINESS_PROJECT,
@@ -371,7 +411,7 @@ export function buildReport(testNodes, options) {
 		environments: [{name: 'iOS Simulator', systemData: {osName: 'iOS', osVersion}}],
 		suites,
 		startTimestamp,
-		duration: Math.max(...ends) - startTimestamp,
+		duration: endTimestamp - startTimestamp,
 		...runnerLoad,
 	}
 	if (url) {
@@ -390,6 +430,54 @@ function readXcodeVersion() {
 	} catch {
 		return
 	}
+}
+
+/** Every test case in the tree. */
+function testCasesIn(nodes) {
+	return (nodes ?? []).flatMap((node) =>
+		node.nodeType === 'Test Case' ? [node] : testCasesIn(node.children),
+	)
+}
+
+/**
+ * Each test's activities, one list per attempt in the order they ran, keyed
+ * by the test's identifier. A test whose activities cannot be read is left
+ * out, and its attempts keep their end-to-end timing.
+ */
+function readActivities(bundlePath, testNodes) {
+	const activities = new Map()
+	let unreadable = 0
+	for (const {nodeIdentifier} of testCasesIn(testNodes)) {
+		if (!nodeIdentifier) {
+			continue
+		}
+		try {
+			const stdout = execFileSync(
+				'xcrun',
+				[
+					'xcresulttool',
+					'get',
+					'test-results',
+					'activities',
+					'--test-id',
+					nodeIdentifier,
+					'--path',
+					bundlePath,
+				],
+				{encoding: 'utf8', maxBuffer: 64 * 1024 * 1024},
+			)
+			const runs = (JSON.parse(stdout).testRuns ?? [])
+				.map((run) => run.activities ?? [])
+				.toSorted((a, b) => (a[0]?.startTime ?? 0) - (b[0]?.startTime ?? 0))
+			activities.set(nodeIdentifier, runs)
+		} catch {
+			unreadable += 1
+		}
+	}
+	if (unreadable > 0) {
+		console.log(`Could not read the activities of ${unreadable} tests`)
+	}
+	return activities
 }
 
 /** The tag markers in the UI tests' sources, or none if they cannot be read. */
@@ -449,6 +537,7 @@ function main() {
 		simulatorWait: readSimulatorWait(env),
 		runnerLoad: readRunnerLoadFile(env.RUNNER_LOAD),
 		tags: readTestTags('uitests'),
+		activities: readActivities(bundlePath, results.testNodes),
 		// Each shard runs on its own machine, one test at a time: one worker.
 		parallelIndex: 0,
 	})

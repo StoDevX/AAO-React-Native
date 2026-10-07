@@ -422,6 +422,137 @@ describe('buildReport', () => {
 		assert.equal(onlyTest(report).tags, undefined)
 	})
 
+	describe('activities', () => {
+		/** An activity as `xcresulttool get test-results activities` reports it. */
+		function activity(title, startTime, childActivities, extra = {}) {
+			return {
+				title,
+				startTime,
+				activityType: 'com.apple.dt.xctest.activity-type.internal',
+				isAssociatedWithFailure: false,
+				...(childActivities && {childActivities}),
+				...extra,
+			}
+		}
+
+		const flake = testCase('testB()', 'Passed', 9, [
+			repetition(0, 'Failed', 4),
+			repetition(1, 'Passed', 5),
+		])
+
+		it('start each attempt when its first activity did, not end to end', () => {
+			const activities = new Map([
+				[
+					'ModuleNewsTests/testB()',
+					[[activity('Start Test', 2000)], [activity('Start Test', 2010)]],
+				],
+			])
+			const report = build(tree(suite('ModuleNewsTests', [flake])), {activities})
+
+			assert.deepEqual(
+				onlyTest(report).attempts.map((attempt) => attempt.startTimestamp),
+				[2_000_000, 2_010_000],
+			)
+			assert.equal(report.startTimestamp, 2_000_000)
+			assert.equal(report.duration, 15_000)
+		})
+
+		it('turn into nested steps, each lasting until the next one starts', () => {
+			const activities = new Map([
+				[
+					'ModuleNewsTests/testA()',
+					[
+						[
+							activity('Set Up', 2000),
+							activity('Waiting 30.0s for Button to exist', 2001, [
+								activity('Find the Button', 2001.5),
+								activity('Check for interrupting elements', 2003),
+							]),
+							activity('Tear Down', 2008),
+						],
+					],
+				],
+			])
+			const report = build(tree(suite('ModuleNewsTests', [testCase('testA()', 'Passed', 10)])), {
+				activities,
+			})
+
+			assert.deepEqual(onlyTest(report).attempts[0].steps, [
+				{title: 'Set Up', duration: 1000},
+				{
+					title: 'Waiting 30.0s for Button to exist',
+					duration: 7000,
+					steps: [
+						{title: 'Find the Button', duration: 1500},
+						{title: 'Check for interrupting elements', duration: 5000},
+					],
+				},
+				{title: 'Tear Down', duration: 2000},
+			])
+		})
+
+		it('give a step with no start time no duration, and time its neighbors past it', () => {
+			const activities = new Map([
+				[
+					'ModuleNewsTests/testA()',
+					[
+						[
+							activity('Set Up', 2000),
+							activity('Screenshot', undefined, undefined, {
+								activityType: 'com.apple.dt.xctest.activity-type.attachmentContainer',
+							}),
+							activity('Tear Down', 2004),
+							// xcresulttool sometimes lists an activity with nothing in it.
+							{title: ''},
+						],
+					],
+				],
+			])
+			const report = build(tree(suite('ModuleNewsTests', [testCase('testA()', 'Passed', 5)])), {
+				activities,
+			})
+
+			assert.deepEqual(onlyTest(report).attempts[0].steps, [
+				{title: 'Set Up', duration: 4000},
+				{title: 'Screenshot'},
+				{title: 'Tear Down', duration: 1000},
+			])
+		})
+
+		it('mark the step where an assertion failed', () => {
+			const activities = new Map([
+				[
+					'ModuleNewsTests/testA()',
+					[
+						[
+							activity('Set Up', 2000),
+							activity('XCTAssertTrue failed - the switch should read 0', 2001, undefined, {
+								activityType: undefined,
+								isAssociatedWithFailure: true,
+							}),
+						],
+					],
+				],
+			])
+			const report = build(tree(suite('ModuleNewsTests', [testCase('testA()', 'Failed', 2)])), {
+				activities,
+			})
+
+			assert.deepEqual(onlyTest(report).attempts[0].steps[1].error, {
+				message: 'XCTAssertTrue failed - the switch should read 0',
+			})
+		})
+
+		it('leave an attempt without them laid end to end, as before', () => {
+			const report = build(tree(suite('ModuleNewsTests', [flake])), {activities: new Map()})
+
+			const [first, retry] = onlyTest(report).attempts
+			assert.equal(first.startTimestamp, 1_000_000)
+			assert.equal(retry.startTimestamp, 1_004_000)
+			assert.equal(first.steps, undefined)
+		})
+	})
+
 	it('returns null when there is nothing to report', () => {
 		assert.equal(buildReport([], OPTIONS), null)
 	})
