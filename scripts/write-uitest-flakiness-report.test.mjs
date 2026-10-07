@@ -140,6 +140,37 @@ describe('buildReport', () => {
 		assert.equal(onlyTest(report).attempts.length, 2)
 	})
 
+	it('points a failure at its line in the repository', () => {
+		const report = build(
+			tree(
+				suite('ModuleNewsTests', [
+					testCase('testA()', 'Failed', 1, [failure('the view menu should offer Latest')]),
+				]),
+			),
+			{
+				workspace: '/Users/runner/work/AAO-React-Native/AAO-React-Native',
+			},
+		)
+
+		assert.deepEqual(onlyTest(report).attempts[0].errors, [
+			{
+				message: 'the view menu should offer Latest',
+				location: {file: 'uitests/Screens/MessFrontPage.swift', line: 140, column: 1},
+			},
+		])
+	})
+
+	it('leaves the location off a failure outside the repository', () => {
+		const report = build(
+			tree(suite('ModuleNewsTests', [testCase('testA()', 'Failed', 1, [failure('boom')])])),
+			{
+				workspace: '/Users/runner/work/elsewhere',
+			},
+		)
+
+		assert.deepEqual(onlyTest(report).attempts[0].errors, [{message: 'boom'}])
+	})
+
 	it('runs attempts back to back from when the tests started', () => {
 		const report = build(
 			tree(

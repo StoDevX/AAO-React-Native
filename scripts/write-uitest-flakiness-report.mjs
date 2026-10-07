@@ -231,12 +231,27 @@ function toSteps(activities, endMs) {
 }
 
 /**
+ * A failure, located in the repository when its file is in the checkout:
+ * xcresulttool gives the path the runner built from.
+ */
+function toError(failureMessage, workspace) {
+	const error = {message: failureMessage.name}
+	const {filePath, lineNumber} = failureMessage.sourceLocation ?? {}
+	if (workspace && filePath?.startsWith(`${workspace}/`) && Number.isInteger(lineNumber)) {
+		error.location = {file: filePath.slice(workspace.length + 1), line: lineNumber, column: 1}
+	}
+	return error
+}
+
+/**
  * Turn one test, or one of its repetitions, into a run attempt.
  *
- * Attempts are laid end to end on `clock`, since the bundle records how long
+ * Without activities, attempts are laid end to end on `context.clock`, since
+ * the bundle records how long
  * each took but not when it started.
  */
-function toAttempt(run, clock, testLevelNodes, activities = []) {
+function toAttempt(run, context, testLevelNodes, activities = []) {
+	const {clock, workspace} = context
 	const duration = Math.round((run.durationInSeconds ?? 0) * 1000)
 	// The first activity says when the attempt really began; without one,
 	// attempts are laid end to end.
@@ -254,7 +269,7 @@ function toAttempt(run, clock, testLevelNodes, activities = []) {
 
 	const errors = (run.children ?? [])
 		.filter((child) => child.nodeType === 'Failure Message')
-		.map((child) => ({message: child.name}))
+		.map((child) => toError(child, workspace))
 	if (errors.length > 0) {
 		attempt.errors = errors
 	}
@@ -276,7 +291,8 @@ function toAttempt(run, clock, testLevelNodes, activities = []) {
  * A test has one attempt per repetition, or one of its own when it never
  * retried. Its tags are its class's and its own.
  */
-function toTest(testCase, suiteName, clock, tags, activities) {
+function toTest(testCase, suiteName, context) {
+	const {tags, activities} = context
 	const repetitions = (testCase.children ?? []).filter((child) => child.nodeType === 'Repetition')
 	const runs = repetitions.length > 0 ? repetitions : [testCase]
 	// A retried test's own nodes, beside its repetitions, belong to every attempt.
@@ -288,7 +304,9 @@ function toTest(testCase, suiteName, clock, tags, activities) {
 	const activityRuns = activities.get(testCase.nodeIdentifier) ?? []
 	const test = {
 		title: testCase.name,
-		attempts: runs.map((run, index) => toAttempt(run, clock, testLevelNodes, activityRuns[index])),
+		attempts: runs.map((run, index) =>
+			toAttempt(run, context, testLevelNodes, activityRuns[index]),
+		),
 	}
 
 	const method = testCase.name.replace(/\(\)$/u, '')
@@ -305,7 +323,7 @@ function toTest(testCase, suiteName, clock, tags, activities) {
  * Turn the tree into suites. Plan and bundle nodes are walked through, since
  * every test in a shard shares them.
  */
-function toSuites(nodes, clock, tags, activities) {
+function toSuites(nodes, context) {
 	return (nodes ?? []).flatMap((node) => {
 		if (node.nodeType === 'Test Case') {
 			return []
@@ -313,8 +331,8 @@ function toSuites(nodes, clock, tags, activities) {
 
 		const tests = (node.children ?? [])
 			.filter((child) => child.nodeType === 'Test Case')
-			.map((child) => toTest(child, node.name, clock, tags, activities))
-		const nested = toSuites(node.children, clock, tags, activities)
+			.map((child) => toTest(child, node.name, context))
+		const nested = toSuites(node.children, context)
 
 		if (node.nodeType !== 'Test Suite') {
 			return nested
@@ -382,10 +400,10 @@ export function buildReport(testNodes, options) {
 		runnerLoad,
 		tags = new Map(),
 		activities = new Map(),
+		workspace,
 	} = options
 
-	const clock = {now: testsStartedMs}
-	const suites = toSuites(testNodes, clock, tags, activities)
+	const suites = toSuites(testNodes, {clock: {now: testsStartedMs}, tags, activities, workspace})
 	if (simulatorWait) {
 		suites.unshift(simulatorWaitSuite(simulatorWait))
 	}
@@ -538,6 +556,7 @@ function main() {
 		runnerLoad: readRunnerLoadFile(env.RUNNER_LOAD),
 		tags: readTestTags('uitests'),
 		activities: readActivities(bundlePath, results.testNodes),
+		workspace: env.GITHUB_WORKSPACE,
 		// Each shard runs on its own machine, one test at a time: one worker.
 		parallelIndex: 0,
 	})
