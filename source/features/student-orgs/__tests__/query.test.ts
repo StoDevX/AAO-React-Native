@@ -18,7 +18,7 @@ function newClient() {
 }
 
 function answering(status: number) {
-	let request = new Request('https://stolaf.api.frogpond.tech/v1/orgs/uri/agape')
+	let request = new Request('https://stolaf.frogpond.tech/v1/orgs/uri/agape')
 	let error = new HTTPError(new Response(null, {status}), request, {} as never)
 	return {json: () => Promise.reject(error)}
 }

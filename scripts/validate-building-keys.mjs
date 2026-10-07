@@ -19,7 +19,7 @@ import {duplicateBuildingHours} from './building-hours-kinds.mjs'
 import {isDataEntry} from './data-entries.mjs'
 import {DATA_BASE} from './paths.mjs'
 
-const GEOJSON_URL = 'https://stolaf.api.frogpond.tech/v1/map/geojson'
+const GEOJSON_URL = 'https://stolaf.frogpond.tech/v1/map/geojson'
 const BUILDING_HOURS_DIR = path.join(DATA_BASE, 'building-hours')
 const BUILDING_DIRECTORY_DIR = path.join(DATA_BASE, 'building-directory')
 
