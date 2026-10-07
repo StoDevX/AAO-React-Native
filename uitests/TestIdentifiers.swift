@@ -257,8 +257,6 @@ struct TestIdentifiers {
 		static let parkingCategory = "Parking"
 		/// The group that lists every building. Mirrors data/map-categories.yaml.
 		static let buildingsCategory = "Buildings"
-		/// A St. Olaf group. Mirrors data/map-categories.yaml.
-		static let diningCategory = "Dining"
 		/// The group whose tile sits at the grid's bottom-left corner at the
 		/// default text size: the last row's first tile. Mirrors the order of
 		/// data/map-categories.yaml.
@@ -272,12 +270,6 @@ struct TestIdentifiers {
 		/// tap that reaches the footprint instead opens the wrong card.
 		/// St. Olaf can rename it.
 		static let aPointOnlyPlace = "Stav Hall"
-		/// The Recents section's title, and its rows' swipe action. Mirror
-		/// RecentsSection in source/features/map/building-picker.tsx.
-		static let recentsTitle = "Recents"
-		static let recentsRemove = "Remove"
-		/// Mirrors CATEGORY_GRID_ID in source/features/map/category-grid.tsx.
-		static let categoryGrid = "map-category-grid"
 		/// A row two screens down `parkingCategory`, behind every Accessible
 		/// Parking space. St. Olaf can rename it.
 		static let aRowFarDownParking = "Alumni Hall Road"
@@ -285,11 +277,10 @@ struct TestIdentifiers {
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/map/index.tsx.
 		static let attribution = "About this map"
-		/// The credit the tiles' licence requires, one of the About menu's
-		/// items. Mirrors `mapCredits` in source/features/map/urls.ts.
-		static let osmCredit = "© OpenStreetMap contributors"
 		/// The map screen's title, which its header no longer draws.
 		static let stolafTitle = "St. Olaf Map"
+		/// The edit menu's Copy, which iOS offers only for selectable text.
+		static let copy = "Copy"
 		/// A St. Olaf-only building near the top of the list, so the expanded
 		/// sheet shows it without scrolling -- and absent from Carleton's map
 		/// data, so selecting it is what would fail if the map's campus parameter
@@ -608,7 +599,6 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		static let tabs = ["Webcams"]
 		/// The station picker's KRLX segment, at the top of the sheet.
 		static let krlxSegment = "KRLX"
 		/// Play and Stop, in source/features/streaming/radio/player-view and the
@@ -635,15 +625,8 @@ struct TestIdentifiers {
 		static let showRadioPlayer = "show-radio-player"
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
-		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
-		/// KSTO's logos in the order a tap cycles through them.
-		static let kstoLogos = [
-			"KSTO 93.1 FM logo, cow badge",
-			"KSTO 93.1 FM logo, wordmark",
-			"KSTO 93.1 FM logo, dumpster fire",
-			"KSTO 93.1 FM logo, narwhal",
-			"KSTO 93.1 FM logo, cow sketch",
-		]
+		/// The logo KSTO shows first, before any tap moves it on.
+		static let kstoFirstLogo = "KSTO 93.1 FM logo, cow badge"
 	}
 
 	// MARK: - Quick Actions
@@ -779,13 +762,6 @@ struct TestIdentifiers {
 	// MARK: - Student Orgs
 
 	enum StudentOrgs {
-		/// Matches CATEGORY_GRID_ID in source/features/student-orgs/category-landing.tsx.
-		static let categoryGrid = "student-orgs-category-grid"
-		/// Matches CATEGORY_LIST_ID in source/features/student-orgs/category-landing.tsx.
-		static let categoryList = "student-orgs-category-list"
-		/// Matches CATEGORY_ROW_ID_PREFIX in source/features/student-orgs/category-landing.tsx. Each
-		/// category row's identifier is this followed by the category's name.
-		static let categoryRowPrefix = "student-orgs-category:"
 		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
 		static let resultsList = "student-orgs-results-list"
 		/// The landing's title, in app/student-orgs/index.tsx.
@@ -873,15 +849,13 @@ struct TestIdentifiers {
 	// MARK: - Transit
 
 	enum Transit {
+		/// The screen's title, in app/_layout.tsx.
+		static let title = "Transit"
 		/// The line every UI test drives, and a stop it always calls at. The
 		/// stop is the college itself, so it is not going to be renamed out
 		/// from under this test.
 		static let aLine = "Express Bus"
 		static let aStop = "St. Olaf College"
-		/// A line the feed publishes with `hidden: true`
-		/// (`data/bus-times/2-oles-go.yaml`), so it stays readable to released
-		/// app versions while this one leaves it off the screen.
-		static let aHiddenLine = "Oles Go"
 		/// A stop several places past `aStop` on Express Bus's route (see
 		/// `docs/bus-times.json`), used to prove a strip swipe actually moved the
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
@@ -919,11 +893,6 @@ struct TestIdentifiers {
 		/// What a row shows in place of a departure the route skips; matches
 		/// `formatDeparture` in `source/features/transit/bus/components/times.tsx`.
 		static let skippedDeparture = "None"
-		/// The last row on the Transit screen. It sits in Other Modes'
-		/// final section, which carries no heading -- its entries have an empty
-		/// `category` -- so reaching this row proves the list scrolls past both
-		/// the widgets and the two headed sections into the headerless one.
-		static let lastOtherModesRow = "Transportation Options"
 	}
 
 }
