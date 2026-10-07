@@ -25,6 +25,7 @@ jest.mock('../../__fixtures__/mess.json', () => ({
 	'json https://x/posts': [{id: 1}],
 	'text https://x/page': '<html>',
 	'json https://x/posts?page=9': {status: 400},
+	'json https://x/posts?page=10': {status: 400, code: 'rest_post_invalid_page_number'},
 }))
 
 import {SourceFetchError} from '@frogpond/data-sources'
@@ -69,6 +70,13 @@ describe('messFetch', () => {
 		expect((error as SourceFetchError).status).toBe(400)
 	})
 
+	test('serve: a recorded failure fails again with its WordPress code', async () => {
+		mockMode = 'serve'
+		let error = await messFetch('https://x/posts?page=10', signal, 'Mess').catch((e: unknown) => e)
+		expect(error).toBeInstanceOf(SourceFetchError)
+		expect(error).toMatchObject({status: 400, code: 'rest_post_invalid_page_number'})
+	})
+
 	test('record: fetches live and appends the answer', async () => {
 		mockMode = 'record'
 		mockFetch.mockResolvedValue([{id: 3}])
@@ -80,7 +88,9 @@ describe('messFetch', () => {
 
 	test('record: a failed fetch is recorded with its status and still fails', async () => {
 		mockMode = 'record'
-		mockFetch.mockRejectedValue(new SourceFetchError('Mess fetch failed: 400', 400))
+		mockFetch.mockRejectedValue(
+			new SourceFetchError('Mess fetch failed: 400', 400, {code: 'rest_post_invalid_page_number'}),
+		)
 		await expect(messFetch('https://x/posts?page=9', signal, 'Mess')).rejects.toThrow(
 			SourceFetchError,
 		)
@@ -88,6 +98,7 @@ describe('messFetch', () => {
 			href: 'https://x/posts?page=9',
 			format: 'json',
 			status: 400,
+			code: 'rest_post_invalid_page_number',
 		})
 	})
 })

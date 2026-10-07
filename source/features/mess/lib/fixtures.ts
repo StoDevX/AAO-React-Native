@@ -7,8 +7,14 @@ import fixtures from '../__fixtures__/mess.json'
 
 type Format = 'json' | 'text'
 
-/** One fetch as recorded: its answer, or the status it failed with. */
-export type Recording = {href: string; format: Format; body?: unknown; status?: number}
+/** One fetch as recorded: its answer, or the status it failed with and WordPress's code for it. */
+export type Recording = {
+	href: string
+	format: Format
+	body?: unknown
+	status?: number
+	code?: string
+}
 
 /** Where a recording run appends each fetch, one JSON object per line. */
 export const RECORDING_FILE = 'fixture-recording.jsonl'
@@ -33,15 +39,16 @@ function serve(href: string, format: Format): unknown {
 		throw new MissingMessFixture(key)
 	}
 	let answer = table[key]
-	// A failure is recorded as its status alone, and fails the same way again.
+	// A failure is recorded as its status alone, or with WordPress's code, and fails the same way
+	// again.
 	if (
 		answer &&
 		typeof answer === 'object' &&
 		'status' in answer &&
-		Object.keys(answer).length === 1
+		Object.keys(answer).every((name) => name === 'status' || name === 'code')
 	) {
-		let {status} = answer as {status: number}
-		throw new SourceFetchError(`fixture fetch failed: ${status}`, status)
+		let {status, code} = answer as {status: number; code?: string}
+		throw new SourceFetchError(`fixture fetch failed: ${status}`, status, {code})
 	}
 	return answer
 }
@@ -77,7 +84,7 @@ export async function messFetch(
 		return body
 	} catch (error) {
 		if (error instanceof SourceFetchError) {
-			record({href, format, status: error.status})
+			record({href, format, status: error.status, code: error.code})
 		}
 		throw error
 	}

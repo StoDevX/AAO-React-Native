@@ -22,11 +22,20 @@ export function nextPage(
 
 /**
  * Reads WordPress's 400 for a page past the last as an empty page, which ends the list. It is asked
- * for when the post count is a multiple of the page size and the last page is full.
+ * for when the post count is a multiple of the page size and the last page is full. Only that 400
+ * ends a list, known by its code: a 400 for a bad parameter, or ccc-server's refusal of one, fails
+ * the page, rather than cutting the list short without a word.
  */
 export function emptyPastLastPage(page: number): (error: unknown) => never[] {
 	return (error) => {
-		if (page > 1 && error instanceof SourceFetchError && error.status === 400) return []
+		if (
+			page > 1 &&
+			error instanceof SourceFetchError &&
+			error.status === 400 &&
+			error.code === 'rest_post_invalid_page_number'
+		) {
+			return []
+		}
 		throw error
 	}
 }

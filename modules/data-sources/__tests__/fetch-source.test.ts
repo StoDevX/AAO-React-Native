@@ -1,4 +1,4 @@
-import {setApiRoot} from '@frogpond/api'
+import {isHTTPError, setApiRoot} from '@frogpond/api'
 import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
 
 describe('isAbsoluteHref', () => {
@@ -71,6 +71,54 @@ describe('fetchSourceBody', () => {
 			status: 400,
 			message: 'Olaf Messenger issues fetch failed: 400',
 		})
+	})
+
+	describe.each([
+		['an absolute', 'https://olafmessenger.com/wp-json/wp/v2/posts?page=54'],
+		['a relative', 'news/mess/wp/v2/posts?page=54'],
+	])('%s href answered with a WordPress error', (_kind, href) => {
+		test('carries the code WordPress named', async () => {
+			global.fetch = jest.fn(() =>
+				Promise.resolve(
+					new Response('{"code":"rest_post_invalid_page_number","data":{"status":400}}', {
+						status: 400,
+						headers: {'content-type': 'application/json'},
+					}),
+				),
+			) as unknown as typeof fetch
+
+			let failure = fetchSourceBody(href, new AbortController().signal, 'Olaf Messenger')
+
+			await expect(failure).rejects.toMatchObject({
+				status: 400,
+				code: 'rest_post_invalid_page_number',
+			})
+		})
+
+		test('carries no code for a body that names none', async () => {
+			global.fetch = jest.fn(() =>
+				Promise.resolve(new Response('<html>no</html>', {status: 400})),
+			) as unknown as typeof fetch
+
+			let failure = fetchSourceBody(href, new AbortController().signal, 'Olaf Messenger')
+
+			await expect(failure).rejects.toMatchObject({status: 400, code: undefined})
+		})
+	})
+
+	test("keeps ky's error as a relative failure's cause", async () => {
+		global.fetch = jest.fn(() =>
+			Promise.resolve(new Response('', {status: 502})),
+		) as unknown as typeof fetch
+
+		let error: unknown = await fetchSourceBody(
+			'calendar/named/ksto-schedule',
+			new AbortController().signal,
+			'Calendar',
+		).catch((caught: unknown) => caught)
+
+		expect(error).toBeInstanceOf(SourceFetchError)
+		expect(isHTTPError((error as Error).cause)).toBe(true)
 	})
 
 	// This app's `AbortSignal` comes from react-native's `abort-controller`

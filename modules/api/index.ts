@@ -1,5 +1,8 @@
 import ky from 'ky'
 
+/// For modules that read ky's errors without depending on ky themselves.
+export {isHTTPError} from 'ky'
+
 export let client: typeof ky
 
 /// The server the app was pointed at, for URLs that are not fetched through
