@@ -34,7 +34,8 @@ function toTest(event, cwd) {
 	const attempt = {
 		environmentIdx: 0,
 		expectedStatus: skipped ? 'skipped' : 'passed',
-		status: event.type === 'test:fail' ? 'failed' : skipped ? 'skipped' : 'passed',
+		// A todo test may fail without failing the run, so it stays skipped.
+		status: skipped ? 'skipped' : event.type === 'test:fail' ? 'failed' : 'passed',
 		// node:test reports when a test ends, not when it began.
 		startTimestamp: receivedAt - duration,
 		duration,
@@ -85,10 +86,17 @@ export function buildReport(events, options) {
 		pending[data.nesting + 1] = []
 
 		// A test with subtests becomes a suite, or the subtests would be lost.
-		const node =
-			data.details.type === 'suite' || children.length > 0
-				? toSuite({type: 'suite', title: data.name, location: location(data, cwd)}, children)
-				: toTest(event, cwd)
+		// Its own failure -- a hook's, or its body's -- becomes a test in it,
+		// unless it failed only because a subtest did.
+		const isSuite = data.details.type === 'suite' || children.length > 0
+		const ownFailure =
+			isSuite && event.type === 'test:fail' && data.details.error?.failureType !== 'subtestsFailed'
+		const node = isSuite
+			? toSuite({type: 'suite', title: data.name, location: location(data, cwd)}, [
+					...children,
+					...(ownFailure ? [toTest(event, cwd)] : []),
+				])
+			: toTest(event, cwd)
 		pending[data.nesting] = [...(pending[data.nesting] ?? []), node]
 	}
 

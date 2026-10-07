@@ -164,6 +164,44 @@ describe('buildReport', () => {
 		}
 	})
 
+	it("keeps a suite's own failure, such as an after hook's, as a failed test in it", () => {
+		const hookFailure = Object.assign(new Error('test failed'), {
+			failureType: 'hookFailed',
+			cause: new Error('the temp folder could not be removed'),
+		})
+		const report = build([
+			event('passes', {nesting: 1}),
+			event('cleans up', {type: 'suite', line: 4, error: hookFailure}),
+		])
+
+		const [suite] = report.suites[0].suites
+		const own = suite.tests.find((test) => test.title === 'cleans up')
+		assert.equal(own.attempts[0].status, 'failed')
+		assert.deepEqual(own.attempts[0].errors, [{message: 'the temp folder could not be removed'}])
+		assert.deepEqual(own.location, {file: 'scripts/a.test.mjs', line: 4, column: 1})
+	})
+
+	it('adds nothing to a suite that failed only because a test in it did', () => {
+		const subtestsFailed = Object.assign(new Error('1 subtest failed'), {
+			failureType: 'subtestsFailed',
+		})
+		const report = build([
+			event('fails', {nesting: 1, error: testFailure('1 !== 2')}),
+			event('outer', {type: 'suite', error: subtestsFailed}),
+		])
+
+		assert.deepEqual(
+			report.suites[0].suites[0].tests.map((test) => test.title),
+			['fails'],
+		)
+	})
+
+	it('reports a todo test that fails as skipped, since node:test does not fail the run for it', () => {
+		const report = build([event('someday', {todo: true, error: testFailure('not done')})])
+
+		assert.equal(report.suites[0].tests[0].attempts[0].status, 'skipped')
+	})
+
 	it('keeps each file apart even when their events interleave', () => {
 		const report = build([
 			event('a one', {file: 'scripts/a.test.mjs', nesting: 1}),

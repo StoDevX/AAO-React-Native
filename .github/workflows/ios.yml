@@ -470,12 +470,18 @@ jobs:
         with:
           persist-credentials: false
 
-      # Only node and the flakiness CLI: the scripts below need nothing else,
-      # and installing every tool would cost each shard more than it saves.
+      # Only node: the scripts below need nothing else, and installing every
+      # tool would cost each shard more than it saves.
       - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
-          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-flakiness-${{ hashFiles('mise.lock') }}
-          install_args: node npm:flakiness
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      # The CLI only uploads to flakiness.io, so a failed install must not stop
+      # the tests; the upload step then fails on its own, and is let off too.
+      - name: Install the flakiness CLI
+        continue-on-error: true
+        run: mise install npm:flakiness
 
       # Always an artifact now: ios-build publishes what it built, and
       # ios-cache-check republishes what the cache held when the build was
@@ -693,7 +699,7 @@ jobs:
       - name: Upload to flakiness.io
         if: always() && hashFiles('flakiness-report/report.json') != ''
         continue-on-error: true
-        run: flakiness upload flakiness-report
+        run: '"$(mise which flakiness)" upload flakiness-report'
 
       # `if: always()`: the stalls this is for mostly happen in tests that pass.
       # Only the default level and above are kept, so this costs nothing while
