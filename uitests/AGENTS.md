@@ -89,6 +89,11 @@ first launch needs, such as a text size.
 typing it; confirm a row exists before tapping. A test that silently did nothing
 otherwise passes exactly like one that worked.
 
+**A test gets two minutes.** CI stops a test that runs longer, attaches a
+spindump, and retries it. A test that needs longer is two tests, or is waiting
+on something it should not: a launch it could skip with a deep link, or
+SpringBoard while the app sits in the background.
+
 ## What earns a slot
 
 Every test cold-launches the app. On CI, launching and tapping through the
