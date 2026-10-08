@@ -21,7 +21,9 @@ type State = {
  * fallbacks below, and the redux migration all read it, and a second copy
  * would let them drift.
  */
-export const DEFAULT_CALENDAR_SOURCES: string[] = isUITesting ? ['uitest'] : ['stolaf', 'presence']
+export const DEFAULT_CALENDAR_SOURCES: string[] = isUITesting
+	? ['uitest']
+	: ['stolaf', 'presence', 'carleton']
 
 // why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
 const initialState = {

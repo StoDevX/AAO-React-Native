@@ -76,6 +76,7 @@ describe('on Carleton', () => {
 		expect(carletonIds()).toStrictEqual([
 			'Menus',
 			'Building Hours',
+			'Calendar',
 			'Important Contacts',
 			'SUMO',
 			'The Carletonian',

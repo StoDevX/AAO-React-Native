@@ -22,6 +22,7 @@ describe('calendarSourceId', () => {
 	it.each([
 		'stolaf',
 		'presence',
+		'carleton',
 		'ksto-schedule',
 		'krlx-schedule',
 		'sumo-schedule',

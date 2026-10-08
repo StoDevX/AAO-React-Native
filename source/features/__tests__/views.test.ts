@@ -153,6 +153,7 @@ describe('HomeViews for Carleton', () => {
 			['Menus', '/carleton-menus'],
 			['Workday', 'https://www.carleton.edu/workday/'],
 			['Building Hours', '/hours?campus=carleton'],
+			['Calendar', '/calendar'],
 			['Directory', 'https://www.carleton.edu/directory/'],
 			['Important Contacts', '/contacts'],
 			['KRLX', 'radio:krlx'],
@@ -181,7 +182,7 @@ describe('HomeViews for Carleton', () => {
 			.map(viewTarget)
 			.filter((target) => stOlafTargets.has(target))
 
-		expect(shared).toEqual(['/transit', '/dictionary', '/developer'])
+		expect(shared).toEqual(['/calendar', '/transit', '/dictionary', '/developer'])
 	})
 
 	test('defaults to St. Olaf', () => {

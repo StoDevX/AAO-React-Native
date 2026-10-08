@@ -6,6 +6,11 @@ export const SUMO_SOURCE_ID = 'sumo-schedule'
 /** Carleton's upcoming convocations, a calendar on Carleton's ccc-server. */
 export const CONVOS_SOURCE_ID = 'upcoming-convos'
 
+export const CARLETON_POWERED_BY = {
+	title: 'Powered by the Carleton Calendar',
+	href: 'https://www.carleton.edu/calendar/',
+}
+
 export const SUMO_POWERED_BY = {
 	title: 'Powered by SUMO',
 	href: 'https://www.carleton.edu/student/orgs/sumo/',

@@ -57,6 +57,13 @@ links:
     properties: {'https://frogpond.tech/ns/id': presence}
 
   - rel: https://frogpond.tech/rel/calendar
+    href: 'calendar/named/carleton'
+    type: application/vnd.frogpond.events+json
+    titles: {und: Carleton Calendar}
+    properties:
+      {'https://frogpond.tech/ns/id': carleton, 'https://frogpond.tech/ns/campus': carleton}
+
+  - rel: https://frogpond.tech/rel/calendar
     href: 'calendar/named/krlx-schedule'
     type: application/vnd.frogpond.events+json
     titles: {und: KRLX Schedule}

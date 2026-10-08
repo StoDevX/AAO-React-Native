@@ -42,6 +42,7 @@ export type QuickActionId = string & {readonly __brand: 'QuickActionId'}
 export type CalendarSourceId =
 	| 'stolaf'
 	| 'presence'
+	| 'carleton'
 	| 'ksto-schedule'
 	| 'krlx-schedule'
 	| 'sumo-schedule'

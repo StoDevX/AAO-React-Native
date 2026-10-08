@@ -6,6 +6,7 @@ import type {CalendarSourceId, PublicEventTitle, TelemetryEvent} from './catalog
 const KNOWN_SOURCES: ReadonlySet<string> = new Set([
 	'stolaf',
 	'presence',
+	'carleton',
 	'ksto-schedule',
 	'krlx-schedule',
 	'sumo-schedule',

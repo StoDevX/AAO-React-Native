@@ -26,6 +26,7 @@ import {
 } from '../../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../../source/features/streaming/radio/constants'
 import {
+	CARLETON_POWERED_BY,
 	CONVOS_POWERED_BY,
 	SUMO_POWERED_BY,
 	sumoEventMapper,
@@ -37,6 +38,7 @@ import type {Window} from '../../../source/database/calendar/queries'
 type EventSource =
 	| 'stolaf'
 	| 'presence'
+	| 'carleton'
 	| 'uitest'
 	| 'ksto-schedule'
 	| 'krlx-schedule'
@@ -50,6 +52,7 @@ const UITEST_POWERED_BY = {title: 'Powered by UI Test Fixtures', href: ''} as co
 const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	stolaf: STOLAF_POWERED_BY,
 	presence: PRESENCE_POWERED_BY,
+	carleton: CARLETON_POWERED_BY,
 	uitest: UITEST_POWERED_BY,
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
@@ -61,7 +64,7 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
  * The sources that contribute to the merged calendar, and so have neighbours
  * to show. The radio schedules and Carleton's SUMO and convocation lists do not.
  */
-const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'uitest'])
+const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'carleton', 'uitest'])
 
 /**
  * KSTO's and KRLX's broadcast schedules, and Carleton's SUMO and convocation

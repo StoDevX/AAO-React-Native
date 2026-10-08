@@ -264,6 +264,13 @@ const carletonViews = (): Array<ViewType> => [
 		gradient: c.blueGradient,
 	},
 	{
+		type: 'view',
+		view: '/calendar',
+		title: 'Calendar',
+		icon: 'calendar',
+		gradient: c.violetGradient,
+	},
+	{
 		type: 'url',
 		url: 'https://www.carleton.edu/directory/',
 		title: 'Directory',
