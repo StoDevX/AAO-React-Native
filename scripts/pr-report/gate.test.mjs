@@ -9,11 +9,14 @@ describe('decideGate', () => {
 	it('passes growth equal to the limit', () => {
 		let gate = decideGate({hermes: growth(100), labels: [], limit: 100})
 		assert.equal(gate.pass, true)
+		assert.equal(gate.kind, 'within')
+		assert.equal(gate.limit, 100)
 	})
 
 	it('fails growth over the limit, naming the growth, limit and label', () => {
 		let gate = decideGate({hermes: growth(101 * 1024), labels: [], limit: 100 * 1024})
 		assert.equal(gate.pass, false)
+		assert.equal(gate.kind, 'over')
 		assert.equal(
 			gate.message,
 			'Hermes bytecode grew 101.0 KiB, over the 100.0 KiB limit. Add the `size/accepted` label if the growth is intended.',
@@ -27,6 +30,7 @@ describe('decideGate', () => {
 			limit: 100,
 		})
 		assert.equal(gate.pass, true)
+		assert.equal(gate.kind, 'accepted')
 		assert.match(gate.message, /accepted/u)
 	})
 
@@ -37,6 +41,7 @@ describe('decideGate', () => {
 	it('passes when there is no baseline to compare with', () => {
 		let gate = decideGate({hermes: null, labels: [], limit: 100})
 		assert.equal(gate.pass, true)
+		assert.equal(gate.kind, 'unchecked')
 		assert.match(gate.message, /no baseline/iu)
 	})
 })
@@ -46,7 +51,12 @@ describe('decideAppGate', () => {
 
 	it('passes growth equal to the limit', () => {
 		let gate = decideAppGate({install: install(100), labels: [], limit: 100, enforced: true})
-		assert.deepEqual(gate, {pass: true, warn: false, message: 'Within the 100 B limit.'})
+		assert.deepEqual(gate, {
+			kind: 'within',
+			pass: true,
+			warn: false,
+			message: 'Within the 100 B limit.',
+		})
 	})
 
 	it('fails growth over the limit when enforced, naming the growth, limit and label', () => {
@@ -57,6 +67,7 @@ describe('decideAppGate', () => {
 			enforced: true,
 		})
 		assert.deepEqual(gate, {
+			kind: 'over',
 			pass: false,
 			warn: false,
 			message:
@@ -72,6 +83,7 @@ describe('decideAppGate', () => {
 			enforced: false,
 		})
 		assert.deepEqual(gate, {
+			kind: 'over',
 			pass: true,
 			warn: true,
 			message:
@@ -88,12 +100,14 @@ describe('decideAppGate', () => {
 		})
 		assert.equal(gate.pass, true)
 		assert.equal(gate.warn, false)
+		assert.equal(gate.kind, 'accepted')
 		assert.match(gate.message, /accepted/u)
 	})
 
 	it('passes when there is nothing to compare', () => {
 		let gate = decideAppGate({install: null, labels: [], limit: 100, enforced: true})
 		assert.deepEqual(gate, {
+			kind: 'unchecked',
 			pass: true,
 			warn: false,
 			message: 'No app size to compare with, so the app size gate passes.',

@@ -142,11 +142,16 @@ export function readAppReport(path) {
 /** The failed result for a commit with no usable size report. */
 function unreadable(nativeChanges, app) {
 	let gate = {
+		kind: 'missing',
 		pass: false,
 		message: 'No size report for this commit, so the size gate cannot pass.',
 	}
 	let empty = {head: null, diff: null, baselineNote: null, gate, nativeChanges, app}
-	return {comment: renderComment(empty), summary: renderComment(empty, Infinity), pass: false}
+	return {
+		comment: renderComment(empty),
+		summary: renderComment(empty, {limit: Infinity, everyRow: true}),
+		pass: false,
+	}
 }
 
 /** What a size report's JS adds to the app: its bytecode and bundled images. */
@@ -217,11 +222,13 @@ export function buildAppSection({
 	} else if (appHead === null) {
 		gate = appEnforced
 			? {
+					kind: 'missing',
 					pass: false,
 					warn: false,
 					message: 'No app size for this commit, so the app size gate cannot pass.',
 				}
 			: {
+					kind: 'missing',
 					pass: true,
 					warn: true,
 					message:
@@ -229,6 +236,7 @@ export function buildAppSection({
 				}
 	} else if (diff !== null && head !== null && usable.sha !== head.baseSha) {
 		gate = {
+			kind: 'unchecked',
 			pass: true,
 			warn: false,
 			message: 'Compared with an older master commit, so the app size gate passes.',
@@ -328,12 +336,16 @@ export function buildPrReport({
 	// this PR did not add, so it is shown but never gates.
 	let gate =
 		diff !== null && comparedSha !== head.baseSha
-			? {pass: true, message: 'Compared with an older master commit, so the size gate passes.'}
+			? {
+					kind: 'unchecked',
+					pass: true,
+					message: "That growth is not all this PR's, so the size gate passes.",
+				}
 			: decideGate({hermes: diff?.hermes ?? null, labels, limit})
 	let full = {head, diff, baselineNote, gate, nativeChanges: nativeChanges(diff), app}
 	return {
 		comment: renderComment(full),
-		summary: renderComment(full, Infinity),
+		summary: renderComment(full, {limit: Infinity, everyRow: true}),
 		pass: gate.pass && (app?.gate.pass ?? true),
 	}
 }

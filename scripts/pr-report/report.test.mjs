@@ -198,7 +198,11 @@ describe('buildPrReport', () => {
 			limit: 100,
 		})
 		assert.equal(result.pass, false)
-		assert.match(result.comment, /Changed most|All packages/u)
+		assert.match(result.comment, /^❌ \*\*JS \+200 B\*\*, over the 100 B limit$/mu)
+		assert.match(
+			result.comment,
+			/^> \[!CAUTION\]\n> Hermes bytecode grew 200 B, over the 100 B limit\./mu,
+		)
 	})
 
 	it('adds the native notice for changed files, with or without a baseline', () => {
@@ -210,7 +214,7 @@ describe('buildPrReport', () => {
 			labels: [],
 			files: ['app.config.ts', 'source/features/dining/store.ts'],
 		})
-		assert.match(result.comment, /### Native changes[^]*`app\.config\.ts`/u)
+		assert.match(result.comment, /> \[!IMPORTANT\][^]*`app\.config\.ts`/u)
 		assert.doesNotMatch(result.comment, /dining/u)
 	})
 
@@ -252,7 +256,7 @@ describe('buildPrReport', () => {
 			limit: 100,
 		})
 		assert.equal(result.pass, false)
-		assert.match(result.comment, /JS size unavailable/u)
+		assert.match(result.comment, /^❌ \*\*No size report for this commit\*\*$/mu)
 	})
 
 	it("compares a stacked PR with its base branch's report, and gates on it", () => {
@@ -269,7 +273,7 @@ describe('buildPrReport', () => {
 			result.comment,
 			/Compared with `feature\/other`, this PR's base branch, at `abcdef1`\./u,
 		)
-		assert.match(result.comment, /Changed most|All packages/u)
+		assert.match(result.comment, /^> \[!CAUTION\]$/mu)
 	})
 
 	it('passes with a note when a stacked PR has no report for its base branch', () => {
@@ -362,19 +366,21 @@ describe('buildPrReport', () => {
 		assert.equal(result.pass, true)
 		assert.match(
 			result.comment,
-			/Compared with master at `older56`, older than this PR's base `abcdef1`: growth merged in between is counted here\./u,
+			/^> Compared with master at `older56`, older than this PR's base `abcdef1`: growth merged in between is counted here\. That growth is not all this PR's, so the size gate passes\.$/mu,
 		)
-		assert.match(result.comment, /Changed most|All packages/u)
+		assert.match(result.comment, /^✅ \*\*JS \+200 B\*\*$/mu)
 	})
 
 	it('separates the comment, capped at COMMENT_LIMIT, from the uncapped summary', () => {
-		let huge = Object.fromEntries(
-			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
-		)
+		// Every package changes, so the changed rows alone overflow the comment.
+		let huge = (grown) =>
+			Object.fromEntries(
+				Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1 + grown]),
+			)
 		let bigReport = (hermesBytes) => ({
 			version: 5,
 			baseSha: 'abcdef1234',
-			js: {hermesBytes, byPackage: huge, byFeature: {}},
+			js: {hermesBytes, byPackage: huge(hermesBytes), byFeature: {}},
 			deps: {nodeModulesBytes: 1000, packages: {}, sizes: {}},
 			publish: report(1).publish,
 		})
@@ -386,9 +392,9 @@ describe('buildPrReport', () => {
 			labels: [],
 			limit: 100,
 		})
-		assert.doesNotMatch(result.comment, /All packages/u)
+		assert.doesNotMatch(result.comment, /<details>/u)
 		assert.match(result.comment, /The full tables are in this run's job summary\./u)
-		assert.match(result.summary, /All packages/u)
+		assert.match(result.summary, /<summary>All 3000 packages<\/summary>/u)
 	})
 })
 
@@ -419,6 +425,7 @@ describe('buildAppSection', () => {
 		})
 		assert.equal(app.runUrl, 'https://github.com/o/r/actions/runs/1')
 		assert.deepEqual(app.gate, {
+			kind: 'missing',
 			pass: true,
 			warn: true,
 			message: 'No app size for this commit; the app size gate will fail this once it is enforced.',
@@ -436,6 +443,7 @@ describe('buildAppSection', () => {
 			baseline: report(10),
 		})
 		assert.equal(app.gate.pass, false)
+		assert.equal(app.gate.kind, 'missing')
 	})
 
 	it('totals native, Hermes and asset bytes on both sides', () => {
@@ -526,6 +534,7 @@ describe('buildAppSection', () => {
 			baseline: report(10),
 		})
 		assert.equal(app.gate.pass, true)
+		assert.equal(app.gate.kind, 'unchecked')
 		assert.match(app.gate.message, /older master commit/u)
 	})
 
@@ -576,7 +585,7 @@ describe('buildPrReport with app size', () => {
 			appEnforced: false,
 		})
 		assert.equal(result.pass, true)
-		assert.match(result.comment, /⚠️ App install size grew/u)
+		assert.match(result.comment, /^> \[!WARNING\]\n> App install size grew/mu)
 	})
 
 	it('shows the app section even when this commit has no size report', () => {
@@ -590,6 +599,7 @@ describe('buildPrReport with app size', () => {
 			appHead: appReport(1000),
 			appBaseline: appReport(100),
 		})
+		assert.match(result.comment, /^\| App install · iPhone18,3 \| [^|]+ \| \+900 B /mu)
 		assert.match(result.comment, /### App size/u)
 		assert.equal(result.pass, false)
 	})
