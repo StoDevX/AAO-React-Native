@@ -2,6 +2,7 @@ import XCTest
 
 /// Which targets the accessibility warnings call out: controls the app draws,
 /// not the system's own or the layout around them.
+/// Tags: chaos
 final class ChaosTargetCheckTests: XCTestCase {
 	private func target(
 		_ type: XCUIElement.ElementType, id: String = "", label: String = "", width: CGFloat = 60, height: CGFloat = 60,

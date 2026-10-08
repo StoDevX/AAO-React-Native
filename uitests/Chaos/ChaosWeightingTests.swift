@@ -2,6 +2,7 @@ import XCTest
 
 /// The monkey's weighted pick: favours what it has used least, and draws the
 /// same from the generator whatever it is given, so a seed repeats.
+/// Tags: chaos
 final class ChaosWeightingTests: XCTestCase {
 	func testDrawsOnceEvenWithNothingToPick() {
 		var picked = ChaosRandom(seed: 1)

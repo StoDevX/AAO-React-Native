@@ -22,6 +22,7 @@ extension UITestCaseUnbooted {
 
 /// A chaos run: `mise run chaos` sets the seed and budget. Skipped anywhere
 /// else, including the CI shards, which discover every test class.
+/// Tags: chaos
 final class ChaosTests: UITestCaseUnbooted {
 	func testChaos() throws {
 		let env = ProcessInfo.processInfo.environment
@@ -43,6 +44,7 @@ final class ChaosTests: UITestCaseUnbooted {
 
 /// Proves the chaos oracles can see: if either fails, a chaos run would pass
 /// while blind.
+/// Tags: chaos
 final class ChaosCanaryTests: UITestCaseUnbooted {
 	func testFindsAJsFatal() {
 		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)

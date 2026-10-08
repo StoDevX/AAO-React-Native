@@ -1,6 +1,7 @@
 import XCTest
 
 /// A session's choices: what it does, how often, and what it types.
+/// Tags: chaos
 final class ChaosSessionTests: XCTestCase {
 	func testEachProfileWeighsToAHundred() {
 		for profile in [ChaosProfile.fuzz, .session] {
