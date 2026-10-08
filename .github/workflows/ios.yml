@@ -616,6 +616,17 @@ jobs:
           nohup bash -c 'while :; do date -u +%FT%TZ; ps -Acro pcpu,pid,comm | head -n 9; sleep 5; done' \
             > uitest-evidence/runner-cpu.log 2>&1 &
 
+      # Probe for #8655: the app's JavaScript logs at info level, which the
+      # simulator keeps only in memory, so a read after the tests finds it
+      # gone. Streamed while they run instead; the job's end stops it.
+      - name: Stream the app's JavaScript log
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: |
+          mkdir -p uitest-evidence
+          nohup xcrun simctl spawn "$SIMULATOR_UDID" log stream --level info --style compact \
+            --predicate 'category == "javascript"' > uitest-evidence/javascript.log 2>&1 &
+
       - name: Run UITests
         timeout-minutes: ${{ runner.debug == '1' && 60 || 45 }}
         # Tells Screen.capture it is in CI, so a passing test's screenshots are
@@ -774,7 +785,8 @@ jobs:
 
       - name: Upload XCResult bundle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
+        # Probe for #8655: every shard's bundle, so a slow pass shows its steps.
+        if: always()
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/
