@@ -1,14 +1,16 @@
 import XCTest
 
-class ModuleAboutTests: UITestCase {
-	/// About, top to bottom: the version, the story's timeline of eras swiped
-	/// sideways, the credits stacked one above the other, then Privacy and
-	/// Legal each opening a screen of their own.
-	///
-	/// At the largest text sizes the header fills the first screen, so each
-	/// part is scrolled to before it is checked, and only ever downwards.
-	func testAboutFromTopToBottom() throws {
-		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
+/// About, top to bottom: the version, the story's timeline of eras swiped
+/// sideways, the credits stacked one above the other, then Privacy and Legal
+/// each opening a screen of their own.
+///
+/// At the largest text sizes the header fills the first screen, so each part
+/// is scrolled to before it is checked, and only ever downwards.
+class ModuleAboutTests: UITestCaseUnbooted {
+	/// The version, then the story's timeline, which opens on its newest era
+	/// and follows a swipe to the next one.
+	func testTheStoryOpensOnItsNewestEraAndSwipesToTheNext() throws {
+		let about = AboutScreen(app: app).navigate()
 		let ids = TestIdentifiers.About.self
 
 		about.reveal(about.version)
@@ -29,6 +31,13 @@ class ModuleAboutTests: UITestCase {
 				$0.value as? String == ids.page(2)
 			},
 			"The dots should follow the swipe to the second era")
+	}
+
+	/// The credits, Contributors above Acknowledgements, then Privacy and Legal
+	/// each opening a screen of their own.
+	func testTheCreditsStackAndPrivacyAndLegalOpen() throws {
+		let about = AboutScreen(app: app).navigate()
+		let ids = TestIdentifiers.About.self
 
 		let contributors = about.text(ids.contributors)
 		let acknowledgements = about.text(ids.acknowledgements)
