@@ -151,12 +151,186 @@ describe('schedule data contracts', () => {
 		assert.doesNotThrow(() => parse(input))
 	})
 
+	it('retains additive metadata at every authored object boundary', () => {
+		let input = pair()
+		let objects = [
+			input.calendar,
+			input.calendar.breaks.fall,
+			input.calendar.templates['office-hours'],
+			input.calendar.breaks.spring.templates['office-hours'],
+			input.calendar.breaks.winter.defaultSpaceSchedule,
+			input.spaces[0],
+			input.spaces[0].schedule[0],
+			input.spaces[0].schedule[0].hours[0],
+			input.spaces[0].exceptions[0],
+			input.spaces[0].breakSchedule.interim,
+		]
+		for (let object of objects) object.futureMetadata = {nested: [1, 2]}
+		let before = structuredClone(input)
+		let result = parse(input)
+		assert.deepEqual(input, before)
+
+		let normalized = [
+			result.calendar,
+			result.calendar.breaks.fall,
+			result.calendar.templates['office-hours'],
+			result.calendar.breaks.spring.templates['office-hours'],
+			result.calendar.breaks.winter.defaultSpaceSchedule,
+			result.spaces[0].data,
+			result.spaces[0].data.schedule[0],
+			result.spaces[0].data.schedule[0].hours[0],
+			result.spaces[0].data.exceptions[0],
+			result.spaces[0].data.breakSchedule.interim,
+		]
+		for (let object of normalized) assert.deepEqual(object.futureMetadata, {nested: [1, 2]})
+	})
+
+	it('normalizes normal exceptions and keeps normal references and aliases unresolved', () => {
+		let input = pair()
+		input.spaces[0].breakSchedule = {winter: 'normal', fall: 'winter'}
+		let {spaces} = parse(input)
+		assert.deepEqual(spaces[0].data.exceptions, input.spaces[0].exceptions)
+		assert.deepEqual(spaces[1].data.exceptions, [])
+		assert.deepEqual(spaces[0].data.breakSchedule, {winter: 'normal', fall: 'winter'})
+	})
+
+	it('keeps a local template as a complete policy without global exceptions', () => {
+		let input = pair()
+		input.calendar.breaks.spring.templates['office-hours'] = {schedule: closed()}
+		input.calendar.breaks.spring.defaultSpaceSchedule = 'office-hours'
+		input.spaces[0].breakSchedule = {spring: 'inherit', easter: 'spring'}
+		let {calendar, spaces} = parse(input)
+		assert.deepEqual(calendar.breaks.spring.templates['office-hours'], {
+			schedule: closed(),
+			exceptions: [],
+		})
+		assert.ok(calendar.templates['office-hours'].exceptions.length > 0)
+		assert.equal(calendar.breaks.spring.defaultSpaceSchedule, 'office-hours')
+		assert.deepEqual(spaces[0].data.breakSchedule, input.spaces[0].breakSchedule)
+	})
+
+	it('accepts nested intervals, reusable out-of-range exceptions and an empty calendar', () => {
+		let input = pair()
+		input.calendar.breaks.fall = {
+			...input.calendar.breaks.fall,
+			name: 'Outer',
+			start: '2026-10-01',
+			end: '2026-10-31',
+		}
+		input.calendar.breaks.inner = {name: 'Inner', date: '2026-10-10'}
+		assert.doesNotThrow(() => parse(input))
+		assert.doesNotThrow(() => parse({calendar: {timezone: 'UTC', breaks: {}}, spaces: []}))
+	})
+
+	it('accepts adjacent breaks after a skipped midnight', () => {
+		assert.doesNotThrow(() =>
+			parse({
+				calendar: {
+					timezone: 'America/Santiago',
+					breaks: {
+						first: {name: 'DST day', date: '2026-09-06'},
+						second: {name: 'Next day', date: '2026-09-07'},
+					},
+				},
+				spaces: [],
+			}),
+		)
+	})
+
 	let invalid = (name, mutate, message) =>
 		it(name, () => {
 			let input = pair()
 			mutate(input)
 			assert.throws(() => parse(input), message)
 		})
+
+	for (let time of ['0:00am', '19:00pm', '9:5am', '01:00am', '12:60pm']) {
+		invalid(
+			'rejects invalid clock time ' + time,
+			({spaces}) => {
+				spaces[0].schedule[0].hours[0].from = time
+			},
+			/pattern/u,
+		)
+	}
+	for (let time of ['1:00am', '9:05am', '12:00pm', '11:59pm']) {
+		it('accepts clock time ' + time, () => {
+			let input = pair()
+			input.spaces[0].schedule[0].hours[0].from = time
+			assert.doesNotThrow(() => parse(input))
+		})
+	}
+	for (let name of ['', '   ']) {
+		invalid(
+			'rejects blank space name ' + JSON.stringify(name),
+			({spaces}) => {
+				spaces[0].name = name
+			},
+			/pattern/u,
+		)
+	}
+	invalid(
+		'rejects duplicate space names with both locations',
+		({spaces}) => {
+			spaces[1].name = spaces[0].name
+		},
+		/space-1.yaml.name: duplicate space name Example office; first defined at space-0.yaml.name/u,
+	)
+	invalid(
+		'rejects duplicate weekdays',
+		({spaces}) => {
+			spaces[0].schedule[0].hours[0].days = ['Mo', 'Mo']
+		},
+		/duplicate items/u,
+	)
+	for (let [start, end] of [
+		['2026-10-12', '2026-10-16'],
+		['2026-10-07', '2026-10-11'],
+	]) {
+		invalid(
+			'rejects partial overlap starting ' + start,
+			({calendar}) => {
+				calendar.breaks.other = {name: 'Other', start, end}
+			},
+			/partially overlaps/u,
+		)
+	}
+	invalid(
+		'validates a global template even when locally shadowed everywhere',
+		({calendar, spaces}) => {
+			spaces.length = 0
+			calendar.templates['office-hours'].exceptions.push(
+				structuredClone(calendar.templates['office-hours'].exceptions[0]),
+			)
+		},
+		/templates.office-hours.*duplicate exception/u,
+	)
+	invalid(
+		'validates unused local templates',
+		({calendar, spaces}) => {
+			spaces.length = 0
+			calendar.breaks.spring.templates['office-hours'].exceptions[0].date = '2026-04-31'
+		},
+		/format "date"/u,
+	)
+	invalid(
+		'rejects unused alias cycles without a path from another policy',
+		({spaces}) => {
+			spaces[0].breakSchedule = {fall: 'normal', winter: 'spring', spring: 'winter'}
+		},
+		/winter -> spring -> winter/u,
+	)
+	invalid(
+		'rejects equal spans across fall DST',
+		({calendar, spaces}) => {
+			calendar.breaks = {
+				first: {name: 'First', start: '2026-10-31', end: '2026-11-02'},
+				second: {name: 'Second', start: '2026-11-02', end: '2026-11-04'},
+			}
+			spaces.length = 0
+		},
+		/equal calendar-day span/u,
+	)
 
 	invalid(
 		'rejects typoed space keys',
@@ -363,13 +537,7 @@ describe('schedule data contracts', () => {
 		},
 		/pattern/u,
 	)
-	invalid(
-		'rejects dates placed on service blocks',
-		({spaces}) => {
-			spaces[0].schedule[0].date = '2026-10-10'
-		},
-		/additional properties/u,
-	)
+
 	invalid(
 		'rejects empty weekdays',
 		({spaces}) => {
@@ -529,7 +697,7 @@ describe('server schedule contract fixtures', () => {
 		}
 		assert.deepEqual(
 			parse({calendar, spaces: expected}).spaces.map(({data}) => data),
-			expected,
+			expected.map((space) => ({...space, exceptions: space.exceptions ?? []})),
 		)
 	})
 
@@ -544,7 +712,10 @@ describe('server schedule contract fixtures', () => {
 			schedule: calendar.templates.closed,
 			exceptions: [],
 		})
-		assert.deepEqual(office.breakSchedule.winter, {schedule: spaces[0].schedule, exceptions: []})
+		assert.deepEqual(office.breakSchedule.winter, {
+			schedule: spaces[0].schedule,
+			exceptions: spaces[0].exceptions,
+		})
 		assert.deepEqual(office.exceptions, spaces[0].exceptions)
 		assert.deepEqual(office.breakSchedule.interim, spaces[0].breakSchedule.interim)
 		assert.deepEqual(building.breakSchedule.fall, {

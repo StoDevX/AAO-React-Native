@@ -140,6 +140,7 @@ export function parseScheduleData(
 			label,
 			data: {
 				...fields,
+				exceptions: fields.exceptions ?? [],
 				...(breakSchedule !== undefined
 					? {
 							breakSchedule: Object.fromEntries(

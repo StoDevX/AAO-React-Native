@@ -4,7 +4,7 @@ import type {BreakCalendar, Schedule, Schedules} from '../modules/schedules/inde
 /** Supplies an author-facing label without tying validation to files or buildings. */
 export type ScheduleValidationInput<T> = {
 	label: string
-	schedules: Schedules<T, string | Schedule<T>>
+	schedules: Schedules<T, string | Schedule<T>> & {name?: string}
 }
 
 /** Reports the location of invalid authored data. */
@@ -70,6 +70,13 @@ export function validateSchedules<T>(
 					`overlaps ${first.key} with an equal calendar-day span`,
 				)
 			}
+			let overlaps = first.startMs < second.endMs && second.startMs < first.endMs
+			let nested =
+				(first.startMs <= second.startMs && first.endMs >= second.endMs) ||
+				(second.startMs <= first.startMs && second.endMs >= first.endMs)
+			if (overlaps && !nested) {
+				fail(`${calendarLabel}.breaks.${second.key}`, `partially overlaps ${first.key}`)
+			}
 		}
 	}
 
@@ -122,7 +129,18 @@ export function validateSchedules<T>(
 		}
 	}
 
+	let names = new Map<string, string>()
 	for (let {label, schedules} of spaces) {
+		if (schedules.name !== undefined) {
+			let previous = names.get(schedules.name)
+			if (previous !== undefined) {
+				fail(
+					`${label}.name`,
+					`duplicate space name ${schedules.name}; first defined at ${previous}.name`,
+				)
+			}
+			names.set(schedules.name, label)
+		}
 		validateSchedule({schedule: schedules.schedule, exceptions: schedules.exceptions ?? []}, label)
 		let entries = schedules.breakSchedule ?? {}
 		for (let key of Object.keys(entries)) {

@@ -77,7 +77,10 @@ describe('schedule bundling', () => {
 			assert.deepEqual(hours[0].breakSchedule.interim, spaces[0].breakSchedule.interim)
 			assert.deepEqual(
 				hours.map(({breakSchedule: _breakSchedule, ...fields}) => fields),
-				spaces.map(({breakSchedule: _breakSchedule, ...fields}) => fields),
+				spaces.map(({breakSchedule: _breakSchedule, ...fields}) => ({
+					...fields,
+					exceptions: fields.exceptions ?? [],
+				})),
 			)
 			let breaks = readJson(toDir, 'breaks.json')
 			assert.equal(breaks.timezone, calendar.timezone)
@@ -95,6 +98,25 @@ describe('schedule bundling', () => {
 			for (let name of ['building-hours.json', 'breaks.json']) {
 				assert.ok(readFileSync(join(toDir, name), 'utf8').endsWith('\n'))
 			}
+		})
+	})
+
+	it('publishes explicit normal exceptions and additive metadata inside data envelopes', () => {
+		withInputs(({toDir, calendar, spaces, calendarFile, spaceFiles, run}) => {
+			calendar.futureMetadata = {revision: 2}
+			calendar.templates.closed = {schedule: calendar.templates.closed, attribution: 'Example'}
+			spaces[1].futureMetadata = ['retained']
+			writeYaml(calendarFile, calendar)
+			writeYaml(spaceFiles[1], spaces[1])
+			assert.equal(run().status, 0)
+			let hours = JSON.parse(readFileSync(join(toDir, 'building-hours.json'), 'utf8'))
+			let breaks = JSON.parse(readFileSync(join(toDir, 'breaks.json'), 'utf8'))
+			assert.deepEqual(Object.keys(hours), ['data'])
+			assert.deepEqual(Object.keys(breaks), ['data'])
+			assert.deepEqual(hours.data[1].exceptions, [])
+			assert.deepEqual(hours.data[1].futureMetadata, ['retained'])
+			assert.deepEqual(breaks.data.futureMetadata, {revision: 2})
+			assert.deepEqual(breaks.data.templates.closed, {...calendar.templates.closed, exceptions: []})
 		})
 	})
 
@@ -131,6 +153,19 @@ describe('schedule bundling', () => {
 			assert.equal(run().status, 0)
 			let before = contentsIn(toDir)
 			assert.equal(run().status, 0)
+			assert.deepEqual(contentsIn(toDir), before)
+		})
+	})
+
+	it('retains the last successfully published tree after a later validation failure', () => {
+		withInputs(({toDir, spaces, spaceFiles, run}) => {
+			assert.equal(run().status, 0)
+			let before = contentsIn(toDir)
+			spaces[1].breakSchedule = {fall: 'winter', winter: 'fall'}
+			writeYaml(spaceFiles[1], spaces[1])
+			let result = run()
+			assert.equal(result.status, 1)
+			assert.match(result.stderr, /cyclic break reference/u)
 			assert.deepEqual(contentsIn(toDir), before)
 		})
 	})
@@ -189,6 +224,33 @@ describe('schedule bundling', () => {
 		},
 		/breaks.yaml/u,
 	)
+	invalid(
+		'rejects duplicate space names before replacing prior artifacts',
+		({spaces, spaceFiles}) => {
+			spaces[1].name = spaces[0].name
+			writeYaml(spaceFiles[1], spaces[1])
+		},
+		/duplicate space name/u,
+	)
+	invalid(
+		'rejects partial overlaps before replacing prior artifacts',
+		({calendar, calendarFile}) => {
+			calendar.breaks.other = {name: 'Other', start: '2026-10-12', end: '2026-10-16'}
+			writeYaml(calendarFile, calendar)
+		},
+		/partially overlaps/u,
+	)
+	invalid(
+		'rejects unused authored definitions before replacing prior artifacts',
+		({calendar, calendarFile}) => {
+			calendar.breaks.spring.templates['office-hours'].exceptions.push(
+				structuredClone(calendar.breaks.spring.templates['office-hours'].exceptions[0]),
+			)
+			writeYaml(calendarFile, calendar)
+		},
+		/duplicate exception date/u,
+	)
+
 	invalid(
 		'requires a paired calendar rather than publishing unchecked hours',
 		({calendarFile}) => rmSync(calendarFile),

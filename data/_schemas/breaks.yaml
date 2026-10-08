@@ -2,7 +2,7 @@ $schema: http://json-schema.org/draft-07/schema#
 $id: breaks.json
 
 type: object
-additionalProperties: false
+additionalProperties: true
 required: [timezone, breaks]
 properties:
   timezone: {$ref: 'schedules.json#/definitions/text'}
@@ -15,7 +15,7 @@ properties:
 definitions:
   break:
     type: object
-    additionalProperties: false
+    additionalProperties: true
     required: [name]
     properties:
       name: {$ref: 'schedules.json#/definitions/text'}
