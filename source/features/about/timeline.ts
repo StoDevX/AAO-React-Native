@@ -1,7 +1,3 @@
-/** What the app is, in a sentence, above its history. */
-export const INTRO =
-	'All About Olaf is a collaborative application created by alumni of St. Olaf College in Northfield, MN under the name StoDevX.'
-
 /** One era in the app's history. */
 export type TimelineEra = {
 	period: string

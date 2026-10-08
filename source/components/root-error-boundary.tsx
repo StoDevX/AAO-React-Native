@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as Sentry from '@sentry/react-native'
 
+import {currentBranding} from '../features/campus/branding'
 import {openEmail} from '../features/support/open-email'
 import {ErrorFallback} from './error-fallback'
 
@@ -24,7 +25,7 @@ export function RootErrorBoundary({children}: {children: React.ReactNode}): Reac
 						{label: 'Try Again', onPress: () => error.resetError()},
 						{label: 'Send Us an Email', onPress: openEmail},
 					]}
-					message="All About Olaf hit an error. Trying again often clears it; if it doesn’t, close and reopen the app."
+					message={`${currentBranding().appName} hit an error. Trying again often clears it; if it doesn’t, close and reopen the app.`}
 				/>
 			)}
 		>

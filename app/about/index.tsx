@@ -27,7 +27,8 @@ import {NavigationRow} from '../../source/components/rows'
 import {PagedSection, type Card} from '../../source/features/about/card-carousel'
 import {acknowledgements, contributors, creditRows} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
-import {INTRO, timeline} from '../../source/features/about/timeline'
+import {timeline} from '../../source/features/about/timeline'
+import {useBranding} from '../../source/features/campus/branding'
 import {versionDetails} from '../../source/features/about/version'
 
 const styles = StyleSheet.create({
@@ -65,6 +66,7 @@ export default function AboutPage(): React.ReactNode {
 	let router = useRouter()
 	let {fontScale} = useWindowDimensions()
 	let [versionIndex, setVersionIndex] = React.useState(0)
+	let branding = useBranding()
 
 	return (
 		<>
@@ -79,7 +81,7 @@ export default function AboutPage(): React.ReactNode {
 						<Text
 							modifiers={[font({textStyle: 'title2', weight: 'bold'}), foregroundStyle(c.label)]}
 						>
-							All About Olaf
+							{branding.appName}
 						</Text>
 						<Text
 							modifiers={[
@@ -88,7 +90,7 @@ export default function AboutPage(): React.ReactNode {
 								multilineTextAlignment('center'),
 							]}
 						>
-							{INTRO}
+							{branding.intro}
 						</Text>
 					</VStack>
 

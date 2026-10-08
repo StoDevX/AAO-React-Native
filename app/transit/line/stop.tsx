@@ -28,7 +28,7 @@ import {
 import {useLineState} from '../../../source/features/transit/bus/use-line-state'
 import {formatDeparture} from '../../../source/features/transit/bus/components/times'
 import {TimetableRow} from '../../../source/features/transit/bus/components/timetable-row'
-import {BUS_FOOTER_MESSAGE} from '../../../source/features/transit/bus/constants'
+import {useBusFooterMessage} from '../../../source/features/transit/bus/constants'
 
 const styles = StyleSheet.create({
 	host: {
@@ -53,6 +53,7 @@ type Props = {
 
 function BusStopDetail(props: Props): React.ReactNode {
 	let {stop, line, now, status, currentBusIteration, subtitle} = props
+	let footerMessage = useBusFooterMessage()
 
 	let departureTimes = stop.departures.filter(Boolean)
 
@@ -119,10 +120,7 @@ function BusStopDetail(props: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
-				<SheetSection
-					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
-					title={`${stop.name} — ${subtitle}`}
-				>
+				<SheetSection footer={<Text>{footerMessage}</Text>} title={`${stop.name} — ${subtitle}`}>
 					{rows}
 				</SheetSection>
 			</List>

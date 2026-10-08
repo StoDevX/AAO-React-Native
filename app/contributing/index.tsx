@@ -8,7 +8,9 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import {Stack, useRouter} from 'expo-router'
 
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
-import {dataSources} from '../../source/features/contributing/data-sources'
+import {useBranding} from '../../source/features/campus/branding'
+import {useCampus} from '../../source/features/campus/store'
+import {dataSourcesFor} from '../../source/features/contributing/data-sources'
 import {openEmail} from '../../source/features/support/open-email'
 import {GH_BASE_URL} from '../../source/lib/constants'
 
@@ -33,6 +35,8 @@ function Blurb({children}: {children: string}): React.ReactNode {
 /// How to help build the app and its data, and where that data comes from.
 export default function ContributingPage(): React.ReactNode {
 	let router = useRouter()
+	let campus = useCampus()
+	let {appName} = useBranding()
 
 	return (
 		<>
@@ -53,14 +57,13 @@ export default function ContributingPage(): React.ReactNode {
 
 					<SheetSection title="We have source code">
 						<Blurb>
-							All About Olaf and the server behind it are open source on GitHub. Read the code,
-							report a bug, or send a change.
+							{`${appName} and the server behind it are open source on GitHub. Read the code, report a bug, or send a change.`}
 						</Blurb>
 						<DisclosureRow
 							destination="external"
 							detail="This app"
 							onPress={() => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})}
-							title="All About Olaf"
+							title={appName}
 						/>
 						<DisclosureRow
 							destination="external"
@@ -83,7 +86,7 @@ export default function ContributingPage(): React.ReactNode {
 					</SheetSection>
 
 					<SheetSection title="Data sources">
-						{dataSources.map((source) => (
+						{dataSourcesFor(campus).map((source) => (
 							<DisclosureRow
 								destination="external"
 								detail={source.provides}

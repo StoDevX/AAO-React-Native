@@ -17,6 +17,7 @@ import {
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
+import {useBranding} from '../../../source/features/campus/branding'
 import {useCampus} from '../../../source/features/campus/store'
 import {remoteImage, type RemoteImage} from '../../../source/lib/remote-images'
 import {useImageFailure} from '../../../source/lib/use-image-failure'
@@ -123,6 +124,7 @@ function ContactBody({
 }): React.ReactNode {
 	// A photo that cannot be fetched leaves its row out, as no photo does.
 	let [imageFailed, onImageError] = useImageFailure(headerImage?.uri)
+	let {appName} = useBranding()
 
 	return (
 		<Host style={styles.host}>
@@ -146,7 +148,7 @@ function ContactBody({
 						/>
 					</VStack>
 
-					<Text modifiers={FOOTER_ROW}>Collected by the humans of All About Olaf</Text>
+					<Text modifiers={FOOTER_ROW}>Collected by the humans of {appName}</Text>
 				</Section>
 			</List>
 		</Host>

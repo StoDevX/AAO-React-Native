@@ -27,6 +27,7 @@ import {LinkListSection} from '../../map/card/link-list-section'
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import {CARD_INSET, SECTION_GAP, SHEET_ROW} from '../../../components/place-card/card-style'
 import {InsetImageRow} from '../../../components/inset-image-row'
+import {BRANDING} from '../../campus/branding'
 
 /// The formal name sits straight under the sheet's title, as the map card's
 /// subtitle sits under its name.
@@ -137,8 +138,8 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						listRowSeparator('hidden'),
 					]}
 				>
-					Building hours subject to change without notice{'\n\n'}Data collected by the humans of All
-					About Olaf
+					Building hours subject to change without notice{'\n\n'}Data collected by the humans of{' '}
+					{BRANDING[campus].appName}
 				</Text>
 			</List>
 		</Host>

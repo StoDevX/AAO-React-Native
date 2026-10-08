@@ -11,7 +11,7 @@ import {openUrl} from '@frogpond/open-url'
 import {useMomentTimer} from '@frogpond/timer'
 
 import {DisclosureRow} from '../../source/components/rows'
-import {BUS_FOOTER_MESSAGE} from '../../source/features/transit/bus/constants'
+import {useBusFooterMessage} from '../../source/features/transit/bus/constants'
 import {visibleBusLines} from '../../source/features/transit/bus/lib'
 import {busRoutesOptionsFor} from '../../source/features/transit/bus/query'
 import {useCampus} from '../../source/features/campus/store'
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
  */
 export default function TransitPage(): React.ReactNode {
 	let campus = useCampus()
+	let footerMessage = useBusFooterMessage()
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 
@@ -156,7 +157,7 @@ export default function TransitPage(): React.ReactNode {
 					{otherModesSection}
 
 					{/* children is required, but this section has no rows of its own -- only a footer */}
-					<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}>{null}</Section>
+					<Section footer={<Text>{footerMessage}</Text>}>{null}</Section>
 				</List>
 			</Host>
 		</>

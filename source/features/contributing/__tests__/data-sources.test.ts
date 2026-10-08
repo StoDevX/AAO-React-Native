@@ -1,6 +1,9 @@
-import {dataSources} from '../data-sources'
+import {dataSourcesFor} from '../data-sources'
+import type {Campus} from '../../campus/store'
 
-describe('dataSources', () => {
+describe.each<Campus>(['stolaf', 'carleton'])("%s's data sources", (campus) => {
+	let dataSources = dataSourcesFor(campus)
+
 	it('names each source once', () => {
 		let names = dataSources.map((entry) => entry.name)
 		expect(new Set(names).size).toBe(names.length)

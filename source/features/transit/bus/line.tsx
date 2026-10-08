@@ -15,7 +15,7 @@ import * as c from '@frogpond/colors'
 import {ContentUnavailableView, Host, List, Text} from '@expo/ui/swift-ui'
 import {SheetSection} from '@frogpond/sheet-section'
 import {frame, listStyle} from '@expo/ui/swift-ui/modifiers'
-import {BUS_FOOTER_MESSAGE} from './constants'
+import {useBusFooterMessage} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
 import {formatDepartures} from './components/times'
 import {CollapsedStopsRow, TimetableRow} from './components/timetable-row'
@@ -44,6 +44,7 @@ type Props = {
 
 export function BusLine(props: Props): React.ReactNode {
 	let {line, now, selectedDay, onPressStop} = props
+	let footerMessage = useBusFooterMessage()
 
 	const currentDay = momentToDayOfWeek(now)
 
@@ -108,7 +109,7 @@ export function BusLine(props: Props): React.ReactNode {
 					</SheetSection>
 				) : null}
 
-				<SheetSection footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title="Stops">
+				<SheetSection footer={<Text>{footerMessage}</Text>} title="Stops">
 					{hiddenCount > 0 ? (
 						<CollapsedStopsRow
 							barColor={barColor}
