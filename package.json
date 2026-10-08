@@ -50,7 +50,7 @@
     "@frogpond/touch-claim": "workspace:*",
     "@frogpond/touchable": "workspace:*",
     "@frogpond/use-debounce": "workspace:*",
-    "@maplibre/maplibre-react-native": "11.4.1",
+    "@maplibre/maplibre-react-native": "11.5.0",
     "@react-native-async-storage/async-storage": "3.1.1",
     "@react-native-community/netinfo": "12.0.1",
     "@reduxjs/toolkit": "2.13.0",

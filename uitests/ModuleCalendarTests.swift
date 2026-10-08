@@ -39,8 +39,9 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     let initialWeekDates = screen.datePickerDayIdentifiers()
 
     let eventRows = screen.visibleRows()
-    let expectation = expectation(for: eventRows.count >= 1)
-    wait(for: [expectation], timeout: 10)
+    XCTAssertTrue(
+      waitUntil("Waiting 10.0s for an event row", timeout: 10) { eventRows.count >= 1 },
+      "the week should list an event")
     let initialEventIdentifiers = eventRows.identifiers()
 
     // swiping the day picker should not, by itself, change the displayed day

@@ -63,6 +63,13 @@ button carries no identifier and, on iOS 26, the label `Close` — which the
 building card's own dismiss button also has — so query it inside the bar rather
 than across the whole screen.
 
+**Wait with `waitUntilExists`, `waitUntilGone` or `waitUntil`,** from
+`XCUITestHelpers.swift`, not XCTest's `waitForExistence`, `waitForNonExistence`
+or `XCTWaiter`. XCTest's waits check about once a second, so even an element
+already there costs a second; ours check at once, then back off from 0.2s to
+1s. A check that needs a pause between reads, like a frame holding still, is
+the exception.
+
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized
 in between lands natively and does nothing. Waiting longer never fixes a tap

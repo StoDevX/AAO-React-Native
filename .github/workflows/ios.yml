@@ -566,6 +566,13 @@ jobs:
           set -o pipefail
           jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
+      # CPU and memory every two seconds, from before the simulator boots, for
+      # the shard's report in flakiness.io. The job's end stops it.
+      - name: Sample the runner's load
+        run: |
+          mkdir -p uitest-evidence
+          nohup node scripts/sample-runner-load.mjs uitest-evidence/runner-load.jsonl > /dev/null 2>&1 &
+
       # Boots the simulator, then turns off iOS services the app never uses,
       # each a measured cost on CI's three cores: apsd retries Apple's push
       # server some seventeen times a second there, and its log lines keep
@@ -618,11 +625,12 @@ jobs:
       # app reports itself idle, and a test that still passes leaves no
       # spindump behind. The runner's busiest processes every five seconds,
       # beside the simulator's log, tell a starved runner from a stuck app.
-      # The job's end stops the loop.
+      # -c prints each executable's name, not its path, which for a simulator
+      # process runs out of room before the name. The job's end stops the loop.
       - name: Sample the runner's busiest processes
         run: |
           mkdir -p uitest-evidence
-          nohup bash -c 'while :; do date -u +%FT%TZ; ps -Aro pcpu,pid,comm | head -n 9; sleep 5; done' \
+          nohup bash -c 'while :; do date -u +%FT%TZ; ps -Acro pcpu,pid,comm | head -n 9; sleep 5; done' \
             > uitest-evidence/runner-cpu.log 2>&1 &
 
       - name: Run UITests
@@ -709,6 +717,8 @@ jobs:
         if: always()
         env:
           SHARD: ${{ matrix.shard }}
+          SIMULATOR_OS: ${{ steps.simulator-device.outputs.os }}
+          RUNNER_LOAD: uitest-evidence/runner-load.jsonl
         run: node scripts/write-uitest-flakiness-report.mjs uitest-results.xcresult flakiness-report
 
       # flakiness.io keeps the history; it does not gate anything, so an upload

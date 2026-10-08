@@ -115,6 +115,9 @@ const config: ExpoConfig = {
 
 	ios: {
 		bundleIdentifier: variant.bundleIdentifier,
+		// Written into every target as DEVELOPMENT_TEAM. Without it, `expo run:ios
+		// --device` reads the Mac's signing certificates to pick a team itself.
+		appleTeamId: 'TMK6S7TPX2',
 		// An Icon Composer document; plugins/with-alternate-icons adds the others.
 		icon: './assets/windmill.icon',
 		// Xcode Cloud's build number becomes an input to generation rather than
