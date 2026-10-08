@@ -1,4 +1,4 @@
-import {carletonClient, client} from '@frogpond/api'
+import {carletonClient, stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useAppSelector} from '../../redux/hooks'
@@ -28,8 +28,8 @@ export const keys = {
 
 // Both campuses run identical `spaces/hours` schemas on their own ccc-server
 // deployments, so only the client and the cache key vary by campus.
-function clientFor(campus: Campus): typeof client {
-	return campus === 'carleton' ? carletonClient : client
+function clientFor(campus: Campus): typeof stolafClient {
+	return campus === 'carleton' ? carletonClient : stolafClient
 }
 
 function fetchBuildings(campus: Campus) {

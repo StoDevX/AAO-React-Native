@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {isHTTPError} from 'ky'
 import {queryOptions} from '@tanstack/react-query'
@@ -21,7 +21,7 @@ async function fetchStudentOrgs({signal}: {signal: AbortSignal}) {
 	if (isUITesting) {
 		return uitestOrgs as StudentOrgType[]
 	}
-	let response = await client.get('orgs', {signal}).json()
+	let response = await stolafClient.get('orgs', {signal}).json()
 	return response as StudentOrgType[]
 }
 
@@ -47,7 +47,7 @@ async function fetchOrgDetail(
 	{signal}: {signal: AbortSignal},
 ): Promise<StudentOrgDetailType | null> {
 	try {
-		let response = await client.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal}).json()
+		let response = await stolafClient.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal}).json()
 		return response as StudentOrgDetailType
 	} catch (error) {
 		if (isHTTPError(error) && error.response.status === 404) {

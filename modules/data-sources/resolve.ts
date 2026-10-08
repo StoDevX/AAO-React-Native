@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {queryOptions, type QueryClient} from '@tanstack/react-query'
 import bundledJson from './bundled.json'
 import {
@@ -38,7 +38,7 @@ export const manifestOptions = queryOptions({
 	// one with nothing cached. The radio plays from it however old it is.
 	meta: {persistAfterFailure: true},
 	queryFn: async ({signal}): Promise<Jrd> => {
-		let response = await client.get('sources', {signal}).json()
+		let response = await stolafClient.get('sources', {signal}).json()
 		return JrdSchema.parse(response)
 	},
 })

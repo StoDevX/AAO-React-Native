@@ -1,4 +1,4 @@
-import {carletonClient, client} from '@frogpond/api'
+import {carletonClient, stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 
@@ -27,7 +27,7 @@ async function fetchOtherModes(
 		return (bundledModes as {data: OtherModeType[]}).data
 	}
 
-	let api = campus === 'carleton' ? carletonClient : client
+	let api = campus === 'carleton' ? carletonClient : stolafClient
 	let response = await api.get('transit/modes', {signal}).json()
 	return (response as {data: OtherModeType[]}).data
 }

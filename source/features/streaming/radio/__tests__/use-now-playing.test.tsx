@@ -23,7 +23,7 @@ jest.mock('@frogpond/data-sources', () => ({
 // feed is the shipped one unless a test caches a manifest.
 jest.mock('@frogpond/api', () => ({
 	...(jest.requireActual('@frogpond/api') as object),
-	client: {get: () => ({json: () => Promise.reject(new Error('offline'))})},
+	stolafClient: {get: () => ({json: () => Promise.reject(new Error('offline'))})},
 }))
 
 const mockFetchSourceBody = fetchSourceBody as jest.Mock<typeof fetchSourceBody>

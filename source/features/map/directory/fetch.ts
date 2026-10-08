@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 
 import bundled from '../../../../docs/building-directory.json'
@@ -17,6 +17,6 @@ export async function fetchDirectories(signal: AbortSignal): Promise<Array<Build
 	if (isUITesting || useForceBundledData.getState().forced) {
 		return bundledDirectories
 	}
-	let response = await client.get('spaces/directory', {signal}).json()
+	let response = await stolafClient.get('spaces/directory', {signal}).json()
 	return (response as {data: Array<BuildingDirectory>}).data
 }

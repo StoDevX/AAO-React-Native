@@ -5,7 +5,9 @@ import {fetchDirectories} from '../fetch'
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 
 let mockGet = jest.fn()
-jest.mock('@frogpond/api', () => ({client: {get: (...args: Array<unknown>) => mockGet(...args)}}))
+jest.mock('@frogpond/api', () => ({
+	stolafClient: {get: (...args: Array<unknown>) => mockGet(...args)},
+}))
 
 describe('fetchDirectories', () => {
 	test("reads the server's copy", async () => {

@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
@@ -111,7 +111,7 @@ async function fetchBonAppMenu(
 		return fixture as EditedBonAppMenuInfoType
 	}
 
-	let response = await client.get(path, {signal}).json()
+	let response = await stolafClient.get(path, {signal}).json()
 	return response as EditedBonAppMenuInfoType
 }
 
@@ -127,7 +127,7 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}, day: string)
 				return fixture as EditedBonAppCafeInfoType
 			}
 
-			let response = await client.get(path, {signal}).json()
+			let response = await stolafClient.get(path, {signal}).json()
 			return response as EditedBonAppCafeInfoType
 		},
 		staleTime: 1000 * 60 * 60, // 1 hour
@@ -169,7 +169,7 @@ async function fetchPauseMenu({signal}: {signal: AbortSignal}): Promise<GithubMe
 		return (bundledPauseMenu as {data: GithubMenuResponse}).data
 	}
 
-	let response = await client.get('food/named/menu/the-pause', {signal}).json()
+	let response = await stolafClient.get('food/named/menu/the-pause', {signal}).json()
 	return (response as {data: GithubMenuResponse}).data
 }
 

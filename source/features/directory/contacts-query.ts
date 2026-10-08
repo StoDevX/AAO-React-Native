@@ -1,4 +1,4 @@
-import {carletonClient, client} from '@frogpond/api'
+import {carletonClient, stolafClient} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {isUITesting} from '@frogpond/launch-arguments'
 import contactInfoData from '../../../docs/contact-info.json'
@@ -27,7 +27,7 @@ async function fetchContacts(campus: Campus, {signal}: {signal: AbortSignal}) {
 		return (contactInfoData as {data: ContactType[]}).data
 	}
 
-	let api = campus === 'carleton' ? carletonClient : client
+	let api = campus === 'carleton' ? carletonClient : stolafClient
 	let response = await api.get('contacts', {signal}).json()
 	// The server sends whatever the data repo deployed, so this is an
 	// assertion, not a check. `icon` in particular claims to be an SFSymbol on

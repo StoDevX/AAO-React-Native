@@ -1,4 +1,4 @@
-import {carletonClient, client} from '@frogpond/api'
+import {carletonClient, stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 
@@ -29,7 +29,7 @@ async function fetchDictionary(campus: Campus, {signal}: {signal: AbortSignal}) 
 		return [...(bundledDictionary as {data: WordType[]}).data, REFERENCE_ENTRY]
 	}
 
-	let api = campus === 'carleton' ? carletonClient : client
+	let api = campus === 'carleton' ? carletonClient : stolafClient
 	let response = await api.get('dictionary', {signal}).json()
 	return (response as {data: WordType[]}).data
 }

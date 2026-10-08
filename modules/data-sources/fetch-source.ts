@@ -1,4 +1,4 @@
-import {carletonClient, client, isHTTPError} from '@frogpond/api'
+import {carletonClient, stolafClient, isHTTPError} from '@frogpond/api'
 import type {SourceCampus} from './types'
 
 const FETCH_TIMEOUT_MS = 10_000
@@ -79,7 +79,7 @@ async function errorBody(response: Response): Promise<unknown> {
 }
 
 /// Fetches and parses the body of a resolved source, dispatching on whether
-/// its href is absolute. A relative href goes through `client`, which
+/// its href is absolute. A relative href goes through `stolafClient`, which
 /// resolves against the configured api root (honouring the Settings
 /// server-URL override and mDNS discovery) and already carries ky's 10-second
 /// default timeout. An absolute href bypasses the api root by design, so it
@@ -101,7 +101,7 @@ export async function fetchSourceBody(
 ): Promise<unknown> {
 	if (!isAbsoluteHref(href)) {
 		try {
-			let api = campus === 'carleton' ? carletonClient : client
+			let api = campus === 'carleton' ? carletonClient : stolafClient
 			let request = api.get(href, {signal})
 			return await (format === 'text' ? request.text() : request.json())
 		} catch (error) {

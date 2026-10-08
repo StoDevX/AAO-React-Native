@@ -23,7 +23,7 @@ describe('fetchSourceBody', () => {
 		jest.useRealTimers()
 	})
 
-	test('a relative href resolves through client, honouring the configured api root', async () => {
+	test('a relative href resolves through stolafClient, honouring the configured api root', async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/mess')
 			return Promise.resolve(new Response(JSON.stringify({ok: true}), {status: 200}))
@@ -187,7 +187,7 @@ describe('fetchSourceBody', () => {
 		await assertion
 	})
 
-	test('a relative href in text format resolves through client as text, not json', async () => {
+	test('a relative href in text format resolves through stolafClient as text, not json', async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/rss-feed')
 			return Promise.resolve(new Response('<rss>not json</rss>', {status: 200}))

@@ -1,4 +1,4 @@
-import {carletonClient, client} from '@frogpond/api'
+import {carletonClient, stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import type {Campus} from '../building-hours/types'
@@ -19,8 +19,8 @@ const staleTime = 1000 * 60 * 60
 // Both campuses serve identical `map/geojson` schemas on their own
 // ccc-server deployments, so only the client and the cache key vary by
 // campus.
-function clientFor(campus: Campus): typeof client {
-	return campus === 'carleton' ? carletonClient : client
+function clientFor(campus: Campus): typeof stolafClient {
+	return campus === 'carleton' ? carletonClient : stolafClient
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types

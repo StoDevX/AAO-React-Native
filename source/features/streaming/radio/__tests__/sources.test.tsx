@@ -18,7 +18,7 @@ import {STATIONS, type StationId} from '../stations'
 const mockGet = jest.fn<() => {json: () => Promise<unknown>}>()
 jest.mock('@frogpond/api', () => ({
 	...(jest.requireActual('@frogpond/api') as object),
-	client: {get: () => mockGet()},
+	stolafClient: {get: () => mockGet()},
 }))
 
 const EMPTY: Jrd = {subject: 'https://stolaf.edu', links: []}

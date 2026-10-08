@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {UITEST_SCORES} from './__fixtures__/scores'
@@ -20,7 +20,7 @@ export const athleticsOptions = queryOptions({
 	queryFn: ({signal}): Promise<Score[]> =>
 		isUITesting
 			? Promise.resolve(UITEST_SCORES)
-			: client.get('athletics/scores', {signal}).json<Score[]>(),
+			: stolafClient.get('athletics/scores', {signal}).json<Score[]>(),
 	select: toProcessedScores,
 	refetchInterval: (query) => {
 		const scores = query.state.data
