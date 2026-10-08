@@ -25,6 +25,7 @@ import {
 import {issueDate} from './lib/issues'
 import {NextPageRow} from './next-page-row'
 import {faded, ink} from './palette'
+import {usePaper} from './paper-context'
 import {usePaperQueries} from './use-paper-queries'
 import {useMessStore} from './store'
 import type {MessIssue} from './types'
@@ -74,6 +75,7 @@ const Tile = React.memo(function Tile({
 	layout?: 'grid' | 'topPortrait' | 'topLandscape'
 	paragraphs?: string[]
 }): React.ReactNode {
+	let {title: nameplate} = usePaper()
 	let kind = useMessStore((state) => state.stainKind)
 	let photoTone = useMessStore((state) => state.photoTone)
 	let count = stainCount(read, issue.storyIds.length)
@@ -85,6 +87,7 @@ const Tile = React.memo(function Tile({
 			accessibilityLabel={tileLabel(issue, read)}
 			date={issueDate(issue.day)}
 			layout={layout}
+			nameplate={nameplate}
 			onPress={() => onOpen(issue)}
 			paragraphs={paragraphs}
 			photoTone={photoTone}

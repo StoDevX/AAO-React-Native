@@ -3,6 +3,7 @@ import SwiftUI
 /// What one tile draws, copied out of its props, so the live tile and its cached image are drawn
 /// from the same values.
 struct TileContent {
+	var nameplate: String
 	var title: String
 	var date: String
 	var special: Bool
@@ -15,6 +16,7 @@ struct TileContent {
 	var sheet: SheetShape
 
 	init(_ props: MessIssueTileProps) {
+		nameplate = props.nameplate
 		title = props.title
 		date = props.date
 		special = props.special
@@ -139,7 +141,7 @@ struct FlatSheet: View {
 
 	private var header: some View {
 		VStack(spacing: 3) {
-			Text("The Olaf Messenger")
+			Text(content.nameplate)
 				.font(.system(size: isTop ? 20 : 12, weight: .bold, design: .serif))
 				.lineLimit(1)
 				.minimumScaleFactor(0.7)
