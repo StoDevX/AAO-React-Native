@@ -102,8 +102,9 @@ test that covers its place in the grid: `testTheUpperTilesOpenTheirScreens` or
 typing it; confirm a row exists before tapping. A test that silently did nothing
 otherwise passes exactly like one that worked.
 
-**A test gets two minutes.** CI stops a test that runs longer, attaches a
-spindump, and retries it. A test that needs longer is two tests, or is waiting
+**A test gets two minutes.** CI stops a test that runs longer and fails it,
+with a spindump attached; it is not retried, so a stall fails the shard. A test
+that needs longer is two tests, or is waiting
 on something it should not: a launch it could skip with a deep link, or
 SpringBoard while the app sits in the background. One that genuinely needs
 more sets `executionTimeAllowance` in its `setUp`, with a comment saying why;

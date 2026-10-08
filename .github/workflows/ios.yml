@@ -694,9 +694,10 @@ jobs:
           #
           # No test should need more than two minutes. One that runs past them --
           # most often a query stalled on an app that stopped answering -- is
-          # stopped with a spindump attached and retried, rather than holding the
-          # shard for as long as XCUITest's own retries take. XCTest rounds the
-          # allowance up to whole minutes.
+          # stopped and failed with a spindump attached, rather than holding the
+          # shard for as long as XCUITest's own retries take. It is not retried:
+          # -retry-tests-on-failure skips a test the limit stops. XCTest rounds
+          # the allowance up to whole minutes.
           #
           # Leave -test-repetition-relaunch-enabled off. It repeats the whole bundle
           # instead of just the failures, which would run every passing test three
