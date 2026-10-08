@@ -271,6 +271,13 @@ const carletonViews = (): Array<ViewType> => [
 		gradient: c.redGradient,
 	},
 	{
+		type: 'view',
+		view: '/contacts',
+		title: 'Important Contacts',
+		icon: 'phone.fill',
+		gradient: c.orangeGradient,
+	},
+	{
 		type: 'radio',
 		station: 'krlx',
 		title: 'KRLX',
@@ -295,6 +302,13 @@ const carletonViews = (): Array<ViewType> => [
 	},
 	{
 		type: 'view',
+		view: '/transit',
+		title: 'Transportation',
+		icon: 'bus.fill',
+		gradient: c.grayGradient,
+	},
+	{
+		type: 'view',
 		view: '/carleton-convos',
 		title: 'Convo',
 		icon: 'building.columns.fill',
@@ -306,6 +320,13 @@ const carletonViews = (): Array<ViewType> => [
 		title: 'Campus Map',
 		icon: 'map.fill',
 		gradient: c.greenGradient,
+	},
+	{
+		type: 'view',
+		view: '/dictionary',
+		title: 'Dictionary',
+		icon: 'character.book.closed.fill',
+		gradient: c.pinkGradient,
 	},
 	{
 		type: 'url',

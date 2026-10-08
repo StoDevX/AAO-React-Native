@@ -13,6 +13,7 @@ import {useMomentTimer} from '@frogpond/timer'
 import type {Moment} from 'moment-timezone'
 
 import {busLineOptions} from '../../../source/features/transit/bus/query'
+import {useCampus} from '../../../source/features/campus/store'
 import {createMomentForDay} from '../../../source/features/transit/bus/components/days'
 import type {
 	DayOfWeek,
@@ -177,6 +178,7 @@ function BusStopForLine({
 }
 
 export default function BusStopPage(): React.ReactNode {
+	let campus = useCampus()
 	let {
 		line: lineName,
 		day,
@@ -189,7 +191,7 @@ export default function BusStopPage(): React.ReactNode {
 
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 
-	let {data: line, isLoading, error, refetch} = useQuery(busLineOptions(lineName))
+	let {data: line, isLoading, error, refetch} = useQuery(busLineOptions(lineName, campus))
 
 	let screenTitle = <Stack.Title>{line ? `${line.line} Schedule` : ''}</Stack.Title>
 

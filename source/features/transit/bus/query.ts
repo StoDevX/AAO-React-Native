@@ -1,14 +1,21 @@
-import {client} from '@frogpond/api'
+import {carletonClient, client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {isUITesting} from '@frogpond/launch-arguments'
 import bundledBusTimes from '../../../../docs/bus-times.json'
 import {UnprocessedBusLine} from './types'
+import type {Campus} from '../../campus/store'
 
 export const keys = {
 	all: ['transit', 'bus-routes'] as const,
+	/** St. Olaf's keeps the key it always had; Carleton's sits under the campus. */
+	forCampus: (campus: Campus): readonly string[] =>
+		campus === 'carleton' ? (['carleton', 'transit', 'bus-routes'] as const) : keys.all,
 }
 
-async function fetchBusRoutes({signal}: {signal: AbortSignal}): Promise<UnprocessedBusLine[]> {
+async function fetchBusRoutes(
+	campus: Campus,
+	{signal}: {signal: AbortSignal},
+): Promise<UnprocessedBusLine[]> {
 	// The UI tests run against a frozen clock, so every stop's status follows
 	// from the timetable they are handed. Off the server that timetable is
 	// whatever the data repo last deployed -- a route St. Olaf reshuffles moves
@@ -19,19 +26,25 @@ async function fetchBusRoutes({signal}: {signal: AbortSignal}): Promise<Unproces
 		return (bundledBusTimes as {data: UnprocessedBusLine[]}).data
 	}
 
-	let response = await client.get('transit/bus', {signal}).json()
+	let api = campus === 'carleton' ? carletonClient : client
+	let response = await api.get('transit/bus', {signal}).json()
 	return (response as {data: UnprocessedBusLine[]}).data
 }
 
-export const busRoutesOptions = queryOptions({
-	queryKey: keys.all,
-	queryFn: fetchBusRoutes,
-})
+/** `campus`'s bus lines. */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const busRoutesOptionsFor = (campus: Campus) =>
+	queryOptions({
+		queryKey: keys.forCampus(campus),
+		queryFn: (context) => fetchBusRoutes(campus, context),
+	})
+
+export const busRoutesOptions = busRoutesOptionsFor('stolaf')
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const busLineOptions = (lineName: string) =>
+export const busLineOptions = (lineName: string, campus: Campus = 'stolaf') =>
 	queryOptions({
-		queryKey: keys.all,
-		queryFn: fetchBusRoutes,
+		queryKey: keys.forCampus(campus),
+		queryFn: (context) => fetchBusRoutes(campus, context),
 		select: (lines) => lines.find((l) => l.line === lineName),
 	})

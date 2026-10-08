@@ -154,11 +154,14 @@ describe('HomeViews for Carleton', () => {
 			['Workday', 'https://www.carleton.edu/workday/'],
 			['Building Hours', '/hours?campus=carleton'],
 			['Directory', 'https://www.carleton.edu/directory/'],
+			['Important Contacts', '/contacts'],
 			['KRLX', 'radio:krlx'],
 			['SUMO', '/carleton-sumo'],
 			['The Carletonian', '/carletonian'],
+			['Transportation', '/transit'],
 			['Convo', '/carleton-convos'],
 			['Campus Map', '/map?campus=carleton'],
+			['Dictionary', '/dictionary'],
 			['Moodle', 'https://moodle.carleton.edu/'],
 			['Carleton News', '/carleton-news'],
 			['Developer', '/developer'],
@@ -172,13 +175,13 @@ describe('HomeViews for Carleton', () => {
 		expect(titles).not.toContain('Developer')
 	})
 
-	test("share no target with St. Olaf's tiles but Developer", () => {
+	test("share only the screens that read each campus's own data, and Developer", () => {
 		let stOlafTargets = new Set(HomeViews('stolaf').map(viewTarget))
 		let shared = carleton()
 			.map(viewTarget)
 			.filter((target) => stOlafTargets.has(target))
 
-		expect(shared).toEqual(['/developer'])
+		expect(shared).toEqual(['/transit', '/dictionary', '/developer'])
 	})
 
 	test('defaults to St. Olaf', () => {

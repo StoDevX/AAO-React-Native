@@ -1,16 +1,20 @@
-import {client} from '@frogpond/api'
+import {carletonClient, client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {isUITesting} from '@frogpond/launch-arguments'
 import contactInfoData from '../../../docs/contact-info.json'
 import {ContactType} from './types'
+import type {Campus} from '../campus/store'
 
 /// Named apart from this feature's `keys`, in query.ts, which addresses the
 /// St. Olaf directory search rather than these.
 export const contactKeys = {
 	all: ['contacts'] as const,
+	/** St. Olaf's keeps the key it always had; Carleton's sits under the campus. */
+	forCampus: (campus: Campus): readonly string[] =>
+		campus === 'carleton' ? (['carleton', 'contacts'] as const) : contactKeys.all,
 }
 
-async function fetchContacts({signal}: {signal: AbortSignal}) {
+async function fetchContacts(campus: Campus, {signal}: {signal: AbortSignal}) {
 	// The UI tests read contacts out of the bundle rather than off the server,
 	// because the two move independently: `data/contact-info/*.yaml` reaches
 	// production by a deploy of its own, so a test asserting on a title, an
@@ -23,7 +27,8 @@ async function fetchContacts({signal}: {signal: AbortSignal}) {
 		return (contactInfoData as {data: ContactType[]}).data
 	}
 
-	let response = await client.get('contacts', {signal}).json()
+	let api = campus === 'carleton' ? carletonClient : client
+	let response = await api.get('contacts', {signal}).json()
 	// The server sends whatever the data repo deployed, so this is an
 	// assertion, not a check. `icon` in particular claims to be an SFSymbol on
 	// no evidence; the tile falls back only when it is missing -- a wrong name
@@ -40,17 +45,22 @@ async function fetchContacts({signal}: {signal: AbortSignal}) {
 // edits.
 const staleTime = 1000 * 60 * 5 // 5 minutes
 
-export const contactsOptions = queryOptions({
-	queryKey: contactKeys.all,
-	queryFn: fetchContacts,
-	staleTime,
-})
+/** `campus`'s important contacts. */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const contactsOptionsFor = (campus: Campus) =>
+	queryOptions({
+		queryKey: contactKeys.forCampus(campus),
+		queryFn: (context) => fetchContacts(campus, context),
+		staleTime,
+	})
+
+export const contactsOptions = contactsOptionsFor('stolaf')
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const contactByTitleOptions = (title: string) =>
+export const contactByTitleOptions = (title: string, campus: Campus = 'stolaf') =>
 	queryOptions({
-		queryKey: contactKeys.all,
-		queryFn: fetchContacts,
+		queryKey: contactKeys.forCampus(campus),
+		queryFn: (context) => fetchContacts(campus, context),
 		select: (contacts) => contacts.find((c) => c.title === title),
 		staleTime,
 	})
