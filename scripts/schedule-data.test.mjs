@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
-import {readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync} from 'node:fs'
+import {readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync, symlinkSync} from 'node:fs'
 import {spawnSync} from 'node:child_process'
 import {tmpdir} from 'node:os'
-import {join} from 'node:path'
+import {join, relative} from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {describe, it} from 'node:test'
 import {load} from 'js-yaml'
@@ -17,6 +17,21 @@ let parse = ({calendar, spaces}) =>
 		{label: 'calendar.yaml', data: calendar},
 		spaces.map((data, index) => ({label: `space-${index}.yaml`, data})),
 	)
+
+/** Exercises the public selected-file CLI with the repository's paired calendar. */
+function validateSelectedSpace(filename) {
+	return spawnSync(
+		process.execPath,
+		[
+			fileURLToPath(new URL('validate-data.mjs', import.meta.url)),
+			'--data',
+			filename,
+			'--schema',
+			fileURLToPath(new URL('../data/_schemas/building-hours.yaml', import.meta.url)),
+		],
+		{encoding: 'utf8'},
+	)
+}
 
 describe('schedule data contracts', () => {
 	it('accepts shorthand, full policies, closures, notes, local overrides and date exceptions', () => {
@@ -104,23 +119,54 @@ describe('schedule data contracts', () => {
 			data.breakSchedule = {fal: 'normal'}
 			let path = join(dir, 'hours.yaml')
 			writeFileSync(path, JSON.stringify(data))
-			let result = spawnSync(
-				process.execPath,
-				[
-					fileURLToPath(new URL('validate-data.mjs', import.meta.url)),
-					'--data',
-					path,
-					'--schema',
-					fileURLToPath(new URL('../data/_schemas/building-hours.yaml', import.meta.url)),
-				],
-				{encoding: 'utf8'},
-			)
+			let result = validateSelectedSpace(path)
 			assert.equal(result.status, 1)
 			assert.match(result.stderr, /breakSchedule.fal.*unknown break key/u)
 		} finally {
 			rmSync(dir, {recursive: true, force: true})
 		}
 	})
+
+	it('rejects a selected file whose space name duplicates another authored space', () => {
+		let dir = mkdtempSync(join(tmpdir(), 'aao-selected-duplicate-'))
+		try {
+			let data = load(
+				readFileSync(new URL('../data/building-hours/1-1-cage.yaml', import.meta.url), 'utf8'),
+			)
+			let filename = join(dir, 'duplicate.yaml')
+			writeFileSync(filename, JSON.stringify(data))
+			let result = validateSelectedSpace(filename)
+			assert.equal(result.status, 1, result.stderr)
+			assert.match(
+				result.stderr,
+				/duplicate space name.*first defined at building-hours\/1-1-cage.yaml.name/u,
+			)
+			assert.ok(result.stderr.includes(filename + '.name'))
+		} finally {
+			rmSync(dir, {recursive: true, force: true})
+		}
+	})
+
+	for (let form of ['absolute', 'relative', 'symlink']) {
+		it('does not count a selected existing space twice through its ' + form + ' path', () => {
+			let dir = mkdtempSync(join(tmpdir(), 'aao-selected-existing-'))
+			try {
+				let original = fileURLToPath(
+					new URL('../data/building-hours/1-1-cage.yaml', import.meta.url),
+				)
+				let filename = original
+				if (form === 'relative') filename = relative(process.cwd(), original)
+				if (form === 'symlink') {
+					filename = join(dir, 'hours.yaml')
+					symlinkSync(original, filename)
+				}
+				let result = validateSelectedSpace(filename)
+				assert.equal(result.status, 0, result.stderr)
+			} finally {
+				rmSync(dir, {recursive: true, force: true})
+			}
+		})
+	}
 
 	it('allows the same exception date in independent policies', () => {
 		let input = pair()
@@ -151,39 +197,28 @@ describe('schedule data contracts', () => {
 		assert.doesNotThrow(() => parse(input))
 	})
 
-	it('retains additive metadata at every authored object boundary', () => {
-		let input = pair()
-		let objects = [
-			input.calendar,
-			input.calendar.breaks.fall,
-			input.calendar.templates['office-hours'],
-			input.calendar.breaks.spring.templates['office-hours'],
-			input.calendar.breaks.winter.defaultSpaceSchedule,
-			input.spaces[0],
-			input.spaces[0].schedule[0],
-			input.spaces[0].schedule[0].hours[0],
-			input.spaces[0].exceptions[0],
-			input.spaces[0].breakSchedule.interim,
-		]
-		for (let object of objects) object.futureMetadata = {nested: [1, 2]}
-		let before = structuredClone(input)
-		let result = parse(input)
-		assert.deepEqual(input, before)
-
-		let normalized = [
-			result.calendar,
-			result.calendar.breaks.fall,
-			result.calendar.templates['office-hours'],
-			result.calendar.breaks.spring.templates['office-hours'],
-			result.calendar.breaks.winter.defaultSpaceSchedule,
-			result.spaces[0].data,
-			result.spaces[0].data.schedule[0],
-			result.spaces[0].data.schedule[0].hours[0],
-			result.spaces[0].data.exceptions[0],
-			result.spaces[0].data.breakSchedule.interim,
-		]
-		for (let object of normalized) assert.deepEqual(object.futureMetadata, {nested: [1, 2]})
-	})
+	for (let [name, select] of [
+		['calendar', ({calendar}) => calendar],
+		['break', ({calendar}) => calendar.breaks.fall],
+		['global template', ({calendar}) => calendar.templates['office-hours']],
+		['local template', ({calendar}) => calendar.breaks.spring.templates['office-hours']],
+		['default policy', ({calendar}) => calendar.breaks.winter.defaultSpaceSchedule],
+		['space', ({spaces}) => spaces[0]],
+		['service', ({spaces}) => spaces[0].schedule[0]],
+		['hours row', ({spaces}) => spaces[0].schedule[0].hours[0]],
+		['exception', ({spaces}) => spaces[0].exceptions[0]],
+		['inline break policy', ({spaces}) => spaces[0].breakSchedule.interim],
+	]) {
+		it('retains additive metadata on a ' + name, () => {
+			let input = pair()
+			select(input).futureMetadata = {nested: [1, 2]}
+			let before = structuredClone(input)
+			let result = parse(input)
+			assert.deepEqual(input, before)
+			let normalized = {calendar: result.calendar, spaces: result.spaces.map(({data}) => data)}
+			assert.deepEqual(select(normalized).futureMetadata, {nested: [1, 2]})
+		})
+	}
 
 	it('normalizes normal exceptions and keeps normal references and aliases unresolved', () => {
 		let input = pair()

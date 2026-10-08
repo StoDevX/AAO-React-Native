@@ -25,9 +25,15 @@ export type ScheduleData = {
 	calendar: BreakCalendar<NamedBuildingScheduleType>
 	spaces: Array<{
 		label: string
-		data: BuildingType<string | Schedule<NamedBuildingScheduleType>>
+		data: PublishedSpace
 	}>
 }
+
+/** Published spaces always carry normalized exceptions and a validated kind. */
+type PublishedSpace = BuildingType<string | Schedule<NamedBuildingScheduleType>> &
+	Schedule<NamedBuildingScheduleType> & {
+		kind: NonNullable<BuildingType['kind']>
+	}
 
 /** YAML permits shorthand arrays and omitted exceptions before normalization. */
 type ScheduleInput =
@@ -47,7 +53,8 @@ type CalendarInput = Omit<BreakCalendar<NamedBuildingScheduleType>, 'breaks' | '
 	templates?: Record<string, ScheduleInput>
 }
 
-type SpaceInput = Omit<BuildingType, 'breakSchedule'> & {
+type SpaceInput = Omit<BuildingType, 'breakSchedule' | 'kind'> & {
+	kind: PublishedSpace['kind']
 	breakSchedule?: Record<string, string | ScheduleInput>
 }
 

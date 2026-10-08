@@ -28,11 +28,19 @@ const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 // get cli arguments
 const args = getArgs(process.argv.slice(2))
 
-const readSpaces = () =>
-	readDir(path.join(DATA_BASE, 'building-hours')).map((filename) => ({
-		label: `building-hours/${filename}`,
-		data: readYaml(path.join(DATA_BASE, 'building-hours', filename)),
-	}))
+/** Excludes a selected space by its resolved path, including symlinked paths. */
+const readSpaces = (selectedFile) => {
+	let selectedPath = selectedFile === undefined ? undefined : fs.realpathSync(selectedFile)
+	return readDir(path.join(DATA_BASE, 'building-hours'))
+		.filter(
+			(filename) =>
+				fs.realpathSync(path.join(DATA_BASE, 'building-hours', filename)) !== selectedPath,
+		)
+		.map((filename) => ({
+			label: `building-hours/${filename}`,
+			data: readYaml(path.join(DATA_BASE, 'building-hours', filename)),
+		}))
+}
 
 // Break keys and references are meaningful only against the paired calendar.
 // Always check the pair when either scheduling input is selected.
@@ -47,6 +55,7 @@ if (args.data) {
 	let schemaFile = readYaml(args.schema)
 	if (schemaFile.$id === 'building-hours.json') {
 		parseScheduleData({label: 'breaks.yaml', data: readYaml(path.join(DATA_BASE, 'breaks.yaml'))}, [
+			...readSpaces(args.data),
 			{label: args.data, data: dataFile},
 		])
 	} else if (schemaFile.$id === 'breaks.json') {
