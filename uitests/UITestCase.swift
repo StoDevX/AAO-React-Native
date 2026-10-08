@@ -8,6 +8,11 @@ import XCTest
 class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
+	/// The campus this test runs on, serving its recordings; nil runs St. Olaf
+	/// on today's bundled data. Campus tests override it and carry a
+	/// `/// Tags: campus:<domain>` marker.
+	class var campus: Campus? { nil }
+
 	/// Synchronous on purpose, as every test method here must be. With
 	/// `continueAfterFailure` false, a failure in an async `setUp` or an async
 	/// test ends the test runner process, and `-retry-tests-on-failure` never
@@ -30,6 +35,15 @@ class UITestCaseUnbooted: XCTestCase {
 		appendJsLocationIfProvided()
 		appendRecordFixturesIfAsked()
 		appendResetChannel()
+		appendCampus()
+	}
+
+	/// Names this test's campus, when it has one. A reset may change it in
+	/// place; see `UITestResetChannel.withoutCampus`.
+	func appendCampus() {
+		if let campus = Self.campus {
+			app.launchArguments.append(contentsOf: [TestIdentifiers.LaunchArguments.campus, campus.rawValue])
+		}
 	}
 
 	override func tearDownWithError() throws {
@@ -167,6 +181,7 @@ class UITestCaseUnbooted: XCTestCase {
 		appendJsLocationIfProvided()
 		appendRecordFixturesIfAsked()
 		appendResetChannel()
+		appendCampus()
 	}
 }
 

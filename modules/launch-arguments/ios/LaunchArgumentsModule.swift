@@ -33,6 +33,12 @@ public class LaunchArgumentsModule: Module {
 			UITestResetChannel.takePendingURL()
 		}
 
+		// The campus a UI test names with `--campus`, by domain: the launch's,
+		// then each in-place reset's. Nil outside UI tests.
+		Function("uiTestCampus") { () -> String? in
+			ProcessInfo.processInfo.arguments.contains("--uitesting") ? UITestResetChannel.campusForTest() : nil
+		}
+
 		let arguments = ProcessInfo.processInfo.arguments
 
 		Constants([
