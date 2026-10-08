@@ -93,15 +93,6 @@ struct MenusScreen: Screen {
 		return self
 	}
 
-	/// Assert `cafe`'s tab is the one showing.
-	@discardableResult
-	func verifyShowing(_ cafe: String) -> Self {
-		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitForExistence(timeout: 30), "\(cafe) tab should be visible")
-		XCTAssertTrue(tab.waitForSelected(true), "\(cafe) should be the selected cafe")
-		return self
-	}
-
 	/// Switch to another St. Olaf cafe's tab and wait for its menu to draw.
 	@discardableResult
 	func openCafe(_ cafe: String) -> Self {

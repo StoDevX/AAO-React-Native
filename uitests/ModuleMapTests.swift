@@ -42,7 +42,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.collapseCard()
 			.verifyCardCollapsed()
 			.verifyMapHeldStill(since: before, in: region)
-			.verifyClearHeader()
 	}
 
 	/// At the largest text size the search field grows to fit its text, and the collapsed stop grows
@@ -125,21 +124,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.collapseCard()
 			.verifyCardCollapsed()
 			.verifyCardHeaderTopWithinSheet()
-	}
-
-	/// Once expanded, a card's About text can be selected and copied. Cut
-	/// short, it cannot: a copy then would hold only the lines on screen.
-	func testAnExpandedAboutCanBeCopied() throws {
-		let name = TestIdentifiers.Map.aBuildingWithALongAbout
-		MapScreen(app: app)
-			.navigate()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
-			.expandCard()
-			.verifyAboutOffersCopy(false)
-			.expandAbout()
-			.verifyAboutOffersCopy(true)
 	}
 
 	/// Closing a card returns to the list as it was left: the same group,

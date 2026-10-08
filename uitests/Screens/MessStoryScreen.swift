@@ -83,72 +83,6 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Hold the first line of the story's body and drag down into its second paragraph, then
-	/// assert the selection's highlight runs unbroken down the column's trailing edge from the
-	/// first paragraph's second line, past the gap between the paragraphs, into the second's
-	/// first line. On an iPhone 17e at the default text size the illustrated story's first
-	/// paragraph ends about 120 points below its first line and its second begins about 138
-	/// points below; a selection ends about a line above the finger, so the drag goes 200
-	/// points down. The highlight is read from the screen because the test runner, in the
-	/// background, may not read the pasteboard.
-	@discardableResult
-	func verifySelectionCrossesParagraphs() -> Self {
-		let body = app.element(matching: TestIdentifiers.News.storyBody)
-		XCTAssertTrue(body.waitForExistence(timeout: 30), "the story should have a body to select")
-		scrollIntoUpperHalf(body)
-		let start = body.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 40, dy: 10))
-		let end = start.withOffset(CGVector(dx: 120, dy: 200))
-		start.press(forDuration: 1.0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.EditMenu.copy)).firstMatch
-		let offered = copy.waitForExistence(timeout: 5)
-		XCTAssertTrue(offered, "a drag across the story's text should select some of it, and offer Copy")
-
-		guard let pixels = ScreenPixels(app.screenshot().image) else {
-			XCTFail("the screenshot should be readable")
-			return self
-		}
-		// The trailing edge, where ragged lines leave the highlight mostly clear of glyphs.
-		let trailingEdge = CGRect(
-			x: body.frame.maxX - 6, y: start.screenPoint.y + 20, width: 4, height: 130)
-		let highlighted = fractionHighlighted(pixels, in: trailingEdge)
-		XCTAssertGreaterThan(
-			highlighted, 0.9,
-			"the selection should run from the first paragraph into the second, but it covers only \(Int(highlighted * 100))% of the column's edge between them")
-		return self
-	}
-
-	/// The share of `region` drawn in the selection's highlight, a pale blue no paper or ink
-	/// colour comes near, sampled every two points.
-	private func fractionHighlighted(_ pixels: ScreenPixels, in region: CGRect) -> Double {
-		var sampled = 0
-		var highlighted = 0
-		for y in stride(from: region.minY, to: region.maxY, by: 2) {
-			for x in stride(from: region.minX, to: region.maxX, by: 2) {
-				let colour = pixels.colour(at: CGPoint(x: x, y: y))
-				sampled += 1
-				if colour.blue - colour.red > 25 { highlighted += 1 }
-			}
-		}
-		return sampled == 0 ? 0 : Double(highlighted) / Double(sampled)
-	}
-
-	/// Drag the page slowly until `element` begins in the upper half of the screen, below the
-	/// navigation bar. A slow, held drag moves the page by about its own length, where a
-	/// swipe flings it past.
-	private func scrollIntoUpperHalf(_ element: XCUIElement) {
-		let window = app.windows.firstMatch.frame
-		let top = app.navigationBars.firstMatch.frame.maxY
-		for _ in 0..<10 {
-			if element.frame.minY > top && element.frame.minY < window.midY { return }
-			let from = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
-			let to = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-			from.press(forDuration: 0.05, thenDragTo: to, withVelocity: .slow, thenHoldForDuration: 0.3)
-		}
-		XCTAssertTrue(
-			element.frame.minY > top && element.frame.minY < window.midY,
-			"scrolling should bring \(element) into the top half of the screen, but it begins at \(element.frame.minY)")
-	}
-
 	/// Pick a sign from a Horoscopes post's list of all twelve, which is what a
 	/// reader who has never picked one sees. A row's label is the sign's name
 	/// followed by its dates.
@@ -254,12 +188,6 @@ struct MessStoryScreen: Screen {
 		let close = closeButton
 		XCTAssertTrue(close.waitForExistence(timeout: 30), "tapping the picture should open the zoom viewer")
 		return self
-	}
-
-	/// Open a story straight from its route, and wait for its headline.
-	@discardableResult
-	func navigate(to route: String) -> Self {
-		open(route: route, mountedWhen: app.staticTexts[TestIdentifiers.News.storyHeadline])
 	}
 
 	/// Double-tap the middle of the picture in the zoom viewer.

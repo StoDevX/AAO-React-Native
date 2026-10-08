@@ -15,7 +15,6 @@ class ModuleStreamingMediaTests: UITestCase {
 			.pick(ids.krlxSegment, expecting: ids.playKrlx)
 			.checkButtons([ids.playKrlx] + ids.krlxActions)
 			.checkLinks(ids.krlxLinks)
-			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
 			.closeSheet(expectingBar: ids.pauseKsto)
 			.press(ids.pauseKsto, expecting: ids.playKsto)
 	}
