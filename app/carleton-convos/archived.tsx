@@ -12,14 +12,15 @@ import {DisclosureRow} from '../../source/components/rows'
 import {archivedConvosOptions} from '../../source/features/carleton/convos'
 
 export default function ArchivedConvosPage(): React.ReactNode {
-	let {data = [], error, refetch, isLoading, isError} = useQuery(archivedConvosOptions)
-
-	if (isError) {
-		return <LoadErrorView error={error} onRetry={refetch} />
-	}
+	let {data, error, refetch, isLoading} = useQuery(archivedConvosOptions)
 
 	if (isLoading) {
 		return <LoadingView />
+	}
+
+	// A failed refresh keeps the recordings already loaded; only a list never loaded shows the error.
+	if (!data) {
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	return (

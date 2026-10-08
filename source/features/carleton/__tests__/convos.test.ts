@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {toArchivedConvos} from '../convos'
+import {archivedConvosFrom, toArchivedConvos} from '../convos'
 
 function episode(overrides: Partial<Parameters<typeof toArchivedConvos>[0][number]> = {}) {
 	return {
@@ -50,5 +50,14 @@ describe('toArchivedConvos', () => {
 
 		expect(video?.isVideo).toBe(true)
 		expect(audio?.isVideo).toBe(false)
+	})
+})
+
+describe('archivedConvosFrom', () => {
+	test('lists the dated episodes when one has no date at all', () => {
+		let {pubDate: _, ...undated} = episode({title: 'Undated'})
+		let convos = archivedConvosFrom([undated, episode({title: 'Dated'})])
+
+		expect(convos.map((convo) => convo.title)).toEqual(['Dated'])
 	})
 })
