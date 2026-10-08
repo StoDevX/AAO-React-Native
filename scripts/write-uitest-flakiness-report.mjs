@@ -24,6 +24,13 @@ import {readTestResults} from './report-flaky-uitests.mjs'
 /** The flakiness.io project these results belong to. */
 export const FLAKINESS_PROJECT = 'frogpond/all-about-olaf'
 
+/**
+ * The category and environment the UI tests report under. The shard planner
+ * names them too when it asks flakiness.io for predicted durations.
+ */
+export const UITEST_CATEGORY = 'xcuitest'
+export const UITEST_ENVIRONMENT_NAME = 'iOS Simulator'
+
 const STATUSES = {
 	Passed: 'passed',
 	Failed: 'failed',
@@ -463,10 +470,10 @@ export function buildReport(testNodes, options) {
 
 	const report = {
 		flakinessProject: FLAKINESS_PROJECT,
-		category: 'xcuitest',
+		category: UITEST_CATEGORY,
 		title: `UITests (${shard})`,
 		commitId,
-		environments: [{name: 'iOS Simulator', systemData: {osName: 'iOS', osVersion}}],
+		environments: [{name: UITEST_ENVIRONMENT_NAME, systemData: {osName: 'iOS', osVersion}}],
 		suites,
 		startTimestamp,
 		duration: endTimestamp - startTimestamp,

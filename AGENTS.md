@@ -82,7 +82,13 @@ These patterns are especially important in this codebase:
   runs upload nothing. Runtime warnings, `XCTSkip` and `XCTExpectFailure`
   reasons become annotations. XCTest has no tags, so a `/// Tags: live-data`
   comment above a UI-test class or `func test…` tags it; other comments and
-  attributes may sit between, but any other line orphans the marker.
+  attributes may sit between, but any other line orphans the marker. The
+  UI-test planner asks flakiness.io for each test's predicted duration
+  (`scripts/fetch-uitest-durations.mjs`), drawn from master's history alone,
+  and packs the shards with those, guessing the p90 for a test without one.
+  The planner's log lists each shard's estimate and each test's, and the PR's
+  UI-test report sets each shard's estimate beside what it took and lists the
+  tests furthest from theirs.
 
 **Jest cannot see what a view looks like.** The test environment has no layout
 pass, no compositor, and no hit testing. A rendered view there is a tree of the

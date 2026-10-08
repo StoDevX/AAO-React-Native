@@ -46,17 +46,21 @@ struct MessStoryScreen: Screen {
 	/// Assert the story on top is the one headlined `expected`. The match is by
 	/// identifier and label together, so it holds while a transition leaves two
 	/// headlines in the tree.
+	///
+	/// The headlines drawn are listed only when the check fails. Mid-transition
+	/// one can leave the tree between XCUITest counting them and reading its
+	/// label, and that read fails the test even though the check passed.
 	@discardableResult
 	func verifyHeadline(_ expected: String, _ message: String) -> Self {
 		let headline = app.staticTexts
 			.matching(NSPredicate(
 				format: "identifier == %@ AND label == %@", TestIdentifiers.News.storyHeadline, expected))
 			.firstMatch
-		let drawn = headline.waitUntilExists(timeout: 30)
-		let found = headlineTexts.allElementsBoundByIndex.map { "\"\($0.label)\"" }
-		XCTAssertTrue(
-			drawn,
-			"\(message): expected \"\(expected)\" on top, but found \(found.isEmpty ? "no story" : found.joined(separator: ", "))")
+		if !headline.waitUntilExists(timeout: 30) {
+			let found = headlineTexts.allElementsBoundByIndex.map { "\"\($0.label)\"" }
+			XCTFail(
+				"\(message): expected \"\(expected)\" on top, but found \(found.isEmpty ? "no story" : found.joined(separator: ", "))")
+		}
 		return self
 	}
 

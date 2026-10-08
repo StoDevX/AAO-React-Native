@@ -418,22 +418,43 @@ jobs:
         with:
           persist-credentials: false
 
-      # A miss is not a failure: the planner falls back to one unit per test,
-      # giving every test an equal share of the split.
-      - name: Restore the UITest duration table
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
-          path: uitest-durations.json
-          key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/
-          restore-keys: |
-            uitest-durations/e=${{ env.cache_epoch }}/ref=master/
+          # -node: this job only runs scripts.
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
+          install_args: node
+
+      # flakiness.io predicts each test's duration from master's history. It
+      # only tunes the split, so neither a failed install nor a slow or failed
+      # fetch may stop the tests: the planner then weighs every test the same,
+      # and guesses the p90 for any test flakiness.io has no history for.
+      - name: Install the flakiness CLI
+        id: flakiness
+        continue-on-error: true
+        timeout-minutes: 2
+        run: mise install npm:flakiness
+
+      - name: Fetch predicted durations from flakiness.io
+        if: steps.flakiness.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 3
+        run: node scripts/fetch-uitest-durations.mjs --test-dir uitests --durations uitest-durations.json --flakiness "$(mise where npm:flakiness)"
 
       # The chaos canaries test the chaos tool rather than the app, so a pull
-      # request leaves them to the merge queue and master.
+      # request leaves them to the merge queue and master. The log lists each
+      # shard's estimate and its tests'; uitest-report sets the plan beside
+      # what the shards took.
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json --plan uitest-plan.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the shard plan
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: uitest-plan
+          path: uitest-plan.json
+          retention-days: 1
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
@@ -633,6 +654,17 @@ jobs:
           nohup bash -c 'while :; do date -u +%FT%TZ; ps -Acro pcpu,pid,comm | head -n 9; sleep 5; done' \
             > uitest-evidence/runner-cpu.log 2>&1 &
 
+      # Probe for #8655: the app's JavaScript logs at info level, which the
+      # simulator keeps only in memory, so a read after the tests finds it
+      # gone. Streamed while they run instead; the job's end stops it.
+      - name: Stream the app's JavaScript log
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: |
+          mkdir -p uitest-evidence
+          nohup xcrun simctl spawn "$SIMULATOR_UDID" log stream --level info --style compact \
+            --predicate 'category == "javascript"' > uitest-evidence/javascript.log 2>&1 &
+
       - name: Run UITests
         timeout-minutes: ${{ runner.debug == '1' && 60 || 45 }}
         # Tells Screen.capture it is in CI, so a passing test's screenshots are
@@ -697,12 +729,6 @@ jobs:
         if: always()
         run: node scripts/report-flaky-uitests.mjs uitest-results.xcresult
 
-      # `if: always()` so a shard that went red still contributes the timings of
-      # the tests that did run before it stopped.
-      - name: Record test durations
-        if: always()
-        run: node scripts/collect-uitest-durations.mjs uitest-results.xcresult uitest-durations.json
-
       # `if: always()`, as above: a shard that went red is still part of the
       # report the pull request comment shows.
       - name: Record the shard's report
@@ -762,15 +788,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 1
 
-      - name: Upload test durations
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: uitest-durations-${{ matrix.shard }}
-          path: uitest-durations.json
-          if-no-files-found: ignore
-          retention-days: 1
-
       - name: Extract failure attachments
         if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         run: |
@@ -791,72 +808,19 @@ jobs:
 
       - name: Upload XCResult bundle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
+        # Probe for #8655: every shard's bundle, so a slow pass shows its steps.
+        if: always()
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/
-
-  uitest-durations:
-    name: Publish UITest durations
-    needs: [ios-uitest]
-    runs-on: ubuntu-slim
-    # Master alone writes. A branch reads master's table through the planner's
-    # restore-key; letting every branch save one would crowd the repository's
-    # shared cache and evict what the shards restore with fail-on-cache-miss.
-    #
-    # ios-uitest skips, rather than fails, when an upstream job (ios-build,
-    # ios-bundle, uitest-plan, ios-cache-check) fails on master, and job-level
-    # always() overrides GitHub's default of skipping a job whose need was
-    # itself skipped. An empty table saved under this run's fresh key would
-    # still outrank a good historical one on the planner's prefix restore, so
-    # this only runs once ios-uitest has actually run.
-    if: always() && github.ref == 'refs/heads/master' && needs.ios-uitest.result != 'skipped'
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Download every shard's durations
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          pattern: uitest-durations-*
-          path: durations/
-          merge-multiple: false
-
-      # Later shards win on a duplicate key, which is fine: a test appears in
-      # exactly one shard, so there are no duplicates to arbitrate.
-      - name: Merge them into one table
-        id: merge
-        run: |
-          find durations -name uitest-durations.json -print0 \
-            | xargs -0 cat \
-            | jq -s 'add // {}' > uitest-durations.json
-          count=$(jq 'length' uitest-durations.json)
-          echo "$count tests timed"
-          echo "count=$count" >> "$GITHUB_OUTPUT"
-
-      # A run that timed nothing -- every shard skipped, or ran but recorded
-      # no durations -- would still save under this run's fresh key and
-      # outrank a good table on the planner's prefix restore. Skip the save
-      # rather than let an empty table win.
-      #
-      # No explicit success() needed: a condition with no status check
-      # function keeps the implicit success(), so a failed merge step skips
-      # this one rather than caching whatever partial file it left behind.
-      - name: Save the table for later runs
-        if: steps.merge.outputs.count != '0'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: uitest-durations.json
-          key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/run=${{ github.run_id }}-${{ github.run_attempt }}
 
   # The UI-test half of the pull request report. pr-report.yml cannot depend on
   # a job here, so this publishes the shards' figures as an artifact, which
   # that workflow reads once this one completes. Master's reports are the
   # baseline every later pull request compares with.
   #
-  # Skipped when the suite was, as uitest-durations is: a run with no shard
-  # files writes no report and the artifact upload finds nothing.
+  # Skipped when the suite was: a run with no shard files writes no report and
+  # the artifact upload finds nothing.
   uitest-report:
     name: Publish the UITest report
     needs: [ios-uitest]
@@ -881,6 +845,14 @@ jobs:
           pattern: uitest-shard-*
           path: shards/
 
+      # The plan only adds the planned-against-actual table; the merge leaves
+      # it out when the file is missing.
+      - name: Download the shard plan
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: uitest-plan
+
       - name: Merge them into one report
         env:
           RESULT: ${{ needs.ios-uitest.result }}
@@ -892,7 +864,7 @@ jobs:
           fi
           mkdir -p uitest-report
           node scripts/pr-report/uitest-report.mjs merge shards/ uitest-report/uitest-report.json \
-            --sha "$HEAD_SHA" --base-sha "$base" --result "$RESULT"
+            --sha "$HEAD_SHA" --base-sha "$base" --result "$RESULT" --plan uitest-plan.json
 
       - name: Upload the report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -915,8 +887,7 @@ jobs:
   # (the bundle, the cache check, the build, the plan, a shard) turns this red
   # even though it skips the shards after it. What stays green is a skip nobody
   # failed to cause: the gate found nothing to test, the `ci/skip-e2e` label is
-  # on, or a cache hit skipped the build. uitest-durations is left out; it only
-  # saves a timing table, on master.
+  # on, or a cache hit skipped the build.
   uitest-conclusion:
     name: UITest Conclusion
     needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check, ios-uitest]
