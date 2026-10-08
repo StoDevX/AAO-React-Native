@@ -99,6 +99,15 @@ URL, and a tap that only shows a screen opened earns no slot (see below).
 typing it; confirm a row exists before tapping. A test that silently did nothing
 otherwise passes exactly like one that worked.
 
+**A test gets two minutes.** CI stops a test that runs longer and fails it,
+with a spindump attached; it is not retried, so a stall fails the shard. A test
+that needs longer is two tests, or is waiting
+on something it should not: a launch it could skip with a deep link, or
+SpringBoard while the app sits in the background. One that genuinely needs
+more sets `executionTimeAllowance` in its `setUp`, with a comment saying why;
+the limit is xcodebuild's default, which a test's own allowance overrides.
+XCTest rounds either up to whole minutes, so 90 seconds is two minutes.
+
 ## What earns a slot
 
 Every test cold-launches the app. On CI, launching and tapping through the
