@@ -47,63 +47,104 @@ extension XCUIApplication {
 	}
 }
 
+/// How `waitUntil` spaces its checks: the first after 0.2s, each later one
+/// half again as long as the last, and none more than 1s apart.
+///
+/// XCTest's own waits check about once a second, so a wait for something
+/// that turns up a moment later overshoots by up to a second. Checking every
+/// 0.1s takes that back but keeps a CPU busy with queries; the backoff keeps
+/// the quick checks for a condition that is about to hold, and slows down for
+/// one that is not. The longest gap is 1s, not the 2s Wealthfront used, so no
+/// wait here checks less often than XCTest's did.
+private enum Polling {
+	static let firstInterval: TimeInterval = 0.2
+	static let growth = 1.5
+	static let longestInterval: TimeInterval = 1.0
+}
+
+/// Wait up to `timeout` seconds for `condition` to hold, and say whether it
+/// did. The step shows in the test report as `activity`, so its time can be
+/// read there as XCTest's own waits can.
+///
+/// Checks once before waiting at all, so a condition that already holds
+/// costs one check. Then checks as `Polling` spaces them, with a last check
+/// at the deadline. Spins the run loop between checks, as XCTest's waits do.
+///
+/// Reports no failure: a caller asserts on the result, so the message is its own.
+func waitUntil(_ activity: String, timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
+	XCTContext.runActivity(named: activity) { _ in
+		if condition() { return true }
+		let deadline = Date().addingTimeInterval(timeout)
+		var interval = Polling.firstInterval
+		while true {
+			let remaining = deadline.timeIntervalSinceNow
+			if remaining <= 0 { return false }
+			RunLoop.current.run(until: Date().addingTimeInterval(min(interval, remaining)))
+			if condition() { return true }
+			interval = min(interval * Polling.growth, Polling.longestInterval)
+		}
+	}
+}
+
 extension XCUIElement {
+	/// `waitForExistence(timeout:)`, checking as `waitUntil` does.
+	func waitUntilExists(timeout: TimeInterval) -> Bool {
+		waitUntil("Waiting \(timeout)s for \(self) to exist", timeout: timeout) { exists }
+	}
+
+	/// `waitForNonExistence(timeout:)`, checking as `waitUntil` does.
+	func waitUntilGone(timeout: TimeInterval) -> Bool {
+		waitUntil("Waiting \(timeout)s for \(self) to not exist", timeout: timeout) { !exists }
+	}
+
+	/// Wait for this element to resolve to one that `matches`. Read from a
+	/// snapshot, which throws for an element that is missing, so a missing
+	/// element reads as "not yet" rather than failing the test.
+	func waitUntilSnapshot(
+		_ activity: String, timeout: TimeInterval, matches: (XCUIElementSnapshot) -> Bool
+	) -> Bool {
+		waitUntil("Waiting \(timeout)s for \(self) \(activity)", timeout: timeout) {
+			(try? snapshot()).map(matches) ?? false
+		}
+	}
+
 	/// Wait for this element to report the given selection state.
 	///
 	/// A selection is the far end of a round trip -- a tap reaches JavaScript,
 	/// the filter state changes, and the control re-renders -- so it is never
-	/// already settled when `tap()` returns. Polling a predicate rather than
-	/// reading `isSelected` once is what separates "not yet" from "never".
+	/// already settled when `tap()` returns. Polling rather than reading
+	/// `isSelected` once is what separates "not yet" from "never".
 	func waitForSelected(_ expected: Bool, timeout: TimeInterval = 30) -> Bool {
-		let predicate = NSPredicate(format: expected ? "isSelected == true" : "isSelected == false")
-		let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
-		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+		waitUntilSnapshot(expected ? "to be selected" : "to be unselected", timeout: timeout) {
+			$0.isSelected == expected
+		}
 	}
 
 	/// Wait for this element to be enabled, or disabled. A control disabled by
 	/// JavaScript state changes a render after the tap that changes the state.
 	func waitForEnabled(_ expected: Bool, timeout: TimeInterval = 30) -> Bool {
-		let predicate = NSPredicate(format: expected ? "isEnabled == true" : "isEnabled == false")
-		let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
-		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+		waitUntilSnapshot(expected ? "to be enabled" : "to be disabled", timeout: timeout) {
+			$0.isEnabled == expected
+		}
 	}
 
 	/// Wait for this element's label to read `expected`. A label drawn by JavaScript changes a
 	/// render after the tap that asks for it.
 	func waitForLabel(_ expected: String, timeout: TimeInterval = 30) -> Bool {
-		let expectation = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "label == %@", expected), object: self)
-		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+		waitUntilSnapshot("to read \(expected)", timeout: timeout) { $0.label == expected }
 	}
 
 	/// Wait for this element to become hittable: on screen, and not covered.
 	/// A readiness check before a single tap, so a control that drops its first
 	/// tap fails the test instead of being tapped again.
+	///
+	/// Hittability is not in a snapshot, so this reads it off the element,
+	/// once the element exists.
 	func waitForHittable(timeout: TimeInterval = 30) -> Bool {
-		let expectation = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "isHittable == true"), object: self)
-		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+		waitUntil("Waiting \(timeout)s for \(self) to be hittable", timeout: timeout) {
+			exists && isHittable
+		}
 	}
-}
-
-extension XCTestCase {
-  /// Creates an expectation for monitoring the given condition.
-  ///
-  /// - Parameters:
-  ///   - condition: The condition to evaluate to be `true`.
-  ///   - description: A string to display in the test log for this expectation, to help diagnose failures.
-  /// - Returns: The expectation for matching the condition.
-  func expectation(for condition: @autoclosure @escaping @MainActor () -> Bool, description: String = "") -> XCTestExpectation {
-    // learned from https://www.avanderlee.com/swift/nspredicate-xctestexpectations
-    let predicate = NSPredicate { _, _ in
-      // Ensures the XCUIElementQuery is safely read on the Main Actor during polling
-      MainActor.assumeIsolated {
-        return condition()
-      }
-    }
-
-    return XCTNSPredicateExpectation(predicate: predicate, object: nil)
-  }
 }
 
 enum StringMatcher {

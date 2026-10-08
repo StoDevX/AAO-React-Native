@@ -61,7 +61,7 @@ struct MessFrontPage: Screen {
 	/// after page as its end comes into view.
 	@discardableResult
 	func scrollIssues(untilAnIssueFrom year: String) -> Self {
-		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show its tiles")
+		XCTAssertTrue(tiles.firstMatch.waitUntilExists(timeout: 30), "By Issue should show its tiles")
 		let older = tiles.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
 		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
@@ -72,7 +72,7 @@ struct MessFrontPage: Screen {
 			bottom.press(forDuration: 0.05, thenDragTo: top)
 		}
 		XCTAssertTrue(
-			older.waitForExistence(timeout: 30),
+			older.waitUntilExists(timeout: 30),
 			"scrolling should keep loading older issues until it reaches \(year)")
 		return self
 	}
@@ -81,13 +81,13 @@ struct MessFrontPage: Screen {
 	@discardableResult
 	func openSecondIssue() -> Self {
 		let second = tiles.firstMatch
-		XCTAssertTrue(second.waitForExistence(timeout: 30), "By Issue should show a tile under the top one")
+		XCTAssertTrue(second.waitUntilExists(timeout: 30), "By Issue should show a tile under the top one")
 		XCTAssertTrue(second.waitForHittable(), "the tile should be ready to tap")
 		second.tap()
 		XCTAssertTrue(
-			viewMenu.waitForNonExistence(timeout: 30),
+			viewMenu.waitUntilGone(timeout: 30),
 			"tapping a tile should open its issue on a page of its own")
-		XCTAssertTrue(lead.waitForExistence(timeout: 30), "an opened issue should lead with a story")
+		XCTAssertTrue(lead.waitUntilExists(timeout: 30), "an opened issue should lead with a story")
 		return self
 	}
 
@@ -106,14 +106,14 @@ struct MessFrontPage: Screen {
 		choose(view: TestIdentifiers.News.latest)
 		let columns = app.buttons.matching(identifier: TestIdentifiers.News.columnChip)
 		let button = columns.matching(NSPredicate(format: "label == %@", column)).firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 30), "\(section) should offer its \(column) column")
+		XCTAssertTrue(button.waitUntilExists(timeout: 30), "\(section) should offer its \(column) column")
 		scrollRow(columns, toReveal: button)
 		XCTAssertTrue(button.waitForHittable(timeout: 10), "the \(column) chip should be ready to tap")
 		button.tap()
 		XCTAssertTrue(
-			viewMenu.waitForNonExistence(timeout: 30),
+			viewMenu.waitUntilGone(timeout: 30),
 			"tapping a column should open its list on a page of its own")
-		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 30), "the \(column) list should show its stories")
+		XCTAssertTrue(storyRows.firstMatch.waitUntilExists(timeout: 30), "the \(column) list should show its stories")
 		return self
 	}
 
@@ -122,14 +122,14 @@ struct MessFrontPage: Screen {
 	func openNewestIssue() -> MessIssueScreen {
 		XCTAssertTrue(topTile.waitForHittable(), "the newest issue's tile should be ready to tap")
 		topTile.tap()
-		XCTAssertTrue(lead.waitForExistence(timeout: 30), "the newest issue should lead with a story")
+		XCTAssertTrue(lead.waitUntilExists(timeout: 30), "the newest issue should lead with a story")
 		return MessIssueScreen(app: app)
 	}
 
 	/// The list of stories is up, as Back from a story should leave it.
 	@discardableResult
 	func verifyStoryListShown() -> Self {
-		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the story list")
+		XCTAssertTrue(storyRows.firstMatch.waitUntilExists(timeout: 10), "Back should return to the story list")
 		return self
 	}
 
@@ -163,8 +163,10 @@ struct MessFrontPage: Screen {
 	/// rows move while the menu opens, so a frame read too soon lands a tap on the row next to the
 	/// one meant.
 	private func waitForOnScreen(_ element: XCUIElement, timeout: TimeInterval = 30) -> Bool {
-		guard element.waitForExistence(timeout: timeout) else { return false }
+		guard element.waitUntilExists(timeout: timeout) else { return false }
 		var last = CGRect.null
+		// XCTWaiter, not `waitUntil`: "holding still" means the same frame at two
+		// checks about a second apart, and `waitUntil` checks 0.2s apart at first.
 		let settled = NSPredicate { _, _ in
 			let frame = element.frame
 			defer { last = frame }
