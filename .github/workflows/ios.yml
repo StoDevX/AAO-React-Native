@@ -10,8 +10,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Each push to master gets its own group and is never cancelled, so every
+  # master commit keeps a result. Same-group runs would otherwise supersede
+  # one another.
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
   xcode_version: 'Xcode_27.0'
