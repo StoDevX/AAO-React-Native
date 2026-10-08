@@ -141,7 +141,7 @@
     "csv-parse": "7.0.3",
     "jest": "30.5.2",
     "js-yaml": "catalog:",
-    "oxfmt": "0.71.0",
+    "oxfmt": "0.72.0",
     "oxlint": "1.86.0",
     "oxlint-tsgolint": "7.0.2003",
     "sf-symbols-typescript": "2.2.0",
