@@ -1,12 +1,20 @@
 import assert from 'node:assert/strict'
-import {readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync, symlinkSync} from 'node:fs'
+import {
+	readFileSync,
+	readdirSync,
+	mkdtempSync,
+	writeFileSync,
+	rmSync,
+	symlinkSync,
+	mkdirSync,
+} from 'node:fs'
 import {spawnSync} from 'node:child_process'
 import {tmpdir} from 'node:os'
 import {join, relative} from 'node:path'
 import {fileURLToPath} from 'node:url'
-import {describe, it} from 'node:test'
+import {afterEach, beforeEach, describe, it} from 'node:test'
 import {load} from 'js-yaml'
-import {parseScheduleData} from './schedule-data.ts'
+import {loadScheduleData, parseScheduleData, scheduleArtifacts} from './schedule-data.ts'
 
 let fixture = (name) =>
 	load(readFileSync(new URL(`fixtures/schedules/${name}.yaml`, import.meta.url), 'utf8'))
@@ -139,7 +147,7 @@ describe('schedule data contracts', () => {
 			assert.equal(result.status, 1, result.stderr)
 			assert.match(
 				result.stderr,
-				/duplicate space name.*first defined at building-hours\/1-1-cage.yaml.name/u,
+				/duplicate space name.*first defined at .*building-hours\/1-1-cage.yaml.name/u,
 			)
 			assert.ok(result.stderr.includes(filename + '.name'))
 		} finally {
@@ -777,5 +785,148 @@ describe('server schedule contract fixtures', () => {
 			assert.deepEqual(expected.data.breaks[key], dates)
 		}
 		assert.doesNotThrow(() => parse({calendar: expected.data, spaces: []}))
+	})
+})
+
+describe('schedule publication artifacts', () => {
+	it('publishes authored policies while preserving normal hours and space exceptions', () => {
+		let {calendar, spaces} = pair()
+		let artifacts = scheduleArtifacts(parse({calendar, spaces}))
+		let hours = artifacts[0].data.data
+		assert.deepEqual(
+			artifacts.map(({filename}) => filename),
+			['building-hours.json', 'breaks.json'],
+		)
+		assert.deepEqual(
+			hours.map((space) => space.name),
+			spaces.map((space) => space.name),
+		)
+		assert.equal(hours[0].breakSchedule.easter, 'spring')
+		assert.equal(hours[0].breakSchedule.fall, 'inherit')
+		assert.equal(hours[0].breakSchedule.winter, 'normal')
+		assert.equal(hours[0].breakSchedule.spring, 'office-hours')
+		assert.deepEqual(hours[1].breakSchedule.fall, {
+			schedule: spaces[1].breakSchedule.fall,
+			exceptions: [],
+		})
+		assert.deepEqual(hours[0].breakSchedule.interim, spaces[0].breakSchedule.interim)
+		assert.deepEqual(
+			hours.map(({breakSchedule: _breakSchedule, ...fields}) => fields),
+			spaces.map(({breakSchedule: _breakSchedule, ...fields}) => ({
+				...fields,
+				exceptions: fields.exceptions ?? [],
+			})),
+		)
+		let breaks = artifacts[1].data.data
+		assert.equal(breaks.timezone, calendar.timezone)
+		assert.equal(breaks.breaks.fall.defaultSpaceSchedule, 'closed')
+		assert.deepEqual(breaks.templates.closed, {
+			schedule: calendar.templates.closed,
+			exceptions: [],
+		})
+		assert.deepEqual(
+			breaks.breaks.spring.templates['office-hours'],
+			calendar.breaks.spring.templates['office-hours'],
+		)
+		assert.deepEqual(breaks.breaks.easter, calendar.breaks.easter)
+	})
+
+	it('publishes explicit normal exceptions and additive metadata inside data envelopes', () => {
+		let {calendar, spaces} = pair()
+		calendar.futureMetadata = {revision: 2}
+		calendar.templates.closed = {schedule: calendar.templates.closed, attribution: 'Example'}
+		spaces[1].futureMetadata = ['retained']
+		let artifacts = scheduleArtifacts(parse({calendar, spaces}))
+		let hours = artifacts[0].data
+		let breaks = artifacts[1].data
+		assert.deepEqual(Object.keys(hours), ['data'])
+		assert.deepEqual(Object.keys(breaks), ['data'])
+		assert.deepEqual(hours.data[1].exceptions, [])
+		assert.deepEqual(hours.data[1].futureMetadata, ['retained'])
+		assert.deepEqual(breaks.data.futureMetadata, {revision: 2})
+		assert.deepEqual(breaks.data.templates.closed, {...calendar.templates.closed, exceptions: []})
+	})
+})
+
+describe('schedule input loading', () => {
+	let root
+	let fromDir
+	let calendar
+	let spaces
+	let spaceFiles
+	let write = (filename, data) => writeFileSync(filename, JSON.stringify(data))
+
+	beforeEach(() => {
+		root = mkdtempSync(join(tmpdir(), 'aao-schedule-inputs-'))
+		fromDir = join(root, 'data')
+		mkdirSync(join(fromDir, 'building-hours'), {recursive: true})
+		;({calendar, spaces} = pair())
+		spaceFiles = [
+			join(fromDir, 'building-hours', '2-office.yaml'),
+			join(fromDir, 'building-hours', '10-building.yaml'),
+		]
+		write(join(fromDir, 'breaks.yaml'), calendar)
+		spaces.forEach((data, index) => write(spaceFiles[index], data))
+	})
+	afterEach(() => rmSync(root, {recursive: true, force: true}))
+
+	it('loads authored inputs in numeric order and ignores unfinished files and OS junk', () => {
+		writeFileSync(join(fromDir, 'building-hours', '_unfinished.yaml'), 'invalid: [')
+		writeFileSync(join(fromDir, 'building-hours', '.DS_Store'), 'junk')
+		let result = loadScheduleData(fromDir)
+		assert.deepEqual(
+			result.spaces.map(({label}) => label),
+			spaceFiles,
+		)
+		assert.deepEqual(
+			result.spaces.map(({data}) => data.name),
+			spaces.map(({name}) => name),
+		)
+	})
+
+	it('replaces a selected existing space in place through its resolved path', () => {
+		let filename = join(root, 'selected.yaml')
+		symlinkSync(spaceFiles[0], filename)
+		let result = loadScheduleData(fromDir, {kind: 'space', filename})
+		assert.deepEqual(
+			result.spaces.map(({label}) => label),
+			[filename, spaceFiles[1]],
+		)
+		assert.equal(result.spaces[0].data.name, spaces[0].name)
+	})
+
+	it('appends a selected new space to the complete pair', () => {
+		let filename = join(root, 'new.yaml')
+		write(filename, {...spaces[0], name: 'New space'})
+		let result = loadScheduleData(fromDir, {kind: 'space', filename})
+		assert.deepEqual(
+			result.spaces.map(({data}) => data.name),
+			[...spaces.map(({name}) => name), 'New space'],
+		)
+	})
+
+	it('rejects a selected new space that duplicates an authored name', () => {
+		let filename = join(root, 'duplicate.yaml')
+		write(filename, spaces[0])
+		assert.throws(
+			() => loadScheduleData(fromDir, {kind: 'space', filename}),
+			/duplicate space name/u,
+		)
+	})
+
+	it('uses a selected calendar without reading the replaced calendar', () => {
+		let filename = join(root, 'calendar.yaml')
+		write(filename, {...calendar, timezone: 'UTC'})
+		writeFileSync(join(fromDir, 'breaks.yaml'), 'invalid: [')
+		assert.equal(loadScheduleData(fromDir, {kind: 'calendar', filename}).calendar.timezone, 'UTC')
+	})
+
+	it('checks a selected calendar against all authored spaces', () => {
+		let filename = join(root, 'calendar.yaml')
+		write(filename, {timezone: 'UTC', breaks: {}})
+		assert.throws(
+			() => loadScheduleData(fromDir, {kind: 'calendar', filename}),
+			/unknown break key/u,
+		)
 	})
 })

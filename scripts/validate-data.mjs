@@ -7,19 +7,11 @@ import {isDataEntry} from './data-entries.mjs'
 import {parseArgs} from 'node:util'
 import {validate} from './validate.mjs'
 import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
-import {loadScheduleData, parseScheduleData} from './schedule-data.ts'
+import {loadScheduleData} from './schedule-data.ts'
 
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
 	JSON.parse(JSON.stringify(loadYaml(fs.readFileSync(pth, 'utf-8'), {filename: pth})))
-
-/*
-const readYamlPipe = (pth) =>
-	fs.readFileSync(pth, 'utf-8')
-		|> loadYaml(%, {filename: pth})
-		|> JSON.stringify(%)
-		|> JSON.parse(%)
-*/
 
 const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 
@@ -28,42 +20,38 @@ const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 // get cli arguments
 const args = getArgs(process.argv.slice(2))
 
-/** Excludes a selected space by its resolved path, including symlinked paths. */
-const readSpaces = (selectedFile) => {
-	let selectedPath = selectedFile === undefined ? undefined : fs.realpathSync(selectedFile)
-	return readDir(path.join(DATA_BASE, 'building-hours'))
-		.filter(
-			(filename) =>
-				fs.realpathSync(path.join(DATA_BASE, 'building-hours', filename)) !== selectedPath,
-		)
-		.map((filename) => ({
-			label: `building-hours/${filename}`,
-			data: readYaml(path.join(DATA_BASE, 'building-hours', filename)),
-		}))
-}
+const scheduleSchemas = new Set(['breaks', 'building-hours'])
 
-// Break keys and references are meaningful only against the paired calendar.
-// Always check the pair when either scheduling input is selected.
-if (!args.data && args.schemaNames.some((name) => name === 'breaks' || name === 'building-hours')) {
-	loadScheduleData(DATA_BASE)
-}
-
-// allow either --data/--schema or automatic schema loading
+// Scheduling inputs share one preparation path with publication.
 let iterator
 if (args.data) {
-	let dataFile = readYaml(args.data)
 	let schemaFile = readYaml(args.schema)
-	if (schemaFile.$id === 'building-hours.json') {
-		parseScheduleData({label: 'breaks.yaml', data: readYaml(path.join(DATA_BASE, 'breaks.yaml'))}, [
-			...readSpaces(args.data),
-			{label: args.data, data: dataFile},
-		])
-	} else if (schemaFile.$id === 'breaks.json') {
-		parseScheduleData({label: args.data, data: dataFile}, readSpaces())
+	let kind =
+		schemaFile.$id === 'building-hours.json'
+			? 'space'
+			: schemaFile.$id === 'breaks.json'
+				? 'calendar'
+				: undefined
+	if (kind !== undefined) {
+		loadScheduleData(DATA_BASE, {kind, filename: args.data})
+		args.quiet || console.log(args.data + ' is valid')
+		iterator = []
+	} else {
+		iterator = [[[args.schema, schemaFile, readYaml(args.data)]]]
 	}
-	iterator = [[[args.schema, schemaFile, dataFile]]]
 } else {
-	iterator = args.schemaNames.map((schemaName) => load(schemaName))
+	if (args.schemaNames.some((name) => scheduleSchemas.has(name))) {
+		let schedules = loadScheduleData(DATA_BASE)
+		if (!args.quiet) {
+			if (args.schemaNames.includes('breaks')) console.log('breaks.yaml is valid')
+			if (args.schemaNames.includes('building-hours')) {
+				for (let {label} of schedules.spaces) {
+					console.log(path.relative(DATA_BASE, label) + ' is valid')
+				}
+			}
+		}
+	}
+	iterator = args.schemaNames.filter((name) => !scheduleSchemas.has(name)).map((name) => load(name))
 }
 
 // iterate!

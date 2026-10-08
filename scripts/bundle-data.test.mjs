@@ -14,6 +14,7 @@ import {join} from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {describe, it} from 'node:test'
 import {load} from 'js-yaml'
+import {loadScheduleData, scheduleArtifacts} from './schedule-data.ts'
 
 let script = fileURLToPath(new URL('bundle-data.mjs', import.meta.url))
 let fixture = (name) =>
@@ -57,66 +58,16 @@ function contentsIn(dir) {
 }
 
 describe('schedule bundling', () => {
-	it('publishes authored policies while preserving normal hours and space exceptions', () => {
-		withInputs(({toDir, calendar, spaces, run}) => {
+	it('writes the prepared schedule artifacts as newline-terminated JSON', () => {
+		withInputs(({fromDir, toDir, run}) => {
+			let artifacts = scheduleArtifacts(loadScheduleData(fromDir))
 			let result = run()
 			assert.equal(result.status, 0, result.stderr)
-			let hours = readJson(toDir, 'building-hours.json')
-			assert.deepEqual(
-				hours.map((space) => space.name),
-				spaces.map((space) => space.name),
-			)
-			assert.equal(hours[0].breakSchedule.easter, 'spring')
-			assert.equal(hours[0].breakSchedule.fall, 'inherit')
-			assert.equal(hours[0].breakSchedule.winter, 'normal')
-			assert.equal(hours[0].breakSchedule.spring, 'office-hours')
-			assert.deepEqual(hours[1].breakSchedule.fall, {
-				schedule: spaces[1].breakSchedule.fall,
-				exceptions: [],
-			})
-			assert.deepEqual(hours[0].breakSchedule.interim, spaces[0].breakSchedule.interim)
-			assert.deepEqual(
-				hours.map(({breakSchedule: _breakSchedule, ...fields}) => fields),
-				spaces.map(({breakSchedule: _breakSchedule, ...fields}) => ({
-					...fields,
-					exceptions: fields.exceptions ?? [],
-				})),
-			)
-			let breaks = readJson(toDir, 'breaks.json')
-			assert.equal(breaks.timezone, calendar.timezone)
-			assert.equal(breaks.breaks.fall.defaultSpaceSchedule, 'closed')
-			assert.deepEqual(breaks.templates.closed, {
-				schedule: calendar.templates.closed,
-				exceptions: [],
-			})
-			assert.deepEqual(
-				breaks.breaks.spring.templates['office-hours'],
-				calendar.breaks.spring.templates['office-hours'],
-			)
-			assert.deepEqual(breaks.breaks.easter, calendar.breaks.easter)
-			assert.equal(existsSync(join(toDir, 'building-hours-authored.json')), false)
-			for (let name of ['building-hours.json', 'breaks.json']) {
-				assert.ok(readFileSync(join(toDir, name), 'utf8').endsWith('\n'))
+			for (let {filename, data} of artifacts) {
+				let output = readFileSync(join(toDir, filename), 'utf8')
+				assert.deepEqual(JSON.parse(output), data)
+				assert.ok(output.endsWith('\n'))
 			}
-		})
-	})
-
-	it('publishes explicit normal exceptions and additive metadata inside data envelopes', () => {
-		withInputs(({toDir, calendar, spaces, calendarFile, spaceFiles, run}) => {
-			calendar.futureMetadata = {revision: 2}
-			calendar.templates.closed = {schedule: calendar.templates.closed, attribution: 'Example'}
-			spaces[1].futureMetadata = ['retained']
-			writeYaml(calendarFile, calendar)
-			writeYaml(spaceFiles[1], spaces[1])
-			assert.equal(run().status, 0)
-			let hours = JSON.parse(readFileSync(join(toDir, 'building-hours.json'), 'utf8'))
-			let breaks = JSON.parse(readFileSync(join(toDir, 'breaks.json'), 'utf8'))
-			assert.deepEqual(Object.keys(hours), ['data'])
-			assert.deepEqual(Object.keys(breaks), ['data'])
-			assert.deepEqual(hours.data[1].exceptions, [])
-			assert.deepEqual(hours.data[1].futureMetadata, ['retained'])
-			assert.deepEqual(breaks.data.futureMetadata, {revision: 2})
-			assert.deepEqual(breaks.data.templates.closed, {...calendar.templates.closed, exceptions: []})
 		})
 	})
 

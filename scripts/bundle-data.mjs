@@ -2,7 +2,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {isDataEntry} from './data-entries.mjs'
-import {loadScheduleData} from './schedule-data.ts'
+import {loadScheduleData, scheduleArtifacts} from './schedule-data.ts'
 import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
 import {buildFaqs} from './build-faqs.mjs'
@@ -47,22 +47,15 @@ const step = (label, work) => {
 const hasSchedules =
 	fs.existsSync(path.join(fromDir, 'breaks.yaml')) ||
 	fs.existsSync(path.join(fromDir, 'building-hours'))
-const schedules = hasSchedules ? loadScheduleData(fromDir) : undefined
+const artifacts = hasSchedules ? scheduleArtifacts(loadScheduleData(fromDir)) : []
 
 fs.mkdirSync(toDir, {recursive: true})
 
-if (schedules) {
-	let hours = schedules.spaces.map(({data}) => data)
-	let outputs = [
-		['building-hours.json', hours],
-		['breaks.json', schedules.calendar],
-	]
-	for (let [filename, data] of outputs) {
-		let output = path.join(toDir, filename)
-		step(`bundle-schedules ${output}`, () =>
-			fs.writeFileSync(output, JSON.stringify({data}) + '\n'),
-		)
-	}
+for (let {filename, data} of artifacts) {
+	let output = path.join(toDir, filename)
+	step(`bundle-schedules ${output}`, () => fs.writeFileSync(output, JSON.stringify(data) + '\n'))
+}
+if (artifacts.length > 0) {
 	// Remove the retired generated feed only after validating and writing its replacement.
 	fs.rmSync(path.join(toDir, 'building-hours-authored.json'), {force: true})
 }
@@ -122,5 +115,5 @@ step(`bundle-images images ${toDir}`, () => {
 })
 
 console.log(
-	`bundle-data: ${dirs.length} directories, ${files.length + built + (schedules ? 2 : 0)} files and ${images} images -> ${toDir}`,
+	`bundle-data: ${dirs.length} directories, ${files.length + built + artifacts.length} files and ${images} images -> ${toDir}`,
 )
