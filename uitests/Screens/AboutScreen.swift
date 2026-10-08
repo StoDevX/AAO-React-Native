@@ -1,11 +1,17 @@
 import XCTest
 
-/// Home's ⋯ menu → About: the version, the app's story as cards that scroll
+/// About: the version, the app's story as cards that scroll
 /// sideways, its credits, and the Privacy and Legal pages.
 struct AboutScreen: Screen {
 	let app: XCUIApplication
 
 	var host: XCUIElement { app.element(matching: TestIdentifiers.About.screen) }
+
+	/// Open About by its route.
+	@discardableResult
+	func navigate() -> Self {
+		open(route: "/about", mountedWhen: host)
+	}
 
 	/// A text in the screen, found by its label: the host's identifier reaches
 	/// every element in it.

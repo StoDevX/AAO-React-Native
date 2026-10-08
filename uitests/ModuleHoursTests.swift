@@ -83,45 +83,55 @@ class ModuleHoursTests: UITestCaseUnbooted {
 				for: TestIdentifiers.Hours.aBuildingWithLongSchedule, titleBefore: titleBefore)
 	}
 
-	/// The report screen's unsaved-changes guard has to survive every way out,
-	/// not just the ones a plain `beforeRemove` listener can see. Dragging the
-	/// sheet down or tapping its dimmed backdrop asks UIKit to dismiss the
-	/// *formSheet* natively -- a level up from the report screen's own pushed
-	/// stack -- which `beforeRemove` alone cannot refuse. This is the scenario
-	/// that motivated moving the guard to `usePreventRemove`.
-	func testUnsavedChangesGuardSurvivesEveryWayToLeave() throws {
-		let screen = HoursScreen(app: app)
+	// The report screen's unsaved-changes guard has to survive every way out,
+	// not just the ones a plain `beforeRemove` listener can see. Dragging the
+	// sheet down or tapping its dimmed backdrop asks UIKit to dismiss the
+	// *formSheet* natively -- a level up from the report screen's own pushed
+	// stack -- which `beforeRemove` alone cannot refuse. This is the scenario
+	// that motivated moving the guard to `usePreventRemove`. One test per way
+	// out.
+
+	/// The back button: cancelling keeps the edit and the report screen up.
+	func testUnsavedChangesGuardHoldsAgainstTheBackButton() throws {
+		openReportWithAnUnsavedEdit()
+			.dismissReportScreen()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToKeepEditing()
+			.verifyReportScreenPresented()
+	}
+
+	/// Dragging the sheet closed attempts a native dismissal of the whole
+	/// formSheet, not just a pop of the report screen -- the path the
+	/// Critical this test guards against found unguarded.
+	func testUnsavedChangesGuardHoldsAgainstDraggingTheSheetDown() throws {
+		openReportWithAnUnsavedEdit()
+			.attemptToDragSheetClosed()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToKeepEditing()
+			.verifyReportScreenPresented()
+	}
+
+	/// The dimmed backdrop is the sheet's other native dismissal path.
+	/// Confirming the discard proves the guard's "let it go" branch still
+	/// actually lets the sheet close, rather than the guard having
+	/// accidentally made the sheet undismissable outright.
+	func testUnsavedChangesGuardLetsTheBackdropDiscardTheEdit() throws {
+		openReportWithAnUnsavedEdit()
+			.attemptToTapDimmedBackdrop()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToDiscardChanges()
+			.verifyReportScreenGone(buildingName: TestIdentifiers.Hours.anExcludedBuilding)
+	}
+
+	/// Opens a building's report screen from its detail sheet and leaves an
+	/// edit unsaved on it.
+	private func openReportWithAnUnsavedEdit() -> HoursScreen {
+		HoursScreen(app: app)
 			.navigate()
 			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.makeUnsavedEditOnReportScreen()
-
-		// The back button: cancelling keeps the edit and the report screen up.
-		screen
-			.dismissReportScreen()
-			.verifyDiscardChangesAlertPresented()
-			.chooseToKeepEditing()
-			.verifyReportScreenPresented()
-
-		// Dragging the sheet closed attempts a native dismissal of the whole
-		// formSheet, not just a pop of the report screen -- the path the
-		// Critical this test guards against found unguarded.
-		screen
-			.attemptToDragSheetClosed()
-			.verifyDiscardChangesAlertPresented()
-			.chooseToKeepEditing()
-			.verifyReportScreenPresented()
-
-		// The dimmed backdrop is the sheet's other native dismissal path.
-		// Confirming the discard this time proves the guard's "let it go"
-		// branch still actually lets the sheet close, rather than the guard
-		// having accidentally made the sheet undismissable outright.
-		screen
-			.attemptToTapDimmedBackdrop()
-			.verifyDiscardChangesAlertPresented()
-			.chooseToDiscardChanges()
-			.verifyReportScreenGone(buildingName: TestIdentifiers.Hours.anExcludedBuilding)
 	}
 }

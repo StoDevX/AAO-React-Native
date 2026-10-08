@@ -92,11 +92,8 @@ set launch arguments on `app` before the first `navigate()` for anything the
 first launch needs, such as a text size. Either changes the arguments, so the
 app is relaunched.
 
-**The home tiles and Home's ⋯ menu are tapped by `ModuleHomeTests`,** which
-checks each against its screen's `mounted` element. A new menu item goes in
-`testEveryHomeMenuItemOpensItsScreen`'s list, and a new tile in the list of the
-test that covers its place in the grid: `testTheUpperTilesOpenTheirScreens` or
-`testTheLowerTilesOpenTheirScreens`.
+**No test taps Home's tiles or its ⋯ menu.** Each screen's own tests open it by
+URL, and a tap that only shows a screen opened earns no slot (see below).
 
 **Assert the precondition before the action.** Read a field's text back after
 typing it; confirm a row exists before tapping. A test that silently did nothing
@@ -127,10 +124,10 @@ Four disqualifiers, each of which has removed a test here:
    appearance to dark, the app did not follow, and its assertions passed either
    way — it photographed a light screen, called it dark, and could not fail at
    the one thing it was for.
-2. **Reachability is already asserted elsewhere.**
-   `ModuleHomeTests` taps every tile, and `navigate()` asserts its
-   screen mounted. A capture-only test is therefore a second copy of both at
-   the price of a full cold launch.
+2. **Reachability is already asserted elsewhere.** A screen's `navigate()`
+   asserts it mounted, so a test that only opens a screen, or only captures
+   it, repeats that at the price of a launch. That is why no test taps Home's
+   tiles or its ⋯ menu any more.
 3. **The defect would be in iOS or a library, not in us.**
    `testAddToCalendarSurvivesReopeningTheSheet` asserted that
    react-native-screens reuses a navigation controller, which is not ours to

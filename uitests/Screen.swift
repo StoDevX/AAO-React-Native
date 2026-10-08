@@ -144,21 +144,6 @@ extension Screen {
 		return self
 	}
 
-	/// Report a Problem's navigation bar, drawn only while the form is up.
-	var problemForm: XCUIElement {
-		app.navigationBars[TestIdentifiers.Support.reportProblemTitle]
-	}
-
-	/// Close Report a Problem with its own close button, and wait for it to go.
-	@discardableResult
-	func closeProblemForm() -> Self {
-		let close = app.buttons[TestIdentifiers.Support.closeProblemForm].firstMatch
-		XCTAssertTrue(close.waitForHittable(timeout: 10), "Report a Problem should have a close button")
-		close.tap()
-		XCTAssertTrue(problemForm.waitUntilGone(timeout: 10), "Report a Problem should close")
-		return self
-	}
-
 	/// Attach a screenshot of the whole screen to the test report, for as long
 	/// as `captureLifetime` says.
 	@discardableResult
