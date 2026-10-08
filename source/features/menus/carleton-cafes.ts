@@ -12,7 +12,7 @@ export type CarletonCafe = {
 	loadingMessage: string[]
 }
 
-/** Carleton's dining halls, in the order they are listed: the CARLS app's, then Schulze. */
+/** Carleton's dining halls, in the order Menus' tab bar lists them. */
 export const CARLETON_CAFES: readonly CarletonCafe[] = [
 	{
 		cafe: 'burton',
@@ -27,16 +27,16 @@ export const CARLETON_CAFES: readonly CarletonCafe[] = [
 		loadingMessage: ['Tracking down empty seats…'],
 	},
 	{
-		cafe: 'weitz',
-		title: 'Weitz Center',
-		icon: 'paintpalette.fill',
-		loadingMessage: ['Observing the artwork…', 'Previewing performances…'],
-	},
-	{
 		cafe: 'sayles',
 		title: 'Sayles Hill',
 		icon: 'storefront.fill',
 		loadingMessage: ['Engaging in people-watching…', 'Checking the mail…'],
+	},
+	{
+		cafe: 'weitz',
+		title: 'Weitz',
+		icon: 'paintpalette.fill',
+		loadingMessage: ['Observing the artwork…', 'Previewing performances…'],
 	},
 	{
 		cafe: 'schulze',

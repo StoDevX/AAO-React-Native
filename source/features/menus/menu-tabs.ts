@@ -25,12 +25,6 @@ export const MENU_TABS: readonly MenuTab[] = [
 	})),
 ]
 
-/** Where each campus's cafés open: its first tab. */
-export const CAMPUS_MENU_HREF = {
-	stolaf: '/menus',
-	carleton: '/menus/burton',
-} as const satisfies Record<Campus, string>
-
 /**
  * The campus whose cafés the tab bar shows, from the path Menus is on: a
  * Carleton hall's tab shows Carleton's, and anything else St. Olaf's.
