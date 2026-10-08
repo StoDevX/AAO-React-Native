@@ -124,6 +124,7 @@ function RootLayout(): React.ReactNode {
 								unstable_screenErrorBoundary={ScreenErrorFallback}
 							>
 								<Stack.Screen name="menus" options={{title: 'Menus'}} />
+								<Stack.Screen name="carleton-menus" options={{title: 'Menus'}} />
 								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
 								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
 								<Stack.Screen name="carleton-convos" options={{title: 'Convocations'}} />
