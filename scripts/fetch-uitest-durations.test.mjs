@@ -3,11 +3,7 @@ import {describe, it} from 'node:test'
 
 import {ReportUtils} from '@flakiness/sdk'
 
-import {
-	buildDurationsRequest,
-	parseCachedTable,
-	readPredictedDurations,
-} from './fetch-uitest-durations.mjs'
+import {buildDurationsRequest, readPredictedDurations} from './fetch-uitest-durations.mjs'
 import {discoverTests} from './split-uitests.mjs'
 import {buildReport} from './write-uitest-flakiness-report.mjs'
 
@@ -106,26 +102,6 @@ describe('buildDurationsRequest', () => {
 		})
 
 		assert.equal(ReportUtils.validateReport(request), undefined)
-	})
-})
-
-describe('parseCachedTable', () => {
-	it('keeps the durations of a well-formed table', () => {
-		assert.deepEqual(parseCachedTable('{"ModuleHomeTests/testOne()": 12.5}'), {
-			'ModuleHomeTests/testOne()': 12.5,
-		})
-	})
-
-	it('drops an entry that is not a finite number', () => {
-		assert.deepEqual(parseCachedTable('{"A/one()": 3, "A/two()": "slow", "A/three()": null}'), {
-			'A/one()': 3,
-		})
-	})
-
-	it('reads anything other than a JSON object as an empty table', () => {
-		for (const text of ['[1, 2]', '7', 'null', '{"truncated', '']) {
-			assert.deepEqual(parseCachedTable(text), {}, text)
-		}
 	})
 })
 

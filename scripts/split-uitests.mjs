@@ -9,6 +9,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import {formatSeconds} from './pr-report/uitest-report.mjs'
+
 const CLASS_PATTERN = /class\s+(\w+)\s*:\s*(?:XCTestCase|UITestCase)/gu
 const METHOD_PATTERN = /func\s+(test\w+)\s*\(/gu
 
@@ -93,20 +95,26 @@ export function weigh(classes, durations) {
  * Weigh each test method on its own.
  *
  * A class can hold more of the suite than one shard's share, and no packing can
- * divide a class — only naming its methods individually can.
+ * divide a class — only naming its methods individually can. A method the
+ * table has no time for is `guessed`, so the plan can say which estimates
+ * rest on no history.
  * @param {Array<{className: string, methods: string[]}>} classes
  * @param {Record<string, number>} durations
- * @returns {Array<{name: string, weight: number}>}
+ * @returns {Array<{name: string, weight: number, guessed: boolean}>}
  */
 export function weighMethods(classes, durations) {
 	const known = Object.values(durations)
 	const fallback = known.length === 0 ? 1 : p90(known)
 
 	return classes.flatMap((testClass) =>
-		testClass.methods.map((method) => ({
-			name: `${testClass.className}/${method}`,
-			weight: durations[`${testClass.className}/${method}()`] ?? fallback,
-		})),
+		testClass.methods.map((method) => {
+			const seconds = durations[`${testClass.className}/${method}()`]
+			return {
+				name: `${testClass.className}/${method}`,
+				weight: seconds ?? fallback,
+				guessed: seconds === undefined,
+			}
+		}),
 	)
 }
 
@@ -131,6 +139,55 @@ export function packShards(items, shardCount) {
 	}
 
 	return shards
+}
+
+const shardTotal = (shard) => shard.reduce((total, item) => total + item.weight, 0)
+
+/**
+ * The plan as the UI-test report reads it: each shard's estimate, keyed by its
+ * matrix number, and each test's, keyed as the report keys a test's duration.
+ * @param {Array<Array<{name: string, weight: number, guessed?: boolean}>>} shards
+ */
+export function buildPlan(shards) {
+	const items = shards.flat()
+	return {
+		shards: Object.fromEntries(shards.map((shard, index) => [index + 1, shardTotal(shard)])),
+		estimates: Object.fromEntries(items.map((item) => [`${item.name}()`, item.weight])),
+		guessed: items.filter((item) => item.guessed).map((item) => `${item.name}()`),
+	}
+}
+
+/**
+ * The plan for the job log: each shard's estimate and its tests', longest
+ * first, then the total and the shortest slowest shard any split could give.
+ * That floor is an even share, or the longest test when it outlasts one.
+ * @param {Array<Array<{name: string, weight: number, guessed?: boolean}>>} shards
+ * @returns {string[]}
+ */
+export function describePlan(shards) {
+	const items = shards.flat()
+	const width = Math.max(...items.map((item) => formatSeconds(item.weight).length))
+	const lines = shards.flatMap((shard, index) => [
+		`Shard ${index + 1}: ${formatSeconds(shardTotal(shard))} estimated, ${shard.length} test${shard.length === 1 ? '' : 's'}`,
+		...[...shard]
+			.sort((a, b) => b.weight - a.weight)
+			.map(
+				(item) =>
+					`  ${formatSeconds(item.weight).padStart(width)}  ${item.name}${item.guessed ? ' (guess: no history)' : ''}`,
+			),
+	])
+
+	const total = shardTotal(items)
+	const evenShare = total / shards.length
+	const longest = Math.max(...items.map((item) => item.weight))
+	const floor =
+		longest > evenShare
+			? `${formatSeconds(longest)} per shard, the longest test`
+			: `${formatSeconds(evenShare)} per shard`
+	lines.push(
+		`Total ${formatSeconds(total)} across ${shards.length} shards; no split can beat ${floor}.`,
+	)
+	return lines
 }
 
 /** Render packed shards as the matrix object `fromJSON()` expects. */
@@ -178,7 +235,9 @@ function main() {
 	const skipDirs = args.flatMap((arg, index) => (args[index - 1] === '--skip-dir' ? [arg] : []))
 
 	if (!testDir || !fs.existsSync(testDir)) {
-		console.error(`usage: split-uitests.mjs --test-dir <dir> [--shards N] [--skip-dir <subdir>]...`)
+		console.error(
+			`usage: split-uitests.mjs --test-dir <dir> [--shards N] [--skip-dir <subdir>]... [--plan <out.json>]`,
+		)
 		process.exit(1)
 	}
 
@@ -208,17 +267,17 @@ function main() {
 		granularity === 'method' ? weighMethods(classes, durations) : weigh(classes, durations)
 	const shards = packShards(items, shardCount)
 
-	const total = items.reduce((n, i) => n + i.weight, 0)
-	console.error(
-		`Found ${classes.length} test classes weighing ${total.toFixed(0)} units, ` +
-			`splitting across ${shards.length} shards`,
-	)
-	for (const [index, shard] of shards.entries()) {
-		const weight = shard.reduce((n, i) => n + i.weight, 0)
-		console.error(
-			`  Shard ${index + 1} (${weight.toFixed(0)} units): ` +
-				`${shard.map((i) => i.name).join(', ')}`,
-		)
+	console.error(`Found ${classes.length} test classes, splitting across ${shards.length} shards`)
+	if (Object.keys(durations).length === 0) {
+		console.error('No durations to go on: every test weighs one, so the times below are counts.')
+	}
+	for (const line of describePlan(shards)) {
+		console.error(line)
+	}
+
+	const planPath = valueOf('--plan', null)
+	if (planPath) {
+		fs.writeFileSync(planPath, JSON.stringify(buildPlan(shards)))
 	}
 
 	console.log(JSON.stringify(formatMatrix(shards, target)))

@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 /**
- * Fill the UITest duration table with flakiness.io's predicted durations.
+ * Write the UITest duration table from flakiness.io's predicted durations.
  *
- * The cached table holds one master run, and a test's time can double from one
- * run to the next, so shards packed from it come out uneven. flakiness.io
- * predicts each test's duration from master's whole history instead. A test it
- * has no prediction for keeps the cached figure.
+ * A test's time can double from one run to the next, so flakiness.io predicts
+ * each one from master's history. `split-uitests.mjs` packs the shards from
+ * the table, and guesses for any test it lacks.
  *
  * This only tunes the balance of the shards, so it must never fail the job: on
- * any error it leaves the table as it was.
+ * any error it writes nothing, and the splitter weighs every test the same.
  */
 
 import fs from 'node:fs'
@@ -16,7 +15,7 @@ import {createRequire} from 'node:module'
 import path from 'node:path'
 import {pathToFileURL} from 'node:url'
 
-import {discoverTests, flagValue, readTestDir, sanitizeDurations} from './split-uitests.mjs'
+import {discoverTests, flagValue, readTestDir} from './split-uitests.mjs'
 import {
 	FLAKINESS_PROJECT,
 	UITEST_CATEGORY,
@@ -76,27 +75,6 @@ function importSdk(flakinessDir) {
 	return import(pathToFileURL(createRequire(cli).resolve('@flakiness/sdk')).href)
 }
 
-/**
- * Read the cached table's text, keeping only well-formed entries. Anything but
- * a JSON object -- a truncated or corrupt cache entry -- reads as empty.
- */
-export function parseCachedTable(text) {
-	try {
-		const table = JSON.parse(text)
-		return table && typeof table === 'object' && !Array.isArray(table)
-			? sanitizeDurations(table)
-			: {}
-	} catch {
-		return {}
-	}
-}
-
-function readCachedTable(durationsPath) {
-	return fs.existsSync(durationsPath)
-		? parseCachedTable(fs.readFileSync(durationsPath, 'utf8'))
-		: {}
-}
-
 async function main() {
 	const args = process.argv.slice(2)
 	const testDir = flagValue(args, '--test-dir')
@@ -114,7 +92,7 @@ async function main() {
 	// all, rather than an error.
 	const commitId = process.env.GITHUB_SHA
 	if (!commitId) {
-		console.log('GITHUB_SHA is unset, keeping the cached table')
+		console.log('GITHUB_SHA is unset, so there is nothing to ask flakiness.io about')
 		return
 	}
 
@@ -124,17 +102,13 @@ async function main() {
 		const request = buildDurationsRequest(classes, {commitId})
 		const predicted = readPredictedDurations(await fetchTestDurations(request))
 
-		// Written beside the table and renamed over it, so a step timeout that
-		// lands mid-write cannot leave the splitter a truncated table.
-		const cached = readCachedTable(durationsPath)
-		fs.writeFileSync(`${durationsPath}.tmp`, JSON.stringify({...cached, ...predicted}))
-		fs.renameSync(`${durationsPath}.tmp`, durationsPath)
+		fs.writeFileSync(durationsPath, JSON.stringify(predicted))
 
 		const total = classes.reduce((n, testClass) => n + testClass.methods.length, 0)
 		console.log(`flakiness.io predicted ${Object.keys(predicted).length} of ${total} tests`)
 	} catch (error) {
 		console.log(
-			`Could not fetch durations from flakiness.io, keeping the cached table: ${error.message}`,
+			`Could not fetch durations from flakiness.io, so every test weighs the same: ${error.message}`,
 		)
 	}
 }

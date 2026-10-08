@@ -1,21 +1,16 @@
-#!/usr/bin/env node
 /**
- * Write a table of per-test durations from an XCResult bundle.
- *
- * `scripts/split-uitests.mjs` packs shards by test count, which is not the same
- * as time: one test has been seen to take two minutes where the median is
- * nearer ten seconds. This is where the real figures come from.
+ * Read per-test durations out of an XCResult bundle, for the UI-test report
+ * (`scripts/pr-report/uitest-report.mjs`).
  */
 
 import {execFileSync} from 'node:child_process'
-import fs from 'node:fs'
 
 /**
  * Map every test that genuinely ran to the seconds it took.
  *
  * Only passing tests count. A skipped test reports a fraction of a second and a
- * failed one stops early, so either would drag its class's weight down and
- * unbalance the next run's shards. A retried test reports the mean of its
+ * failed one stops early, so either would read as a test that got faster, and
+ * as one that beat its estimate. A retried test reports the mean of its
  * attempts, a failed one included, so its passing attempt's time is taken
  * instead.
  * @param {object[] | undefined} testNodes
@@ -65,29 +60,4 @@ export function readTestNodes(bundlePath) {
 	)
 
 	return JSON.parse(stdout).testNodes ?? []
-}
-
-function main() {
-	const [bundlePath, outputPath] = process.argv.slice(2)
-
-	if (!bundlePath || !outputPath) {
-		console.error('usage: collect-uitest-durations.mjs <path to .xcresult> <output.json>')
-		process.exit(2)
-	}
-
-	let durations = {}
-	try {
-		durations = collectDurations(readTestNodes(bundlePath))
-	} catch (error) {
-		// A step that times out leaves no bundle. Losing a run's timings costs
-		// the next run some balance; failing the shard costs it everything.
-		console.log(`Could not read ${bundlePath}: ${error.message}`)
-	}
-
-	fs.writeFileSync(outputPath, `${JSON.stringify(durations, null, '\t')}\n`)
-	console.log(`Recorded ${Object.keys(durations).length} test durations`)
-}
-
-if (import.meta.main) {
-	main()
 }

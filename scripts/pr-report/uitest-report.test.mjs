@@ -24,10 +24,18 @@ let BASE = 'abcdef1234567'.padEnd(40, '0')
 let report = ({
 	durations = {},
 	flaky = [],
-	shards = {1: {wallSeconds: 552, testCount: Object.keys(durations).length}},
+	shards = {
+		1: {
+			wallSeconds: 552,
+			testCount: Object.keys(durations).length,
+			testSeconds: Object.values(durations).reduce((total, seconds) => total + seconds, 0),
+			plannedSeconds: null,
+		},
+	},
 	result = 'success',
 	baseSha = BASE,
-} = {}) => ({version: 1, sha: 'head', baseSha, result, shards, durations, flaky})
+	plan = null,
+} = {}) => ({version: 2, sha: 'head', baseSha, result, shards, durations, flaky, plan})
 
 describe('buildShard', () => {
 	it('takes the durations of passing tests and the flaky ones from the result bundle', () => {
@@ -89,17 +97,41 @@ describe('mergeShards', () => {
 			{sha: 'head', baseSha: null, result: 'failure'},
 		)
 		assert.deepEqual(merged, {
-			version: 1,
+			version: 2,
 			sha: 'head',
 			baseSha: null,
 			result: 'failure',
-			shards: {1: {wallSeconds: 90, testCount: 2}, 2: {wallSeconds: 60, testCount: 1}},
+			shards: {
+				1: {wallSeconds: 90, testCount: 2, testSeconds: 4, plannedSeconds: null},
+				2: {wallSeconds: 60, testCount: 1, testSeconds: 2, plannedSeconds: null},
+			},
 			durations: {a: 1, c: 3, b: 2},
 			flaky: [
 				{identifier: 'a', attempts: 3},
 				{identifier: 'b', attempts: 2},
 			],
+			plan: null,
 		})
+	})
+
+	it("sets each shard beside the planner's estimate for it, and keeps the test estimates", () => {
+		let merged = mergeShards(
+			[
+				{shard: '1', wallSeconds: 900, durations: {a: 300}, flaky: []},
+				{shard: '2', wallSeconds: 800, durations: {b: 250}, flaky: []},
+			],
+			{
+				sha: 'head',
+				baseSha: null,
+				result: 'success',
+				plan: {shards: {1: 280, 2: 270}, estimates: {a: 280, b: 270}, guessed: ['b']},
+			},
+		)
+		assert.deepEqual(merged.shards, {
+			1: {wallSeconds: 900, testCount: 1, testSeconds: 300, plannedSeconds: 280},
+			2: {wallSeconds: 800, testCount: 1, testSeconds: 250, plannedSeconds: 270},
+		})
+		assert.deepEqual(merged.plan, {estimates: {a: 280, b: 270}, guessed: ['b']})
 	})
 })
 
@@ -127,6 +159,23 @@ describe('readUitestReport', () => {
 		assert.deepEqual(read.flaky, [{identifier: 'FooTests/testA()', attempts: 2}])
 	})
 
+	it('drops plan entries whose names are not safe to print', () => {
+		let read = readUitestReport(
+			write(
+				report({
+					plan: {
+						estimates: {'FooTests/testA()': 30, 'x`; @someone': 40},
+						guessed: ['FooTests/testA()', '-->`@x`'],
+					},
+				}),
+			),
+		)
+		assert.deepEqual(read.plan, {
+			estimates: {'FooTests/testA()': 30},
+			guessed: ['FooTests/testA()'],
+		})
+	})
+
 	it('returns null for a missing file, a file that is not JSON and a malformed report', () => {
 		assert.equal(readUitestReport(join(dir, 'absent.json')), null)
 		assert.equal(readUitestReport(write('<html>expired</html>')), null)
@@ -139,13 +188,21 @@ describe('readUitestReport', () => {
 			{...report(), baseSha: 'abc'},
 			{...report(), baseSha: undefined},
 			{...report(), baseSha: 'A'.repeat(40)},
+			{
+				...report(),
+				shards: {1: {wallSeconds: 1, testCount: 1, testSeconds: 1, plannedSeconds: 'x'}},
+			},
+			{...report(), shards: {1: {wallSeconds: 1, testCount: 1, plannedSeconds: null}}},
+			{...report(), plan: undefined},
+			{...report(), plan: {estimates: {a: 'x'}, guessed: []}},
+			{...report(), plan: {estimates: {}, guessed: 'a'}},
 		]) {
 			assert.equal(readUitestReport(write(bad)), null)
 		}
 	})
 
 	it('returns a report at another version unchecked', () => {
-		let other = {version: 2, anything: true}
+		let other = {version: 1, anything: true}
 		assert.deepEqual(readUitestReport(write(other)), other)
 	})
 })
@@ -275,6 +332,53 @@ describe('buildBlock', () => {
 		assert.match(rest, /…and 10 more\./u)
 	})
 
+	it("sets each shard's planned time beside what it took, and lists the furthest estimates", () => {
+		let head = report({
+			durations: {a: 100, b: 40, c: 61, d: 10, e: 20, f: 31, g: 5},
+			shards: {
+				1: {wallSeconds: 1500, testCount: 4, testSeconds: 171, plannedSeconds: 150},
+				2: {wallSeconds: 1300, testCount: 3, testSeconds: 96, plannedSeconds: 140},
+			},
+			plan: {
+				estimates: {a: 60, b: 40, c: 60, d: 79, e: 20, f: 30, g: 6, gone: 50},
+				guessed: ['d'],
+			},
+		})
+		let block = buildBlock({head, baselines: [], comparedSha: ''})
+		assert.ok(
+			block.includes(
+				[
+					'| Shard | Planned | Test time | Wall |',
+					'| --- | --- | --- | --- |',
+					'| 1 | 2m 30s | 2m 51s | 25m 0s |',
+					'| 2 | 2m 20s | 1m 36s | 21m 40s |',
+					'',
+				].join('\n'),
+			),
+			block,
+		)
+		assert.ok(
+			block.includes(
+				[
+					'| Furthest from its estimate | Estimate | Took | Δ |',
+					'| --- | --- | --- | --- |',
+					'| `d` | 79.0 s (guess) | 10.0 s | -69.0 s |',
+					'| `a` | 60.0 s | 100.0 s | +40.0 s |',
+					'| `c` | 60.0 s | 61.0 s | +1.0 s |',
+					'| `f` | 30.0 s | 31.0 s | +1.0 s |',
+					'| `g` | 6.0 s | 5.0 s | -1.0 s |',
+					'',
+				].join('\n'),
+			),
+			block,
+		)
+	})
+
+	it('leaves the plan out of a report that has none', () => {
+		let block = buildBlock({head: baseline, baselines: [baseline], comparedSha: baseline.baseSha})
+		assert.doesNotMatch(block, /Planned|Furthest from/u)
+	})
+
 	it('says so when no test needed a retry and nothing moved', () => {
 		let block = buildBlock({head: baseline, baselines: [baseline], comparedSha: baseline.baseSha})
 		assert.match(block, /No test needed a retry\./u)
@@ -289,13 +393,13 @@ describe('buildBlock', () => {
 
 	it('says the format changed, and names an older master commit', () => {
 		assert.match(
-			buildBlock({head: report(), baselines: [{version: 2}], comparedSha: 'x'}),
-			/Baseline format changed \(master's report is version 2\)/u,
+			buildBlock({head: report(), baselines: [{version: 1}], comparedSha: 'x'}),
+			/Baseline format changed \(master's report is version 1\)/u,
 		)
 		assert.match(
 			buildBlock({
 				head: report({durations: {a: 10}}),
-				baselines: [{version: 2}, baseline],
+				baselines: [{version: 1}, baseline],
 				comparedSha: BASE,
 			}),
 			/test time 10s \(master: 10s on the same 1, 0s\)/u,
@@ -308,7 +412,7 @@ describe('buildBlock', () => {
 
 	it('renders nothing without a current-version report', () => {
 		assert.equal(buildBlock({head: null, baselines: [baseline], comparedSha: ''}), null)
-		assert.equal(buildBlock({head: {version: 2}, baselines: [baseline], comparedSha: ''}), null)
+		assert.equal(buildBlock({head: {version: 1}, baselines: [baseline], comparedSha: ''}), null)
 	})
 })
 
