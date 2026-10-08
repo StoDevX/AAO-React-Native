@@ -61,6 +61,16 @@ export function getServerAddress(): Promise<serverAddressType> {
 	return getItemAsString(serverAddressKey)
 }
 
+/// Carleton's server, set apart from St. Olaf's: each campus runs its own.
+const carletonServerAddressKey = 'settings:carleton-server-address'
+export function setCarletonServerAddress(address: serverAddressType): Promise<void> {
+	if (address && !address.endsWith('/')) address += '/'
+	return setItem(carletonServerAddressKey, address)
+}
+export function getCarletonServerAddress(): Promise<serverAddressType> {
+	return getItemAsString(carletonServerAddressKey)
+}
+
 /// MARK: Favorite Buildings
 
 const favoriteBuildingsKey = 'buildings:favorited'

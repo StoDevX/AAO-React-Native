@@ -1,4 +1,5 @@
-import {client, isHTTPError} from '@frogpond/api'
+import {carletonClient, client, isHTTPError} from '@frogpond/api'
+import type {SourceCampus} from './types'
 
 const FETCH_TIMEOUT_MS = 10_000
 
@@ -88,15 +89,20 @@ async function errorBody(response: Response): Promise<unknown> {
 /// `format` picks the body parser: `'json'` (the default) for sources like
 /// WordPress's REST API, `'text'` for sources whose media type is not JSON —
 /// RSS (`application/rss+xml`), for instance.
+///
+/// `campus` picks the server a relative href resolves against: St. Olaf's api
+/// root by default, or Carleton's, which has a server setting of its own.
 export async function fetchSourceBody(
 	href: string,
 	signal: AbortSignal,
 	label: string,
 	format: 'json' | 'text' = 'json',
+	campus: SourceCampus = 'stolaf',
 ): Promise<unknown> {
 	if (!isAbsoluteHref(href)) {
 		try {
-			let request = client.get(href, {signal})
+			let api = campus === 'carleton' ? carletonClient : client
+			let request = api.get(href, {signal})
 			return await (format === 'text' ? request.text() : request.json())
 		} catch (error) {
 			// The same error an absolute source's refusal throws, so a caller reads a

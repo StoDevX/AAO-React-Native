@@ -1,7 +1,14 @@
 import {client} from '@frogpond/api'
 import {queryOptions, type QueryClient} from '@tanstack/react-query'
 import bundledJson from './bundled.json'
-import {ID_PROPERTY, JrdSchema, type Jrd, type ResolvedSource} from './types'
+import {
+	CAMPUS_PROPERTY,
+	ID_PROPERTY,
+	JrdSchema,
+	type Jrd,
+	type ResolvedSource,
+	type SourceCampus,
+} from './types'
 
 const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24
 
@@ -46,12 +53,18 @@ export async function fetchManifest(queryClient: QueryClient): Promise<Jrd> {
 	}
 }
 
+/// A link's campus. Anything but Carleton reads as St. Olaf's, the api root.
+function campusOf(link: Jrd['links'][number]): SourceCampus {
+	return link.properties[CAMPUS_PROPERTY] === 'carleton' ? 'carleton' : 'stolaf'
+}
+
 function toResolved(link: Jrd['links'][number]): ResolvedSource {
 	return {
 		id: link.properties[ID_PROPERTY],
 		href: link.href,
 		type: link.type,
 		title: link.titles?.['und'],
+		campus: campusOf(link),
 	}
 }
 

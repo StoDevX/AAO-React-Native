@@ -153,7 +153,7 @@ export default function HoursPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>{campus === 'carleton' ? 'Carleton Campus' : 'Hours'}</Stack.Title>
+			<Stack.Title>{campus === 'carleton' ? 'Building Hours' : 'Hours'}</Stack.Title>
 			<HoursView campus={campus} />
 		</>
 	)

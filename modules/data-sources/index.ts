@@ -8,6 +8,7 @@ export {
 } from './resolve'
 export {useManifest} from './use-manifest'
 export {
+	CAMPUS_PROPERTY,
 	ID_PROPERTY,
 	JrdSchema,
 	REL_A_TO_Z,
@@ -26,4 +27,5 @@ export {
 	REL_STUDENT_WORK_UNITS,
 	type Jrd,
 	type ResolvedSource,
+	type SourceCampus,
 } from './types'

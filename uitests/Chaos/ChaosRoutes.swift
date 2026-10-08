@@ -16,6 +16,7 @@ enum ChaosRoutes {
 		"carleton-convos",
 		"carleton-convos/archived",
 		"carleton-ldc-menu",
+		"carleton-menus",
 		"carleton-sayles-menu",
 		"carleton-schulze-menu",
 		"carleton-sumo",

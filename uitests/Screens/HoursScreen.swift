@@ -8,11 +8,11 @@ struct HoursScreen: Screen {
 		app.navigationBars[TestIdentifiers.Hours.title]
 	}
 
-	/// Carleton's Hours, which the Carleton Campus tile opens with
+	/// Carleton's Hours, which Carleton's Building Hours tile opens with
 	/// `?campus=carleton`. Its search field is St. Olaf's too, so the title is
 	/// what tells the two apart.
 	var carletonMounted: XCUIElement {
-		app.navigationBars[TestIdentifiers.Buttons.carletonCampus]
+		app.navigationBars[TestIdentifiers.Hours.carletonTitle]
 	}
 
 	/// Opens Hours, which defaults to `'stolaf'` with no `?campus=` param.

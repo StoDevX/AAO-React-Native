@@ -17,7 +17,7 @@ export const ALTERNATE_ICONS = ['old-main', 'windmill-sky', 'windmill-dawn', 'wi
  * whose tinted look adds nothing: each set costs one render per appearance it
  * lists. Each lives at assets/<name>.xcassets/<name>.appiconset.
  */
-export const STATIC_ALTERNATE_ICONS = ['old-main-retro']
+export const STATIC_ALTERNATE_ICONS = ['old-main-retro', 'carls-penguin']
 
 /** Where the tracked documents live, relative to the repository root. */
 const SOURCE_DIR = 'assets'

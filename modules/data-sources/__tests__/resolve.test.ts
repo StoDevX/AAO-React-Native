@@ -2,8 +2,10 @@ import {onlineManager, QueryClient} from '@tanstack/react-query'
 import bundled from '../bundled.json'
 import {fetchManifest, hasBundledSource, resolveSource, resolveSources} from '../resolve'
 import {
+	CAMPUS_PROPERTY,
 	ID_PROPERTY,
 	JrdSchema,
+	REL_CALENDAR,
 	REL_A_TO_Z,
 	REL_JOBS,
 	REL_NEWS,
@@ -193,4 +195,33 @@ test('the bundled manifest offers Presence as a calendar', () => {
 	)
 	expect(link?.href).toBe('https://api.presence.io/stolaf/v1/events')
 	expect(link?.type).toBe('application/vnd.presence.events+json')
+})
+
+const EVENTS = ['application/vnd.frogpond.events+json']
+
+test("a source marked Carleton's resolves against Carleton's server", () => {
+	const source = resolveSource(manifest, REL_CALENDAR, 'sumo-schedule', EVENTS)
+	expect(source.campus).toBe('carleton')
+	expect(source.href).toBe('calendar/named/sumo-schedule')
+})
+
+test("a source with no campus resolves against St. Olaf's", () => {
+	expect(resolveSource(manifest, REL_CALENDAR, 'krlx-schedule', EVENTS).campus).toBe('stolaf')
+})
+
+test('a campus this build does not know reads as St. Olaf, without failing the manifest', () => {
+	const document = JrdSchema.parse({
+		subject: 'https://stolaf.edu',
+		links: [
+			{
+				rel: REL_CALENDAR,
+				href: 'calendar/named/elsewhere',
+				type: EVENTS[0],
+				properties: {[ID_PROPERTY]: 'elsewhere', [CAMPUS_PROPERTY]: 'macalester'},
+			},
+		],
+	})
+	expect(
+		resolveSources(document, REL_CALENDAR, EVENTS).find((s) => s.id === 'elsewhere')?.campus,
+	).toBe('stolaf')
 })

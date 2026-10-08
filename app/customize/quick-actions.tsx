@@ -22,7 +22,8 @@ import {
 } from '../../source/features/quick-actions/destinations'
 import type {QuickActionDestination} from '../../source/features/quick-actions/destinations'
 import {isPickable} from '../../source/features/quick-actions/picker'
-import {useQuickActionsStore} from '../../source/features/quick-actions/store'
+import {pickedFor, useQuickActionsStore} from '../../source/features/quick-actions/store'
+import {useCampus} from '../../source/features/campus/store'
 import {iconImage} from '../../source/features/views'
 
 const styles = StyleSheet.create({
@@ -37,14 +38,23 @@ const styles = StyleSheet.create({
 const SYMBOL_COLUMN = 28
 
 export default function QuickActionsPage(): React.ReactNode {
-	let saved = useQuickActionsStore((state) => state.quickActions)
-	let toggle = useQuickActionsStore((state) => state.toggleQuickAction)
-	let reset = useQuickActionsStore((state) => state.resetQuickActions)
+	let campus = useCampus()
+	let saved = useQuickActionsStore((state) => pickedFor(state, campus))
+	let toggleQuickAction = useQuickActionsStore((state) => state.toggleQuickAction)
+	let resetQuickActions = useQuickActionsStore((state) => state.resetQuickActions)
+	let toggle = React.useCallback(
+		(id: string) => toggleQuickAction(id, campus),
+		[campus, toggleQuickAction],
+	)
+	let reset = React.useCallback(() => resetQuickActions(campus), [campus, resetQuickActions])
 
 	// Resolved here rather than in a store selector: a selector returning a
 	// fresh array re-renders forever under zustand 5.
-	let picked = React.useMemo(() => resolveQuickActions(saved).map((d) => d.id), [saved])
-	let destinations = React.useMemo(() => quickActionDestinations(), [])
+	let picked = React.useMemo(
+		() => resolveQuickActions(saved, campus).map((d) => d.id),
+		[saved, campus],
+	)
+	let destinations = React.useMemo(() => quickActionDestinations(campus), [campus])
 
 	return (
 		<>

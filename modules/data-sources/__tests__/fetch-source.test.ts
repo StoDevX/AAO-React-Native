@@ -1,4 +1,4 @@
-import {isHTTPError, setApiRoot} from '@frogpond/api'
+import {isHTTPError, setApiRoot, setCarletonApiRoot} from '@frogpond/api'
 import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
 
 describe('isAbsoluteHref', () => {
@@ -34,6 +34,27 @@ describe('fetchSourceBody', () => {
 		let body = await fetchSourceBody('news/named/mess', controller.signal, 'News')
 
 		expect(body).toEqual({ok: true})
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	test("a Carleton source's relative href resolves against Carleton's server", async () => {
+		setCarletonApiRoot(new URL('https://carleton.example.test/v1/'))
+		let fetchMock = jest.fn((request: Request) => {
+			expect(request.url).toBe('https://carleton.example.test/v1/calendar/named/sumo-schedule')
+			return Promise.resolve(new Response(JSON.stringify([]), {status: 200}))
+		})
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		let controller = new AbortController()
+		let body = await fetchSourceBody(
+			'calendar/named/sumo-schedule',
+			controller.signal,
+			'Calendar',
+			'json',
+			'carleton',
+		)
+
+		expect(body).toEqual([])
 		expect(fetchMock).toHaveBeenCalledTimes(1)
 	})
 

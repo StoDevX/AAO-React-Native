@@ -132,7 +132,6 @@ struct TestIdentifiers {
 		static let menus = "Menus"
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
-		static let carletonCampus = "Carleton Campus"
 		static let developer = "Developer"
 		static let hours = "Hours"
 		static let dictionary = "Dictionary"
@@ -754,6 +753,8 @@ struct TestIdentifiers {
 	enum Hours {
 		/// The screen's title, in app/hours/index.tsx.
 		static let title = "Hours"
+		/// Its title for Carleton, which Carleton's Building Hours tile opens.
+		static let carletonTitle = "Building Hours"
 		/// What the list says when a search matches nothing, in
 		/// source/features/building-hours/list/building-list.tsx.
 		static func noResults(for query: String) -> String { "No results found for \"\(query)\"." }

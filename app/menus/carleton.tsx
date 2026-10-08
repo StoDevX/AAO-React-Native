@@ -6,6 +6,7 @@ import * as c from '@frogpond/colors'
 import {useIsFocused, useRouter} from 'expo-router'
 
 import {NavigationRow} from '../../source/components/rows'
+import {CARLETON_CAFES} from '../../source/features/menus/carleton-cafes'
 import {usePublishMenuHeader} from '../../source/features/menus/menu-header'
 
 export default function CarletonPage(): React.ReactNode {
@@ -30,19 +31,11 @@ export default function CarletonPage(): React.ReactNode {
 		useIsFocused(),
 	)
 
-	let carletonCafes = [
-		{href: '/carleton-burton-menu', title: 'Burton'},
-		{href: '/carleton-ldc-menu', title: 'LDC'},
-		{href: '/carleton-weitz-menu', title: 'Weitz Center'},
-		{href: '/carleton-sayles-menu', title: 'Sayles Hill'},
-		{href: '/carleton-schulze-menu', title: 'Schulze'},
-	] as const
-
 	return (
 		<Host matchContents={false} style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
 				<Section>
-					{carletonCafes.map((loc) => (
+					{CARLETON_CAFES.map((loc) => (
 						<NavigationRow
 							key={loc.href}
 							onPress={() => router.navigate(loc.href)}

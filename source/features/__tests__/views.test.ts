@@ -7,15 +7,14 @@ import {
 	CUSTOM_SYMBOLS,
 	iconImage,
 	opensInBrowser,
+	viewTarget,
 	visibleViews,
 	type ViewType,
 } from '../views'
 
 describe('the views registry', () => {
 	test('no two tiles share a title and a target', () => {
-		let keys = HomeViews().map((view) =>
-			JSON.stringify([view.title, view.type === 'view' ? view.view : view.url]),
-		)
+		let keys = HomeViews().map((view) => JSON.stringify([view.title, viewTarget(view)]))
 
 		expect(new Set(keys).size).toBe(keys.length)
 	})
@@ -27,7 +26,7 @@ describe('HomeViews', () => {
 		let tiles = HomeViews().map((view) => ({
 			title: view.title,
 			icon: view.icon,
-			target: view.type === 'view' ? view.view : view.url,
+			target: viewTarget(view),
 			devOnly: view.devOnly ?? false,
 			disabled: view.disabled ?? false,
 		}))
@@ -136,48 +135,6 @@ describe('HomeViews', () => {
 				disabled: false,
 			},
 			{
-				title: 'Carleton Campus',
-				icon: 'building.2.fill',
-				target: '/hours?campus=carleton',
-				devOnly: true,
-				disabled: false,
-			},
-			{
-				title: 'Carleton SUMO',
-				icon: 'film.fill',
-				target: '/carleton-sumo',
-				devOnly: true,
-				disabled: false,
-			},
-			{
-				title: 'Carleton Convo',
-				icon: 'building.columns.fill',
-				target: '/carleton-convos',
-				devOnly: true,
-				disabled: false,
-			},
-			{
-				title: 'Carleton Directory',
-				icon: 'person.crop.rectangle.fill',
-				target: 'https://www.carleton.edu/directory/',
-				devOnly: true,
-				disabled: false,
-			},
-			{
-				title: 'Carleton Moodle',
-				icon: 'graduationcap.fill',
-				target: 'https://moodle.carleton.edu/',
-				devOnly: true,
-				disabled: false,
-			},
-			{
-				title: 'Carleton Workday',
-				icon: 'briefcase.fill',
-				target: 'https://www.carleton.edu/workday/',
-				devOnly: true,
-				disabled: false,
-			},
-			{
 				title: 'Developer',
 				icon: 'hammer.fill',
 				target: '/developer',
@@ -187,6 +144,60 @@ describe('HomeViews', () => {
 		])
 	})
 })
+
+describe('HomeViews for Carleton', () => {
+	let carleton = () => HomeViews('carleton')
+
+	test("are the CARLS app's tiles, in its order and under its names", () => {
+		expect(carleton().map((view) => [view.title, viewTarget(view)])).toEqual([
+			['Menus', '/carleton-menus'],
+			['Workday', 'https://www.carleton.edu/workday/'],
+			['Building Hours', '/hours?campus=carleton'],
+			['Directory', 'https://www.carleton.edu/directory/'],
+			['KRLX', 'radio:krlx'],
+			['SUMO', '/carleton-sumo'],
+			['Convo', '/carleton-convos'],
+			['Campus Map', '/map?campus=carleton'],
+			['Moodle', 'https://moodle.carleton.edu/'],
+			['Developer', '/developer'],
+		])
+	})
+
+	test('show every tile but Developer outside dev mode', () => {
+		let titles = visibleViews(carleton(), {isDev: false}).map((view) => view.title)
+
+		expect(titles).toHaveLength(carleton().length - 1)
+		expect(titles).not.toContain('Developer')
+	})
+
+	test("share no target with St. Olaf's tiles but Developer", () => {
+		let stOlafTargets = new Set(HomeViews('stolaf').map(viewTarget))
+		let shared = carleton()
+			.map(viewTarget)
+			.filter((target) => stOlafTargets.has(target))
+
+		expect(shared).toEqual(['/developer'])
+	})
+
+	test('defaults to St. Olaf', () => {
+		expect(HomeViews().map(viewTarget)).toEqual(HomeViews('stolaf').map(viewTarget))
+	})
+})
+
+describe('opensInBrowser for a station', () => {
+	test('is false, since a station opens the Now Playing sheet', () => {
+		let krlx = carletonView((v) => v.type === 'radio')
+		expect(opensInBrowser(krlx)).toBe(false)
+	})
+})
+
+function carletonView(matches: (view: ViewType) => boolean): ViewType {
+	let found = HomeViews('carleton').filter(matches)
+	if (found.length !== 1) {
+		throw new Error(`expected one matching view, found ${found.length}`)
+	}
+	return found[0]
+}
 
 describe('visibleViews', () => {
 	test('leaves out disabled and dev-only views outside dev mode', () => {
@@ -200,16 +211,7 @@ describe('visibleViews', () => {
 	test('adds the dev-only views in dev mode, after the rest', () => {
 		let titles = visibleViews(HomeViews(), {isDev: true}).map((view) => view.title)
 
-		expect(titles.slice(-8)).toEqual([
-			'Athletics',
-			'Carleton Campus',
-			'Carleton SUMO',
-			'Carleton Convo',
-			'Carleton Directory',
-			'Carleton Moodle',
-			'Carleton Workday',
-			'Developer',
-		])
+		expect(titles.slice(-2)).toEqual(['Athletics', 'Developer'])
 	})
 })
 
