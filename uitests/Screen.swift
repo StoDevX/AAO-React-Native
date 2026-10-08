@@ -30,17 +30,30 @@ extension Screen {
 	/// route's screen draws.
 	///
 	/// `route` is an Expo Router path: `app/calendar/index.tsx` is `/calendar`.
-	/// `XCUIApplication.open(_:)` relaunches the app and raises no "Open in…?"
-	/// sheet, unlike `simctl openurl`.
+	/// When the app is already running with this launch's arguments, it is
+	/// reset in place and reloads its JavaScript at the route; see
+	/// `ResetChannel`. Otherwise `XCUIApplication.open(_:)` relaunches the app
+	/// and raises no "Open in…?" sheet, unlike `simctl openurl`.
 	///
 	/// The wait is what makes this safe: the relaunched app has no home screen
 	/// while it is still blank, so "Home has gone" is true before anything has
-	/// mounted, and a test's first action could land on nothing.
+	/// mounted, and a test's first action could land on nothing. A reset app
+	/// answers only once every screen of the last test has unmounted, so
+	/// `mounted` cannot be found on what the last test left.
 	@discardableResult
 	func open(route: String, mountedWhen mounted: XCUIElement, timeout: TimeInterval = 30) -> Self {
+		let url = URL(string: "AllAboutOlaf://\(route)")!
 		// No wait for Home to go: `mounted` belongs to the route alone, and
 		// each wait reads the accessibility tree at least once.
-		app.open(URL(string: "AllAboutOlaf://\(route)")!)
+		// Named activities, so a result bundle shows which way each test began.
+		let reset = XCTContext.runActivity(named: "Try a reset in place to \(route)") { _ in
+			ResetChannel.reset(app, opening: url)
+		}
+		if !reset {
+			XCTContext.runActivity(named: "Cold launch to \(route)") { _ in
+				app.open(url)
+			}
+		}
 		XCTAssertTrue(
 			mounted.waitUntilExists(timeout: timeout),
 			"\(route) should mount \(mounted)")

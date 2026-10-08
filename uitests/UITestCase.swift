@@ -29,6 +29,7 @@ class UITestCaseUnbooted: XCTestCase {
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		appendJsLocationIfProvided()
 		appendRecordFixturesIfAsked()
+		appendResetChannel()
 	}
 
 	override func tearDownWithError() throws {
@@ -60,6 +61,12 @@ class UITestCaseUnbooted: XCTestCase {
 		if ProcessInfo.processInfo.environment["AAO_RECORD_FIXTURES"] == "1" {
 			app.launchArguments.append(TestIdentifiers.LaunchArguments.recordFixtures)
 		}
+	}
+
+	/// Gives the app the channel `open(route:mountedWhen:)` resets it through
+	/// between tests, in place of a relaunch. See `ResetChannel`.
+	func appendResetChannel() {
+		app.launchArguments.append(contentsOf: [ResetChannel.flag, ResetChannel.directory])
 	}
 
 	/// Points the app at a Metro other than the default localhost:8081, when
@@ -159,6 +166,7 @@ class UITestCaseUnbooted: XCTestCase {
 		app.launchArguments = [TestIdentifiers.LaunchArguments.uiTesting] + arguments
 		appendJsLocationIfProvided()
 		appendRecordFixturesIfAsked()
+		appendResetChannel()
 	}
 }
 
@@ -168,5 +176,81 @@ class UITestCase: UITestCaseUnbooted {
 	override func setUpWithError() throws {
 		try super.setUpWithError()
 		app.launch()
+	}
+}
+
+/// Resets a running app and opens a route in it, in place of the cold launch
+/// `XCUIApplication.open(_:)` makes. The app's half is
+/// `modules/launch-arguments/ios/UITestResetChannel.swift`.
+///
+/// The runner writes `request.json` into a directory both processes can reach
+/// -- the simulator does not sandbox its apps -- and posts a Darwin
+/// notification named after it. The app answers in a file named after the
+/// request: `ok` once every screen has unmounted, AsyncStorage, the database
+/// and UserDefaults are clear, and its JavaScript is about to reload; `refused`
+/// when its launch arguments are not the ones this launch would use.
+enum ResetChannel {
+	static let flag = "--uitest-reset-channel"
+
+	/// One per runner process, so two simulators on one Mac cannot hear each
+	/// other.
+	static let directory: String = {
+		let path = (NSTemporaryDirectory() as NSString).appendingPathComponent("aao-reset-\(UUID().uuidString)")
+		try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
+		return path
+	}()
+
+	/// Whether the app has answered a request in this run. One launched
+	/// without the channel -- from a Home Screen quick action, say -- never
+	/// answers, and costs one timeout. But a first request left unanswered
+	/// means the channel does not work in this run at all, and every later
+	/// test then cold-launches at once rather than waiting out the timeout.
+	nonisolated(unsafe) private static var hasAnswered = false
+	nonisolated(unsafe) private static var isBroken = false
+
+	/// How long the app gets to unmount its screens and clear its storage.
+	private static let answerTimeout: TimeInterval = 10
+
+	private struct Request: Encodable {
+		let id: String
+		let url: String
+		let arguments: [String]
+	}
+
+	/// Resets `app` and has it open `url`. False when the app has to be
+	/// launched instead: it is not running, it was launched with other
+	/// arguments, or it did not answer.
+	static func reset(_ app: XCUIApplication, opening url: URL) -> Bool {
+		guard !isBroken, app.launchArguments.contains(flag), app.state == .runningForeground else {
+			return false
+		}
+
+		let id = UUID().uuidString
+		let request = Request(id: id, url: url.absoluteString, arguments: app.launchArguments)
+		let directoryURL = URL(fileURLWithPath: directory, isDirectory: true)
+		guard
+			let data = try? JSONEncoder().encode(request),
+			(try? data.write(to: directoryURL.appendingPathComponent("request.json"), options: .atomic)) != nil
+		else {
+			return false
+		}
+
+		CFNotificationCenterPostNotification(
+			CFNotificationCenterGetDarwinNotifyCenter(),
+			CFNotificationName("AllAboutOlaf.uitest-reset:\(directory)" as CFString),
+			nil, nil, true)
+
+		let answerURL = directoryURL.appendingPathComponent(id)
+		let answered = waitUntil("Waiting \(answerTimeout)s for the app to answer", timeout: answerTimeout) {
+			FileManager.default.fileExists(atPath: answerURL.path)
+		}
+		guard answered else {
+			isBroken = !hasAnswered
+			return false
+		}
+		hasAnswered = true
+		let answer = (try? String(contentsOf: answerURL, encoding: .utf8)) ?? ""
+		try? FileManager.default.removeItem(at: answerURL)
+		return answer == "ok"
 	}
 }

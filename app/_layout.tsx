@@ -36,6 +36,7 @@ import {RootErrorBoundary} from '../source/components/root-error-boundary'
 import {ScreenErrorFallback} from '../source/components/screen-error-boundary'
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
 import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
+import {useUITestReset} from '../source/lib/uitest-reset'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
@@ -200,6 +201,10 @@ function RootLayout(): React.ReactNode {
  * at a blank one.
  */
 function GuardedRootLayout(): React.ReactNode {
+	if (useUITestReset()) {
+		return null
+	}
+
 	return (
 		<RootErrorBoundary>
 			<RootLayout />
