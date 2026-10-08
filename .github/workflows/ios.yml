@@ -594,10 +594,27 @@ jobs:
           mkdir -p uitest-evidence
           nohup node scripts/sample-runner-load.mjs uitest-evidence/runner-load.jsonl > /dev/null 2>&1 &
 
+      # Boots the simulator, then turns off iOS services the app never uses,
+      # each a measured cost on CI's three cores: apsd retries Apple's push
+      # server some seventeen times a second there, and its log lines keep
+      # diagnosticd busy as well; PosterBoard renders every wallpaper and
+      # chronod every widget after the first boot; intelligenceplatformd and
+      # photoanalysisd index for Apple Intelligence and Photos. launchctl
+      # answers a second after boot starts, before any of them has, so they
+      # never start; the setting holds for the rest of the boot. The UI tests
+      # pass with all five off.
       - name: Boot the simulator
         env:
           SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
-        run: xcrun simctl boot "$SIMULATOR_UDID"
+        run: |
+          xcrun simctl boot "$SIMULATOR_UDID"
+          for service in com.apple.apsd com.apple.PosterBoard com.apple.chronod \
+            com.apple.intelligenceplatformd com.apple.photoanalysisd; do
+            xcrun simctl spawn "$SIMULATOR_UDID" launchctl disable "user/foreground/$service"
+            # Stops one that started all the same; one that has not fails, which is fine.
+            xcrun simctl spawn "$SIMULATOR_UDID" launchctl bootout "user/foreground/$service" || true
+          done
+          xcrun simctl spawn "$SIMULATOR_UDID" launchctl print-disabled user/foreground
 
       # Timed for flakiness.io, which keeps it as the CI/waitForSimulator test.
       # The step still fails exactly when bootstatus does.
