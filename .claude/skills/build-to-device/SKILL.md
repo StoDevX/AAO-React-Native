@@ -92,8 +92,8 @@ In a sysdiagnose, one report per launch attempt:
 ```bash
 xcrun devicectl device sysdiagnose --device <UDID> --destination /tmp/sysdiag
 # ~190 MB; list first, extract only what you need
-tar -tzf /tmp/sysdiag/*.tar.gz | grep AllAboutOlaf
-tar -xzf /tmp/sysdiag/*.tar.gz '<path>/crashes_and_spins/Retired/AllAboutOlaf-*.ips'
+tar -tzf /tmp/sysdiag/*.tar.gz | grep AllAboutAnything
+tar -xzf /tmp/sysdiag/*.tar.gz '<path>/crashes_and_spins/Retired/AllAboutAnything-*.ips'
 ```
 
 An `.ips` is JSON with a one-line header. `termination`, `exception` and the

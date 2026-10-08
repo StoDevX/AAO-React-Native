@@ -26,11 +26,11 @@ function testCase(name, result, repetitions = [], extraChildren = []) {
 function tree(...cases) {
 	return [
 		{
-			name: 'AllAboutOlaf',
+			name: 'AllAboutAnything',
 			nodeType: 'Test Plan',
 			children: [
 				{
-					name: 'AllAboutOlafUITests',
+					name: 'AllAboutAnythingUITests',
 					nodeType: 'Test Suite',
 					children: cases,
 				},

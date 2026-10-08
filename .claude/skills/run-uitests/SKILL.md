@@ -16,10 +16,10 @@ tap target or a native control is asserting the props we passed in.
 # 1. Build the app and the test bundle. Slow the first time, incremental after.
 #    Pin -destination: see "Pin the destination" below.
 SKIP_BUNDLING=true CODE_SIGNING_DISABLED=true xcodebuild build-for-testing \
-  -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf \
+  -workspace ios/AllAboutAnything.xcworkspace -scheme AllAboutAnything \
   -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build \
   -destination "id=$UDID" \
-  -only-testing:AllAboutOlafUITests \
+  -only-testing:AllAboutAnythingUITests \
   CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
 # 2. Boot a simulator and wait for it.
@@ -36,7 +36,7 @@ rm -rf /tmp/results.xcresult
 TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 xcodebuild test-without-building \
   -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
   -destination "platform=iOS Simulator,id=<UDID>" \
-  -only-testing:AllAboutOlafUITests/ModuleDirectoryTests/testSomething \
+  -only-testing:AllAboutAnythingUITests/ModuleDirectoryTests/testSomething \
   -resultBundlePath /tmp/results
 ```
 
@@ -80,10 +80,10 @@ prefers a `main.jsbundle` inside the `.app` even in DEBUG, which is how CI
 runs. Between step 1 and step 4:
 
 ```bash
-APP_VARIANT=aao mise run bundle:ios     # writes ios/AllAboutOlaf/main.jsbundle from THIS checkout
+APP_VARIANT=aao mise run bundle:ios     # writes ios/AllAboutAnything/main.jsbundle from THIS checkout
 
-APP=ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app
-cp ios/AllAboutOlaf/main.jsbundle "$APP/"
+APP=ios/build/Build/Products/Debug-iphonesimulator/AllAboutAnything.app
+cp ios/AllAboutAnything/main.jsbundle "$APP/"
 rm -rf "$APP/assets" && cp -R ios/assets "$APP/"
 ls "$APP/main.jsbundle"   # confirm before trusting any run
 ```
@@ -135,7 +135,7 @@ Three things that bite on the second run:
 - **It appends `.xcresult` for you.** `-resultBundlePath /tmp/results` writes
   `/tmp/results.xcresult`, which is the path every later command wants.
 - **The version in the bundle's name is the SDK, not a runtime.**
-  `AllAboutOlaf_iphonesimulator27.0-arm64-x86_64.xctestrun` is built by the
+  `AllAboutAnything_iphonesimulator27.0-arm64-x86_64.xctestrun` is built by the
   Xcode 27 SDK and runs on any installed runtime that SDK supports and that is
   at least the deployment target. Do not assume the two numbers match; `xcrun
   simctl list runtimes` shows what you have.
@@ -225,7 +225,7 @@ The two directions fail differently, and the deletion is the nastier one:
   This reads like a missing dependency and sends you looking for a file you
   deliberately removed. `ios/` is generated and gitignored, so `mise run
   prebuild` is the whole fix. Grep the project if you want to confirm before
-  rebuilding: `grep -c ScratchProbe ios/AllAboutOlaf.xcodeproj/project.pbxproj`.
+  rebuilding: `grep -c ScratchProbe ios/AllAboutAnything.xcodeproj/project.pbxproj`.
 
 Throwaway probe tests earn this twice over — the temptation is to delete the
 file and move on, which is exactly the case that breaks the next build.

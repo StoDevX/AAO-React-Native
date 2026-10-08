@@ -354,9 +354,12 @@ describe('describePlan', () => {
 
 describe('formatMatrix', () => {
 	it('renders one -only-testing flag per item', () => {
-		assert.deepEqual(formatMatrix([[{name: 'ModuleATests', weight: 1}]], 'AllAboutOlafUITests'), {
-			include: [{shard: 1, tests: '-only-testing:AllAboutOlafUITests/ModuleATests'}],
-		})
+		assert.deepEqual(
+			formatMatrix([[{name: 'ModuleATests', weight: 1}]], 'AllAboutAnythingUITests'),
+			{
+				include: [{shard: 1, tests: '-only-testing:AllAboutAnythingUITests/ModuleATests'}],
+			},
+		)
 	})
 })
 

@@ -120,7 +120,7 @@ const config: ExpoConfig = {
 	// Constant across variants: this also names the generated Xcode project,
 	// its target, its scheme and its directory. The variant's own name goes to
 	// CFBundleDisplayName below, which is what the home screen shows.
-	name: 'All About Olaf',
+	name: 'All About Anything',
 	slug: 'all-about-olaf',
 	scheme: variant.scheme,
 	version: shippableVersion,

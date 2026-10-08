@@ -276,7 +276,7 @@ which is why they differ.
 ## Notes
 
 - **`expo run:ios` does not use `ios/build`.** It writes to
-  `~/Library/Developer/Xcode/DerivedData/AllAboutOlaf-<hash>/`, so it neither
+  `~/Library/Developer/Xcode/DerivedData/AllAboutAnything-<hash>/`, so it neither
   reuses nor contends with a UITest build — it pays its own full build the
   first time. Deleting `ios/build` will not reclaim it.
 - Metro serves whatever is on disk on the next launch, so **JavaScript changes

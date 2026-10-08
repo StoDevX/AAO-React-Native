@@ -22,11 +22,11 @@ function file(root, path, bytes) {
 describe('listFiles', () => {
 	it('lists every regular file with its bytes, relative and slash-separated', () => {
 		let app = mkdtempSync(join(tmpdir(), 'app-size-'))
-		file(app, 'AllAboutOlaf', 100)
+		file(app, 'AllAboutAnything', 100)
 		file(app, 'Frameworks/hermes.framework/hermes', 40)
 		let files = listFiles(app).sort((a, b) => a.path.localeCompare(b.path))
 		assert.deepEqual(files, [
-			{path: 'AllAboutOlaf', bytes: 100},
+			{path: 'AllAboutAnything', bytes: 100},
 			{path: 'Frameworks/hermes.framework/hermes', bytes: 40},
 		])
 	})
@@ -42,29 +42,29 @@ describe('listFiles', () => {
 
 describe('groupOf', () => {
 	it('names the asset catalog, each framework and plug-in, the binary, and the rest', () => {
-		assert.equal(groupOf('Assets.car', 'AllAboutOlaf'), 'Assets.car')
+		assert.equal(groupOf('Assets.car', 'AllAboutAnything'), 'Assets.car')
 		assert.equal(
-			groupOf('Frameworks/hermes.framework/hermes', 'AllAboutOlaf'),
+			groupOf('Frameworks/hermes.framework/hermes', 'AllAboutAnything'),
 			'Frameworks/hermes.framework',
 		)
-		assert.equal(groupOf('PlugIns/Widget.appex/Widget', 'AllAboutOlaf'), 'PlugIns/Widget.appex')
-		assert.equal(groupOf('AllAboutOlaf', 'AllAboutOlaf'), 'AllAboutOlaf')
-		assert.equal(groupOf('Info.plist', 'AllAboutOlaf'), '(other)')
-		assert.equal(groupOf('EXConstants.bundle/app.config', 'AllAboutOlaf'), '(other)')
+		assert.equal(groupOf('PlugIns/Widget.appex/Widget', 'AllAboutAnything'), 'PlugIns/Widget.appex')
+		assert.equal(groupOf('AllAboutAnything', 'AllAboutAnything'), 'AllAboutAnything')
+		assert.equal(groupOf('Info.plist', 'AllAboutAnything'), '(other)')
+		assert.equal(groupOf('EXConstants.bundle/app.config', 'AllAboutAnything'), '(other)')
 	})
 })
 
 describe('groupFiles', () => {
 	it('sums bytes by group', () => {
 		let files = [
-			{path: 'AllAboutOlaf', bytes: 100},
+			{path: 'AllAboutAnything', bytes: 100},
 			{path: 'Frameworks/a.framework/a', bytes: 10},
 			{path: 'Frameworks/a.framework/Info.plist', bytes: 2},
 			{path: 'Info.plist', bytes: 3},
 			{path: 'PrivacyInfo.xcprivacy', bytes: 4},
 		]
-		assert.deepEqual(groupFiles(files, 'AllAboutOlaf'), {
-			AllAboutOlaf: 100,
+		assert.deepEqual(groupFiles(files, 'AllAboutAnything'), {
+			AllAboutAnything: 100,
 			'Frameworks/a.framework': 12,
 			'(other)': 7,
 		})
@@ -118,7 +118,7 @@ describe('buildAppReport', () => {
 		let report = buildAppReport({
 			sha: 'abc',
 			measuredSha: 'abc',
-			byGroup: {'Assets.car': 30, AllAboutOlaf: 70},
+			byGroup: {'Assets.car': 30, AllAboutAnything: 70},
 			byAsset: {windmill: 25},
 			downloadBytes: 60,
 		})
@@ -129,7 +129,7 @@ describe('buildAppReport', () => {
 			device: 'iPhone18,3',
 			installBytes: 100,
 			downloadBytes: 60,
-			byGroup: {'Assets.car': 30, AllAboutOlaf: 70},
+			byGroup: {'Assets.car': 30, AllAboutAnything: 70},
 			byAsset: {windmill: 25},
 		})
 	})

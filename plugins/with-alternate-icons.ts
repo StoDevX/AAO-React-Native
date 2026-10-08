@@ -22,7 +22,7 @@ export const STATIC_ALTERNATE_ICONS = ['old-main-retro', 'carls-penguin']
 /** Where the tracked documents live, relative to the repository root. */
 const SOURCE_DIR = 'assets'
 
-const APP_TARGET = 'AllAboutOlaf'
+const APP_TARGET = 'AllAboutAnything'
 
 /**
  * Read one record out of a pbxproj section. Sections interleave records with

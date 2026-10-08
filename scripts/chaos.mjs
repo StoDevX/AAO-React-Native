@@ -153,7 +153,7 @@ function main() {
 		testWithoutBuilding({
 			udid: device.udid,
 			xctestrun: findXctestrun(),
-			only: ['AllAboutOlafUITests/ChaosTests/testChaos'],
+			only: ['AllAboutAnythingUITests/ChaosTests/testChaos'],
 			env: testEnv(options),
 			resultBundle,
 		})

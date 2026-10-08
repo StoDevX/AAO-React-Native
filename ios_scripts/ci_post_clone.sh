@@ -86,7 +86,7 @@ mise run prebuild
 # never be committed. Keep the file beside this script and put it in place
 # instead. The ios-build job in ios.yml resolves from scratch and diffs
 # against it, so a MapLibre version bump fails there rather than here.
-resolved_dir='ios/AllAboutOlaf.xcworkspace/xcshareddata/swiftpm'
+resolved_dir='ios/AllAboutAnything.xcworkspace/xcshareddata/swiftpm'
 mkdir -p "${resolved_dir}"
 cp ios_scripts/Package.resolved "${resolved_dir}/Package.resolved"
 

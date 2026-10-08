@@ -63,8 +63,8 @@ function makeProjectRoot(icons: readonly string[]): string {
 
 describe('includeAllAppIcons', () => {
 	it('compiles every app icon in every build configuration of the app target', () => {
-		let project = includeAllAppIcons(loadProject(), 'AllAboutOlaf')
-		let configurations = settingsFor(project, 'AllAboutOlaf')
+		let project = includeAllAppIcons(loadProject(), 'AllAboutAnything')
+		let configurations = settingsFor(project, 'AllAboutAnything')
 		assert.ok(configurations.length > 0)
 		for (let settings of configurations) {
 			assert.equal(settings.ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS, 'YES')
@@ -72,9 +72,9 @@ describe('includeAllAppIcons', () => {
 	})
 
 	it('leaves unrelated settings alone', () => {
-		let before = settingsFor(loadProject(), 'AllAboutOlaf')[0].PRODUCT_NAME
-		let project = includeAllAppIcons(loadProject(), 'AllAboutOlaf')
-		assert.equal(settingsFor(project, 'AllAboutOlaf')[0].PRODUCT_NAME, before)
+		let before = settingsFor(loadProject(), 'AllAboutAnything')[0].PRODUCT_NAME
+		let project = includeAllAppIcons(loadProject(), 'AllAboutAnything')
+		assert.equal(settingsFor(project, 'AllAboutAnything')[0].PRODUCT_NAME, before)
 	})
 
 	it('throws when the target is missing', () => {
@@ -84,7 +84,7 @@ describe('includeAllAppIcons', () => {
 
 describe('addAlternateIconResources', () => {
 	it('bundles each alternate icon as a resource of the app group', () => {
-		let pbxproj = addAlternateIconResources(loadProject(), 'AllAboutOlaf').writeSync()
+		let pbxproj = addAlternateIconResources(loadProject(), 'AllAboutAnything').writeSync()
 		for (let name of ALTERNATE_ICONS) {
 			assert.match(pbxproj, new RegExp(`${name}\\.icon in Resources`, 'u'))
 		}
@@ -94,7 +94,7 @@ describe('addAlternateIconResources', () => {
 describe('copyAlternateIcons', () => {
 	it('copies each Icon Composer document, with its layers, into the native project', () => {
 		let root = makeProjectRoot(ALTERNATE_ICONS)
-		let destination = join(root, 'ios', 'AllAboutOlaf')
+		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(destination, {recursive: true})
 
 		copyAlternateIcons(root, destination)
@@ -108,7 +108,7 @@ describe('copyAlternateIcons', () => {
 
 	it('copies each static app icon set into the native project catalog', () => {
 		let root = makeProjectRoot(ALTERNATE_ICONS)
-		let destination = join(root, 'ios', 'AllAboutOlaf')
+		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(join(destination, 'Images.xcassets'), {recursive: true})
 
 		copyAlternateIcons(root, destination)
@@ -122,7 +122,7 @@ describe('copyAlternateIcons', () => {
 	it('fails loudly when a static set is missing', () => {
 		let root = makeProjectRoot(ALTERNATE_ICONS)
 		rmSync(join(root, 'assets', 'old-main-retro.xcassets'), {recursive: true})
-		let destination = join(root, 'ios', 'AllAboutOlaf')
+		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(join(destination, 'Images.xcassets'), {recursive: true})
 
 		assert.throws(
@@ -133,7 +133,7 @@ describe('copyAlternateIcons', () => {
 
 	it('fails loudly when a document is missing', () => {
 		let root = makeProjectRoot(['old-main'])
-		let destination = join(root, 'ios', 'AllAboutOlaf')
+		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(destination, {recursive: true})
 
 		assert.throws(
@@ -147,7 +147,7 @@ describe('copyAlternateIcons', () => {
 	it('fails loudly when a layer image is missing', () => {
 		let root = makeProjectRoot(ALTERNATE_ICONS)
 		rmSync(join(root, 'assets', 'windmill-sky.icon', 'Assets', 'Layer.png'))
-		let destination = join(root, 'ios', 'AllAboutOlaf')
+		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(destination, {recursive: true})
 
 		assert.throws(
@@ -197,8 +197,8 @@ describe('ALTERNATE_ICONS', () => {
 
 describe('compressAppIcons', () => {
 	it('compiles the asset catalog for size in every build configuration of the app target', () => {
-		let project = compressAppIcons(loadProject(), 'AllAboutOlaf')
-		let configurations = settingsFor(project, 'AllAboutOlaf')
+		let project = compressAppIcons(loadProject(), 'AllAboutAnything')
+		let configurations = settingsFor(project, 'AllAboutAnything')
 		assert.ok(configurations.length > 0)
 		for (let settings of configurations) {
 			assert.equal(settings.ASSETCATALOG_COMPILER_OPTIMIZATION, 'space')

@@ -230,7 +230,7 @@ function main() {
 
 	const testDir = valueOf('--test-dir', null)
 	const shardCount = Number(valueOf('--shards', '2'))
-	const target = valueOf('--target', 'AllAboutOlafUITests')
+	const target = valueOf('--target', 'AllAboutAnythingUITests')
 	const granularity = valueOf('--granularity', 'class')
 	const skipDirs = args.flatMap((arg, index) => (args[index - 1] === '--skip-dir' ? [arg] : []))
 

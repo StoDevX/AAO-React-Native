@@ -72,11 +72,11 @@ describe('app.config variants', () => {
 
 	// `name` also names the generated Xcode project, its target, its scheme and
 	// its directory. It must not vary per variant: every plugin looks the
-	// AllAboutOlaf target up by name.
+	// AllAboutAnything target up by name.
 	it.each(['aao', 'aao-dev', 'carls', 'carls-dev'])(
 		'keeps the Xcode project name fixed for %s',
 		(variant) => {
-			expect(loadConfig(variant).name).toBe('All About Olaf')
+			expect(loadConfig(variant).name).toBe('All About Anything')
 		},
 	)
 

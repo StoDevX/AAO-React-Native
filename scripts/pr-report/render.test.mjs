@@ -573,7 +573,7 @@ describe('renderComment app size', () => {
 			rows: [
 				{name: 'Assets.car', before: MiB, after: 2 * MiB, delta: MiB},
 				{name: 'Assets.car › aurora', before: null, after: MiB, delta: MiB},
-				{name: 'AllAboutOlaf', before: KiB, after: KiB, delta: 0},
+				{name: 'AllAboutAnything', before: KiB, after: KiB, delta: 0},
 			],
 		},
 		total: {name: 'total', before: 4 * MiB, after: 5 * MiB, delta: MiB},

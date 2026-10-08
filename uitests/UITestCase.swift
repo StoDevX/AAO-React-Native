@@ -237,7 +237,7 @@ enum ResetChannel {
 
 		CFNotificationCenterPostNotification(
 			CFNotificationCenterGetDarwinNotifyCenter(),
-			CFNotificationName("AllAboutOlaf.uitest-reset:\(directory)" as CFString),
+			CFNotificationName("AllAboutAnything.uitest-reset:\(directory)" as CFString),
 			nil, nil, true)
 
 		let answerURL = directoryURL.appendingPathComponent(id)

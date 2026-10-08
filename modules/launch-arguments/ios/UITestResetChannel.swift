@@ -63,7 +63,7 @@ final class UITestResetChannel {
 	/// The Darwin notification's name for a channel directory. The runner
 	/// builds the same name; see `UITestResetChannel` in `uitests/UITestCase.swift`.
 	static func notificationName(directory: String) -> String {
-		"AllAboutOlaf.uitest-reset:\(directory)"
+		"AllAboutAnything.uitest-reset:\(directory)"
 	}
 
 	func close() {
