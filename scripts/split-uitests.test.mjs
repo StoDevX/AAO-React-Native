@@ -420,12 +420,14 @@ describe('the real suite', () => {
 
 	it('finds every test class and nothing else', () => {
 		// Test classes are the ones declared in a *Tests.swift file, in any
-		// folder, whichever base class they extend. The base classes and page
-		// objects live in other files and hold no tests, so they are absent
-		// from both lists.
-		const declared = realTestFiles()
+		// folder, whichever base class they extend, less a template other
+		// test classes inherit from. The base classes and page objects live in
+		// other files and hold no tests, so they are absent from both lists.
+		const declarations = realTestFiles()
 			.filter((file) => /^\w*Tests\.swift$/u.test(basename(file.name)))
-			.flatMap((file) => [...file.text.matchAll(/class\s+(\w+)\s*:/gu)].map((m) => m[1]))
+			.flatMap((file) => [...file.text.matchAll(/class\s+(\w+)\s*:\s*(\w+)/gu)])
+		const templates = new Set(declarations.map((m) => m[2]))
+		const declared = declarations.map((m) => m[1]).filter((name) => !templates.has(name))
 		const found = discoverTests(realTestFiles()).map((c) => c.className)
 
 		// Every class in a file, not just its first: a method credited to the
@@ -448,5 +450,37 @@ describe('the real suite', () => {
 		const heaviest = Math.max(...items.map((i) => i.weight))
 
 		assert.ok(Math.max(...totals) - Math.min(...totals) <= heaviest)
+	})
+})
+
+describe('discoverTests with campus subclasses', () => {
+	const files = [
+		{
+			name: 'CampusSmokeTests.swift',
+			text: `class CampusSmokeTests: UITestCaseUnbooted {
+	func testHome() throws {}
+	func testHours() throws {}
+}
+/// Tags: campus:stolaf.edu
+final class StOlafSmokeTests: CampusSmokeTests {
+	override class var campus: Campus? { .stolaf }
+}
+/// Tags: campus:carleton.edu
+final class CarletonSmokeTests: CampusSmokeTests {
+	override class var campus: Campus? { .carleton }
+	func testSumo() throws {}
+}`,
+		},
+	]
+
+	it('runs each subclass with the tests it inherits', () => {
+		assert.deepEqual(discoverTests(files), [
+			{className: 'StOlafSmokeTests', methods: ['testHome', 'testHours']},
+			{className: 'CarletonSmokeTests', methods: ['testHome', 'testHours', 'testSumo']},
+		])
+	})
+
+	it('never schedules the template the subclasses inherit from', () => {
+		assert.ok(!discoverTests(files).some((entry) => entry.className === 'CampusSmokeTests'))
 	})
 })
