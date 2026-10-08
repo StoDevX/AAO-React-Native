@@ -102,17 +102,44 @@ final class UITestResetChannel {
 			.flatMap { $0.windows }
 			.first { $0.isKeyWindow }?
 			.rootViewController
-		if let presented = root?.presentedViewController, !presented.isBeingDismissed {
-			root?.dismiss(animated: false)
-		}
+		let answer = {
+			// What `--reset-state` clears at launch, as AppDelegate does it.
+			if let bundleId = Bundle.main.bundleIdentifier {
+				UserDefaults.standard.removePersistentDomain(forName: bundleId)
+			}
 
-		// What `--reset-state` clears at launch, as AppDelegate does it.
-		if let bundleId = Bundle.main.bundleIdentifier {
-			UserDefaults.standard.removePersistentDomain(forName: bundleId)
+			Self.setPendingURL(url)
+			self.reply(to: id, "ok")
 		}
+		// Answer only once the dismissal is done. Even unanimated, a Safari
+		// view is still presented when `dismiss` returns, and the next test
+		// would then present its own sheets while it is being taken down.
+		guard let root, let presented = root.presentedViewController else {
+			answer()
+			return
+		}
+		if presented.isBeingDismissed {
+			// A dismissal already under way is not ours to complete.
+			Self.whenNothingPresented(on: root, then: answer)
+		} else {
+			root.dismiss(animated: false, completion: answer)
+		}
+	}
 
-		Self.setPendingURL(url)
-		reply(to: id, "ok")
+	/// Runs `answer` once `root` presents nothing, checking every 50ms. A
+	/// dismissal that never lands leaves the reset unanswered, and the runner
+	/// then cold-launches, as it does for any reset that goes unanswered.
+	@MainActor
+	private static func whenNothingPresented(on root: UIViewController, then answer: @escaping () -> Void) {
+		if root.presentedViewController == nil {
+			answer()
+			return
+		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+			MainActor.assumeIsolated {
+				whenNothingPresented(on: root, then: answer)
+			}
+		}
 	}
 
 	private func reply(to id: String, _ answer: String) {
