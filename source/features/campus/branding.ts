@@ -25,8 +25,9 @@ export const BRANDING: Record<Campus, Branding> = {
 		appName: 'CARLS',
 		supportEmail: 'carls@frogpond.tech',
 		college: 'Carleton College',
+		// CARLS' own, as carls-app/carls' data/credits.yaml has it.
 		intro:
-			'CARLS is an application created by Hawken Rives, based on All About Olaf, the app made by students and alumni of St. Olaf College in Northfield, MN under the name StoDevX.',
+			"CARLS is an application created by Hawken Rives, based off of the app All About Olaf, which was a result of collaboration between student and alumni of St. Olaf College. It was inspired by the original 'All About Olaf', an iOS application created by Drew Volz as an independent project in 2014.",
 	},
 }
 
