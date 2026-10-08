@@ -71,11 +71,18 @@ export function uitestsNeeded(changedFiles) {
 		return true
 	}
 
-	return !changedFiles.every((file) =>
-		file.startsWith('data/')
-			? isInertData(file)
-			: isInertWorkflow(file) || INERT.some((pattern) => pattern.test(file)),
-	)
+	return !changedFiles.every(isInert)
+}
+
+/**
+ * Whether a changed file cannot alter what any UI test sees.
+ * @param {string} file
+ * @returns {boolean}
+ */
+export function isInert(file) {
+	return file.startsWith('data/')
+		? isInertData(file)
+		: isInertWorkflow(file) || INERT.some((pattern) => pattern.test(file))
 }
 
 // A very large pull request's changed-file list can exceed a shell's ARG_MAX,
