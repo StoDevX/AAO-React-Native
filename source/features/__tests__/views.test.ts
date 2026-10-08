@@ -150,7 +150,7 @@ describe('HomeViews for Carleton', () => {
 
 	test("are the CARLS app's tiles, in its order and under its names", () => {
 		expect(carleton().map((view) => [view.title, viewTarget(view)])).toEqual([
-			['Menus', '/carleton-menus'],
+			['Menus', '/menus/burton'],
 			['Workday', 'https://www.carleton.edu/workday/'],
 			['Building Hours', '/hours?campus=carleton'],
 			['Calendar', '/calendar'],

@@ -243,7 +243,7 @@ const stOlafViews = (): Array<ViewType> => [
 const carletonViews = (): Array<ViewType> => [
 	{
 		type: 'view',
-		view: '/carleton-menus',
+		view: '/menus/burton',
 		title: 'Menus',
 		icon: 'fork.knife',
 		gradient: c.greenGradient,

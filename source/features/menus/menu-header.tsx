@@ -18,6 +18,7 @@ import {
 	TitleStack,
 } from '../../components/navigation-title'
 import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
+import {CAMPUSES, type Campus} from '../campus/store'
 
 /**
  * What a menu screen puts in its navigation bar: the cafe it is showing, the
@@ -160,11 +161,18 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
  * Draws the published header.
  *
  * Must be mounted as a direct child of the stack -- `app/menus/_layout.tsx`
- * for the tabs, or a Carleton page for its own screen. Expo Router keys these
- * options by the nearest route, so the same components inside a tab register
- * against the tab's route and are dropped without a word.
+ * for the tabs. Expo Router keys these options by the nearest route, so the
+ * same components inside a tab register against the tab's route and are
+ * dropped without a word.
+ *
+ * `campusSwitch` adds a ⋯ menu beside the filter button that switches the tab
+ * bar between St. Olaf's cafés and Carleton's.
  */
-export function MenuHeaderHost(): React.ReactNode {
+export function MenuHeaderHost({
+	campusSwitch,
+}: {
+	campusSwitch?: {campus: Campus; onSwitch: (campus: Campus) => void}
+} = {}): React.ReactNode {
 	let header = React.useContext(MenuHeaderContext)
 
 	if (!header) {
@@ -228,14 +236,31 @@ export function MenuHeaderHost(): React.ReactNode {
 					)}
 				</Host>
 			</Stack.Title>
-			{header.filters ? (
+			{header.filters || campusSwitch ? (
 				<Stack.Toolbar placement="right">
-					<Stack.Toolbar.Button
-						accessibilityLabel="Filters"
-						icon="line.3.horizontal.decrease"
-						onPress={header.filters.toggle}
-						selected={header.filters.visible}
-					/>
+					{header.filters ? (
+						<Stack.Toolbar.Button
+							accessibilityLabel="Filters"
+							icon="line.3.horizontal.decrease"
+							onPress={header.filters.toggle}
+							selected={header.filters.visible}
+						/>
+					) : null}
+					{campusSwitch ? (
+						<Stack.Toolbar.Menu accessibilityLabel="More" icon="ellipsis">
+							<Stack.Toolbar.Menu inline={true} title="Cafés">
+								{CAMPUSES.map((option) => (
+									<Stack.Toolbar.MenuAction
+										key={option.campus}
+										isOn={option.campus === campusSwitch.campus}
+										onPress={() => campusSwitch.onSwitch(option.campus)}
+									>
+										{option.title}
+									</Stack.Toolbar.MenuAction>
+								))}
+							</Stack.Toolbar.Menu>
+						</Stack.Toolbar.Menu>
+					) : null}
 				</Stack.Toolbar>
 			) : null}
 		</>
