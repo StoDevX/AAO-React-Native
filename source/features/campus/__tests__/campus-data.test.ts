@@ -12,6 +12,7 @@ jest.mock('@frogpond/launch-arguments', () => ({
 import {dictionaryOptionsFor} from '../../dictionary/query'
 import {contactsOptionsFor} from '../../directory/contacts-query'
 import {busRoutesOptionsFor} from '../../transit/bus/query'
+import {DEFAULT_CALENDAR_SOURCES} from '../../../redux/parts/settings'
 
 let requested: string[] = []
 
@@ -35,4 +36,8 @@ describe.each([
 		await client.query(options('carleton') as Parameters<QueryClient['query']>[0])
 		expect(requested).toEqual([`https://carleton.example.test/v1/${route}`])
 	})
+})
+
+test("a campus test switches on the campus's own calendars, which its recordings answer", () => {
+	expect(DEFAULT_CALENDAR_SOURCES).toEqual(['stolaf', 'presence', 'carleton'])
 })

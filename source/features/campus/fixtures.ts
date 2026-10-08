@@ -3,18 +3,49 @@ import {getApiRoot, getCarletonApiRoot, setFetchInterceptor} from '@frogpond/api
 import type {FixtureMode} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../lib/ui-test-fixture'
-import carletonFixtures from './__fixtures__/carleton.edu.json'
-import stolafFixtures from './__fixtures__/stolaf.edu.json'
+import carletonFixtures from './__fixtures__/carleton.edu'
+import stolafFixtures from './__fixtures__/stolaf.edu'
 
 /** One response as recorded: enough to answer the same request again. */
 export type CampusRecording = {status: number; contentType: string | null; body: string}
 
 type Table = Record<string, CampusRecording>
 
-/** Each campus's recordings, by domain. */
-const TABLES: Record<string, Table> = {
-	'stolaf.edu': stolafFixtures as Table,
-	'carleton.edu': carletonFixtures as Table,
+/** One recorded request as its file holds it: a JSON answer as JSON, any other as its text. */
+export type CampusRecordingFile = {
+	key?: string
+	status?: number
+	contentType?: string | null
+	json?: unknown
+	text?: string
+}
+
+/** Each campus's recordings, by domain, one file per request. */
+const FILES: Record<string, ReadonlyArray<CampusRecordingFile>> = {
+	'stolaf.edu': stolafFixtures,
+	'carleton.edu': carletonFixtures,
+}
+
+/**
+ * A campus's recordings, keyed by request. Refuses a file a release bundle
+ * emptied (metro.config.js), naming the fix.
+ */
+export function tableFrom(domain: string, files: ReadonlyArray<CampusRecordingFile>): Table {
+	let table: Table = {}
+	for (let file of files) {
+		let {key, status, contentType = null, json, text} = uiTestFixture(`${domain} recordings`, file)
+		if (key === undefined || status === undefined) {
+			throw new Error(
+				`A ${domain} recording has no request; rerecord it with mise run update-campus-fixtures ${domain}`,
+			)
+		}
+		table[key] = {
+			status,
+			contentType,
+			body: json === undefined ? (text ?? '') : JSON.stringify(json),
+		}
+	}
+	return table
 }
 
 /** Where a recording run appends each response, one JSON object per line. */
@@ -83,7 +114,7 @@ function append(entry: {key: string} & CampusRecording): void {
  */
 export function installCampusFixtures(domain: string, mode: FixtureMode): void {
 	if (mode === 'serve') {
-		let table = uiTestFixture(`${domain}.json`, TABLES[domain] ?? {})
+		let table = tableFrom(domain, FILES[domain] ?? [])
 		setFetchInterceptor((request) =>
 			Promise.resolve(serveFixture(domain, table, request, currentRoots())),
 		)

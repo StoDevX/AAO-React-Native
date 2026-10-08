@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
 
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import type {RootState} from '../store'
 
 type State = {
@@ -14,14 +14,15 @@ type State = {
 /**
  * The calendars an install starts with. The campus calendar plus Presence,
  * where the student organisations post: between them they are the whole of
- * what happens on campus, so both are on. UI test mode uses only the fixture
- * calendar.
+ * what happens on campus, so both are on. A UI test on bundled data uses
+ * only the fixture calendar; a campus test keeps the live sources, which its
+ * recording answers.
  *
  * The one definition of that list. `initialState`, the two rehydration
  * fallbacks below, and the redux migration all read it, and a second copy
  * would let them drift.
  */
-export const DEFAULT_CALENDAR_SOURCES: string[] = isUITesting
+export const DEFAULT_CALENDAR_SOURCES: string[] = servesBundledFixtures
 	? ['uitest']
 	: ['stolaf', 'presence', 'carleton']
 

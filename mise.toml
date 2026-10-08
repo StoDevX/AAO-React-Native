@@ -425,6 +425,20 @@ run = "node scripts/update-map-fixtures.mjs"
 description = "Re-record Olaf Messenger's UI-test fixtures from a run of its UI tests"
 run = "node scripts/update-mess-fixtures.mjs"
 
+[tasks."update-campus-fixtures"]
+description = "Re-record a campus's UI-test fixtures from a run of its campus tests"
+usage = '''
+  arg "<campus>" help="The campus, by domain" {
+    choices "stolaf.edu" "carleton.edu"
+  }
+  flag "--allow-large" help="Keep a response over 200 KB"
+'''
+# The UI tests build All About Olaf, and Carleton mode in it runs CARLS's code.
+env = { APP_VARIANT = "aao" }
+run = '''
+node scripts/update-campus-fixtures.mjs "$usage_campus" ${usage_allow_large:+--allow-large}
+'''
+
 [tasks."chaos-routes"]
 description = "Regenerate the list of routes the chaos monkey opens"
 run = "node scripts/chaos-routes.mjs"

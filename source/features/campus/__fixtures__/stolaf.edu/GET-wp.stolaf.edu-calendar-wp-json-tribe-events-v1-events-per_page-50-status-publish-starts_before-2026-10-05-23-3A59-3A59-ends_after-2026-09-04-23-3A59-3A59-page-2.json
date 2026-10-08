@@ -1,0 +1,970 @@
+{
+	"contentType": "application/json; charset=UTF-8",
+	"json": {
+		"events": [
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection></div>",
+				"organizer": [],
+				"title": "Last day to add a first half of semester course",
+				"url": "https://wp.stolaf.edu/calendar/event/last-day-to-add-a-first-half-of-semester-course-2/",
+				"utc_end_date": "2026-09-19 04:59:59",
+				"utc_start_date": "2026-09-18 05:00:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>All new student workers are welcome to attend New Student Worker Orientation hosted by the Student Employment Office. The fall orientation sessions will take place in the Buntrock Ballrooms on September 15 (2 p.m. &#8211; 3 p.m.) and September 18 (8 a.m. &#8211; 9 a.m.). No registration is required. At the event, new student workers will have the opportunity to meet and speak with staff from Human Resources, Student Employment, the Payroll Office, and the Lutheran Center.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Student Employment Office"
+					}
+				],
+				"title": "New Student Worker Orientation",
+				"url": "https://wp.stolaf.edu/calendar/event/new-student-worker-orientation-3/",
+				"utc_end_date": "2026-09-18 14:00:00",
+				"utc_start_date": "2026-09-18 13:00:00",
+				"venue": {
+					"venue": "Ballrooms in Buntrock Commons"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, and students are welcome to gather at the Buntrock Institute for Freedom and Community every Friday from 8:30 to 9:30 a.m. Politics and Pastries provides opportunities to discuss politics, campaigns, and current events. Coffee and light pastries will be provided.</p>\n<p>This week’s conversation will be led by Vice President for Community and Belonging Eduardo Pazos.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Buntrock Institute for Freedom and Community"
+					}
+				],
+				"title": "Politics and Pastries",
+				"url": "https://wp.stolaf.edu/calendar/event/politics-and-pastries-10/",
+				"utc_end_date": "2026-09-18 14:30:00",
+				"utc_start_date": "2026-09-18 13:30:00",
+				"venue": {
+					"venue": "Tomson Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Service of Morning Prayer",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-service-of-morning-prayer-2/",
+				"utc_end_date": "2026-09-18 15:30:00",
+				"utc_start_date": "2026-09-18 15:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs University of Dubuque<br />\nStreaming Video: https://rollriversnetwork.com/coe/?B=4298316</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs University of Dubuque",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-university-of-dubuque/",
+				"utc_end_date": "2026-09-18 23:00:00",
+				"utc_start_date": "2026-09-18 21:00:00",
+				"venue": {
+					"venue": "Cedar Rapids, Iowa / Kohawk Arena"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball at Coe College<br />\nStreaming Video: https://rollriversnetwork.com/coe/?B=4298316</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball at Coe College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-at-coe-college/",
+				"utc_end_date": "2026-09-19 01:30:00",
+				"utc_start_date": "2026-09-18 23:30:00",
+				"venue": {
+					"venue": "Cedar Rapids, Iowa / Kohawk Arena"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, students, and the wider community are welcome to attend this faculty/guest recital featuring Melissa Holm-Johansen &#8217;98, <em>soprano</em> with Bryon Wilson, <em>piano. </em>The funding for this event is provided by the Dag Schjelderup-Ebbe Fund.</p>\n<p>This event is free and open to the public.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Guest Recital: Melissa Holm-Johansen ’98, soprano, with Bryon Wilson, piano",
+				"url": "https://wp.stolaf.edu/calendar/event/faculty-guest-recital-melissa-holm-johansen-soprano-with-bryon-wilson-piano/",
+				"utc_end_date": "2026-09-19 01:30:00",
+				"utc_start_date": "2026-09-19 00:00:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Tennis at MIAC Tune-Up</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Tennis at MIAC Tune-Up",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-tennis-at-miac-tune-up-2/",
+				"utc_end_date": "2026-09-20 04:59:59",
+				"utc_start_date": "2026-09-19 05:00:00",
+				"venue": {
+					"venue": "Arden Hills, Minn. / Ona Orth Athletic Complex"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Golf at St. Kate&#8217;s Invitational</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Golf at St. Kate&#8217;s Invitational",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-golf-at-st-kates-invitational/",
+				"utc_end_date": "2026-09-20 04:59:59",
+				"utc_start_date": "2026-09-19 05:00:00",
+				"venue": {
+					"venue": "Woodbury, Minn. &#8211; Eagle Valley G.C. / Edina, Minn. &#8211; Braemar G.C."
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Alumni"
+					}
+				],
+				"description": "<div data-modular-content-collection><div class=\"bee-row bee-row-4\">\n<div class=\"bee-row-content\">\n<div class=\"bee-col bee-col-1 bee-col-w12\">\n<div class=\"bee-block bee-block-1 bee-paragraph\">\n<p>Join the alumni-led St. Olaf Virtual Book Club on <strong>Saturday, September 19, 2026, at 10 a.m. (ET) on Zoom</strong> to discuss the best-selling novel<em> <strong>The Road to Wisdom: On Truth, Science, Faith, and Trust</strong> </em><strong>by Francis S. Collins.</strong></p>\n<p>Founded and led by alumni in the DC/Baltimore area, this book club is open to all St. Olaf graduates and friends of the college. Whether you&#8217;re a lifelong reader or just love discussing great books, we’d love to have you join us!</p>\n</div>\n<div class=\"bee-block bee-block-2 bee-spacer\">\n<div class=\"spacer\">\n<ul>\n<li><strong>Event:</strong> St. Olaf Virtual Book Club</li>\n<li><strong>Book:</strong> <em>The Road to Wisdom: On Truth, Science, Faith, and Trust </em>by Francis S. Collins</li>\n<li><strong>Date:</strong> Saturday, September 19, 2026</li>\n<li><strong>Time:</strong> 10 a.m. to Noon EST (US and Canada) via Zoom</li>\n</ul>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"bee-row bee-row-5\">\n<div class=\"bee-row-content\">\n<div class=\"bee-col bee-col-1 bee-col-w12\">\n<div class=\"bee-block bee-block-1 bee-paragraph\">\n<p><strong>Zoom meeting details will be provided via email after registration.</strong></p>\n<p><strong>Questions</strong>: <a title=\"mgfoh@aol.com\" href=\"mailto:mgfoh%40aol.com\" target=\"_blank\" rel=\"noopener\">Michele Foss &#8217;97</a></p>\n</div>\n</div>\n</div>\n</div>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Alumni and Parent Relations"
+					}
+				],
+				"title": "St. Olaf Alumni Led Virtual Book Club",
+				"url": "https://wp.stolaf.edu/calendar/event/st-olaf-alumni-led-virtual-book-club-2/",
+				"utc_end_date": "2026-09-19 17:00:00",
+				"utc_start_date": "2026-09-19 15:00:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs Hope College<br />\nStreaming Video: https://rollriversnetwork.com/coe/?B=4298316</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs Hope College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-hope-college/",
+				"utc_end_date": "2026-09-19 17:00:00",
+				"utc_start_date": "2026-09-19 15:00:00",
+				"venue": {
+					"venue": "Cedar Rapids, Iowa / Kohawk Arena"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Cross Country vs St. Olaf Invitational</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Cross Country vs St. Olaf Invitational",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-cross-country-vs-st-olaf-invitational/",
+				"utc_end_date": "2026-09-19 18:00:00",
+				"utc_start_date": "2026-09-19 15:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., St. Olaf Cross Country Course"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Cross Country vs St. Olaf Invitational</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Cross Country vs St. Olaf Invitational",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-cross-country-vs-st-olaf-invitational/",
+				"utc_end_date": "2026-09-19 19:00:00",
+				"utc_start_date": "2026-09-19 16:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., St. Olaf Cross Country Course"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Soccer vs Saint Mary&#8217;s University<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Soccer vs Saint Mary&#8217;s University",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-vs-saint-marys-university/",
+				"utc_end_date": "2026-09-19 20:00:00",
+				"utc_start_date": "2026-09-19 18:00:00",
+				"venue": {
+					"venue": "Northfield, Minn. , Rolf Mellby Field"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs St. Norbert College<br />\nStreaming Video: https://rollriversnetwork.com/coe/?B=4298316</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs St. Norbert College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-st-norbert-college/",
+				"utc_end_date": "2026-09-19 22:00:00",
+				"utc_start_date": "2026-09-19 20:00:00",
+				"venue": {
+					"venue": "Cedar Rapids, Iowa / Kohawk Arena"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Soccer vs Saint Mary&#8217;s University<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Soccer vs Saint Mary&#8217;s University",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-soccer-vs-saint-marys-university/",
+				"utc_end_date": "2026-09-19 22:30:00",
+				"utc_start_date": "2026-09-19 20:30:00",
+				"venue": {
+					"venue": "Northfield, Minn., Rolf Mellby Field"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Golf at Minnesota Golf Classic</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Golf at Minnesota Golf Classic",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-golf-at-minnesota-golf-classic-2/",
+				"utc_end_date": "2026-09-21 04:59:59",
+				"utc_start_date": "2026-09-20 05:00:00",
+				"venue": {
+					"venue": "Independence, Minn. &#8211; Pioneer Creek G.C."
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>The 17th Sunday after Pentecost; Sunday Worship with Holy Communion.</p>\n<p>College Chaplain Matthew Marohl will deliver the sermon; presided by Associate College Chaplain Sarah Semmler Smith ’04  and assisted by Jonathan Madden ’20, Interim Cantor for the Student Congregation. The Chapel Choir will be conducted by Joseph Kemper &#8217;11, Assistant Professor of Music. <span style=\"font-weight: 400;\">Founded in 1925, the St. Olaf Chapel Choir began as one of two mixed choruses at St. Olaf College following the dissolution of the Choral Union. Specializing in the performance of oratorio and larger works, the St. Olaf Chapel Choir frequently collaborates with the St. Olaf Orchestra as well as instrumentalists and soloists from the St. Olaf community.</span></p>\n<p>Sunday Worship is a time of inspiration and worship for body, mind, and spirit; a meaningful beginning to a new week. All are welcome!</p>\n<p>Click the web link below to access streamed and archived services.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Sunday Morning Worship: 17th Sunday after Pentecost",
+				"url": "https://wp.stolaf.edu/calendar/event/sunday-morning-worship-17th-sunday-after-pentecost/",
+				"utc_end_date": "2026-09-20 16:30:00",
+				"utc_start_date": "2026-09-20 15:30:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Multicultural"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>St. Olaf students are invited to register to attend the 54th Annual Traditional Mahkato Wacipi (Pow Wow) Trip to Mankato, MN.</p>\n<p>This trip organized by the Taylor Center is an opportunity for all students to learn about Dakota Culture in Minnesota. <a href=\"https://forms.gle/UWaDGharVRaUQuKWA\">RSVP HERE</a></p>\n<p>Trip Details:</p>\n<ul>\n<li>Free transportation and entrance ticket to registered participants is provided.</li>\n<li>Food is available for purchase from vendors in-site.</li>\n<li>Departure from Buntrock Commons: 11:45 a.m. | Return from event: 3 p.m.</li>\n<li>Location: Dakota Wokiksuye Makoce (Land of Memories Park), Mankato, Minnesota.</li>\n<li>All attendees are expected to follow the <a href=\"https://www.mahkatowacipi.org/for-visitors\">Guidelines for Visitors</a> from The Mahkato Mdewakanton Association.</li>\n</ul>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Taylor Center"
+					}
+				],
+				"title": "54th Annual Traditional Mahkato Wacipi Trip",
+				"url": "https://wp.stolaf.edu/calendar/event/54th-annual-traditional-mahkato-wacipi-trip/",
+				"utc_end_date": "2026-09-20 21:00:00",
+				"utc_start_date": "2026-09-20 16:45:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Tennis vs Bethel University &#8211; Exhibition</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Tennis vs Bethel University &#8211; Exhibition",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-tennis-vs-bethel-university-exhibition/",
+				"utc_end_date": "2026-09-20 21:00:00",
+				"utc_start_date": "2026-09-20 18:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Carlson Courts"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>The chapel speaker today will be Bernadette Donlon Kovacs; Associate Director of Admission, St. John&#8217;s School of Theology and Seminary.</p>\n<p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Bernadette Donlon Kovacs",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-bernadette-donlon-kovacs/",
+				"utc_end_date": "2026-09-21 15:30:00",
+				"utc_start_date": "2026-09-21 15:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Soccer vs University of Wisconsin-Stout<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Soccer vs University of Wisconsin-Stout",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-vs-university-of-wisconsin-stout-2/",
+				"utc_end_date": "2026-09-21 22:30:00",
+				"utc_start_date": "2026-09-21 20:30:00",
+				"venue": {
+					"venue": "Northfield, Minn. , Rolf Mellby Field"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>All students are welcome to attend the University of East Anglia Study Abroad Info Session hosted by the Smith Center for Global Engagement and Amy Humphreys from the University of East Anglia in Norwich, England.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Smith Center for Global Engagement"
+					}
+				],
+				"title": "University of East Anglia Study Abroad Info Session",
+				"url": "https://wp.stolaf.edu/calendar/event/university-of-east-anglia-study-abroad-info-session/",
+				"utc_end_date": "2026-09-21 22:00:00",
+				"utc_start_date": "2026-09-21 21:00:00",
+				"venue": {
+					"venue": "Buntrock Commons 142"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Vocation and Career"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Students are welcome to attend the Fall Recruiting Showcase hosted by the Piper Center.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Piper Center"
+					}
+				],
+				"title": "Fall Recruiting Showcase",
+				"url": "https://wp.stolaf.edu/calendar/event/fall-recruiting-showcase/",
+				"utc_end_date": "2026-09-22 01:30:00",
+				"utc_start_date": "2026-09-21 23:00:00",
+				"venue": {
+					"venue": "Tomson 280 &amp; Tomson Atrium"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Lectio Divina",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-20/",
+				"utc_end_date": "2026-09-22 16:30:00",
+				"utc_start_date": "2026-09-22 16:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Supervisors of student workers on campus are welcome to attend the Supervisor Training Sessions hosted by the Student Employment Office. Student Employment staff will offer supervisor training sessions on Recruiting and Hiring for Student Employment on September 15 from 8 a.m. &#8211; 10:30 a.m. and on September 22 from 2 p.m. &#8211; 3:30 p.m. in the Valhalla Room.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Student Employment Office"
+					}
+				],
+				"title": "Supervisor Training Session: Recruiting and Hiring Student Workers",
+				"url": "https://wp.stolaf.edu/calendar/event/supervisor-training-session-recruiting-and-hiring-student-workers-2/",
+				"utc_end_date": "2026-09-22 20:30:00",
+				"utc_start_date": "2026-09-22 19:00:00",
+				"venue": {
+					"venue": "BC 211 (Valhalla Ballroom)"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><em>Crafting Resilience: Finding Community and Connection through Fiber Arts</em> is an artist-led workshop where participants gather together — without technology — to build community while working on a fiber craft of their choosing. Bring your own project that’s in process or start a new one with materials and tools provided; we’ll be working primarily in knitting, crochet, needle-felting, and embroidery. Stop by or stay for the whole time: we’ll get to know each other and share ways that we’re practicing resilience together and on our own. From novice to expert, everyone is welcome and demonstrations will be available for those looking to learn. Light snacks and refreshments provided. This workshop is led by artist and Collections Manager Krista Anderson-Larson and made possible by funding from the Gimse <em>Striving for Peace on Horizon’s Brim</em> Art Endowment.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Art and Art History Department"
+					}
+				],
+				"title": "Crafting Resilience: Finding Community and Connection through Fiber Arts",
+				"url": "https://wp.stolaf.edu/calendar/event/crafting-resilience-finding-community-and-connection-through-fiber-arts-2/",
+				"utc_end_date": "2026-09-22 23:00:00",
+				"utc_start_date": "2026-09-22 20:00:00",
+				"venue": {
+					"venue": "Buntrock Commons 143 Munch Room"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>All students are welcome to attend the Wild Rockies Field Institute Semester Program Info Session hosted by Smith Center for Global Engagement.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Smith Center for Global Engagement"
+					}
+				],
+				"title": "Wild Rockies Field Institute Semester Program Info Session",
+				"url": "https://wp.stolaf.edu/calendar/event/wild-rockies-field-institute-semester-program-info-session/",
+				"utc_end_date": "2026-09-22 21:00:00",
+				"utc_start_date": "2026-09-22 20:00:00",
+				"venue": {
+					"venue": "Buntrock Commons 144"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection></div>",
+				"organizer": [],
+				"title": "Last day to add a semester-long course",
+				"url": "https://wp.stolaf.edu/calendar/event/last-day-to-add-a-semester-long-course/",
+				"utc_end_date": "2026-09-24 04:59:59",
+				"utc_start_date": "2026-09-23 05:00:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Service of Holy Communion",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-service-of-holy-communion-10/",
+				"utc_end_date": "2026-09-23 15:30:00",
+				"utc_start_date": "2026-09-23 15:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Recreation"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Students are welcome to join our student fellows and other students for CommuniTEA every Wednesday from 2:30-3:30 p.m. in the Lutheran Center. Come and chat (or not!), color, and drink tea.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "The Lutheran Center for Faith, Values, and Community"
+					}
+				],
+				"title": "Student CommuniTEA",
+				"url": "https://wp.stolaf.edu/calendar/event/student-communitea/2026-09-23/",
+				"utc_end_date": "2026-09-23 20:30:00",
+				"utc_start_date": "2026-09-23 19:30:00",
+				"venue": {
+					"venue": "the Lutheran Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Soccer at Luther College<br />\nStreaming Video: https://watchmidwestsports.com/luthernorse/?B=4105640<br />\nTickets: https://www.luther.edu/offices/programming/tickets/sports</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Soccer at Luther College",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-soccer-at-luther-college-2/",
+				"utc_end_date": "2026-09-24 02:00:00",
+				"utc_start_date": "2026-09-24 00:00:00",
+				"venue": {
+					"venue": "Decorah, Iowa / Luther Soccer Field"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball at Carleton College<br />\nStreaming Video: https://miacsportsnetwork.com/carleton/</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball at Carleton College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-at-carleton-college/",
+				"utc_end_date": "2026-09-24 02:00:00",
+				"utc_start_date": "2026-09-24 00:00:00",
+				"venue": {
+					"venue": "Northfield, Minn. / West Gym"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Dr. Tim Anderson &#8217;97, superintendent for Northfield Public Schools, will speak as part of the celebration of the Svoboda Center for Civic Engagement.</p>\n<p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Dr. Tim Anderson &#8217;97",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-svoboda-center/",
+				"utc_end_date": "2026-09-24 16:20:00",
+				"utc_start_date": "2026-09-24 16:00:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Academic Year"
+					},
+					{
+						"name": "Special Events/Celebrations"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, students, and the greater community are invited to the Svoboda Center to celebrate the launch of the Svoboda Center for Civic Engagement, and give thanks for the generous gift of Paul Svoboda &#8217;81 to our college community. The program will include remarks and dessert.</p>\n</div>",
+				"organizer": [],
+				"title": "Svoboda Center Opening Celebration",
+				"url": "https://wp.stolaf.edu/calendar/event/svoboda-center-opening-celebration/",
+				"utc_end_date": "2026-09-24 17:30:00",
+				"utc_start_date": "2026-09-24 16:30:00",
+				"venue": {
+					"venue": "Tomson Hall 3rd Floor East Lantern"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Recreation"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Staff and Faculty are welcome to join us for CommuniTEA every Thursday during community time 11:30 a.m.-12:30 p.m. in the Lutheran Center. Come and chat (or not!), color, and drink tea.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "The Lutheran Center for Faith, Values, and Community"
+					}
+				],
+				"title": "Faculty/Staff CommuniTEA time",
+				"url": "https://wp.stolaf.edu/calendar/event/faculty-staff-communitea-time/2026-09-24/",
+				"utc_end_date": "2026-09-24 17:30:00",
+				"utc_start_date": "2026-09-24 16:30:00",
+				"venue": {
+					"venue": "the Lutheran Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>The Kierkegaard Library invites St. Olaf faculty, staff, and community members to join close readings and discussions of Kierkegaard’s works.</p>\n<p>Location: Hong Kierkegaard Library, Steensland Hall</p>\n<p>Light refreshments provided.</p>\n<p>RSVP with interest to HKL@stolaf.edu</p>\n</div>",
+				"organizer": [],
+				"title": "Kierkegaard and Coffee",
+				"url": "https://wp.stolaf.edu/calendar/event/kierkegaard-and-coffee/",
+				"utc_end_date": "2026-09-24 17:30:00",
+				"utc_start_date": "2026-09-24 16:30:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Performing and Visual Arts"
+					},
+					{
+						"name": "Speakers/Lectures"
+					},
+					{
+						"name": "Special Events/Celebrations"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Join Provost Tarshia Stanley and the Flaten Art Museum staff for an educator’s tour of the museum’s galleries, classroom, and vault. Discover how faculty across the disciplines are using the Flaten Art Museum to spark student engagement — from a single class visit to a semester-long sequence — and leave with adaptable exercises and assignments to make your own. Linger for conversation, drinks, and new connections with colleagues across campus.</p>\n<p>Co-presented by the Flaten Art Museum and New Faculty Mentoring.</p>\n<p>Flaten Art Musuem<br />\nCenter for Art and Dance</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Flaten Art Museum"
+					}
+				],
+				"title": "After Hours at FAM: A Faculty Mixer",
+				"url": "https://wp.stolaf.edu/calendar/event/after-hours-at-fam-a-faculty-mixer/",
+				"utc_end_date": "2026-09-24 23:00:00",
+				"utc_start_date": "2026-09-24 21:30:00",
+				"venue": {
+					"venue": "Center for Art and Dance"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Tennis at ITA Midwest Regional Championships</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Tennis at ITA Midwest Regional Championships",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-tennis-at-ita-midwest-regional-championships/",
+				"utc_end_date": "2026-09-27 04:59:59",
+				"utc_start_date": "2026-09-25 05:00:00",
+				"venue": {
+					"venue": "St. Peter, Minn. / Wilkinson Tennis Complex"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, and students are welcome to gather at the Buntrock Institute for Freedom and Community every Friday from 8:30 to 9:30 a.m. Politics and Pastries provides opportunities to discuss politics, campaigns, and current events. Coffee and light pastries will be provided.</p>\n<p>This week’s conversation will be led by Assistant Director for Student Civic Leadership Erin Golden Zimmerman.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Buntrock Institute for Freedom and Community"
+					}
+				],
+				"title": "Politics and Pastries",
+				"url": "https://wp.stolaf.edu/calendar/event/politics-and-pastries-11/",
+				"utc_end_date": "2026-09-25 14:30:00",
+				"utc_start_date": "2026-09-25 13:30:00",
+				"venue": {
+					"venue": "Tomson Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Service of Morning Prayer",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-service-of-morning-prayer-3/",
+				"utc_end_date": "2026-09-25 15:30:00",
+				"utc_start_date": "2026-09-25 15:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs University of Minnesota Morris<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs University of Minnesota Morris",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-university-of-minnesota-morris-2/",
+				"utc_end_date": "2026-09-26 00:00:00",
+				"utc_start_date": "2026-09-25 22:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs Simpson College vs. UW-Stout<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs Simpson College vs. UW-Stout",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-simpson-college-vs-uw-stout/",
+				"utc_end_date": "2026-09-26 02:00:00",
+				"utc_start_date": "2026-09-26 00:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Golf at Carleton Invitational</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Golf at Carleton Invitational",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-golf-at-carleton-invitational/",
+				"utc_end_date": "2026-09-27 04:59:59",
+				"utc_start_date": "2026-09-26 05:00:00",
+				"venue": {
+					"venue": "White Bear Township, Minn. &#8211; Oneka Ridge G.C. / Faribault, Minn. &#8211; Faribault C.C."
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Speakers/Lectures"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Join KYMN Radio, Carleton College, and St. Olaf College&#8217;s Buntrock Institute for Freedom and Community for the 2026 Northfield Candidate Forum on Saturday, September 26 in Viking Theater. The forum will run from 9 a.m. to 10:30 a.m.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Events"
+					}
+				],
+				"title": "Candidate Forum with KYMN Radio",
+				"url": "https://wp.stolaf.edu/calendar/event/candidate-forum-with-kymn-radio/",
+				"utc_end_date": "2026-09-26 15:30:00",
+				"utc_start_date": "2026-09-26 14:00:00",
+				"venue": {
+					"venue": "Viking Theater, Buntrock Commons"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs University of Wisconsin-Stout<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs University of Wisconsin-Stout",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-university-of-wisconsin-stout-3/",
+				"utc_end_date": "2026-09-26 16:00:00",
+				"utc_start_date": "2026-09-26 14:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Speakers/Lectures"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400\">Faculty, staff, students, and the wider community are welcome to spend an immersive afternoon exploring what it really means to train the voice like an athlete. Through lecture, interactive workshop, and live masterclass, Marci Rosenberg connects exercise physiology, vocal workload and recovery, vocal health, and the science and application of SOVT. Learn practical strategies for building vocal capacity, identifying emerging problems early, managing fatigue and risk, and making smarter training choices in the studio and onstage.</span></p>\n<p>Lecture/Workshop 10 a.m.- 12 p.m. | Masterclass 1 p.m. &#8211; 2:15 p.m.</p>\n<p><span style=\"font-weight: 400\">This event is free and open to the public.</span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Pedagogy Saturday: The Vocal Athlete Lab",
+				"url": "https://wp.stolaf.edu/calendar/event/pedagogy-saturday/",
+				"utc_end_date": "2026-09-26 19:15:00",
+				"utc_start_date": "2026-09-26 15:00:00",
+				"venue": {
+					"venue": "CHM 233"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs University of Wisconsin-Stout vs. Martin Luther College<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs University of Wisconsin-Stout vs. Martin Luther College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-university-of-wisconsin-stout-vs-martin-luther-college/",
+				"utc_end_date": "2026-09-26 18:00:00",
+				"utc_start_date": "2026-09-26 16:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Settle into a pair of colorful lawn chairs in The Link in the Center for Art and Dance for a cup of apple cider and conversation. Stay Awhile is a playful experience inspired by Alyssa Baguss&#8217;s public art project <em>Face to Face: 20 Questions That Lead to Loving the Planet</em>, along with the themes of observation, relationship, and connection found in Michon Weeks&#8217; Flaten Art Museum exhibition <em>Mystic Topographies</em>. </p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Flaten Art Museum"
+					}
+				],
+				"title": "Stay Awhile: Conversations for Loving the Planet",
+				"url": "https://wp.stolaf.edu/calendar/event/stay-awhile-conversations-for-loving-the-planet/",
+				"utc_end_date": "2026-09-26 20:00:00",
+				"utc_start_date": "2026-09-26 18:00:00",
+				"venue": {
+					"venue": "CAD 204 (The Link)"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Soccer vs Augsburg University<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Soccer vs Augsburg University",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-vs-augsburg-university-2/",
+				"utc_end_date": "2026-09-26 20:00:00",
+				"utc_start_date": "2026-09-26 18:00:00",
+				"venue": {
+					"venue": "Northfield, Minn. , Rolf Mellby Field"
+				}
+			}
+		],
+		"next_rest_url": "https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events/?per_page=50&status=publish&starts_before=2026-10-05+23%3A59%3A59&ends_after=2026-09-04+23%3A59%3A59&page=3"
+	},
+	"key": "GET https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events/?per_page=50&status=publish&starts_before=2026-10-05+23%3A59%3A59&ends_after=2026-09-04+23%3A59%3A59&page=2",
+	"status": 200
+}

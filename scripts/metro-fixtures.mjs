@@ -7,7 +7,7 @@ import path from 'node:path'
 /** What a stubbed fixture resolves to. */
 export const EMPTY_FIXTURE = path.join(import.meta.dirname, 'empty-fixture.json')
 
-const FIXTURE_DATA = /[\\/]__fixtures__[\\/][^\\/]+\.json$/u
+const FIXTURE_DATA = /[\\/]__fixtures__[\\/](?:[^\\/]+[\\/])*[^\\/]+\.json$/u
 
 /**
  * Whether a bundle swaps the fixture at `filePath` for the empty one: a

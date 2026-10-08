@@ -3,7 +3,8 @@ import {eventKey} from '@frogpond/event-list/calendar-util'
 import {queryOptions} from '@tanstack/react-query'
 import {addMonths, startOfDay} from 'date-fns'
 import * as Sentry from '@sentry/react-native'
-import {now as currentMoment} from '@frogpond/timer'
+import {now as currentMoment, UITEST_FROZEN_DATE} from '@frogpond/timer'
+import {campusFixturesDomain} from '@frogpond/launch-arguments'
 import {queryClient} from '../../source/init/tanstack-query'
 import {getRunner} from '../../source/database/client'
 import {bumpCalendarRevision} from '../../source/database/calendar/revision'
@@ -42,7 +43,7 @@ const CALENDAR_PARSERS: Record<string, CalendarParser> = {
 	[TEC_EVENTS]: {
 		format: 'json',
 		parse: parseTecEvents,
-		fetch: (href, fetchPage) => fetchTecPages(href, tecWindow(new Date()), fetchPage),
+		fetch: (href, fetchPage) => fetchTecPages(href, tecWindow(tecClock()), fetchPage),
 	},
 	[FROGPOND_EVENTS]: {format: 'json', parse: parseEvents},
 	[ICAL_EVENTS]: {format: 'text', parse: parseIcalEvents},
@@ -67,6 +68,15 @@ function parserFor(type: string): CalendarParser {
  * override could miss the feed altogether -- and an empty feed reads as an
  * empty calendar.
  */
+/**
+ * The clock `tecWindow` reads. A campus test asks from the frozen date, so its
+ * request matches the recording on every run; anything else goes by the
+ * device clock, as `tecWindow` explains.
+ */
+function tecClock(): Date {
+	return campusFixturesDomain ? new Date(UITEST_FROZEN_DATE) : new Date()
+}
+
 export function tecWindow(now: Date): {from: Date; until: Date} {
 	let from = startOfDay(now)
 	return {from, until: addMonths(from, 1)}

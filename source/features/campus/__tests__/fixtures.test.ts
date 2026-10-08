@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {fixtureKey, MissingCampusFixture, serveFixture} from '../fixtures'
+import {fixtureKey, MissingCampusFixture, serveFixture, tableFrom} from '../fixtures'
 
 const roots = {
 	'stolaf.edu': new URL('http://localhost:3000/v1/'),
@@ -52,5 +52,25 @@ describe('serveFixture', () => {
 		expect(() => serveFixture('carleton.edu', table, request, roots)).toThrow(
 			/GET \{server:carleton\.edu\}\/contacts.*mise run update-campus-fixtures carleton\.edu/u,
 		)
+	})
+})
+
+describe('tableFrom', () => {
+	test('reads a JSON answer back as the text it was', () => {
+		let table = tableFrom('stolaf.edu', [
+			{
+				key: 'GET {server:stolaf.edu}/contacts',
+				status: 200,
+				contentType: 'application/json',
+				json: {data: []},
+			},
+			{key: 'GET {server:stolaf.edu}/feed', status: 200, contentType: 'text/xml', text: '<rss/>'},
+		])
+		expect(table['GET {server:stolaf.edu}/contacts'].body).toBe('{"data":[]}')
+		expect(table['GET {server:stolaf.edu}/feed'].body).toBe('<rss/>')
+	})
+
+	test('refuses recordings a release bundle emptied', () => {
+		expect(() => tableFrom('stolaf.edu', [{}])).toThrow(/stolaf\.edu.*KEEP_UITEST_FIXTURES/u)
 	})
 })

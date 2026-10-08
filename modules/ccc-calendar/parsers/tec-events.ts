@@ -18,6 +18,8 @@ const TecCategorySchema = z.object({
 	name: z.string(),
 })
 
+// Campus UI-test recordings keep only these fields (`TRIMS` in
+// scripts/campus-fixtures.mjs); a field read here is added there too.
 const TecEventSchema = z.object({
 	title: z.string(),
 	description: z.string(),
