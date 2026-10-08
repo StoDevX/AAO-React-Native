@@ -143,6 +143,41 @@ describe('HomeViews', () => {
 				disabled: false,
 			},
 			{
+				title: 'Carleton SUMO',
+				icon: 'film.fill',
+				target: '/carleton-sumo',
+				devOnly: true,
+				disabled: false,
+			},
+			{
+				title: 'Carleton Convo',
+				icon: 'building.columns.fill',
+				target: '/carleton-convos',
+				devOnly: true,
+				disabled: false,
+			},
+			{
+				title: 'Carleton Directory',
+				icon: 'person.crop.rectangle.fill',
+				target: 'https://www.carleton.edu/directory/',
+				devOnly: true,
+				disabled: false,
+			},
+			{
+				title: 'Carleton Moodle',
+				icon: 'graduationcap.fill',
+				target: 'https://moodle.carleton.edu/',
+				devOnly: true,
+				disabled: false,
+			},
+			{
+				title: 'Carleton Workday',
+				icon: 'briefcase.fill',
+				target: 'https://www.carleton.edu/workday/',
+				devOnly: true,
+				disabled: false,
+			},
+			{
 				title: 'Developer',
 				icon: 'hammer.fill',
 				target: '/developer',
@@ -165,7 +200,16 @@ describe('visibleViews', () => {
 	test('adds the dev-only views in dev mode, after the rest', () => {
 		let titles = visibleViews(HomeViews(), {isDev: true}).map((view) => view.title)
 
-		expect(titles.slice(-3)).toEqual(['Athletics', 'Carleton Campus', 'Developer'])
+		expect(titles.slice(-8)).toEqual([
+			'Athletics',
+			'Carleton Campus',
+			'Carleton SUMO',
+			'Carleton Convo',
+			'Carleton Directory',
+			'Carleton Moodle',
+			'Carleton Workday',
+			'Developer',
+		])
 	})
 })
 

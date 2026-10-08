@@ -11,6 +11,7 @@ import {
 	type TimelineWindow,
 } from '@frogpond/event-list'
 import * as c from '@frogpond/colors'
+import type {EventType} from '@frogpond/event-type'
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
@@ -24,11 +25,23 @@ import {
 	STOLAF_POWERED_BY,
 } from '../../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../../source/features/streaming/radio/constants'
+import {
+	CONVOS_POWERED_BY,
+	SUMO_POWERED_BY,
+	sumoEventMapper,
+} from '../../../source/features/carleton/constants'
 import {Host} from '@expo/ui/swift-ui'
 import {useEvent, useNeighbours} from '../../../source/database/calendar/read'
 import type {Window} from '../../../source/database/calendar/queries'
 
-type EventSource = 'stolaf' | 'presence' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
+type EventSource =
+	| 'stolaf'
+	| 'presence'
+	| 'uitest'
+	| 'ksto-schedule'
+	| 'krlx-schedule'
+	| 'sumo-schedule'
+	| 'upcoming-convos'
 
 // A stand-in for a real remote source, so its detail screen attributes exactly
 // like `stolaf`'s or `presence`'s does.
@@ -40,16 +53,31 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	uitest: UITEST_POWERED_BY,
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
+	'sumo-schedule': SUMO_POWERED_BY,
+	'upcoming-convos': CONVOS_POWERED_BY,
 }
 
 /**
  * The sources that contribute to the merged calendar, and so have neighbours
- * to show. KSTO's and KRLX's broadcast schedules do not.
+ * to show. The radio schedules and Carleton's SUMO and convocation lists do not.
  */
 const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'uitest'])
 
-/** KSTO's and KRLX's broadcast schedules -- fetched, not written into the database. */
-const SCHEDULE_SOURCE_IDS = new Set(['ksto-schedule', 'krlx-schedule'])
+/**
+ * KSTO's and KRLX's broadcast schedules, and Carleton's SUMO and convocation
+ * lists -- fetched, not written into the database.
+ */
+const SCHEDULE_SOURCE_IDS = new Set([
+	'ksto-schedule',
+	'krlx-schedule',
+	'sumo-schedule',
+	'upcoming-convos',
+])
+
+/** The schedules whose list retitles its events, by the list's own mapper. */
+const TITLE_MAPPERS: Partial<Record<string, (event: EventType) => EventType>> = {
+	'sumo-schedule': sumoEventMapper,
+}
 
 /** `timelineWindow`'s Moment span, as the `Window` `useNeighbours` reads by value. */
 function occurrenceWindowFor(range: TimelineWindow): Window {
@@ -75,12 +103,12 @@ export default function EventDetailPage(): React.ReactNode {
 	// the query inside the call would still leave the hook count stable but the
 	// types unresolvable. The idle one never fetches.
 	//
-	// Detail lookups don't need the list's eventMapper: it only ever sets
-	// config.subtitle, which the detail view never reads (only the list's
-	// row does) -- passing a mapper here would just be a second copy of that
-	// transform that has to stay byte-identical to the list's forever.
+	// Detail lookups don't need a mapper that only sets config.subtitle, which
+	// the detail view never reads. A mapper that changes the title does
+	// belong here: the row's key is built from the mapped title, so the
+	// lookup has to map the same way to find it.
 	let scheduleQuery = useQuery({
-		...scheduleEventOptions(source, eventKey),
+		...scheduleEventOptions(source, eventKey, {eventMapper: TITLE_MAPPERS[source]}),
 		enabled: scheduleSource,
 	})
 	let {enabled} = useCalendarSources()

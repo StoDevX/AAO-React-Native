@@ -55,6 +55,18 @@ links:
     titles: {und: KSTO Schedule}
     properties: {'https://frogpond.tech/ns/id': ksto-schedule}
 
+  - rel: https://frogpond.tech/rel/calendar
+    href: 'https://carleton.frogpond.tech/v1/calendar/named/sumo-schedule'
+    type: application/vnd.frogpond.events+json
+    titles: {und: SUMO Schedule}
+    properties: {'https://frogpond.tech/ns/id': sumo-schedule}
+
+  - rel: https://frogpond.tech/rel/calendar
+    href: 'https://carleton.frogpond.tech/v1/calendar/named/upcoming-convos'
+    type: application/vnd.frogpond.events+json
+    titles: {und: Carleton Convocations}
+    properties: {'https://frogpond.tech/ns/id': upcoming-convos}
+
   - rel: https://frogpond.tech/rel/jobs
     href: 'https://fa-ewur-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1'
     type: application/vnd.oracle.recruiting-ce+json

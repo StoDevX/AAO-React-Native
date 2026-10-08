@@ -8,6 +8,8 @@ const KNOWN_SOURCES: ReadonlySet<string> = new Set([
 	'presence',
 	'ksto-schedule',
 	'krlx-schedule',
+	'sumo-schedule',
+	'upcoming-convos',
 ])
 
 /** The event screen's `source` route param, narrowed to the calendar feeds; `other` for anything else. */

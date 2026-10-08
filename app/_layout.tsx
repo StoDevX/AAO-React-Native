@@ -126,6 +126,7 @@ function RootLayout(): React.ReactNode {
 								<Stack.Screen name="menus" options={{title: 'Menus'}} />
 								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
 								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
+								<Stack.Screen name="carleton-convos" options={{title: 'Convocations'}} />
 								{/* No large title: the front page draws the paper's name in the bar, in its serif,
 								    and a large title would show the plain name until the page scrolled. */}
 								<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
