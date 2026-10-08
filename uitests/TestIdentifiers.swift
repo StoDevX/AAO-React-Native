@@ -219,6 +219,8 @@ struct TestIdentifiers {
 		/// A building with a directory file (data/building-directory/toh.yaml),
 		/// whose first floor (index 1) lists Financial Aid, an Hours venue.
 		static let aBuildingWithADirectory = "Tomson Hall"
+		/// `aBuildingWithADirectory`'s feature id, which a link to the map opens it by.
+		static let aBuildingWithADirectoryId = "toh"
 		static let aDirectoryFloor = "1st floor"
 		static let aDirectoryFloorIndex = 1
 		static let aDirectoryVenue = "Financial Aid"
@@ -270,9 +272,11 @@ struct TestIdentifiers {
 		/// tap that reaches the footprint instead opens the wrong card.
 		/// St. Olaf can rename it.
 		static let aPointOnlyPlace = "Stav Hall"
-		/// A row two screens down `parkingCategory`, behind every Accessible
-		/// Parking space. St. Olaf can rename it.
-		static let aRowFarDownParking = "Alumni Hall Road"
+		/// A row a little over a screen down `parkingCategory`, about halfway
+		/// through its Accessible Parking spaces: far enough that its place in
+		/// the list can be lost, near enough to reach in a few slow drags. St.
+		/// Olaf can rename it.
+		static let aRowDownParking = "Accessible Parking, Mohn + Kildahl"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/map/index.tsx.

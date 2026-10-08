@@ -72,6 +72,15 @@ struct MapScreen: Screen {
 		open(route: "/map?campus=stolaf", mountedWhen: mounted, timeout: 60)
 	}
 
+	/// St. Olaf's map, opened by a link on the card of the place whose feature
+	/// id is `id`, skipping the search a user would type.
+	@discardableResult
+	func navigate(toPlace id: String) -> Self {
+		open(route: "/map?campus=stolaf&place=\(id)", mountedWhen: mounted, timeout: 60)
+		XCTAssertTrue(closeButton.waitUntilExists(timeout: 30), "The link should open \(id)'s card")
+		return self
+	}
+
 	/// Where the field's top edge sits on screen. Only a detent change moves
 	/// it: it is pinned above the list, so a scroll never does.
 	func searchFieldTop() -> CGFloat {
