@@ -4,7 +4,7 @@ import {
 	REL_ORG_CATEGORIES,
 	resolveSources,
 } from '@frogpond/data-sources'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import orgCategoriesData from '../../../docs/org-categories.json'
@@ -21,11 +21,11 @@ export const keys = {
 const staleTime = 1000 * 60 * 5
 
 async function fetchCategoryIcons({signal}: {signal: AbortSignal}): Promise<OrgCategoryType[]> {
-	// Mirrors contacts-query.ts: UI tests read the bundled copy directly, so a
+	// Mirrors contacts-query.ts: UI tests naming no campus read the bundled copy directly, so a
 	// row's icon and gradient in a screenshot match whatever this checkout
 	// carries rather than whatever data/org-categories.yaml happens to
 	// publish at test time.
-	if (isUITesting) {
+	if (servesBundledFixtures) {
 		return (orgCategoriesData as {data: OrgCategoryType[]}).data
 	}
 

@@ -4,7 +4,7 @@ import {
 	REL_MAP_CATEGORIES,
 	resolveSources,
 } from '@frogpond/data-sources'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {z} from 'zod'
 
@@ -35,7 +35,7 @@ const PublishedMapCategoriesSchema = z.object({
 	data: z.object({stolaf: CampusSchema, carleton: CampusSchema}),
 })
 
-/// This checkout's copy, which UI tests read in place of the published one.
+/// This checkout's copy, which UI tests naming no campus read in place of the published one.
 const UITEST_MAP_CATEGORIES = (mapCategoriesData as {data: MapCategoryTable}).data
 
 export const keys = {
@@ -47,9 +47,9 @@ export const keys = {
 const staleTime = 1000 * 60 * 5
 
 async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapCategoryTable> {
-	// UI tests read the bundled copy, so a screenshot's tiles match this
+	// UI tests naming no campus read the bundled copy, so a screenshot's tiles match this
 	// checkout rather than whatever is published at test time.
-	if (isUITesting) {
+	if (servesBundledFixtures) {
 		return UITEST_MAP_CATEGORIES
 	}
 
@@ -96,8 +96,8 @@ export const mapCategoriesOptions = queryOptions({
 	queryFn: fetchMapCategories,
 	staleTime,
 	select: readableMapCategories,
-	// UI tests' copy is there from the start, marked stale.
-	initialData: isUITesting ? UITEST_MAP_CATEGORIES : undefined,
+	// The copy UI tests naming no campus read is there from the start, marked stale.
+	initialData: servesBundledFixtures ? UITEST_MAP_CATEGORIES : undefined,
 	initialDataUpdatedAt: 0,
 	retry: (failures, error) =>
 		!(error instanceof UnreadableMapCategoriesError) && failures < MAX_FETCH_RETRIES,

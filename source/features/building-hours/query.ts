@@ -1,5 +1,5 @@
 import {carletonClient, stolafClient} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useAppSelector} from '../../redux/hooks'
 import {favoriteNamesForCampus, selectFavoriteBuildings} from '../../redux/parts/buildings'
@@ -34,7 +34,7 @@ function clientFor(campus: Campus): typeof stolafClient {
 
 function fetchBuildings(campus: Campus) {
 	return async ({signal}: {signal: AbortSignal}): Promise<BuildingType[]> => {
-		// UI tests assert against what a screen does with a venue, so they need
+		// UI tests naming no campus assert against what a screen does with a venue, so they need
 		// the same venues every run, and they need this repository's copy rather
 		// than the deployed one -- a `building` key added here only reaches the
 		// server once it merges, and a test for it would fail in between for a
@@ -44,7 +44,7 @@ function fetchBuildings(campus: Campus) {
 		// The dev override takes the same route, for the same reason: a field
 		// added here is invisible on a device until the server has it.
 		let forced = useForceBundledData.getState().forced
-		if ((isUITesting || forced) && campus === 'stolaf') {
+		if ((servesBundledFixtures || forced) && campus === 'stolaf') {
 			return (bundledBuildings as {data: BuildingType[]}).data
 		}
 

@@ -12,7 +12,7 @@ import type {CalendarSource, SourcedEvent} from '@frogpond/event-list'
 export type {CalendarSource, SourcedEvent}
 
 import type {SourceCampus} from '@frogpond/data-sources'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 
 /** A calendar, and the campus whose calendar screen offers it. */
 type CampusSource = CalendarSource & {campus: SourceCampus}
@@ -28,19 +28,19 @@ const LIVE_SOURCES: CampusSource[] = [
  * pick. The order is the dedupe order `sourceRankOf` reads, so a source's
  * place here decides which copy of a duplicated event survives.
  *
- * UI test mode replaces live sources with a fixture calendar so tests don't
+ * UI test mode, naming no campus, replaces live sources with a fixture calendar so tests don't
  * depend on network data.
  */
-export const REMOTE_SOURCES: CalendarSource[] = isUITesting
+export const REMOTE_SOURCES: CalendarSource[] = servesBundledFixtures
 	? [{id: 'uitest', title: 'UI Test Fixtures', color: c.systemBlue}]
 	: LIVE_SOURCES.map(({campus: _campus, ...source}) => source)
 
 /**
  * The calendars `campus`'s calendar screen offers. St. Olaf's has its own and
- * Presence; Carleton's has Carleton's. UI test mode offers the fixture alone.
+ * Presence; Carleton's has Carleton's. UI test mode, naming no campus, offers the fixture alone.
  */
 export function remoteSourcesFor(campus: SourceCampus): CalendarSource[] {
-	if (isUITesting) return REMOTE_SOURCES
+	if (servesBundledFixtures) return REMOTE_SOURCES
 	let ids = new Set(LIVE_SOURCES.filter((source) => source.campus === campus).map((s) => s.id))
 	return REMOTE_SOURCES.filter((source) => ids.has(source.id))
 }

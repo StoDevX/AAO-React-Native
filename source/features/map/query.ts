@@ -1,5 +1,5 @@
 import {carletonClient, stolafClient} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import type {Campus} from '../building-hours/types'
 import {UITEST_MAPS} from './__fixtures__/maps'
@@ -28,7 +28,7 @@ export const mapDataOptions = (campus: Campus) =>
 	queryOptions({
 		queryKey: keys.all(campus),
 		queryFn: async ({signal}): Promise<Array<Feature<Building>>> => {
-			if (isUITesting) {
+			if (servesBundledFixtures) {
 				return uiTestFixture(`${campus}-map.json`, UITEST_MAPS[campus]).features
 			}
 			let response = await clientFor(campus)
