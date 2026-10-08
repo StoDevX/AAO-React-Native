@@ -51,6 +51,7 @@ import {
 	selectionFraming,
 } from '../../source/features/map/lib/selection'
 import {MapPinImages, MapPinsLayer} from '../../source/features/map/map-pins-layer'
+import {linkedPlace} from '../../source/features/map/lib/linked-place'
 import {MapSelectionLayer} from '../../source/features/map/map-selection-layer'
 import {useFrameRequests} from '../../source/features/map/use-frame-requests'
 import {SELECTED, useFootprintHighlight} from '../../source/features/map/use-footprint-highlight'
@@ -109,7 +110,10 @@ export default function MapPage(): React.ReactNode {
 	// parseCampus' own St. Olaf default, which belongs to `/hours`. A param
 	// that is present but unrecognised still falls back through parseCampus
 	// rather than crashing.
-	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
+	let {campus: campusParam, place: placeParam} = useLocalSearchParams<{
+		campus?: string
+		place?: string
+	}>()
 	// Wrapped in useMemo, rather than a plain `let`, so the React Compiler
 	// treats it as one reactive value with a clear dependency -- otherwise it
 	// loses track of `dispatchStack`'s stability below and refuses to
@@ -190,6 +194,18 @@ export default function MapPage(): React.ReactNode {
 		},
 		[dispatchSheet],
 	)
+
+	// A link can open a place by its feature id: `/map?campus=stolaf&place=toh`.
+	// It opens once its places have loaded, and only once per link, so closing
+	// its card leaves the map as the user left it.
+	let opened = React.useRef<string | null>(null)
+	let linked = linkedPlace(placeParam, buildings)
+	React.useEffect(() => {
+		if (linked && opened.current !== linked) {
+			opened.current = linked
+			openPlace(linked)
+		}
+	}, [linked, openPlace])
 
 	// A tap opens the place whose name is drawn under it -- The Cage, inside
 	// Buntrock -- or the trail drawn under it, before the building it landed

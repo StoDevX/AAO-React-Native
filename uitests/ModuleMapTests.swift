@@ -131,7 +131,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// leaves the sheet and so where the list is seen again.
 	func testClosingACardKeepsTheListsPlace() throws {
 		let category = TestIdentifiers.Map.parkingCategory
-		let name = TestIdentifiers.Map.aRowFarDownParking
+		let name = TestIdentifiers.Map.aRowDownParking
 		let screen = MapScreen(app: app)
 			.navigate()
 			.expandSheet()
@@ -171,10 +171,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 	func testAFloorOpensWhatIsOnIt() throws {
 		let name = TestIdentifiers.Map.aBuildingWithADirectory
 		MapScreen(app: app)
-			.navigate()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
+			.navigate(toPlace: TestIdentifiers.Map.aBuildingWithADirectoryId)
 			.expandCard()
 			.openDirectoryFloor(TestIdentifiers.Map.aDirectoryFloorIndex)
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
