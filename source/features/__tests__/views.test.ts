@@ -152,6 +152,7 @@ describe('HomeViews for Carleton', () => {
 		expect(carleton().map((view) => [view.title, viewTarget(view)])).toEqual([
 			['Menus', '/menus/burton'],
 			['Workday', 'https://www.carleton.edu/workday/'],
+			['OneCard', 'https://get.cbord.com/carletonstolaf/full/prelogin.php'],
 			['Building Hours', '/hours?campus=carleton'],
 			['Calendar', '/calendar'],
 			['Directory', 'https://www.carleton.edu/directory/'],

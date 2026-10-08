@@ -256,6 +256,14 @@ const carletonViews = (): Array<ViewType> => [
 		icon: 'briefcase.fill',
 		gradient: c.goldGradient,
 	},
+	// The CARLS app's Balances tile; the OneCard site shows them, and the card's other uses.
+	{
+		type: 'url',
+		url: 'https://get.cbord.com/carletonstolaf/full/prelogin.php',
+		title: 'OneCard',
+		icon: 'creditcard.fill',
+		gradient: c.mintGradient,
+	},
 	{
 		type: 'view',
 		view: '/hours?campus=carleton',
