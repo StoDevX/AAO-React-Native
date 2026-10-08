@@ -548,14 +548,6 @@ struct TestIdentifiers {
 		/// again can drop it from the feed, which these tests read it from.
 		static let illustratedStoryRoute = "/messenger/story?id=36948"
 
-		/// An article whose first paragraph holds a link: "The true cost of convenience: AI in
-		/// the classroom", from the same recorded issue as the illustrated story.
-		static let linkedStoryRoute = "/messenger/story?id=36959"
-		/// That link's words.
-		static let linkedStoryLink = "According to the college library website"
-		/// What the system's menu for a held link offers, and its menu for selected text does not.
-		static let copyLink = "Copy Link"
-
 		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
@@ -632,14 +624,6 @@ struct TestIdentifiers {
 		/// The edit menu's Copy, which iOS offers only for text that can be,
 		/// or has been, selected.
 		static let copy = "Copy"
-	}
-
-	// MARK: - In-app browser
-
-	enum Browser {
-		/// The in-app browser's own close button, which only the browser
-		/// sheet draws.
-		static let done = "Done"
 	}
 
 	// MARK: - stoPrint

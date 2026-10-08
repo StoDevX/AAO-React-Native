@@ -132,50 +132,6 @@ struct MessStoryScreen: Screen {
 		return sampled == 0 ? 0 : Double(highlighted) / Double(sampled)
 	}
 
-	/// Tap a link in the story's text and assert it opens in the in-app browser, then close it.
-	@discardableResult
-	func openLinkInAppBrowser(_ label: String) -> Self {
-		let link = storyLink(label)
-		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to tap")
-		link.tap()
-		let done = app.buttons[TestIdentifiers.Browser.done].firstMatch
-		XCTAssertTrue(done.waitForExistence(timeout: 30), "tapping a story's link should open the in-app browser")
-		done.tap()
-		XCTAssertTrue(done.waitForNonExistence(timeout: 10), "Done should close the in-app browser")
-		return self
-	}
-
-	/// Hold a link in the story's text and assert iOS offers its link menu, not the menu for
-	/// selected text.
-	@discardableResult
-	func verifyLinkOffersLinkMenu(_ label: String) -> Self {
-		let link = storyLink(label)
-		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to hold")
-		// Press the link's screen point through SpringBoard rather than pressing
-		// the link itself. The menu's preview loads the linked page live, and
-		// the app never goes quiet while it does, so a press on our own app
-		// waits out XCUITest's full 60s quiescence timeout after landing.
-		// SpringBoard is quiet, and the point is the same point.
-		let target = link.frame
-		XCUIApplication(bundleIdentifier: TestIdentifiers.SpringBoard.bundleIdentifier)
-			.coordinate(withNormalizedOffset: .zero)
-			.withOffset(CGVector(dx: target.midX, dy: target.midY))
-			.press(forDuration: 1.5)
-		let copyLink = app.descendants(matching: .any)
-			.matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copyLink)).firstMatch
-		let offered = copyLink.waitForExistence(timeout: 5)
-		XCTAssertTrue(offered, "holding a link in a story should offer \(TestIdentifiers.News.copyLink)")
-		return self
-	}
-
-	/// The link in the story's text with these words, scrolled into view.
-	private func storyLink(_ label: String) -> XCUIElement {
-		let link = app.links.matching(NSPredicate(format: "label == %@", label)).firstMatch
-		XCTAssertTrue(link.waitForExistence(timeout: 30), "the story should hold the link \"\(label)\"")
-		scrollIntoUpperHalf(link)
-		return link
-	}
-
 	/// Drag the page slowly until `element` begins in the upper half of the screen, below the
 	/// navigation bar. A slow, held drag moves the page by about its own length, where a
 	/// swipe flings it past.
