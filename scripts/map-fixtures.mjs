@@ -4,8 +4,8 @@
 
 /** Each campus, and where its live map is served. */
 export const CAMPUSES = {
-	stolaf: 'https://stolaf.api.frogpond.tech/v1/map/geojson',
-	carleton: 'https://carleton.api.frogpond.tech/v1/map/geojson',
+	stolaf: 'https://stolaf.frogpond.tech/v1/map/geojson',
+	carleton: 'https://carleton.frogpond.tech/v1/map/geojson',
 }
 
 /** `value` with every object's keys in order, at every depth; arrays keep theirs. */

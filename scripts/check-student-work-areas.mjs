@@ -29,7 +29,7 @@ const SOURCES = new URL('../data/sources.yaml', import.meta.url)
 const REL_JOBS = 'https://frogpond.tech/rel/jobs'
 const REL_UNITS = 'https://frogpond.tech/rel/student-work-units'
 /** What the app resolves a relative source against; see source/lib/constants.ts. */
-const API_ROOT = 'https://stolaf.api.frogpond.tech/v1/'
+const API_ROOT = 'https://stolaf.frogpond.tech/v1/'
 const UNIT_NAMES_URL =
 	'https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json'
 

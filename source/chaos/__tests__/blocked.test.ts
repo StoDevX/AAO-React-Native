@@ -23,6 +23,6 @@ describe('isBlockedUrl', () => {
 	})
 
 	test('lets everything else through', () => {
-		expect(isBlockedUrl('https://stolaf.api.frogpond.tech/v1/menus')).toBe(false)
+		expect(isBlockedUrl('https://stolaf.frogpond.tech/v1/menus')).toBe(false)
 	})
 })
