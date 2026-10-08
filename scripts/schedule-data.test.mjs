@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import {
 	readFileSync,
+	existsSync,
 	readdirSync,
 	mkdtempSync,
 	writeFileSync,
@@ -27,7 +28,10 @@ let parse = ({calendar, spaces}) =>
 	)
 
 /** Exercises the public selected-file CLI with the repository's paired calendar. */
-function validateSelectedSpace(filename) {
+function validateSelectedSchedule(
+	filename,
+	schema = fileURLToPath(new URL('../data/_schemas/building-hours.yaml', import.meta.url)),
+) {
 	return spawnSync(
 		process.execPath,
 		[
@@ -35,7 +39,7 @@ function validateSelectedSpace(filename) {
 			'--data',
 			filename,
 			'--schema',
-			fileURLToPath(new URL('../data/_schemas/building-hours.yaml', import.meta.url)),
+			schema,
 		],
 		{encoding: 'utf8'},
 	)
@@ -127,7 +131,7 @@ describe('schedule data contracts', () => {
 			data.breakSchedule = {fal: 'normal'}
 			let path = join(dir, 'hours.yaml')
 			writeFileSync(path, JSON.stringify(data))
-			let result = validateSelectedSpace(path)
+			let result = validateSelectedSchedule(path)
 			assert.equal(result.status, 1)
 			assert.match(result.stderr, /breakSchedule.fal.*unknown break key/u)
 		} finally {
@@ -143,7 +147,7 @@ describe('schedule data contracts', () => {
 			)
 			let filename = join(dir, 'duplicate.yaml')
 			writeFileSync(filename, JSON.stringify(data))
-			let result = validateSelectedSpace(filename)
+			let result = validateSelectedSchedule(filename)
 			assert.equal(result.status, 1, result.stderr)
 			assert.match(
 				result.stderr,
@@ -168,8 +172,80 @@ describe('schedule data contracts', () => {
 					filename = join(dir, 'hours.yaml')
 					symlinkSync(original, filename)
 				}
-				let result = validateSelectedSpace(filename)
+				let result = validateSelectedSchedule(filename)
 				assert.equal(result.status, 0, result.stderr)
+			} finally {
+				rmSync(dir, {recursive: true, force: true})
+			}
+		})
+	}
+
+	for (let schemaName of ['breaks', 'building-hours']) {
+		for (let matchesConstraint of [false, true]) {
+			it(
+				'enforces an override of ' +
+					schemaName +
+					' with its constraint satisfied ' +
+					matchesConstraint,
+				() => {
+					let dir = mkdtempSync(join(tmpdir(), 'aao-schema-override-'))
+					try {
+						let schema = load(
+							readFileSync(
+								new URL('../data/_schemas/' + schemaName + '.yaml', import.meta.url),
+								'utf8',
+							),
+						)
+						let field = schemaName === 'breaks' ? 'timezone' : 'name'
+						let expected = schemaName === 'breaks' ? 'UTC' : 'Schema override accepted'
+						schema.properties[field] = {const: expected}
+						let data = load(
+							readFileSync(
+								new URL(
+									schemaName === 'breaks'
+										? '../data/breaks.yaml'
+										: '../data/building-hours/1-1-cage.yaml',
+									import.meta.url,
+								),
+								'utf8',
+							),
+						)
+						data[field] = matchesConstraint
+							? expected
+							: schemaName === 'breaks'
+								? 'America/Chicago'
+								: 'Schema override rejected'
+						let filename = join(dir, 'selected.yaml')
+						let schemaFile = join(dir, 'schema.yaml')
+						writeFileSync(filename, JSON.stringify(data))
+						writeFileSync(schemaFile, JSON.stringify(schema))
+						let result = validateSelectedSchedule(filename, schemaFile)
+						assert.equal(result.status, matchesConstraint ? 0 : 1, result.stderr)
+						if (!matchesConstraint) {
+							assert.ok(result.stdout.includes(field))
+							assert.doesNotMatch(result.stdout, / is valid/u)
+						}
+					} finally {
+						rmSync(dir, {recursive: true, force: true})
+					}
+				},
+			)
+		}
+
+		it('retains canonical authoring checks with a permissive ' + schemaName + ' override', () => {
+			let dir = mkdtempSync(join(tmpdir(), 'aao-schema-canonical-'))
+			try {
+				let data =
+					schemaName === 'breaks'
+						? {breaks: {}}
+						: {name: 'Incomplete space', category: 'Buildings', kind: 'building'}
+				let filename = join(dir, 'selected.yaml')
+				let schemaFile = join(dir, 'schema.yaml')
+				writeFileSync(filename, JSON.stringify(data))
+				writeFileSync(schemaFile, JSON.stringify({$id: schemaName + '.json', type: 'object'}))
+				let result = validateSelectedSchedule(filename, schemaFile)
+				assert.equal(result.status, 1)
+				assert.match(result.stderr, /required property/u)
 			} finally {
 				rmSync(dir, {recursive: true, force: true})
 			}
@@ -217,14 +293,10 @@ describe('schedule data contracts', () => {
 		['exception', ({spaces}) => spaces[0].exceptions[0]],
 		['inline break policy', ({spaces}) => spaces[0].breakSchedule.interim],
 	]) {
-		it('retains additive metadata on a ' + name, () => {
+		it('rejects unknown fields on a ' + name, () => {
 			let input = pair()
-			select(input).futureMetadata = {nested: [1, 2]}
-			let before = structuredClone(input)
-			let result = parse(input)
-			assert.deepEqual(input, before)
-			let normalized = {calendar: result.calendar, spaces: result.spaces.map(({data}) => data)}
-			assert.deepEqual(select(normalized).futureMetadata, {nested: [1, 2]})
+			select(input).unexpectedField = true
+			assert.throws(() => parse(input), /additional properties/u)
 		})
 	}
 
@@ -312,6 +384,30 @@ describe('schedule data contracts', () => {
 			/pattern/u,
 		)
 	}
+	for (let [name, select, key] of [
+		['singular exception', ({spaces}) => spaces[0], 'exception'],
+		['plural breakSchedules', ({spaces}) => spaces[0], 'breakSchedules'],
+		['misspelt chapel flag', ({spaces}) => spaces[0].schedule[0], 'closedForChapleTime'],
+		['misspelt default', ({calendar}) => calendar.breaks.fall, 'defaultSpaceSchedul'],
+		['service date', ({spaces}) => spaces[0].schedule[0], 'date'],
+		[
+			'link field',
+			({spaces}) => {
+				spaces[0].links = [{title: 'Example', url: 'https://example.com'}]
+				return spaces[0].links[0]
+			},
+			'unexpectedField',
+		],
+	]) {
+		invalid(
+			'rejects ' + name,
+			(input) => {
+				select(input)[key] = true
+			},
+			/additional properties/u,
+		)
+	}
+
 	invalid(
 		'rejects duplicate space names with both locations',
 		({spaces}) => {
@@ -372,7 +468,7 @@ describe('schedule data contracts', () => {
 			}
 			spaces.length = 0
 		},
-		/equal calendar-day span/u,
+		/partially overlaps/u,
 	)
 
 	invalid(
@@ -714,7 +810,7 @@ describe('schedule data contracts', () => {
 			}
 			spaces.length = 0
 		},
-		/overlaps first with an equal calendar-day span/u,
+		/partially overlaps first/u,
 	)
 })
 
@@ -831,20 +927,13 @@ describe('schedule publication artifacts', () => {
 		assert.deepEqual(breaks.breaks.easter, calendar.breaks.easter)
 	})
 
-	it('publishes explicit normal exceptions and additive metadata inside data envelopes', () => {
-		let {calendar, spaces} = pair()
-		calendar.futureMetadata = {revision: 2}
-		calendar.templates.closed = {schedule: calendar.templates.closed, attribution: 'Example'}
-		spaces[1].futureMetadata = ['retained']
-		let artifacts = scheduleArtifacts(parse({calendar, spaces}))
+	it('publishes explicit normal exceptions inside data envelopes', () => {
+		let artifacts = scheduleArtifacts(parse(pair()))
 		let hours = artifacts[0].data
 		let breaks = artifacts[1].data
 		assert.deepEqual(Object.keys(hours), ['data'])
 		assert.deepEqual(Object.keys(breaks), ['data'])
 		assert.deepEqual(hours.data[1].exceptions, [])
-		assert.deepEqual(hours.data[1].futureMetadata, ['retained'])
-		assert.deepEqual(breaks.data.futureMetadata, {revision: 2})
-		assert.deepEqual(breaks.data.templates.closed, {...calendar.templates.closed, exceptions: []})
 	})
 })
 
@@ -893,6 +982,19 @@ describe('schedule input loading', () => {
 			[filename, spaceFiles[1]],
 		)
 		assert.equal(result.spaces[0].data.name, spaces[0].name)
+	})
+
+	it('replaces a selected existing space with different path casing', (t) => {
+		let filename = join(fromDir, 'building-hours', '2-OFFICE.yaml')
+		if (!existsSync(filename)) {
+			t.skip('Requires a case-insensitive filesystem')
+			return
+		}
+		let result = loadScheduleData(fromDir, {kind: 'space', filename})
+		assert.deepEqual(
+			result.spaces.map(({label}) => label),
+			[filename, spaceFiles[1]],
+		)
 	})
 
 	it('appends a selected new space to the complete pair', () => {

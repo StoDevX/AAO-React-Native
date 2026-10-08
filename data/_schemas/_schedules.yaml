@@ -16,20 +16,17 @@ definitions:
     pattern: '^(?:[1-9]|1[0-2]):[0-5]\d[ap]m$'
 
   hours-row:
-    type: object
-    additionalProperties: true
-    required: [days, from, to]
-    properties:
-      days:
-        allOf:
-          - {$ref: '_defs.json#/definitions/days-of-week'}
-          - {type: array, minItems: 1, uniqueItems: true}
-      from: {$ref: '#/definitions/time'}
-      to: {$ref: '#/definitions/time'}
+    allOf:
+      - {$ref: '_defs.json#/definitions/day'}
+      - type: object
+        properties:
+          days: {type: array, minItems: 1, uniqueItems: true}
+          from: {$ref: '#/definitions/time'}
+          to: {$ref: '#/definitions/time'}
 
   service-block:
     type: object
-    additionalProperties: true
+    additionalProperties: false
     required: [title, hours]
     properties:
       title: {$ref: '#/definitions/text'}
@@ -55,7 +52,7 @@ definitions:
 
   exception:
     type: object
-    additionalProperties: true
+    additionalProperties: false
     required: [date, schedule]
     properties:
       date: {$ref: '#/definitions/date'}
@@ -69,7 +66,7 @@ definitions:
     oneOf:
       - {$ref: '#/definitions/services'}
       - type: object
-        additionalProperties: true
+        additionalProperties: false
         required: [schedule]
         properties:
           schedule: {$ref: '#/definitions/services'}

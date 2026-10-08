@@ -194,12 +194,21 @@ describe('schedule bundling', () => {
 	invalid(
 		'rejects unused authored definitions before replacing prior artifacts',
 		({calendar, calendarFile}) => {
-			calendar.breaks.spring.templates['office-hours'].exceptions.push(
-				structuredClone(calendar.breaks.spring.templates['office-hours'].exceptions[0]),
-			)
+			let unused = structuredClone(calendar.breaks.spring.templates['office-hours'])
+			unused.exceptions.push(structuredClone(unused.exceptions[0]))
+			calendar.breaks.spring.templates.unused = unused
 			writeYaml(calendarFile, calendar)
 		},
 		/duplicate exception date/u,
+	)
+
+	invalid(
+		'rejects misspelt optional fields before replacing prior artifacts',
+		({spaces, spaceFiles}) => {
+			spaces[1].exception = [{date: '2027-01-01', schedule: spaces[1].schedule}]
+			writeYaml(spaceFiles[1], spaces[1])
+		},
+		/additional properties/u,
 	)
 
 	invalid(

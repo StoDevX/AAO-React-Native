@@ -79,16 +79,6 @@ function validateBreakIntervals<T>({calendar, calendarLabel}: ValidationContext<
 			if (first.startMs === second.startMs && first.endMs === second.endMs) {
 				fail(`${calendarLabel}.breaks.${second.key}`, `duplicates the interval of ${first.key}`)
 			}
-			if (
-				first.calendarDays === second.calendarDays &&
-				first.startMs < second.endMs &&
-				second.startMs < first.endMs
-			) {
-				fail(
-					`${calendarLabel}.breaks.${second.key}`,
-					`overlaps ${first.key} with an equal calendar-day span`,
-				)
-			}
 			let overlaps = first.startMs < second.endMs && second.startMs < first.endMs
 			let nested =
 				(first.startMs <= second.startMs && first.endMs >= second.endMs) ||

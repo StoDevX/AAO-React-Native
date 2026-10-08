@@ -2,7 +2,7 @@ $schema: http://json-schema.org/draft-07/schema#
 $id: building-hours.json
 
 type: object
-additionalProperties: true
+additionalProperties: false
 required: [name, category, kind, schedule]
 properties:
   name: {$ref: 'schedules.json#/definitions/text'}
@@ -19,7 +19,7 @@ properties:
     type: array
     items:
       type: object
-      additionalProperties: true
+      additionalProperties: false
       required: [title, url]
       properties:
         title: {type: string}

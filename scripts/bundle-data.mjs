@@ -48,12 +48,16 @@ const hasSchedules =
 	fs.existsSync(path.join(fromDir, 'breaks.yaml')) ||
 	fs.existsSync(path.join(fromDir, 'building-hours'))
 const artifacts = hasSchedules ? scheduleArtifacts(loadScheduleData(fromDir)) : []
+const outputs = artifacts.map(({filename, data}) => ({
+	filename,
+	contents: JSON.stringify(data) + '\n',
+}))
 
 fs.mkdirSync(toDir, {recursive: true})
 
-for (let {filename, data} of artifacts) {
+for (let {filename, contents} of outputs) {
 	let output = path.join(toDir, filename)
-	step(`bundle-schedules ${output}`, () => fs.writeFileSync(output, JSON.stringify(data) + '\n'))
+	step(`bundle-schedules ${output}`, () => fs.writeFileSync(output, contents))
 }
 if (artifacts.length > 0) {
 	// Remove the retired generated feed only after validating and writing its replacement.

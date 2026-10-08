@@ -34,8 +34,17 @@ if (args.data) {
 				: undefined
 	if (kind !== undefined) {
 		loadScheduleData(DATA_BASE, {kind, filename: args.data})
-		args.quiet || console.log(args.data + ' is valid')
-		iterator = []
+		let canonicalSchema = path.join(
+			SCHEMA_BASE,
+			kind === 'space' ? 'building-hours.yaml' : 'breaks.yaml',
+		)
+		if (fs.realpathSync.native(args.schema) === fs.realpathSync.native(canonicalSchema)) {
+			args.quiet || console.log(args.data + ' is valid')
+			iterator = []
+		} else {
+			// An override adds its own rules to the canonical authoring checks.
+			iterator = [[[args.schema, schemaFile, readYaml(args.data)]]]
+		}
 	} else {
 		iterator = [[[args.schema, schemaFile, readYaml(args.data)]]]
 	}

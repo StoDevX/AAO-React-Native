@@ -21,7 +21,7 @@ import {validateSchedules} from './validate-schedules.ts'
 /** Labels identify the input in structural and cross-file errors. */
 export type ScheduleDataInput = {label: string; data: unknown}
 
-/** Validated schedules retain every field and unresolved reference. */
+/** Validated schedules retain authored fields and unresolved references. */
 export type ScheduleData = {
 	calendar: BreakCalendar<NamedBuildingScheduleType>
 	spaces: Array<{
@@ -104,7 +104,7 @@ function normalizeTemplates(input: Record<string, ScheduleInput>) {
 	)
 }
 
-/** Preserves calendar metadata while normalizing each authored policy. */
+/** Normalizes each calendar policy while retaining its names and dates. */
 function normalizeCalendar(input: CalendarInput): ScheduleData['calendar'] {
 	let {breaks, templates, ...calendarFields} = input
 	return {
@@ -203,8 +203,8 @@ export function loadScheduleData(fromDir: string, selection?: ScheduleSelection)
 	files.sort(new Intl.Collator(undefined, {numeric: true}).compare)
 	let spaceFiles = files.map((file) => join(hoursDir, file))
 	if (selection?.kind === 'space') {
-		let selectedPath = realpathSync(selection.filename)
-		let index = spaceFiles.findIndex((filename) => realpathSync(filename) === selectedPath)
+		let selectedPath = realpathSync.native(selection.filename)
+		let index = spaceFiles.findIndex((filename) => realpathSync.native(filename) === selectedPath)
 		if (index === -1) spaceFiles.push(selection.filename)
 		else spaceFiles[index] = selection.filename
 	}
