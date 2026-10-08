@@ -366,6 +366,8 @@ const config: ExpoConfig = {
 		'./plugins/with-sentry-debug-files-environment',
 		'./plugins/with-sentry-cli-executable',
 		'./plugins/with-tree-shaking',
+		// Xcode's own build phases read app.config.ts too, so ios/ remembers its variant.
+		['./plugins/with-app-variant', {variant: requested}],
 		[
 			'@sentry/react-native/expo',
 			{
