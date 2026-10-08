@@ -26,6 +26,33 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 	/// actual proof of that -- `verifyPreviewPresented` alone would pass
 	/// against a completely blank preview, since its identifier sits on the
 	/// outer container.
+	func testAnEditPreviewsAsAMarkedUpDiffOnceSomethingChanges() throws {
+		openEditFormWithAnEdit()
+			.openPreview()
+			.verifyPreviewPresented()
+			.verifyPreviewShows(TestIdentifiers.Dictionary.aWordOfTheDefinition)
+			.verifyPreviewShows(TestIdentifiers.Dictionary.addedWord)
+			.verifyNoUnsupportedNestedModifierMarker()
+	}
+
+	/// `usePreventRemove` should catch a sheet drag-down mid-edit the same way
+	/// it catches the form's own Back button -- nothing in Jest exercises this
+	/// gesture at all -- so the sheet is dragged once the edit has landed, and
+	/// keeping on editing leaves the form where it was.
+	func testDraggingTheSheetMidEditAsksBeforeDiscarding() throws {
+		openEditFormWithAnEdit()
+			.attemptToDragSheetClosed()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToKeepEditing()
+			.verifyEditFormPushedIntoSheet()
+	}
+
+	/// Opens the reference entry's edit form and prepends a word to its first
+	/// definition.
+	///
+	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
+	/// rather than presenting some other way -- its own Back button is what
+	/// `verifyEditFormPushedIntoSheet` looks for.
 	///
 	/// `addedWord` and the space after it make seven characters, here and in every other test
 	/// that types into this field: a shorter burst does not reliably straddle
@@ -33,15 +60,7 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 	/// dropped between renders. Seven characters is what it takes to trip that
 	/// race reliably -- `editFirstDefinition`'s read-back of the field's value
 	/// is what fails if one ever is.
-	///
-	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
-	/// rather than presenting some other way -- its own Back button is what
-	/// `verifyEditFormPushedIntoSheet` looks for.
-	///
-	/// `usePreventRemove` should catch a sheet drag-down mid-edit the same way
-	/// it catches the form's own Back button -- nothing in Jest exercises this
-	/// gesture at all -- so the sheet is dragged once the edit has landed.
-	func testAnEditPreviewsAsAMarkedUpDiffOnceSomethingChanges() throws {
+	private func openEditFormWithAnEdit() -> CampusDictionaryScreen {
 		CampusDictionaryScreen(app: app)
 			.navigate()
 			.search(for: TestIdentifiers.Dictionary.referenceEntry)
@@ -50,14 +69,5 @@ class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
 			.editFirstDefinition(prepending: TestIdentifiers.Dictionary.addedWord + " ")
-			.attemptToDragSheetClosed()
-			.verifyDiscardChangesAlertPresented()
-			.chooseToKeepEditing()
-			.verifyEditFormPushedIntoSheet()
-			.openPreview()
-			.verifyPreviewPresented()
-			.verifyPreviewShows(TestIdentifiers.Dictionary.aWordOfTheDefinition)
-			.verifyPreviewShows(TestIdentifiers.Dictionary.addedWord)
-			.verifyNoUnsupportedNestedModifierMarker()
 	}
 }
