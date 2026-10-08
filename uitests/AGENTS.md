@@ -107,9 +107,11 @@ otherwise passes exactly like one that worked.
 Every test cold-launches the app. On CI, launching and tapping through the
 home screen took a median 23 seconds before the screen under test was up —
 **roughly 1% of a 45-minute shard**. Opening the route by URL skips the home
-screen's share of that. Three shards is
-a ceiling, not a preference: this is a public repo on a free org plan, so
-GitHub allows 5 concurrent macOS jobs and a merge group already needs 4. The
+screen's share of that. The suite runs in two shards, and that is a
+ceiling, not a preference: this is a public repo on a free org plan, so
+GitHub allows 5 concurrent macOS jobs, and every shard of every run is one of
+them. Once the simulator stopped running services the app never uses, two
+shards took as long as three, 23 minutes, for 13% fewer runner-minutes. The
 only lever on the suite's wall-clock is how many tests are in it.
 
 So:
