@@ -9,7 +9,7 @@
  */
 
 import {execFileSync} from 'node:child_process'
-import {readFileSync, writeFileSync} from 'node:fs'
+import {existsSync, readFileSync, writeFileSync} from 'node:fs'
 
 import {discoverTests, packShards, weighMethods} from './split-uitests.mjs'
 import {selectUITests} from './uitests-selection.mjs'
@@ -94,6 +94,7 @@ export function summarize(rows) {
 }
 
 const BIG = 1 << 28
+const ROWS_PATH = 'replay-rows.json'
 
 /** A commit's tree, read from git without a checkout. */
 function gitTree(commit) {
@@ -118,11 +119,26 @@ function gitTree(commit) {
 	}
 }
 
-const gh = (args) =>
-	execFileSync('gh', ['api', '--allow-escape-sequences', ...args], {
-		encoding: 'utf8',
-		maxBuffer: BIG,
-	})
+/** Block for a moment; the replay is a synchronous script. */
+function pause(seconds) {
+	Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, seconds * 1000)
+}
+
+/** A GitHub API call, tried again after a server error, which GitHub returns now and then. */
+function gh(args) {
+	for (let attempt = 1; ; attempt++) {
+		try {
+			return execFileSync('gh', ['api', '--allow-escape-sequences', ...args], {
+				encoding: 'utf8',
+				maxBuffer: BIG,
+				stdio: ['ignore', 'pipe', 'pipe'],
+			})
+		} catch (error) {
+			if (attempt === 4 || !/HTTP 5\d\d/u.test(String(error.stderr))) throw error
+			pause(2 ** attempt)
+		}
+	}
+}
 const ghPages = (path) => JSON.parse(gh(['--paginate', '--slurp', path]))
 
 /** Failed UI tests across every iOS workflow run on a PR's branch. */
@@ -202,8 +218,11 @@ function main() {
 		),
 	)
 
-	const rows = []
+	// Rows already written survive a crash, so a rerun picks up where it stopped.
+	const rows = existsSync(ROWS_PATH) ? JSON.parse(readFileSync(ROWS_PATH, 'utf8')) : []
+	const done = new Set(rows.map((row) => row.number))
 	for (const pr of prs) {
+		if (done.has(pr.number)) continue
 		const files = pr.files.map((file) => file.path)
 		let result
 		if (files.length >= 100) {
@@ -233,12 +252,12 @@ function main() {
 			failed: failedOnBranch(pr.headRefName),
 		}
 		rows.push(row)
+		writeFileSync(ROWS_PATH, JSON.stringify(rows, null, '\t'))
 		console.error(
 			`#${row.number} ${row.kind}: ${row.all ? `all (${row.reason})` : row.classes.join(' ') || 'none'}`,
 		)
 	}
 
-	writeFileSync('replay-rows.json', JSON.stringify(rows, null, '\t'))
 	console.log(JSON.stringify(summarize(rows), null, '\t'))
 }
 
