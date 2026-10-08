@@ -5,6 +5,8 @@ import {basename, join} from 'node:path'
 import {describe, it} from 'node:test'
 
 import {
+	buildPlan,
+	describePlan,
 	discoverTests,
 	packShards,
 	formatMatrix,
@@ -260,16 +262,93 @@ describe('weighMethods', () => {
 				'ModuleATests/testTwo()': 20,
 			}),
 			[
-				{name: 'ModuleATests/testOne', weight: 10},
-				{name: 'ModuleATests/testTwo', weight: 20},
+				{name: 'ModuleATests/testOne', weight: 10, guessed: false},
+				{name: 'ModuleATests/testTwo', weight: 20, guessed: false},
 			],
 		)
 	})
 
 	it('falls back the same way class weighing does', () => {
 		assert.deepEqual(weighMethods([{className: 'ModuleATests', methods: ['testOne']}], {}), [
-			{name: 'ModuleATests/testOne', weight: 1},
+			{name: 'ModuleATests/testOne', weight: 1, guessed: true},
 		])
+	})
+
+	it('marks a test the table has no time for as a guess', () => {
+		assert.deepEqual(
+			weighMethods([{className: 'ModuleATests', methods: ['testKnown', 'testNew']}], {
+				'ModuleATests/testKnown()': 30,
+			}),
+			[
+				{name: 'ModuleATests/testKnown', weight: 30, guessed: false},
+				{name: 'ModuleATests/testNew', weight: 30, guessed: true},
+			],
+		)
+	})
+})
+
+describe('buildPlan', () => {
+	it("records each shard's estimate and each test's, keyed as durations are", () => {
+		assert.deepEqual(
+			buildPlan([
+				[
+					{name: 'ModuleATests/testOne', weight: 90, guessed: false},
+					{name: 'ModuleATests/testTwo', weight: 10, guessed: true},
+				],
+				[{name: 'ModuleBTests/testThree', weight: 95, guessed: false}],
+			]),
+			{
+				shards: {1: 100, 2: 95},
+				estimates: {
+					'ModuleATests/testOne()': 90,
+					'ModuleATests/testTwo()': 10,
+					'ModuleBTests/testThree()': 95,
+				},
+				guessed: ['ModuleATests/testTwo()'],
+			},
+		)
+	})
+})
+
+describe('describePlan', () => {
+	const shards = [
+		[
+			{name: 'ModuleATests/testOne', weight: 90, guessed: false},
+			{name: 'ModuleATests/testTwo', weight: 30, guessed: true},
+		],
+		[{name: 'ModuleBTests/testThree', weight: 100, guessed: false}],
+	]
+
+	it("gives each shard's estimate, then its tests, longest first", () => {
+		const lines = describePlan(shards)
+
+		assert.deepEqual(lines.slice(0, 4), [
+			'Shard 1: 2m 0s estimated, 2 tests',
+			'  1m 30s  ModuleATests/testOne',
+			'     30s  ModuleATests/testTwo (guess: no history)',
+			'Shard 2: 1m 40s estimated, 1 test',
+		])
+	})
+
+	it('ends with the total and the best split the tests allow', () => {
+		// 220 seconds over two shards is 110 apiece, which no split of these
+		// three tests reaches, but the longest test (100) does not bind.
+		assert.equal(
+			describePlan(shards).at(-1),
+			'Total 3m 40s across 2 shards; no split can beat 1m 50s per shard.',
+		)
+	})
+
+	it('names the longest test as the limit when it outlasts an even share', () => {
+		const lopsided = [
+			[{name: 'ModuleATests/testLong', weight: 300, guessed: false}],
+			[{name: 'ModuleBTests/testShort', weight: 10, guessed: false}],
+		]
+
+		assert.equal(
+			describePlan(lopsided).at(-1),
+			'Total 5m 10s across 2 shards; no split can beat 5m 0s per shard, the longest test.',
+		)
 	})
 })
 

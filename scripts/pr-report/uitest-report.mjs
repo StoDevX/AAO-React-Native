@@ -18,7 +18,7 @@ import {collectDurations, readTestNodes} from '../collect-uitest-durations.mjs'
 import {findFlakyTests} from '../report-flaky-uitests.mjs'
 
 /** Bumped whenever `uitest-report.json`'s shape changes. */
-export const UITEST_REPORT_VERSION = 1
+export const UITEST_REPORT_VERSION = 2
 
 /** The block's own markers, so it can be found and replaced inside the comment. */
 export const BLOCK_START = '<!-- aao-uitest-report -->'
@@ -36,6 +36,8 @@ const RESULTS = new Set(['success', 'failure', 'cancelled', 'skipped'])
 const FULL_SHA = /^[0-9a-f]{40}$/u
 
 const TOP_ROWS = 10
+/** The tests furthest from their estimates, listed under the shard plan. */
+const ESTIMATE_ROWS = 5
 /** The collapsed table's rows, which keeps the block far under the comment limit. */
 const MAX_ROWS = 50
 
@@ -63,9 +65,11 @@ export function buildShard({shard, wallSeconds, testNodes}) {
  * Merges the shards' files into `uitest-report.json`. A test runs in exactly
  * one shard, so durations don't collide. `result` is the suite's conclusion
  * (`success`, `failure`, …), `baseSha` the master commit a pull request was
- * based on, or null on a push to master.
+ * based on, or null on a push to master. `plan` is what `split-uitests.mjs
+ * --plan` wrote, or null without one: each shard's estimate is set beside the
+ * time its tests took, and each test's is kept to compare with its duration.
  */
-export function mergeShards(shards, {sha, baseSha, result}) {
+export function mergeShards(shards, {sha, baseSha, result, plan = null}) {
 	let ordered = [...shards].sort((a, b) => String(a.shard).localeCompare(String(b.shard)))
 	return {
 		version: UITEST_REPORT_VERSION,
@@ -75,11 +79,17 @@ export function mergeShards(shards, {sha, baseSha, result}) {
 		shards: Object.fromEntries(
 			ordered.map((s) => [
 				s.shard,
-				{wallSeconds: s.wallSeconds, testCount: Object.keys(s.durations).length},
+				{
+					wallSeconds: s.wallSeconds,
+					testCount: Object.keys(s.durations).length,
+					testSeconds: Object.values(s.durations).reduce((total, seconds) => total + seconds, 0),
+					plannedSeconds: plan?.shards[s.shard] ?? null,
+				},
 			]),
 		),
 		durations: Object.assign({}, ...ordered.map((s) => s.durations)),
 		flaky: ordered.flatMap((s) => s.flaky).sort((a, b) => a.identifier.localeCompare(b.identifier)),
+		plan: plan === null ? null : {estimates: plan.estimates, guessed: plan.guessed},
 	}
 }
 
@@ -102,19 +112,34 @@ export function readUitestReport(path) {
 	if (parsed.version !== UITEST_REPORT_VERSION) {
 		return parsed
 	}
-	let {shards, durations, flaky} = parsed
+	let {shards, durations, flaky, plan} = parsed
 	if (
 		typeof parsed.sha !== 'string' ||
 		!RESULTS.has(parsed.result) ||
 		(parsed.baseSha !== null && !FULL_SHA.test(parsed.baseSha)) ||
 		!isMap(shards) ||
 		!Object.values(shards).every(
-			(s) => isMap(s) && Number.isFinite(s.wallSeconds) && Number.isFinite(s.testCount),
+			(s) =>
+				isMap(s) &&
+				Number.isFinite(s.wallSeconds) &&
+				Number.isFinite(s.testCount) &&
+				Number.isFinite(s.testSeconds) &&
+				(s.plannedSeconds === null || Number.isFinite(s.plannedSeconds)),
 		) ||
 		!isMap(durations) ||
 		!Object.values(durations).every((seconds) => Number.isFinite(seconds)) ||
 		!Array.isArray(flaky) ||
-		!flaky.every((t) => isMap(t) && typeof t.identifier === 'string' && Number.isFinite(t.attempts))
+		!flaky.every(
+			(t) => isMap(t) && typeof t.identifier === 'string' && Number.isFinite(t.attempts),
+		) ||
+		!(
+			plan === null ||
+			(isMap(plan) &&
+				isMap(plan.estimates) &&
+				Object.values(plan.estimates).every((seconds) => Number.isFinite(seconds)) &&
+				Array.isArray(plan.guessed) &&
+				plan.guessed.every((name) => typeof name === 'string'))
+		)
 	) {
 		return null
 	}
@@ -124,6 +149,15 @@ export function readUitestReport(path) {
 			Object.entries(durations).filter(([name]) => SAFE_IDENTIFIER.test(name)),
 		),
 		flaky: flaky.filter((t) => SAFE_IDENTIFIER.test(t.identifier)),
+		plan:
+			plan === null
+				? null
+				: {
+						estimates: Object.fromEntries(
+							Object.entries(plan.estimates).filter(([name]) => SAFE_IDENTIFIER.test(name)),
+						),
+						guessed: plan.guessed.filter((name) => SAFE_IDENTIFIER.test(name)),
+					},
 	}
 }
 
@@ -217,6 +251,42 @@ const testRow = (row) =>
 	`| \`${row.name}\` | ${tenths(row.before)} | ${row.min.toFixed(1)}–${tenths(row.max)} | ${tenths(row.after)} | ${tenthsChange(row.delta)} |`
 
 /**
+ * How the planner's split went: each shard's estimate beside the time its
+ * tests took and its wall time, then the tests that ran furthest from their
+ * estimates, a guess marked as one.
+ */
+function planLines(head) {
+	let shardRows = Object.entries(head.shards).map(
+		([shard, s]) =>
+			`| ${shard} | ${s.plannedSeconds === null ? '–' : formatSeconds(s.plannedSeconds)} | ${formatSeconds(s.testSeconds)} | ${formatSeconds(s.wallSeconds)} |`,
+	)
+	let guessed = new Set(head.plan.guessed)
+	let misses = Object.entries(head.plan.estimates)
+		.filter(([name]) => name in head.durations)
+		.map(([name, estimate]) => ({name, estimate, delta: head.durations[name] - estimate}))
+		.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || a.name.localeCompare(b.name))
+		.slice(0, ESTIMATE_ROWS)
+		.map(
+			(row) =>
+				`| \`${row.name}\` | ${tenths(row.estimate)}${guessed.has(row.name) ? ' (guess)' : ''} | ${tenths(head.durations[row.name])} | ${tenthsChange(row.delta)} |`,
+		)
+	return [
+		'| Shard | Planned | Test time | Wall |',
+		'| --- | --- | --- | --- |',
+		...shardRows,
+		'',
+		...(misses.length === 0
+			? []
+			: [
+					'| Furthest from its estimate | Estimate | Took | Δ |',
+					'| --- | --- | --- | --- |',
+					...misses,
+					'',
+				]),
+	]
+}
+
+/**
  * Renders the block. `diff` is `diffUitests`'s result, or null with no
  * usable comparison, and `note` then says why.
  */
@@ -268,6 +338,9 @@ export function renderBlock({head, diff, note}) {
 				'',
 			)
 		}
+	}
+	if (head.plan !== null) {
+		lines.push(...planLines(head))
 	}
 	lines.push(BLOCK_END)
 	return lines.join('\n')
@@ -378,7 +451,12 @@ function mainMerge(args) {
 	let {values, positionals} = parseArgs({
 		args,
 		allowPositionals: true,
-		options: {sha: {type: 'string'}, 'base-sha': {type: 'string'}, result: {type: 'string'}},
+		options: {
+			sha: {type: 'string'},
+			'base-sha': {type: 'string'},
+			result: {type: 'string'},
+			plan: {type: 'string'},
+		},
 	})
 	let [dir, out] = positionals
 	let shards = readShardFiles(dir)
@@ -386,10 +464,20 @@ function mainMerge(args) {
 		console.log('No shard reports; the suite did not run.')
 		return
 	}
+	let plan = null
+	if (values.plan) {
+		try {
+			plan = JSON.parse(readFileSync(values.plan, 'utf8'))
+		} catch (error) {
+			// The plan only adds to the report; without one the rest still stands.
+			console.log(`Could not read the shard plan ${values.plan}: ${error.message}`)
+		}
+	}
 	let report = mergeShards(shards, {
 		sha: values.sha,
 		baseSha: values['base-sha'] || null,
 		result: values.result,
+		plan,
 	})
 	writeFileSync(out, `${JSON.stringify(report, null, '\t')}\n`)
 }
