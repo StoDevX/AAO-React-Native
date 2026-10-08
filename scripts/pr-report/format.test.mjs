@@ -34,6 +34,16 @@ describe('formatPercent', () => {
 		assert.equal(formatPercent(-50, 1000), '-5.0%')
 	})
 
+	it('gives two decimal places when one would read as no change', () => {
+		assert.equal(formatPercent(2048, 8.75 * 1024 * 1024), '+0.02%')
+		assert.equal(formatPercent(-193, 1000000), '-0.02%')
+	})
+
+	it('says less than a hundredth of a percent for a change too small for two places', () => {
+		assert.equal(formatPercent(289, 655000000), '<0.01%')
+		assert.equal(formatPercent(-5, 30000000), '<0.01%')
+	})
+
 	it('is empty when there is nothing to compare with', () => {
 		assert.equal(formatPercent(10, null), '')
 		assert.equal(formatPercent(10, 0), '')

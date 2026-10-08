@@ -426,8 +426,10 @@ jobs:
             || { echo "::warning::Could not read the report marker."; exit 0; }
           {
             echo "$marker"
-            echo '### JS bundle'
-            echo "The PR report could not be built. See [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID) for details."
+            echo '❌ **The PR report could not be built**'
+            echo
+            echo '> [!CAUTION]'
+            echo "> See [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID) for details."
           } > crash.md
           scripts/pr-report/upsert-comment.sh crash.md
 

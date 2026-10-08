@@ -23,11 +23,19 @@ export function formatDelta(bytes) {
 	return bytes > 0 ? `+${formatBytes(bytes)}` : formatBytes(bytes)
 }
 
-/** Formats a change as a percentage of `before`: `+0.3%`; empty when there is no before. */
+/**
+ * Formats a change as a percentage of `before`: `+0.3%`, `+0.02%` where one
+ * place would round a real change to nothing, `<0.01%` where two would; empty
+ * when there is no before.
+ */
 export function formatPercent(delta, before) {
 	if (!before) {
 		return ''
 	}
 	let percent = (delta / before) * 100
-	return `${percent > 0 ? '+' : ''}${percent.toFixed(1)}%`
+	let places = delta !== 0 && Math.abs(percent) < 0.05 ? 2 : 1
+	if (delta !== 0 && Math.abs(percent) < 0.005) {
+		return '<0.01%'
+	}
+	return `${percent > 0 ? '+' : ''}${percent.toFixed(places)}%`
 }
