@@ -12,7 +12,7 @@ const severitySchema = z
 
 const platformSchema = z.union([z.literal('ios'), z.literal('android'), z.literal('native')])
 
-const institutionSchema = z.union([z.literal('stolaf'), z.literal('carleton')])
+const campusSchema = z.union([z.literal('stolaf.edu'), z.literal('carleton.edu')])
 
 const dateTimeString = z
 	.string()
@@ -23,8 +23,8 @@ const conditionRuleSchema = z
 	.object({
 		platform: platformSchema.optional(),
 		platforms: z.array(platformSchema).nonempty().optional(),
-		institution: institutionSchema.optional(),
-		institutions: z.array(institutionSchema).nonempty().optional(),
+		campus: campusSchema.optional(),
+		campuses: z.array(campusSchema).nonempty().optional(),
 		versionRange: optionalTrimmedString,
 		startDate: dateTimeString.optional(),
 		endDate: dateTimeString.optional(),
@@ -34,8 +34,8 @@ const conditionRuleSchema = z
 			Boolean(
 				value.platform ??
 				value.platforms?.length ??
-				value.institution ??
-				value.institutions?.length ??
+				value.campus ??
+				value.campuses?.length ??
 				value.versionRange ??
 				value.startDate ??
 				value.endDate,

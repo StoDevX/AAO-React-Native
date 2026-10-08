@@ -12,7 +12,7 @@ export const keys = {
 
 /**
  * Both apps' notices are one list, the one `data/faqs.yaml` publishes; each
- * campus keeps those whose conditions name its institution, or none.
+ * campus keeps those whose conditions name it, or no campus.
  */
 const optionsFor = (campus: Campus) =>
 	queryOptions<unknown, unknown, FaqQueryData>({

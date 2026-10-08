@@ -31,8 +31,8 @@ export type PlatformCondition = 'ios' | 'android' | 'native'
 
 export type ConditionRule = {
 	platforms?: PlatformCondition[]
-	/** The institutions whose app shows it: St. Olaf's All About Olaf, Carleton's CARLS. */
-	institutions?: Campus[]
+	/** The campuses whose app shows it: St. Olaf's All About Olaf, Carleton's CARLS. */
+	campuses?: Campus[]
 	versionRange?: string
 	startDate?: number
 	endDate?: number

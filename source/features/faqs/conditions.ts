@@ -2,18 +2,19 @@ import {Platform} from 'react-native'
 import semver from 'semver'
 import {appVersion} from '@frogpond/constants'
 
-import {CAMPUSES, type Campus, useCampusStore} from '../campus/store'
+import {campusForDomain} from '../campus/domains'
+import {type Campus, useCampusStore} from '../campus/store'
 import type {ConditionNode, ConditionRule, PlatformCondition} from './types'
 
 export type ConditionContext = {
 	platform: PlatformCondition
 	version: string
 	now: number
-	/** The institution the app is for. */
+	/** The campus the app is for. */
 	campus: Campus
 }
 
-/** The device, build, moment and institution the app is running as now. */
+/** The device, build, moment and campus the app is running as now. */
 export const defaultConditionContext = (): ConditionContext => ({
 	platform: mapPlatform(Platform.OS),
 	version: appVersion(),
@@ -58,7 +59,7 @@ function evaluateConditionRule(rule: ConditionRule, context: ConditionContext): 
 		}
 	}
 
-	if (rule.institutions && !rule.institutions.includes(context.campus)) {
+	if (rule.campuses && !rule.campuses.includes(context.campus)) {
 		return false
 	}
 
@@ -145,14 +146,14 @@ function parseConditionNode(value: unknown): ConditionNode | null {
 
 function parseRule(value: Record<string, unknown>): ConditionRule | null {
 	let platforms = readPlatforms(value.platform ?? value.platforms)
-	let institutions = readInstitutions(value.institution ?? value.institutions)
+	let campuses = readCampuses(value.campus ?? value.campuses)
 	let versionRange = readString(value.versionRange)
 	let startDate = readDate(value.startDate)
 	let endDate = readDate(value.endDate)
 
 	if (
 		!platforms?.length &&
-		!institutions &&
+		!campuses &&
 		!versionRange &&
 		typeof startDate !== 'number' &&
 		typeof endDate !== 'number'
@@ -162,7 +163,7 @@ function parseRule(value: Record<string, unknown>): ConditionRule | null {
 
 	return {
 		platforms,
-		institutions,
+		campuses,
 		versionRange: versionRange ?? undefined,
 		startDate: startDate ?? undefined,
 		endDate: endDate ?? undefined,
@@ -194,18 +195,17 @@ function readPlatforms(value: unknown): PlatformCondition[] | undefined {
 	return valid.length > 0 ? valid : undefined
 }
 
-/** The institutions named, by their ids (`stolaf`, `carleton`). An unknown name matches none. */
-function readInstitutions(value: unknown): Campus[] | undefined {
+/** The campuses named, by their domains (`stolaf.edu`, `carleton.edu`). An unknown domain matches none. */
+function readCampuses(value: unknown): Campus[] | undefined {
 	if (!value) {
 		return undefined
 	}
 
-	let known = new Set<string>(CAMPUSES.map((entry) => entry.campus))
-	let names = toArray(value).filter((item): item is string => typeof item === 'string')
-	return names.length > 0
-		? names
-				.map((name) => name.trim().toLowerCase())
-				.filter((name): name is Campus => known.has(name))
+	let domains = toArray(value).filter((item): item is string => typeof item === 'string')
+	return domains.length > 0
+		? domains
+				.map((domain) => campusForDomain(domain.trim().toLowerCase()))
+				.filter((campus): campus is Campus => campus !== undefined)
 		: undefined
 }
 
