@@ -65,9 +65,12 @@ describe('app.config variants', () => {
 	// `name` also names the generated Xcode project, its target, its scheme and
 	// its directory. It must not vary per variant: every plugin looks the
 	// AllAboutOlaf target up by name.
-	it.each(['production', 'development'])('keeps the Xcode project name fixed for %s', (variant) => {
-		expect(loadConfig(variant).name).toBe('All About Olaf')
-	})
+	it.each(['production', 'development', 'carls', 'carls-development'])(
+		'keeps the Xcode project name fixed for %s',
+		(variant) => {
+			expect(loadConfig(variant).name).toBe('All About Olaf')
+		},
+	)
 
 	it('is identical when the production variant is named explicitly', () => {
 		expect(loadConfig('production')).toEqual(loadConfig())
@@ -89,8 +92,36 @@ describe('app.config variants', () => {
 	})
 
 	it('keeps every variant installable alongside the others', () => {
-		let ids = ['production', 'development'].map((v) => loadConfig(v).ios?.bundleIdentifier)
-		expect(new Set(ids).size).toBe(2)
+		let variants = ['production', 'development', 'carls', 'carls-development']
+		let ids = variants.map((v) => loadConfig(v).ios?.bundleIdentifier)
+		expect(new Set(ids).size).toBe(variants.length)
+	})
+})
+
+describe('app.config CARLS', () => {
+	// The CARLS app's own identifier and scheme, so the build updates CARLS on
+	// the App Store and links made for it still open it.
+	it.each([
+		['carls', 'com.rives.carls', 'CARLS', 'carls'],
+		['carls-development', 'com.rives.carls.dev', 'CARLS Dev', 'carlsDev'],
+	])('builds %s as CARLS', (variant, bundleIdentifier, displayName, scheme) => {
+		let config = loadConfig(variant)
+		expect(config.ios?.bundleIdentifier).toBe(bundleIdentifier)
+		expect(config.ios?.infoPlist?.CFBundleDisplayName).toBe(displayName)
+		expect(config.scheme).toBe(scheme)
+		expect(config.extra?.app).toBe('carls')
+	})
+
+	it('wears the penguin, and bundles none of All About Olaf’s icons', () => {
+		let config = loadConfig('carls')
+		expect(config.ios?.icon).toMatch(/carls-penguin/u)
+		expect(config.plugins).toContainEqual(['./plugins/with-alternate-icons', {alternates: false}])
+	})
+
+	it.each(['production', 'development'])('builds %s as All About Olaf', (variant) => {
+		let config = loadConfig(variant)
+		expect(config.extra?.app).toBe('aao')
+		expect(config.plugins).toContainEqual(['./plugins/with-alternate-icons', {alternates: true}])
 	})
 
 	it('throws on an unrecognised variant rather than shipping production', () => {

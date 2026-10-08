@@ -33,7 +33,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
 import {HomeViews, visibleViews, type ViewType} from '../source/features/views'
-import {CAMPUSES, useCampusStore} from '../source/features/campus/store'
+import {CAMPUSES, CAMPUS_IS_FIXED, useCampusStore} from '../source/features/campus/store'
 import {switchIconForCampus} from '../source/features/customize/use-app-icon'
 import {
 	FILL_WIDTH,
@@ -168,7 +168,7 @@ function UnofficialAppNotice(): React.ReactNode {
 					}}
 					systemImage={devModeOverride ? 'checkmark' : undefined}
 				/>
-				{isDev ? (
+				{isDev && !CAMPUS_IS_FIXED ? (
 					<Section title={CAMPUS_SECTION}>
 						{/* A Toggle, which a menu draws with the platform's own checkmark. */}
 						{CAMPUSES.map((option) => (

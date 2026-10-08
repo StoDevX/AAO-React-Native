@@ -14,9 +14,23 @@ const shippableVersion = fullVersion.split('-')[0]
 
 const BUNDLE_ID = 'NFMTHAZVS9.com.drewvolz.stolaf'
 
+/** The CARLS app's identifier, so a CARLS build updates the App Store's CARLS. */
+const CARLS_BUNDLE_ID = 'com.rives.carls'
+
+/** The windmill, an Icon Composer document. */
+const AAO_ICON = './assets/windmill.icon'
+
+/** The CARLS penguin, the CARLS app's own 1024px artwork. */
+const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/light.png'
+
 /**
  * Which build this is. Set `APP_VARIANT=development` to get an app that
  * installs alongside the real one instead of replacing it on your device.
+ *
+ * `carls` and `carls-development` build the same code as CARLS: Carleton's
+ * app, with the campus fixed to Carleton (`extra.app`, read by
+ * source/lib/app-identity.ts), the penguin as its icon and no St. Olaf icons
+ * to switch to.
  *
  * The identity has to differ in three places, not one: iOS keys installs on the
  * bundle identifier, the home screen shows the name, and two apps claiming the
@@ -28,16 +42,35 @@ const BUNDLE_ID = 'NFMTHAZVS9.com.drewvolz.stolaf'
  */
 const VARIANTS = {
 	production: {
+		app: 'aao',
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
+		icon: AAO_ICON,
 	},
 	development: {
+		app: 'aao',
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
 		scheme: 'AllAboutOlafDev',
+		icon: AAO_ICON,
 	},
-}
+	carls: {
+		app: 'carls',
+		displayName: 'CARLS',
+		bundleIdentifier: CARLS_BUNDLE_ID,
+		// The CARLS app's own scheme, so links made for it still open it.
+		scheme: 'carls',
+		icon: CARLS_ICON,
+	},
+	'carls-development': {
+		app: 'carls',
+		displayName: 'CARLS Dev',
+		bundleIdentifier: `${CARLS_BUNDLE_ID}.dev`,
+		scheme: 'carlsDev',
+		icon: CARLS_ICON,
+	},
+} as const
 
 const requested = process.env.APP_VARIANT ?? 'production'
 
@@ -118,8 +151,8 @@ const config: ExpoConfig = {
 		// Written into every target as DEVELOPMENT_TEAM. Without it, `expo run:ios
 		// --device` reads the Mac's signing certificates to pick a team itself.
 		appleTeamId: 'TMK6S7TPX2',
-		// An Icon Composer document; plugins/with-alternate-icons adds the others.
-		icon: './assets/windmill.icon',
+		// plugins/with-alternate-icons adds the others, All About Olaf's alone.
+		icon: variant.icon,
 		// Xcode Cloud's build number becomes an input to generation rather than
 		// something agvtool edits afterwards.
 		buildNumber,
@@ -265,7 +298,7 @@ const config: ExpoConfig = {
 		},
 	},
 
-	extra: {fullVersion, commit},
+	extra: {fullVersion, commit, app: variant.app},
 
 	plugins: [
 		[
@@ -339,7 +372,8 @@ const config: ExpoConfig = {
 		'./plugins/with-app-delegate-customizations',
 		// DebugSwift, in Debug builds only; Release never links it.
 		'./plugins/with-debug-swift',
-		'./plugins/with-alternate-icons',
+		// CARLS offers no icon but its penguin, which is its primary.
+		['./plugins/with-alternate-icons', {alternates: variant.app === 'aao'}],
 		'./plugins/with-custom-symbols',
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',

@@ -163,12 +163,24 @@ every default path is unchanged.
 | --- | --- | --- |
 | *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf |
 | `development` | `…stolaf.dev` | AAO Dev |
+| `carls` | `com.rives.carls` | CARLS |
+| `carls-development` | `com.rives.carls.dev` | CARLS Dev |
 
-Both variants share the windmill icon, so tell them apart by name.
+The two All About Olaf variants share the windmill icon, so tell them apart by
+name. The CARLS variants build the same code as Carleton's app: `extra.app`
+fixes the campus to Carleton (`source/lib/app-identity.ts`), the penguin is the
+primary icon, and no St. Olaf icon is bundled. `com.rives.carls` is the CARLS
+app's own identifier, so a release build updates CARLS on the App Store.
 
 ```bash
-APP_VARIANT=development mise run prebuild   # then build to your device
+mise run aao:ios [device]     # AAO Dev, prebuilt and run
+mise run carls:ios [device]   # CARLS Dev, prebuilt and run
 ```
+
+`ios/` holds one variant at a time; `mise run prebuild` starts it afresh when
+`APP_VARIANT` changes. The app's config reaches the JavaScript through Metro,
+so a Metro started on its own needs the variant too:
+`APP_VARIANT=carls-development mise run start`.
 
 The URL scheme varies too — two apps claiming one scheme is undefined behaviour.
 

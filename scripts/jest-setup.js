@@ -54,6 +54,13 @@ jest.mock('expo-image-picker', () => ({
 
 // The app's version is read from a native module Jest does not have; the
 // query cache marks what it saves with it.
+// The app config's `extra`, which source/lib/app-identity.ts reads: an All
+// About Olaf build. A test of CARLS mocks app-identity instead.
+jest.mock('expo-constants', () => ({
+	__esModule: true,
+	default: {expoConfig: {extra: {app: 'aao'}}},
+}))
+
 jest.mock('expo-application', () => ({
 	nativeApplicationVersion: '2.8.0',
 	nativeBuildVersion: '17',

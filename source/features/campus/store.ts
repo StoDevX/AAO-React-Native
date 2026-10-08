@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
 
+import {APP} from '../../lib/app-identity'
 import type {Campus} from '../building-hours/types'
 
 export type {Campus}
@@ -11,6 +12,11 @@ export const CAMPUSES: ReadonlyArray<{campus: Campus; title: string}> = [
 	{campus: 'stolaf', title: 'St. Olaf College'},
 	{campus: 'carleton', title: 'Carleton College'},
 ]
+
+/** CARLS is Carleton's app and nothing else; only All About Olaf switches campus. */
+export const CAMPUS_IS_FIXED = APP === 'carls'
+
+const STARTING_CAMPUS: Campus = CAMPUS_IS_FIXED ? 'carleton' : 'stolaf'
 
 type CampusStore = {
 	/**
@@ -29,8 +35,10 @@ type CampusStore = {
 export const useCampusStore = create<CampusStore>()(
 	persist(
 		(set) => ({
-			campus: 'stolaf',
-			setCampus: (campus) => set({campus}),
+			campus: STARTING_CAMPUS,
+			setCampus: (campus) => {
+				if (!CAMPUS_IS_FIXED) set({campus})
+			},
 			hydrated: false,
 		}),
 		{
@@ -38,6 +46,9 @@ export const useCampusStore = create<CampusStore>()(
 			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
 			partialize: (state) => ({campus: state.campus}),
+			// A campus saved by a build that could switch never overrides CARLS' own.
+			merge: (persisted, current) =>
+				CAMPUS_IS_FIXED ? current : {...current, ...(persisted as Partial<CampusStore>)},
 			onRehydrateStorage: () => () => useCampusStore.setState({hydrated: true}),
 		},
 	),
