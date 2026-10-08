@@ -62,8 +62,7 @@ let alert = (markdown, type) => {
 let headline = (markdown) => markdown.split('\n')[1]
 
 /** A regular expression matching `lines` exactly, one after another. */
-let rows = (lines) =>
-	new RegExp(lines.join('\n').replace(/[\\^$.*+?()[\]{}|]/gu, '\\$&'), 'u')
+let rows = (lines) => new RegExp(RegExp.escape(lines.join('\n')), 'u')
 
 describe('renderComment', () => {
 	it('folds the sizes away when nothing changed', () => {
