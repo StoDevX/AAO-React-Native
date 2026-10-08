@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /map
 class ModuleMapTests: UITestCaseUnbooted {
 	/// The collapsed sheet, and the two things that raise it.
 	///

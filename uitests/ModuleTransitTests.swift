@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /transit
 class ModuleTransitTests: UITestCaseUnbooted {
 	/// The strip is a horizontal scroll view inside a list row, which is the
 	/// arrangement most likely to have the list steal the gesture.

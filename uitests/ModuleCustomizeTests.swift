@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /customize
 class ModuleCustomizeTests: UITestCase {
 	/// Home's layout is chosen in Customize: List swaps the tile grid for a
 	/// list, and Tiled brings the grid back.

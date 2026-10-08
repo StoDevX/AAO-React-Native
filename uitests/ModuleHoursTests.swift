@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /hours
 class ModuleHoursTests: UITestCaseUnbooted {
 	/// A query typed into the search bar narrows the list, and one that
 	/// matches nothing says so.

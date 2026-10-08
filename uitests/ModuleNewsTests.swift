@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /messenger /st-olaf-news
 class ModuleNewsTests: UITestCaseUnbooted {
 	/// The paper opens By Issue on its grid of issues, and a real scroll down the grid pages
 	/// back through older issues.

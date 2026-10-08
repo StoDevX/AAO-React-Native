@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /student-work
 class ModuleStudentWorkTests: UITestCaseUnbooted {
 	private typealias IDs = TestIdentifiers.StudentWork
 

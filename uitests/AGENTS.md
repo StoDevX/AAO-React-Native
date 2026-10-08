@@ -102,6 +102,26 @@ test that covers its place in the grid: `testTheUpperTilesOpenTheirScreens` or
 typing it; confirm a row exists before tapping. A test that silently did nothing
 otherwise passes exactly like one that worked.
 
+## Routes markers
+
+Each test class names the routes it exercises, as the last doc-comment line
+above the class:
+
+```swift
+/// Routes: /menus /menu-item-detail /carleton-*-menu
+class ModuleMenusTests: UITestCaseUnbooted {
+```
+
+`scripts/uitests-selection.mjs` reads these to decide which classes a pull
+request's changes can reach. A pattern covers its route and everything under
+it, and `*` stands for part of one path segment. A class without a marker runs
+on every pull request that changes anything a UI test could see. A pattern
+that matches no file under `app/` fails the selector, which then runs every
+class.
+
+When a test starts reaching a new route, by a tap or a link, add the route to
+its class's marker.
+
 ## What earns a slot
 
 Every test cold-launches the app. On CI, launching and tapping through the

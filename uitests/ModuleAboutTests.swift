@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /about
 class ModuleAboutTests: UITestCase {
 	/// About, top to bottom: the version, the story's timeline of eras swiped
 	/// sideways, the credits stacked one above the other, then Privacy and

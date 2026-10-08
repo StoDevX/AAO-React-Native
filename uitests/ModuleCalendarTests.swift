@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /calendar
 class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 
 	/// Choosing a category from the toolbar picker narrows the day's list, and

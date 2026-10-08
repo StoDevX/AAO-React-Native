@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /customize
 class ModuleQuickActionsTests: UITestCase {
 	func testPicksAndUnpicksQuickActions() throws {
 		let picker = QuickActionsScreen(app: app).navigate()

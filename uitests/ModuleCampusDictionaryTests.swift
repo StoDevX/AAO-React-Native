@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /dictionary
 class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 	/// A search made from far down the list starts its results at the top.
 	/// The first word then opens a half-height sheet whose lone sense lines up

@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /student-orgs
 class ModuleStudentOrgsTests: UITestCaseUnbooted {
 	/// A refined search starts its results at the top, not wherever the list
 	/// was scrolled before: each query is a new list (`id(query)` in

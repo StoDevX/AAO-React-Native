@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /streaming-media /krlx-schedule /ksto-schedule
 class ModuleStreamingMediaTests: UITestCase {
 	/// The bar on Home opens the sheet on the last station viewed. Picking
 	/// another station there only browses: the bar says what is loaded, not

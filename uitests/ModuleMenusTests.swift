@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /menus /menu-item-detail /carleton-*-menu
 class ModuleMenusTests: UITestCaseUnbooted {
 	// MARK: - Navigation and the header
 

@@ -1,5 +1,6 @@
 import XCTest
 
+/// Routes: /course-search
 class ModuleCourseCatalogTests: UITestCaseUnbooted {
 	/// Opens on its Recent section, then searches the catalogue, which under UI
 	/// testing holds one course, and opens it. The search runs against the
