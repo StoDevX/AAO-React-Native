@@ -242,9 +242,6 @@ struct TestIdentifiers {
 		/// The building card's title block. Matches `CARD_TITLE_ID` in
 		/// `source/features/map/building-info.tsx`.
 		static let cardTitle = "card-title"
-		/// The card's About text. Matches the `testID` in
-		/// `source/features/map/card/about-section.tsx`.
-		static let cardAbout = "card-about"
 		/// A St. Olaf building whose card carries a subtitle
 		/// ("Administrative & Academic") under a long name, so title and subtitle
 		/// together are the tightest fit the collapsed header has to hold. Its row
@@ -255,8 +252,6 @@ struct TestIdentifiers {
 		static let aBuildingWithPoints = "Buntrock Commons"
 		/// A point inside `aBuildingWithPoints`.
 		static let aPointInside = "The Cage"
-		/// A St. Olaf building whose description runs well past five lines.
-		static let aBuildingWithALongAbout = "Holland Hall"
 		/// A group in the map sheet's category grid with a list long enough to
 		/// scroll. Mirrors a label in data/map-categories.yaml.
 		static let parkingCategory = "Parking"
@@ -282,8 +277,6 @@ struct TestIdentifiers {
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/map/index.tsx.
 		static let attribution = "About this map"
-		/// The map screen's title, which its header no longer draws.
-		static let stolafTitle = "St. Olaf Map"
 		/// A St. Olaf-only building near the top of the list, so the expanded
 		/// sheet shows it without scrolling -- and absent from Carleton's map
 		/// data, so selecting it is what would fail if the map's campus parameter
@@ -514,10 +507,6 @@ struct TestIdentifiers {
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
-		/// Each stretch of a story's body between its figures, one text view holding its
-		/// paragraphs, quotes and lists, in source/features/mess/story-blocks.tsx.
-		static let storyBody = "mess-story-body"
-
 		/// The Mess section whose columns the Variety templates draw, and the columns
 		/// the tests open, as the section chips and column chips in source/features/mess/
 		/// name them. They are the paper's own category names, from olafmessenger.com.
@@ -542,19 +531,6 @@ struct TestIdentifiers {
 		/// The framed comic or artwork that opens the zoom viewer, in
 		/// source/features/mess/image-view.tsx.
 		static let storyImage = "mess-story-image"
-
-		/// An article with a captioned lead photo, three short paragraphs, then captioned figures
-		/// in its body: "Finding peace on campus", from the recorded Mess fixtures. Recording them
-		/// again can drop it from the feed, which these tests read it from.
-		static let illustratedStoryRoute = "/messenger/story?id=36948"
-
-		/// An article whose first paragraph holds a link: "The true cost of convenience: AI in
-		/// the classroom", from the same recorded issue as the illustrated story.
-		static let linkedStoryRoute = "/messenger/story?id=36959"
-		/// That link's words.
-		static let linkedStoryLink = "According to the college library website"
-		/// What the system's menu for a held link offers, and its menu for selected text does not.
-		static let copyLink = "Copy Link"
 
 		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
 		static let imageViewerClose = "mess-image-viewer-close"
@@ -594,8 +570,6 @@ struct TestIdentifiers {
 		static let idleBar = "Not Playing"
 		/// Customize's Radio Player switch.
 		static let showRadioPlayer = "show-radio-player"
-		/// KRLX has one logo, so nothing labelled with this may be a button.
-		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
 		/// The logo KSTO shows first, before any tap moves it on.
 		static let kstoFirstLogo = "KSTO 93.1 FM logo, cow badge"
 	}
@@ -608,9 +582,6 @@ struct TestIdentifiers {
 		static let reset = "Reset to Defaults"
 		/// DEFAULT_QUICK_ACTIONS in source/features/quick-actions/destinations.ts.
 		static let defaults = ["Stav Menu", "Cage Menu", "Olaf Messenger", "Transit"]
-		static let cageMenu = "Cage Menu"
-		/// The tab Cage Menu opens, as Menus labels it.
-		static let cageTab = "The Cage"
 		/// One of `defaults`, and an action outside them.
 		static let aDefault = "Transit"
 		static let anExtra = "Calendar"
@@ -624,22 +595,6 @@ struct TestIdentifiers {
 		static let alert = "Discard changes?"
 		static let keepEditing = "Edit"
 		static let discard = "Discard"
-	}
-
-	// MARK: - Edit menu
-
-	enum EditMenu {
-		/// The edit menu's Copy, which iOS offers only for text that can be,
-		/// or has been, selected.
-		static let copy = "Copy"
-	}
-
-	// MARK: - In-app browser
-
-	enum Browser {
-		/// The in-app browser's own close button, which only the browser
-		/// sheet draws.
-		static let done = "Done"
 	}
 
 	// MARK: - stoPrint
@@ -659,20 +614,9 @@ struct TestIdentifiers {
 		static let print = "Print"
 	}
 
-	// MARK: - SpringBoard
-
-	enum SpringBoard {
-		static let bundleIdentifier = "com.apple.springboard"
-		/// The button on the alert iOS shows once the app's icon changes.
-		static let iconChangedOK = "OK"
-	}
-
 	// MARK: - Customize
 
 	enum Customize {
-		/// The gallery's default icon, and an alternate, as the gallery titles them.
-		static let defaultIcon = "Big Ole"
-		static let anAlternateIcon = "Old Main"
 		/// The sheet's host, set in app/customize/index.tsx.
 		static let screen = "screen-customize"
 		static let quickActionsRow = "Quick Actions"

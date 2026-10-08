@@ -113,14 +113,6 @@ struct StreamingMediaScreen: Screen {
 		XCTAssertGreaterThanOrEqual(element.frame.width, 44, "\(name) should be at least 44pt wide")
 	}
 
-	/// Check a station with one logo leaves it as a picture, not a button.
-	@discardableResult
-	func checkLogoIsNotAButton(_ labelPrefix: String) -> Self {
-		let logoButtons = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", labelPrefix))
-		XCTAssertEqual(logoButtons.count, 0, "No button should be labelled \"\(labelPrefix)…\"")
-		return self
-	}
-
 	/// Drag across the logo, well past a tap's slop, and check it is still
 	/// the same logo: a scrub turns the record and must not count as a tap.
 	@discardableResult

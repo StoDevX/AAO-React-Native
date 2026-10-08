@@ -83,116 +83,6 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Hold the first line of the story's body and drag down into its second paragraph, then
-	/// assert the selection's highlight runs unbroken down the column's trailing edge from the
-	/// first paragraph's second line, past the gap between the paragraphs, into the second's
-	/// first line. On an iPhone 17e at the default text size the illustrated story's first
-	/// paragraph ends about 120 points below its first line and its second begins about 138
-	/// points below; a selection ends about a line above the finger, so the drag goes 200
-	/// points down. The highlight is read from the screen because the test runner, in the
-	/// background, may not read the pasteboard.
-	@discardableResult
-	func verifySelectionCrossesParagraphs() -> Self {
-		let body = app.element(matching: TestIdentifiers.News.storyBody)
-		XCTAssertTrue(body.waitUntilExists(timeout: 30), "the story should have a body to select")
-		scrollIntoUpperHalf(body)
-		let start = body.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 40, dy: 10))
-		let end = start.withOffset(CGVector(dx: 120, dy: 200))
-		start.press(forDuration: 1.0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", TestIdentifiers.EditMenu.copy)).firstMatch
-		let offered = copy.waitUntilExists(timeout: 5)
-		XCTAssertTrue(offered, "a drag across the story's text should select some of it, and offer Copy")
-
-		guard let pixels = ScreenPixels(app.screenshot().image) else {
-			XCTFail("the screenshot should be readable")
-			return self
-		}
-		// The trailing edge, where ragged lines leave the highlight mostly clear of glyphs.
-		let trailingEdge = CGRect(
-			x: body.frame.maxX - 6, y: start.screenPoint.y + 20, width: 4, height: 130)
-		let highlighted = fractionHighlighted(pixels, in: trailingEdge)
-		XCTAssertGreaterThan(
-			highlighted, 0.9,
-			"the selection should run from the first paragraph into the second, but it covers only \(Int(highlighted * 100))% of the column's edge between them")
-		return self
-	}
-
-	/// The share of `region` drawn in the selection's highlight, a pale blue no paper or ink
-	/// colour comes near, sampled every two points.
-	private func fractionHighlighted(_ pixels: ScreenPixels, in region: CGRect) -> Double {
-		var sampled = 0
-		var highlighted = 0
-		for y in stride(from: region.minY, to: region.maxY, by: 2) {
-			for x in stride(from: region.minX, to: region.maxX, by: 2) {
-				let colour = pixels.colour(at: CGPoint(x: x, y: y))
-				sampled += 1
-				if colour.blue - colour.red > 25 { highlighted += 1 }
-			}
-		}
-		return sampled == 0 ? 0 : Double(highlighted) / Double(sampled)
-	}
-
-	/// Tap a link in the story's text and assert it opens in the in-app browser, then close it.
-	@discardableResult
-	func openLinkInAppBrowser(_ label: String) -> Self {
-		let link = storyLink(label)
-		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to tap")
-		link.tap()
-		let done = app.buttons[TestIdentifiers.Browser.done].firstMatch
-		XCTAssertTrue(done.waitUntilExists(timeout: 30), "tapping a story's link should open the in-app browser")
-		done.tap()
-		XCTAssertTrue(done.waitUntilGone(timeout: 10), "Done should close the in-app browser")
-		return self
-	}
-
-	/// Hold a link in the story's text and assert iOS offers its link menu, not the menu for
-	/// selected text.
-	@discardableResult
-	func verifyLinkOffersLinkMenu(_ label: String) -> Self {
-		let link = storyLink(label)
-		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to hold")
-		// Press the link's screen point through SpringBoard rather than pressing
-		// the link itself. The menu's preview loads the linked page live, and
-		// the app never goes quiet while it does, so a press on our own app
-		// waits out XCUITest's full 60s quiescence timeout after landing.
-		// SpringBoard is quiet, and the point is the same point.
-		let target = link.frame
-		XCUIApplication(bundleIdentifier: TestIdentifiers.SpringBoard.bundleIdentifier)
-			.coordinate(withNormalizedOffset: .zero)
-			.withOffset(CGVector(dx: target.midX, dy: target.midY))
-			.press(forDuration: 1.5)
-		let copyLink = app.descendants(matching: .any)
-			.matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copyLink)).firstMatch
-		let offered = copyLink.waitUntilExists(timeout: 5)
-		XCTAssertTrue(offered, "holding a link in a story should offer \(TestIdentifiers.News.copyLink)")
-		return self
-	}
-
-	/// The link in the story's text with these words, scrolled into view.
-	private func storyLink(_ label: String) -> XCUIElement {
-		let link = app.links.matching(NSPredicate(format: "label == %@", label)).firstMatch
-		XCTAssertTrue(link.waitUntilExists(timeout: 30), "the story should hold the link \"\(label)\"")
-		scrollIntoUpperHalf(link)
-		return link
-	}
-
-	/// Drag the page slowly until `element` begins in the upper half of the screen, below the
-	/// navigation bar. A slow, held drag moves the page by about its own length, where a
-	/// swipe flings it past.
-	private func scrollIntoUpperHalf(_ element: XCUIElement) {
-		let window = app.windows.firstMatch.frame
-		let top = app.navigationBars.firstMatch.frame.maxY
-		for _ in 0..<10 {
-			if element.frame.minY > top && element.frame.minY < window.midY { return }
-			let from = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
-			let to = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-			from.press(forDuration: 0.05, thenDragTo: to, withVelocity: .slow, thenHoldForDuration: 0.3)
-		}
-		XCTAssertTrue(
-			element.frame.minY > top && element.frame.minY < window.midY,
-			"scrolling should bring \(element) into the top half of the screen, but it begins at \(element.frame.minY)")
-	}
-
 	/// Pick a sign from a Horoscopes post's list of all twelve, which is what a
 	/// reader who has never picked one sees. A row's label is the sign's name
 	/// followed by its dates.
@@ -296,12 +186,6 @@ struct MessStoryScreen: Screen {
 		let close = closeButton
 		XCTAssertTrue(close.waitUntilExists(timeout: 30), "tapping the picture should open the zoom viewer")
 		return self
-	}
-
-	/// Open a story straight from its route, and wait for its headline.
-	@discardableResult
-	func navigate(to route: String) -> Self {
-		open(route: route, mountedWhen: app.staticTexts[TestIdentifiers.News.storyHeadline])
 	}
 
 	/// Double-tap the middle of the picture in the zoom viewer.
