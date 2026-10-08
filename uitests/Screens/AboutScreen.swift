@@ -34,7 +34,7 @@ struct AboutScreen: Screen {
 		reveal(row)
 		tap(row, until: app.navigationBars[page], named: "About's \(page) row")
 		goBack()
-		XCTAssertTrue(host.waitForExistence(timeout: 10), "Back should return to About")
+		XCTAssertTrue(host.waitUntilExists(timeout: 10), "Back should return to About")
 		return self
 	}
 
@@ -46,7 +46,7 @@ struct AboutScreen: Screen {
 		// not for `element`: a row further down is built only once it is
 		// scrolled to, so waiting for it spends the whole timeout.
 		if !element.exists {
-			_ = host.staticTexts.firstMatch.waitForExistence(timeout: 10)
+			_ = host.staticTexts.firstMatch.waitUntilExists(timeout: 10)
 		}
 		// Enough swipes for the whole page at the largest text sizes.
 		for _ in 0..<20 {
@@ -70,10 +70,8 @@ struct AboutScreen: Screen {
 		let start = card.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
 		let end = card.coordinate(withNormalizedOffset: CGVector(dx: -0.2, dy: 0.5))
 		start.press(forDuration: 0.1, thenDragTo: end)
-		let arrived = XCTNSPredicateExpectation(
-			predicate: NSPredicate { _, _ in isOnScreen(next) }, object: nil)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [arrived], timeout: 10), .completed,
+		XCTAssertTrue(
+			waitUntil("Waiting 10.0s for \(next) to come on screen", timeout: 10) { isOnScreen(next) },
 			"Swiping should bring \(next.label) onto the screen")
 		return self
 	}

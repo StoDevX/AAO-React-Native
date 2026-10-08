@@ -7,7 +7,7 @@ struct HomeScreen: Screen {
 	func checkHomescreenExists() -> Self {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(
-			homescreen.waitForExistence(timeout: 30),
+			homescreen.waitUntilExists(timeout: 30),
 			"Home screen should be visible")
 		return self
 	}
@@ -36,8 +36,8 @@ struct HomeScreen: Screen {
 	}
 
 	private func verifyLayout(shown: XCUIElement, hidden: XCUIElement, named name: String) -> Self {
-		XCTAssertTrue(shown.waitForExistence(timeout: 10), "Home should draw \(name)")
-		XCTAssertTrue(hidden.waitForNonExistence(timeout: 10), "Home should draw only \(name)")
+		XCTAssertTrue(shown.waitUntilExists(timeout: 10), "Home should draw \(name)")
+		XCTAssertTrue(hidden.waitUntilGone(timeout: 10), "Home should draw only \(name)")
 		return self
 	}
 
@@ -45,7 +45,7 @@ struct HomeScreen: Screen {
 	func longPressNotice() -> Self {
 		let notice = app.element(matching: TestIdentifiers.Home.notice)
 		XCTAssertTrue(
-			notice.waitForExistence(timeout: 30),
+			notice.waitUntilExists(timeout: 30),
 			"Home notice widget should be visible")
 		notice.press(forDuration: 1.0)
 		return self
@@ -55,7 +55,7 @@ struct HomeScreen: Screen {
 	func tapEnableDevMode() -> Self {
 		let enableDevMode = app.buttons[TestIdentifiers.Home.enableDevMode]
 		XCTAssertTrue(
-			enableDevMode.waitForExistence(timeout: 10),
+			enableDevMode.waitUntilExists(timeout: 10),
 			"Context menu should show 'Enable dev mode' option")
 		enableDevMode.tap()
 		return self
@@ -99,7 +99,7 @@ struct HomeScreen: Screen {
 		let screen = app.element(matching: TestIdentifiers.Developer.screen)
 		openTile(TestIdentifiers.Buttons.developer, expecting: screen)
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitForExistence(timeout: 10),
+			app.buttons[TestIdentifiers.Developer.components].firstMatch.waitUntilExists(timeout: 10),
 			"Developer should hold the tools Settings' Developer section held")
 		return self
 	}

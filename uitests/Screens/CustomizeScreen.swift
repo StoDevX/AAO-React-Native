@@ -14,22 +14,18 @@ struct CustomizeScreen: Screen {
 
 	@discardableResult
 	func toggleRadioPlayer() -> Self {
-		let toggle = sheet.switches[TestIdentifiers.StreamingMedia.showRadioPlayer]
-		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Radio Player")
-		let before = toggle.value as? String
+		let id = TestIdentifiers.StreamingMedia.showRadioPlayer
+		let toggle = sheet.switches[id]
+		XCTAssertTrue(toggle.waitUntilExists(timeout: 10), "Customize should offer Radio Player")
+		let before = toggle.value as? String ?? ""
+		// Waiting for the switch to report the other value means a tap that
+		// flipped nothing fails here rather than as a missing bar on Home.
+		let changed = sheet.switches
+			.matching(NSPredicate(format: "identifier == %@ AND value != %@", id, before)).firstMatch
 		// The element spans the whole row, and a tap at its centre lands on the
 		// label, which flips nothing in a Form -- as for a person. Tap the
 		// switch at the trailing end instead.
-		toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
-		// Wait for the switch to report the other value, so a tap that landed
-		// on the label and flipped nothing fails here rather than as a missing
-		// bar on Home.
-		let flipped = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value != %@", before ?? ""), object: toggle)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [flipped], timeout: 5), .completed,
-			"Radio Player should change from \(before ?? "nil")")
-		return self
+		return tap(toggle, until: changed, named: "Radio Player", wait: 5, at: CGVector(dx: 0.92, dy: 0.5))
 	}
 
 	@discardableResult
@@ -44,9 +40,9 @@ struct CustomizeScreen: Screen {
 	@discardableResult
 	func close() -> Self {
 		let button = app.buttons[TestIdentifiers.Customize.close].firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Customize should have a close button")
+		XCTAssertTrue(button.waitUntilExists(timeout: 10), "Customize should have a close button")
 		button.tap()
-		XCTAssertTrue(sheet.waitForNonExistence(timeout: 10), "Customize should close")
+		XCTAssertTrue(sheet.waitUntilGone(timeout: 10), "Customize should close")
 		return self
 	}
 }

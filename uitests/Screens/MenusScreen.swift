@@ -21,7 +21,7 @@ struct MenusScreen: Screen {
 	@discardableResult
 	func revealFilters() -> Self {
 		XCTAssertTrue(
-			mounted.waitForExistence(timeout: 30),
+			mounted.waitUntilExists(timeout: 30),
 			"the Filters button should be in the navigation bar")
 		mounted.tap()
 		return self
@@ -62,7 +62,7 @@ struct MenusScreen: Screen {
 	@discardableResult
 	func verifyTitleNames(_ meal: String, at cafe: String) -> Self {
 		XCTAssertTrue(
-			mealPicker(cafe, showing: meal).waitForExistence(timeout: 30),
+			mealPicker(cafe, showing: meal).waitUntilExists(timeout: 30),
 			"the title should now name \(meal)")
 		return self
 	}
@@ -70,7 +70,7 @@ struct MenusScreen: Screen {
 	/// A food row, by the identifier the menu gives it, is on screen.
 	@discardableResult
 	func verifyItemShown(_ item: String) -> Self {
-		XCTAssertTrue(app.buttons[item].waitForExistence(timeout: 30), "the menu should list \(item)")
+		XCTAssertTrue(app.buttons[item].waitUntilExists(timeout: 30), "the menu should list \(item)")
 		return self
 	}
 
@@ -88,7 +88,7 @@ struct MenusScreen: Screen {
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Menus.foodRowPrefix)
 		).firstMatch
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"at least one food row should be visible")
 		return self
 	}
@@ -97,7 +97,7 @@ struct MenusScreen: Screen {
 	@discardableResult
 	func openCafe(_ cafe: String) -> Self {
 		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitForExistence(timeout: 30), "\(cafe) tab should be visible")
+		XCTAssertTrue(tab.waitUntilExists(timeout: 30), "\(cafe) tab should be visible")
 		tab.tap()
 		return verifyFoodRowsAppear()
 	}

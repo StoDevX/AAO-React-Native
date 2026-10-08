@@ -66,7 +66,7 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func closeSheet(expectingBar label: String) -> Self {
 		let airStatus = app.element(matching: TestIdentifiers.StreamingMedia.airStatus)
-		XCTAssertTrue(airStatus.waitForExistence(timeout: 10), "The sheet should be open before it is closed")
+		XCTAssertTrue(airStatus.waitUntilExists(timeout: 10), "The sheet should be open before it is closed")
 		// By the grabber, above the station picker: a drag that starts on the
 		// picker or the record goes to them instead.
 		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.075))
@@ -82,7 +82,7 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func checkShows(_ label: String) -> Self {
 		XCTAssertTrue(
-			app.elementWithLabel(startingWith: label).waitForExistence(timeout: 10),
+			app.elementWithLabel(startingWith: label).waitUntilExists(timeout: 10),
 			"Something labelled \"\(label)\" should be showing")
 		return self
 	}
@@ -96,10 +96,7 @@ struct StreamingMediaScreen: Screen {
 	/// Check `element` is not on screen, waiting for it to go.
 	@discardableResult
 	func checkGone(_ element: XCUIElement, named name: String) -> Self {
-		let gone = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: element)],
-			timeout: 10)
-		XCTAssertEqual(gone, .completed, "\(name) should be gone")
+		XCTAssertTrue(element.waitUntilGone(timeout: 10), "\(name) should be gone")
 		return self
 	}
 
@@ -111,7 +108,7 @@ struct StreamingMediaScreen: Screen {
 	}
 
 	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
-		XCTAssertTrue(element.waitForExistence(timeout: 10), "\(name) should exist")
+		XCTAssertTrue(element.waitUntilExists(timeout: 10), "\(name) should exist")
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")
 		XCTAssertGreaterThanOrEqual(element.frame.width, 44, "\(name) should be at least 44pt wide")
 	}
@@ -121,14 +118,14 @@ struct StreamingMediaScreen: Screen {
 	@discardableResult
 	func checkScrubKeepsLogo(_ label: String) -> Self {
 		let logo = app.buttonLabelled(label)
-		XCTAssertTrue(logo.waitForExistence(timeout: 10), "\"\(label)\" should be showing before the scrub")
+		XCTAssertTrue(logo.waitUntilExists(timeout: 10), "\"\(label)\" should be showing before the scrub")
 
 		let start = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.25))
 		let end = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.2))
 		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
 
 		XCTAssertTrue(
-			app.buttonLabelled(label).waitForExistence(timeout: 5),
+			app.buttonLabelled(label).waitUntilExists(timeout: 5),
 			"A scrub should leave the logo as \"\(label)\"")
 		return self
 	}

@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 
 import {makeBuilding} from '../../__tests__/fixtures'
-import {selectionFor, selectionFraming} from '../selection'
+import {highlightedFootprint, selectionFor, selectionFraming} from '../selection'
 import type {Building, Feature, GeometryCollection} from '../../types'
 
 function place(geometry: GeometryCollection): Feature<Building> {
@@ -132,5 +132,30 @@ describe('selectionFraming', () => {
 
 	test('leaves the camera alone for a place with no anchor', () => {
 		expect(selectionFraming(place({type: 'GeometryCollection', geometries: []}))).toBeNull()
+	})
+})
+
+describe('highlightedFootprint', () => {
+	const footprints = new Set(['bc', 'toh'])
+
+	test('a building with a footprint tints its own', () => {
+		expect(highlightedFootprint(makeBuilding({id: 'bc', name: 'Buntrock'}), footprints)).toBe('bc')
+	})
+
+	test('a place inside a building tints its parent', () => {
+		let pause = makeBuilding({id: 'pause', name: "The Lion's Pause", parent: 'bc'})
+		expect(highlightedFootprint(pause, footprints)).toBe('bc')
+	})
+
+	test('a parent with no footprint tints nothing', () => {
+		let point = makeBuilding({id: 'bench', name: 'Bench', parent: 'quad'})
+		expect(highlightedFootprint(point, footprints)).toBeNull()
+	})
+
+	test('a place with no footprint and no parent tints nothing', () => {
+		expect(highlightedFootprint(trail, footprints)).toBeNull()
+		expect(
+			highlightedFootprint(makeBuilding({id: 'lot', name: 'Lot', parent: null}), footprints),
+		).toBeNull()
 	})
 })
