@@ -4,6 +4,7 @@ import {addResetListener, finishReset, isUITesting} from '@frogpond/launch-argum
 import type {ResetRequest} from '@frogpond/launch-arguments'
 
 import {clearStoredData} from './clear-stored-data'
+import {probe} from './probe'
 
 /**
  * Resets the app in place when the UI test runner asks, standing in for the
@@ -26,8 +27,11 @@ export function useUITestReset(): boolean {
 			return
 		}
 		void (async () => {
+			probe(`reset asked for ${request.url}`)
 			await clearStoredData()
+			probe('reset cleared stored data')
 			await finishReset(request)
+			probe('reset answered; restarting')
 			Restart()
 		})()
 	}, [request])
