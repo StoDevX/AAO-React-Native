@@ -10,6 +10,7 @@ import {
 	Section,
 	Spacer,
 	Text,
+	Toggle,
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
@@ -169,15 +170,16 @@ function UnofficialAppNotice(): React.ReactNode {
 				/>
 				{isDev ? (
 					<Section title={CAMPUS_SECTION}>
+						{/* A Toggle, which a menu draws with the platform's own checkmark. */}
 						{CAMPUSES.map((option) => (
-							<Button
+							<Toggle
 								key={option.campus}
+								isOn={option.campus === campus}
 								label={option.title}
-								onPress={() => {
+								onIsOnChange={() => {
 									setCampus(option.campus)
 									switchIconForCampus(option.campus)
 								}}
-								systemImage={option.campus === campus ? 'checkmark' : undefined}
 							/>
 						))}
 					</Section>
