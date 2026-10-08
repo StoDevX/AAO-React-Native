@@ -102,17 +102,23 @@ final class UITestResetChannel {
 			.flatMap { $0.windows }
 			.first { $0.isKeyWindow }?
 			.rootViewController
+		let answer = {
+			// What `--reset-state` clears at launch, as AppDelegate does it.
+			if let bundleId = Bundle.main.bundleIdentifier {
+				UserDefaults.standard.removePersistentDomain(forName: bundleId)
+			}
+
+			Self.setPendingURL(url)
+			self.reply(to: id, "ok")
+		}
+		// Answer only once the dismissal is done. Even unanimated, a Safari
+		// view is still presented when `dismiss` returns, and the next test
+		// would then present its own sheets while it is being taken down.
 		if let presented = root?.presentedViewController, !presented.isBeingDismissed {
-			root?.dismiss(animated: false)
+			root?.dismiss(animated: false, completion: answer)
+		} else {
+			answer()
 		}
-
-		// What `--reset-state` clears at launch, as AppDelegate does it.
-		if let bundleId = Bundle.main.bundleIdentifier {
-			UserDefaults.standard.removePersistentDomain(forName: bundleId)
-		}
-
-		Self.setPendingURL(url)
-		reply(to: id, "ok")
 	}
 
 	private func reply(to id: String, _ answer: String) {
