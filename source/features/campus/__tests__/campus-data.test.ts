@@ -30,7 +30,9 @@ describe.each([
 	['transit/bus', busRoutesOptionsFor],
 ] as const)('%s in a Carleton campus test', (route, options) => {
 	test("fetches Carleton's, which the recording answers, instead of St. Olaf's bundled data", async () => {
-		await new QueryClient().query(options('carleton') as Parameters<QueryClient['query']>[0])
+		// No garbage collection, whose timer would hold Jest open.
+		let client = new QueryClient({defaultOptions: {queries: {gcTime: Infinity, retry: false}}})
+		await client.query(options('carleton') as Parameters<QueryClient['query']>[0])
 		expect(requested).toEqual([`https://carleton.example.test/v1/${route}`])
 	})
 })

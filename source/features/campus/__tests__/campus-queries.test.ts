@@ -42,7 +42,8 @@ describe.each(QUERIES)('$route', ({route, options}) => {
 		['stolaf', 'https://stolaf.example.test/v1/'],
 		['carleton', 'https://carleton.example.test/v1/'],
 	])("reads %s's from its own server", async (campus, root) => {
-		let client = new QueryClient()
+		// No garbage collection, whose timer would hold Jest open.
+		let client = new QueryClient({defaultOptions: {queries: {gcTime: Infinity, retry: false}}})
 		// The options' types differ per query; each is fetched only for its request.
 		await client.query(options(campus) as Parameters<typeof client.query>[0])
 		expect(requested).toEqual([`${root}${route}`])
