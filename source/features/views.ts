@@ -14,7 +14,7 @@ type href = r extends {push: (href: infer H) => void} ? H : never
  * `.symbolset` in `assets/symbols/`, which `plugins/with-custom-symbols` copies
  * into the asset catalog.
  */
-export const CUSTOM_SYMBOLS = ['olaf-messenger'] as const
+export const CUSTOM_SYMBOLS = ['olaf-messenger', 'carletonian'] as const
 
 type CustomSymbol = (typeof CUSTOM_SYMBOLS)[number]
 
@@ -289,7 +289,7 @@ const carletonViews = (): Array<ViewType> => [
 		type: 'view',
 		view: '/carletonian',
 		title: 'The Carletonian',
-		icon: 'newspaper.fill',
+		icon: 'carletonian',
 		gradient: c.tanGradient,
 		titleDesign: 'serif',
 	},

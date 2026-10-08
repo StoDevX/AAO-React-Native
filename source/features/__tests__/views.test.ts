@@ -274,3 +274,10 @@ describe('Olaf Messenger', () => {
 		expect(onlyView((v) => v.title === 'Olaf Messenger').icon).toBe('olaf-messenger')
 	})
 })
+
+describe('The Carletonian', () => {
+	test("shows the paper's C", () => {
+		let tile = HomeViews('carleton').find((v) => v.title === 'The Carletonian')
+		expect(tile?.icon).toBe('carletonian')
+	})
+})

@@ -304,6 +304,10 @@ ImageMagick and potrace (`brew install imagemagick potrace`). The image's dark
 pixels become the symbol, so a white mark on a dark disc comes out as a disc
 with the mark cut out. The Messenger's came from
 `https://olafmessenger.com/wp-content/uploads/2021/02/Logo_white-e1713492149523.png`.
+The Carletonian's C came from the gray C in
+`https://thecarletonian.com/wp-content/uploads/2019/04/carletonianlogo-1.jpg`,
+with the wordmark that crosses it painted out and the stroke redrawn there
+before tracing.
 
 The template holds `Regular-S`, `Regular-M` and `Regular-L`. Other weights
 fall back to Regular, but a missing scale does not: without `Regular-L`, the
