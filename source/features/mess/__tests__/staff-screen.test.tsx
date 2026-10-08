@@ -100,7 +100,7 @@ describe('StaffScreen', () => {
 		await renderWithClient(<StaffScreen />)
 		await waitForQueriesToSettle(queryClient)
 
-		expect(screen.getByText('The Messenger has listed no staff yet.')).toBeTruthy()
+		expect(screen.getByText('The Mess has listed no staff yet.')).toBeTruthy()
 	})
 
 	test('says the staff failed to load, and offers to try again', async () => {

@@ -24,7 +24,8 @@ import {groupStaff, photoSubjectOf} from './lib/staff'
 import {MessPage, UnloadedPage, PAPER_BAR, PaperTitle} from './mess-page'
 import {PageMessage} from './page-notice'
 import {ink, paper, paperTypeface, wash} from './palette'
-import {messStaffOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
+import {usePaper} from './paper-context'
 import {SECTION_HEADING} from './story-blocks'
 import type {StaffProfile} from './types'
 
@@ -45,7 +46,8 @@ const COLUMN = [
  */
 export function StaffScreen(): React.ReactNode {
 	let router = useRouter()
-	let staff = useQuery(messStaffOptions)
+	let paper = usePaper()
+	let staff = useQuery(usePaperQueries().staffOptions)
 	let columns = useTileColumns()
 	let tileWidth = useTileWidth(columns)
 
@@ -55,7 +57,7 @@ export function StaffScreen(): React.ReactNode {
 			<PaperTitle subtitle={staff.data?.[0]?.year} title="Staff" />
 			{staff.data?.length === 0 ? (
 				<MessPage onRefresh={() => staff.refetch()}>
-					<PageMessage text="The Messenger has listed no staff yet." />
+					<PageMessage text={`${paper.shortTitle} has listed no staff yet.`} />
 				</MessPage>
 			) : staff.data ? (
 				<Host matchContents={false} style={styles.paper}>
@@ -79,7 +81,7 @@ export function StaffScreen(): React.ReactNode {
 											<PersonTile
 												onPress={() =>
 													router.navigate({
-														pathname: '/messenger/staff/[id]',
+														pathname: paper.routes.staffMember,
 														params: {id: String(person.id)},
 													})
 												}
@@ -114,7 +116,7 @@ const UNTITLED_CLEAR_BAR = {title: '', headerTransparent: true} as const
  * no fetch of its own.
  */
 export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
-	let staff = useQuery(messStaffOptions)
+	let staff = useQuery(usePaperQueries().staffOptions)
 	// A refetch can move the list on to a new year without this person, so the page keeps showing
 	// whom it last found rather than turning into Not Found while it is open.
 	let [lastFound, setLastFound] = React.useState<StaffProfile | null>(null)

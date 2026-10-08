@@ -284,6 +284,15 @@ const carletonViews = (): Array<ViewType> => [
 		icon: 'film.fill',
 		gradient: c.lightBlueGradient,
 	},
+	// The CARLS app's News tile, as the student paper: Carleton's own news is at the end.
+	{
+		type: 'view',
+		view: '/carletonian',
+		title: 'The Carletonian',
+		icon: 'newspaper.fill',
+		gradient: c.tanGradient,
+		titleDesign: 'serif',
+	},
 	{
 		type: 'view',
 		view: '/carleton-convos',
@@ -304,6 +313,13 @@ const carletonViews = (): Array<ViewType> => [
 		title: 'Moodle',
 		icon: 'graduationcap.fill',
 		gradient: c.yellowGradient,
+	},
+	{
+		type: 'view',
+		view: '/carleton-news',
+		title: 'Carleton News',
+		icon: 'megaphone.fill',
+		gradient: c.indigoGradient,
 	},
 	developerView(),
 ]

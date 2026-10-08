@@ -73,7 +73,15 @@ describe('on Carleton', () => {
 	let carletonIds = () => quickActionDestinations('carleton').map((d) => d.id)
 
 	test("offers Carleton's in-app tiles, and none of St. Olaf's cafés", () => {
-		expect(carletonIds()).toStrictEqual(['Menus', 'Building Hours', 'SUMO', 'Convo', 'Campus Map'])
+		expect(carletonIds()).toStrictEqual([
+			'Menus',
+			'Building Hours',
+			'SUMO',
+			'The Carletonian',
+			'Convo',
+			'Campus Map',
+			'Carleton News',
+		])
 	})
 
 	test('defaults to four picks it offers', () => {

@@ -8,7 +8,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {useQueries} from '@tanstack/react-query'
 import {faded, ink} from './palette'
-import {staffProfileOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {RemotePhoto} from './remote-photo'
 import type {Byline, StaffProfile} from './types'
 
@@ -34,6 +34,7 @@ const RULE = [accessibilityIdentifier(AUTHOR_RULE_ID)]
  * one whose profiles are still loading never draws a rule that may then go.
  */
 export function AuthorCards({bylines}: {bylines: Byline[]}): React.ReactNode {
+	let {staffProfileOptions} = usePaperQueries()
 	let profiles = useQueries({
 		queries: bylines.map((byline) => staffProfileOptions(byline.id)),
 		combine: (results) => results.map((result) => result.data),

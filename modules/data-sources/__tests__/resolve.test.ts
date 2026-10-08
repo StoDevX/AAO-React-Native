@@ -33,7 +33,7 @@ test('resolves a source by rel and id', () => {
 
 test('lists every source under a rel', () => {
 	const ids = resolveSources(manifest, REL_NEWS, ALL_NEWS_TYPES).map((s) => s.id)
-	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville'])
+	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville', 'carletonian', 'carleton-now'])
 })
 
 test('the bundled manifest carries the St. Olaf jobs site', () => {
@@ -105,11 +105,11 @@ test('resolveSources drops an entry whose fetched and bundled types are both uns
 	// 'stolaf' is unsupported here (both its fetched type and its bundled
 	// type -- the real wordpress type -- are excluded), so it must be
 	// dropped rather than thrown for the whole list or returned unusable.
-	// 'mess' is a WordPress source too, so it goes the same way.
+	// 'mess' and 'carletonian' are WordPress sources too, so they go the same way.
 	const ids = resolveSources(edited, REL_NEWS, ['application/vnd.frogpond.feed-items+json']).map(
 		(s) => s.id,
 	)
-	expect(ids).toStrictEqual(['oleville'])
+	expect(ids).toStrictEqual(['oleville', 'carleton-now'])
 })
 
 test('resolveSources: an id missing from the fetched document still appears, from the bundled entry', () => {
@@ -158,7 +158,7 @@ test('resolveSources: a fetched-only id with an unsupported type is dropped', ()
 	// 'brand-new' has no bundled entry to fall back to, so it must be
 	// dropped rather than thrown for the whole list.
 	const ids = resolveSources(edited, REL_NEWS, ALL_NEWS_TYPES).map((s) => s.id)
-	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville'])
+	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville', 'carletonian', 'carleton-now'])
 })
 
 test('fetchManifest resolves to the bundled document rather than hanging while offline', async () => {

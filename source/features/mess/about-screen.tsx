@@ -16,7 +16,7 @@ import {sendEmail} from '../../components/send-email'
 import {DisclosureRow} from '../../components/rows'
 import {UnloadedPage, PAPER_BAR, PaperTitle} from './mess-page'
 import {ink, paper, paperTypeface, wash} from './palette'
-import {messAboutOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {SECTION_HEADING} from './story-blocks'
 import type {AboutSection} from './types'
 
@@ -51,7 +51,7 @@ function AboutSectionRows({section}: {section: AboutSection}): React.ReactNode {
  * grouping of whom to write to, and its submission policy, carry over as the paper edits them.
  */
 export function AboutScreen(): React.ReactNode {
-	let about = useQuery(messAboutOptions)
+	let about = useQuery(usePaperQueries().aboutOptions)
 
 	return (
 		<>

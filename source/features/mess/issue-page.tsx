@@ -32,7 +32,8 @@ import {keepsDarkMode} from './lib/photo-story'
 import {leadStory, shelvesOf} from './lib/shelves'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, messRed, wash} from './palette'
-import {messIssueOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
+import {usePaper} from './paper-context'
 import {RemotePhoto} from './remote-photo'
 import {useMessStore} from './store'
 import {SECTION_HEADING} from './story-blocks'
@@ -164,7 +165,7 @@ export function IssuePage({
 	onShowSection,
 	persist = false,
 }: IssuePageProps): React.ReactNode {
-	let stories = useQuery(messIssueOptions(issue, {persist}))
+	let stories = useQuery(usePaperQueries().issueOptions(issue, {persist}))
 	return (
 		<>
 			{stories.data ? (
@@ -203,13 +204,14 @@ export function IssueStories({
 	onShowSection,
 }: IssueStoriesProps): React.ReactNode {
 	let open = useOpenStory()
+	let {mainSections} = usePaper()
 	let lead = stories.find((story) => story.id === leadId) ?? leadStory(stories)
 	return (
 		<>
 			{lead ? (
 				<LeadStory columnWidth={columnWidth} onPress={() => open(lead)} story={lead} />
 			) : null}
-			{shelvesOf(stories, lead?.id).map(({section, stories: shelved}) =>
+			{shelvesOf(stories, lead?.id, mainSections).map(({section, stories: shelved}) =>
 				section === null ? (
 					<MoreGrid columnWidth={columnWidth} key={MORE_SHELF} onOpen={open} stories={shelved} />
 				) : (

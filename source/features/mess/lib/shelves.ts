@@ -30,16 +30,20 @@ export type Shelf = {section: string | null; stories: MessStory[]}
  * in any other section, or none. Each keeps its stories newest first; the lead is on none of
  * them, and a section with no stories gets no shelf.
  */
-export function shelvesOf(stories: MessStory[], leadId: number | undefined): Shelf[] {
+export function shelvesOf(
+	stories: MessStory[],
+	leadId: number | undefined,
+	mainSections: readonly string[] = MAIN_SECTIONS,
+): Shelf[] {
 	let rest = stories.filter((story) => story.id !== leadId)
-	let sections: Shelf[] = MAIN_SECTIONS.map((section) => ({
+	let sections: Shelf[] = mainSections.map((section) => ({
 		section,
 		stories: rest.filter((story) => story.section === section),
 	}))
 	let others: Shelf = {
 		section: null,
 		stories: rest.filter(
-			(story) => story.section === null || !MAIN_SECTIONS.includes(story.section),
+			(story) => story.section === null || !mainSections.includes(story.section),
 		),
 	}
 	return [...sections, others].filter((shelf) => shelf.stories.length > 0)

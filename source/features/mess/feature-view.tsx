@@ -7,6 +7,7 @@ import {SeriesRow} from './series-row'
 import {PhotoCaption} from './photo-caption'
 import {BODY_PROSE, type ProseStyle, SiteLinkCard, StoryBlocks} from './story-blocks'
 import type {MessStory, StoryLayout} from './types'
+import {usePaper} from './paper-context'
 
 /** A Photo post's words, set small and italic like a photo's caption, so the pictures lead. */
 const PHOTO_WORDS: ProseStyle = {textStyle: 'footnote', italic: true, color: faded}
@@ -26,6 +27,7 @@ type Props = {
  * series. Returned side by side, to land in the page's column.
  */
 export function FeatureView({story, layout, columnWidth}: Props): React.ReactNode {
+	let {site} = usePaper()
 	// The two columns share a layout; the column says which one this is.
 	let isShortStory = story.column === 'Short Story'
 	// Some older Photo posts lost their picture and never had words.
@@ -46,9 +48,7 @@ export function FeatureView({story, layout, columnWidth}: Props): React.ReactNod
 				prose={isShortStory ? STORY_PROSE : PHOTO_WORDS}
 				story={story}
 			/>
-			{isEmpty ? (
-				<SiteLinkCard icon="safari" label="Read on olafmessenger.com" url={story.link} />
-			) : null}
+			{isEmpty ? <SiteLinkCard icon="safari" label={`Read on ${site}`} url={story.link} /> : null}
 			{/* Every Microfiction Corner post carries the same banner, so its series is listed by title. */}
 			{isShortStory ? <SeriesRow asTitles={true} story={story} /> : null}
 		</>

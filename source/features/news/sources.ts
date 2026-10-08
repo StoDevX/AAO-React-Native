@@ -18,3 +18,10 @@ export const STOLAF_NEWS: NewsSource = {
 	title: 'St. Olaf News',
 	thumbnail: 'stolaf',
 }
+
+/** Carleton's own news site, Carleton Now, read through Carleton's server. */
+export const CARLETON_NEWS: NewsSource = {
+	id: 'carleton-now',
+	title: 'Carleton News',
+	thumbnail: false,
+}

@@ -4,7 +4,7 @@ import {ProgressView, VStack} from '@expo/ui/swift-ui'
 import {frame} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {spotifyUrl} from './lib/spotify'
-import {messPlaylistPageOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {EMBED_HEIGHT, SpotifyEmbed} from './spotify-embed'
 import {PhotoFigure, SiteLinkCard, StoryBlocks} from './story-blocks'
 import type {MessStory, StoryLayout} from './types'
@@ -34,7 +34,8 @@ type Props = {
  * with a link to the page, unless its body already links there. Returned side by side, to land in the page's column.
  */
 export function PlaylistView({story, layout, columnWidth}: Props): React.ReactNode {
-	let page = useQuery({...messPlaylistPageOptions(story), enabled: layout.spotify === null})
+	let {playlistPageOptions} = usePaperQueries()
+	let page = useQuery({...playlistPageOptions(story), enabled: layout.spotify === null})
 	let spotify = layout.spotify ?? page.data ?? null
 	// Only a body with no playlist is read from its page, so only that page can come back empty.
 	let unfound = spotify === null && !page.isPending

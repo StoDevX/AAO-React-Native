@@ -156,9 +156,11 @@ describe('HomeViews for Carleton', () => {
 			['Directory', 'https://www.carleton.edu/directory/'],
 			['KRLX', 'radio:krlx'],
 			['SUMO', '/carleton-sumo'],
+			['The Carletonian', '/carletonian'],
 			['Convo', '/carleton-convos'],
 			['Campus Map', '/map?campus=carleton'],
 			['Moodle', 'https://moodle.carleton.edu/'],
+			['Carleton News', '/carleton-news'],
 			['Developer', '/developer'],
 		])
 	})

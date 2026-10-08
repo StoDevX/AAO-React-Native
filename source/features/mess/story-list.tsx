@@ -24,7 +24,7 @@ import {rowGlyph} from './lib/row-glyph'
 import {NextPageRow} from './next-page-row'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, wash} from './palette'
-import {messCategoryOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {RemotePhoto} from './remote-photo'
 import type {MessStory} from './types'
 import {useOpenStory} from './use-open-story'
@@ -129,5 +129,6 @@ export function PagedStoryRows({
 
 /** A section's or column's newest stories, a row each. */
 export function CategoryStories({categoryId}: {categoryId: number}): React.ReactNode {
-	return <PagedStoryRows query={useInfiniteQuery(messCategoryOptions(categoryId))} />
+	let {categoryOptions} = usePaperQueries()
+	return <PagedStoryRows query={useInfiniteQuery(categoryOptions(categoryId))} />
 }
