@@ -28,7 +28,7 @@ xcrun simctl boot $UDID; xcrun simctl bootstatus $UDID -b
 
 # 3. Serve the JavaScript. Any free port; 8091 here because another checkout
 #    may own 8081 — see "Sharing a machine with other checkouts" below.
-npx expo start --port 8091 &
+APP_VARIANT=aao npx expo start --port 8091 &
 until curl -sf http://localhost:8091/status | grep -q running; do sleep 1; done
 
 # 4. Run one test, or a suite, or the lot.
@@ -80,7 +80,7 @@ prefers a `main.jsbundle` inside the `.app` even in DEBUG, which is how CI
 runs. Between step 1 and step 4:
 
 ```bash
-mise run bundle:ios     # writes ios/AllAboutOlaf/main.jsbundle from THIS checkout
+APP_VARIANT=aao mise run bundle:ios     # writes ios/AllAboutOlaf/main.jsbundle from THIS checkout
 
 APP=ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app
 cp ios/AllAboutOlaf/main.jsbundle "$APP/"

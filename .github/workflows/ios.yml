@@ -17,6 +17,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
+  # app.config.ts requires it; CI builds and tests All About Olaf.
+  APP_VARIANT: 'aao'
   xcode_version: 'Xcode_27.0'
   cache_epoch: '1'
   MISE_RUBY_COMPILE: 'false'

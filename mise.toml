@@ -81,8 +81,9 @@ expo run:ios ${usage_device:+--device "$usage_device"} "$@"
 # Each app's development build, which installs beside the App Store's: AAO Dev
 # and CARLS Dev. Each prebuilds first, since ios/ holds one app at a time, and
 # runs Metro with the same APP_VARIANT, as the app's config reaches the
-# JavaScript through it. A Metro started on its own needs the variant too:
-# `APP_VARIANT=carls-development mise run start`.
+# JavaScript through it. Every other task that reads the app's config (ios,
+# start, prebuild, bundle:ios, …) needs APP_VARIANT set by its caller:
+# app.config.ts has no default, so it cannot build the wrong app unasked.
 [tasks."aao:ios"]
 description = "Build and run All About Olaf (AAO Dev) on a simulator or device"
 usage = '''
@@ -90,8 +91,8 @@ usage = '''
   complete "device" run=#"{{ vars.device_names }}"#
   arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
 '''
-env = { APP_VARIANT = "development" }
-depends = [{ task = "prebuild", env.APP_VARIANT = "development" }]
+env = { APP_VARIANT = "aao-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "aao-dev" }]
 run = '''
 eval "set -- $usage_args"
 expo run:ios ${usage_device:+--device "$usage_device"} "$@"
@@ -104,8 +105,8 @@ usage = '''
   complete "device" run=#"{{ vars.device_names }}"#
   arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
 '''
-env = { APP_VARIANT = "carls-development" }
-depends = [{ task = "prebuild", env.APP_VARIANT = "carls-development" }]
+env = { APP_VARIANT = "carls-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "carls-dev" }]
 run = '''
 eval "set -- $usage_args"
 expo run:ios ${usage_device:+--device "$usage_device"} "$@"
@@ -178,7 +179,7 @@ bundle install --quiet
 
 # ios/ holds one app at a time. Prebuilding over another variant's project
 # keeps that one's icons and settings, so a change of variant starts afresh.
-variant="${APP_VARIANT:-production}"
+variant="${APP_VARIANT:?set APP_VARIANT to aao, aao-dev, carls or carls-dev}"
 clean=""
 if test "$(cat ios/.app-variant 2>/dev/null)" != "$variant"; then
   clean="--clean"
@@ -254,11 +255,11 @@ usage = '''
 '''
 depends = [
 	{ task = "pnpm:install:frozen" },
-	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = "prebuild", env.APP_VARIANT = "aao-dev" },
 	{ task = 'build:ios', args = [
 		"{{usage.device}}",
 	] },
-	{ task = "bundle:ios" },
+	{ task = "bundle:ios", env.APP_VARIANT = "aao-dev" },
 	{ task = "embed-jsbundle:ios" },
 ]
 run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
@@ -272,7 +273,7 @@ usage = '''
 env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
 depends = [
 	{ task = "pnpm:install:frozen" },
-	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = "prebuild", env.APP_VARIANT = "aao-dev" },
 	{ task = 'build:ios', args = [
 		"{{usage.device}}",
 	] },

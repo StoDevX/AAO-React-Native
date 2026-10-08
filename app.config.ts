@@ -24,10 +24,12 @@ const AAO_ICON = './assets/windmill.icon'
 const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/light.png'
 
 /**
- * Which build this is. Set `APP_VARIANT=development` to get an app that
- * installs alongside the real one instead of replacing it on your device.
+ * Which app this build is, which `APP_VARIANT` must name: `aao`, `carls`, or
+ * their `-dev` builds, which install alongside the App Store's instead of
+ * replacing it on your device. There is no default, so a forgotten variant
+ * fails here rather than building and launching the other app.
  *
- * `carls` and `carls-development` build the same code as CARLS: Carleton's
+ * `carls` and `carls-dev` build the same code as CARLS: Carleton's
  * app, with the campus fixed to Carleton (`extra.app`, read by
  * source/lib/app-identity.ts), the penguin as its icon and no St. Olaf icons
  * to switch to.
@@ -41,14 +43,14 @@ const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/lig
  * `Cannot find module` at prebuild time. See __tests__/app.config.test.ts.
  */
 const VARIANTS = {
-	production: {
+	aao: {
 		app: 'aao',
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
 		icon: AAO_ICON,
 	},
-	development: {
+	'aao-dev': {
 		app: 'aao',
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
@@ -63,7 +65,7 @@ const VARIANTS = {
 		scheme: 'carls',
 		icon: CARLS_ICON,
 	},
-	'carls-development': {
+	'carls-dev': {
 		app: 'carls',
 		displayName: 'CARLS Dev',
 		bundleIdentifier: `${CARLS_BUNDLE_ID}.dev`,
@@ -72,10 +74,14 @@ const VARIANTS = {
 	},
 } as const
 
-const requested = process.env.APP_VARIANT ?? 'production'
+const requested = process.env.APP_VARIANT
+
+if (!requested) {
+	throw new Error(`APP_VARIANT is not set. Set it to one of ${Object.keys(VARIANTS).join(', ')}.`)
+}
 
 if (!(requested in VARIANTS)) {
-	// Loudly, rather than quietly shipping production's identity under a typo.
+	// Loudly, rather than quietly building another app's identity under a typo.
 	throw new Error(`APP_VARIANT="${requested}" is not one of ${Object.keys(VARIANTS).join(', ')}.`)
 }
 
@@ -364,7 +370,7 @@ const config: ExpoConfig = {
 			'@sentry/react-native/expo',
 			{
 				organization: 'frog-pond-labs',
-				project: 'all-about-olaf',
+				project: variant.app === 'carls' ? 'carls' : 'all-about-olaf',
 			},
 		],
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;

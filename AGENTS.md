@@ -150,21 +150,24 @@ mise run test         # every test
 mise run test:jest    # Jest: app, source, modules
 mise run test:node    # node:test: scripts/, plugins/
 mise run tsc          # Type check
-mise run prebuild     # Generate ios/ from app.config.ts, and install pods
+APP_VARIANT=aao mise run prebuild   # Generate ios/ from app.config.ts, and install pods
 ```
 
 ### App Variants
 
-A development build can sit alongside the shipping app on one device.
-`APP_VARIANT` selects the build at generation time; unset means production, so
-every default path is unchanged.
+`APP_VARIANT` names the app a build is, and anything that reads the app's
+config needs it: prebuild, Metro (`expo start`), `expo run:ios`,
+`bundle:ios`, the size report. It has no default, so a forgotten variant fails
+at once instead of building and launching the other app. The `-dev` builds sit
+alongside the App Store's on one device. CI sets `aao`; each Xcode Cloud
+workflow sets its own in its environment.
 
-| `APP_VARIANT` | Bundle identifier | Home screen |
-| --- | --- | --- |
-| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf |
-| `development` | `…stolaf.dev` | AAO Dev |
-| `carls` | `com.rives.carls` | CARLS |
-| `carls-development` | `com.rives.carls.dev` | CARLS Dev |
+| `APP_VARIANT` | Bundle identifier | Home screen | Sentry project |
+| --- | --- | --- | --- |
+| `aao` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | `all-about-olaf` |
+| `aao-dev` | `…stolaf.dev` | AAO Dev | `all-about-olaf` |
+| `carls` | `com.rives.carls` | CARLS | `carls` |
+| `carls-dev` | `com.rives.carls.dev` | CARLS Dev | `carls` |
 
 The two All About Olaf variants share the windmill icon, so tell them apart by
 name. The CARLS variants build the same code as Carleton's app: `extra.app`
@@ -180,12 +183,12 @@ mise run carls:ios [device]   # CARLS Dev, prebuilt and run
 `ios/` holds one variant at a time; `mise run prebuild` starts it afresh when
 `APP_VARIANT` changes. The app's config reaches the JavaScript through Metro,
 so a Metro started on its own needs the variant too:
-`APP_VARIANT=carls-development mise run start`.
+`APP_VARIANT=carls-dev mise run start`.
 
 The URL scheme varies too — two apps claiming one scheme is undefined behaviour.
 
-TestFlight and App Store builds both ship the production identity, so a
-TestFlight build replaces the App Store app as it always has.
+TestFlight and App Store builds ship `aao` or `carls`, so a TestFlight build
+replaces the App Store app as it always has.
 
 **A build to a local device needs nothing beyond `mise run device "<DEVICE
 NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
