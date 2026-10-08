@@ -1,4 +1,8 @@
 import type {ImageSourcePropType} from 'react-native'
+import lionDark from './lion-dark.png'
+import lion from './lion.png'
+import oIsForOlafDark from './o-is-for-olaf-dark.png'
+import oIsForOlaf from './o-is-for-olaf.png'
 import oldMainRetroDark from './old-main-retro-dark.png'
 import oldMainRetro from './old-main-retro.png'
 import oldMainDark from './old-main-dark.png'
@@ -29,6 +33,14 @@ export const appIcons = {
 	'old-main-retro': {
 		light: oldMainRetro,
 		dark: oldMainRetroDark,
+	},
+	lion: {
+		light: lion,
+		dark: lionDark,
+	},
+	'o-is-for-olaf': {
+		light: oIsForOlaf,
+		dark: oIsForOlafDark,
 	},
 	'windmill-sky': {
 		light: windmillSky,

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {join} from 'node:path'
 import {describe, it} from 'node:test'
-import {exportPlan, retroPreviews, retroSetImages} from './make-icons.mjs'
+import {artworkPreviews, exportPlan, retroPreviews, retroSetImages} from './make-icons.mjs'
 
 describe('exportPlan', () => {
 	it('exports a light and dark preview for each Icon Composer document', () => {
@@ -54,6 +54,29 @@ describe('retroPreviews', () => {
 			assert.equal(p.input, 'assets/0-source-icons/old-main-retro.icon')
 			assert.equal(p.points, 100)
 		}
+	})
+})
+
+describe('artworkPreviews', () => {
+	it('previews each artwork set from its own light and dark images', () => {
+		assert.deepEqual(artworkPreviews(), [
+			{
+				input: 'assets/lion.xcassets/lion.appiconset/light.png',
+				output: 'images/icons/lion.png',
+			},
+			{
+				input: 'assets/lion.xcassets/lion.appiconset/dark.png',
+				output: 'images/icons/lion-dark.png',
+			},
+			{
+				input: 'assets/o-is-for-olaf.xcassets/o-is-for-olaf.appiconset/light.png',
+				output: 'images/icons/o-is-for-olaf.png',
+			},
+			{
+				input: 'assets/o-is-for-olaf.xcassets/o-is-for-olaf.appiconset/dark.png',
+				output: 'images/icons/o-is-for-olaf-dark.png',
+			},
+		])
 	})
 })
 
