@@ -447,7 +447,7 @@ jobs:
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json --plan uitest-plan.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 2 --granularity method --durations uitest-durations.json --plan uitest-plan.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
 
       - name: Upload the shard plan
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
