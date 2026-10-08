@@ -31,8 +31,8 @@ import {usePaperQueries} from './use-paper-queries'
 /** The name each view goes by in the menu, and in the menu button's label. */
 const VIEW_NAMES = {issues: 'By Issue', latest: 'Latest'} as const
 
-/** The Messenger's castle, alone in the title, read by VoiceOver as the paper's name. */
-function castle(title: string) {
+/** A paper's drawn mark, alone in the title, read by VoiceOver as the paper's name. */
+function masthead(title: string) {
 	return [
 		font({textStyle: 'title2'}),
 		foregroundStyle(c.label),
@@ -161,8 +161,8 @@ function SavedLatestStories(): React.ReactNode {
 }
 
 /**
- * A paper's front page: a navigation bar on the paper, titled with its masthead (the Messenger's
- * castle, or the paper's name), with the paintbrush and the view menu at its right, over the
+ * A paper's front page: a navigation bar on the paper, titled with its masthead (its drawn mark,
+ * the Messenger's castle or the Carletonian's C, or else the paper's name), with the paintbrush and the view menu at its right, over the
  * view's page. The view and the section are remembered in the news filter store, under the
  * paper's id. A link can name the view to open on, and the section to narrow Latest to:
  * `/messenger?view=Latest&section=Variety`.
@@ -194,7 +194,7 @@ export function FrontPageScreen(): React.ReactNode {
 					<Stack.Screen options={{title: paper.title}} />
 					<Stack.Title asChild={true}>
 						<Host style={TITLE_HOST_STYLE}>
-							<Image assetName={paper.masthead.assetName} modifiers={castle(paper.title)} />
+							<Image assetName={paper.masthead.assetName} modifiers={masthead(paper.title)} />
 						</Host>
 					</Stack.Title>
 				</>

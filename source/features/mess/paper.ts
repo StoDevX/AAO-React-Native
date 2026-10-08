@@ -24,7 +24,7 @@ export type Paper = {
 	/** The slug of the page the front page's Contact item shows. */
 	contactPageSlug: string
 	/** The paper's masthead in the navigation bar: a custom symbol, or its name set in type. */
-	masthead: {assetName: 'olaf-messenger-castle'} | null
+	masthead: {assetName: 'olaf-messenger-castle' | 'carletonian'} | null
 	/** The reader's screens for this paper. */
 	routes: PaperRoutes
 }
@@ -83,7 +83,7 @@ export const CARLETONIAN_PAPER: Paper = {
 	mainSections: ['News', 'Viewpoint', 'Features and Arts', 'The Bald Spot', 'Arb Notes'],
 	logoMediaIds: new Set(),
 	contactPageSlug: 'contact',
-	masthead: null,
+	masthead: {assetName: 'carletonian'},
 	routes: {
 		front: '/carletonian',
 		story: '/carletonian/story',
