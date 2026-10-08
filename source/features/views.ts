@@ -335,6 +335,14 @@ const carletonViews = (): Array<ViewType> => [
 		icon: 'character.book.closed.fill',
 		gradient: c.pinkGradient,
 	},
+	// Carleton blocks ccc-server from its orgs list, so the tile opens the college's own.
+	{
+		type: 'url',
+		url: 'https://www.carleton.edu/student-organizations/',
+		title: 'Student Orgs',
+		icon: 'person.3.fill',
+		gradient: c.sageGradient,
+	},
 	{
 		type: 'url',
 		url: 'https://moodle.carleton.edu/',

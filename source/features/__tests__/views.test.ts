@@ -163,6 +163,7 @@ describe('HomeViews for Carleton', () => {
 			['Convo', '/carleton-convos'],
 			['Campus Map', '/map?campus=carleton'],
 			['Dictionary', '/dictionary'],
+			['Student Orgs', 'https://www.carleton.edu/student-organizations/'],
 			['Moodle', 'https://moodle.carleton.edu/'],
 			['Carleton News', '/carleton-news'],
 			['Developer', '/developer'],
