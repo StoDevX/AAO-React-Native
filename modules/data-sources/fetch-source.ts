@@ -1,4 +1,4 @@
-import {carletonClient, stolafClient, isHTTPError} from '@frogpond/api'
+import {apiFetch, carletonClient, isHTTPError, stolafClient} from '@frogpond/api'
 import type {SourceCampus} from './types'
 
 const FETCH_TIMEOUT_MS = 10_000
@@ -34,7 +34,7 @@ async function fetchWithTimeout(href: string, signal: AbortSignal): Promise<Resp
 	let timer = setTimeout(abort, FETCH_TIMEOUT_MS)
 
 	try {
-		return await fetch(href, {signal: controller.signal})
+		return await apiFetch(href, {signal: controller.signal})
 	} finally {
 		clearTimeout(timer)
 		signal.removeEventListener('abort', abort)

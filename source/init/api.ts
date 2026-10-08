@@ -1,4 +1,6 @@
 import {setApiRoot, setCarletonApiRoot} from '@frogpond/api'
+import {campusFixturesDomain, fixtureMode} from '@frogpond/launch-arguments'
+import {installCampusFixtures} from '../features/campus/fixtures'
 import * as storage from '../lib/storage'
 import {CARLETON_DEFAULT_URL, DEFAULT_URL} from '../lib/constants'
 
@@ -27,3 +29,8 @@ const configureCarletonApiRoot = async () => {
 
 configureApiRoot()
 configureCarletonApiRoot()
+
+// A UI test that names a campus reads that campus's recordings for every request.
+if (campusFixturesDomain !== null) {
+	installCampusFixtures(campusFixturesDomain, fixtureMode)
+}
