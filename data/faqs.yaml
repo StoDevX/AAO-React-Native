@@ -17,6 +17,7 @@ faqs:
     severity: alert
     icon: envelope.circle
     dismissable: false
+    conditions: {institution: stolaf}
     updatedAt: '2025-12-14T00:00:00Z'
 
   - id: sis-login-disabled
@@ -38,4 +39,27 @@ faqs:
     backgroundColor: '#fef3f2'
     foregroundColor: '#b42318'
     dismissable: false
+    conditions: {institution: stolaf}
     updatedAt: '2025-12-14T00:00:00Z'
+
+  # CARLS' notices, carried over from the CARLS app's own FAQ page. The known
+  # issues it listed were that app's bugs, so they stay behind.
+  #
+  # A build older than the institution condition drops it and would show a
+  # CARLS notice to St. Olaf, so each also needs 2.9.0-rc.4 or later, which no
+  # App Store build is. Older builds read only the version range, and fail it.
+  - id: carls-support
+    question: 'Say hello to us'
+    answer: |-
+      **CARLS is a work in progress!**
+
+      If it doesn't do something you'd like it to do, or if you have a question or a problem with it, email us at [carls@frogpond.tech](mailto:carls@frogpond.tech). Thanks!
+    bannerTitle: Say hello to us
+    bannerText: 'Email us at [carls@frogpond.tech](mailto:carls@frogpond.tech).'
+    targets:
+      - 'Faq'
+    severity: alert
+    icon: envelope.circle
+    dismissable: false
+    conditions: {and: [{institution: carleton}, {versionRange: '>=2.9.0-rc.4'}]}
+    updatedAt: '2026-10-08T00:00:00Z'

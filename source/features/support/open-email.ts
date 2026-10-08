@@ -14,9 +14,10 @@ ${Application.nativeApplicationVersion}.${Application.nativeBuildVersion}
 
 /** Opens a message to the app's maintainers, with the device's details below the body. */
 export const openEmail = (): void => {
+	let {appName, supportEmail} = currentBranding()
 	sendEmail({
-		to: ['allaboutolaf@frogpond.tech'],
-		subject: `Support: ${currentBranding().appName}`,
+		to: [supportEmail],
+		subject: `Support: ${appName}`,
 		body: getDeviceInfo(),
 	})
 }

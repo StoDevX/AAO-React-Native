@@ -282,7 +282,7 @@ run = "oxfmt --check ."
 
 [tasks.tsc]
 description = "Run TypeScript compiler"
-# source/features/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
+# source/features/faqs/query.ts imports docs/faqs.json, which bundle-data
 # generates, so tsc cannot run against a clean checkout without it.
 depends = ["bundle-data"]
 run = "tsc --noEmit"

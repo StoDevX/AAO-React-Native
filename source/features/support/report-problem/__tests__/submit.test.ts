@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native'
 
 import {useTelemetryStore} from '../../../telemetry/store'
 import {reportEmail, submitReport} from '../submit'
+import {useCampusStore} from '../../../campus/store'
 
 jest.mock('@sentry/react-native', () => ({
 	captureFeedback: jest.fn(),
@@ -142,6 +143,18 @@ describe('reportEmail', () => {
 
 	it('leaves out contact details that were not given', () => {
 		expect(reportEmail({message: 'the map is blank'}).body).toBe('the map is blank')
+	})
+
+	it("addresses a Carleton install's report to CARLS' support", () => {
+		useCampusStore.setState({campus: 'carleton'})
+		try {
+			expect(reportEmail({message: 'the map is blank'})).toMatchObject({
+				to: ['carls@frogpond.tech'],
+				subject: 'CARLS problem report',
+			})
+		} finally {
+			useCampusStore.setState({campus: 'stolaf'})
+		}
 	})
 })
 

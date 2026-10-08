@@ -1,45 +1,64 @@
 import {client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import {fallbackFaqs, fallbackLegacyText} from './local-faqs'
-import {evaluateConditions} from './conditions'
+import bundledFaqs from '../../../docs/faqs.json'
+import {defaultConditionContext, evaluateConditions} from './conditions'
 import {parseFaqMetadata} from './schema'
 import type {Faq, FaqQueryData, FaqTarget} from './types'
+import type {Campus} from '../campus/store'
 
 export const keys = {
 	all: ['faqs'] as const,
 }
 
-const emptyData: FaqQueryData = {
-	faqs: fallbackFaqs,
-	legacyText: fallbackLegacyText,
+/**
+ * Both apps' notices are one list, the one `data/faqs.yaml` publishes; each
+ * campus keeps those whose conditions name its institution, or none.
+ */
+const optionsFor = (campus: Campus) =>
+	queryOptions<unknown, unknown, FaqQueryData>({
+		queryKey: keys.all,
+		queryFn: ({signal}) => client.get('faqs', {signal}).json(),
+		select: (raw) => faqsFor(raw, campus),
+	})
+
+// Built once per campus, so `select` keeps its identity and runs only when the data changes.
+const OPTIONS = {stolaf: optionsFor('stolaf'), carleton: optionsFor('carleton')}
+
+/** The FAQs and notices `campus`'s app shows. */
+export function faqsOptionsFor(campus: Campus): ReturnType<typeof optionsFor> {
+	return OPTIONS[campus]
 }
 
-export const faqsOptions = queryOptions<unknown, unknown, FaqQueryData>({
-	queryKey: keys.all,
-	queryFn: ({signal}) => client.get('faqs', {signal}).json(),
-	select: normalizeFaqResponse,
-})
+/** What `campus`'s FAQ screen shows before its data arrives: the copy bundled with the app. */
+export function emptyFaqDataFor(campus: Campus): FaqQueryData {
+	return faqsFor(bundledFaqs, campus)
+}
 
-function normalizeFaqResponse(raw: unknown): FaqQueryData {
+/** The notices in `raw` that `campus`'s app shows, falling back on the bundled copy's. */
+export function faqsFor(raw: unknown, campus: Campus): FaqQueryData {
 	if (!isRecord(raw)) {
-		return emptyData
+		return emptyFaqDataFor(campus)
 	}
 
+	let context = {...defaultConditionContext(), campus}
 	let faqs = Array.isArray(raw.faqs)
 		? (raw.faqs as unknown[])
 				.map(normalizeFaq)
 				.filter(isFaq)
-				.filter((faq) => evaluateConditions(faq.conditions))
+				.filter((faq) => evaluateConditions(faq.conditions, context))
 		: []
 
-	if (faqs.length === 0) {
-		faqs = fallbackFaqs
+	if (faqs.length === 0 && raw !== bundledFaqs) {
+		faqs = emptyFaqDataFor(campus).faqs
 	}
 
-	return {
-		faqs,
-		legacyText: typeof raw.text === 'string' ? raw.text : fallbackLegacyText,
+	// The free-form text predates the list and is All About Olaf's alone.
+	let legacyText = ''
+	if (campus === 'stolaf') {
+		legacyText = typeof raw.text === 'string' ? raw.text : bundledFaqs.text
 	}
+
+	return {faqs, legacyText}
 }
 
 type UnknownRecord = Record<string, unknown>
@@ -162,5 +181,3 @@ function buildSummary(value: string): string {
 
 	return `${plain.slice(0, 137).trimEnd()}…`
 }
-
-export {emptyData as emptyFaqData}
