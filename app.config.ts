@@ -121,7 +121,7 @@ const config: ExpoConfig = {
 	// its target, its scheme and its directory. The variant's own name goes to
 	// CFBundleDisplayName below, which is what the home screen shows.
 	name: 'All About Anything',
-	slug: 'all-about-olaf',
+	slug: 'all-about-anything',
 	scheme: variant.scheme,
 	version: shippableVersion,
 

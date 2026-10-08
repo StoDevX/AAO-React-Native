@@ -465,7 +465,7 @@ after adding a route.
 
 Versions come from Changesets. A change that belongs in the release notes adds
 a file with `mise run changeset` (a plain markdown file in `.changeset/`:
-`"all-about-olaf": patch|minor|major` in the frontmatter, the note below it).
+`"all-about-anything": patch|minor|major` in the frontmatter, the note below it).
 The Release workflow turns those into a "Version Packages" pull request, and a
 `prerelease:alpha|beta|rc|none` label on it picks the channel. Do not edit
 `version` in `package.json` or add to `CHANGELOG.md` by hand. The logic is in
