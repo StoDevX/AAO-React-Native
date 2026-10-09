@@ -105,29 +105,38 @@ export function campusDay(instant) {
 	return instant.toLocaleDateString('en-CA', {timeZone: 'America/Chicago'})
 }
 
+/** Days from `from` to `to`, both YYYY-MM-DD. */
+function daysBetween(from, to) {
+	return Math.round((Date.parse(to) - Date.parse(from)) / DAY_MS)
+}
+
 /**
- * A campus's calendars moved back by whole days, all by the same amount, so
- * the first day from the recording on that has an event starting becomes the
- * UI tests' frozen day. The feeds answer from the day they are asked, so the
- * frozen day would otherwise show nothing; this asks no feed to keep serving
- * the past. An event that began earlier, such as a running exhibition, moves
- * with the rest. Calendars recorded on the frozen day are left as they came.
+ * A campus's calendars moved back by whole weeks, all by the same amount, so
+ * the first day from the recording on that has an event starting and falls on
+ * the frozen day's weekday becomes the UI tests' frozen day. The feeds answer
+ * from the day they are asked, so the frozen day would otherwise show
+ * nothing; this asks no feed to keep serving the past. Whole weeks keep each
+ * event on its own weekday, which titles such as "Friday Morning" name. An
+ * event that began earlier, such as a running exhibition, moves with the
+ * rest. Calendars recorded on the frozen day are left as they came.
  */
 export function shiftCalendars(table, {frozenDay, recordedDay}) {
 	let calendars = Object.keys(table).flatMap((key) => {
 		let calendar = CALENDARS.find(({matches}) => matches.test(key))
 		return calendar ? [{key, calendar, body: JSON.parse(table[key].body)}] : []
 	})
-	let eventDays = calendars.flatMap(({calendar, body}) =>
-		calendar.events(body).flatMap((event) => {
-			let start = event[calendar.fields[0]]
-			return start ? [campusDay(instantOf(start))] : []
-		}),
-	)
+	let eventDays = calendars
+		.flatMap(({calendar, body}) =>
+			calendar.events(body).flatMap((event) => {
+				let start = event[calendar.fields[0]]
+				return start ? [campusDay(instantOf(start))] : []
+			}),
+		)
+		.filter((day) => day >= recordedDay)
+		.sort((a, b) => a.localeCompare(b))
 	let anchor =
-		eventDays.filter((day) => day >= recordedDay).sort((a, b) => a.localeCompare(b))[0] ??
-		recordedDay
-	let days = Math.round((Date.parse(frozenDay) - Date.parse(anchor)) / DAY_MS)
+		eventDays.find((day) => daysBetween(day, frozenDay) % 7 === 0) ?? eventDays[0] ?? recordedDay
+	let days = Math.floor(daysBetween(anchor, frozenDay) / 7) * 7
 	if (days >= 0) return table
 
 	let shifted = {...table}

@@ -22,6 +22,10 @@ struct CampusExpectations {
 	let cafe: String
 	/// An event on the frozen date, which Day view opens on.
 	let calendarEvent: String
+	let newsRoute: String
+	let newsTitle: String
+	/// A story the campus news lists, matched within its row.
+	let newsHeadline: String
 	let emergencyButton: String
 }
 
@@ -67,18 +71,20 @@ class CampusSmokeTests: UITestCaseUnbooted {
 			"Home should offer \(expected.homeTile)")
 	}
 
-	func testHoursListsTheCampusBuildings() throws {
+	func testHoursOpensACampusBuilding() throws {
 		opens(expected.hoursRoute, waitingFor: app.navigationBars[expected.hoursTitle])
 		try verifyRecorded(
 			app.element(matching: TestIdentifiers.Hours.rowPrefix + expected.building), expected.building)
+		HoursScreen(app: app).tapRow(expected.building)
 	}
 
-	func testMapFindsACampusBuilding() throws {
+	func testMapOpensASearchedBuilding() throws {
 		opens(expected.mapRoute, waitingFor: app.searchFields.firstMatch)
 		let field = app.searchFields.firstMatch
 		field.tap()
 		field.typeText(expected.mapPlace)
 		try verifyRecorded(app.staticTexts[expected.mapPlace], expected.mapPlace)
+		MapScreen(app: app).selectBuilding(named: expected.mapPlace).verifyTopCard(expected.mapPlace)
 	}
 
 	func testContactsListTheCampusOwn() throws {
@@ -108,6 +114,20 @@ class CampusSmokeTests: UITestCaseUnbooted {
 			expected.calendarEvent)
 	}
 
+	func testNewsOpensAStory() throws {
+		opens(expected.newsRoute, waitingFor: app.navigationBars[expected.newsTitle])
+		let story = shows(expected.newsHeadline)
+		try verifyRecorded(story, expected.newsHeadline)
+		story.tap()
+		// A story opens on the web, in a sheet the list does not have.
+		XCTAssertTrue(app.buttons["Done"].waitUntilExists(timeout: 30), "the story should open")
+	}
+
+	func testAboutNamesTheApp() throws {
+		let about = AboutScreen(app: app).navigate()
+		XCTAssertTrue(about.text(expected.homeTitle).waitUntilExists(timeout: 30), "About should name \(expected.homeTitle)")
+	}
+
 	func testSupportOffersTheCampusEmergencyLine() throws {
 		opens("/support", waitingFor: app.navigationBars["Support"])
 		XCTAssertTrue(app.buttons["Call \(expected.emergencyButton)"].waitUntilExists(timeout: 30))
@@ -134,7 +154,10 @@ final class StOlafSmokeTests: CampusSmokeTests {
 			busLine: "Express Bus",
 			menusRoute: "/menus",
 			cafe: "Stav Hall",
-			calendarEvent: "St. Olaf Vaccine Clinic",
+			calendarEvent: "Norwegian-American Historical Association Biennial Meeting",
+			newsRoute: "/st-olaf-news",
+			newsTitle: "St. Olaf News",
+			newsHeadline: "A summer spent sampling careers",
 			emergencyButton: "PubSafe")
 	}
 }
@@ -159,7 +182,10 @@ final class CarletonSmokeTests: CampusSmokeTests {
 			busLine: "Carls-Go! Route 1",
 			menusRoute: "/menus/burton",
 			cafe: "Burton",
-			calendarEvent: "First-Gen Friday",
+			calendarEvent: "Foods of Faith",
+			newsRoute: "/carleton-news",
+			newsTitle: "Carleton News",
+			newsHeadline: "Carnegie classification for sustainability",
 			emergencyButton: "Security")
 	}
 
@@ -167,16 +193,6 @@ final class CarletonSmokeTests: CampusSmokeTests {
 		opens("/carletonian", waitingFor: app.navigationBars["The Carletonian"])
 		let story = "A small adventure"
 		try verifyRecorded(shows(story), story)
-	}
-
-	func testCarletonNewsOpensAStory() throws {
-		opens("/carleton-news", waitingFor: app.navigationBars["Carleton News"])
-		let headline = "Carnegie classification for sustainability"
-		let story = shows(headline)
-		try verifyRecorded(story, headline)
-		story.tap()
-		// A story opens on the web, in a sheet the list does not have.
-		XCTAssertTrue(app.buttons["Done"].waitUntilExists(timeout: 30), "the story should open")
 	}
 
 	func testSumoListsRecordedFilms() throws {

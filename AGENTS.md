@@ -424,9 +424,10 @@ run with `--allow-large`. What it writes differs from what the servers sent in
 four ways, all in `scripts/campus-fixtures.mjs`:
 
 - **Calendar dates move back.** The feeds answer from the day they are asked,
-  so the recorder moves a campus's events back by whole days until the first
-  day from the recording on with an event is the UI tests' frozen day
-  (`UITEST_FROZEN_DATE`).
+  so the recorder moves a campus's events back by whole weeks until the first
+  day from the recording on with events, on the frozen day's weekday, is the
+  UI tests' frozen day (`UITEST_FROZEN_DATE`). Whole weeks keep each event on
+  its own weekday.
 - **The St. Olaf calendar's dates are `{date}` in its keys**, since its window
   comes from the day's date, and the recorder fetches any page of it the run
   ended before asking for.

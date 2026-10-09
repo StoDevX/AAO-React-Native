@@ -179,61 +179,69 @@ describe('shiftCalendars', () => {
 		body: JSON.stringify(json),
 	})
 	const events = (table, key) => JSON.parse(table[key].body)
+	const starts = (table, key) => events(table, key).map((event) => event.startTime)
 	const CARLETON = 'GET {server:carleton.edu}/calendar/named/carleton'
 	const SUMO = 'GET {server:carleton.edu}/calendar/named/sumo-schedule'
 	const TEC = 'GET https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events?per_page=50'
+	// The UI tests' frozen day, a Saturday.
+	const FROZEN = '2026-09-05'
 
-	it("moves a campus's calendars back together, so the day they were recorded is the frozen day", () => {
+	it("moves a campus's calendars back by whole weeks, landing a day with events on the frozen day", () => {
 		let table = shiftCalendars(
 			{
 				[CARLETON]: answer([
-					// 7 PM Central on Oct 5, which is Oct 6 in UTC.
 					{
-						title: 'First',
-						startTime: '2026-10-06T00:00:00.000Z',
-						endTime: '2026-10-06T01:00:00.000Z',
+						title: 'Friday',
+						startTime: '2026-10-09T15:00:00.000Z',
+						endTime: '2026-10-09T16:00:00.000Z',
+					},
+					{
+						title: 'Saturday',
+						startTime: '2026-10-10T18:00:00.000Z',
+						endTime: '2026-10-10T19:00:00.000Z',
 					},
 				]),
 				[SUMO]: answer([
 					{
 						title: 'Film',
-						startTime: '2026-10-09T19:00:00.000Z',
-						endTime: '2026-10-09T21:00:00.000Z',
+						startTime: '2026-10-16T19:00:00.000Z',
+						endTime: '2026-10-16T21:00:00.000Z',
 					},
 				]),
 			},
-			{frozenDay: '2026-09-05', recordedDay: '2026-10-05'},
+			{frozenDay: FROZEN, recordedDay: '2026-10-08'},
 		)
-		assert.deepEqual(events(table, CARLETON), [
-			{title: 'First', startTime: '2026-09-06T00:00:00.000Z', endTime: '2026-09-06T01:00:00.000Z'},
+		assert.deepEqual(starts(table, CARLETON), [
+			'2026-09-04T15:00:00.000Z',
+			'2026-09-05T18:00:00.000Z',
 		])
-		assert.deepEqual(events(table, SUMO), [
-			{title: 'Film', startTime: '2026-09-09T19:00:00.000Z', endTime: '2026-09-09T21:00:00.000Z'},
-		])
+		assert.deepEqual(starts(table, SUMO), ['2026-09-11T19:00:00.000Z'])
 	})
 
-	it('lands the first day with events from the recording day on, when that day had none', () => {
+	it('takes the first such day from the recording on, by the colleges’ clock', () => {
 		let table = shiftCalendars(
 			{
 				[CARLETON]: answer([
+					// A Saturday before the recording, which the feed still sends.
 					{
-						title: 'Exhibition',
-						startTime: '2026-10-04T15:00:00.000Z',
-						endTime: '2026-11-01T23:00:00.000Z',
+						title: 'Past',
+						startTime: '2026-10-03T18:00:00.000Z',
+						endTime: '2026-10-03T19:00:00.000Z',
 					},
+					// 7 PM Central on Saturday Oct 10, which is Sunday in UTC.
 					{
-						title: 'Next',
-						startTime: '2026-10-09T15:00:00.000Z',
-						endTime: '2026-10-09T16:00:00.000Z',
+						title: 'Evening',
+						startTime: '2026-10-11T00:00:00.000Z',
+						endTime: '2026-10-11T01:00:00.000Z',
 					},
 				]),
 			},
-			{frozenDay: '2026-09-05', recordedDay: '2026-10-08'},
+			{frozenDay: FROZEN, recordedDay: '2026-10-08'},
 		)
-		assert.deepEqual(
-			events(table, CARLETON).map((event) => event.startTime),
-			['2026-08-31T15:00:00.000Z', '2026-09-05T15:00:00.000Z'],
-		)
+		assert.deepEqual(starts(table, CARLETON), [
+			'2026-08-29T18:00:00.000Z',
+			'2026-09-06T00:00:00.000Z',
+		])
 	})
 
 	it('moves an event that began long before the recording by as much as the rest', () => {
@@ -247,23 +255,40 @@ describe('shiftCalendars', () => {
 							utc_end_date: '2026-12-01 23:00:00',
 						},
 						{
-							title: 'Talk',
-							utc_start_date: '2026-10-08 18:00:00',
-							utc_end_date: '2026-10-08 19:00:00',
+							title: 'Game',
+							utc_start_date: '2026-10-10 18:00:00',
+							utc_end_date: '2026-10-10 20:00:00',
 						},
 					],
 				}),
 			},
-			{frozenDay: '2026-09-05', recordedDay: '2026-10-08'},
+			{frozenDay: FROZEN, recordedDay: '2026-10-08'},
 		)
 		assert.deepEqual(events(table, TEC).events, [
 			{
 				title: 'Exhibition',
-				utc_start_date: '2026-06-29 15:00:00',
-				utc_end_date: '2026-10-29 23:00:00',
+				utc_start_date: '2026-06-27 15:00:00',
+				utc_end_date: '2026-10-27 23:00:00',
 			},
-			{title: 'Talk', utc_start_date: '2026-09-05 18:00:00', utc_end_date: '2026-09-05 19:00:00'},
+			{title: 'Game', utc_start_date: '2026-09-05 18:00:00', utc_end_date: '2026-09-05 20:00:00'},
 		])
+	})
+
+	it('keeps weekdays even when no day with events falls on the frozen day’s', () => {
+		let table = shiftCalendars(
+			{
+				[CARLETON]: answer([
+					{
+						title: 'Monday',
+						startTime: '2026-10-12T15:00:00.000Z',
+						endTime: '2026-10-12T16:00:00.000Z',
+					},
+				]),
+			},
+			{frozenDay: FROZEN, recordedDay: '2026-10-08'},
+		)
+		// Monday Oct 12 lands on Monday Aug 31, six weeks back.
+		assert.deepEqual(starts(table, CARLETON), ['2026-08-31T15:00:00.000Z'])
 	})
 
 	it('keeps each feed’s own way of writing a time', () => {
@@ -271,13 +296,13 @@ describe('shiftCalendars', () => {
 		let table = shiftCalendars(
 			{
 				[presence]: answer([
-					{startDateTimeUtc: '2026-09-16T17:00:00Z', endDateTimeUtc: '2026-09-16T18:00:00Z'},
+					{startDateTimeUtc: '2026-09-12T17:00:00Z', endDateTimeUtc: '2026-09-12T18:00:00Z'},
 				]),
 				[TEC]: answer({
-					events: [{utc_start_date: '2026-09-16 17:00:00', utc_end_date: '2026-09-16 18:00:00'}],
+					events: [{utc_start_date: '2026-09-12 17:00:00', utc_end_date: '2026-09-12 18:00:00'}],
 				}),
 			},
-			{frozenDay: '2026-09-05', recordedDay: '2026-09-16'},
+			{frozenDay: FROZEN, recordedDay: '2026-09-10'},
 		)
 		assert.deepEqual(events(table, presence), [
 			{startDateTimeUtc: '2026-09-05T17:00:00Z', endDateTimeUtc: '2026-09-05T18:00:00Z'},
@@ -293,20 +318,14 @@ describe('shiftCalendars', () => {
 				{startTime: '2026-09-05T17:00:00.000Z', endTime: '2026-09-05T18:00:00.000Z'},
 			]),
 		}
-		assert.deepEqual(
-			shiftCalendars(before, {frozenDay: '2026-09-05', recordedDay: '2026-09-05'}),
-			before,
-		)
+		assert.deepEqual(shiftCalendars(before, {frozenDay: FROZEN, recordedDay: FROZEN}), before)
 	})
 
 	it('leaves every other answer as it came', () => {
 		let hours = {
 			'GET {server:carleton.edu}/spaces/hours': answer({data: [{startTime: '2026-10-09'}]}),
 		}
-		assert.deepEqual(
-			shiftCalendars(hours, {frozenDay: '2026-09-05', recordedDay: '2026-10-09'}),
-			hours,
-		)
+		assert.deepEqual(shiftCalendars(hours, {frozenDay: FROZEN, recordedDay: '2026-10-09'}), hours)
 	})
 })
 

@@ -9,7 +9,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, I Love Boosters. The movie will be shown twice on Friday and Saturday nights at 7pm and 10pm. Closed captioning equipment and assistive listening devices are available for the Friday showings. The Saturday showings will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5L",
-			"endTime": "2026-09-05T21:00:00.000Z",
+			"endTime": "2026-09-04T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -18,6 +18,48 @@
 			"location": "Weitz Cinema, Weitz Center for Creativity",
 			"metadata": {
 				"uid": "0oijaotpt1dtu05e8gli6e5v4o"
+			},
+			"startTime": "2026-09-04T19:00:00.000Z",
+			"title": "SUMO Movie: I Love Boosters"
+		},
+		{
+			"config": {
+				"endTime": true,
+				"startTime": true,
+				"subtitle": "location"
+			},
+			"dataSource": "ical",
+			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, I Love Boosters. The movie will be shown twice on Friday and Saturday nights at 7pm and 10pm. Closed captioning equipment and assistive listening devices are available for the Friday showings. The Saturday showings will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5N",
+			"endTime": "2026-09-04T23:59:00.000Z",
+			"isOngoing": false,
+			"links": [
+				"https://carleton.edu/student/orgs/sumo",
+				"https://carleton.edu/_c/ut5N"
+			],
+			"location": "Weitz Cinema, Weitz Center for Creativity",
+			"metadata": {
+				"uid": "3tlotikp8kugldjnj776jhptrg"
+			},
+			"startTime": "2026-09-04T22:00:00.000Z",
+			"title": "SUMO Movie: I Love Boosters"
+		},
+		{
+			"config": {
+				"endTime": true,
+				"startTime": true,
+				"subtitle": "location"
+			},
+			"dataSource": "ical",
+			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, I Love Boosters. The movie will be shown twice on Friday and Saturday nights at 7pm and 10pm. Closed captioning equipment and assistive listening devices are available for the Friday showings. The Saturday showings will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5J",
+			"endTime": "2026-09-05T21:00:00.000Z",
+			"isOngoing": false,
+			"links": [
+				"https://carleton.edu/student/orgs/sumo",
+				"https://carleton.edu/_c/ut5J"
+			],
+			"location": "Weitz Cinema, Weitz Center for Creativity",
+			"metadata": {
+				"uid": "o9noaf8strvv2v656arlfqcv50"
 			},
 			"startTime": "2026-09-05T19:00:00.000Z",
 			"title": "SUMO Movie: I Love Boosters"
@@ -29,16 +71,16 @@
 				"subtitle": "location"
 			},
 			"dataSource": "ical",
-			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, I Love Boosters. The movie will be shown twice on Friday and Saturday nights at 7pm and 10pm. Closed captioning equipment and assistive listening devices are available for the Friday showings. The Saturday showings will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5N",
+			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, I Love Boosters. The movie will be shown twice on Friday and Saturday nights at 7pm and 10pm. Closed captioning equipment and assistive listening devices are available for the Friday showings. The Saturday showings will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5M",
 			"endTime": "2026-09-05T23:59:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
-				"https://carleton.edu/_c/ut5N"
+				"https://carleton.edu/_c/ut5M"
 			],
 			"location": "Weitz Cinema, Weitz Center for Creativity",
 			"metadata": {
-				"uid": "3tlotikp8kugldjnj776jhptrg"
+				"uid": "0oepnlrnshht5eef24ollhmkc8"
 			},
 			"startTime": "2026-09-05T22:00:00.000Z",
 			"title": "SUMO Movie: I Love Boosters"
@@ -50,50 +92,8 @@
 				"subtitle": "location"
 			},
 			"dataSource": "ical",
-			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, I Love Boosters. The movie will be shown twice on Friday and Saturday nights at 7pm and 10pm. Closed captioning equipment and assistive listening devices are available for the Friday showings. The Saturday showings will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5J",
-			"endTime": "2026-09-06T21:00:00.000Z",
-			"isOngoing": false,
-			"links": [
-				"https://carleton.edu/student/orgs/sumo",
-				"https://carleton.edu/_c/ut5J"
-			],
-			"location": "Weitz Cinema, Weitz Center for Creativity",
-			"metadata": {
-				"uid": "o9noaf8strvv2v656arlfqcv50"
-			},
-			"startTime": "2026-09-06T19:00:00.000Z",
-			"title": "SUMO Movie: I Love Boosters"
-		},
-		{
-			"config": {
-				"endTime": true,
-				"startTime": true,
-				"subtitle": "location"
-			},
-			"dataSource": "ical",
-			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, I Love Boosters. The movie will be shown twice on Friday and Saturday nights at 7pm and 10pm. Closed captioning equipment and assistive listening devices are available for the Friday showings. The Saturday showings will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5M",
-			"endTime": "2026-09-06T23:59:00.000Z",
-			"isOngoing": false,
-			"links": [
-				"https://carleton.edu/student/orgs/sumo",
-				"https://carleton.edu/_c/ut5M"
-			],
-			"location": "Weitz Cinema, Weitz Center for Creativity",
-			"metadata": {
-				"uid": "0oepnlrnshht5eef24ollhmkc8"
-			},
-			"startTime": "2026-09-06T22:00:00.000Z",
-			"title": "SUMO Movie: I Love Boosters"
-		},
-		{
-			"config": {
-				"endTime": true,
-				"startTime": true,
-				"subtitle": "location"
-			},
-			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, Song of the Sea. The movie will be open captioned. Due to restrictions with this license placed on us by the distributor, this movie can only be shown to staff, students and their families, and faculty. Members of the general public are asked to refrain from attending movies this weekend.\n\nThis movie is rated PG.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5T",
-			"endTime": "2026-09-12T20:35:00.000Z",
+			"endTime": "2026-09-11T20:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -103,7 +103,7 @@
 			"metadata": {
 				"uid": "fvqncf385dld83oaoniejh2p7o"
 			},
-			"startTime": "2026-09-12T19:00:00.000Z",
+			"startTime": "2026-09-11T19:00:00.000Z",
 			"title": "SUMO Movie: Song of the Sea"
 		},
 		{
@@ -114,7 +114,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, My Neighbor Totoro. The movie will be open captioned. Due to restrictions with this license placed on us by the distributor, this movie can only be shown to staff, students and their families, and faculty. Members of the general public are asked to refrain from attending movies this weekend.\n\nThis movie is rated G.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5S",
-			"endTime": "2026-09-12T23:30:00.000Z",
+			"endTime": "2026-09-11T23:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -124,7 +124,7 @@
 			"metadata": {
 				"uid": "tn55doib7mh4gjbv37h4de3rvo"
 			},
-			"startTime": "2026-09-12T22:00:00.000Z",
+			"startTime": "2026-09-11T22:00:00.000Z",
 			"title": "SUMO Movie: My Neighbor Totoro"
 		},
 		{
@@ -135,7 +135,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, My Neighbor Totoro. The movie will be open captioned. Due to restrictions with this license placed on us by the distributor, this movie can only be shown to staff, students and their families, and faculty. Members of the general public are asked to refrain from attending movies this weekend.\n\nThis movie is rated G.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut53",
-			"endTime": "2026-09-13T20:30:00.000Z",
+			"endTime": "2026-09-12T20:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -145,7 +145,7 @@
 			"metadata": {
 				"uid": "f8h5ouo2ofonsgssmbcanvntbg"
 			},
-			"startTime": "2026-09-13T19:00:00.000Z",
+			"startTime": "2026-09-12T19:00:00.000Z",
 			"title": "SUMO Movie: My Neighbor Totoro"
 		},
 		{
@@ -156,7 +156,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, Song of the Sea. The movie will be open captioned. Due to restrictions with this license placed on us by the distributor, this movie can only be shown to staff, students and their families, and faculty. Members of the general public are asked to refrain from attending movies this weekend.\n\nThis movie is rated PG.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5U",
-			"endTime": "2026-09-13T23:35:00.000Z",
+			"endTime": "2026-09-12T23:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -166,7 +166,7 @@
 			"metadata": {
 				"uid": "mmer2kels4fmmb84lin8i4dulc"
 			},
-			"startTime": "2026-09-13T22:00:00.000Z",
+			"startTime": "2026-09-12T22:00:00.000Z",
 			"title": "SUMO Movie: Song of the Sea"
 		},
 		{
@@ -177,7 +177,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, Leviticus. Closed captioning equipment and assistive listening devices are available. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut55",
-			"endTime": "2026-09-19T20:30:00.000Z",
+			"endTime": "2026-09-18T20:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -187,7 +187,7 @@
 			"metadata": {
 				"uid": "74knqq03da3ghr0vnpa27dalq8"
 			},
-			"startTime": "2026-09-19T19:00:00.000Z",
+			"startTime": "2026-09-18T19:00:00.000Z",
 			"title": "SUMO Movie: Leviticus"
 		},
 		{
@@ -198,7 +198,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, Girls Like Girls. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut58",
-			"endTime": "2026-09-19T23:35:00.000Z",
+			"endTime": "2026-09-18T23:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -208,7 +208,7 @@
 			"metadata": {
 				"uid": "3j9p709v94jh9qotbmg5kgruqk"
 			},
-			"startTime": "2026-09-19T22:00:00.000Z",
+			"startTime": "2026-09-18T22:00:00.000Z",
 			"title": "SUMO Movie: Girls Like Girls"
 		},
 		{
@@ -219,7 +219,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, Girls Like Girls. The Saturday showing will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut56",
-			"endTime": "2026-09-20T20:35:00.000Z",
+			"endTime": "2026-09-19T20:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -229,7 +229,7 @@
 			"metadata": {
 				"uid": "o8vuicos9lc3qkv72rg30ok988"
 			},
-			"startTime": "2026-09-20T19:00:00.000Z",
+			"startTime": "2026-09-19T19:00:00.000Z",
 			"title": "SUMO Movie: Girls Like Girls"
 		},
 		{
@@ -240,7 +240,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, Leviticus. The Saturday showing will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut57",
-			"endTime": "2026-09-20T23:30:00.000Z",
+			"endTime": "2026-09-19T23:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -250,7 +250,7 @@
 			"metadata": {
 				"uid": "kgku7b1kikv1hesnbdbkqhrb9o"
 			},
-			"startTime": "2026-09-20T22:00:00.000Z",
+			"startTime": "2026-09-19T22:00:00.000Z",
 			"title": "SUMO Movie: Leviticus"
 		},
 		{
@@ -261,7 +261,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, Corpse Bride. Closed captioning equipment and assistive listening devices are available. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated PG.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut59",
-			"endTime": "2026-09-26T20:20:00.000Z",
+			"endTime": "2026-09-25T20:20:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -271,7 +271,7 @@
 			"metadata": {
 				"uid": "6oakblrego167mhrcjd6n8qs78"
 			},
-			"startTime": "2026-09-26T19:00:00.000Z",
+			"startTime": "2026-09-25T19:00:00.000Z",
 			"title": "SUMO Movie: Corpse Bride"
 		},
 		{
@@ -282,7 +282,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, The Shining. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6b",
-			"endTime": "2026-09-27T00:30:00.000Z",
+			"endTime": "2026-09-26T00:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -292,7 +292,7 @@
 			"metadata": {
 				"uid": "5di5v4vf9e1s62742gs6si5e3k"
 			},
-			"startTime": "2026-09-26T22:00:00.000Z",
+			"startTime": "2026-09-25T22:00:00.000Z",
 			"title": "SUMO Movie: The Shining"
 		},
 		{
@@ -303,7 +303,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, The Shining. The Saturday showing will be open-captioned.\n\nThis movie is rated R.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6c",
-			"endTime": "2026-09-27T21:30:00.000Z",
+			"endTime": "2026-09-26T21:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -313,7 +313,7 @@
 			"metadata": {
 				"uid": "noqlvfg1qh08f8occ1am9l6g84"
 			},
-			"startTime": "2026-09-27T19:00:00.000Z",
+			"startTime": "2026-09-26T19:00:00.000Z",
 			"title": "SUMO Movie: The Shining"
 		},
 		{
@@ -324,7 +324,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 10pm for this week's Sumo movie, Corpse Bride. The Saturday showing will be open-captioned.\n\nThis movie is rated PG.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6a",
-			"endTime": "2026-09-27T23:20:00.000Z",
+			"endTime": "2026-09-26T23:20:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -334,7 +334,7 @@
 			"metadata": {
 				"uid": "a1jck0og5pjbhm0gk3i2qk9jb8"
 			},
-			"startTime": "2026-09-27T22:00:00.000Z",
+			"startTime": "2026-09-26T22:00:00.000Z",
 			"title": "SUMO Movie: Corpse Bride"
 		},
 		{
@@ -345,7 +345,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, 10 Things I Hate About You. Closed captioning equipment and assistive listening devices are available. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6d",
-			"endTime": "2026-10-03T20:45:00.000Z",
+			"endTime": "2026-10-02T20:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -355,7 +355,7 @@
 			"metadata": {
 				"uid": "ad054cqvdmbv0a0uhi7bnit0d0"
 			},
-			"startTime": "2026-10-03T19:00:00.000Z",
+			"startTime": "2026-10-02T19:00:00.000Z",
 			"title": "SUMO Movie: 10 Things I Hate About You"
 		},
 		{
@@ -366,7 +366,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, (500) Days of Summer. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6f",
-			"endTime": "2026-10-03T23:35:00.000Z",
+			"endTime": "2026-10-02T23:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -376,7 +376,7 @@
 			"metadata": {
 				"uid": "f9b79pcer47lnbknqot6qjd598"
 			},
-			"startTime": "2026-10-03T22:00:00.000Z",
+			"startTime": "2026-10-02T22:00:00.000Z",
 			"title": "SUMO Movie: (500) Days of Summer"
 		},
 		{
@@ -387,7 +387,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, (500) Days of Summer. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6g",
-			"endTime": "2026-10-04T20:35:00.000Z",
+			"endTime": "2026-10-03T20:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -397,7 +397,7 @@
 			"metadata": {
 				"uid": "prfh71a9fnb4n108hvcgl7eg74"
 			},
-			"startTime": "2026-10-04T19:00:00.000Z",
+			"startTime": "2026-10-03T19:00:00.000Z",
 			"title": "SUMO Movie: (500) Days of Summer"
 		},
 		{
@@ -408,7 +408,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, 10 Things I Hate About You. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6e",
-			"endTime": "2026-10-04T23:45:00.000Z",
+			"endTime": "2026-10-03T23:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -418,7 +418,7 @@
 			"metadata": {
 				"uid": "q56tlo9pci3u6eqqp095aq62js"
 			},
-			"startTime": "2026-10-04T22:00:00.000Z",
+			"startTime": "2026-10-03T22:00:00.000Z",
 			"title": "SUMO Movie: 10 Things I Hate About You"
 		}
 	],

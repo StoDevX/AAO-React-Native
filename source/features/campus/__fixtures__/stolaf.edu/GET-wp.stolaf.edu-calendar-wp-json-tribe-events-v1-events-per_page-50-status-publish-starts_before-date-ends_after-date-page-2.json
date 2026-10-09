@@ -13,8 +13,8 @@
 				"organizer": [],
 				"title": "Men&#8217;s Cross Country at SJU+CSB Autumn Classic",
 				"url": "https://wp.stolaf.edu/calendar/event/mens-cross-country-at-sjucsb-autumn-classic/",
-				"utc_end_date": "2026-09-14 19:00:00",
-				"utc_start_date": "2026-09-14 16:00:00",
+				"utc_end_date": "2026-09-12 19:00:00",
+				"utc_start_date": "2026-09-12 16:00:00",
 				"venue": {
 					"venue": "Cold Spring, Minn. / River Oaks G.C."
 				}
@@ -30,27 +30,10 @@
 				"organizer": [],
 				"title": "Men&#8217;s Cross Country at Connecticut College Invitational",
 				"url": "https://wp.stolaf.edu/calendar/event/mens-cross-country-at-connecticut-college-invitational-2/",
-				"utc_end_date": "2026-09-14 20:00:00",
-				"utc_start_date": "2026-09-14 17:00:00",
+				"utc_end_date": "2026-09-12 20:00:00",
+				"utc_start_date": "2026-09-12 17:00:00",
 				"venue": {
 					"venue": "Waterford, Conn. / Harkness Memorial State Park"
-				}
-			},
-			{
-				"all_day": false,
-				"categories": [
-					{
-						"name": "Athletics"
-					}
-				],
-				"description": "<div data-modular-content-collection><p>Football vs Bethel University<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
-				"organizer": [],
-				"title": "Football vs Bethel University",
-				"url": "https://wp.stolaf.edu/calendar/event/football-vs-bethel-university/",
-				"utc_end_date": "2026-09-14 21:00:00",
-				"utc_start_date": "2026-09-14 18:00:00",
-				"venue": {
-					"venue": "Northfield, Minn., Klein Field at Manitou"
 				}
 			},
 			{
@@ -64,8 +47,8 @@
 				"organizer": [],
 				"title": "Volleyball at Macalester College",
 				"url": "https://wp.stolaf.edu/calendar/event/volleyball-at-macalester-college/",
-				"utc_end_date": "2026-09-14 20:00:00",
-				"utc_start_date": "2026-09-14 18:00:00",
+				"utc_end_date": "2026-09-12 20:00:00",
+				"utc_start_date": "2026-09-12 18:00:00",
 				"venue": {
 					"venue": "St. Paul, Minn. / Leonard Center"
 				}
@@ -81,10 +64,27 @@
 				"organizer": [],
 				"title": "Women&#8217;s Soccer at Macalester College",
 				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-at-macalester-college-2/",
-				"utc_end_date": "2026-09-14 20:00:00",
-				"utc_start_date": "2026-09-14 18:00:00",
+				"utc_end_date": "2026-09-12 20:00:00",
+				"utc_start_date": "2026-09-12 18:00:00",
 				"venue": {
 					"venue": "St. Paul, Minn. / John Leaney Field"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Football vs Bethel University<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Football vs Bethel University",
+				"url": "https://wp.stolaf.edu/calendar/event/football-vs-bethel-university/",
+				"utc_end_date": "2026-09-12 21:00:00",
+				"utc_start_date": "2026-09-12 18:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Klein Field at Manitou"
 				}
 			},
 			{
@@ -98,8 +98,8 @@
 				"organizer": [],
 				"title": "Volleyball vs University of Wisconsin-La Crosse",
 				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-university-of-wisconsin-la-crosse-2/",
-				"utc_end_date": "2026-09-14 22:00:00",
-				"utc_start_date": "2026-09-14 20:00:00",
+				"utc_end_date": "2026-09-12 22:00:00",
+				"utc_start_date": "2026-09-12 20:00:00",
 				"venue": {
 					"venue": "St. Paul, Minn. / Leonard Center"
 				}
@@ -115,8 +115,8 @@
 				"organizer": [],
 				"title": "Men&#8217;s Soccer at Macalester College",
 				"url": "https://wp.stolaf.edu/calendar/event/mens-soccer-at-macalester-college-2/",
-				"utc_end_date": "2026-09-14 22:30:00",
-				"utc_start_date": "2026-09-14 20:30:00",
+				"utc_end_date": "2026-09-12 22:30:00",
+				"utc_start_date": "2026-09-12 20:30:00",
 				"venue": {
 					"venue": "St. Paul, Minn. / John Leaney Field"
 				}
@@ -136,8 +136,8 @@
 				],
 				"title": "Sunday Morning Worship: 21st Sunday after Pentecost",
 				"url": "https://wp.stolaf.edu/calendar/event/sunday-morning-worship-21st-sunday-after-pentecost/",
-				"utc_end_date": "2026-09-15 16:30:00",
-				"utc_start_date": "2026-09-15 15:30:00",
+				"utc_end_date": "2026-09-13 16:30:00",
+				"utc_start_date": "2026-09-13 15:30:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -157,8 +157,8 @@
 				],
 				"title": "St. Olaf Orchestra Home Concert",
 				"url": "https://wp.stolaf.edu/calendar/event/st-olaf-orchestra-home-concert/",
-				"utc_end_date": "2026-09-15 22:30:00",
-				"utc_start_date": "2026-09-15 20:30:00",
+				"utc_end_date": "2026-09-13 22:30:00",
+				"utc_start_date": "2026-09-13 20:30:00",
 				"venue": {
 					"venue": "Boe Chapel"
 				}
@@ -178,8 +178,8 @@
 				],
 				"title": "Daily Chapel: Camp Chapel",
 				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-18/",
-				"utc_end_date": "2026-09-16 15:30:00",
-				"utc_start_date": "2026-09-16 15:10:00",
+				"utc_end_date": "2026-09-14 15:30:00",
+				"utc_start_date": "2026-09-14 15:10:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -205,8 +205,8 @@
 				],
 				"title": "Jazz Coaching Session with John Fedchock, jazz trombone",
 				"url": "https://wp.stolaf.edu/calendar/event/jazz-coaching-session-with-john-fedchock-jazz-trombone/",
-				"utc_end_date": "2026-09-17 01:45:00",
-				"utc_start_date": "2026-09-16 23:45:00",
+				"utc_end_date": "2026-09-15 01:45:00",
+				"utc_start_date": "2026-09-14 23:45:00",
 				"venue": {
 					"venue": "Christiansen Hall of Music 138 Band Room"
 				}
@@ -232,8 +232,8 @@
 				],
 				"title": "Guest Masterclass: Kenneth Bozeman, tenor and Joanne Bozeman, soprano",
 				"url": "https://wp.stolaf.edu/calendar/event/guest-masterclass-kenneth-bozeman-tenor-joanne-bozeman-mezzo-soprano/",
-				"utc_end_date": "2026-09-17 01:30:00",
-				"utc_start_date": "2026-09-17 00:00:00",
+				"utc_end_date": "2026-09-15 01:30:00",
+				"utc_start_date": "2026-09-15 00:00:00",
 				"venue": {
 					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
 				}
@@ -253,8 +253,8 @@
 				],
 				"title": "Daily Chapel: Service of Holy Communion",
 				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-24/",
-				"utc_end_date": "2026-09-17 16:30:00",
-				"utc_start_date": "2026-09-17 16:10:00",
+				"utc_end_date": "2026-09-15 16:30:00",
+				"utc_start_date": "2026-09-15 16:10:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -270,8 +270,8 @@
 				"organizer": [],
 				"title": "Lecture:  From Latin American Studies at St. Olaf to Immigration Lawyer",
 				"url": "https://wp.stolaf.edu/calendar/event/lecture-from-latin-american-studies-to-immigration-attorney/",
-				"utc_end_date": "2026-09-17 21:30:00",
-				"utc_start_date": "2026-09-17 20:15:00",
+				"utc_end_date": "2026-09-15 21:30:00",
+				"utc_start_date": "2026-09-15 20:15:00",
 				"venue": {
 					"venue": "Tomson 280"
 				}
@@ -287,8 +287,8 @@
 				"organizer": [],
 				"title": "Women&#8217;s Soccer vs College of Saint Benedict",
 				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-vs-college-of-saint-benedict/",
-				"utc_end_date": "2026-09-17 22:30:00",
-				"utc_start_date": "2026-09-17 20:30:00",
+				"utc_end_date": "2026-09-15 22:30:00",
+				"utc_start_date": "2026-09-15 20:30:00",
 				"venue": {
 					"venue": "Northfield, Minn., Rolf Mellby Field"
 				}
@@ -311,8 +311,8 @@
 				],
 				"title": "Twin Cities | Human Resources and Organizational Development Connections Trip",
 				"url": "https://wp.stolaf.edu/calendar/event/twin-cities-human-resources-and-organizational-development-connections-trip/",
-				"utc_end_date": "2026-09-18 20:00:00",
-				"utc_start_date": "2026-09-18 14:00:00",
+				"utc_end_date": "2026-09-16 20:00:00",
+				"utc_start_date": "2026-09-16 14:00:00",
 				"venue": {
 					"venue": "Twin Cities"
 				}
@@ -332,8 +332,8 @@
 				],
 				"title": "Daily Chapel: The Rt. Rev. Deon Johnson",
 				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-the-rt-rev-deon-johnson/",
-				"utc_end_date": "2026-09-18 15:30:00",
-				"utc_start_date": "2026-09-18 15:10:00",
+				"utc_end_date": "2026-09-16 15:30:00",
+				"utc_start_date": "2026-09-16 15:10:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -353,8 +353,8 @@
 				],
 				"title": "Student CommuniTEA",
 				"url": "https://wp.stolaf.edu/calendar/event/student-communitea/2026-10-21/",
-				"utc_end_date": "2026-09-18 20:30:00",
-				"utc_start_date": "2026-09-18 19:30:00",
+				"utc_end_date": "2026-09-16 20:30:00",
+				"utc_start_date": "2026-09-16 19:30:00",
 				"venue": {
 					"venue": "the Lutheran Center"
 				}
@@ -370,8 +370,8 @@
 				"organizer": [],
 				"title": "Men&#8217;s Soccer vs Saint John&#8217;s University",
 				"url": "https://wp.stolaf.edu/calendar/event/mens-soccer-vs-saint-johns-university-2/",
-				"utc_end_date": "2026-09-18 22:30:00",
-				"utc_start_date": "2026-09-18 20:30:00",
+				"utc_end_date": "2026-09-16 22:30:00",
+				"utc_start_date": "2026-09-16 20:30:00",
 				"venue": {
 					"venue": "Northfield, Minn., Rolf Mellby Field"
 				}
@@ -394,8 +394,8 @@
 				],
 				"title": "5th Grose Family LGBTQIA+ Lecture Series",
 				"url": "https://wp.stolaf.edu/calendar/event/5th-grose-family-lgbtqia-lecture-series/",
-				"utc_end_date": "2026-09-18 23:00:00",
-				"utc_start_date": "2026-09-18 21:00:00",
+				"utc_end_date": "2026-09-16 23:00:00",
+				"utc_start_date": "2026-09-16 21:00:00",
 				"venue": {
 					"venue": "Buntrock Commons &#8211; Viking Theater"
 				}
@@ -411,8 +411,8 @@
 				"organizer": [],
 				"title": "Men&#8217;s Hockey vs University of Wisconsin-Stout &#8211; Exhibition",
 				"url": "https://wp.stolaf.edu/calendar/event/mens-hockey-vs-university-of-wisconsin-stout-exhibition/",
-				"utc_end_date": "2026-09-19 03:00:00",
-				"utc_start_date": "2026-09-19 00:00:00",
+				"utc_end_date": "2026-09-17 03:00:00",
+				"utc_start_date": "2026-09-17 00:00:00",
 				"venue": {
 					"venue": "Northfield, Minn., St. Olaf Ice Arena"
 				}
@@ -428,8 +428,8 @@
 				"organizer": [],
 				"title": "Volleyball vs University of Wisconsin-Superior",
 				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-university-of-wisconsin-superior/",
-				"utc_end_date": "2026-09-19 02:00:00",
-				"utc_start_date": "2026-09-19 00:00:00",
+				"utc_end_date": "2026-09-17 02:00:00",
+				"utc_start_date": "2026-09-17 00:00:00",
 				"venue": {
 					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
 				}
@@ -445,8 +445,8 @@
 				"organizer": [],
 				"title": "50th Anniversary of the Hong Kierkegaard Library Lecture",
 				"url": "https://wp.stolaf.edu/calendar/event/50th-anniversary-of-the-hong-kierkegaard-library-banquet-and-lecture/",
-				"utc_end_date": "2026-09-19 01:00:00",
-				"utc_start_date": "2026-09-19 00:00:00",
+				"utc_end_date": "2026-09-17 01:00:00",
+				"utc_start_date": "2026-09-17 00:00:00",
 				"venue": []
 			},
 			{
@@ -464,8 +464,8 @@
 				],
 				"title": "Vespers: Holden Evening Prayer",
 				"url": "https://wp.stolaf.edu/calendar/event/vespers-holden-evening-prayer-3/",
-				"utc_end_date": "2026-09-19 02:30:00",
-				"utc_start_date": "2026-09-19 02:00:00",
+				"utc_end_date": "2026-09-17 02:30:00",
+				"utc_start_date": "2026-09-17 02:00:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -485,8 +485,8 @@
 				],
 				"title": "Daily Chapel: Sonja Ebey &#8217;27",
 				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-28/",
-				"utc_end_date": "2026-09-19 16:20:00",
-				"utc_start_date": "2026-09-19 16:00:00",
+				"utc_end_date": "2026-09-17 16:20:00",
+				"utc_start_date": "2026-09-17 16:00:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -506,8 +506,8 @@
 				],
 				"title": "Post-Board Town Hall",
 				"url": "https://wp.stolaf.edu/calendar/event/post-board-town-hall-4/",
-				"utc_end_date": "2026-09-19 17:30:00",
-				"utc_start_date": "2026-09-19 16:30:00",
+				"utc_end_date": "2026-09-17 17:30:00",
+				"utc_start_date": "2026-09-17 16:30:00",
 				"venue": {
 					"venue": "Tomson 280"
 				}
@@ -527,8 +527,8 @@
 				],
 				"title": "SOAR Session",
 				"url": "https://wp.stolaf.edu/calendar/event/soar-session/2026-10-22/",
-				"utc_end_date": "2026-09-19 17:30:00",
-				"utc_start_date": "2026-09-19 16:30:00",
+				"utc_end_date": "2026-09-17 17:30:00",
+				"utc_start_date": "2026-09-17 16:30:00",
 				"venue": []
 			},
 			{
@@ -546,8 +546,8 @@
 				],
 				"title": "Faculty/Staff CommuniTEA time",
 				"url": "https://wp.stolaf.edu/calendar/event/faculty-staff-communitea-time/2026-10-22/",
-				"utc_end_date": "2026-09-19 17:30:00",
-				"utc_start_date": "2026-09-19 16:30:00",
+				"utc_end_date": "2026-09-17 17:30:00",
+				"utc_start_date": "2026-09-17 16:30:00",
 				"venue": {
 					"venue": "the Lutheran Center"
 				}
@@ -563,8 +563,8 @@
 				"organizer": [],
 				"title": "State Financial Aid Tabling",
 				"url": "https://wp.stolaf.edu/calendar/event/state-financial-aid-tabling/",
-				"utc_end_date": "2026-09-19 20:00:00",
-				"utc_start_date": "2026-09-19 18:00:00",
+				"utc_end_date": "2026-09-17 20:00:00",
+				"utc_start_date": "2026-09-17 18:00:00",
 				"venue": {
 					"venue": "Buntrock"
 				}
@@ -584,8 +584,8 @@
 				],
 				"title": "In Congress We Trust? 250 Years of &#8220;We the Voters&#8221; in the American Democratic Experiment",
 				"url": "https://wp.stolaf.edu/calendar/event/in-congress-we-trust-250-years-of-we-the-voters-in-the-american-democratic-experiment/",
-				"utc_end_date": "2026-09-19 21:45:00",
-				"utc_start_date": "2026-09-19 20:45:00",
+				"utc_end_date": "2026-09-17 21:45:00",
+				"utc_start_date": "2026-09-17 20:45:00",
 				"venue": {
 					"venue": "Buntrock Commons, Viking Theater"
 				}
@@ -611,8 +611,8 @@
 				],
 				"title": "Career Fair with St. Olaf History Alumni",
 				"url": "https://wp.stolaf.edu/calendar/event/career-fair-with-st-olaf-history-alumni/",
-				"utc_end_date": "2026-09-20 00:00:00",
-				"utc_start_date": "2026-09-19 22:00:00",
+				"utc_end_date": "2026-09-18 00:00:00",
+				"utc_start_date": "2026-09-17 22:00:00",
 				"venue": {
 					"venue": "Holland Hall Commons"
 				}
@@ -638,8 +638,8 @@
 				],
 				"title": "50th Anniversary of the St. Olaf Social Work Program",
 				"url": "https://wp.stolaf.edu/calendar/event/50th-anniversary-of-the-st-olaf-social-work-program/",
-				"utc_end_date": "2026-09-20 01:00:00",
-				"utc_start_date": "2026-09-19 23:00:00",
+				"utc_end_date": "2026-09-18 01:00:00",
+				"utc_start_date": "2026-09-17 23:00:00",
 				"venue": {
 					"venue": "Kings Dining Room &#8211; Buntrock Commons"
 				}
@@ -659,8 +659,8 @@
 				],
 				"title": "St. Olaf Theatre Department Presents — Bakersfield Mist",
 				"url": "https://wp.stolaf.edu/calendar/event/st-olaf-theatre-department-presents-bakersfield-mist/2026-10-22/",
-				"utc_end_date": "2026-09-20 02:30:00",
-				"utc_start_date": "2026-09-20 00:30:00",
+				"utc_end_date": "2026-09-18 02:30:00",
+				"utc_start_date": "2026-09-18 00:30:00",
 				"venue": {
 					"venue": "Haugen Theater"
 				}
@@ -680,8 +680,8 @@
 				],
 				"title": "St. Olaf Theater Department Presents — Bakersfield Mist",
 				"url": "https://wp.stolaf.edu/calendar/event/bakersfield-mist/2026-10-22/",
-				"utc_end_date": "2026-09-20 02:00:00",
-				"utc_start_date": "2026-09-20 00:30:00",
+				"utc_end_date": "2026-09-18 02:00:00",
+				"utc_start_date": "2026-09-18 00:30:00",
 				"venue": {
 					"venue": "Haugen Theater"
 				}
@@ -707,8 +707,8 @@
 				],
 				"title": "Student Recital",
 				"url": "https://wp.stolaf.edu/calendar/event/student-recital-11/",
-				"utc_end_date": "2026-09-20 02:15:00",
-				"utc_start_date": "2026-09-20 01:15:00",
+				"utc_end_date": "2026-09-18 02:15:00",
+				"utc_start_date": "2026-09-18 01:15:00",
 				"venue": {
 					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
 				}
@@ -728,8 +728,8 @@
 				],
 				"title": "Politics and Pastries",
 				"url": "https://wp.stolaf.edu/calendar/event/politics-and-pastries-15/",
-				"utc_end_date": "2026-09-20 14:30:00",
-				"utc_start_date": "2026-09-20 13:30:00",
+				"utc_end_date": "2026-09-18 14:30:00",
+				"utc_start_date": "2026-09-18 13:30:00",
 				"venue": {
 					"venue": "Tomson Hall"
 				}
@@ -749,8 +749,8 @@
 				],
 				"title": "Daily Chapel: Service of Morning Prayer",
 				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-service-of-morning-prayer-34/",
-				"utc_end_date": "2026-09-20 15:30:00",
-				"utc_start_date": "2026-09-20 15:10:00",
+				"utc_end_date": "2026-09-18 15:30:00",
+				"utc_start_date": "2026-09-18 15:10:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -770,8 +770,8 @@
 				],
 				"title": "Government and Nonprofit Career Fair",
 				"url": "https://wp.stolaf.edu/calendar/event/government-and-nonprofit-career-fair/",
-				"utc_end_date": "2026-09-20 20:00:00",
-				"utc_start_date": "2026-09-20 16:00:00",
+				"utc_end_date": "2026-09-18 20:00:00",
+				"utc_start_date": "2026-09-18 16:00:00",
 				"venue": {
 					"venue": "Coffman Memorial Union at the University of Minnesota &#8211; 300 Washington Ave SE, Great Hall, Ground Floor, Minneapolis, MN 55455"
 				}
@@ -787,8 +787,8 @@
 				"organizer": [],
 				"title": "Women&#8217;s Hockey vs Hamline University &#8211; Exhibition",
 				"url": "https://wp.stolaf.edu/calendar/event/womens-hockey-vs-hamline-university-exhibition/",
-				"utc_end_date": "2026-09-21 02:00:00",
-				"utc_start_date": "2026-09-20 23:00:00",
+				"utc_end_date": "2026-09-19 02:00:00",
+				"utc_start_date": "2026-09-18 23:00:00",
 				"venue": {
 					"venue": "Northfield, Minn., St. Olaf Ice Arena"
 				}
@@ -804,8 +804,8 @@
 				"organizer": [],
 				"title": "Volleyball vs College of Saint Benedict",
 				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-college-of-saint-benedict/",
-				"utc_end_date": "2026-09-21 02:00:00",
-				"utc_start_date": "2026-09-21 00:00:00",
+				"utc_end_date": "2026-09-19 02:00:00",
+				"utc_start_date": "2026-09-19 00:00:00",
 				"venue": {
 					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
 				}
@@ -825,8 +825,8 @@
 				],
 				"title": "St. Olaf Theatre Department Presents — Bakersfield Mist",
 				"url": "https://wp.stolaf.edu/calendar/event/st-olaf-theatre-department-presents-bakersfield-mist/2026-10-23/",
-				"utc_end_date": "2026-09-21 02:30:00",
-				"utc_start_date": "2026-09-21 00:30:00",
+				"utc_end_date": "2026-09-19 02:30:00",
+				"utc_start_date": "2026-09-19 00:30:00",
 				"venue": {
 					"venue": "Haugen Theater"
 				}
@@ -846,8 +846,8 @@
 				],
 				"title": "St. Olaf Theater Department Presents — Bakersfield Mist",
 				"url": "https://wp.stolaf.edu/calendar/event/bakersfield-mist/2026-10-23/",
-				"utc_end_date": "2026-09-21 02:00:00",
-				"utc_start_date": "2026-09-21 00:30:00",
+				"utc_end_date": "2026-09-19 02:00:00",
+				"utc_start_date": "2026-09-19 00:30:00",
 				"venue": {
 					"venue": "Haugen Theater"
 				}
@@ -863,8 +863,8 @@
 				"organizer": [],
 				"title": "Football at College of St. Scholastica",
 				"url": "https://wp.stolaf.edu/calendar/event/football-at-college-of-st-scholastica/",
-				"utc_end_date": "2026-09-21 21:00:00",
-				"utc_start_date": "2026-09-21 18:00:00",
+				"utc_end_date": "2026-09-19 21:00:00",
+				"utc_start_date": "2026-09-19 18:00:00",
 				"venue": {
 					"venue": "Duluth, Minn. / Public Schools Stadium"
 				}
@@ -880,8 +880,8 @@
 				"organizer": [],
 				"title": "Women&#8217;s Soccer at Bethel University",
 				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-at-bethel-university-2/",
-				"utc_end_date": "2026-09-21 20:00:00",
-				"utc_start_date": "2026-09-21 18:00:00",
+				"utc_end_date": "2026-09-19 20:00:00",
+				"utc_start_date": "2026-09-19 18:00:00",
 				"venue": {
 					"venue": "Arden Hills, Minn. / Royal Stadium"
 				}
@@ -901,8 +901,8 @@
 				],
 				"title": "St. Olaf Theatre Department Presents — Bakersfield Mist",
 				"url": "https://wp.stolaf.edu/calendar/event/st-olaf-theatre-department-presents-bakersfield-mist/2026-10-24/1/",
-				"utc_end_date": "2026-09-21 21:00:00",
-				"utc_start_date": "2026-09-21 19:00:00",
+				"utc_end_date": "2026-09-19 21:00:00",
+				"utc_start_date": "2026-09-19 19:00:00",
 				"venue": {
 					"venue": "Haugen Theater"
 				}
@@ -922,27 +922,10 @@
 				],
 				"title": "St. Olaf Theater Department Presents — Bakersfield Mist",
 				"url": "https://wp.stolaf.edu/calendar/event/bakersfield-mist/2026-10-24/1/",
-				"utc_end_date": "2026-09-23 21:00:00",
-				"utc_start_date": "2026-09-21 19:00:00",
+				"utc_end_date": "2026-09-21 21:00:00",
+				"utc_start_date": "2026-09-19 19:00:00",
 				"venue": {
 					"venue": "Haugen Theater"
-				}
-			},
-			{
-				"all_day": false,
-				"categories": [
-					{
-						"name": "Athletics"
-					}
-				],
-				"description": "<div data-modular-content-collection><p>Volleyball at St. Catherine University<br />\nStreaming Video: https://miacsportsnetwork.com/stkates/</p>\n</div>",
-				"organizer": [],
-				"title": "Volleyball at St. Catherine University",
-				"url": "https://wp.stolaf.edu/calendar/event/volleyball-at-st-catherine-university/",
-				"utc_end_date": "2026-09-21 22:00:00",
-				"utc_start_date": "2026-09-21 20:00:00",
-				"venue": {
-					"venue": "St. Paul, Minn. / Butler Center"
 				}
 			},
 			{
@@ -956,10 +939,27 @@
 				"organizer": [],
 				"title": "Women&#8217;s Hockey at Augsburg University &#8211; Exhibition",
 				"url": "https://wp.stolaf.edu/calendar/event/womens-hockey-at-augsburg-university-exhibition-2/",
-				"utc_end_date": "2026-09-21 23:00:00",
-				"utc_start_date": "2026-09-21 20:00:00",
+				"utc_end_date": "2026-09-19 23:00:00",
+				"utc_start_date": "2026-09-19 20:00:00",
 				"venue": {
 					"venue": "Minneapolis, Minn. / Ed Saugestad Rink"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball at St. Catherine University<br />\nStreaming Video: https://miacsportsnetwork.com/stkates/</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball at St. Catherine University",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-at-st-catherine-university/",
+				"utc_end_date": "2026-09-19 22:00:00",
+				"utc_start_date": "2026-09-19 20:00:00",
+				"venue": {
+					"venue": "St. Paul, Minn. / Butler Center"
 				}
 			},
 			{
@@ -973,8 +973,8 @@
 				"organizer": [],
 				"title": "Men&#8217;s Soccer at Bethel University",
 				"url": "https://wp.stolaf.edu/calendar/event/mens-soccer-at-bethel-university-2/",
-				"utc_end_date": "2026-09-21 22:30:00",
-				"utc_start_date": "2026-09-21 20:30:00",
+				"utc_end_date": "2026-09-19 22:30:00",
+				"utc_start_date": "2026-09-19 20:30:00",
 				"venue": {
 					"venue": "Arden Hills, Minn. / Ona Orth Athletic Complex"
 				}
@@ -990,8 +990,8 @@
 				"organizer": [],
 				"title": "Men&#8217;s Hockey at Gustavus Adolphus College &#8211; Exhibition",
 				"url": "https://wp.stolaf.edu/calendar/event/mens-hockey-at-gustavus-adolphus-college-exhibition-2/",
-				"utc_end_date": "2026-09-22 02:00:00",
-				"utc_start_date": "2026-09-21 23:00:00",
+				"utc_end_date": "2026-09-20 02:00:00",
+				"utc_start_date": "2026-09-19 23:00:00",
 				"venue": {
 					"venue": "St. Peter, Minn. / Don Roberts Ice Rink"
 				}
