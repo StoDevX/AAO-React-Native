@@ -9,6 +9,12 @@ export {CAMPUS_IDS}
 /** Every campus this build knows, in CAMPUS_IDS' order. */
 export const CAMPUSES: ReadonlyArray<CampusDefinition> = [stolaf, carleton]
 
+/**
+ * The server that publishes what every campus shares: the sources manifest
+ * and images/groups.json. St. Olaf's, for now.
+ */
+export const PLATFORM_SERVER: CampusId = 'edu.stolaf'
+
 /** A campus id this build doesn't have. */
 export class UnknownCampusError extends Error {}
 

@@ -20,8 +20,19 @@ export const keys = {
 	manifest: ['data-sources', 'manifest'] as const,
 }
 
-/// The manifest is published on St. Olaf's server for every campus.
-const MANIFEST_SERVER: SourceCampus = 'edu.stolaf'
+/** The server that publishes the sources manifest; the app sets it at boot. */
+let manifestServer: SourceCampus | undefined
+
+export function setManifestServer(id: SourceCampus): void {
+	manifestServer = id
+}
+
+function requireManifestServer(): SourceCampus {
+	if (manifestServer === undefined) {
+		throw new Error('setManifestServer has not run; source/init/api.ts calls it at boot')
+	}
+	return manifestServer
+}
 
 export const manifestOptions = queryOptions({
 	queryKey: keys.manifest,
@@ -41,7 +52,7 @@ export const manifestOptions = queryOptions({
 	// one with nothing cached. The radio plays from it however old it is.
 	meta: {persistAfterFailure: true},
 	queryFn: async ({signal}): Promise<Jrd> => {
-		let response = await clientFor(MANIFEST_SERVER).get('sources', {signal}).json()
+		let response = await clientFor(requireManifestServer()).get('sources', {signal}).json()
 		return JrdSchema.parse(response)
 	},
 })

@@ -1,7 +1,8 @@
 import {registerCampusServer} from '@frogpond/api'
+import {setManifestServer} from '@frogpond/data-sources'
 import {fixtureMode, uiTestCampus} from '@frogpond/launch-arguments'
 
-import {CAMPUSES} from '../campuses'
+import {CAMPUSES, PLATFORM_SERVER} from '../campuses'
 import {installCampusFixtures} from '../features/campus/fixtures'
 import * as storage from '../lib/storage'
 
@@ -28,6 +29,7 @@ export async function applySavedServers(): Promise<void> {
 }
 
 registerDefaultServers()
+setManifestServer(PLATFORM_SERVER)
 void applySavedServers()
 
 // A UI test that names a campus reads that campus's recordings for every request.

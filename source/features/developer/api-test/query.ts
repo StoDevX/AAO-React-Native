@@ -1,6 +1,7 @@
 import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {groupBy} from '@frogpond/collections'
+import {currentCampusId} from '../../campus/store'
 
 export const keys = {
 	all: ['routes'] as const,
@@ -15,8 +16,8 @@ export interface ServerRoute {
 export const serverRoutesOptions = queryOptions({
 	queryKey: keys.all,
 	queryFn: async ({signal}) => {
-		// The API Tester lists St. Olaf's server, as it always has.
-		let response = await clientFor('edu.stolaf').get('routes', {signal}).json()
+		// The API Tester asks the server of the campus dev mode is on.
+		let response = await clientFor(currentCampusId()).get('routes', {signal}).json()
 		return response as ServerRoute[]
 	},
 	select: (routes) => {

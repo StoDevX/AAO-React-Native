@@ -1,6 +1,6 @@
-import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import type {OrgCategoryMembership} from './types'
+import {clientForSection} from '../campus/section-client'
 
 export const keys = {
 	all: ['org-category-memberships'] as const,
@@ -15,8 +15,7 @@ async function fetchCategoryMemberships({
 }: {
 	signal: AbortSignal
 }): Promise<OrgCategoryMembership[]> {
-	// St. Olaf's server: only St. Olaf's Home offers student orgs.
-	let response = await clientFor('edu.stolaf').get('orgs/categories', {signal}).json()
+	let response = await clientForSection('studentOrgs').get('orgs/categories', {signal}).json()
 	return response as OrgCategoryMembership[]
 }
 

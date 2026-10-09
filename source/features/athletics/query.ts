@@ -1,9 +1,9 @@
-import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {UITEST_SCORES} from './__fixtures__/scores'
 import {Score} from './types'
 import {isInPlay, toProcessedScores} from './utils'
+import {clientForSection} from '../campus/section-client'
 
 export const keys = {
 	all: ['athletics', 'scores'] as const,
@@ -20,8 +20,7 @@ export const athleticsOptions = queryOptions({
 	queryFn: ({signal}): Promise<Score[]> =>
 		servesBundledFixtures
 			? Promise.resolve(UITEST_SCORES)
-			: // St. Olaf's server: only St. Olaf's Home offers athletics.
-				clientFor('edu.stolaf').get('athletics/scores', {signal}).json<Score[]>(),
+			: clientForSection('athletics').get('athletics/scores', {signal}).json<Score[]>(),
 	select: toProcessedScores,
 	refetchInterval: (query) => {
 		const scores = query.state.data

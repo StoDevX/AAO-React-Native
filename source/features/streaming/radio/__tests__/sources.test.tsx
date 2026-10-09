@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
+import {afterEach, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {IsRestoringProvider, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {renderHook, waitFor} from '@testing-library/react-native'
 import {registerCampusServer} from '@frogpond/api'
@@ -9,6 +9,7 @@ import {
 	manifestOptions,
 	REL_RADIO_PLAYER_PAGE,
 	REL_RADIO_STREAM,
+	setManifestServer,
 	type Jrd,
 } from '@frogpond/data-sources'
 
@@ -24,6 +25,11 @@ jest.mock('@frogpond/api', () => ({
 	...(jest.requireActual('@frogpond/api') as object),
 	clientFor: () => ({get: () => mockGet()}),
 }))
+
+// The app names the manifest's server at boot; these tests boot no app.
+beforeAll(() => {
+	setManifestServer('edu.stolaf')
+})
 
 const EMPTY: Jrd = {subject: 'https://stolaf.edu', links: []}
 

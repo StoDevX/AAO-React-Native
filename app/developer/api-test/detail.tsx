@@ -13,6 +13,7 @@ import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
 import {DebugView} from '../../../source/features/developer/debug'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
+import {currentCampusId} from '../../../source/features/campus/store'
 
 type DisplayMode = 'raw' | 'parsed'
 
@@ -28,8 +29,8 @@ export default function APITestDetailPage(): React.ReactNode {
 			if (!cleanedName) {
 				return ''
 			}
-			// The API Tester lists St. Olaf's server, as it always has.
-			return clientFor('edu.stolaf').get(cleanedName, {signal}).text()
+			// The API Tester asks the server of the campus dev mode is on.
+			return clientFor(currentCampusId()).get(cleanedName, {signal}).text()
 		},
 		staleTime: 0,
 		gcTime: 0,

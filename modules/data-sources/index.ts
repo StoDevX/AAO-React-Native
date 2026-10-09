@@ -5,6 +5,7 @@ export {
 	manifestOptions,
 	resolveSource,
 	resolveSources,
+	setManifestServer,
 } from './resolve'
 export {useManifest} from './use-manifest'
 export {

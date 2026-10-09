@@ -1,6 +1,13 @@
 import {onlineManager, QueryClient} from '@tanstack/react-query'
 import bundled from '../bundled.json'
-import {fetchManifest, hasBundledSource, resolveSource, resolveSources} from '../resolve'
+import {beforeAll, expect, jest, test} from '@jest/globals'
+import {
+	fetchManifest,
+	hasBundledSource,
+	resolveSource,
+	resolveSources,
+	setManifestServer,
+} from '../resolve'
 import {
 	CAMPUS_PROPERTY,
 	ID_PROPERTY,
@@ -12,6 +19,10 @@ import {
 	REL_RADIO_NOW_PLAYING,
 	REL_RADIO_PLAYER_PAGE,
 } from '../types'
+
+beforeAll(() => {
+	setManifestServer('edu.stolaf')
+})
 
 const ALL_NEWS_TYPES = [
 	'application/vnd.wordpress.v2.posts+json',
@@ -185,6 +196,19 @@ test('fetchManifest resolves to the bundled document rather than hanging while o
 		queryClient.clear()
 		onlineManager.setOnline(wasOnline)
 	}
+})
+
+test('asks for the manifest only once the app has named its server', async () => {
+	let fresh: typeof import('../resolve') | undefined
+	jest.isolateModules(() => {
+		fresh = jest.requireActual<typeof import('../resolve')>('../resolve')
+	})
+	let queryFn = fresh?.manifestOptions.queryFn as (context: {
+		signal: AbortSignal
+	}) => Promise<unknown>
+	await expect(queryFn({signal: new AbortController().signal})).rejects.toThrow(
+		'setManifestServer has not run; source/init/api.ts calls it at boot',
+	)
 })
 
 test('the bundled manifest offers Presence as a calendar', () => {
