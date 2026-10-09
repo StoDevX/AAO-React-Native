@@ -1,12 +1,14 @@
 /**
  * What the API Tester shows of a response: its status and its body, as text,
- * or as a `data:` URI when the body is an image.
+ * as a `data:` URI when the body is an image, or only its type and size when
+ * it is neither.
  */
 export interface ApiResponse {
 	status: number
 	statusText: string
 	body: string
 	image?: string
+	binary?: {contentType: string; size: number}
 }
 
 /** The status as a server reports it, such as `404 Not Found`. */
@@ -19,7 +21,38 @@ export function isErrorStatus(status: number): boolean {
 	return status >= 400
 }
 
-/** Whether a `Content-Type` is an image's, to be shown as one rather than as text. */
-export function isImageType(contentType: string): boolean {
-	return contentType.trim().toLowerCase().startsWith('image/')
+/// Types read as text beyond `text/*`: JSON, XML and script, and their `+json`
+/// and `+xml` variants.
+const TEXT_TYPE =
+	/^(?:text\/|application\/(?:json|xml|javascript|ecmascript|x-www-form-urlencoded)$|[\w.-]+\/[\w.-]+\+(?:json|xml)$)/u
+
+/**
+ * How a body with this `Content-Type` is shown: an image as itself; text, and a
+ * body with no type, as text; anything else -- a database, an archive -- not
+ * decoded at all, since as text it is unreadable and can be too large to draw.
+ */
+export function bodyKind(contentType: string): 'image' | 'text' | 'binary' {
+	let type = contentType.split(';')[0]?.trim().toLowerCase() ?? ''
+	if (type.startsWith('image/')) {
+		return 'image'
+	}
+	if (!type || TEXT_TYPE.test(type)) {
+		return 'text'
+	}
+	return 'binary'
+}
+
+/** A byte count in the largest unit it fills, to one decimal place. */
+export function byteSize(bytes: number): string {
+	if (bytes < 1024) {
+		return `${bytes} bytes`
+	}
+	let units = ['KB', 'MB', 'GB']
+	let size = bytes / 1024
+	let unit = 0
+	while (size >= 1024 && unit < units.length - 1) {
+		size /= 1024
+		unit++
+	}
+	return `${Number(size.toFixed(1))} ${units[unit]}`
 }

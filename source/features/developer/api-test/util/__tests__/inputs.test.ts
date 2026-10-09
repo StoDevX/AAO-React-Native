@@ -9,6 +9,7 @@ import {
 	localDate,
 	missingInputs,
 	nextStep,
+	requestBody,
 	startingRequest,
 	suggestionsFor,
 } from '../inputs'
@@ -172,5 +173,54 @@ describe('startingRequest', () => {
 	test('falls back to what is remembered when the request it was handed is not one', () => {
 		expect(startingRequest('{not json', recent)).toEqual(recent[0])
 		expect(startingRequest('{"query": 3}', recent)).toEqual(recent[0])
+	})
+})
+
+describe('a JSON body', () => {
+	const text: RouteInput = {
+		name: 'text',
+		in: 'body',
+		required: true,
+		examples: ['<p>Hello</p>'],
+	}
+	const route = 'POST /v1/util/html-to-md'
+
+	test('starts a route never sent at each body input’s example', () => {
+		expect(initialValues([text], undefined)).toEqual({
+			pathValues: {},
+			query: [],
+			bodyValues: {text: '<p>Hello</p>'},
+		})
+	})
+
+	test('starts from the body last sent', () => {
+		let last = {pathValues: {}, query: [], bodyValues: {text: '<b>mine</b>'}}
+		expect(initialValues([text], last)).toEqual(last)
+	})
+
+	test('names a required body field still without a value', () => {
+		expect(missingInputs([text], {pathValues: {}, query: [], bodyValues: {text: ' '}})).toEqual([
+			'text',
+		])
+		expect(missingInputs([text], {pathValues: {}, query: []})).toEqual(['text'])
+	})
+
+	test('offers what this route sent in its body before the server’s example', () => {
+		let history = recordRequest([], route, {pathValues: {}, query: [], bodyValues: {text: 'sent'}})
+		expect(suggestionsFor(text, history, route, new Date(2026, 9, 8))).toEqual([
+			'sent',
+			'<p>Hello</p>',
+		])
+	})
+
+	test('is built from the body inputs alone, and not at all for a route without them', () => {
+		expect(requestBody([text], {text: '<b>hi</b>', stray: 'x'})).toEqual({text: '<b>hi</b>'})
+		expect(requestBody([], {text: '<b>hi</b>'})).toBeUndefined()
+	})
+
+	test('comes back with the request handed over from a result', () => {
+		let sent = {pathValues: {}, query: [], bodyValues: {text: '<b>hi</b>'}}
+		expect(startingRequest(JSON.stringify(sent), [])).toEqual(sent)
+		expect(startingRequest(JSON.stringify({...sent, bodyValues: {text: 3}}), [])).toBeUndefined()
 	})
 })

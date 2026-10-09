@@ -8,8 +8,10 @@ import {
 	Image,
 	Menu,
 	Section,
+	Spacer,
 	SwipeActions,
 	Text,
+	VStack,
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
@@ -41,6 +43,7 @@ import {
 	defaultFor,
 	initialValues,
 	missingInputs,
+	requestBody,
 	startingRequest,
 	suggestionsFor,
 } from '../../../source/features/developer/api-test/util/inputs'
@@ -64,9 +67,38 @@ function toRows(query: QueryRow[], inputs: RouteInput[]): EditableRow[] {
 	}))
 }
 
+/** An input's suggested values, in a menu beside it; nothing when there are none. */
+function Suggestions(props: {
+	input: RouteInput
+	suggestions: string[]
+	onChange: (value: string) => void
+}): React.ReactNode {
+	let {input, suggestions, onChange} = props
+	if (!suggestions.length) {
+		return null
+	}
+	return (
+		<Menu
+			label={
+				// sized to sit beside the value like a picker's own chevrons, not over it
+				<Image
+					modifiers={[font({textStyle: 'footnote', weight: 'semibold'}), imageScale('small')]}
+					systemName="chevron.down"
+				/>
+			}
+			modifiers={[accessibilityLabel(`Suggestions for ${input.name}`)]}
+		>
+			{suggestions.map((suggestion) => (
+				<Button key={suggestion} label={suggestion} onPress={() => onChange(suggestion)} />
+			))}
+		</Menu>
+	)
+}
+
 /**
- * An input's row: a picker for a set of accepted values, else its name with the
- * value beside it, trailing, and the value's suggestions in a menu.
+ * An input's row: a picker for a set of accepted values; for a body field, its
+ * name over a field that grows with what is typed; else its name with the
+ * value beside it, trailing. Suggestions sit in a menu beside the name.
  */
 function InputValue(props: {
 	input: RouteInput
@@ -75,6 +107,24 @@ function InputValue(props: {
 	onChange: (value: string) => void
 }): React.ReactNode {
 	let {input, value, suggestions, onChange} = props
+	if (input.in === 'body') {
+		return (
+			<VStack alignment="leading" spacing={6}>
+				<HStack>
+					<Text>{input.name}</Text>
+					<Spacer />
+					<Suggestions input={input} onChange={onChange} suggestions={suggestions} />
+				</HStack>
+				<SyncedTextField
+					autocapitalization="never"
+					multiline={true}
+					onChangeText={onChange}
+					placeholder={input.name}
+					value={value}
+				/>
+			</VStack>
+		)
+	}
 	if (input.values) {
 		return (
 			<MenuPickerRow
@@ -103,22 +153,7 @@ function InputValue(props: {
 				placeholder={input.format === 'date' ? 'YYYY-MM-DD' : input.name}
 				value={value}
 			/>
-			{suggestions.length ? (
-				<Menu
-					label={
-						// sized to sit beside the value like a picker's own chevrons, not over it
-						<Image
-							modifiers={[font({textStyle: 'footnote', weight: 'semibold'}), imageScale('small')]}
-							systemName="chevron.down"
-						/>
-					}
-					modifiers={[accessibilityLabel(`Suggestions for ${input.name}`)]}
-				>
-					{suggestions.map((suggestion) => (
-						<Button key={suggestion} label={suggestion} onPress={() => onChange(suggestion)} />
-					))}
-				</Menu>
-			) : null}
+			<Suggestions input={input} onChange={onChange} suggestions={suggestions} />
 		</HStack>
 	)
 }
@@ -143,6 +178,7 @@ export default function APITestComposePage(): React.ReactNode {
 	)
 	let pathInputs = inputs.filter((input) => input.in === 'path')
 	let queryInputs = inputs.filter((input) => input.in === 'query')
+	let bodyInputs = inputs.filter((input) => input.in === 'body')
 
 	let history = useApiTestStore((state) => state.history)
 	let record = useApiTestStore((state) => state.record)
@@ -155,12 +191,14 @@ export default function APITestComposePage(): React.ReactNode {
 	// one tap; or, for a route never sent, from values the server accepts.
 	let [initial] = React.useState(() => initialValues(inputs, startingRequest(sent, recent)))
 	let [pathValues, setPathValues] = React.useState(initial.pathValues)
+	let [bodyValues, setBodyValues] = React.useState(initial.bodyValues)
 	let [rows, setRows] = React.useState(() => toRows(initial.query, inputs))
 	let touched = React.useRef(false)
 
 	let fill = (request: SavedRequest) => {
 		let next = initialValues(inputs, request)
 		setPathValues(next.pathValues)
+		setBodyValues(next.bodyValues)
 		setRows(toRows(next.query, inputs))
 	}
 
@@ -178,6 +216,10 @@ export default function APITestComposePage(): React.ReactNode {
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [inputs])
 
+	let setBodyValue = (name: string, value: string) => {
+		touched.current = true
+		setBodyValues((current) => ({...current, [name]: value}))
+	}
 	let setPathValue = (name: string, value: string) => {
 		touched.current = true
 		setPathValues((current) => ({...current, [name]: value}))
@@ -197,7 +239,8 @@ export default function APITestComposePage(): React.ReactNode {
 
 	let query = rows.map(({name, value}) => ({name, value}))
 	let requestPath = buildRequestPath(path, pathValues, query)
-	let missing = missingInputs(inputs, {pathValues, query})
+	let missing = missingInputs(inputs, {pathValues, query, bodyValues})
+	let body = requestBody(inputs, bodyValues)
 	let today = new Date()
 
 	let addedNames = new Set(rows.map((row) => row.name))
@@ -207,7 +250,7 @@ export default function APITestComposePage(): React.ReactNode {
 	)
 
 	let send = () => {
-		record(route, {pathValues, query})
+		record(route, {pathValues, query, bodyValues: body})
 		// `sentAt` makes every send its own: an identical request already on the
 		// stack would otherwise be shown again rather than sent
 		router.navigate({
@@ -216,7 +259,7 @@ export default function APITestComposePage(): React.ReactNode {
 				path: requestPath,
 				method,
 				route: path,
-				request: JSON.stringify({pathValues, query}),
+				request: JSON.stringify({pathValues, query, bodyValues: body}),
 				sentAt: String(Date.now()),
 			},
 		})
@@ -260,6 +303,17 @@ export default function APITestComposePage(): React.ReactNode {
 								{requestPath}
 							</Text>
 						</HStack>
+						{body ? (
+							<Text
+								modifiers={[
+									font({textStyle: 'footnote', design: 'monospaced'}),
+									foregroundStyle(c.secondaryLabel),
+									textSelection(true),
+								]}
+							>
+								{JSON.stringify(body, null, 2)}
+							</Text>
+						) : null}
 					</Section>
 
 					{pathInputs.length ? (
@@ -271,6 +325,20 @@ export default function APITestComposePage(): React.ReactNode {
 									onChange={(value) => setPathValue(input.name, value)}
 									suggestions={suggestionsFor(input, history, route, today)}
 									value={pathValues[input.name] ?? ''}
+								/>
+							))}
+						</Section>
+					) : null}
+
+					{bodyInputs.length ? (
+						<Section footer={<Text>Sent as JSON.</Text>} title="Body">
+							{bodyInputs.map((input) => (
+								<InputValue
+									input={input}
+									key={input.name}
+									onChange={(value) => setBodyValue(input.name, value)}
+									suggestions={suggestionsFor(input, history, route, today)}
+									value={bodyValues?.[input.name] ?? ''}
 								/>
 							))}
 						</Section>

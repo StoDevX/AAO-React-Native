@@ -41,12 +41,10 @@ export function initialValues(
 	inputs: RouteInput[],
 	recent: SavedRequest | undefined,
 ): SavedRequest {
-	let pathValues: Record<string, string> = {}
-	for (let input of inputs.filter((each) => each.in === 'path')) {
-		let remembered = recent?.pathValues[input.name]
-		pathValues[input.name] =
-			remembered !== undefined && isAccepted(input, remembered) ? remembered : defaultFor(input)
-	}
+	let pathValues = fieldValues(
+		inputs.filter((each) => each.in === 'path'),
+		recent?.pathValues,
+	)
 
 	let query = (recent?.query ?? []).map((row) => {
 		let input = inputs.find((each) => each.in === 'query' && each.name === row.name)
@@ -57,18 +55,45 @@ export function initialValues(
 			query.push({name: input.name, value: defaultFor(input)})
 		}
 	}
-	return {pathValues, query}
+
+	let bodyInputs = inputs.filter((each) => each.in === 'body')
+	return bodyInputs.length
+		? {pathValues, query, bodyValues: fieldValues(bodyInputs, recent?.bodyValues)}
+		: {pathValues, query}
+}
+
+/** Each input's remembered value when the route still accepts it, else its default. */
+function fieldValues(
+	inputs: RouteInput[],
+	remembered: Record<string, string> | undefined,
+): Record<string, string> {
+	return Object.fromEntries(
+		inputs.map((input) => {
+			let value = remembered?.[input.name]
+			return [
+				input.name,
+				value !== undefined && isAccepted(input, value) ? value : defaultFor(input),
+			]
+		}),
+	)
+}
+
+/** What a request holds for an input, wherever the input goes. */
+function valueOf(input: RouteInput, request: SavedRequest): string | undefined {
+	if (input.in === 'path') {
+		return request.pathValues[input.name]
+	}
+	if (input.in === 'body') {
+		return request.bodyValues?.[input.name]
+	}
+	return request.query.find((row) => row.name === input.name && row.value.trim())?.value
 }
 
 /** The required inputs that still have no value; the request cannot go without them. */
 export function missingInputs(inputs: RouteInput[], request: SavedRequest): string[] {
 	return inputs
 		.filter((input) => input.required)
-		.filter((input) =>
-			input.in === 'path'
-				? !request.pathValues[input.name]?.trim()
-				: !request.query.some((row) => row.name === input.name && row.value.trim()),
-		)
+		.filter((input) => !valueOf(input, request)?.trim())
 		.map((input) => input.name)
 }
 
@@ -92,9 +117,9 @@ export function suggestionsFor(
 	today: Date,
 ): string[] {
 	let sent = recentRequests(history, route).flatMap((request) =>
-		input.in === 'path'
-			? [request.pathValues[input.name] ?? '']
-			: request.query.filter((row) => row.name === input.name).map((row) => row.value),
+		input.in === 'query'
+			? request.query.filter((row) => row.name === input.name).map((row) => row.value)
+			: [valueOf(input, request) ?? ''],
 	)
 	let fromServer = [
 		...(input.values?.map((option) => option.value) ?? []),
@@ -104,15 +129,22 @@ export function suggestionsFor(
 	return [...new Set([...sent, ...fromServer, ...dated].filter((value) => value.trim()))]
 }
 
+function isStringRecord(value: unknown): value is Record<string, string> {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		Object.values(value).every((each) => typeof each === 'string')
+	)
+}
+
 function isSavedRequest(value: unknown): value is SavedRequest {
 	if (typeof value !== 'object' || value === null) {
 		return false
 	}
-	let {pathValues, query} = value as Record<string, unknown>
+	let {pathValues, query, bodyValues} = value as Record<string, unknown>
 	return (
-		typeof pathValues === 'object' &&
-		pathValues !== null &&
-		Object.values(pathValues).every((each) => typeof each === 'string') &&
+		isStringRecord(pathValues) &&
+		(bodyValues === undefined || isStringRecord(bodyValues)) &&
 		Array.isArray(query) &&
 		query.every(
 			(row: unknown) =>
@@ -143,4 +175,19 @@ export function startingRequest(
 		}
 	}
 	return recent[0]
+}
+
+/**
+ * The JSON body a request sends: its values for the route's body inputs, and
+ * nothing for a route that reads no body.
+ */
+export function requestBody(
+	inputs: RouteInput[],
+	bodyValues: Record<string, string> | undefined,
+): Record<string, string> | undefined {
+	let fields = inputs.filter((input) => input.in === 'body')
+	if (!fields.length) {
+		return undefined
+	}
+	return Object.fromEntries(fields.map((input) => [input.name, bodyValues?.[input.name] ?? '']))
 }

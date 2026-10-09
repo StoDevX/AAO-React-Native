@@ -10,7 +10,8 @@ export const keys = {
 /** One thing a route reads from its request, as the server's sitemap describes it. */
 export interface RouteInput {
 	name: string
-	in: 'path' | 'query'
+	/** Where it goes: the path, the query string, or a field of a JSON body. */
+	in: 'path' | 'query' | 'body'
 	required: boolean
 	/** The complete set of accepted values. */
 	values?: {value: string; label?: string}[]

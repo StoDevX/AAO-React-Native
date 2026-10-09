@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {isErrorStatus, isImageType, statusLine} from '../response'
+import {bodyKind, byteSize, isErrorStatus, statusLine} from '../response'
 
 describe('statusLine', () => {
 	test('reads the status with its reason', () => {
@@ -25,16 +25,37 @@ describe('isErrorStatus', () => {
 	})
 })
 
-describe('isImageType', () => {
-	test('counts any image type, whatever follows it', () => {
-		expect(isImageType('image/webp')).toBe(true)
-		expect(isImageType('image/png; charset=binary')).toBe(true)
-		expect(isImageType('IMAGE/JPEG')).toBe(true)
+describe('bodyKind', () => {
+	test('shows any image type as an image', () => {
+		expect(bodyKind('image/webp')).toBe('image')
+		expect(bodyKind('IMAGE/JPEG')).toBe('image')
 	})
 
-	test('does not count text, JSON or a missing type', () => {
-		expect(isImageType('application/json; charset=utf-8')).toBe(false)
-		expect(isImageType('text/plain')).toBe(false)
-		expect(isImageType('')).toBe(false)
+	test('shows text, JSON, XML and script as text, with or without parameters', () => {
+		expect(bodyKind('text/plain')).toBe('text')
+		expect(bodyKind('text/html; charset=utf-8')).toBe('text')
+		expect(bodyKind('application/json; charset=utf-8')).toBe('text')
+		expect(bodyKind('application/problem+json')).toBe('text')
+		expect(bodyKind('application/rss+xml')).toBe('text')
+		expect(bodyKind('application/xml')).toBe('text')
+		expect(bodyKind('application/javascript')).toBe('text')
+	})
+
+	test('reads a body with no type as text, as a bare 204 or a plain server sends', () => {
+		expect(bodyKind('')).toBe('text')
+	})
+
+	test('leaves anything else undecoded, as a database or an archive', () => {
+		expect(bodyKind('application/octet-stream')).toBe('binary')
+		expect(bodyKind('application/vnd.sqlite3')).toBe('binary')
+		expect(bodyKind('application/zip')).toBe('binary')
+	})
+})
+
+describe('byteSize', () => {
+	test('reads a size in the largest unit it fills', () => {
+		expect(byteSize(512)).toBe('512 bytes')
+		expect(byteSize(2048)).toBe('2 KB')
+		expect(byteSize(4780032)).toBe('4.6 MB')
 	})
 })

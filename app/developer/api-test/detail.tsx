@@ -15,9 +15,11 @@ import {DebugView} from '../../../source/features/developer/debug'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
 import {useCampusId} from '../../../source/features/campus/store'
 import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
+import {startingRequest} from '../../../source/features/developer/api-test/util/inputs'
 import {
 	isErrorStatus,
-	isImageType,
+	bodyKind,
+	byteSize,
 	statusLine,
 	type ApiResponse,
 } from '../../../source/features/developer/api-test/util/response'
@@ -60,7 +62,7 @@ export default function APITestDetailPage(): React.ReactNode {
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
 	let {data, isLoading, error} = useQuery<ApiResponse | null, Error>({
-		queryKey: ['api-test', campus, method, path, sentAt],
+		queryKey: ['api-test', campus, method, path, request, sentAt],
 		queryFn: async ({signal}) => {
 			if (!path) {
 				return null
@@ -68,16 +70,26 @@ export default function APITestDetailPage(): React.ReactNode {
 			// An error status is a response worth reading, not a failure. And a
 			// confirmed DELETE or POST goes out once: ky would retry a DELETE on a
 			// 5xx, as the query would on a failure, focus or reconnect.
+			// a body only goes with a method that can carry one
+			let body = method === 'GET' ? undefined : startingRequest(request, [])?.bodyValues
 			// The API Tester asks the server of the campus dev mode is on.
 			let response = await clientFor(campus)(clientPath(path), {
 				method,
 				signal,
 				throwHttpErrors: false,
 				retry: 0,
+				...(body ? {json: body} : {}),
 			})
 			let {status, statusText} = response
-			if (isImageType(response.headers.get('content-type') ?? '')) {
+			let contentType = response.headers.get('content-type') ?? ''
+			let kind = bodyKind(contentType)
+			if (kind === 'image') {
 				return {status, statusText, body: '', image: await dataUri(await response.blob())}
+			}
+			if (kind === 'binary') {
+				// not decoded: as text it is unreadable, and can be too large to draw
+				let blob = await response.blob()
+				return {status, statusText, body: '', binary: {contentType, size: blob.size}}
 			}
 			return {status, statusText, body: await response.text()}
 		},
@@ -164,6 +176,12 @@ export default function APITestDetailPage(): React.ReactNode {
 						resizeMode="contain"
 						source={{uri: data.image}}
 						style={styles.image}
+					/>
+				) : data.binary ? (
+					<NoticeView
+						description={`${statusLine(data)} · ${data.binary.contentType} · ${byteSize(data.binary.size)}`}
+						systemImage="doc.zipper"
+						title="Binary Response"
 					/>
 				) : body.kind === 'empty' ? (
 					<NoticeView description={statusLine(data)} systemImage="tray" title="Empty Response" />
