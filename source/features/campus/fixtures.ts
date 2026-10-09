@@ -3,6 +3,7 @@ import {getApiRoot, getCarletonApiRoot, setFetchInterceptor} from '@frogpond/api
 import type {FixtureMode} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../lib/ui-test-fixture'
+import {campusFromDomain} from './domains'
 import {undatedUrl} from './fixture-dates'
 import carletonFixtures from './__fixtures__/carleton.edu'
 import stolafFixtures from './__fixtures__/stolaf.edu'
@@ -112,9 +113,11 @@ function append(entry: {key: string} & CampusRecording): void {
 /**
  * Answers every request from `domain`'s recordings (`serve`), or from the
  * network while recording each answer (`record`), for a UI test that names a
- * campus.
+ * campus. A domain no campus here has fails at once, naming the ones there
+ * are, rather than at the first request.
  */
 export function installCampusFixtures(domain: string, mode: FixtureMode): void {
+	campusFromDomain(domain)
 	if (mode === 'serve') {
 		let table = tableFrom(domain, FILES[domain] ?? [])
 		setFetchInterceptor((request) =>

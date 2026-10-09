@@ -1,6 +1,13 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {fixtureKey, MissingCampusFixture, serveFixture, tableFrom} from '../fixtures'
+import {UnknownCampusError} from '../domains'
+import {
+	fixtureKey,
+	installCampusFixtures,
+	MissingCampusFixture,
+	serveFixture,
+	tableFrom,
+} from '../fixtures'
 
 const roots = {
 	'stolaf.edu': new URL('http://localhost:3000/v1/'),
@@ -96,5 +103,14 @@ describe('tableFrom', () => {
 
 	test('refuses recordings a release bundle emptied', () => {
 		expect(() => tableFrom('stolaf.edu', [{}])).toThrow(/stolaf\.edu.*KEEP_UITEST_FIXTURES/u)
+	})
+})
+
+describe('installCampusFixtures', () => {
+	test('refuses a campus no campus here has, naming the ones there are', () => {
+		expect(() => installCampusFixtures('luther.edu', 'serve')).toThrow(UnknownCampusError)
+		expect(() => installCampusFixtures('luther.edu', 'serve')).toThrow(
+			/stolaf\.edu, carleton\.edu/u,
+		)
 	})
 })
