@@ -13,40 +13,70 @@ export function setFetchInterceptor(next: FetchInterceptor | null): void {
 	interceptor = next
 }
 
-/// `fetch`, through the interceptor when one is set. Both clients and the
-/// data sources' own fetches go through it.
+/// `fetch`, through the interceptor when one is set. Every campus's client and
+/// the data sources' own fetches go through it.
 export function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
 	if (!interceptor) return fetch(input, init)
 	return interceptor(new Request(input instanceof URL ? input.href : input, init), fetch)
 }
 
+// MARK: Old names, for callers not yet on clientFor
+
+const STOLAF = 'edu.stolaf'
+const CARLETON = 'edu.carleton'
+
+/** The old name for `clientFor('edu.stolaf')`. */
 export let stolafClient: typeof ky
 
-/// The server the app was pointed at, for URLs that are not fetched through
-/// `stolafClient`, such as an image's `uri`. Unset until `setApiRoot` has run.
-let apiRoot: URL | undefined
-
-export function getApiRoot(): URL | undefined {
-	return apiRoot
-}
-
-export function setApiRoot(url: URL): void {
-	apiRoot = url
-	stolafClient = ky.create({baseUrl: url, fetch: apiFetch})
-}
-
-/// Carleton runs its own ccc-server deployment. The map view reads building
-/// data from it directly, so it needs a peer of `stolafClient` rather than a
-/// different path on the St. Olaf server.
+/** The old name for `clientFor('edu.carleton')`. */
 export let carletonClient: typeof ky
 
-let carletonApiRoot: URL | undefined
+// MARK: Campus servers
 
-export function getCarletonApiRoot(): URL | undefined {
-	return carletonApiRoot
+/// Each campus's server and a client for it, by campus id (`edu.carleton`).
+/// Boot registers every campus at its default, then applies any override a
+/// developer saved (source/init/api.ts), so a client is there before anything
+/// fetches.
+let roots = new Map<string, URL>()
+let clients = new Map<string, typeof ky>()
+
+/// Points campus `id`'s client at `root`, replacing any it had.
+export function registerCampusServer(id: string, root: URL): void {
+	let client = ky.create({baseUrl: root, fetch: apiFetch})
+	roots.set(id, root)
+	clients.set(id, client)
+	if (id === STOLAF) stolafClient = client
+	if (id === CARLETON) carletonClient = client
 }
 
+/// The client for campus `id`'s server. A campus nothing registered throws,
+/// naming it and the ones there are, rather than asking some other server.
+export function clientFor(id: string): typeof ky {
+	let client = clients.get(id)
+	if (client === undefined) {
+		let known = [...clients.keys()].join(', ') || 'none yet'
+		throw new Error(`No server is registered for campus ${id}; registered: ${known}`)
+	}
+	return client
+}
+
+/// Campus `id`'s server, for an address not fetched through `clientFor`, such
+/// as an image's `uri`. Undefined until boot registers it.
+export function campusRoot(id: string): URL | undefined {
+	return roots.get(id)
+}
+
+/// Every registered campus's server, by campus id.
+export function campusRoots(): Record<string, URL> {
+	return Object.fromEntries(roots)
+}
+
+/** The old name for `registerCampusServer('edu.stolaf', url)`. */
+export function setApiRoot(url: URL): void {
+	registerCampusServer(STOLAF, url)
+}
+
+/** The old name for `registerCampusServer('edu.carleton', url)`. */
 export function setCarletonApiRoot(url: URL): void {
-	carletonApiRoot = url
-	carletonClient = ky.create({baseUrl: url, fetch: apiFetch})
+	registerCampusServer(CARLETON, url)
 }

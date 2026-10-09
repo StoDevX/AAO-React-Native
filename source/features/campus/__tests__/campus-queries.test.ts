@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {setApiRoot, setCarletonApiRoot} from '@frogpond/api'
+import {registerCampusServer} from '@frogpond/api'
 import {QueryClient} from '@tanstack/react-query'
 
 import {dictionaryOptionsFor} from '../../dictionary/query'
@@ -29,8 +29,8 @@ let requested: string[] = []
 
 beforeEach(() => {
 	requested = []
-	setApiRoot(new URL('https://stolaf.example.test/v1/'))
-	setCarletonApiRoot(new URL('https://carleton.example.test/v1/'))
+	registerCampusServer('edu.stolaf', new URL('https://stolaf.example.test/v1/'))
+	registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
 	global.fetch = jest.fn((request: Request) => {
 		requested.push(request.url)
 		return Promise.resolve(new Response(JSON.stringify({data: []}), {status: 200}))

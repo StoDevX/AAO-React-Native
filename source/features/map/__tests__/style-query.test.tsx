@@ -4,9 +4,11 @@ import {renderHook, waitFor} from '@testing-library/react-native'
 import * as React from 'react'
 import {fetchManifest, ID_PROPERTY, REL_MAP_STYLE, type Jrd} from '@frogpond/data-sources'
 
-import {DEFAULT_URL} from '../../../lib/constants'
+import {campusById} from '../../../campuses'
 import {MAP_STYLE_TYPE, stolafMapStyleOptions, useMapStyleUrl} from '../style-query'
 import {MAP_STYLE_URL} from '../urls'
+
+const STOLAF_URL = campusById('edu.stolaf').api.defaultUrl
 
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
@@ -52,8 +54,8 @@ describe('useMapStyleUrl', () => {
 	test("draws St. Olaf's shipped style on the server, in light and dark", async () => {
 		let light = await renderHook(() => useMapStyleUrl('stolaf', 'light'), {wrapper})
 		let dark = await renderHook(() => useMapStyleUrl('stolaf', 'dark'), {wrapper})
-		expect(light.result.current).toBe(`${DEFAULT_URL}map/style`)
-		expect(dark.result.current).toBe(`${DEFAULT_URL}map/style-dark`)
+		expect(light.result.current).toBe(`${STOLAF_URL}map/style`)
+		expect(dark.result.current).toBe(`${STOLAF_URL}map/style-dark`)
 	})
 
 	// Carleton's style has no dark variant, and is not in the manifest.

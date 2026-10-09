@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {setCarletonApiRoot} from '@frogpond/api'
+import {registerCampusServer} from '@frogpond/api'
 import {QueryClient} from '@tanstack/react-query'
 
 // A Carleton campus test: features must fetch, so the recording answers.
@@ -19,7 +19,7 @@ let requested: string[] = []
 
 beforeEach(() => {
 	requested = []
-	setCarletonApiRoot(new URL('https://carleton.example.test/v1/'))
+	registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
 	global.fetch = jest.fn((request: Request) => {
 		requested.push(request.url)
 		return Promise.resolve(new Response(JSON.stringify({data: []}), {status: 200}))

@@ -1,36 +1,36 @@
-import {setApiRoot, setCarletonApiRoot} from '@frogpond/api'
-import {uiTestCampus, fixtureMode} from '@frogpond/launch-arguments'
+import {registerCampusServer} from '@frogpond/api'
+import {fixtureMode, uiTestCampus} from '@frogpond/launch-arguments'
+
+import {CAMPUSES} from '../campuses'
 import {installCampusFixtures} from '../features/campus/fixtures'
 import * as storage from '../lib/storage'
-import {CARLETON_DEFAULT_URL, DEFAULT_URL} from '../lib/constants'
 
-// Set to the default before the await rather than only after it: anything
-// reading `carletonClient` during the storage round-trip would otherwise find
-// it undefined. Carleton's own server setting replaces it once read.
-setCarletonApiRoot(new URL(CARLETON_DEFAULT_URL))
-
-const configureApiRoot = async () => {
-	let address = await storage.getServerAddress()
-
-	if (!address) {
-		address = DEFAULT_URL
-	}
-
-	setApiRoot(new URL(address))
-}
-
-const configureCarletonApiRoot = async () => {
-	let address = await storage.getCarletonServerAddress()
-
-	if (address) {
-		setCarletonApiRoot(new URL(address))
+/**
+ * Points every campus's client at its default server. Synchronous, so a client
+ * asked for while the saved addresses are still being read finds its campus.
+ */
+export function registerDefaultServers(): void {
+	for (let campus of CAMPUSES) {
+		registerCampusServer(campus.id, new URL(campus.api.defaultUrl))
 	}
 }
 
-configureApiRoot()
-configureCarletonApiRoot()
+/** Points each campus a developer gave a server of its own at that server. */
+export async function applySavedServers(): Promise<void> {
+	await Promise.all(
+		CAMPUSES.map(async (campus) => {
+			let address = await storage.getServerAddressFor(campus.api.storageKey)
+			if (address) {
+				registerCampusServer(campus.id, new URL(address))
+			}
+		}),
+	)
+}
+
+registerDefaultServers()
+void applySavedServers()
 
 // A UI test that names a campus reads that campus's recordings for every request.
-if (uiTestCampus !== null) {
+if (typeof uiTestCampus === 'string') {
 	installCampusFixtures(uiTestCampus, fixtureMode)
 }

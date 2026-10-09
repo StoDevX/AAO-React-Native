@@ -1,6 +1,5 @@
 import {Image} from 'react-native'
-import {getApiRoot} from '@frogpond/api'
-import {DEFAULT_URL} from './constants'
+import {apiUrl} from './api-url'
 
 /**
  * The folders ccc-server serves images from, one per kind of picture. They
@@ -28,8 +27,8 @@ export type RemoteImage = {uri: string; cache: 'force-cache'}
  * server is the one to ask.
  */
 export function imageUrl(group: ImageGroup, name: string): string {
-	let root = getApiRoot() ?? new URL(DEFAULT_URL)
-	return new URL(`images/${group}/${name}.webp`, root).toString()
+	// St. Olaf's server publishes every campus's images (images/groups.json).
+	return apiUrl('edu.stolaf', `images/${group}/${name}.webp`)
 }
 
 /**

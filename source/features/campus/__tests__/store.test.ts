@@ -90,6 +90,12 @@ describe('switching campus', () => {
 })
 
 describe('the legacy bridge', () => {
+	test('maps legacy ids back to campus ids', () => {
+		let {campusIdOfLegacy} = loadStore({defaultCampus: 'edu.stolaf', uiTestCampus: null})
+		expect(campusIdOfLegacy('stolaf')).toBe('edu.stolaf')
+		expect(campusIdOfLegacy('carleton')).toBe('edu.carleton')
+	})
+
 	test('maps ids to the ids features still compare against', () => {
 		let {legacyCampusOf} = loadStore({defaultCampus: 'edu.stolaf', uiTestCampus: null})
 		expect(legacyCampusOf('edu.stolaf')).toBe('stolaf')

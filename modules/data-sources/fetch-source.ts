@@ -1,4 +1,4 @@
-import {apiFetch, carletonClient, isHTTPError, stolafClient} from '@frogpond/api'
+import {apiFetch, clientFor, isHTTPError} from '@frogpond/api'
 import type {SourceCampus} from './types'
 
 const FETCH_TIMEOUT_MS = 10_000
@@ -79,9 +79,9 @@ async function errorBody(response: Response): Promise<unknown> {
 }
 
 /// Fetches and parses the body of a resolved source, dispatching on whether
-/// its href is absolute. A relative href goes through `stolafClient`, which
-/// resolves against the configured api root (honouring the Settings
-/// server-URL override and mDNS discovery) and already carries ky's 10-second
+/// its href is absolute. A relative href goes through its campus's client,
+/// which resolves against that campus's configured server (honouring the
+/// Settings server-URL override and mDNS discovery) and already carries ky's 10-second
 /// default timeout. An absolute href bypasses the api root by design, so it
 /// gets the same 10-second timeout applied manually. An error status from
 /// either kind throws `SourceFetchError`.
@@ -90,19 +90,18 @@ async function errorBody(response: Response): Promise<unknown> {
 /// WordPress's REST API, `'text'` for sources whose media type is not JSON —
 /// RSS (`application/rss+xml`), for instance.
 ///
-/// `campus` picks the server a relative href resolves against: St. Olaf's api
-/// root by default, or Carleton's, which has a server setting of its own.
+/// `campus` picks that server, by campus id: St. Olaf's, where the manifest
+/// names none, or the one it names.
 export async function fetchSourceBody(
 	href: string,
 	signal: AbortSignal,
 	label: string,
 	format: 'json' | 'text' = 'json',
-	campus: SourceCampus = 'stolaf',
+	campus: SourceCampus = 'edu.stolaf',
 ): Promise<unknown> {
 	if (!isAbsoluteHref(href)) {
 		try {
-			let api = campus === 'carleton' ? carletonClient : stolafClient
-			let request = api.get(href, {signal})
+			let request = clientFor(campus).get(href, {signal})
 			return await (format === 'text' ? request.text() : request.json())
 		} catch (error) {
 			// The same error an absolute source's refusal throws, so a caller reads a

@@ -6,7 +6,7 @@ jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 
 let mockGet = jest.fn()
 jest.mock('@frogpond/api', () => ({
-	stolafClient: {get: (...args: Array<unknown>) => mockGet(...args)},
+	clientFor: () => ({get: (...args: Array<unknown>) => mockGet(...args)}),
 }))
 
 describe('fetchDirectories', () => {

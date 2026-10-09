@@ -34,3 +34,21 @@ describe('the campus registry', () => {
 		)
 	})
 })
+
+describe("each campus's server", () => {
+	test('saves each override under its campus id', () => {
+		expect(campusById('edu.stolaf').api.storageKey).toBe('settings:server-address:edu.stolaf')
+		expect(campusById('edu.carleton').api.storageKey).toBe('settings:server-address:edu.carleton')
+	})
+
+	test('saves no two campuses under one key', () => {
+		let keys = CAMPUSES.map((campus) => campus.api.storageKey)
+		expect(new Set(keys).size).toBe(keys.length)
+	})
+
+	test('ends in a slash, so ky extends the path rather than replacing its last segment', () => {
+		for (let campus of CAMPUSES) {
+			expect(campus.api.defaultUrl).toMatch(/\/$/u)
+		}
+	})
+})

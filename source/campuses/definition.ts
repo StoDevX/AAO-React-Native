@@ -1,5 +1,6 @@
 import type {BrandingSection} from '../features/campus/campus-section'
 import type {ContactsSection} from '../features/directory/campus-section'
+import type {ApiSection} from '../features/developer/campus-section'
 import type {HomeSection} from '../features/home/campus-section'
 import type {SupportSection} from '../features/support/campus-section'
 import type {CampusId} from './ids'
@@ -21,4 +22,6 @@ export type CampusDefinition = {
 	// Optional: a campus without a section doesn't have that feature.
 	support?: SupportSection
 	contacts?: ContactsSection
+	/** The campus's server, and its field in developer settings. */
+	api: ApiSection
 }

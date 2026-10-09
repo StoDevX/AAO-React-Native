@@ -20,7 +20,7 @@ jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 // Every fetch fails, so a test that refetches sees what a 5xx or a captive
 // portal would hand the screen.
 jest.mock('@frogpond/api', () => ({
-	stolafClient: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
+	clientFor: () => ({get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))}),
 }))
 
 // A Pause item's id is its place in the menu.

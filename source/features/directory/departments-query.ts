@@ -1,4 +1,4 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {DepartmentListing} from './types'
 
@@ -10,7 +10,8 @@ export const directoryDepartmentKeys = {
 }
 
 async function fetchDepartments({signal}: {signal: AbortSignal}) {
-	let response = await stolafClient.get('directory/departments', {signal}).json()
+	// St. Olaf's server answers the departments for every campus.
+	let response = await clientFor('edu.stolaf').get('directory/departments', {signal}).json()
 	// The server returns whatever the directory deployed; this is an assertion,
 	// not a check. Only `name` is consumed downstream.
 	return (response as {results: DepartmentListing[]}).results

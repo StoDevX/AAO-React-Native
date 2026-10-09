@@ -1,7 +1,8 @@
-import {carletonClient, stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import type {Campus} from '../building-hours/types'
+import {campusIdOfLegacy} from '../campus/store'
 import {UITEST_MAPS} from './__fixtures__/maps'
 import {uiTestFixture} from '../../lib/ui-test-fixture'
 import type {Building, Feature, FeatureCollection} from './types'
@@ -16,13 +17,6 @@ export const keys = {
 /// staleness costs nothing and saves a request every time the sheet opens.
 const staleTime = 1000 * 60 * 60
 
-// Both campuses serve identical `map/geojson` schemas on their own
-// ccc-server deployments, so only the client and the cache key vary by
-// campus.
-function clientFor(campus: Campus): typeof stolafClient {
-	return campus === 'carleton' ? carletonClient : stolafClient
-}
-
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const mapDataOptions = (campus: Campus) =>
 	queryOptions({
@@ -31,7 +25,7 @@ export const mapDataOptions = (campus: Campus) =>
 			if (servesBundledFixtures) {
 				return uiTestFixture(`${campus}-map.json`, UITEST_MAPS[campus]).features
 			}
-			let response = await clientFor(campus)
+			let response = await clientFor(campusIdOfLegacy(campus))
 				.get('map/geojson', {signal})
 				.json<FeatureCollection<Building>>()
 			return response.features

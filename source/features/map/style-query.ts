@@ -41,5 +41,6 @@ export const stolafMapStyleOptions = (scheme: 'light' | 'dark') =>
 /// against the configured server when drawn.
 export function useMapStyleUrl(campus: Campus, scheme: ColorSchemeName | undefined): string {
 	let {data: href} = useQuery(stolafMapStyleOptions(basemapScheme(campus, scheme)))
-	return campus === 'stolaf' ? apiUrl(href) : MAP_STYLE_URL
+	// St. Olaf's map style is on its own server; Carleton's is a hosted style.
+	return campus === 'stolaf' ? apiUrl('edu.stolaf', href) : MAP_STYLE_URL
 }

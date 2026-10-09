@@ -1,4 +1,4 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions, type QueryClient} from '@tanstack/react-query'
 import bundledJson from './bundled.json'
 import {
@@ -20,6 +20,9 @@ export const keys = {
 	manifest: ['data-sources', 'manifest'] as const,
 }
 
+/// The manifest is published on St. Olaf's server for every campus.
+const MANIFEST_SERVER: SourceCampus = 'edu.stolaf'
+
 export const manifestOptions = queryOptions({
 	queryKey: keys.manifest,
 	staleTime: ONE_DAY_IN_MS,
@@ -38,7 +41,7 @@ export const manifestOptions = queryOptions({
 	// one with nothing cached. The radio plays from it however old it is.
 	meta: {persistAfterFailure: true},
 	queryFn: async ({signal}): Promise<Jrd> => {
-		let response = await stolafClient.get('sources', {signal}).json()
+		let response = await clientFor(MANIFEST_SERVER).get('sources', {signal}).json()
 		return JrdSchema.parse(response)
 	},
 })
@@ -53,9 +56,19 @@ export async function fetchManifest(queryClient: QueryClient): Promise<Jrd> {
 	}
 }
 
-/// A link's campus. Anything but Carleton reads as St. Olaf's, the api root.
+/// The manifest's campus names, as published (`carleton`) and as campus ids.
+const CAMPUS_IDS = new Map<string, SourceCampus>([
+	['stolaf', 'edu.stolaf'],
+	['edu.stolaf', 'edu.stolaf'],
+	['carleton', 'edu.carleton'],
+	['edu.carleton', 'edu.carleton'],
+])
+
+/// A link's campus. Absent, or a campus this build does not know, is St. Olaf's,
+/// the server a manifest entry names when it names none.
 function campusOf(link: Jrd['links'][number]): SourceCampus {
-	return link.properties[CAMPUS_PROPERTY] === 'carleton' ? 'carleton' : 'stolaf'
+	let named = link.properties[CAMPUS_PROPERTY]
+	return (named === undefined ? undefined : CAMPUS_IDS.get(named)) ?? 'edu.stolaf'
 }
 
 function toResolved(link: Jrd['links'][number]): ResolvedSource {

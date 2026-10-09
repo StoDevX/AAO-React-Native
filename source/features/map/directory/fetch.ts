@@ -1,4 +1,4 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 
 import bundled from '../../../../docs/building-directory.json'
@@ -17,6 +17,7 @@ export async function fetchDirectories(signal: AbortSignal): Promise<Array<Build
 	if (servesBundledFixtures || useForceBundledData.getState().forced) {
 		return bundledDirectories
 	}
-	let response = await stolafClient.get('spaces/directory', {signal}).json()
+	// St. Olaf's server answers the directory for every campus.
+	let response = await clientFor('edu.stolaf').get('spaces/directory', {signal}).json()
 	return (response as {data: Array<BuildingDirectory>}).data
 }

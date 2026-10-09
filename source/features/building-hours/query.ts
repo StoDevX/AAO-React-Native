@@ -1,4 +1,4 @@
-import {carletonClient, stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useAppSelector} from '../../redux/hooks'
@@ -9,7 +9,7 @@ import {FAVORITES_TITLE} from './lib/listed-sections'
 import {useForceBundledData} from './dev/data-source-store'
 import {groupBy} from '@frogpond/collections'
 import {isCampusId} from '../../campuses'
-import {legacyCampusOf} from '../campus/store'
+import {campusIdOfLegacy, legacyCampusOf} from '../campus/store'
 
 /**
  * Narrows a route's `?campus=` param to a known `Campus`, falling back to
@@ -33,12 +33,6 @@ export const keys = {
 	all: (campus: Campus) => [campus, 'buildings'] as const,
 }
 
-// Both campuses run identical `spaces/hours` schemas on their own ccc-server
-// deployments, so only the client and the cache key vary by campus.
-function clientFor(campus: Campus): typeof stolafClient {
-	return campus === 'carleton' ? carletonClient : stolafClient
-}
-
 function fetchBuildings(campus: Campus) {
 	return async ({signal}: {signal: AbortSignal}): Promise<BuildingType[]> => {
 		// UI tests naming no campus assert against what a screen does with a venue, so they need
@@ -55,7 +49,7 @@ function fetchBuildings(campus: Campus) {
 			return (bundledBuildings as {data: BuildingType[]}).data
 		}
 
-		let response = await clientFor(campus).get('spaces/hours', {signal}).json()
+		let response = await clientFor(campusIdOfLegacy(campus)).get('spaces/hours', {signal}).json()
 		return (response as {data: BuildingType[]}).data
 	}
 }

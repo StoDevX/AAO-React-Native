@@ -1,5 +1,5 @@
 import {File, Paths} from 'expo-file-system'
-import {getApiRoot, getCarletonApiRoot, setFetchInterceptor} from '@frogpond/api'
+import {campusRoots, setFetchInterceptor} from '@frogpond/api'
 import type {FixtureMode} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../lib/ui-test-fixture'
@@ -98,10 +98,6 @@ export function serveFixture(
 	})
 }
 
-function currentRoots(): Record<string, URL | undefined> {
-	return {'edu.stolaf': getApiRoot(), 'edu.carleton': getCarletonApiRoot()}
-}
-
 function append(entry: {key: string} & CampusRecording): void {
 	let file = new File(Paths.document, CAMPUS_RECORDING_FILE)
 	if (!file.exists) {
@@ -121,13 +117,13 @@ export function installCampusFixtures(campus: string, mode: FixtureMode): void {
 	if (mode === 'serve') {
 		let table = tableFrom(campus, FILES[campus] ?? [])
 		setFetchInterceptor((request) =>
-			Promise.resolve(serveFixture(campus, table, request, currentRoots())),
+			Promise.resolve(serveFixture(campus, table, request, campusRoots())),
 		)
 		return
 	}
 	if (mode === 'record') {
 		setFetchInterceptor(async (request, next) => {
-			let key = fixtureKey(request.method, request.url, currentRoots())
+			let key = fixtureKey(request.method, request.url, campusRoots())
 			let response = await next(request)
 			let body = await response.clone().text()
 			append({

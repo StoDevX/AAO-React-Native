@@ -1,11 +1,11 @@
-import {carletonClient, stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 
 import bundledModes from '../../../../docs/transportation.json'
 import {OtherModeType} from '../types'
 import {groupBy} from '@frogpond/collections'
-import type {Campus} from '../../campus/store'
+import {campusIdOfLegacy, type Campus} from '../../campus/store'
 
 export const keys = {
 	all: ['transit', 'modes'] as const,
@@ -27,7 +27,7 @@ async function fetchOtherModes(
 		return (bundledModes as {data: OtherModeType[]}).data
 	}
 
-	let api = campus === 'carleton' ? carletonClient : stolafClient
+	let api = clientFor(campusIdOfLegacy(campus))
 	let response = await api.get('transit/modes', {signal}).json()
 	return (response as {data: OtherModeType[]}).data
 }

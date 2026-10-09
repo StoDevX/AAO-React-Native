@@ -1,4 +1,4 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {isHTTPError} from 'ky'
 import {queryOptions} from '@tanstack/react-query'
@@ -21,7 +21,8 @@ async function fetchStudentOrgs({signal}: {signal: AbortSignal}) {
 	if (servesBundledFixtures) {
 		return uitestOrgs as StudentOrgType[]
 	}
-	let response = await stolafClient.get('orgs', {signal}).json()
+	// St. Olaf's server: only St. Olaf's Home offers student orgs.
+	let response = await clientFor('edu.stolaf').get('orgs', {signal}).json()
 	return response as StudentOrgType[]
 }
 
@@ -47,7 +48,10 @@ async function fetchOrgDetail(
 	{signal}: {signal: AbortSignal},
 ): Promise<StudentOrgDetailType | null> {
 	try {
-		let response = await stolafClient.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal}).json()
+		// St. Olaf's server: only St. Olaf's Home offers student orgs.
+		let response = await clientFor('edu.stolaf')
+			.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal})
+			.json()
 		return response as StudentOrgDetailType
 	} catch (error) {
 		if (isHTTPError(error) && error.response.status === 404) {

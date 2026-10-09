@@ -1,4 +1,4 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import bundledFaqs from '../../../docs/faqs.json'
 import {defaultConditionContext, evaluateConditions} from './conditions'
@@ -17,7 +17,8 @@ export const keys = {
 const optionsFor = (campus: Campus) =>
 	queryOptions<unknown, unknown, FaqQueryData>({
 		queryKey: keys.all,
-		queryFn: ({signal}) => stolafClient.get('faqs', {signal}).json(),
+		// St. Olaf's server answers every campus's FAQs.
+		queryFn: ({signal}) => clientFor('edu.stolaf').get('faqs', {signal}).json(),
 		select: (raw) => faqsFor(raw, campus),
 	})
 

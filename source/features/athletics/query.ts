@@ -1,4 +1,4 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {UITEST_SCORES} from './__fixtures__/scores'
@@ -20,7 +20,8 @@ export const athleticsOptions = queryOptions({
 	queryFn: ({signal}): Promise<Score[]> =>
 		servesBundledFixtures
 			? Promise.resolve(UITEST_SCORES)
-			: stolafClient.get('athletics/scores', {signal}).json<Score[]>(),
+			: // St. Olaf's server: only St. Olaf's Home offers athletics.
+				clientFor('edu.stolaf').get('athletics/scores', {signal}).json<Score[]>(),
 	select: toProcessedScores,
 	refetchInterval: (query) => {
 		const scores = query.state.data

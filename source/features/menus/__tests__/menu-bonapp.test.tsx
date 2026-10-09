@@ -4,7 +4,7 @@ import {act, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 import moment from 'moment-timezone'
 
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {timezone} from '@frogpond/constants'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {MealHeaderState, MenuItemType} from '@frogpond/food-menu'
@@ -32,7 +32,10 @@ jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 // Every fetch fails, so a test that refetches sees what a 5xx or a captive
 // portal would hand the screen.
 jest.mock('@frogpond/api', () => ({
-	stolafClient: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
+	clientFor: (() => {
+		let client = {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))}
+		return () => client
+	})(),
 }))
 
 // One router for the whole run, as expo-router's own hook hands back.
@@ -51,7 +54,7 @@ const mockFoodMenu = FoodMenu as unknown as jest.Mock<
 		onMealHeaderChange: (header: MealHeaderState) => void
 	}) => null
 >
-const mockGet = stolafClient.get as unknown as jest.Mock
+const mockGet = clientFor('edu.stolaf').get as unknown as jest.Mock
 
 /** The Cage's one daypart, as Bon Appétit publishes it. */
 const CAGE_DAYPART = {

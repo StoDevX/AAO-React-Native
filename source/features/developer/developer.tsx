@@ -3,6 +3,8 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
 import {useRouter} from 'expo-router'
+
+import {CAMPUSES} from '../../campuses'
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
 import {DebugSwiftSection} from './debugswift-section'
@@ -66,9 +68,9 @@ export const DeveloperSection = (): React.ReactElement => {
 
 			<DebugSwiftSection />
 
-			<ServerUrlSection campus="stolaf" />
-
-			<ServerUrlSection campus="carleton" />
+			{CAMPUSES.map((campus) => (
+				<ServerUrlSection key={campus.id} campus={campus} />
+			))}
 		</>
 	)
 }

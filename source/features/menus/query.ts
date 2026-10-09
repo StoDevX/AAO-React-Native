@@ -1,4 +1,4 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
@@ -111,7 +111,8 @@ async function fetchBonAppMenu(
 		return fixture as EditedBonAppMenuInfoType
 	}
 
-	let response = await stolafClient.get(path, {signal}).json()
+	// St. Olaf's server answers every campus's menus.
+	let response = await clientFor('edu.stolaf').get(path, {signal}).json()
 	return response as EditedBonAppMenuInfoType
 }
 
@@ -127,7 +128,8 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}, day: string)
 				return fixture as EditedBonAppCafeInfoType
 			}
 
-			let response = await stolafClient.get(path, {signal}).json()
+			// St. Olaf's server answers every campus's menus.
+			let response = await clientFor('edu.stolaf').get(path, {signal}).json()
 			return response as EditedBonAppCafeInfoType
 		},
 		staleTime: 1000 * 60 * 60, // 1 hour
@@ -169,7 +171,8 @@ async function fetchPauseMenu({signal}: {signal: AbortSignal}): Promise<GithubMe
 		return (bundledPauseMenu as {data: GithubMenuResponse}).data
 	}
 
-	let response = await stolafClient.get('food/named/menu/the-pause', {signal}).json()
+	// St. Olaf's server answers every campus's menus.
+	let response = await clientFor('edu.stolaf').get('food/named/menu/the-pause', {signal}).json()
 	return (response as {data: GithubMenuResponse}).data
 }
 

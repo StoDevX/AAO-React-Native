@@ -1,9 +1,9 @@
-import {carletonClient, stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import bundledBusTimes from '../../../../docs/bus-times.json'
 import {UnprocessedBusLine} from './types'
-import type {Campus} from '../../campus/store'
+import {campusIdOfLegacy, type Campus} from '../../campus/store'
 
 export const keys = {
 	all: ['transit', 'bus-routes'] as const,
@@ -26,7 +26,7 @@ async function fetchBusRoutes(
 		return (bundledBusTimes as {data: UnprocessedBusLine[]}).data
 	}
 
-	let api = campus === 'carleton' ? carletonClient : stolafClient
+	let api = clientFor(campusIdOfLegacy(campus))
 	let response = await api.get('transit/bus', {signal}).json()
 	return (response as {data: UnprocessedBusLine[]}).data
 }

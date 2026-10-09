@@ -1,12 +1,12 @@
 import {afterEach, describe, expect, it, jest} from '@jest/globals'
 import {Image} from 'react-native'
-import {setApiRoot} from '@frogpond/api'
+import {registerCampusServer} from '@frogpond/api'
 
 import {imageUrl, prefetchImages, remoteImage} from '../remote-images'
 
 describe('imageUrl', () => {
 	it('asks the server the app is pointed at', () => {
-		setApiRoot(new URL('https://example.test/v1/'))
+		registerCampusServer('edu.stolaf', new URL('https://example.test/v1/'))
 
 		expect(imageUrl('streaming', 'ksto-wordmark')).toBe(
 			'https://example.test/v1/images/streaming/ksto-wordmark.webp',

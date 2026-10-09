@@ -1,10 +1,9 @@
-import {carletonClient, stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import contactInfoData from '../../../docs/contact-info.json'
 import {ContactType} from './types'
 import type {CampusId} from '../../campuses'
-import {legacyCampusOf} from '../campus/store'
 
 /// Named apart from this feature's `keys`, in query.ts, which addresses the
 /// St. Olaf directory search rather than these.
@@ -26,8 +25,7 @@ async function fetchContacts(campusId: CampusId, {signal}: {signal: AbortSignal}
 		return (contactInfoData as {data: ContactType[]}).data
 	}
 
-	let api = legacyCampusOf(campusId) === 'carleton' ? carletonClient : stolafClient
-	let response = await api.get('contacts', {signal}).json()
+	let response = await clientFor(campusId).get('contacts', {signal}).json()
 	// The server sends whatever the data repo deployed, so this is an
 	// assertion, not a check. `icon` in particular claims to be an SFSymbol on
 	// no evidence; the tile falls back only when it is missing -- a wrong name
