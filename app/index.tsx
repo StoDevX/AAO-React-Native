@@ -29,7 +29,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
 import {visibleViews, type ViewType} from '../source/features/views'
@@ -47,7 +47,7 @@ import {HomeScreenButton} from '../source/features/home/button'
 import {HomeListRows} from '../source/features/home/list-rows'
 import {useHomeLayoutStore} from '../source/features/home/store'
 import {openUrl} from '@frogpond/open-url'
-import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
+import {setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerSlot} from '../source/features/faqs/banner'
 import {CUSTOMIZE_LABEL} from '../source/features/customize/labels'
@@ -104,7 +104,6 @@ const noticeShape = shapes.roundedRectangle({
 
 function UnofficialAppNotice(): React.ReactNode {
 	const dispatch = useDispatch()
-	const devModeOverride = useSelector(selectDevModeOverride)
 	const isDev = useIsDevMode()
 	const {notices} = useCampusSection('branding')
 	const campusId = useCampusStore((state) => state.campus)
@@ -145,9 +144,9 @@ function UnofficialAppNotice(): React.ReactNode {
 				<Button
 					label={DEV_MODE_ACTION}
 					onPress={() => {
-						dispatch(setDevModeOverride(!devModeOverride))
+						dispatch(setDevModeOverride(!isDev))
 					}}
-					systemImage={devModeOverride ? 'checkmark' : undefined}
+					systemImage={isDev ? 'checkmark' : undefined}
 				/>
 				{isDev ? (
 					<Section title={CAMPUS_SECTION}>
