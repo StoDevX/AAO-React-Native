@@ -51,9 +51,6 @@ export const contactsOptionsFor = (campusId: CampusId) =>
 		staleTime,
 	})
 
-/** St. Olaf's, which its Directory heads with. The directory section takes this over in Task 5. */
-export const contactsOptions = contactsOptionsFor('edu.stolaf')
-
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const contactByTitleOptions = (title: string, campusId: CampusId) =>
 	queryOptions({

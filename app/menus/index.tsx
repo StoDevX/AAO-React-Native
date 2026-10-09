@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {BonAppHostedMenu} from '../../source/features/menus/menu-bonapp'
+import {menuTab} from '../../source/features/menus/menu-tabs'
 import {LoadingView} from '@frogpond/notice'
 import {useHasEverBeenFocused} from '../../source/lib/use-has-ever-been-focused'
 
 export default function StavHallPage(): React.ReactNode {
+	let {server} = menuTab('index')
 	// `NativeTabs` builds every tab the moment Menus opens, so a reader who
 	// only wants one cafe pays for all of them. Defer this one until it is
 	// actually asked for.
@@ -19,6 +21,7 @@ export default function StavHallPage(): React.ReactNode {
 
 	return (
 		<BonAppHostedMenu
+			server={server}
 			cafe="stav-hall"
 			loadingMessage={[
 				'Hunting Ferndale Turkey…',

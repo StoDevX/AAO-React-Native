@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {CAMPUSES, campusById} from '..'
+import {CAMPUSES, campusById, campusWithSection} from '..'
 
 describe.each(CAMPUSES)('$id', (campus) => {
 	test('names its app, its college and where support email goes', () => {
@@ -63,5 +63,53 @@ describe('Carleton', () => {
 
 	test('titles its contacts as its tile does', () => {
 		expect(carleton.contacts?.title).toBe('Important Contacts')
+	})
+})
+
+describe('menus', () => {
+	test("Carleton's are its five halls, by Bon Appétit's names", () => {
+		expect(campusById('edu.carleton').menus?.tabs.map((tab) => tab.bonApp?.cafe)).toEqual([
+			'burton',
+			'ldc',
+			'sayles',
+			'weitz',
+			'schulze',
+		])
+	})
+
+	test("each campus's tile opens its own first café", () => {
+		expect(campusById('edu.stolaf').menus?.entryHref).toBe('/menus')
+		expect(campusById('edu.carleton').menus?.entryHref).toBe('/menus/burton')
+	})
+
+	test('St. Olaf gives Stav and the Cage a quick action each', () => {
+		expect(campusById('edu.stolaf').menus?.quickActions?.map((view) => view.title)).toEqual([
+			'Stav Menu',
+			'Cage Menu',
+		])
+	})
+})
+
+describe('transit', () => {
+	test('Carleton titles the screen Transportation, as CARLS did', () => {
+		expect(campusById('edu.carleton').transit?.title).toBe('Transportation')
+		expect(campusById('edu.stolaf').transit?.title).toBeUndefined()
+	})
+})
+
+describe('dictionary', () => {
+	test("only St. Olaf's takes suggestions", () => {
+		expect(campusById('edu.stolaf').dictionary?.acceptsSuggestions).toBe(true)
+		expect(campusById('edu.carleton').dictionary?.acceptsSuggestions).toBe(false)
+	})
+})
+
+describe('a one-campus screen reached by URL', () => {
+	test("shows St. Olaf's directory on Carleton, the only campus with one", () => {
+		expect(campusWithSection('directory', 'edu.carleton')?.id).toBe('edu.stolaf')
+	})
+
+	test("prefers the active campus's own section", () => {
+		expect(campusWithSection('menus', 'edu.carleton')?.id).toBe('edu.carleton')
 	})
 })

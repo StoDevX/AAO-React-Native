@@ -8,6 +8,7 @@ import {MenuItemDetailView} from '../../../../modules/food-menu/food-item-detail
 import {bonAppMenuOptions, pauseMenuOptions} from '../query'
 import {OFFLINE_MESSAGE} from '../lib/menu-view'
 import type {EditedBonAppMenuInfoType, GithubMenuResponse} from '../types'
+import {useCampusStore} from '../../campus/store'
 
 // The detail view renders `@expo/ui`, which cannot mount under Jest. What the
 // screen hands it is read off the call.
@@ -46,9 +47,11 @@ const PAUSE_RESPONSE = {
 let queryClient: QueryClient
 
 beforeEach(() => {
+	// A link without `server` reads the active campus's.
+	useCampusStore.setState({campus: 'edu.stolaf'})
 	jest.useFakeTimers()
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(pauseMenuOptions.queryKey, PAUSE_RESPONSE)
+	queryClient.setQueryData(pauseMenuOptions('edu.stolaf').queryKey, PAUSE_RESPONSE)
 	mockDetailView.mockClear()
 	mockParams = PAUSE_PARAMS
 })
@@ -76,7 +79,7 @@ describe('MenuItemDetailPage', () => {
 			await jest.runOnlyPendingTimersAsync()
 		})
 
-		expect(queryClient.getQueryState(pauseMenuOptions.queryKey)?.status).toBe('error')
+		expect(queryClient.getQueryState(pauseMenuOptions('edu.stolaf').queryKey)?.status).toBe('error')
 		expect(screen.queryByText(/HTTP 503/u)).toBeNull()
 		expect(mockDetailView.mock.lastCall?.[0]).toMatchObject({item: {label: 'Nachos'}})
 	})
@@ -106,11 +109,11 @@ describe('MenuItemDetailPage', () => {
 				days: [{date, cafe: {name: 'The Cage', menu_id: '1', dayparts: [[]]}}],
 			}) as unknown as EditedBonAppMenuInfoType
 		queryClient.setQueryData(
-			bonAppMenuOptions('the-cage', '2026-09-22').queryKey,
+			bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey,
 			menuWith('Nachos', '2026-09-22'),
 		)
 		queryClient.setQueryData(
-			bonAppMenuOptions('the-cage', '2026-09-23').queryKey,
+			bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-23').queryKey,
 			menuWith('Tacos', '2026-09-23'),
 		)
 		mockParams = {source: 'bonapp', cafe: 'the-cage', day: '2026-09-22', itemId: '42'}
@@ -127,7 +130,10 @@ describe('MenuItemDetailPage', () => {
 			cor_icons: {},
 			days: [],
 		} as unknown as EditedBonAppMenuInfoType
-		queryClient.setQueryData(bonAppMenuOptions({id: '261'}, '2026-09-22').queryKey, menu)
+		queryClient.setQueryData(
+			bonAppMenuOptions('edu.stolaf', {id: '261'}, '2026-09-22').queryKey,
+			menu,
+		)
 		mockParams = {source: 'bonapp', cafeId: '261', day: '2026-09-22', itemId: '5'}
 
 		await renderDetail()

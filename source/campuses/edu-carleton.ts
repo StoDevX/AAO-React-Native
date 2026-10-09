@@ -1,5 +1,6 @@
 import type {CampusDefinition} from './definition'
 import {carletonHomeTiles} from './edu-carleton/home-tiles'
+import {menus} from './edu-carleton/menus'
 
 export const carleton = {
 	id: 'edu.carleton',
@@ -55,4 +56,9 @@ export const carleton = {
 		// Carleton's map has no home tile, so Hours carries the way to it.
 		showsMapButton: true,
 	},
+	menus,
+	// CARLS named the tile Transportation.
+	transit: {title: 'Transportation'},
+	// Suggestions are filed against St. Olaf's dictionary data.
+	dictionary: {acceptsSuggestions: false},
 } as const satisfies CampusDefinition

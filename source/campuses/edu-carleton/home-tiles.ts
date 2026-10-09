@@ -1,6 +1,7 @@
 import * as c from '@frogpond/colors'
 
 import type {ViewType} from '../../features/views'
+import {menus} from './menus'
 import {developerTile} from '../shared-tiles'
 
 /**
@@ -11,7 +12,7 @@ import {developerTile} from '../shared-tiles'
 export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	{
 		type: 'view',
-		view: '/menus/burton',
+		view: menus.entryHref,
 		title: 'Menus',
 		icon: 'fork.knife',
 		gradient: c.greenGradient,

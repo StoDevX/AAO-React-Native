@@ -48,6 +48,6 @@
 			"zip": ""
 		}
 	},
-	"key": "GET {server:edu.stolaf}/food/named/cafe/burton",
+	"key": "GET {server:edu.carleton}/food/named/cafe/burton",
 	"status": 200
 }

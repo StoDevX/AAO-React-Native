@@ -46,3 +46,19 @@ export function campusIdFromPublished(key: string): CampusId | undefined {
 		(campus) => campus.id === key || ('publishedAs' in campus && campus.publishedAs === key),
 	)?.id
 }
+
+/**
+ * `preferred` if it has `key`'s section, else the first campus that does. A
+ * one-campus screen reached by URL on another campus, such as /directory, shows
+ * the campus that has it.
+ */
+export function campusWithSection(
+	key: keyof CampusDefinition,
+	preferred: CampusId,
+): CampusDefinition | undefined {
+	let hasSection = (campus: CampusDefinition) => campus[key] !== undefined
+	return (
+		CAMPUSES.find((campus) => campus.id === preferred && hasSection(campus)) ??
+		CAMPUSES.find(hasSection)
+	)
+}

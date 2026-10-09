@@ -1,10 +1,12 @@
 import * as React from 'react'
 import {GitHubHostedMenu} from '../../source/features/menus/menu-github'
+import {menuTab} from '../../source/features/menus/menu-tabs'
 import {PAUSE_VENUE} from '../../source/features/menus/lib/cafe-hours'
 import {LoadingView} from '@frogpond/notice'
 import {useHasEverBeenFocused} from '../../source/lib/use-has-ever-been-focused'
 
 export default function ThePausePage(): React.ReactNode {
+	let {campus, server} = menuTab('the-pause')
 	// `NativeTabs` builds every tab the moment Menus opens, so a reader who
 	// only wants one cafe pays for all of them. Defer this one until it is
 	// actually asked for.
@@ -20,6 +22,8 @@ export default function ThePausePage(): React.ReactNode {
 
 	return (
 		<GitHubHostedMenu
+			campus={campus}
+			server={server}
 			loadingMessage={[
 				'Mixing up a shake…',
 				'Spinning up pizzas…',

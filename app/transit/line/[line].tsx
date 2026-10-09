@@ -8,12 +8,13 @@ import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {BusLine} from '../../../source/features/transit/bus/line'
 import {busLineOptions} from '../../../source/features/transit/bus/query'
-import {useLegacyCampus} from '../../../source/features/campus/store'
+import {useCampusId, useCampusSection} from '../../../source/features/campus/store'
+import {sectionServer} from '../../../source/features/campus/section-server'
 import {DAYS_OF_WEEK} from '../../../source/features/transit/bus/components/days'
 import type {DayOfWeek} from '../../../source/features/transit/bus/types'
 
 export default function BusLinePage(): React.ReactNode {
-	let campus = useLegacyCampus()
+	let server = sectionServer(useCampusId(), useCampusSection('transit'))
 	let {line: lineName} = useLocalSearchParams<{line: string}>()
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
@@ -29,7 +30,7 @@ export default function BusLinePage(): React.ReactNode {
 	 */
 	let [selectedDay, setSelectedDay] = React.useState<DayOfWeek | null>(null)
 
-	let {data: line, isLoading, error, refetch} = useQuery(busLineOptions(lineName, campus))
+	let {data: line, isLoading, error, refetch} = useQuery(busLineOptions(lineName, server))
 
 	let label = DAYS_OF_WEEK.find(({day}) => day === selectedDay)?.label ?? 'Today'
 

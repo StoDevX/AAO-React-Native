@@ -2,13 +2,14 @@ import * as React from 'react'
 import {usePathname} from 'expo-router'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 
+import {useCampusId} from '../../source/features/campus/store'
 import {MenuHeaderHost, MenuHeaderProvider} from '../../source/features/menus/menu-header'
 import {MENU_TABS, menuCampusOf} from '../../source/features/menus/menu-tabs'
 
 export default function MenusLayout(): React.ReactNode {
-	// The tab bar shows one campus's cafés: the campus of the tab that is open.
-	// Each campus's Menus tile opens on its own first café.
-	let campus = menuCampusOf(usePathname())
+	// The tab bar shows one campus's cafés: those of the campus whose tab is
+	// open. Each campus's Menus tile opens on its own first café.
+	let campus = menuCampusOf(usePathname(), useCampusId())
 
 	return (
 		// The host sits here rather than in each tab: Expo Router keys a
@@ -17,8 +18,8 @@ export default function MenusLayout(): React.ReactNode {
 		<MenuHeaderProvider>
 			<MenuHeaderHost />
 			<NativeTabs>
-				{MENU_TABS.map((tab) => (
-					<NativeTabs.Trigger key={tab.name} hidden={tab.campus !== campus} name={tab.name}>
+				{MENU_TABS.map(({campus: owner, tab}) => (
+					<NativeTabs.Trigger key={tab.name} hidden={owner !== campus} name={tab.name}>
 						<NativeTabs.Trigger.Icon sf={tab.icon} />
 						<NativeTabs.Trigger.Label>{tab.title}</NativeTabs.Trigger.Label>
 					</NativeTabs.Trigger>

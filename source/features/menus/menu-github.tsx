@@ -4,6 +4,7 @@ import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import moment from 'moment-timezone'
 import {pauseMenuOptions} from './query'
+import type {CampusId} from '../../campuses'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
@@ -17,6 +18,10 @@ import {sample} from '@frogpond/collections'
 
 type Props = {
 	name: string
+	/** The menus server of the campus whose café this is. */
+	server: CampusId
+	/** The campus whose Hours list `venue`. */
+	campus: CampusId
 	loadingMessage: string[]
 	/**
 	 * The venue in `spaces/hours` whose schedule these are, e.g. `The Pause
@@ -39,7 +44,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let isFocused = useIsFocused()
 	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
-	let menuQuery = useQuery(pauseMenuOptions)
+	let menuQuery = useQuery(pauseMenuOptions(props.server))
 	let {refetch, dataUpdatedAt} = menuQuery
 	let menu = menuView(menuQuery)
 
@@ -75,7 +80,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	// Shares the Hours screen's cache key, so a reader who has been there pays
 	// nothing for this.
 	let {data: venue, isLoading: isVenueLoading} = useQuery({
-		...buildingByNameOptions('edu.stolaf', props.venue ?? ''),
+		...buildingByNameOptions(props.campus, props.venue ?? ''),
 		// A disabled query is pending but never fetching, which React Query
 		// reports as `isLoading: false` -- so the header below needs no guard of
 		// its own for a screen that named no venue.
@@ -116,9 +121,9 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		(item: MenuItemType) =>
 			router.navigate({
 				pathname: '/menu-item-detail',
-				params: {source: 'pause', itemId: item.id},
+				params: {source: 'pause', server: props.server, itemId: item.id},
 			}),
-		[router],
+		[router, props.server],
 	)
 
 	if (menu.kind === 'loading') {

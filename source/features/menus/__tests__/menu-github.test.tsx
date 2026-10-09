@@ -65,7 +65,7 @@ beforeEach(() => {
 
 	// Seeded fresh, so no query refetches through a network Jest does not have.
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(pauseMenuOptions.queryKey, {
+	queryClient.setQueryData(pauseMenuOptions('edu.stolaf').queryKey, {
 		foodItems: [],
 		stationMenus: [],
 		corIcons: {},
@@ -84,7 +84,13 @@ afterEach(() => {
 function renderPause() {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<GitHubHostedMenu loadingMessage={['Loading…']} name={PAUSE_VENUE} venue={PAUSE_VENUE} />
+			<GitHubHostedMenu
+				campus="edu.stolaf"
+				server="edu.stolaf"
+				loadingMessage={['Loading…']}
+				name={PAUSE_VENUE}
+				venue={PAUSE_VENUE}
+			/>
 		</QueryClientProvider>,
 	)
 }
@@ -102,7 +108,13 @@ describe('GitHubHostedMenu', () => {
 	test('moves the line under the name on as the clock turns over', async () => {
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<GitHubHostedMenu loadingMessage={['Loading…']} name={PAUSE_VENUE} venue={PAUSE_VENUE} />
+				<GitHubHostedMenu
+					campus="edu.stolaf"
+					server="edu.stolaf"
+					loadingMessage={['Loading…']}
+					name={PAUSE_VENUE}
+					venue={PAUSE_VENUE}
+				/>
 			</QueryClientProvider>,
 		)
 
@@ -124,7 +136,13 @@ describe('GitHubHostedMenu', () => {
 	test('keeps the menu body off the per-minute tick', async () => {
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<GitHubHostedMenu loadingMessage={['Loading…']} name={PAUSE_VENUE} venue={PAUSE_VENUE} />
+				<GitHubHostedMenu
+					campus="edu.stolaf"
+					server="edu.stolaf"
+					loadingMessage={['Loading…']}
+					name={PAUSE_VENUE}
+					venue={PAUSE_VENUE}
+				/>
 			</QueryClientProvider>,
 		)
 
@@ -146,17 +164,17 @@ describe('GitHubHostedMenu', () => {
 		await renderPause()
 
 		await act(async () => {
-			await queryClient.refetchQueries({queryKey: pauseMenuOptions.queryKey})
+			await queryClient.refetchQueries({queryKey: pauseMenuOptions('edu.stolaf').queryKey})
 			await jest.runOnlyPendingTimersAsync()
 		})
 
-		expect(queryClient.getQueryState(pauseMenuOptions.queryKey)?.status).toBe('error')
+		expect(queryClient.getQueryState(pauseMenuOptions('edu.stolaf').queryKey)?.status).toBe('error')
 		expect(screen.queryByText(/HTTP 503/u)).toBeNull()
 		expect(mockFoodMenu).toHaveBeenCalled()
 	})
 
 	test('says it is offline when nothing is cached and there is no network', async () => {
-		queryClient.removeQueries({queryKey: pauseMenuOptions.queryKey})
+		queryClient.removeQueries({queryKey: pauseMenuOptions('edu.stolaf').queryKey})
 		onlineManager.setOnline(false)
 		await renderPause()
 

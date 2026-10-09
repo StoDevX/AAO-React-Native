@@ -7,3 +7,10 @@ export type ContactsSection = {
 	/** The server the contacts come from; the campus's own when absent. */
 	server?: CampusId
 }
+
+export type DirectorySection = {
+	/** The college's own directory search, which the screen asks directly. Ends in a slash. */
+	searchUrl: string
+	/** The campus whose server lists the departments; the campus's own when absent. */
+	server?: CampusId
+}

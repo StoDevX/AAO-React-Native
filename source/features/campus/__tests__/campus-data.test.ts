@@ -35,7 +35,7 @@ describe.each([
 	test("fetches Carleton's, which the recording answers, instead of St. Olaf's bundled data", async () => {
 		// No garbage collection, whose timer would hold Jest open.
 		let client = new QueryClient({defaultOptions: {queries: {gcTime: Infinity, retry: false}}})
-		await client.query(options('carleton') as Parameters<QueryClient['query']>[0])
+		await client.query(options('edu.carleton') as Parameters<QueryClient['query']>[0])
 		expect(requested).toEqual([`https://carleton.example.test/v1/${route}`])
 	})
 })

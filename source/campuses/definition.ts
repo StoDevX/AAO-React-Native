@@ -1,7 +1,10 @@
 import type {HoursSection} from '../features/building-hours/campus-section'
 import type {MapSection} from '../features/map/campus-section'
 import type {BrandingSection} from '../features/campus/campus-section'
-import type {ContactsSection} from '../features/directory/campus-section'
+import type {ContactsSection, DirectorySection} from '../features/directory/campus-section'
+import type {DictionarySection} from '../features/dictionary/campus-section'
+import type {MenusSection} from '../features/menus/campus-section'
+import type {TransitSection} from '../features/transit/campus-section'
 import type {ApiSection} from '../features/developer/campus-section'
 import type {HomeSection} from '../features/home/campus-section'
 import type {SupportSection} from '../features/support/campus-section'
@@ -34,4 +37,10 @@ export type CampusDefinition = {
 	publishedAs?: string
 	map?: MapSection
 	hours?: HoursSection
+	/** The cafés Menus' tab bar lists. */
+	menus?: MenusSection
+	transit?: TransitSection
+	dictionary?: DictionarySection
+	/** The people directory; St. Olaf's alone. */
+	directory?: DirectorySection
 }

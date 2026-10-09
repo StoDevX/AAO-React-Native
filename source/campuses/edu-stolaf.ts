@@ -1,14 +1,14 @@
-import {SUPPORT_EMAIL} from '../lib/constants'
 import type {CampusDefinition} from './definition'
 import {BUNDLED_DIRECTORIES, BUNDLED_HOURS} from './edu-stolaf/bundled'
 import {stolafHomeTiles} from './edu-stolaf/home-tiles'
+import {menus} from './edu-stolaf/menus'
 
 export const stolaf = {
 	id: 'edu.stolaf',
 	name: 'St. Olaf College',
 	branding: {
 		appName: 'All About Olaf',
-		supportEmail: SUPPORT_EMAIL,
+		supportEmail: 'allaboutolaf@frogpond.tech',
 		college: 'St. Olaf College',
 		intro:
 			'All About Olaf is a collaborative application created by alumni of St. Olaf College in Northfield, MN under the name StoDevX.',
@@ -56,4 +56,8 @@ export const stolaf = {
 		photos: true,
 		bundled: BUNDLED_HOURS,
 	},
+	menus,
+	transit: {},
+	dictionary: {acceptsSuggestions: true},
+	directory: {searchUrl: 'https://www.stolaf.edu/directory/'},
 } as const satisfies CampusDefinition
