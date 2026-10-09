@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Image, StyleSheet} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -16,10 +16,24 @@ import {parseBody} from '../../../source/features/developer/api-test/util/parse-
 import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
 import {
 	isErrorStatus,
+	isImageType,
 	statusLine,
 	type ApiResponse,
 } from '../../../source/features/developer/api-test/util/response'
 import {ResponseText} from '../../../source/features/developer/api-test/response-text'
+
+/** A body read as a `data:` URI, for an image to be drawn from what was fetched. */
+function dataUri(blob: Blob): Promise<string> {
+	return new Promise((resolve, reject) => {
+		let reader = new FileReader()
+		reader.onload = () =>
+			typeof reader.result === 'string'
+				? resolve(reader.result)
+				: reject(new Error('the image was not read as a data URI'))
+		reader.onerror = () => reject(reader.error ?? new Error('could not read the image'))
+		reader.readAsDataURL(blob)
+	})
+}
 
 type DisplayMode = 'raw' | 'parsed'
 
@@ -58,7 +72,11 @@ export default function APITestDetailPage(): React.ReactNode {
 				throwHttpErrors: false,
 				retry: 0,
 			})
-			return {status: response.status, statusText: response.statusText, body: await response.text()}
+			let {status, statusText} = response
+			if (isImageType(response.headers.get('content-type') ?? '')) {
+				return {status, statusText, body: '', image: await dataUri(await response.blob())}
+			}
+			return {status, statusText, body: await response.text()}
 		},
 		staleTime: 0,
 		gcTime: 0,
@@ -137,6 +155,13 @@ export default function APITestDetailPage(): React.ReactNode {
 					<LoadingView />
 				) : isErrorStatus(data.status) ? (
 					<ResponseText body={data.body} heading={{text: statusLine(data), color: c.systemRed}} />
+				) : data.image ? (
+					<Image
+						accessibilityLabel={`The image at ${path}`}
+						resizeMode="contain"
+						source={{uri: data.image}}
+						style={styles.image}
+					/>
 				) : body.kind === 'empty' ? (
 					<NoticeView description={statusLine(data)} systemImage="tray" title="Empty Response" />
 				) : body.kind === 'text' ? (
@@ -155,5 +180,9 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: c.systemBackground,
 		flex: 1,
+	},
+	image: {
+		flex: 1,
+		margin: 16,
 	},
 })
