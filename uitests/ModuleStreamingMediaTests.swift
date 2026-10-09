@@ -12,7 +12,8 @@ class ModuleStreamingMediaTests: UITestCase {
 		StreamingMediaScreen(app: app)
 			.openSheetFromBar(expecting: ids.playKmnk)
 			.press(ids.playKmnk, expecting: ids.pauseKmnk)
-			.checkButtons([ids.playKmnk] + ids.kmnkActions)
+			// Playing now, so the button reads Pause.
+			.checkButtons([ids.pauseKmnk] + ids.kmnkActions)
 			.closeSheet(expectingBar: ids.pauseKmnk)
 			.press(ids.pauseKmnk, expecting: ids.playKmnk)
 	}
