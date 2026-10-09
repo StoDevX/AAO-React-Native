@@ -436,7 +436,7 @@ usage = '''
 # The UI tests build All About Olaf, and Carleton mode in it runs CARLS's code.
 env = { APP_VARIANT = "aao" }
 run = '''
-node scripts/update-campus-fixtures.mjs "$usage_campus" ${usage_allow_large:+--allow-large}
+node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/update-campus-fixtures.mjs "$usage_campus" ${usage_allow_large:+--allow-large}
 '''
 
 [tasks."chaos-routes"]

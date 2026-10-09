@@ -1,11 +1,10 @@
 // A campus's UI-test recordings: what a recording run of its campus tests
 // fetched, keyed as source/features/campus/fixtures.ts looks them up.
 
+import {TEC_EVENTS, undatedUrl} from '../source/features/campus/fixture-dates.ts'
+
 /** A body larger than this is refused unless asked for, so a smoke test cannot pull a whole feed in unnoticed. */
 export const LARGE_BODY_BYTES = 200 * 1024
-
-/** The St. Olaf calendar's feed (TEC), by its URL. */
-const TEC_EVENTS = /tribe\/events\/v1\/events/u
 
 /** An object's named keys alone, those it has. */
 function pick(object, keys) {
@@ -156,7 +155,7 @@ export function shiftCalendars(table, {frozenDay, recordedDay}) {
  * source/features/campus/fixtures.ts writes the window's dates `{date}`.
  */
 function tecPageKey(url) {
-	return `GET ${url.replaceAll(/([?&](?:ends_after|starts_before)=)[^&]*/gu, '$1{date}')}`
+	return `GET ${undatedUrl(url)}`
 }
 
 /**

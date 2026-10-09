@@ -40,6 +40,12 @@ describe('fixtureKey', () => {
 			),
 		).toBe(`GET ${events}/?per_page=50&starts_before={date}&ends_after={date}&page=2`)
 	})
+
+	test("keeps another feed's dates, which say what it was asked for", () => {
+		expect(fixtureKey('GET', 'https://x.example/feed?ends_after=2026-10-07', roots)).toBe(
+			'GET https://x.example/feed?ends_after=2026-10-07',
+		)
+	})
 })
 
 describe('serveFixture', () => {

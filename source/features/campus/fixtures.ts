@@ -3,6 +3,7 @@ import {getApiRoot, getCarletonApiRoot, setFetchInterceptor} from '@frogpond/api
 import type {FixtureMode} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../lib/ui-test-fixture'
+import {undatedUrl} from './fixture-dates'
 import carletonFixtures from './__fixtures__/carleton.edu'
 import stolafFixtures from './__fixtures__/stolaf.edu'
 
@@ -52,13 +53,6 @@ export function tableFrom(domain: string, files: ReadonlyArray<CampusRecordingFi
 export const CAMPUS_RECORDING_FILE = 'campus-fixture-recording.jsonl'
 
 /**
- * The St. Olaf calendar's window, which `tecWindow` takes from the day's date:
- * written `{date}` so a recording answers on any day. The recorder moves the
- * recorded events onto the frozen day to match.
- */
-const DATED_PARAMS = /([?&](?:ends_after|starts_before)=)[^&]*/gu
-
-/**
  * A request's key: its method and URL, with each campus server's root written
  * `{server:<domain>}`, so a recording against one server serves any other.
  */
@@ -67,7 +61,7 @@ export function fixtureKey(
 	url: string,
 	roots: Readonly<Record<string, URL | undefined>>,
 ): string {
-	let undated = url.replaceAll(DATED_PARAMS, '$1{date}')
+	let undated = undatedUrl(url)
 	for (let [domain, root] of Object.entries(roots)) {
 		let prefix = root?.href.replace(/\/$/u, '')
 		if (prefix && undated.startsWith(`${prefix}/`)) {
