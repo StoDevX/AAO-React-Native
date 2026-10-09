@@ -39,6 +39,12 @@ public class LaunchArgumentsModule: Module {
 			ProcessInfo.processInfo.arguments.contains("--uitesting") ? UITestResetChannel.campusForTest() : nil
 		}
 
+		// A request the fixtures could not answer, for the runner to fail the
+		// test with. See UITestResetChannel.reportMissingFixture.
+		Function("reportMissingFixture") { (campus: String, key: String) in
+			UITestResetChannel.reportMissingFixture(campus: campus, key: key)
+		}
+
 		let arguments = ProcessInfo.processInfo.arguments
 
 		Constants([

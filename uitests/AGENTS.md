@@ -173,6 +173,12 @@ it makes is answered from the hand-written `.yaml` fixtures in
 `source/features/campus/__fixtures__/example.college/`, in any mode, so it
 has nothing to record.
 
+Missing fixtures are strict. A request no fixture answers is listed in
+`missing-fixtures.jsonl` in the reset channel's directory, and `UITestCase`
+fails the test naming each missing key, even a test that otherwise passed
+(`MissingFixtureReportTests` pins this). Write the named fixture, or re-record
+the campus, rather than loosening the check.
+
 A check on a value from a recording goes through `verifyRecorded`. On replay a
 missing value fails. While recording it skips instead, naming the value: live
 data moves, and the calendar's dates move onto the frozen day only after the

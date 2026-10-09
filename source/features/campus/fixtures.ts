@@ -1,6 +1,6 @@
 import {File, Paths} from 'expo-file-system'
 import {campusRoots, setFetchInterceptor} from '@frogpond/api'
-import type {FixtureMode} from '@frogpond/launch-arguments'
+import {reportMissingFixture, type FixtureMode} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../lib/ui-test-fixture'
 import {campusById, requireCampusId, type CampusId} from '../../campuses'
@@ -91,6 +91,7 @@ export function serveFixture(
 	let key = fixtureKey(request.method, request.url, roots)
 	let recording = table[key]
 	if (!recording) {
+		reportMissingFixture(campus, key)
 		throw new MissingCampusFixture(campus, key)
 	}
 	let headers = recording.contentType ? {'content-type': recording.contentType} : undefined

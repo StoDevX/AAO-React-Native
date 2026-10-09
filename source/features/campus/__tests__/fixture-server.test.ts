@@ -1,5 +1,6 @@
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {apiFetch, registerCampusServer, setFetchInterceptor} from '@frogpond/api'
+import {reportMissingFixture} from '@frogpond/launch-arguments'
 
 import type {CampusId} from '../../../campuses'
 import {
@@ -42,6 +43,18 @@ describe('installFixtureServer', () => {
 			MissingCampusFixture,
 		)
 		await expect(apiFetch('https://example.college.invalid/nowhere')).rejects.toThrow(
+			'GET {server:example.college}/nowhere',
+		)
+	})
+
+	test('a missing fixture is reported for the test runner, then rejects', async () => {
+		jest.mocked(reportMissingFixture).mockClear()
+		installFixtureServer(() => active)
+		await expect(apiFetch('https://example.college.invalid/nowhere')).rejects.toThrow(
+			MissingCampusFixture,
+		)
+		expect(reportMissingFixture).toHaveBeenCalledWith(
+			'example.college',
 			'GET {server:example.college}/nowhere',
 		)
 	})

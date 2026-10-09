@@ -36,6 +36,8 @@ class UITestCaseUnbooted: XCTestCase {
 		appendRecordFixturesIfAsked()
 		appendResetChannel()
 		appendCampus()
+		// A previous test's missing requests are not this test's.
+		MissingFixtures.clear()
 	}
 
 	/// Names this test's campus, when it has one. A reset may change it in
@@ -46,7 +48,22 @@ class UITestCaseUnbooted: XCTestCase {
 		}
 	}
 
+	/// Adds the requests the app had no fixture for to any failure, so a test
+	/// that timed out waiting on an error screen says what to write.
+	override func record(_ issue: XCTIssue) {
+		var issue = issue
+		if let missing = MissingFixtures.message() {
+			issue.compactDescription += "\n\(missing)"
+		}
+		super.record(issue)
+	}
+
 	override func tearDownWithError() throws {
+		// Strict: a test that passed while a request went unanswered fails.
+		if (testRun?.failureCount ?? 0) == 0, let missing = MissingFixtures.message() {
+			XCTFail(missing)
+		}
+		MissingFixtures.clear()
 		if (testRun?.failureCount ?? 0) > 0 {
 			captureFailureScreen()
 		}
@@ -197,6 +214,38 @@ class UITestCase: UITestCaseUnbooted {
 	override func setUpWithError() throws {
 		try super.setUpWithError()
 		app.launch()
+	}
+}
+
+/// The requests the app had no fixture for in this test, which it lists in the
+/// reset channel's directory (`UITestResetChannel.reportMissingFixture`).
+enum MissingFixtures {
+	static var file: URL {
+		URL(fileURLWithPath: ResetChannel.directory, isDirectory: true)
+			.appendingPathComponent("missing-fixtures.jsonl")
+	}
+
+	private struct Entry: Decodable, Hashable {
+		let campus: String
+		let key: String
+	}
+
+	/// "Missing fixtures for <campus>: <keys>", a line per campus, or nil when none are missing.
+	static func message() -> String? {
+		guard let text = try? String(contentsOf: file, encoding: .utf8) else { return nil }
+		let entries = text.split(separator: "\n").compactMap {
+			try? JSONDecoder().decode(Entry.self, from: Data($0.utf8))
+		}
+		guard !entries.isEmpty else { return nil }
+		let byCampus = Dictionary(grouping: Set(entries), by: \.campus)
+		return byCampus.keys.sorted().map { campus in
+			let keys = byCampus[campus, default: []].map(\.key).sorted().joined(separator: ", ")
+			return "Missing fixtures for \(campus): \(keys)"
+		}.joined(separator: "\n")
+	}
+
+	static func clear() {
+		try? FileManager.default.removeItem(at: file)
 	}
 }
 

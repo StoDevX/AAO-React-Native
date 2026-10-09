@@ -62,17 +62,51 @@ final class UITestResetChannel {
 		return arguments[index + 1]
 	}
 
+	/// The channel directory this launch was given, as the runner wrote it, or nil without one.
+	private static func directoryArgument() -> String? {
+		let arguments = ProcessInfo.processInfo.arguments
+		guard let index = arguments.firstIndex(of: flag), index + 1 < arguments.count else {
+			return nil
+		}
+		return arguments[index + 1]
+	}
+
+	/// The channel directory this launch was given, or nil without one.
+	static func directoryFromArguments() -> URL? {
+		directoryArgument().map { URL(fileURLWithPath: $0, isDirectory: true) }
+	}
+
+	/// Where the app lists the requests it had no fixture for, one JSON object
+	/// per line; `uitests/UITestCase.swift` fails the test with them.
+	static let missingFixturesFile = "missing-fixtures.jsonl"
+
+	/// Appends one missing request to the channel's list. Without a channel
+	/// there is no runner to tell.
+	static func reportMissingFixture(campus: String, key: String) {
+		guard let directory = directoryFromArguments() else { return }
+		let url = directory.appendingPathComponent(missingFixturesFile)
+		guard let line = try? JSONSerialization.data(withJSONObject: ["campus": campus, "key": key]) else { return }
+		let entry = line + Data("\n".utf8)
+		lock.lock()
+		defer { lock.unlock() }
+		if let handle = try? FileHandle(forWritingTo: url) {
+			defer { try? handle.close() }
+			_ = try? handle.seekToEnd()
+			try? handle.write(contentsOf: entry)
+		} else {
+			try? entry.write(to: url)
+		}
+	}
+
 	/// The channel this launch was given, or nil when it was given none.
 	static func open(onRequest: @escaping (Request) -> Void) -> UITestResetChannel? {
-		let arguments = ProcessInfo.processInfo.arguments
 		guard
-			arguments.contains("--uitesting"),
-			let index = arguments.firstIndex(of: flag),
-			index + 1 < arguments.count
+			ProcessInfo.processInfo.arguments.contains("--uitesting"),
+			let directory = directoryArgument()
 		else {
 			return nil
 		}
-		return UITestResetChannel(directory: arguments[index + 1], onRequest: onRequest)
+		return UITestResetChannel(directory: directory, onRequest: onRequest)
 	}
 
 	private init(directory: String, onRequest: @escaping (Request) -> Void) {

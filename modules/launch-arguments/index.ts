@@ -33,6 +33,7 @@ declare class LaunchArgumentsModule extends NativeModule<LaunchArgumentsEvents> 
 	finishReset(id: string, url: string): Promise<void>
 	takePendingResetURL(): string | null
 	uiTestCampus(): string | null
+	reportMissingFixture(campus: string, key: string): void
 }
 
 const LaunchArguments = requireNativeModule<LaunchArgumentsModule>('LaunchArguments')
@@ -80,4 +81,15 @@ export function finishReset(request: ResetRequest): Promise<void> {
 /** The deep link the last reset asked for, once; null when there was none. */
 export function takePendingResetURL(): string | null {
 	return LaunchArguments.takePendingResetURL()
+}
+
+/**
+ * Tells the UI test runner a request had no fixture, so the test fails naming
+ * it (uitests/UITestCase.swift). Does nothing outside UI tests or while
+ * recording, when every request is answered.
+ */
+export function reportMissingFixture(campus: string, key: string): void {
+	if (isUITesting && fixtureMode !== 'record') {
+		LaunchArguments.reportMissingFixture(campus, key)
+	}
 }

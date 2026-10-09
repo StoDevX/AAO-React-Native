@@ -1,4 +1,5 @@
-import {describe, expect, test} from '@jest/globals'
+import {describe, expect, jest, test} from '@jest/globals'
+import {reportMissingFixture} from '@frogpond/launch-arguments'
 
 import {UnknownCampusError} from '../../../campuses'
 import {
@@ -83,6 +84,23 @@ describe('serveFixture', () => {
 		expect(() => serveFixture('edu.carleton', table, request, roots)).toThrow(
 			/GET \{server:edu\.carleton\}\/contacts.*mise run update-campus-fixtures edu\.carleton/u,
 		)
+	})
+
+	test('reports a request nothing recorded to the test runner, naming its key', () => {
+		jest.mocked(reportMissingFixture).mockClear()
+		let request = new Request('https://carleton.api.frogpond.tech/v1/contacts')
+		expect(() => serveFixture('edu.carleton', table, request, roots)).toThrow(MissingCampusFixture)
+		expect(reportMissingFixture).toHaveBeenCalledWith(
+			'edu.carleton',
+			'GET {server:edu.carleton}/contacts',
+		)
+	})
+
+	test('reports nothing for a request it answers', () => {
+		jest.mocked(reportMissingFixture).mockClear()
+		let request = new Request('https://carleton.api.frogpond.tech/v1/dictionary')
+		serveFixture('edu.carleton', table, request, roots)
+		expect(reportMissingFixture).not.toHaveBeenCalled()
 	})
 })
 
