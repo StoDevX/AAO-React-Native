@@ -51,6 +51,8 @@ export const exampleCollege = {
 		credit: {label: 'Wiki Monkeys', url: 'https://college.example/'},
 		// MapLibre's public demo style: the tiles load natively, outside the fixtures.
 		style: {url: 'https://demotiles.maplibre.org/style.json'},
+		// The demo style serves Open Sans, not the Noto Sans the other campuses' styles do.
+		labelFont: 'Open Sans Semibold',
 		venuesByBuilding: true,
 		buildingDirectory: {},
 	},

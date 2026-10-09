@@ -24,6 +24,8 @@ export type MapSection = {
 	style: MapStyle
 	/** The basemap in the dark appearance. Absent keeps the map light in dark mode. */
 	darkStyle?: MapStyle
+	/** The font pins' names are set in, which the basemap must serve; Noto Sans Medium when absent. */
+	labelFont?: string
 	/** The basemap's building-name layer, which Hours' outline hides for its own building. */
 	buildingLabelsLayer?: string
 	/** Where `photos` filenames in the map feed resolve; absent means no photos are shown. */

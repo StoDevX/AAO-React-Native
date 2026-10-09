@@ -437,9 +437,14 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 				</GeoJSONSource>
 
 				<MapPinImages />
-				<MapPinsLayer onCluster={frameCluster} onSelect={openPlace} pins={shownPins} />
+				<MapPinsLayer
+					font={map.labelFont}
+					onCluster={frameCluster}
+					onSelect={openPlace}
+					pins={shownPins}
+				/>
 
-				<MapSelectionLayer selection={selection} />
+				<MapSelectionLayer font={map.labelFont} selection={selection} />
 			</Map>
 			{/* Covers the map, and lets every touch through. The sheet is
 			    presented rather than laid out, so the Host needs no size of its

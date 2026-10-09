@@ -27,10 +27,11 @@ const PIN_ICON_SIZE = 1
 const PIN_RING = 2
 const CLUSTER_RADIUS = 14
 const PIN_STROKE = 2
-/// Both campuses' styles serve Noto Sans and nothing else. Left unset, a text
-/// layer asks for MapLibre's default font stack, whose glyphs 404 -- and the
-/// source's tiles then never finish, so the pins vanish with their names.
-const PIN_FONT = ['Noto Sans Medium']
+/// St. Olaf's and Carleton's styles serve Noto Sans and nothing else. A font
+/// the style does not serve -- MapLibre's default stack, left unset -- 404s,
+/// and the source's tiles then never finish, so the pins vanish with their
+/// names. A campus whose basemap serves another names it as `labelFont`.
+const PIN_FONT = 'Noto Sans Medium'
 /// A pin's name in the base map's own label colors -- dark text on a light
 /// halo -- rather than the group's color, which is too light to read on the
 /// map's tan. The dot carries the group's color.
@@ -38,13 +39,16 @@ const PIN_TEXT_COLOR = '#2f2a24'
 const PIN_TEXT_HALO = '#f4f1e9'
 const PIN_TEXT_HALO_WIDTH = 1.2
 
-/// A place's name under its dot, shared by the pins and the selected place.
-export const PIN_NAME_LAYOUT: SymbolLayerSpecification['layout'] = {
-	'text-field': ['get', 'name'],
-	'text-font': PIN_FONT,
-	'text-size': 12,
-	'text-offset': [0, 0.9],
-	'text-anchor': 'top',
+/// A place's name under its dot, shared by the pins and the selected place,
+/// set in `font` or, when the campus names none, Noto Sans.
+export function pinNameLayout(font: string | undefined): SymbolLayerSpecification['layout'] {
+	return {
+		'text-field': ['get', 'name'],
+		'text-font': [font ?? PIN_FONT],
+		'text-size': 12,
+		'text-offset': [0, 0.9],
+		'text-anchor': 'top',
+	}
 }
 export const PIN_NAME_PAINT: SymbolLayerSpecification['paint'] = {
 	'text-color': PIN_TEXT_COLOR,
@@ -54,6 +58,8 @@ export const PIN_NAME_PAINT: SymbolLayerSpecification['paint'] = {
 
 type Props = {
 	pins: MapPins | null
+	/// The font the basemap serves for names, as the campus's map names it.
+	font: string | undefined
 	onSelect: (id: string) => void
 	/// A cluster was tapped: the places it holds, for the screen to frame.
 	/// The camera, and the sheet it has to stay clear of, are the screen's.
@@ -63,7 +69,7 @@ type Props = {
 /// The places the sheet is listing, as pins; close ones merge into a numbered
 /// cluster, as in Maps. A pin opens its place; a cluster is framed until it
 /// splits.
-export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNode {
+export function MapPinsLayer({pins, font, onSelect, onCluster}: Props): React.ReactNode {
 	let sourceRef = React.useRef<GeoJSONSourceRef>(null)
 	let data = React.useMemo(() => pinCollection(pins?.places ?? []), [pins])
 
@@ -121,7 +127,7 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 					id="map-pins-cluster-counts"
 					layout={{
 						'text-field': ['get', 'point_count_abbreviated'],
-						'text-font': PIN_FONT,
+						'text-font': [font ?? PIN_FONT],
 						'text-size': 13,
 					}}
 					paint={{'text-color': c.white}}
@@ -142,7 +148,7 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 						// A pin always draws, even over another; it still claims its
 						// space, which is what hides the base map's label there.
 						'icon-allow-overlap': true,
-						...PIN_NAME_LAYOUT,
+						...pinNameLayout(font),
 						// Where two pins crowd each other, a name drops, not a pin.
 						'text-optional': true,
 					}}
