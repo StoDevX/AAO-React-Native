@@ -94,7 +94,7 @@ const HEADER_CLEARANCE = 44
 const SELECTED_FOOTPRINT_OPACITY = 0.3
 
 export default function MapPage(): React.ReactNode {
-	// A link with no campus, or one this build doesn't know -- `?campus=edu.carleton`
+	// A link with no campus, or one this build doesn't know -- `?campus=carleton`
 	// from a 2.9 Home Screen quick action -- opens the active campus's map.
 	// Every link the app draws names its campus.
 	let {campus: campusParam, place} = useLocalSearchParams<{campus?: string; place?: string}>()
