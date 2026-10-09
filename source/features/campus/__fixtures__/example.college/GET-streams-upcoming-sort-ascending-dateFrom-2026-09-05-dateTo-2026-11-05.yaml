@@ -1,0 +1,78 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/streams/upcoming?sort=ascending&dateFrom=2026-09-05&dateTo=2026-11-05
+json:
+  - category: Music
+    eid: '4101'
+    iframesrc: https://college.example/streams/4101/embed
+    lastmod: '2026-09-01 09:00:00'
+    location: Glacier Hall Auditorium
+    performer: Valley Wind Ensemble
+    player: https://college.example/streams/player
+    poster: https://college.example/streams/4101/poster.jpg
+    starttime: '2026-09-05 19:00:00'
+    status: upcoming
+    subtitle: Glacier Hall Auditorium
+    thumb: https://college.example/streams/4101/thumb.jpg
+    title: Welcome Back Concert
+  - category: Gatherings
+    eid: '4102'
+    iframesrc: https://college.example/streams/4102/embed
+    lastmod: '2026-09-01 09:00:00'
+    location: Summit Chapel
+    player: https://college.example/streams/player
+    poster: https://college.example/streams/4102/poster.jpg
+    starttime: '2026-09-06 09:00:00'
+    status: upcoming
+    subtitle: Summit Chapel
+    thumb: https://college.example/streams/4102/thumb.jpg
+    title: Sunday Gathering
+  - category: Athletics
+    eid: '4103'
+    iframesrc: https://college.example/streams/4103/embed
+    lastmod: '2026-09-01 09:00:00'
+    location: Avalanche Field
+    player: https://college.example/streams/player
+    poster: https://college.example/streams/4103/poster.jpg
+    starttime: '2026-09-12 13:00:00'
+    status: upcoming
+    subtitle: Avalanche Field
+    thumb: https://college.example/streams/4103/thumb.jpg
+    title: Football vs. Upper Valley
+  - category: Lectures
+    eid: '4104'
+    iframesrc: https://college.example/streams/4104/embed
+    lastmod: '2026-09-01 09:00:00'
+    location: Norway Valley Hall of Natural Sciences
+    player: https://college.example/streams/player
+    poster: https://college.example/streams/4104/poster.jpg
+    starttime: '2026-09-16 15:00:00'
+    status: upcoming
+    subtitle: Norway Valley Hall of Natural Sciences
+    thumb: https://college.example/streams/4104/thumb.jpg
+    title: 'Faculty Lecture: Reading the Glacier'
+  - category: Music
+    eid: '4105'
+    iframesrc: https://college.example/streams/4105/embed
+    lastmod: '2026-09-01 09:00:00'
+    location: Summit Chapel
+    performer: Valley Choir
+    player: https://college.example/streams/player
+    poster: https://college.example/streams/4105/poster.jpg
+    starttime: '2026-09-18 13:30:00'
+    status: upcoming
+    subtitle: Summit Chapel
+    thumb: https://college.example/streams/4105/thumb.jpg
+    title: Choir Concert
+  - category: Events
+    eid: '4106'
+    iframesrc: https://college.example/streams/4106/embed
+    lastmod: '2026-09-01 09:00:00'
+    location: Treeline Commons
+    player: https://college.example/streams/player
+    poster: https://college.example/streams/4106/poster.jpg
+    starttime: '2026-10-03 10:00:00'
+    status: upcoming
+    subtitle: Treeline Commons
+    thumb: https://college.example/streams/4106/thumb.jpg
+    title: Fall Family Weekend Welcome

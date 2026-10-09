@@ -553,22 +553,15 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		/// The station picker's KRLX segment, at the top of the sheet.
-		static let krlxSegment = "KRLX"
 		/// Play and Stop, in source/features/streaming/radio/player-view and the
-		/// mini-player; each names its station.
-		static let playKsto = "Play KSTO 93.1 FM"
-		static let pauseKsto = "Pause KSTO 93.1 FM"
-		static let playKrlx = "Play 88.1 KRLX-FM"
-		/// The player's bottom row, as VoiceOver names it.
-		static let krlxActions = [
-			"Call 88.1 KRLX-FM",
+		/// mini-player; each names Wiki Monkeys' station.
+		static let playKmnk = "Play KMNK 91.7, The Peak"
+		static let pauseKmnk = "Pause KMNK 91.7, The Peak"
+		/// The player's bottom row, as VoiceOver names it. KMNK has no chat, so
+		/// its Chat button is a dimmed "Chat unavailable" rather than a link.
+		static let kmnkActions = [
+			"Call KMNK 91.7, The Peak",
 			"Today's schedule",
-		]
-		/// The bottom row's buttons that leave the app, which VoiceOver reads as
-		/// links.
-		static let krlxLinks = [
-			"Chat with 88.1 KRLX-FM",
 		]
 		/// The full player's stand-in for a scrubber, which shows only at full size.
 		static let airStatus = "radio-air-status"
@@ -577,8 +570,8 @@ struct TestIdentifiers {
 		static let idleBar = "Not Playing"
 		/// Customize's Radio Player switch.
 		static let showRadioPlayer = "show-radio-player"
-		/// The logo KSTO shows first, before any tap moves it on.
-		static let kstoFirstLogo = "KSTO 93.1 FM logo, cow badge"
+		/// KMNK's one logo: the station's name, then the logo's.
+		static let kmnkLogo = "KMNK 91.7, The Peak logo, KMNK 91.7, The Peak"
 	}
 
 	// MARK: - Quick Actions

@@ -13,15 +13,6 @@ struct StreamingMediaScreen: Screen {
 		open(route: "/streaming-media", mountedWhen: mounted)
 	}
 
-
-
-	/// Pick a station in the player's segmented control, and wait for its Play.
-	@discardableResult
-	func pick(_ segment: String, expecting play: String) -> Self {
-		tap(app.buttons[segment], until: app.buttonLabelled(play), named: "the \(segment) segment")
-		return self
-	}
-
 	/// Tap a button labelled `label`, and wait for one labelled `marker`.
 	@discardableResult
 	func press(_ label: String, expecting marker: String) -> Self {
@@ -40,19 +31,6 @@ struct StreamingMediaScreen: Screen {
 		}
 		return self
 	}
-
-	/// Check each control that leaves the app is a link VoiceOver can name,
-	/// with a target of at least 44pt on each side.
-	@discardableResult
-	func checkLinks(_ labels: [String]) -> Self {
-		for label in labels {
-			XCTContext.runActivity(named: label) { _ in
-				checkTouchTarget(app.linkLabelled(label), named: "A link labelled \"\(label)\"")
-			}
-		}
-		return self
-	}
-
 
 	/// Open the Now Playing sheet from the bar, and wait for `play` in it.
 	@discardableResult

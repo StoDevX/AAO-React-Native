@@ -100,13 +100,12 @@ json:
         https://frogpond.tech/ns/id: wiki-monkeys
         https://frogpond.tech/ns/campus: example.college
     - rel: https://frogpond.tech/rel/radio-stream
-      href: radio/named/kmnk
+      href: https://cdn.stobcm.com/ksto/live.m3u8
       type: application/vnd.apple.mpegurl
       titles:
         und: KMNK 91.7, The Peak
       properties:
         https://frogpond.tech/ns/id: kmnk
-        https://frogpond.tech/ns/campus: example.college
     - rel: https://frogpond.tech/rel/radio-now-playing
       href: radio/named/kmnk/now-playing
       type: application/vnd.metaradio.stationnow+json
