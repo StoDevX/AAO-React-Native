@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {Button, Host, List} from '@expo/ui/swift-ui'
+import {Button, Host, Label, List} from '@expo/ui/swift-ui'
 import {buttonStyle, controlSize, frame, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
@@ -13,6 +13,7 @@ import {contactsOptionsFor} from '../source/features/directory/contacts-query'
 import {useCampusId, useCampusSection} from '../source/features/campus/store'
 import {ImportantContactsGrid} from '../source/features/directory/important-contacts-grid'
 import {requiresSection} from '../source/features/campus/section-gate'
+import {FILL_WIDTH} from '../source/components/tile-layout'
 
 /// The curated campus contacts on their own, for the Help group on home. The
 /// same grid heads the Directory, where it shares the screen with the
@@ -70,7 +71,7 @@ function ContactsPage(): React.ReactNode {
 }
 
 /** Where a search bar's edges sit in the bottom toolbar, from the screen's. */
-const TOOLBAR_MARGIN = 16
+const TOOLBAR_MARGIN = 28
 
 /**
  * The college's own directory, on the web, in the bottom toolbar where the
@@ -80,18 +81,24 @@ function OpenDirectoryButton({url}: {url: string}): React.ReactNode {
 	let {width} = useWindowDimensions()
 	return (
 		<Stack.Toolbar placement="bottom">
-			<Stack.Toolbar.View>
+			{/* The button draws its own glass, so the toolbar's capsule would wrap it in a second. */}
+			<Stack.Toolbar.View hidesSharedBackground={true}>
 				<Host matchContents={true}>
 					<Button
-						label="Open the Directory"
 						modifiers={[
 							buttonStyle('glass'),
 							controlSize('large'),
 							frame({width: width - 2 * TOOLBAR_MARGIN}),
 						]}
 						onPress={() => openUrl(url)}
-						systemImage="arrow.up.right"
-					/>
+					>
+						{/* A glass button's capsule is as wide as its label, so the label fills the frame. */}
+						<Label
+							modifiers={[frame({maxWidth: FILL_WIDTH})]}
+							systemImage="arrow.up.right"
+							title="Open the Directory"
+						/>
+					</Button>
 				</Host>
 			</Stack.Toolbar.View>
 		</Stack.Toolbar>
