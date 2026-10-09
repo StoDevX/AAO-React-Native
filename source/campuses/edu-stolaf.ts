@@ -78,4 +78,8 @@ export const stolaf = {
 	streaming: {},
 	athletics: {},
 	printing: {},
+	balances: {},
+	more: {},
+	courseCatalog: {},
+	studentWork: {},
 } as const satisfies CampusDefinition
