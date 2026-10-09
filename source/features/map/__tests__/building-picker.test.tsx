@@ -186,6 +186,23 @@ describe('BuildingPicker', () => {
 		expect(screen.getByText('Beta Lot')).toBeTruthy()
 	})
 
+	it('says a row was a search result when one is tapped', async () => {
+		let {onSelect} = await renderPicker()
+		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+		await waitFor(() => {
+			expect(screen.getByText('Gamma Field')).toBeTruthy()
+		})
+		await fireEvent.press(screen.getByText('Gamma Field'))
+		expect(onSelect).toHaveBeenCalledWith('c', 'search')
+	})
+
+	it('says a row in a group was listed, not searched for', async () => {
+		let {onSelect} = await renderPicker()
+		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+		await fireEvent.press(screen.getByText('Beta Lot'))
+		expect(onSelect).toHaveBeenCalledWith('b', 'list')
+	})
+
 	it('hides the grid and searches across every group while typing', async () => {
 		await renderPicker()
 		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
@@ -637,7 +654,7 @@ describe('BuildingPicker', () => {
 			remember('a')
 			let {onSelect} = await renderPicker()
 			await fireEvent.press(screen.getByText('Alpha Hall'))
-			expect(onSelect).toHaveBeenCalledWith('a')
+			expect(onSelect).toHaveBeenCalledWith('a', 'list')
 		})
 	})
 

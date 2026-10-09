@@ -112,7 +112,9 @@ type Props = {
 	/// the top of the field off with them. The list stays, and compresses to
 	/// nothing.
 	compact: boolean
-	onSelect: (id: string) => void
+	/// A row was tapped: one of the search's results, or a row listed some
+	/// other way -- a group's, a recent, or the fallback list of every place.
+	onSelect: (id: string, from: 'search' | 'list') => void
 	/// Focus is what raises the sheet, and losing it may lower it -- but only
 	/// when the field is empty, since a typed query still needs the room to
 	/// show its results. The screen that owns the sheet decides; the picker
@@ -301,6 +303,9 @@ function PickerContents({
 		}
 	}, [isEmptySearch])
 
+	let selectResult = React.useCallback((id: string) => onSelect(id, 'search'), [onSelect])
+	let selectListed = React.useCallback((id: string) => onSelect(id, 'list'), [onSelect])
+
 	let cancelSearch = React.useCallback(() => {
 		setTypedQuery('')
 		onSearchCancel()
@@ -362,7 +367,7 @@ function PickerContents({
 									key={building.id}
 									building={building}
 									icons={icons}
-									onSelect={onSelect}
+									onSelect={selectResult}
 								/>
 							))
 						)
@@ -374,7 +379,7 @@ function PickerContents({
 								key={building.id}
 								building={building}
 								icons={icons}
-								onSelect={onSelect}
+								onSelect={selectListed}
 							/>
 						))
 					) : compact ? null : (
@@ -386,7 +391,7 @@ function PickerContents({
 						icons={icons}
 						onClear={() => clearRecents(campus)}
 						onForget={(id) => forgetRecent(campus, id)}
-						onSelect={onSelect}
+						onSelect={selectListed}
 						places={remembered}
 					/>
 				) : null}
