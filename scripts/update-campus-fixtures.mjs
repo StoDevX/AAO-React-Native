@@ -12,6 +12,7 @@ import {
 	campusFixtureFiles,
 	completeTecPages,
 	failedKeys,
+	frozenDay,
 	mergeCampusRecordings,
 	shiftCalendars,
 } from './campus-fixtures.mjs'
@@ -51,8 +52,10 @@ function recordingPath() {
 	return path
 }
 
-// A recording left by an earlier run would mix two runs.
-rmSync(recordingPath(), {force: true})
+// A recording left by an earlier run would mix two runs. A simulator that has
+// never had the app holds none; the test run below installs it.
+let stale = appDataPath(device.udid, RECORDING)
+if (stale) rmSync(stale, {force: true})
 
 buildForTesting(device.udid)
 // A failed run throws here, before the fixture is touched.
@@ -67,14 +70,6 @@ let recording = recordingPath()
 if (!existsSync(recording)) {
 	throw new Error(`nothing was recorded; ${domain}'s fixtures are left as they were`)
 }
-/** The UI tests' frozen day, read from `UITEST_FROZEN_DATE` so the two cannot drift. */
-function frozenDay() {
-	let source = readFileSync('modules/timer/index.ts', 'utf8')
-	let day = /UITEST_FROZEN_DATE = '(\d{4}-\d{2}-\d{2})/u.exec(source)?.[1]
-	if (!day) throw new Error('no UITEST_FROZEN_DATE in modules/timer/index.ts')
-	return day
-}
-
 /** A page of a feed, fetched live, as a recording holds it. */
 async function fetchPage(url) {
 	let response = await fetch(url)

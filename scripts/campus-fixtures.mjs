@@ -1,6 +1,8 @@
 // A campus's UI-test recordings: what a recording run of its campus tests
 // fetched, keyed as source/features/campus/fixtures.ts looks them up.
 
+import {readFileSync} from 'node:fs'
+
 import {TEC_MAX_PAGES} from '../modules/ccc-calendar/parsers/tec-pages.ts'
 import {TEC_EVENTS, undatedUrl} from '../source/features/campus/fixture-dates.ts'
 
@@ -313,4 +315,12 @@ export function campusFixtureFiles(table) {
 		'',
 	].join('\n')
 	return {files, index}
+}
+
+/** The UI tests' frozen day, read from `UITEST_FROZEN_DATE` so the two cannot drift. */
+export function frozenDay() {
+	let source = readFileSync(new URL('../modules/timer/index.ts', import.meta.url), 'utf8')
+	let day = /UITEST_FROZEN_DATE = '(\d{4}-\d{2}-\d{2})/u.exec(source)?.[1]
+	if (!day) throw new Error('no UITEST_FROZEN_DATE in modules/timer/index.ts')
+	return day
 }

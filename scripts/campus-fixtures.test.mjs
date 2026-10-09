@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict'
 import {describe, it} from 'node:test'
+import {tmpdir} from 'node:os'
 
 import {
 	campusFixtureFiles,
 	completeTecPages,
 	failedKeys,
+	frozenDay,
 	LARGE_BODY_BYTES,
 	mergeCampusRecordings,
 	shiftCalendars,
@@ -505,5 +507,17 @@ describe('completeTecPages, against a feed that misbehaves', () => {
 			Promise.resolve(json({events: [{title: 'x', description: 'x'.repeat(LARGE_BODY_BYTES)}]}))
 		await assert.rejects(completeTecPages(first, big), /--allow-large/u)
 		await completeTecPages(first, big, {allowLarge: true})
+	})
+})
+
+describe('frozenDay', () => {
+	it("reads the UI tests' frozen day, wherever the recorder runs from", () => {
+		let here = process.cwd()
+		process.chdir(tmpdir())
+		try {
+			assert.match(frozenDay(), /^\d{4}-\d{2}-\d{2}$/u)
+		} finally {
+			process.chdir(here)
+		}
 	})
 })
