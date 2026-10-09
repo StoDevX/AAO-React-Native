@@ -7,7 +7,8 @@ import {
 } from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
 
-import {PIN_IMAGE, PIN_NAME_PAINT, pinNameLayout} from './map-pins-layer'
+import {PIN_IMAGE, PIN_NAME_PAINT} from './map-pins-layer'
+import {pinNameLayout} from './lib/pin-name-layout'
 import type {Selection} from './lib/selection'
 
 /// The ring around the selected place's gold dot: wider than a pin's, so

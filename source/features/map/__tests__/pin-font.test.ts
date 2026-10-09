@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 
 import {campusById} from '../../../campuses'
-import {pinNameLayout} from '../map-pins-layer'
+import {pinNameLayout} from '../lib/pin-name-layout'
 
 describe("a pin's name", () => {
 	test("is set in Noto Sans, which St. Olaf's and Carleton's basemaps serve", () => {

@@ -11,6 +11,7 @@ import {
 import * as c from '@frogpond/colors'
 
 import pinImage from '../../../images/map/pin.png'
+import {pinNameLayout} from './lib/pin-name-layout'
 import {pinCollection, pinIds, pressedPin, type MapPins} from './lib/map-pins'
 
 /// More than any cluster on either campus holds, so one call returns them all.
@@ -27,11 +28,6 @@ const PIN_ICON_SIZE = 1
 const PIN_RING = 2
 const CLUSTER_RADIUS = 14
 const PIN_STROKE = 2
-/// St. Olaf's and Carleton's styles serve Noto Sans and nothing else. A font
-/// the style does not serve -- MapLibre's default stack, left unset -- 404s,
-/// and the source's tiles then never finish, so the pins vanish with their
-/// names. A campus whose basemap serves another names it as `labelFont`.
-const PIN_FONT = 'Noto Sans Medium'
 /// A pin's name in the base map's own label colors -- dark text on a light
 /// halo -- rather than the group's color, which is too light to read on the
 /// map's tan. The dot carries the group's color.
@@ -39,17 +35,6 @@ const PIN_TEXT_COLOR = '#2f2a24'
 const PIN_TEXT_HALO = '#f4f1e9'
 const PIN_TEXT_HALO_WIDTH = 1.2
 
-/// A place's name under its dot, shared by the pins and the selected place,
-/// set in `font` or, when the campus names none, Noto Sans.
-export function pinNameLayout(font: string | undefined): SymbolLayerSpecification['layout'] {
-	return {
-		'text-field': ['get', 'name'],
-		'text-font': [font ?? PIN_FONT],
-		'text-size': 12,
-		'text-offset': [0, 0.9],
-		'text-anchor': 'top',
-	}
-}
 export const PIN_NAME_PAINT: SymbolLayerSpecification['paint'] = {
 	'text-color': PIN_TEXT_COLOR,
 	'text-halo-color': PIN_TEXT_HALO,
@@ -127,7 +112,7 @@ export function MapPinsLayer({pins, font, onSelect, onCluster}: Props): React.Re
 					id="map-pins-cluster-counts"
 					layout={{
 						'text-field': ['get', 'point_count_abbreviated'],
-						'text-font': [font ?? PIN_FONT],
+						'text-font': pinNameLayout(font)?.['text-font'],
 						'text-size': 13,
 					}}
 					paint={{'text-color': c.white}}
