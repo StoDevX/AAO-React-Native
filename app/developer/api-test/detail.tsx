@@ -39,7 +39,8 @@ function dataUri(blob: Blob): Promise<string> {
 	})
 }
 
-type DisplayMode = 'raw' | 'parsed'
+/** How a JSON body shows: as the highlighted text it came as, or as a tree to explore. */
+type DisplayMode = 'raw' | 'tree'
 
 export default function APITestDetailPage(): React.ReactNode {
 	// Sent as given: a route's path carries the server's mount prefix, and
@@ -104,6 +105,7 @@ export default function APITestDetailPage(): React.ReactNode {
 	const body = React.useMemo(() => parseBody(data?.body ?? ''), [data])
 
 	let page = React.useRef<HtmlContentHandle>(null)
+	let isJson = data != null && !isErrorStatus(data.status) && body.kind === 'json'
 
 	const jsonViewContent = React.useMemo((): React.ReactNode => {
 		if (body.kind !== 'json') {
@@ -143,24 +145,33 @@ export default function APITestDetailPage(): React.ReactNode {
 						}
 					/>
 				) : null}
-				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					{/* Only the raw JSON is a web page with a find bar of its own. */}
-					{data && !isErrorStatus(data.status) && body.kind === 'json' && displayMode === 'raw' ? (
+				{/* a JSON body is the only one shown more than one way, or searchable */}
+				{isJson ? (
+					<Stack.Toolbar.Menu icon="ellipsis.circle">
+						{displayMode === 'raw' ? (
+							<Stack.Toolbar.MenuAction
+								icon="magnifyingglass"
+								onPress={() => page.current?.findInPage()}
+							>
+								Find on Page
+							</Stack.Toolbar.MenuAction>
+						) : null}
 						<Stack.Toolbar.MenuAction
-							icon="magnifyingglass"
-							onPress={() => page.current?.findInPage()}
+							icon="curlybraces"
+							isOn={displayMode === 'raw'}
+							onPress={() => setDisplayMode('raw')}
 						>
-							Find on Page
+							JSON
 						</Stack.Toolbar.MenuAction>
-					) : null}
-					<Stack.Toolbar.MenuAction
-						icon="curlybraces"
-						isOn={displayMode === 'parsed'}
-						onPress={() => setDisplayMode(displayMode === 'parsed' ? 'raw' : 'parsed')}
-					>
-						Parse as JSON
-					</Stack.Toolbar.MenuAction>
-				</Stack.Toolbar.Menu>
+						<Stack.Toolbar.MenuAction
+							icon="list.bullet.indent"
+							isOn={displayMode === 'tree'}
+							onPress={() => setDisplayMode('tree')}
+						>
+							Tree
+						</Stack.Toolbar.MenuAction>
+					</Stack.Toolbar.Menu>
+				) : null}
 			</Stack.Toolbar>
 
 			<SafeAreaView edges={['left', 'right']} style={styles.container}>
