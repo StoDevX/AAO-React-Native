@@ -74,11 +74,14 @@ describe('the route table', () => {
 	})
 })
 
+// Named by where each tile goes as well as its title: St. Olaf has two
+// Balances tiles, the web page and the disabled native screen, and two tests
+// of the same name read as one test to the flakiness tracker.
 const TILES = CAMPUSES.flatMap((campus) =>
-	campus.home.tiles.map((tile) => [campus.id, tile.title, tile] as const),
+	campus.home.tiles.map((tile) => [campus.id, tile.title, viewTarget(tile), tile] as const),
 )
 
-describe.each(TILES)('%s’s %s tile', (_campus, _title, tile) => {
+describe.each(TILES)('%s’s %s tile, to %s', (_campus, _title, _target, tile) => {
 	test('opens a screen that exists, or a secure web page, or a station', () => {
 		if (tile.type === 'view') {
 			expect(routeExists(viewTarget(tile))).toBe(true)
