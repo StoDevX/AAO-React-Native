@@ -9,7 +9,8 @@ import {Stack, useRouter} from 'expo-router'
 import {DisclosureRow} from '../../../source/components/rows'
 
 import {SearchBar} from '../../../source/components/search-bar'
-import {ServerRoute, serverRoutesOptions} from '../../../source/features/developer/api-test/query'
+import {RouteEntry, serverRoutesOptions} from '../../../source/features/developer/api-test/query'
+import {methodColor} from '../../../source/features/developer/api-test/util/method'
 
 export default function APITestPage(): React.ReactNode {
 	let router = useRouter()
@@ -28,10 +29,10 @@ export default function APITestPage(): React.ReactNode {
 	} = useQuery(serverRoutesOptions)
 
 	const openRoute = React.useCallback(
-		(route: ServerRoute) =>
+		(route: RouteEntry) =>
 			router.navigate({
-				pathname: '/developer/api-test/detail',
-				params: {displayName: route.displayName},
+				pathname: '/developer/api-test/compose',
+				params: {path: route.path, method: route.method, params: route.params.join(',')},
 			}),
 		[router],
 	)
@@ -50,7 +51,7 @@ export default function APITestPage(): React.ReactNode {
 				onSearchButtonPress={(ev) => {
 					router.navigate({
 						pathname: '/developer/api-test/detail',
-						params: {displayName: ev.nativeEvent.text},
+						params: {path: ev.nativeEvent.text.trim()},
 					})
 				}}
 				placeholder="/path/to/uri"
@@ -78,8 +79,9 @@ export default function APITestPage(): React.ReactNode {
 								<Section key={section.title} title={section.title}>
 									{section.data.map((route) => (
 										<DisclosureRow
-											key={route.path}
+											key={route.key}
 											onPress={() => openRoute(route)}
+											tag={{text: route.method, color: methodColor(route.method)}}
 											title={route.displayName}
 										/>
 									))}
