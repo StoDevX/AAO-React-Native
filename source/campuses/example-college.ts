@@ -51,8 +51,11 @@ export const exampleCollege = {
 		credit: {label: 'Wiki Monkeys', url: 'https://college.example/'},
 		// MapLibre's public demo style: the tiles load natively, outside the fixtures.
 		style: {url: 'https://demotiles.maplibre.org/style.json'},
+		venuesByBuilding: true,
+		buildingDirectory: {},
 	},
-	hours: {title: 'Building Hours', reportLabel: 'Wiki Monkeys', showsMapButton: true},
+	// Valley Map has a home tile of its own, as St. Olaf's map does.
+	hours: {title: 'Building Hours', reportLabel: 'Wiki Monkeys', showsMapButton: false},
 	menus,
 	transit: {title: 'Transit'},
 	dictionary: {acceptsSuggestions: false},

@@ -1,0 +1,47 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/spaces/directory
+json:
+  data:
+    - building: glh
+      floors:
+        - name: Ground floor
+          entries:
+            - name: Valley Events
+              room: '021'
+            - name: Troop Communications
+              room: '021'
+        - name: 1st floor
+          entries:
+            - name: Finance Office
+              room: '130'
+            - name: Financial Aid
+              room: '120'
+            - name: Human Resources
+              room: '180'
+            - name: Registrar
+              room: '110'
+            - name: Residence Life
+              room: '148'
+        - name: 2nd floor
+          entries:
+            - name: Admissions
+              room: '220'
+            - name: President's Office
+              room: '260'
+        - name: 3rd floor
+          entries:
+            - name: Languages of the Alps
+              room: '331'
+    - building: tlc
+      floors:
+        - name: Ground floor
+          entries:
+            - name: Post Office
+              room: '007'
+        - name: 1st floor
+          entries:
+            - name: Student Activities
+              room: '108'
+            - name: Wellness Center
+              room: '120'

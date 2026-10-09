@@ -1,0 +1,343 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/map/categories
+json:
+  data:
+    stolaf:
+      groups:
+        - label: Buildings
+          icon: building.2.fill
+          gradient: gray
+          categories:
+            - building
+        - label: Academic
+          icon: graduationcap.fill
+          gradient: gold
+          categories:
+            - academic
+        - label: Dining
+          icon: fork.knife
+          gradient: orange
+          categories:
+            - dining
+        - label: Housing
+          icon: bed.double.fill
+          gradient: indigo
+          categories:
+            - residence-hall
+            - housing
+        - label: Offices
+          icon: briefcase.fill
+          gradient: blue
+          categories:
+            - administrative
+            - admissions
+        - label: Parking
+          icon: parkingsign
+          gradient: light-blue
+          categories:
+            - parking
+            - campus-parking
+            - accessible-parking
+            - visitor-parking
+            - admissions-parking
+        - label: Landmarks
+          icon: building.columns.fill
+          gradient: tan
+          categories:
+            - landmark
+            - memorial
+        - label: Services
+          icon: info.circle.fill
+          gradient: purple
+          categories:
+            - bookstore
+            - student-center
+            - visitor-center
+            - visitor-information
+            - ev-charging
+        - label: Athletics
+          icon: figure.run
+          gradient: red
+          categories:
+            - athletics
+            - field
+        - label: Outdoors
+          icon: tree.fill
+          gradient: green
+          categories:
+            - outdoors
+        - label: Wellness Walks
+          icon: figure.walk
+          gradient: mint
+          categories:
+            - wellness-walk
+      icons:
+        - icon: figure.walk
+          gradient: mint
+          categories:
+            - wellness-walk
+        - icon: figure.hiking
+          gradient: green
+          categories:
+            - trail
+        - icon: water.waves
+          gradient: blue
+          categories:
+            - water
+        - icon: figure.run
+          gradient: red
+          categories:
+            - athletics
+            - field
+        - icon: figure.roll
+          gradient: light-blue
+          categories:
+            - accessible-parking
+        - icon: parkingsign
+          gradient: light-blue
+          categories:
+            - parking
+        - icon: fork.knife
+          gradient: orange
+          categories:
+            - dining
+        - icon: bed.double.fill
+          gradient: indigo
+          categories:
+            - residence-hall
+            - housing
+        - icon: graduationcap.fill
+          gradient: gold
+          categories:
+            - academic
+        - icon: briefcase.fill
+          gradient: blue
+          categories:
+            - administrative
+            - admissions
+        - icon: building.columns.fill
+          gradient: tan
+          categories:
+            - landmark
+            - memorial
+        - icon: info.circle.fill
+          gradient: purple
+          categories:
+            - bookstore
+            - student-center
+            - visitor-center
+            - visitor-information
+            - ev-charging
+        - icon: tree.fill
+          gradient: green
+          categories:
+            - outdoors
+        - icon: building.2.fill
+          gradient: gray
+          categories:
+            - building
+    carleton:
+      groups:
+        - label: Buildings
+          icon: building.2.fill
+          gradient: gray
+          categories:
+            - building
+        - label: Academic
+          icon: graduationcap.fill
+          gradient: gold
+          categories:
+            - academic
+        - label: Housing
+          icon: bed.double.fill
+          gradient: indigo
+          categories:
+            - student-housing
+            - hall
+            - house
+            - employee-housing
+        - label: Offices
+          icon: briefcase.fill
+          gradient: blue
+          categories:
+            - administrative
+        - label: Athletics
+          icon: figure.run
+          gradient: red
+          categories:
+            - athletics
+        - label: Outdoors
+          icon: tree.fill
+          gradient: green
+          categories:
+            - outdoors
+        - label: Parking
+          icon: parkingsign
+          gradient: light-blue
+          categories:
+            - parking
+      icons:
+        - icon: figure.run
+          gradient: red
+          categories:
+            - athletics
+        - icon: parkingsign
+          gradient: light-blue
+          categories:
+            - parking
+        - icon: bed.double.fill
+          gradient: indigo
+          categories:
+            - student-housing
+            - employee-housing
+        - icon: graduationcap.fill
+          gradient: gold
+          categories:
+            - academic
+        - icon: briefcase.fill
+          gradient: blue
+          categories:
+            - administrative
+        - icon: tree.fill
+          gradient: green
+          categories:
+            - outdoors
+        - icon: building.2.fill
+          gradient: gray
+          categories:
+            - building
+    example.college:
+      groups:
+        - label: Buildings
+          icon: building.2.fill
+          gradient: gray
+          categories:
+            - building
+        - label: Academic
+          icon: graduationcap.fill
+          gradient: gold
+          categories:
+            - academic
+        - label: Dining
+          icon: fork.knife
+          gradient: orange
+          categories:
+            - dining
+        - label: Housing
+          icon: bed.double.fill
+          gradient: indigo
+          categories:
+            - residence-hall
+            - housing
+        - label: Offices
+          icon: briefcase.fill
+          gradient: blue
+          categories:
+            - administrative
+            - admissions
+        - label: Parking
+          icon: parkingsign
+          gradient: light-blue
+          categories:
+            - parking
+            - campus-parking
+            - accessible-parking
+            - visitor-parking
+            - admissions-parking
+        - label: Landmarks
+          icon: building.columns.fill
+          gradient: tan
+          categories:
+            - landmark
+            - memorial
+        - label: Services
+          icon: info.circle.fill
+          gradient: purple
+          categories:
+            - bookstore
+            - student-center
+            - visitor-center
+            - visitor-information
+            - ev-charging
+        - label: Athletics
+          icon: figure.run
+          gradient: red
+          categories:
+            - athletics
+            - field
+        - label: Outdoors
+          icon: tree.fill
+          gradient: green
+          categories:
+            - outdoors
+        - label: Wellness Walks
+          icon: figure.walk
+          gradient: mint
+          categories:
+            - wellness-walk
+      icons:
+        - icon: figure.walk
+          gradient: mint
+          categories:
+            - wellness-walk
+        - icon: figure.hiking
+          gradient: green
+          categories:
+            - trail
+        - icon: water.waves
+          gradient: blue
+          categories:
+            - water
+        - icon: figure.run
+          gradient: red
+          categories:
+            - athletics
+            - field
+        - icon: figure.roll
+          gradient: light-blue
+          categories:
+            - accessible-parking
+        - icon: parkingsign
+          gradient: light-blue
+          categories:
+            - parking
+        - icon: fork.knife
+          gradient: orange
+          categories:
+            - dining
+        - icon: bed.double.fill
+          gradient: indigo
+          categories:
+            - residence-hall
+            - housing
+        - icon: graduationcap.fill
+          gradient: gold
+          categories:
+            - academic
+        - icon: briefcase.fill
+          gradient: blue
+          categories:
+            - administrative
+            - admissions
+        - icon: building.columns.fill
+          gradient: tan
+          categories:
+            - landmark
+            - memorial
+        - icon: info.circle.fill
+          gradient: purple
+          categories:
+            - bookstore
+            - student-center
+            - visitor-center
+            - visitor-information
+            - ev-charging
+        - icon: tree.fill
+          gradient: green
+          categories:
+            - outdoors
+        - icon: building.2.fill
+          gradient: gray
+          categories:
+            - building

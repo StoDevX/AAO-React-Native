@@ -1,0 +1,78 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"results": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"buildingabbr": {
+						"type": "string"
+					},
+					"buildingname": {
+						"type": "string"
+					},
+					"buildingroom": {
+						"type": [
+							"string",
+							"null"
+						]
+					},
+					"email": {
+						"type": [
+							"string",
+							"null"
+						]
+					},
+					"extension": {
+						"type": [
+							"number",
+							"null"
+						]
+					},
+					"fax": {
+						"type": [
+							"null",
+							"string"
+						]
+					},
+					"headcount": {
+						"type": "number"
+					},
+					"name": {
+						"type": "string"
+					},
+					"text": {
+						"type": [
+							"null",
+							"string"
+						]
+					},
+					"website": {
+						"type": [
+							"null",
+							"string"
+						]
+					}
+				},
+				"required": [
+					"buildingabbr",
+					"buildingname",
+					"buildingroom",
+					"email",
+					"extension",
+					"fax",
+					"headcount",
+					"name",
+					"text",
+					"website"
+				]
+			}
+		}
+	},
+	"required": [
+		"results"
+	]
+}

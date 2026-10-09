@@ -4,23 +4,26 @@ import XCTest
 /// exist: every one of these assertions is about a native control's state,
 /// hit target, or presentation, and Jest can see none of those.
 ///
-/// Menus is the vehicle. The Pause's menu comes from this repository's own
-/// `data/pause-menu.yaml`, so its ten stations are fixed rather than whatever
-/// is being served today. Stations asks for a menu outright, so its count does
-/// not decide its shape.
+/// Menus is the vehicle: Treeline Commons, whose menu is Wiki Monkeys'
+/// fixture, so its stations are fixed rather than whatever is being served
+/// today. Stations asks for a menu outright, so its count does not decide its
+/// shape.
+/// Tags: campus:example.college
 class ModuleFilterTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	private typealias Keys = TestIdentifiers.Filter.MenusKeys
 
 	// MARK: - The menu
 
-	/// The Pause's two kinds of trigger, one after the other: a toggle, then a
+	/// The menu's two kinds of trigger, one after the other: a toggle, then a
 	/// menu.
 	///
 	/// A toggle has one state to change, so its trigger is the control: the tap
 	/// flips it where it stands. Nothing is presented, which is the half Jest
 	/// cannot see -- a mocked render cannot tell a control that changed state
 	/// from one that opened a menu over the screen. It is flipped back before
-	/// the menu, so Specials Only is as the Pause left it.
+	/// the menu, so Specials Only is as the menu opened with it.
 	///
 	/// Then the other presentation: open the pull-down menu and tick two
 	/// stations in one opening. The trigger then reads as selected, which it
@@ -29,7 +32,6 @@ class ModuleFilterTests: UITestCaseUnbooted {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
-			.openCafe(TestIdentifiers.Menus.pause)
 			.revealFilters()
 
 		let menus = MenusScreen(app: app)
@@ -37,7 +39,7 @@ class ModuleFilterTests: UITestCaseUnbooted {
 		let pizza = TestIdentifiers.Menus.pizzaStation
 
 		// The toggle is built on; a meal with no specials of its own would
-		// force it off and grey it out. The Pause's current meal has them.
+		// force it off and grey it out. Treeline Commons' Lunch has them.
 		filters.verifyTrigger(Keys.specials, isSelected: true)
 
 		filters.tapTrigger(Keys.specials)

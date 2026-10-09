@@ -1,0 +1,265 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/spaces/hours
+json:
+  data:
+    - building: basecampcafe
+      category: Food
+      kind: space
+      name: Basecamp Café
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 7:30am
+              to: 8:00pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+            - from: 9:00am
+              to: 8:00pm
+              days:
+                - Sa
+                - Su
+    - building: treelinediningroom
+      category: Food
+      kind: space
+      name: Treeline Dining Room
+      breakSchedule: {}
+      schedule:
+        - title: Breakfast
+          hours:
+            - from: 7:15am
+              to: 9:45am
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+            - from: 8:00am
+              to: 9:30am
+              days:
+                - Sa
+            - from: 9:00am
+              to: 10:30am
+              days:
+                - Su
+        - title: Lunch
+          hours:
+            - from: 10:30am
+              to: 2:00pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+            - from: 11:00am
+              to: 1:30pm
+              days:
+                - Sa
+            - from: 10:30am
+              to: 1:30pm
+              days:
+                - Su
+        - title: Dinner
+          hours:
+            - from: 4:30pm
+              to: 8:00pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+            - from: 4:30pm
+              to: 7:30pm
+              days:
+                - Fr
+                - Sa
+                - Su
+    - building: themonkeyspause
+      category: Food
+      kind: space
+      name: The Monkey's Pause
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 7:00pm
+              to: 12:00am
+              days:
+                - Su
+                - Mo
+                - Tu
+                - We
+                - Th
+            - from: 7:00pm
+              to: 2:00am
+              days:
+                - Fr
+                - Sa
+    - building: thesummitroom
+      category: Food
+      kind: space
+      name: The Summit Room
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 11:00am
+              to: 1:30pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+    - building: wikimonkeysbookstore
+      category: Supplies and Books
+      kind: space
+      name: Wiki Monkeys Bookstore
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 9:00am
+              to: 6:00pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+            - from: 10:00am
+              to: 4:00pm
+              days:
+                - Sa
+    - building: tlc
+      category: Mail and Packages
+      kind: office
+      name: Post Office
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 10:00am
+              to: 4:30pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+    - building: sum
+      category: Libraries
+      kind: building
+      name: Summit Library
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 7:30am
+              to: 2:00am
+              days:
+                - Su
+                - Mo
+                - Tu
+                - We
+                - Th
+            - from: 7:30am
+              to: 10:00pm
+              days:
+                - Fr
+            - from: 9:00am
+              to: 10:00pm
+              days:
+                - Sa
+    - building: sum
+      category: Help and Support
+      kind: office
+      name: Basecamp Help Desk
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 8:00am
+              to: 5:00pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+    - building: skc
+      category: Gym
+      kind: building
+      name: Skyline Athletic Center
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 6:00am
+              to: 10:00pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+            - from: 9:00am
+              to: 8:00pm
+              days:
+                - Sa
+                - Su
+    - building: tlc
+      category: Health and Wellness
+      kind: office
+      name: Valley Health Service
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 8:00am
+              to: 4:30pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+    - building: glh
+      category: Offices
+      kind: office
+      name: Financial Aid
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 8:00am
+              to: 5:00pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr
+    - building: glh
+      category: Offices
+      kind: office
+      name: Registrar
+      breakSchedule: {}
+      schedule:
+        - title: Hours
+          hours:
+            - from: 8:00am
+              to: 4:30pm
+              days:
+                - Mo
+                - Tu
+                - We
+                - Th
+                - Fr

@@ -44,7 +44,7 @@ json:
         https://frogpond.tech/ns/id: wiki-monkeys
         https://frogpond.tech/ns/campus: example.college
     - rel: https://frogpond.tech/rel/map-categories
-      href: map/named/wiki-monkeys/categories
+      href: map/categories
       type: application/vnd.frogpond.map-categories+json
       titles:
         und: Map Categories

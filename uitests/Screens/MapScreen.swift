@@ -65,18 +65,18 @@ struct MapScreen: Screen {
 		searchField
 	}
 
-	/// St. Olaf's map is a home tile of its own, pushing `/map?campus=edu.stolaf`.
+	/// The active campus's map.
 	@discardableResult
 	func navigate() -> Self {
 		// The sheet, not the map: MapLibre draws nothing XCUITest can see.
-		open(route: "/map?campus=edu.stolaf", mountedWhen: mounted, timeout: 60)
+		open(route: "/map", mountedWhen: mounted, timeout: 60)
 	}
 
-	/// St. Olaf's map, opened by a link on the card of the place whose feature
-	/// id is `id`, skipping the search a user would type.
+	/// The active campus's map, opened by a link on the card of the place whose
+	/// feature id is `id`, skipping the search a user would type.
 	@discardableResult
 	func navigate(toPlace id: String) -> Self {
-		open(route: "/map?campus=edu.stolaf&place=\(id)", mountedWhen: mounted, timeout: 60)
+		open(route: "/map?place=\(id)", mountedWhen: mounted, timeout: 60)
 		XCTAssertTrue(closeButton.waitUntilExists(timeout: 30), "The link should open \(id)'s card")
 		return self
 	}
@@ -184,9 +184,9 @@ struct MapScreen: Screen {
 	}
 
 	/// A building's row in the sheet's list: the name alone, or the name and
-	/// then its abbreviation -- a building carrying one reads as "Buntrock
-	/// Commons, BC". Not any label beginning with the name, which would take
-	/// Baseball Pond Loop's row for Baseball Pond's.
+	/// then its abbreviation -- a building carrying one reads as "Treeline
+	/// Commons, TLC". Not any label beginning with the name, which would take
+	/// Baseball Tarn Loop's row for Baseball Tarn's.
 	private func row(named name: String) -> XCUIElement {
 		app.buttons.matching(
 			NSPredicate(format: "label == %@ OR label BEGINSWITH %@", name, "\(name), ")

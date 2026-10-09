@@ -1,10 +1,7 @@
 import {clientFor} from '@frogpond/api'
-import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {campusById, type CampusId} from '../../campuses'
 import {sectionServer} from '../campus/section-server'
-import {UITEST_MAPS} from './__fixtures__/maps'
-import {uiTestFixture} from '../../lib/ui-test-fixture'
 import type {Building, Feature, FeatureCollection} from './types'
 
 export const keys = {
@@ -24,13 +21,6 @@ export const mapDataOptions = (campus: CampusId) =>
 	queryOptions({
 		queryKey: keys.all(campus),
 		queryFn: async ({signal}): Promise<Array<Feature<Building>>> => {
-			if (servesBundledFixtures) {
-				let fixture = UITEST_MAPS[campus]
-				if (!fixture) {
-					throw new Error(`No UI-test map is bundled for ${campus}`)
-				}
-				return uiTestFixture(`${campus}'s map in __fixtures__/maps.ts`, fixture).features
-			}
 			let response = await clientFor(sectionServer(campus, campusById(campus).map))
 				.get('map/geojson', {signal})
 				.json<FeatureCollection<Building>>()

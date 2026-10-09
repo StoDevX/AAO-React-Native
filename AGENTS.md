@@ -448,19 +448,11 @@ still writes. Take each skipped value from the new files into the subclass's
 
 Tests naming no campus keep the per-feature fixtures below.
 
-Under UI tests the map reads copies of each campus's `map/geojson` from
-`source/features/map/__fixtures__/`, not ccc-server, so a data publish cannot
-move what the map tests measure. Refresh them on purpose, when a test needs a
-place or a field the copies lack:
-
-```bash
-mise run update-map-fixtures
-```
-
-It prints the places each campus added and removed, and how many changed, and
-writes nothing when any campus's response has no places. The copies are written
-with sorted keys, so the diff shows only the data that moved. Rerun the map UI
-tests after a refresh: a moved label point can change what a tap hits.
+The map's UI tests run on Wiki Monkeys, whose map is a fixture
+(`source/features/campus/__fixtures__/example.college/GET-map-geojson.yaml`):
+St. Olaf's layout, moved to the valley and renamed, so a data publish cannot
+move what they measure. A moved footprint or label point can change what a
+tap hits, so rerun the map UI tests after editing it.
 
 Olaf Messenger's fetches are answered from
 `source/features/mess/__fixtures__/mess.json` under UI tests, and a fetch with

@@ -22,6 +22,11 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	{pattern: 'GET {server}/sources', schema: 'sources'},
 	{pattern: 'GET {server}/contacts', schema: 'contacts'},
 	{pattern: 'GET {server}/dictionary', schema: 'dictionary'},
+	{
+		pattern: 'GET {server}/directory/departments',
+		schema: 'directory-departments',
+		live: ['https://stolaf.frogpond.tech/v1/directory/departments'],
+	},
 	{pattern: 'GET {server}/faqs', schema: 'faqs'},
 	{pattern: 'GET {server}/food/named/cafe/:id', schema: 'food-cafe'},
 	{pattern: 'GET {server}/food/named/menu/:id', schema: 'food-menu'},

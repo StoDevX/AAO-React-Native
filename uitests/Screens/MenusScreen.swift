@@ -92,13 +92,4 @@ struct MenusScreen: Screen {
 			"at least one food row should be visible")
 		return self
 	}
-
-	/// Switch to another St. Olaf cafe's tab and wait for its menu to draw.
-	@discardableResult
-	func openCafe(_ cafe: String) -> Self {
-		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitUntilExists(timeout: 30), "\(cafe) tab should be visible")
-		tab.tap()
-		return verifyFoodRowsAppear()
-	}
 }
