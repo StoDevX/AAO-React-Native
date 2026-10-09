@@ -288,7 +288,8 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	if (searchedId && openedId !== searchedId) {
 		setSearchedId(null)
 	}
-	let shownPins = onlyPin(pins, searchedId)
+	// Memoized, so the pins' layer does not rebuild its source every render.
+	let shownPins = React.useMemo(() => onlyPin(pins, searchedId), [pins, searchedId])
 
 	// Frames what a Framing asks for in the map above the sheet and below the
 	// header: a box fitted, one place eased to at the selection zoom.
