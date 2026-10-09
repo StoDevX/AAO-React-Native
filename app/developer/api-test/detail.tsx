@@ -11,7 +11,7 @@ import {clientFor} from '@frogpond/api'
 import {HtmlContent, type HtmlContentHandle} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
-import {DebugView} from '../../../source/features/developer/debug'
+import {JsonTree} from '../../../source/features/developer/api-test/json-tree'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
 import {useCampusId} from '../../../source/features/campus/store'
 import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
@@ -195,7 +195,7 @@ export default function APITestDetailPage(): React.ReactNode {
 				) : displayMode === 'raw' ? (
 					jsonViewContent
 				) : (
-					<DebugView state={body.value} />
+					<JsonTree value={body.value} />
 				)}
 			</SafeAreaView>
 		</>
