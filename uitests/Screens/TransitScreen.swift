@@ -14,7 +14,7 @@ struct TransitScreen: Screen {
 	}
 
 	/// A line's widget header, which carries the line name and what it is
-	/// doing -- "Express Bus, Running" -- as one label.
+	/// doing -- "Switchback Shuttle, Running" -- as one label.
 	private func lineHeader(_ line: String) -> XCUIElement {
 		app.elementWithLabel(startingWith: line)
 	}
@@ -28,7 +28,7 @@ struct TransitScreen: Screen {
 	/// Press a stop cell in a widget's strip. Every cell opens the line's full
 	/// timetable, the same as the header, so this reaches the sheet by the
 	/// short way. The cell's label is the stop name and its departure --
-	/// "St. Olaf College, 1:05 PM" -- so the name is a prefix.
+	/// "Treeline Commons, 1:05 PM" -- so the name is a prefix.
 	@discardableResult
 	func openTimetableFromStrip(_ stop: String) -> Self {
 		tap(app.elementWithLabel(startingWith: stop), until: dayMenu, named: "\(stop) in the strip")

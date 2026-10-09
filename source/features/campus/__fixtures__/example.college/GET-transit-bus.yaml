@@ -1,0 +1,121 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/transit/bus
+json:
+  data:
+    - line: Switchback Shuttle
+      timezone: America/Chicago
+      notice: Climbs the valley road between campus and the village. Free with a Wiki Monkeys ID.
+      colors:
+        bar: rgb(124, 176, 214)
+        dot: rgb(26, 74, 112)
+      schedules:
+        - days:
+            - Mo
+            - Tu
+            - We
+            - Th
+            - Fr
+            - Sa
+          coordinates:
+            Treeline Commons:
+              - 61.1802377
+              - 10.420868
+            Summit Library:
+              - 61.1771923
+              - 10.445185
+            Glacier Hall:
+              - 61.1793158
+              - 10.448113
+            Valley Co-op:
+              - 61.175187
+              - 10.442027
+            Village Market:
+              - 61.1607269
+              - 10.417206
+            Old Lodge:
+              - 61.1738864
+              - 10.4420999
+          stops:
+            - Treeline Commons
+            - Summit Library
+            - Glacier Hall
+            - Valley Co-op
+            - Village Market
+            - Old Lodge
+            - Glacier Hall
+            - Treeline Commons
+          times:
+            - - 3:00pm
+              - 3:08pm
+              - 3:12pm
+              - 3:16pm
+              - 3:26pm
+              - 3:36pm
+              - 3:41pm
+              - 3:50pm
+            - - 4:00pm
+              - 4:08pm
+              - 4:12pm
+              - 4:16pm
+              - 4:26pm
+              - 4:36pm
+              - 4:41pm
+              - 4:50pm
+            - - 5:00pm
+              - 5:08pm
+              - 5:12pm
+              - 5:16pm
+              - 5:26pm
+              - 5:36pm
+              - 5:41pm
+              - 5:50pm
+            - - 6:00pm
+              - 6:08pm
+              - 6:12pm
+              - 6:16pm
+              - 6:26pm
+              - 6:36pm
+              - 6:41pm
+              - 6:50pm
+            - - 7:00pm
+              - 7:08pm
+              - 7:12pm
+              - 7:16pm
+              - 7:26pm
+              - 7:36pm
+              - 7:41pm
+              - 7:50pm
+            - - 8:00pm
+              - 8:08pm
+              - 8:12pm
+              - 8:16pm
+              - 8:26pm
+              - 8:36pm
+              - 8:41pm
+              - 8:50pm
+            - - 9:00pm
+              - 9:08pm
+              - 9:12pm
+              - 9:16pm
+              - 9:26pm
+              - 9:36pm
+              - 9:41pm
+              - 9:50pm
+          closures:
+            - date: '2026-09-07'
+              name: Labor Day
+            - date: '2026-11-26'
+              name: Thanksgiving
+            - date: '2026-11-27'
+              name: Day after Thanksgiving
+            - date: '2026-12-25'
+              name: Christmas Day
+            - date: '2027-01-01'
+              name: New Years Day
+            - date: '2027-03-28'
+              name: Easter Sunday
+            - date: '2027-05-31'
+              name: Memorial Day
+            - date: '2027-07-04'
+              name: Independence Day

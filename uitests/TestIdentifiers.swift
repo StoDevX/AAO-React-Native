@@ -824,22 +824,21 @@ struct TestIdentifiers {
 	enum Transit {
 		/// The screen's title, in app/_layout.tsx.
 		static let title = "Transit"
-		/// The line every UI test drives, and a stop it always calls at. The
-		/// stop is the college itself, so it is not going to be renamed out
-		/// from under this test.
-		static let aLine = "Express Bus"
-		static let aStop = "St. Olaf College"
-		/// A stop several places past `aStop` on Express Bus's route (see
-		/// `docs/bus-times.json`), used to prove a strip swipe actually moved the
+		/// The line every UI test drives, Wiki Monkeys' only one, and a stop it
+		/// always calls at.
+		static let aLine = "Switchback Shuttle"
+		static let aStop = "Treeline Commons"
+		/// A stop several places past `aStop` on the Switchback Shuttle's route
+		/// (Wiki Monkeys' `GET-transit-bus.yaml`), used to prove a strip swipe actually moved the
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
 		/// visits twice (the loop starts and ends there), this one appears only
 		/// once, so its presence unambiguously means the strip scrolled forward
 		/// rather than showing a second, later occurrence of the start. It is the
 		/// sixth of eight stops: past the four and a half cells the strip shows
 		/// when it opens on the first stop, and still in view once two swipes
-		/// have carried the strip to its end -- which the fifth, Cub/Target, is
-		/// not. No other line calls here.
-		static let aStopFartherAlongTheRoute = "Wells Fargo"
+		/// have carried the strip to its end -- which the fifth, Village Market,
+		/// is not.
+		static let aStopFartherAlongTheRoute = "Old Lodge"
 		/// The horizontal strip of stops inside a line's widget, which a swipe
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the
@@ -850,15 +849,15 @@ struct TestIdentifiers {
 		/// The navigation bar's day menu, labelled by the day it is showing.
 		/// `Today` when the screens are following the clock.
 		static let dayMenuDefaultLabel = "Today"
-		/// The day the day-picker test picks. Sunday, because Express Bus keeps
-		/// one timetable Monday to Saturday (`docs/bus-times.json`), so Sunday
+		/// The day the day-picker test picks. Sunday, because the shuttle keeps
+		/// one timetable Monday to Saturday, so Sunday
 		/// is the one pick that draws nothing where the frozen Saturday clock
 		/// draws rows.
 		static let aDay = "Sunday"
-		/// A stop Express Bus calls at once per round, so its row lists times
+		/// A stop the shuttle calls at once per round, so its row lists times
 		/// wherever the line runs. Unlike `aStop`, which the route visits twice
 		/// and ends the round on, with no departure to list.
-		static let aStopOnEveryRunningDay = "Food Co-op"
+		static let aStopOnEveryRunningDay = "Valley Co-op"
 		/// The empty state that replaces the timetable on a day the line does not
 		/// run. A prefix: a holiday appends its name. Matches `BusLine` in
 		/// `source/features/transit/bus/line.tsx`.
