@@ -40,12 +40,13 @@ void applySavedServers()
 
 // A UI test that names a campus reads that campus's recordings for every
 // request. Otherwise a campus with no server of its own (Wiki Monkeys) is
-// answered from its fixtures while it is active, and switching to or from it
-// drops whatever the other campus's servers answered.
+// answered from its fixtures while it is active, and only then; a request made
+// before the saved campus loads waits for it. Switching to or from such a
+// campus drops whatever the other campus's servers answered.
 if (typeof uiTestCampus === 'string') {
 	installCampusFixtures(uiTestCampus, fixtureMode)
 } else {
-	installFixtureServer(() => useCampusStore.getState().campus)
+	installFixtureServer(useCampusStore)
 	useCampusStore.subscribe((state, prev) => {
 		if (fixtureCampusChanged(prev.campus, state.campus)) {
 			void queryClient.invalidateQueries()
