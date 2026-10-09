@@ -6,7 +6,11 @@ import XCTest
 ///
 /// At the largest text sizes the header fills the first screen, so each part
 /// is scrolled to before it is checked, and only ever downwards.
+///
+/// Tags: campus:example.college
 class ModuleAboutTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	/// The version, then the story's timeline, which opens on its newest era
 	/// and follows a swipe to the next one.
 	func testTheStoryOpensOnItsNewestEraAndSwipesToTheNext() throws {

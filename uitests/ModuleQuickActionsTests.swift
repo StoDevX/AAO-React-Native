@@ -1,6 +1,9 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleQuickActionsTests: UITestCase {
+	override class var campus: Campus? { .example }
+
 	func testPicksAndUnpicksQuickActions() throws {
 		let picker = QuickActionsScreen(app: app).navigate()
 		for name in TestIdentifiers.QuickActions.defaults {

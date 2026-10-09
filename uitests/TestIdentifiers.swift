@@ -581,11 +581,11 @@ struct TestIdentifiers {
 		/// The picker's accessibility identifier, set in app/customize/quick-actions.tsx.
 		static let screen = "screen-quick-actions"
 		static let reset = "Reset to Defaults"
-		/// DEFAULT_QUICK_ACTIONS in source/features/quick-actions/destinations.ts.
-		static let defaults = ["Stav Menu", "Cage Menu", "Olaf Messenger", "Transit"]
+		/// Wiki Monkeys' `quickActions.defaults`, in source/campuses/example-college.ts.
+		static let defaults = ["Menus", "Building Hours", "Calendar", "Valley Map"]
 		/// One of `defaults`, and an action outside them.
-		static let aDefault = "Transit"
-		static let anExtra = "Calendar"
+		static let aDefault = "Valley Map"
+		static let anExtra = "Transit"
 	}
 
 	// MARK: - Unsaved changes
@@ -664,12 +664,12 @@ struct TestIdentifiers {
 		static let version = "App Version"
 		/// A section header in app/about/index.tsx.
 		static let storyHeading = "Our story"
-		/// The headings of the first two timeline cards, from source/features/about/timeline.ts.
-		static let firstEra = "🏡 October 2017 — Today"
-		static let secondEra = "🧱 July 2016 — September 2017"
-		/// The credits cards' headings, from app/about/index.tsx.
-		static let contributors = "Contributors"
-		static let acknowledgements = "Acknowledgements"
+		/// The headings of Wiki Monkeys' first two eras, from source/campuses/example-college/about.ts.
+		static let firstEra = "🏔 2026 — Today"
+		static let secondEra = "🚡 1952 — 2025"
+		/// Wiki Monkeys' two credits cards' headings, from the same file.
+		static let contributors = "The Troop"
+		static let acknowledgements = "With Thanks To"
 		static let privacy = "Privacy"
 		static let legal = "Legal"
 	}
