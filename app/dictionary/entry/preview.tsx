@@ -11,6 +11,7 @@ import {normalizeDraft, startDraft} from '../../../source/features/dictionary/li
 import {submitReport} from '../../../source/features/dictionary/report/submit'
 import {useDictionaryDraftStore} from '../../../source/features/dictionary/store'
 import {track} from '../../../source/features/telemetry/track'
+import {useCampusSection} from '../../../source/features/campus/store'
 
 const styles = StyleSheet.create({
 	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
@@ -18,6 +19,7 @@ const styles = StyleSheet.create({
 
 export default function DictionaryPreviewPage(): React.ReactNode {
 	let {original, draft, markSubmitted} = useDictionaryDraftStore()
+	let {supportEmail} = useCampusSection('branding')
 
 	// Both sides go through `startDraft`, which numbers a given entry the same
 	// way every time -- so the diff can match senses by id rather than guess.
@@ -58,7 +60,7 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 		// draft survives and the guard stays armed over a report that never
 		// went out.
 		try {
-			submitReport(normalizeDraft(startDraft(original)), normalizeDraft(draft))
+			submitReport(normalizeDraft(startDraft(original)), normalizeDraft(draft), supportEmail)
 		} catch {
 			Alert.alert(
 				'Could not send the report',
@@ -69,7 +71,7 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 
 		markSubmitted()
 		track({name: 'dictionary.edit.submit', attributes: {}})
-	}, [draft, markSubmitted, original])
+	}, [draft, markSubmitted, original, supportEmail])
 
 	if (!diff) {
 		return <NoticeView systemImage="character.book.closed" title="Nothing to Preview" />

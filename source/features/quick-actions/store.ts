@@ -4,11 +4,12 @@ import {persist, createJSONStorage} from 'zustand/middleware'
 
 import type {QuickActionId} from '../telemetry/catalog'
 import {track} from '../telemetry/track'
-import type {Campus} from '../campus/store'
+import type {CampusDefinition} from '../../campuses'
 import {
 	DEFAULT_CARLETON_QUICK_ACTIONS,
 	DEFAULT_QUICK_ACTIONS,
 	defaultQuickActions,
+	isStOlafsQuickActions,
 	MAX_QUICK_ACTIONS,
 	resolveQuickActions,
 } from './destinations'
@@ -22,20 +23,20 @@ type QuickActionsStore = {
 	 */
 	carletonQuickActions: string[]
 	/** Pick `id` on `campus`, or unpick it if already picked. Does nothing when every slot is taken. */
-	toggleQuickAction: (id: string, campus?: Campus) => void
-	resetQuickActions: (campus?: Campus) => void
+	toggleQuickAction: (id: string, campus: CampusDefinition) => void
+	resetQuickActions: (campus: CampusDefinition) => void
 }
 
 /** The ids picked on `campus`. */
 export function pickedFor(
 	state: Pick<QuickActionsStore, 'quickActions' | 'carletonQuickActions'>,
-	campus: Campus,
+	campus: CampusDefinition,
 ): string[] {
-	return campus === 'carleton' ? state.carletonQuickActions : state.quickActions
+	return isStOlafsQuickActions(campus) ? state.quickActions : state.carletonQuickActions
 }
 
-function setPicked(campus: Campus, ids: string[]): Partial<QuickActionsStore> {
-	return campus === 'carleton' ? {carletonQuickActions: ids} : {quickActions: ids}
+function setPicked(campus: CampusDefinition, ids: string[]): Partial<QuickActionsStore> {
+	return isStOlafsQuickActions(campus) ? {quickActions: ids} : {carletonQuickActions: ids}
 }
 
 export const useQuickActionsStore = create<QuickActionsStore>()(
@@ -43,7 +44,7 @@ export const useQuickActionsStore = create<QuickActionsStore>()(
 		(set, get) => ({
 			quickActions: DEFAULT_QUICK_ACTIONS,
 			carletonQuickActions: DEFAULT_CARLETON_QUICK_ACTIONS,
-			toggleQuickAction: (id, campus = 'stolaf') => {
+			toggleQuickAction: (id, campus) => {
 				// Count only ids that still name a destination, so one left
 				// behind by a renamed tile gives its slot back.
 				let current = resolveQuickActions(pickedFor(get(), campus), campus).map((d) => d.id)
@@ -63,7 +64,7 @@ export const useQuickActionsStore = create<QuickActionsStore>()(
 				set(setPicked(campus, [...current, id]))
 				reportToggle(id, 'add')
 			},
-			resetQuickActions: (campus = 'stolaf') => set(setPicked(campus, defaultQuickActions(campus))),
+			resetQuickActions: (campus) => set(setPicked(campus, defaultQuickActions(campus))),
 		}),
 		{
 			name: 'quick-actions',

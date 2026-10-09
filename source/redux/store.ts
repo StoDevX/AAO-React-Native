@@ -21,8 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const persistConfig = {
 	key: 'root',
-	// Bumped for the Carleton calendar migration -- see ./migrations.
-	version: 4,
+	// Bumped to drop 2.9's favourites, keyed by old campus ids -- see ./migrations.
+	version: 5,
 	migrate: createMigrate(migrations),
 	storage: AsyncStorage,
 }

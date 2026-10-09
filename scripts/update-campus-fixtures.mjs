@@ -2,7 +2,7 @@
 
 // Re-records a campus's UI-test fixtures from a run of its campus tests: they
 // run against the live servers with --record-fixtures, and every response
-// becomes a file in source/features/campus/__fixtures__/<domain>/. Needs a booted
+// becomes a file in source/features/campus/__fixtures__/<campus id>/. Needs a booted
 // simulator, and Metro or an embedded bundle, as any UI test run.
 
 import {existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
@@ -25,25 +25,25 @@ import {
 	testWithoutBuilding,
 } from './uitest-run.mjs'
 
-/** Each campus's smoke-test class, by domain. */
-const SMOKE_CLASSES = {'stolaf.edu': 'StOlafSmokeTests', 'carleton.edu': 'CarletonSmokeTests'}
+/** Each campus's smoke-test class, by reverse-DNS id. */
+const SMOKE_CLASSES = {'edu.stolaf': 'StOlafSmokeTests', 'edu.carleton': 'CarletonSmokeTests'}
 
 let args = process.argv.slice(2)
 let allowLarge = args.includes('--allow-large')
-let domain = args.find((arg) => !arg.startsWith('--'))
-if (!domain || !(domain in SMOKE_CLASSES)) {
+let campus = args.find((arg) => !arg.startsWith('--'))
+if (!campus || !(campus in SMOKE_CLASSES)) {
 	console.error(
 		`usage: update-campus-fixtures <${Object.keys(SMOKE_CLASSES).join('|')}> [--allow-large]`,
 	)
 	process.exit(1)
 }
 
-const FIXTURES = new URL(`../source/features/campus/__fixtures__/${domain}/`, import.meta.url)
+const FIXTURES = new URL(`../source/features/campus/__fixtures__/${campus}/`, import.meta.url)
 	.pathname
 const RECORDING = 'Documents/campus-fixture-recording.jsonl'
 
 let device = bootedSimulator()
-console.log(`recording ${domain} on ${device.name} (${device.udid})`)
+console.log(`recording ${campus} on ${device.name} (${device.udid})`)
 
 /** The recording's path: asked for each time, since the test run reinstalls the app. */
 function recordingPath() {
@@ -62,13 +62,13 @@ buildForTesting(device.udid)
 testWithoutBuilding({
 	udid: device.udid,
 	xctestrun: findXctestrun(),
-	only: [`AllAboutAnythingUITests/${SMOKE_CLASSES[domain]}`],
+	only: [`AllAboutAnythingUITests/${SMOKE_CLASSES[campus]}`],
 	env: {TEST_RUNNER_AAO_RECORD_FIXTURES: '1'},
 })
 
 let recording = recordingPath()
 if (!existsSync(recording)) {
-	throw new Error(`nothing was recorded; ${domain}'s fixtures are left as they were`)
+	throw new Error(`nothing was recorded; ${campus}'s fixtures are left as they were`)
 }
 /** A page of a feed, fetched live, as a recording holds it. */
 async function fetchPage(url) {
@@ -103,7 +103,7 @@ mkdirSync(FIXTURES, {recursive: true})
 let {files, index} = campusFixtureFiles(table)
 for (let [name, text] of Object.entries(files)) writeFileSync(join(FIXTURES, name), text)
 writeFileSync(join(FIXTURES, 'index.ts'), index)
-console.log(`${domain}: ${Object.keys(before).length} → ${Object.keys(table).length} recordings`)
+console.log(`${campus}: ${Object.keys(before).length} → ${Object.keys(table).length} recordings`)
 if (added.length) console.log(`  added:\n    ${added.join('\n    ')}`)
 if (removed.length) console.log(`  removed:\n    ${removed.join('\n    ')}`)
 let failed = failedKeys(table)

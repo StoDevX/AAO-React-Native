@@ -10,7 +10,8 @@ import {z} from 'zod'
 
 import {queryClient} from '../../init/tanstack-query'
 import mapCategoriesData from '../../../docs/map-categories.json'
-import type {MapCategoryTable} from './lib/category-groups'
+import {campusIdFromPublished} from '../../campuses'
+import type {CampusMapCategories, MapCategoryTable} from './lib/category-groups'
 
 const MAP_CATEGORIES_TYPE = 'application/vnd.frogpond.map-categories+json'
 
@@ -31,12 +32,36 @@ const CampusSchema = z.object({
 	icons: z.array(MapIconEntrySchema),
 })
 
+/// Each campus's entry is checked only for a campus this build has, so a file
+/// naming a newer campus, in whatever shape, cannot fail the whole table.
 const PublishedMapCategoriesSchema = z.object({
-	data: z.object({stolaf: CampusSchema, carleton: CampusSchema}),
+	data: z.record(z.string(), z.unknown()),
 })
 
+/// The table by campus id, or none if any known campus's entry is unreadable.
+/// The published file still keys campuses as 2.9's release candidates read
+/// them (`stolaf`, `carleton`); a table this build cached is keyed by id.
+/// `campusIdFromPublished` reads both.
+function byCampusId(data: Record<string, unknown>): MapCategoryTable | string {
+	let table: MapCategoryTable = {}
+	for (let [key, entry] of Object.entries(data)) {
+		let campus = campusIdFromPublished(key)
+		if (!campus) {
+			continue
+		}
+		let parsed = CampusSchema.safeParse(entry)
+		if (!parsed.success) {
+			return `${key}: ${parsed.error.message}`
+		}
+		// An icon is checked as a string; whether it names an SF Symbol cannot be.
+		table[campus] = parsed.data as CampusMapCategories
+	}
+	return table
+}
+
 /// This checkout's copy, which UI tests naming no campus read in place of the published one.
-const UITEST_MAP_CATEGORIES = (mapCategoriesData as {data: MapCategoryTable}).data
+const UITEST_MAP_CATEGORIES: MapCategoryTable =
+	readableMapCategories((mapCategoriesData as {data: unknown}).data) ?? {}
 
 export const keys = {
 	all: ['map-categories'] as const,
@@ -68,8 +93,11 @@ async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapC
 	if (!parsed.success) {
 		throw new UnreadableMapCategoriesError(parsed.error.message)
 	}
-	// An icon is checked as a string; whether it names an SF Symbol cannot be.
-	return parsed.data.data as MapCategoryTable
+	let table = byCampusId(parsed.data.data)
+	if (typeof table === 'string') {
+		throw new UnreadableMapCategoriesError(table)
+	}
+	return table
 }
 
 /// A published file of a shape this build cannot read. It fails the same way
@@ -86,7 +114,11 @@ class UnreadableMapCategoriesError extends Error {
 /// otherwise reach the picker unchecked.
 function readableMapCategories(table: unknown): MapCategoryTable | undefined {
 	let parsed = PublishedMapCategoriesSchema.safeParse({data: table})
-	return parsed.success ? (parsed.data.data as MapCategoryTable) : undefined
+	if (!parsed.success) {
+		return undefined
+	}
+	let byId = byCampusId(parsed.data.data)
+	return typeof byId === 'string' ? undefined : byId
 }
 
 const MAX_FETCH_RETRIES = 3

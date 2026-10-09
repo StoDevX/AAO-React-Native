@@ -20,13 +20,15 @@ export const REL_RADIO_NOW_PLAYING = 'https://frogpond.tech/rel/radio-now-playin
 export const ID_PROPERTY = 'https://frogpond.tech/ns/id'
 
 /// Names the campus whose server a relative href resolves against. Absent
-/// means St. Olaf's, the configured api root. Read as a plain string, so a
-/// campus a build does not know leaves its entry alone rather than failing
-/// the whole manifest.
+/// means St. Olaf's. Published manifests say `carleton`, which the 2.9 RCs
+/// read, so that spelling stays readable beside the campus id `edu.carleton`.
+/// Read as a plain string, so a campus a build does not know leaves its entry
+/// alone rather than failing the whole manifest.
 export const CAMPUS_PROPERTY = 'https://frogpond.tech/ns/campus'
 
-/// The campuses a relative href can resolve against.
-export type SourceCampus = 'stolaf' | 'carleton'
+/// The campuses a relative href can resolve against, by campus id. Spelt out
+/// here because a module cannot import the app's campus registry.
+export type SourceCampus = 'edu.stolaf' | 'edu.carleton'
 
 /// A proxied source's href is relative (e.g. `news/named/mess`), so it
 /// resolves against the configured api root and honours the Settings

@@ -17,7 +17,7 @@ faqs:
     severity: alert
     icon: envelope.circle
     dismissable: false
-    conditions: {campus: stolaf.edu}
+    conditions: {campus: edu.stolaf}
     updatedAt: '2025-12-14T00:00:00Z'
 
   - id: sis-login-disabled
@@ -39,7 +39,7 @@ faqs:
     backgroundColor: '#fef3f2'
     foregroundColor: '#b42318'
     dismissable: false
-    conditions: {campus: stolaf.edu}
+    conditions: {campus: edu.stolaf}
     updatedAt: '2025-12-14T00:00:00Z'
 
   # CARLS' notices, carried over from the CARLS app's own FAQ page. The known
@@ -61,5 +61,5 @@ faqs:
     severity: alert
     icon: envelope.circle
     dismissable: false
-    conditions: {and: [{campus: carleton.edu}, {versionRange: '>=2.9.0-rc.4'}]}
+    conditions: {and: [{campus: edu.carleton}, {versionRange: '>=2.9.0-rc.4'}]}
     updatedAt: '2026-10-08T00:00:00Z'

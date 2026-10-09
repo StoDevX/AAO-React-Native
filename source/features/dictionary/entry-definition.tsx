@@ -31,7 +31,7 @@ import {
 	TEXT_INDENT,
 } from './lib/metrics'
 import type {NormalizedEntry, Sense} from './types'
-import {useBranding} from '../campus/branding'
+import {useCampusSection} from '../campus/store'
 
 type Props = {
 	entry: NormalizedEntry
@@ -100,7 +100,7 @@ function SenseRow({
  * Presentational — the route that hosts it owns the title and the toolbar.
  */
 export function EntryDefinition({entry}: Props): React.ReactNode {
-	let {appName} = useBranding()
+	let {appName} = useCampusSection('branding')
 	let pronunciation = pronunciationText(entry.pronunciation)
 	let hasSeveralSenses = entry.senses.length > 1
 

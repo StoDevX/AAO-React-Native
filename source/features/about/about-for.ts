@@ -1,4 +1,3 @@
-import {BRANDING} from '../campus/branding'
 import type {Campus} from '../campus/store'
 import {acknowledgements, carlsContributors, contributors} from './credits'
 import {timeline, type TimelineEra} from './timeline'
@@ -6,15 +5,14 @@ import {timeline, type TimelineEra} from './timeline'
 /** A list of people About credits, under its heading. */
 export type Credit = {id: string; heading: string; names: ReadonlyArray<string>}
 
-/** What About shows on one campus: the app's intro, its history, and whom it credits. */
+/** What About shows on one campus: its history, and whom it credits. */
 export type About = {
-	intro: string
 	story: ReadonlyArray<TimelineEra>
 	credits: ReadonlyArray<Credit>
 }
 
 /**
- * Each campus's About. CARLS' is the CARLS app's own: its intro and its
+ * Each campus's About. CARLS' is the CARLS app's own: its
  * writers, with no history and no one else to thank, so those sections go.
  */
 export function aboutFor(campus: Campus): About {
@@ -26,7 +24,6 @@ export function aboutFor(campus: Campus): About {
 					{id: 'acknowledgements', heading: 'Acknowledgements', names: acknowledgements},
 				]
 	return {
-		intro: BRANDING[campus].intro,
 		story: campus === 'carleton' ? [] : timeline,
 		credits: credits.filter((credit) => credit.names.length > 0),
 	}

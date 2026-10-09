@@ -13,7 +13,8 @@ import {
 	normalizeEntry,
 } from '../../source/features/dictionary/lib/entry'
 import {dictionaryOptionsFor} from '../../source/features/dictionary/query'
-import {useCampus} from '../../source/features/campus/store'
+import {useCampusId, useCampusSection} from '../../source/features/campus/store'
+import {sectionServer} from '../../source/features/campus/section-server'
 import type {NormalizedEntry} from '../../source/features/dictionary/types'
 
 const styles = StyleSheet.create({
@@ -27,8 +28,8 @@ function DictionaryView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let campus = useCampus()
-	let {data = [], refetch, isLoading, isError} = useQuery(dictionaryOptionsFor(campus))
+	let server = sectionServer(useCampusId(), useCampusSection('dictionary'))
+	let {data = [], refetch, isLoading, isError} = useQuery(dictionaryOptionsFor(server))
 
 	let groups = React.useMemo(
 		() => groupEntries(filterEntries(data.map(normalizeEntry), searchQuery)),

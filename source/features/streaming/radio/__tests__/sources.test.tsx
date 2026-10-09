@@ -10,15 +10,17 @@ import {
 	type Jrd,
 } from '@frogpond/data-sources'
 
-import {DEFAULT_URL} from '../../../../lib/constants'
+import {campusById} from '../../../../campuses'
 import {stationSources, useStationSources} from '../sources'
 import {STATIONS, type StationId} from '../stations'
+
+const STOLAF_URL = campusById('edu.stolaf').api.defaultUrl
 
 // The manifest is asked for over the network; each test says how that goes.
 const mockGet = jest.fn<() => {json: () => Promise<unknown>}>()
 jest.mock('@frogpond/api', () => ({
 	...(jest.requireActual('@frogpond/api') as object),
-	stolafClient: {get: () => mockGet()},
+	clientFor: () => ({get: () => mockGet()}),
 }))
 
 const EMPTY: Jrd = {subject: 'https://stolaf.edu', links: []}
@@ -79,7 +81,7 @@ describe('stationSources', () => {
 		let manifest = manifestWith(
 			link(REL_RADIO_STREAM, 'ksto', 'radio/ksto.m3u8', 'application/vnd.apple.mpegurl'),
 		)
-		expect(stationSources(manifest, 'ksto').streamSourceUrl).toBe(`${DEFAULT_URL}radio/ksto.m3u8`)
+		expect(stationSources(manifest, 'ksto').streamSourceUrl).toBe(`${STOLAF_URL}radio/ksto.m3u8`)
 	})
 
 	test("keeps KSTO's shipped player page when the published one is on another site", () => {

@@ -1,19 +1,17 @@
-import {carletonClient, stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import bundledBusTimes from '../../../../docs/bus-times.json'
 import {UnprocessedBusLine} from './types'
-import type {Campus} from '../../campus/store'
+import type {CampusId} from '../../../campuses'
 
 export const keys = {
-	all: ['transit', 'bus-routes'] as const,
-	/** St. Olaf's keeps the key it always had; Carleton's sits under the campus. */
-	forCampus: (campus: Campus): readonly string[] =>
-		campus === 'carleton' ? (['carleton', 'transit', 'bus-routes'] as const) : keys.all,
+	/** By server, so each campus's lines sit under its own key. */
+	forServer: (server: CampusId) => [server, 'transit', 'bus-routes'] as const,
 }
 
 async function fetchBusRoutes(
-	campus: Campus,
+	server: CampusId,
 	{signal}: {signal: AbortSignal},
 ): Promise<UnprocessedBusLine[]> {
 	// The UI tests run against a frozen clock, so every stop's status follows
@@ -26,25 +24,22 @@ async function fetchBusRoutes(
 		return (bundledBusTimes as {data: UnprocessedBusLine[]}).data
 	}
 
-	let api = campus === 'carleton' ? carletonClient : stolafClient
-	let response = await api.get('transit/bus', {signal}).json()
+	let response = await clientFor(server).get('transit/bus', {signal}).json()
 	return (response as {data: UnprocessedBusLine[]}).data
 }
 
-/** `campus`'s bus lines. */
+/** The bus lines on `server`, the active campus's transit server. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const busRoutesOptionsFor = (campus: Campus) =>
+export const busRoutesOptionsFor = (server: CampusId) =>
 	queryOptions({
-		queryKey: keys.forCampus(campus),
-		queryFn: (context) => fetchBusRoutes(campus, context),
+		queryKey: keys.forServer(server),
+		queryFn: (context) => fetchBusRoutes(server, context),
 	})
 
-export const busRoutesOptions = busRoutesOptionsFor('stolaf')
-
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const busLineOptions = (lineName: string, campus: Campus = 'stolaf') =>
+export const busLineOptions = (lineName: string, server: CampusId) =>
 	queryOptions({
-		queryKey: keys.forCampus(campus),
-		queryFn: (context) => fetchBusRoutes(campus, context),
+		queryKey: keys.forServer(server),
+		queryFn: (context) => fetchBusRoutes(server, context),
 		select: (lines) => lines.find((l) => l.line === lineName),
 	})

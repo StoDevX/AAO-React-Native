@@ -1,10 +1,10 @@
-import {stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import bundledFaqs from '../../../docs/faqs.json'
 import {defaultConditionContext, evaluateConditions} from './conditions'
 import {parseFaqMetadata} from './schema'
 import type {Faq, FaqQueryData, FaqTarget} from './types'
-import type {Campus} from '../campus/store'
+import {type Campus, campusIdOfLegacy} from '../campus/store'
 
 export const keys = {
 	all: ['faqs'] as const,
@@ -17,7 +17,8 @@ export const keys = {
 const optionsFor = (campus: Campus) =>
 	queryOptions<unknown, unknown, FaqQueryData>({
 		queryKey: keys.all,
-		queryFn: ({signal}) => stolafClient.get('faqs', {signal}).json(),
+		// St. Olaf's server answers every campus's FAQs.
+		queryFn: ({signal}) => clientFor('edu.stolaf').get('faqs', {signal}).json(),
 		select: (raw) => faqsFor(raw, campus),
 	})
 
@@ -40,7 +41,7 @@ export function faqsFor(raw: unknown, campus: Campus): FaqQueryData {
 		return emptyFaqDataFor(campus)
 	}
 
-	let context = {...defaultConditionContext(), campus}
+	let context = {...defaultConditionContext(), campus: campusIdOfLegacy(campus)}
 	let faqs = Array.isArray(raw.faqs)
 		? (raw.faqs as unknown[])
 				.map(normalizeFaq)

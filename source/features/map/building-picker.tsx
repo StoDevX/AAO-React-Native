@@ -34,7 +34,7 @@ import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 
 import {LeadingImage, RowAccessory} from '../../components/rows'
-import type {Campus} from '../building-hours/types'
+import type {CampusId} from '../../campuses/ids'
 import {CategoryGrid, ROW_ICON_WIDTH} from './category-grid'
 import {mapCategoriesOptions} from './category-groups-query'
 import {
@@ -79,6 +79,9 @@ const BACK_BUTTON_SIZE = 44
 /// Space between the button and the title beside it.
 const BACK_BUTTON_GAP = 8
 
+/// No recents, kept as one list so the store selector hands back the same value each render.
+const NO_RECENTS: string[] = []
+
 /// Recents' header as Maps draws its sections: a grey title and a blue Clear
 /// at headline size, and Clear tall enough to tap.
 const RECENTS_TITLE_MODIFIERS = [font({textStyle: 'headline'}), foregroundStyle(c.secondaryLabel)]
@@ -101,7 +104,7 @@ export const RECENTS_CLEAR_LABEL = 'Clear Recents'
 const SEARCH_BAR_HORIZONTAL_PADDING = SEARCH_MARGIN - 8
 
 type Props = {
-	campus: Campus
+	campus: CampusId
 	/// True when the sheet is at a stop with room for the search field and
 	/// nothing else. Drawing the category grid or a group's header there would
 	/// not merely hide them: a `VStack` taller than the stop it is presented in
@@ -204,7 +207,7 @@ function PickerContents({
 
 	// Held with its campus, so a switch closes it; and looked up among the
 	// groups that have places, so a group a refetch emptied closes too.
-	let [opened, setOpened] = React.useState<{campus: Campus; label: MapGroupLabel} | null>(null)
+	let [opened, setOpened] = React.useState<{campus: CampusId; label: MapGroupLabel} | null>(null)
 	// Cleared during render rather than in an effect, as React recommends for
 	// state that follows a prop, so a switch never draws the old group first.
 	if (opened && opened.campus !== campus) {
@@ -257,7 +260,7 @@ function PickerContents({
 	// not a set of places someone asked to see.
 	// The places opened on this campus's map, shown under the grid on the root
 	// view alone -- not inside a group, not while searching.
-	let recentIds = useRecentPlacesStore((state) => state.recent[campus])
+	let recentIds = useRecentPlacesStore((state) => state.recent[campus] ?? NO_RECENTS)
 	let forgetRecent = useRecentPlacesStore((state) => state.forget)
 	let clearRecents = useRecentPlacesStore((state) => state.clear)
 	let remembered = React.useMemo(() => recentPlaces(recentIds, buildings), [recentIds, buildings])

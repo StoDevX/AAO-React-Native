@@ -3,9 +3,8 @@ import {Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
 import {disabled, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
 import {Restart} from 'react-native-restart-newarch'
 import * as storage from '../../lib/storage'
-import {CARLETON_DEFAULT_URL, DEFAULT_URL} from '../../lib/constants'
+import type {CampusDefinition} from '../../campuses'
 import {useMutation, useQuery} from '@tanstack/react-query'
-import type {Campus} from '../campus/store'
 import {serverUrlOptions} from './query'
 import {useServerDiscovery} from './use-server-discovery'
 import {ActionRow, NavigationRow} from '../../components/rows'
@@ -19,36 +18,21 @@ const isHttpUrl = (value: string): boolean => {
 	}
 }
 
-/** Each campus's server: where it is stored, its default, and its heading. */
-const SERVERS = {
-	stolaf: {
-		title: 'Server URL',
-		defaultUrl: DEFAULT_URL,
-		save: storage.setServerAddress,
-	},
-	carleton: {
-		title: 'Carleton Server URL',
-		defaultUrl: CARLETON_DEFAULT_URL,
-		save: storage.setCarletonServerAddress,
-	},
-} as const
-
 type Props = {
-	/** The campus whose server this section sets. St. Olaf's also lists the servers found nearby. */
-	campus: Campus
+	/** The campus whose server this section sets. */
+	campus: CampusDefinition
 }
 
 export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
-	const server = SERVERS[campus]
+	const {api} = campus
 	const [serverAddress, setServerAddress] = React.useState('')
 	const serverAddressState = useNativeState('')
 
-	let urlOptions = serverUrlOptions(campus)
+	let urlOptions = serverUrlOptions(api.storageKey)
 	let serverUrlQuery = useQuery(urlOptions)
 	let {isLoading} = serverUrlQuery
 
 	const discoveredServers = useServerDiscovery()
-	const showsDiscovery = campus === 'stolaf'
 
 	React.useEffect(() => {
 		if (serverUrlQuery.data !== undefined) {
@@ -62,7 +46,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 
 	let storeServerAddress = useMutation({
 		mutationKey: urlOptions.queryKey,
-		mutationFn: () => server.save(serverAddress),
+		mutationFn: () => storage.setServerAddressFor(api.storageKey, serverAddress),
 		onSuccess: () => Restart(),
 	})
 
@@ -73,7 +57,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 
 	return (
 		<>
-			<Section footer={<Text>Empty means we will use the default URL.</Text>} title={server.title}>
+			<Section footer={<Text>Empty means we will use the default URL.</Text>} title="Server URL">
 				{isLoading ? (
 					<TextField
 						modifiers={[disabled(true)]}
@@ -89,7 +73,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 								disabled(storeServerAddress.isPending),
 							]}
 							onTextChange={setServerAddress}
-							placeholder={server.defaultUrl}
+							placeholder={api.defaultUrl}
 							text={serverAddressState}
 						/>
 						<ActionRow
@@ -100,7 +84,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 					</>
 				)}
 			</Section>
-			{showsDiscovery && discoveredServers.length > 0 && (
+			{discoveredServers.length > 0 && (
 				<Section footer={<Text>Tap a server to use it.</Text>} title="Local Servers">
 					{discoveredServers.map((server) => (
 						<NavigationRow

@@ -55,10 +55,10 @@ jest.mock('expo-image-picker', () => ({
 // The app's version is read from a native module Jest does not have; the
 // query cache marks what it saves with it.
 // The app config's `extra`, which source/lib/app-identity.ts reads: an All
-// About Olaf build. A test of CARLS mocks app-identity instead.
+// About Olaf build, starting on St. Olaf. A test of CARLS mocks app-identity instead.
 jest.mock('expo-constants', () => ({
 	__esModule: true,
-	default: {expoConfig: {extra: {app: 'aao'}}},
+	default: {expoConfig: {extra: {app: 'aao', defaultCampus: 'edu.stolaf'}}},
 }))
 
 jest.mock('expo-application', () => ({
@@ -101,7 +101,7 @@ jest.mock('expo-file-system', () => ({
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
 	// An untagged UI test: no campus named, so features serve their bundled data.
-	campusFixturesDomain: null,
+	uiTestCampus: null,
 	servesBundledFixtures: true,
 	// Live, so a test that stubs fetchSourceBody gets its stub, not a fixture.
 	fixtureMode: 'live',

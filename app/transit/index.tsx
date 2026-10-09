@@ -14,7 +14,8 @@ import {DisclosureRow} from '../../source/components/rows'
 import {useBusFooterMessage} from '../../source/features/transit/bus/constants'
 import {visibleBusLines} from '../../source/features/transit/bus/lib'
 import {busRoutesOptionsFor} from '../../source/features/transit/bus/query'
-import {useCampus} from '../../source/features/campus/store'
+import {useCampusId, useCampusSection} from '../../source/features/campus/store'
+import {sectionServer} from '../../source/features/campus/section-server'
 import {BusLineWidget} from '../../source/features/transit/bus/widget'
 import {otherModesGroupedOptionsFor} from '../../source/features/transit/other-modes/query'
 
@@ -31,7 +32,8 @@ const styles = StyleSheet.create({
  * slightly different moments.
  */
 export default function TransitPage(): React.ReactNode {
-	let campus = useCampus()
+	let transit = useCampusSection('transit')
+	let server = sectionServer(useCampusId(), transit)
 	let footerMessage = useBusFooterMessage()
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
@@ -42,7 +44,7 @@ export default function TransitPage(): React.ReactNode {
 		refetch: refetchBuses,
 		isLoading: busesLoading,
 		isError: busesErrored,
-	} = useQuery(busRoutesOptionsFor(campus))
+	} = useQuery(busRoutesOptionsFor(server))
 
 	let {
 		data: otherModes = [],
@@ -50,7 +52,7 @@ export default function TransitPage(): React.ReactNode {
 		refetch: refetchOtherModes,
 		isLoading: otherModesLoading,
 		isError: otherModesErrored,
-	} = useQuery(otherModesGroupedOptionsFor(campus))
+	} = useQuery(otherModesGroupedOptionsFor(server))
 
 	let lines = visibleBusLines(busLines)
 
@@ -141,8 +143,8 @@ export default function TransitPage(): React.ReactNode {
 
 	return (
 		<>
-			{/* CARLS named the tile Transportation; St. Olaf's title comes from the root stack. */}
-			{campus === 'carleton' ? <Stack.Title>Transportation</Stack.Title> : null}
+			{/* A campus that names the screen apart from the root stack's "Transit". */}
+			{transit?.title ? <Stack.Title>{transit.title}</Stack.Title> : null}
 			<Host style={styles.host}>
 				<List
 					modifiers={[

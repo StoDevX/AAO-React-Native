@@ -10,6 +10,9 @@ import {
 import {apiUrl} from '../../../lib/api-url'
 import type {StationId} from './stations'
 
+/** The server the manifest's relative radio hrefs name. */
+const RADIO_SERVER = 'edu.stolaf'
+
 /** The streams iOS plays itself: HLS, and the MP3 and AAC an Icecast or Shoutcast server sends. */
 export const STREAM_TYPES = ['application/vnd.apple.mpegurl', 'audio/mpeg', 'audio/aac']
 /** The station-now feed of the metaradio WordPress plugin, which `parseStationNow` reads. */
@@ -77,7 +80,7 @@ function optionalHref(
  */
 function absoluteUrl(href: string): string | undefined {
 	try {
-		return apiUrl(href)
+		return apiUrl(RADIO_SERVER, href)
 	} catch {
 		return undefined
 	}
@@ -88,7 +91,7 @@ function streamUrl(manifest: Jrd, stationId: StationId): string {
 	let href = resolveSource(manifest, REL_RADIO_STREAM, stationId, STREAM_TYPES).href
 	return (
 		absoluteUrl(href) ??
-		apiUrl(resolveSource(SHIPPED, REL_RADIO_STREAM, stationId, STREAM_TYPES).href)
+		apiUrl(RADIO_SERVER, resolveSource(SHIPPED, REL_RADIO_STREAM, stationId, STREAM_TYPES).href)
 	)
 }
 
@@ -112,7 +115,7 @@ function playerPageUrl(manifest: Jrd, stationId: StationId): string | undefined 
 		return url
 	}
 	let shipped = optionalHref(SHIPPED, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
-	return shipped === undefined ? undefined : apiUrl(shipped)
+	return shipped === undefined ? undefined : apiUrl(RADIO_SERVER, shipped)
 }
 
 /**

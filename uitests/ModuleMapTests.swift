@@ -74,7 +74,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// corners, which once cut the foot off that tile's first letter.
 	///
 	/// `aBuilding` is absent from Carleton's map, so this also fails if `/map`
-	/// ignored its `campus`, which falls back to Carleton.
+	/// drew Carleton's map for `?campus=edu.stolaf`.
 	func testTheFullSheetDropsToMediumForARow() throws {
 		let screen = MapScreen(app: app)
 			.navigate()

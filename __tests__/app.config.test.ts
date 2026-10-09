@@ -17,7 +17,7 @@ function loadConfig(variant: string | undefined): ExpoConfig {
 	} else {
 		process.env.APP_VARIANT = variant
 	}
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../app.config').default as ExpoConfig
 }
 
@@ -30,7 +30,7 @@ describe('app.config version', () => {
 		jest.resetModules()
 		process.env.APP_VARIANT = 'aao'
 		jest.doMock('../package.json', () => ({version}))
-		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		// oxlint-disable-next-line typescript/no-require-imports
 		return require('../app.config').default as ExpoConfig
 	}
 
@@ -167,5 +167,15 @@ describe('app.config link schemes', () => {
 		expect(loadConfig('aao').ios?.infoPlist?.LSApplicationQueriesSchemes).toEqual(
 			expect.arrayContaining(['tel', 'mailto']),
 		)
+	})
+})
+
+describe('app.config default campus', () => {
+	test("every variant's default campus is registered", () => {
+		// oxlint-disable-next-line typescript/no-require-imports
+		let {isCampusId} = require('../source/campuses') as typeof import('../source/campuses')
+		for (let variant of ['aao', 'aao-dev', 'carls', 'carls-dev']) {
+			expect(isCampusId(loadConfig(variant).extra?.defaultCampus)).toBe(true)
+		}
 	})
 })

@@ -4,7 +4,8 @@ import {describe, expect, test} from '@jest/globals'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
-import type {BuildingType, Campus} from '../../types'
+import type {BuildingType} from '../../types'
+import type {CampusId} from '../../../../campuses/ids'
 import {BuildingDetailSwiftUI} from '../building-detail'
 import {keys as mapKeys} from '../../../map/query'
 import {makeBuilding as makeFeature} from '../../../map/__tests__/fixtures'
@@ -60,7 +61,7 @@ afterEach(() => {
  */
 function renderDetail(
 	building: BuildingType,
-	campus: Campus = 'stolaf',
+	campus: CampusId = 'edu.stolaf',
 	mapFeatures?: Array<Feature<Building>>,
 ) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
@@ -145,7 +146,7 @@ describe('BuildingDetailSwiftUI', () => {
 	test('shows the cutout, labelled with the joined building, when the venue carries a building key', async () => {
 		let building = makeBuilding({name: 'Registrar', building: 'toh'})
 
-		let {getByLabelText} = await renderDetail(building, 'stolaf', [makeFramedFeature()])
+		let {getByLabelText} = await renderDetail(building, 'edu.stolaf', [makeFramedFeature()])
 		await layOutPictureRows(355)
 
 		expect(getByLabelText('Map showing Tomson Hall')).toBeTruthy()
@@ -157,7 +158,7 @@ describe('BuildingDetailSwiftUI', () => {
 	test('mounts the cutout only once its row has a width', async () => {
 		let building = makeBuilding({name: 'Registrar', building: 'toh'})
 
-		let {queryByLabelText} = await renderDetail(building, 'stolaf', [makeFramedFeature()])
+		let {queryByLabelText} = await renderDetail(building, 'edu.stolaf', [makeFramedFeature()])
 
 		expect(queryByLabelText('Map showing Tomson Hall')).toBeNull()
 
@@ -171,7 +172,7 @@ describe('BuildingDetailSwiftUI', () => {
 	test('hides the basemap label for the framed building on St. Olaf', async () => {
 		let building = makeBuilding({name: 'Registrar', building: 'toh'})
 
-		let {queryByTestId} = await renderDetail(building, 'stolaf', [makeFramedFeature()])
+		let {queryByTestId} = await renderDetail(building, 'edu.stolaf', [makeFramedFeature()])
 		await layOutPictureRows(355)
 
 		expect(queryByTestId('layer:campus_labels_buildings')).toBeTruthy()
@@ -182,7 +183,7 @@ describe('BuildingDetailSwiftUI', () => {
 	test('leaves the Carleton basemap labels alone', async () => {
 		let building = makeBuilding({name: 'Registrar', building: 'toh'})
 
-		let {queryByLabelText, queryByTestId} = await renderDetail(building, 'carleton', [
+		let {queryByLabelText, queryByTestId} = await renderDetail(building, 'edu.carleton', [
 			makeFramedFeature(),
 		])
 		await layOutPictureRows(355)
@@ -196,7 +197,7 @@ describe('BuildingDetailSwiftUI', () => {
 	test('shows no cutout when the venue carries no building key', async () => {
 		let building = makeBuilding({name: 'Sayles Café', building: undefined})
 
-		let {queryByLabelText} = await renderDetail(building, 'carleton')
+		let {queryByLabelText} = await renderDetail(building, 'edu.carleton')
 
 		expect(queryByLabelText(/^Map showing/u)).toBeNull()
 	})

@@ -4,6 +4,8 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import EntryScreen from '../../../../app/dictionary/entry/[word]'
 import {keys} from '../query'
+import {useCampusStore} from '../../campus/store'
+import type {CampusId} from '../../../campuses'
 import {useDictionaryDraftStore} from '../store'
 import type {WordType} from '../types'
 
@@ -25,11 +27,11 @@ const wordEntry: WordType = {word: 'Caf', definition: 'The dining hall.'}
 // See the identical comment in ../../faqs/__tests__/banner.test.tsx.
 const trackedQueryClients: QueryClient[] = []
 
-const renderWithQuery = (words: WordType[]) => {
+const renderWithQuery = (words: WordType[], server: CampusId = 'edu.stolaf') => {
 	let queryClient = new QueryClient({
 		defaultOptions: {queries: {retry: false, staleTime: Infinity}},
 	})
-	queryClient.setQueryData(keys.all, words)
+	queryClient.setQueryData(keys.forServer(server), words)
 	trackedQueryClients.push(queryClient)
 	return render(
 		<QueryClientProvider client={queryClient}>
@@ -39,6 +41,7 @@ const renderWithQuery = (words: WordType[]) => {
 }
 
 beforeEach(() => {
+	useCampusStore.setState({campus: 'edu.stolaf'})
 	mockNavigate.mockClear()
 	useDictionaryDraftStore.getState().clearDraft()
 })
@@ -51,6 +54,13 @@ afterEach(() => {
 })
 
 describe('the dictionary entry screen', () => {
+	it('offers no Suggest an Edit where the dictionary takes no suggestions', async () => {
+		useCampusStore.setState({campus: 'edu.carleton'})
+		await renderWithQuery([wordEntry], 'edu.carleton')
+
+		expect(screen.queryByText('Suggest an Edit')).toBeNull()
+	})
+
 	it('starts a draft from the entry on screen and pushes to the edit form', async () => {
 		await renderWithQuery([wordEntry])
 

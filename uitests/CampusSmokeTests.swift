@@ -2,7 +2,7 @@ import XCTest
 
 /// What one campus's screens show from its recordings, which its smoke tests
 /// check. Each value comes from that campus's recording, in
-/// `source/features/campus/__fixtures__/<domain>/`, except the screen titles
+/// `source/features/campus/__fixtures__/<campus id>/`, except the screen titles
 /// and tiles, which the app draws itself.
 struct CampusExpectations {
 	let homeTitle: String
@@ -132,7 +132,7 @@ class CampusSmokeTests: UITestCaseUnbooted {
 	}
 }
 
-/// Tags: campus:stolaf.edu
+/// Tags: campus:edu.stolaf
 final class StOlafSmokeTests: CampusSmokeTests {
 	override class var campus: Campus? { .stolaf }
 
@@ -143,7 +143,7 @@ final class StOlafSmokeTests: CampusSmokeTests {
 			hoursRoute: "/hours",
 			hoursTitle: TestIdentifiers.Hours.title,
 			building: "The Cage",
-			mapRoute: "/map?campus=stolaf",
+			mapRoute: "/map?campus=edu.stolaf",
 			mapPlace: "Holland Hall",
 			contactsTitle: "Contacts",
 			contact: "PubSafe",
@@ -160,7 +160,7 @@ final class StOlafSmokeTests: CampusSmokeTests {
 	}
 }
 
-/// Tags: campus:carleton.edu
+/// Tags: campus:edu.carleton
 final class CarletonSmokeTests: CampusSmokeTests {
 	override class var campus: Campus? { .carleton }
 
@@ -168,10 +168,10 @@ final class CarletonSmokeTests: CampusSmokeTests {
 		CampusExpectations(
 			homeTitle: "CARLS",
 			homeTile: "The Carletonian",
-			hoursRoute: "/hours?campus=carleton",
+			hoursRoute: "/hours?campus=edu.carleton",
 			hoursTitle: TestIdentifiers.Hours.carletonTitle,
 			building: "Burton",
-			mapRoute: "/map?campus=carleton",
+			mapRoute: "/map?campus=edu.carleton",
 			mapPlace: "Boliou Hall",
 			contactsTitle: "Important Contacts",
 			contact: "Security Services",

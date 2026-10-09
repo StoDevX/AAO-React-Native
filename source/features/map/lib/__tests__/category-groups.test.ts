@@ -11,7 +11,7 @@ import {
 } from '../category-groups'
 
 const TABLE: MapCategoryTable = {
-	stolaf: {
+	'edu.stolaf': {
 		groups: [
 			{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
 			{label: 'Academic', categories: ['academic'], icon: 'graduationcap.fill', gradient: 'gold'},
@@ -25,7 +25,7 @@ const TABLE: MapCategoryTable = {
 		],
 		icons: [],
 	},
-	carleton: {
+	'edu.carleton': {
 		groups: [{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'}],
 		icons: [],
 	},
@@ -42,7 +42,7 @@ const PLACES = [
 ]
 
 const labels = (table: MapCategoryTable, places = PLACES) =>
-	groupsFor(table, 'stolaf', places).map((group) => group.label)
+	groupsFor(table, 'edu.stolaf', places).map((group) => group.label)
 
 describe('groupsFor', () => {
 	test('keeps the order the file gives', () => {
@@ -64,13 +64,13 @@ describe('groupsFor', () => {
 
 	test('reads the campus it is asked for', () => {
 		let campusPlaces = [makeBuilding({id: 'arb', name: 'The Arb', categories: ['outdoors']})]
-		expect(groupsFor(TABLE, 'carleton', campusPlaces).map((group) => group.label)).toEqual([
+		expect(groupsFor(TABLE, 'edu.carleton', campusPlaces).map((group) => group.label)).toEqual([
 			'Outdoors',
 		])
 	})
 
 	test('resolves the icon and gradient', () => {
-		let [first, second] = groupsFor(TABLE, 'stolaf', PLACES)
+		let [first, second] = groupsFor(TABLE, 'edu.stolaf', PLACES)
 		expect(first).toMatchObject({icon: 'building.2.fill', gradient: grayGradient})
 		expect(second).toMatchObject({icon: 'graduationcap.fill', gradient: goldGradient})
 	})
@@ -78,10 +78,10 @@ describe('groupsFor', () => {
 	// A released app can meet a file written for a newer one.
 	test('falls back when an entry has no icon or gradient', () => {
 		let bare: MapCategoryTable = {
-			stolaf: {groups: [{label: 'All Buildings', categories: ['building']}], icons: []},
-			carleton: {groups: [], icons: []},
+			'edu.stolaf': {groups: [{label: 'All Buildings', categories: ['building']}], icons: []},
+			'edu.carleton': {groups: [], icons: []},
 		}
-		expect(groupsFor(bare, 'stolaf', PLACES)[0]).toMatchObject({
+		expect(groupsFor(bare, 'edu.stolaf', PLACES)[0]).toMatchObject({
 			icon: FALLBACK_GROUP_ICON,
 			gradient: grayGradient,
 		})
@@ -91,7 +91,7 @@ describe('groupsFor', () => {
 	// would collide, so the first is kept.
 	test('keeps only the first of two entries with the same label', () => {
 		let doubled: MapCategoryTable = {
-			stolaf: {
+			'edu.stolaf': {
 				groups: [
 					{
 						label: 'Housing',
@@ -103,22 +103,22 @@ describe('groupsFor', () => {
 				],
 				icons: [],
 			},
-			carleton: {groups: [], icons: []},
+			'edu.carleton': {groups: [], icons: []},
 		}
-		let groups = groupsFor(doubled, 'stolaf', PLACES)
+		let groups = groupsFor(doubled, 'edu.stolaf', PLACES)
 		expect(groups.map((group) => [group.label, group.icon])).toEqual([
 			['Housing', 'bed.double.fill'],
 		])
 	})
 
 	test('has no groups before any place has loaded', () => {
-		expect(groupsFor(TABLE, 'stolaf', [])).toEqual([])
+		expect(groupsFor(TABLE, 'edu.stolaf', [])).toEqual([])
 	})
 })
 
 describe('placesIn', () => {
 	let housing = () => {
-		let group = groupsFor(TABLE, 'stolaf', PLACES).find(
+		let group = groupsFor(TABLE, 'edu.stolaf', PLACES).find(
 			(candidate) => candidate.label === 'Housing',
 		)
 		if (!group) {
@@ -140,7 +140,7 @@ describe('placesIn', () => {
 	})
 
 	test('lists a place in each group it belongs to', () => {
-		let groups = groupsFor(TABLE, 'stolaf', PLACES)
+		let groups = groupsFor(TABLE, 'edu.stolaf', PLACES)
 		let holding = groups.filter((group) =>
 			placesIn(group, PLACES).some((place) => place.id === 'ytt'),
 		)

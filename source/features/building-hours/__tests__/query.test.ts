@@ -15,28 +15,28 @@ import {buildingByNameOptions, buildingsOptions, keys} from '../query'
 
 describe('keys', () => {
 	test('scopes the cache key by campus', () => {
-		expect(keys.all('stolaf')).toEqual(['stolaf', 'buildings'])
-		expect(keys.all('carleton')).toEqual(['carleton', 'buildings'])
+		expect(keys.all('edu.stolaf')).toEqual(['edu.stolaf', 'buildings'])
+		expect(keys.all('edu.carleton')).toEqual(['edu.carleton', 'buildings'])
 	})
 
 	test('gives the two campuses different keys', () => {
-		expect(keys.all('stolaf')).not.toEqual(keys.all('carleton'))
+		expect(keys.all('edu.stolaf')).not.toEqual(keys.all('edu.carleton'))
 	})
 })
 
 describe('buildingByNameOptions', () => {
 	test('shares its query key with buildingsOptions for the same campus, so the detail sheet reads a warm cache', () => {
-		expect(buildingByNameOptions('stolaf', 'Rølvaag Library').queryKey).toEqual(
-			buildingsOptions('stolaf').queryKey,
+		expect(buildingByNameOptions('edu.stolaf', 'Rølvaag Library').queryKey).toEqual(
+			buildingsOptions('edu.stolaf').queryKey,
 		)
-		expect(buildingByNameOptions('carleton', 'The Libe').queryKey).toEqual(
-			buildingsOptions('carleton').queryKey,
+		expect(buildingByNameOptions('edu.carleton', 'The Libe').queryKey).toEqual(
+			buildingsOptions('edu.carleton').queryKey,
 		)
 	})
 
 	test('does not share a query key across campuses', () => {
-		expect(buildingByNameOptions('stolaf', 'Rølvaag Library').queryKey).not.toEqual(
-			buildingByNameOptions('carleton', 'Rølvaag Library').queryKey,
+		expect(buildingByNameOptions('edu.stolaf', 'Rølvaag Library').queryKey).not.toEqual(
+			buildingByNameOptions('edu.carleton', 'Rølvaag Library').queryKey,
 		)
 	})
 })

@@ -146,14 +146,14 @@ describe('reportEmail', () => {
 	})
 
 	it("addresses a Carleton install's report to CARLS' support", () => {
-		useCampusStore.setState({campus: 'carleton'})
+		useCampusStore.setState({campus: 'edu.carleton'})
 		try {
 			expect(reportEmail({message: 'the map is blank'})).toMatchObject({
 				to: ['carls@frogpond.tech'],
 				subject: 'CARLS problem report',
 			})
 		} finally {
-			useCampusStore.setState({campus: 'stolaf'})
+			useCampusStore.setState({campus: 'edu.stolaf'})
 		}
 	})
 })

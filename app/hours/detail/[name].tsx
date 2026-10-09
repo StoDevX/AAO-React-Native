@@ -6,7 +6,8 @@ import {timezone} from '@frogpond/constants'
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {BuildingDetailSwiftUI} from '../../../source/features/building-hours/detail/building-detail'
-import {buildingByNameOptions, parseCampus} from '../../../source/features/building-hours/query'
+import {buildingByNameOptions} from '../../../source/features/building-hours/query'
+import {useCampusParam} from '../../../source/features/campus/campus-param'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
 import {
@@ -20,7 +21,7 @@ export default function HoursDetailPage(): React.ReactNode {
 	let router = useRouter()
 
 	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
-	let campus = parseCampus(campusParam)
+	let campus = useCampusParam(campusParam)
 	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
 
 	let favorites = useAppSelector(selectFavoriteBuildings)

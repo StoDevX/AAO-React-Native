@@ -3,6 +3,8 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
 import {useRouter} from 'expo-router'
+
+import {useCampus} from '../campus/store'
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
 import {DebugSwiftSection} from './debugswift-section'
@@ -23,6 +25,7 @@ const onResetButton = () => {
 export const DeveloperSection = (): React.ReactElement => {
 	let router = useRouter()
 	const isDev = useIsDevMode()
+	let campus = useCampus()
 
 	const onComponentsButton = () => router.navigate('/developer/component-library')
 	const onAPIButton = () => router.navigate('/developer/api-test')
@@ -66,9 +69,8 @@ export const DeveloperSection = (): React.ReactElement => {
 
 			<DebugSwiftSection />
 
-			<ServerUrlSection campus="stolaf" />
-
-			<ServerUrlSection campus="carleton" />
+			{/* Keyed by campus, so switching campus starts the field afresh. */}
+			<ServerUrlSection key={campus.id} campus={campus} />
 		</>
 	)
 }

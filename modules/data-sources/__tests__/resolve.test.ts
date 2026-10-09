@@ -201,12 +201,12 @@ const EVENTS = ['application/vnd.frogpond.events+json']
 
 test("a source marked Carleton's resolves against Carleton's server", () => {
 	const source = resolveSource(manifest, REL_CALENDAR, 'sumo-schedule', EVENTS)
-	expect(source.campus).toBe('carleton')
+	expect(source.campus).toBe('edu.carleton')
 	expect(source.href).toBe('calendar/named/sumo-schedule')
 })
 
 test("a source with no campus resolves against St. Olaf's", () => {
-	expect(resolveSource(manifest, REL_CALENDAR, 'krlx-schedule', EVENTS).campus).toBe('stolaf')
+	expect(resolveSource(manifest, REL_CALENDAR, 'krlx-schedule', EVENTS).campus).toBe('edu.stolaf')
 })
 
 test('a campus this build does not know reads as St. Olaf, without failing the manifest', () => {
@@ -223,5 +223,27 @@ test('a campus this build does not know reads as St. Olaf, without failing the m
 	})
 	expect(
 		resolveSources(document, REL_CALENDAR, EVENTS).find((s) => s.id === 'elsewhere')?.campus,
-	).toBe('stolaf')
+	).toBe('edu.stolaf')
+})
+
+test.each([
+	['carleton', 'edu.carleton'],
+	['edu.carleton', 'edu.carleton'],
+	['stolaf', 'edu.stolaf'],
+	['edu.stolaf', 'edu.stolaf'],
+])('reads the campus %s, as a 2.9 RC or a later manifest names it, as %s', (named, id) => {
+	const document = JrdSchema.parse({
+		subject: 'https://stolaf.edu',
+		links: [
+			{
+				rel: REL_CALENDAR,
+				href: 'calendar/named/somewhere',
+				type: EVENTS[0],
+				properties: {[ID_PROPERTY]: 'somewhere', [CAMPUS_PROPERTY]: named},
+			},
+		],
+	})
+	expect(
+		resolveSources(document, REL_CALENDAR, EVENTS).find((s) => s.id === 'somewhere')?.campus,
+	).toBe(id)
 })

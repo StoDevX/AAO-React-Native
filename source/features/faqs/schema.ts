@@ -1,5 +1,6 @@
 import {z} from 'zod'
 
+import {isCampusId} from '../../campuses'
 import {parseConditionInput} from './conditions'
 import type {ConditionNode, FaqSeverity, RepeatRule} from './types'
 
@@ -12,7 +13,7 @@ const severitySchema = z
 
 const platformSchema = z.union([z.literal('ios'), z.literal('android'), z.literal('native')])
 
-const campusSchema = z.union([z.literal('stolaf.edu'), z.literal('carleton.edu')])
+const campusSchema = z.string().refine(isCampusId, {message: 'Not a campus id'})
 
 const dateTimeString = z
 	.string()

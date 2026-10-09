@@ -1,17 +1,15 @@
-import {carletonClient, stolafClient} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 
 import bundledDictionary from '../../../docs/dictionary.json'
 import {REFERENCE_ENTRY} from './lib/reference-entry'
 import {WordType} from './types'
-import type {Campus} from '../campus/store'
+import type {CampusId} from '../../campuses'
 
 export const keys = {
-	all: ['dictionary'] as const,
-	/** St. Olaf's keeps the key it always had; Carleton's sits under the campus, as its map's does. */
-	forCampus: (campus: Campus): readonly string[] =>
-		campus === 'carleton' ? (['carleton', 'dictionary'] as const) : keys.all,
+	/** By server, so each campus's dictionary sits under its own key. */
+	forServer: (server: CampusId) => [server, 'dictionary'] as const,
 }
 
 // Dictionary entries change rarely -- matches the 5-minute staleTime
@@ -20,7 +18,7 @@ export const keys = {
 // detail or editor screen right after the list.
 const staleTime = 1000 * 60 * 5
 
-async function fetchDictionary(campus: Campus, {signal}: {signal: AbortSignal}) {
+async function fetchDictionary(server: CampusId, {signal}: {signal: AbortSignal}) {
 	// UI tests naming no campus assert against what the screen does with an entry, so they need
 	// the same entries every run. The live server's copy changes on someone
 	// else's schedule, and a word renamed there fails a test here for no
@@ -29,27 +27,24 @@ async function fetchDictionary(campus: Campus, {signal}: {signal: AbortSignal}) 
 		return [...(bundledDictionary as {data: WordType[]}).data, REFERENCE_ENTRY]
 	}
 
-	let api = campus === 'carleton' ? carletonClient : stolafClient
-	let response = await api.get('dictionary', {signal}).json()
+	let response = await clientFor(server).get('dictionary', {signal}).json()
 	return (response as {data: WordType[]}).data
 }
 
-/** `campus`'s dictionary. */
+/** The dictionary on `server`, the active campus's dictionary server. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const dictionaryOptionsFor = (campus: Campus) =>
+export const dictionaryOptionsFor = (server: CampusId) =>
 	queryOptions({
-		queryKey: keys.forCampus(campus),
-		queryFn: (context) => fetchDictionary(campus, context),
+		queryKey: keys.forServer(server),
+		queryFn: (context) => fetchDictionary(server, context),
 		staleTime,
 	})
 
-export const dictionaryOptions = dictionaryOptionsFor('stolaf')
-
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const wordByTermOptions = (word: string, campus: Campus = 'stolaf') =>
+export const wordByTermOptions = (word: string, server: CampusId) =>
 	queryOptions({
-		queryKey: keys.forCampus(campus),
-		queryFn: (context) => fetchDictionary(campus, context),
+		queryKey: keys.forServer(server),
+		queryFn: (context) => fetchDictionary(server, context),
 		staleTime,
 		select: (words) => words.find((w) => w.word === word),
 	})

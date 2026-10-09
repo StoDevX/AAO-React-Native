@@ -1,19 +1,25 @@
+import {describe, expect, it} from '@jest/globals'
+import {carleton} from '../../../../campuses/edu-carleton'
+import {stolaf} from '../../../../campuses/edu-stolaf'
 import {remoteImage} from '../../../../lib/remote-images'
 import {buildingPhoto} from '../building-photo'
 
 describe('buildingPhoto', () => {
-	it('gives a St. Olaf venue the photograph its key names', () => {
-		expect(buildingPhoto('stolaf', 'cage')).toStrictEqual(remoteImage('spaces', 'cage'))
+	it("finds a venue's photo on a campus with photos", () => {
+		expect(buildingPhoto(stolaf.hours, 'cage')).toStrictEqual(remoteImage('spaces', 'cage'))
 	})
 
-	it('has none for a venue that names no image', () => {
-		expect(buildingPhoto('stolaf', undefined)).toBeNull()
+	it('finds none for a venue without an image', () => {
+		expect(buildingPhoto(stolaf.hours, undefined)).toBeNull()
 	})
 
-	// The photos are St. Olaf's alone. Carleton's Writing Center carries the
-	// key `disco`, which at St. Olaf is a different room -- showing it would
-	// put the wrong building on the screen, not merely no building.
-	it('never resolves a Carleton venue, even on a key that collides', () => {
-		expect(buildingPhoto('carleton', 'disco')).toBeNull()
+	// Carleton's Writing Center keys to `disco`, which at St. Olaf is a
+	// different room entirely: the campus gates the lookup, not the key.
+	it('finds none on a campus without photos, whatever the key', () => {
+		expect(buildingPhoto(carleton.hours, 'disco')).toBeNull()
+	})
+
+	it('finds none on a campus without hours', () => {
+		expect(buildingPhoto(undefined, 'cage')).toBeNull()
 	})
 })

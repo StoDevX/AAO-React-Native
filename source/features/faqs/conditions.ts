@@ -2,8 +2,8 @@ import {Platform} from 'react-native'
 import semver from 'semver'
 import {appVersion} from '@frogpond/constants'
 
-import {campusForDomain} from '../campus/domains'
-import {type Campus, useCampusStore} from '../campus/store'
+import {type CampusId, isCampusId} from '../../campuses'
+import {currentCampusId} from '../campus/store'
 import type {ConditionNode, ConditionRule, PlatformCondition} from './types'
 
 export type ConditionContext = {
@@ -11,7 +11,7 @@ export type ConditionContext = {
 	version: string
 	now: number
 	/** The campus the app is for. */
-	campus: Campus
+	campus: CampusId
 }
 
 /** The device, build, moment and campus the app is running as now. */
@@ -19,7 +19,7 @@ export const defaultConditionContext = (): ConditionContext => ({
 	platform: mapPlatform(Platform.OS),
 	version: appVersion(),
 	now: Date.now(),
-	campus: useCampusStore.getState().campus,
+	campus: currentCampusId(),
 })
 
 export function evaluateConditions(
@@ -195,18 +195,14 @@ function readPlatforms(value: unknown): PlatformCondition[] | undefined {
 	return valid.length > 0 ? valid : undefined
 }
 
-/** The campuses named, by their domains (`stolaf.edu`, `carleton.edu`). An unknown domain matches none. */
-function readCampuses(value: unknown): Campus[] | undefined {
+/** The campuses named, by id (`edu.stolaf`, `edu.carleton`). An unknown id matches none. */
+function readCampuses(value: unknown): CampusId[] | undefined {
 	if (!value) {
 		return undefined
 	}
 
-	let domains = toArray(value).filter((item): item is string => typeof item === 'string')
-	return domains.length > 0
-		? domains
-				.map((domain) => campusForDomain(domain.trim().toLowerCase()))
-				.filter((campus): campus is Campus => campus !== undefined)
-		: undefined
+	let ids = toArray(value).filter((item): item is string => typeof item === 'string')
+	return ids.length > 0 ? ids.map((id) => id.trim().toLowerCase()).filter(isCampusId) : undefined
 }
 
 function readString(value: unknown): string | undefined {

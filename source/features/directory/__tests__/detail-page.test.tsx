@@ -4,6 +4,7 @@ import {useLocalSearchParams} from 'expo-router'
 
 import DirectoryDetailPage from '../../../../app/directory/[index]'
 import {loadBeforeTests} from '../../../testing/load-before-tests'
+import {useCampusStore} from '../../campus/store'
 
 loadBeforeTests('Image')
 
@@ -14,6 +15,11 @@ jest.mock('expo-router', () => ({
 }))
 
 describe('the directory detail page', () => {
+	// A campus without a directory, as a URL can reach the page on one.
+	beforeEach(() => {
+		useCampusStore.setState({campus: 'edu.carleton'})
+	})
+
 	/// A link like `AllAboutOlaf://directory/0` names an index but not the
 	/// search it indexes into, so there is no entry to look up.
 	it('shows Entry Not Found when the link names no search', async () => {

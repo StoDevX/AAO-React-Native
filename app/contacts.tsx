@@ -6,8 +6,10 @@ import {Host, List} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
+import {NoticeView} from '@frogpond/notice'
+
 import {contactsOptionsFor} from '../source/features/directory/contacts-query'
-import {useCampus} from '../source/features/campus/store'
+import {useCampusId, useCampusSection} from '../source/features/campus/store'
 import {ImportantContactsGrid} from '../source/features/directory/important-contacts-grid'
 
 /// The curated campus contacts on their own, for the Help group on home. The
@@ -15,13 +17,31 @@ import {ImportantContactsGrid} from '../source/features/directory/important-cont
 /// department roster.
 export default function ContactsPage(): React.ReactNode {
 	let router = useRouter()
-	let campus = useCampus()
-	let contacts = useQuery(contactsOptionsFor(campus))
+	let section = useCampusSection('contacts')
+	let {college} = useCampusSection('branding')
+	let contacts = useQuery({
+		...contactsOptionsFor(useCampusId()),
+		enabled: section !== undefined,
+	})
+
+	// The route stays reachable by URL on a campus without contacts.
+	if (!section) {
+		return (
+			<>
+				<Stack.Title>Contacts</Stack.Title>
+				<NoticeView
+					description={`The app has no contacts for ${college}.`}
+					systemImage="phone"
+					title="No Contacts"
+				/>
+			</>
+		)
+	}
 
 	return (
 		<>
 			{/* Named as each campus's home tile names it. */}
-			<Stack.Title>{campus === 'carleton' ? 'Important Contacts' : 'Contacts'}</Stack.Title>
+			<Stack.Title>{section.title}</Stack.Title>
 			<Host matchContents={false} style={styles.host}>
 				<List
 					modifiers={[

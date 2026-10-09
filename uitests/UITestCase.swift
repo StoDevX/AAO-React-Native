@@ -10,7 +10,7 @@ class UITestCaseUnbooted: XCTestCase {
 
 	/// The campus this test runs on, serving its recordings; nil runs St. Olaf
 	/// on today's bundled data. Campus tests override it and carry a
-	/// `/// Tags: campus:<domain>` marker.
+	/// `/// Tags: campus:<id>` marker.
 	class var campus: Campus? { nil }
 
 	/// Synchronous on purpose, as every test method here must be. With

@@ -44,7 +44,7 @@ describe('mergeCampusRecordings', () => {
 
 describe('campusFixtureFiles', () => {
 	const table = {
-		'GET {server:stolaf.edu}/spaces/hours': {
+		'GET {server:edu.stolaf}/spaces/hours': {
 			status: 200,
 			contentType: 'application/json',
 			body: '{"data":[1]}',
@@ -54,7 +54,7 @@ describe('campusFixtureFiles', () => {
 			contentType: 'application/json; charset=UTF-8',
 			body: '[]',
 		},
-		'GET {server:stolaf.edu}/feed': {status: 200, contentType: 'text/xml', body: '<rss/>'},
+		'GET {server:edu.stolaf}/feed': {status: 200, contentType: 'text/xml', body: '<rss/>'},
 	}
 
 	it('names each request by its method and path', () => {
@@ -68,7 +68,7 @@ describe('campusFixtureFiles', () => {
 	it('keeps a JSON answer as JSON, so a diff shows which fields moved', () => {
 		let file = JSON.parse(campusFixtureFiles(table).files['GET-spaces-hours.json'])
 		assert.deepEqual(file, {
-			key: 'GET {server:stolaf.edu}/spaces/hours',
+			key: 'GET {server:edu.stolaf}/spaces/hours',
 			status: 200,
 			contentType: 'application/json',
 			json: {data: [1]},
@@ -164,7 +164,7 @@ describe('trimmedBody', () => {
 
 	it('leaves any other answer as it came', () => {
 		let body = '{"data":[{"name":"The Cage","extra":1}]}'
-		assert.equal(trimmedBody('GET {server:stolaf.edu}/spaces/hours', body), body)
+		assert.equal(trimmedBody('GET {server:edu.stolaf}/spaces/hours', body), body)
 	})
 
 	it('measures a recording against the size limit after trimming', () => {
@@ -183,8 +183,8 @@ describe('shiftCalendars', () => {
 	})
 	const events = (table, key) => JSON.parse(table[key].body)
 	const starts = (table, key) => events(table, key).map((event) => event.startTime)
-	const CARLETON = 'GET {server:carleton.edu}/calendar/named/carleton'
-	const SUMO = 'GET {server:carleton.edu}/calendar/named/sumo-schedule'
+	const CARLETON = 'GET {server:edu.carleton}/calendar/named/carleton'
+	const SUMO = 'GET {server:edu.carleton}/calendar/named/sumo-schedule'
 	const TEC = 'GET https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events?per_page=50'
 	// The UI tests' frozen day, a Saturday.
 	const FROZEN = '2026-09-05'
@@ -345,7 +345,7 @@ describe('shiftCalendars', () => {
 
 	it('leaves every other answer as it came', () => {
 		let hours = {
-			'GET {server:carleton.edu}/spaces/hours': answer({data: [{startTime: '2026-10-09'}]}),
+			'GET {server:edu.carleton}/spaces/hours': answer({data: [{startTime: '2026-10-09'}]}),
 		}
 		assert.deepEqual(shiftCalendars(hours, {frozenDay: FROZEN, recordedDay: '2026-10-09'}), hours)
 	})
@@ -398,7 +398,7 @@ describe('completeTecPages', () => {
 
 describe('email addresses', () => {
 	it('are each written person@example.com, wherever a recording holds one', () => {
-		let key = 'GET {server:carleton.edu}/calendar/named/carleton'
+		let key = 'GET {server:edu.carleton}/calendar/named/carleton'
 		let body = JSON.stringify([
 			{description: 'Questions? Email a.student@carleton.edu or HELP@stolaf.edu.'},
 		])
@@ -409,13 +409,13 @@ describe('email addresses', () => {
 	})
 
 	it('leave an image named for its scale alone', () => {
-		let key = 'GET {server:stolaf.edu}/contacts'
+		let key = 'GET {server:edu.stolaf}/contacts'
 		let body = JSON.stringify({image: 'https://x.example/logo@2x.png'})
 		assert.equal(mergeCampusRecordings([line(key, body)])[key].body, body)
 	})
 
 	it('are looked for quickly in a long run of text with none', () => {
-		let key = 'GET {server:stolaf.edu}/contacts'
+		let key = 'GET {server:edu.stolaf}/contacts'
 		let body = JSON.stringify({image: 'x'.repeat(LARGE_BODY_BYTES / 2)})
 		let started = performance.now()
 		mergeCampusRecordings([line(key, body)])
@@ -465,7 +465,7 @@ describe('an answer that is not a feed', () => {
 	it('is named in the recording summary', () => {
 		let table = {
 			[TEC]: {status: 503, contentType: 'text/html', body: HTML},
-			'GET {server:stolaf.edu}/contacts': {
+			'GET {server:edu.stolaf}/contacts': {
 				status: 200,
 				contentType: 'application/json',
 				body: '{}',

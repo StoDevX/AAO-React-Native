@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as Sentry from '@sentry/react-native'
 
-import {currentBranding} from '../features/campus/branding'
+import {currentCampus, useCampusStore} from '../features/campus/store'
 import {openEmail} from '../features/support/open-email'
 import {ErrorFallback} from './error-fallback'
 
@@ -19,15 +19,20 @@ import {ErrorFallback} from './error-fallback'
 export function RootErrorBoundary({children}: {children: React.ReactNode}): React.ReactNode {
 	return (
 		<Sentry.GlobalErrorBoundary
-			fallback={(error) => (
-				<ErrorFallback
-					actions={[
-						{label: 'Try Again', onPress: () => error.resetError()},
-						{label: 'Send Us an Email', onPress: openEmail},
-					]}
-					message={`${currentBranding().appName} hit an error. Trying again often clears it; if it doesn’t, close and reopen the app.`}
-				/>
-			)}
+			fallback={(error) => {
+				// Before a campus is chosen, the picker is all there is: no app
+				// name to give, and no campus's support to write to.
+				let campus = useCampusStore.getState().campus === null ? null : currentCampus()
+				let tryAgain = {label: 'Try Again', onPress: () => error.resetError()}
+				return (
+					<ErrorFallback
+						actions={
+							campus ? [tryAgain, {label: 'Send Us an Email', onPress: openEmail}] : [tryAgain]
+						}
+						message={`${campus?.branding.appName ?? 'The app'} hit an error. Trying again often clears it; if it doesn’t, close and reopen the app.`}
+					/>
+				)
+			}}
 		>
 			{children}
 		</Sentry.GlobalErrorBoundary>

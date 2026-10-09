@@ -30,13 +30,15 @@ const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/lig
  * fails here rather than building and launching the other app.
  *
  * `carls` and `carls-dev` build the same code as CARLS: Carleton's
- * app, with the campus fixed to Carleton (`extra.app`, read by
- * source/lib/app-identity.ts), the penguin as its icon and no St. Olaf icons
- * to switch to.
+ * app (`extra.app`, read by source/lib/app-identity.ts), opening on Carleton,
+ * with the penguin as its icon and no St. Olaf icons to switch to.
  *
  * The identity has to differ in three places, not one: iOS keys installs on the
  * bundle identifier, the home screen shows the name, and two apps claiming the
  * same URL scheme is undefined behaviour — whichever iOS feels like wins.
+ *
+ * `defaultCampus` is the campus a fresh install opens on; any build can switch
+ * in dev mode.
  *
  * Defined inline rather than imported from a helper: Expo's config loader
  * compiles this file on its own, so `import {x} from './somewhere'` throws
@@ -45,6 +47,7 @@ const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/lig
 const VARIANTS = {
 	aao: {
 		app: 'aao',
+		defaultCampus: 'edu.stolaf',
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
@@ -52,6 +55,7 @@ const VARIANTS = {
 	},
 	'aao-dev': {
 		app: 'aao',
+		defaultCampus: 'edu.stolaf',
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
 		scheme: 'AllAboutOlafDev',
@@ -59,6 +63,7 @@ const VARIANTS = {
 	},
 	carls: {
 		app: 'carls',
+		defaultCampus: 'edu.carleton',
 		displayName: 'CARLS',
 		bundleIdentifier: CARLS_BUNDLE_ID,
 		// The CARLS app's own scheme, so links made for it still open it.
@@ -67,6 +72,7 @@ const VARIANTS = {
 	},
 	'carls-dev': {
 		app: 'carls',
+		defaultCampus: 'edu.carleton',
 		displayName: 'CARLS Dev',
 		bundleIdentifier: `${CARLS_BUNDLE_ID}.dev`,
 		scheme: 'carlsDev',
@@ -304,7 +310,7 @@ const config: ExpoConfig = {
 		},
 	},
 
-	extra: {fullVersion, commit, app: variant.app},
+	extra: {fullVersion, commit, app: variant.app, defaultCampus: variant.defaultCampus},
 
 	plugins: [
 		[

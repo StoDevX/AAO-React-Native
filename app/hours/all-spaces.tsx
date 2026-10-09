@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {parseCampus, useGroupedBuildings} from '../../source/features/building-hours/query'
+import {useGroupedBuildings} from '../../source/features/building-hours/query'
+import {useCampusParam} from '../../source/features/campus/campus-param'
 import {BuildingType} from '../../source/features/building-hours/types'
 import {BuildingList} from '../../source/features/building-hours/list'
 import {withoutFavorites} from '../../source/features/building-hours/lib/listed-sections'
@@ -19,7 +20,7 @@ import {useMomentTimer} from '@frogpond/timer'
 /// leaves out of its sections.
 export default function AllSpacesPage(): React.ReactNode {
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
-	let campus = parseCampus(campusParam)
+	let campus = useCampusParam(campusParam)
 	let router = useRouter()
 	let dispatch = useAppDispatch()
 	let allFavorites = useAppSelector(selectFavoriteBuildings)

@@ -1,4 +1,4 @@
-import type {Campus} from '../campus/store'
+import type {CampusId} from '../../campuses'
 
 // import type {
 // 	RootViewsParamList,
@@ -32,7 +32,7 @@ export type PlatformCondition = 'ios' | 'android' | 'native'
 export type ConditionRule = {
 	platforms?: PlatformCondition[]
 	/** The campuses whose app shows it: St. Olaf's All About Olaf, Carleton's CARLS. */
-	campuses?: Campus[]
+	campuses?: CampusId[]
 	versionRange?: string
 	startDate?: number
 	endDate?: number

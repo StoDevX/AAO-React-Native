@@ -5,12 +5,14 @@ import {
 	buildingPhotoUrl,
 	mapCredits,
 } from '../urls'
+import {carleton} from '../../../campuses/edu-carleton'
+import {stolaf} from '../../../campuses/edu-stolaf'
 
 describe('buildingPhotoUrl', () => {
 	// ccc-server stores `photos` as bare filenames, so a record is useless
-	// without this prefix.
-	it('resolves a bare filename against the photo host', () => {
-		expect(buildingPhotoUrl('leighton.jpg')).toBe(
+	// without its campus's prefix.
+	it("resolves a bare filename against the campus's photo host", () => {
+		expect(buildingPhotoUrl(carleton.map.photoRoot, 'leighton.jpg')).toBe(
 			'https://carls-app.github.io/map-data/cache/img/leighton.jpg',
 		)
 	})
@@ -34,17 +36,15 @@ describe('appleMapsSearchUrl', () => {
 
 describe('basemapScheme', () => {
 	it('is dark only for a campus with a dark style, in dark mode', () => {
-		expect(basemapScheme('stolaf', 'dark')).toBe('dark')
-		expect(basemapScheme('stolaf', 'light')).toBe('light')
-		expect(basemapScheme('carleton', 'dark')).toBe('light')
-		expect(basemapScheme('carleton', 'light')).toBe('light')
+		expect(basemapScheme(stolaf.map, 'dark')).toBe('dark')
+		expect(basemapScheme(stolaf.map, 'light')).toBe('light')
+		expect(basemapScheme(carleton.map, 'dark')).toBe('light')
+		expect(basemapScheme(carleton.map, 'light')).toBe('light')
 	})
 
-	// Before the system reports an appearance, the light basemap is the one
-	// every campus has.
 	it('falls back to light when the appearance is unknown', () => {
-		expect(basemapScheme('stolaf', 'unspecified')).toBe('light')
-		expect(basemapScheme('stolaf', undefined)).toBe('light')
+		expect(basemapScheme(stolaf.map, 'unspecified')).toBe('light')
+		expect(basemapScheme(stolaf.map, undefined)).toBe('light')
 	})
 })
 
@@ -60,14 +60,14 @@ describe('appleMapsDirectionsUrl', () => {
 // also credits its college. These mirror the styles' own source attributions.
 describe('mapCredits', () => {
 	it("credits OpenStreetMap, then St. Olaf, for St. Olaf's map", () => {
-		expect(mapCredits('stolaf')).toEqual([
+		expect(mapCredits(stolaf.map)).toEqual([
 			{label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'},
 			{label: 'St. Olaf College', url: 'https://wp.stolaf.edu/'},
 		])
 	})
 
 	it("credits OpenStreetMap, then Carleton, for Carleton's map", () => {
-		expect(mapCredits('carleton')).toEqual([
+		expect(mapCredits(carleton.map)).toEqual([
 			{label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'},
 			{label: 'Carleton College', url: 'https://www.carleton.edu/'},
 		])

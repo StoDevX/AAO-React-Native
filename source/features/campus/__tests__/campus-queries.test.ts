@@ -1,12 +1,12 @@
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {setApiRoot, setCarletonApiRoot} from '@frogpond/api'
+import {registerCampusServer} from '@frogpond/api'
 import {QueryClient} from '@tanstack/react-query'
 
 import {dictionaryOptionsFor} from '../../dictionary/query'
-import {contactsOptionsFor} from '../../directory/contacts-query'
+import {contactKeys, contactsOptionsFor} from '../../directory/contacts-query'
 import {busRoutesOptionsFor} from '../../transit/bus/query'
 import {otherModesGroupedOptionsFor} from '../../transit/other-modes/query'
-import type {Campus} from '../store'
+import type {CampusId} from '../../../campuses'
 
 // Jest's setup runs every test as a UI test, where these queries read the bundled data and fetch
 // nothing; what is under test here is the fetch.
@@ -25,8 +25,8 @@ let requested: string[] = []
 
 beforeEach(() => {
 	requested = []
-	setApiRoot(new URL('https://stolaf.example.test/v1/'))
-	setCarletonApiRoot(new URL('https://carleton.example.test/v1/'))
+	registerCampusServer('edu.stolaf', new URL('https://stolaf.example.test/v1/'))
+	registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
 	global.fetch = jest.fn((request: Request) => {
 		requested.push(request.url)
 		return Promise.resolve(new Response(JSON.stringify({data: []}), {status: 200}))
@@ -38,9 +38,9 @@ afterEach(() => {
 })
 
 describe.each(QUERIES)('$route', ({route, options}) => {
-	test.each<[Campus, string]>([
-		['stolaf', 'https://stolaf.example.test/v1/'],
-		['carleton', 'https://carleton.example.test/v1/'],
+	test.each<[CampusId, string]>([
+		['edu.stolaf', 'https://stolaf.example.test/v1/'],
+		['edu.carleton', 'https://carleton.example.test/v1/'],
 	])("reads %s's from its own server", async (campus, root) => {
 		// No garbage collection, whose timer would hold Jest open.
 		let client = new QueryClient({defaultOptions: {queries: {gcTime: Infinity, retry: false}}})
@@ -50,6 +50,13 @@ describe.each(QUERIES)('$route', ({route, options}) => {
 	})
 
 	test("keeps each campus's data under a key of its own", () => {
-		expect(options('carleton').queryKey).not.toEqual(options('stolaf').queryKey)
+		expect(options('edu.carleton').queryKey).not.toEqual(options('edu.stolaf').queryKey)
+	})
+})
+
+describe('contacts', () => {
+	test('are keyed by the campus id', () => {
+		expect(contactKeys.forCampus('edu.stolaf')).toEqual(['edu.stolaf', 'contacts'])
+		expect(contactsOptionsFor('edu.carleton').queryKey).toEqual(['edu.carleton', 'contacts'])
 	})
 })

@@ -1,4 +1,4 @@
-import {isHTTPError, setApiRoot, setCarletonApiRoot} from '@frogpond/api'
+import {isHTTPError, registerCampusServer} from '@frogpond/api'
 import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
 
 describe('isAbsoluteHref', () => {
@@ -15,7 +15,7 @@ describe('fetchSourceBody', () => {
 	let originalFetch = global.fetch
 
 	beforeEach(() => {
-		setApiRoot(new URL('https://example.test/'))
+		registerCampusServer('edu.stolaf', new URL('https://example.test/'))
 	})
 
 	afterEach(() => {
@@ -23,7 +23,7 @@ describe('fetchSourceBody', () => {
 		jest.useRealTimers()
 	})
 
-	test('a relative href resolves through stolafClient, honoring the configured api root', async () => {
+	test("a relative href resolves through St. Olaf's client, honoring the configured api root", async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/mess')
 			return Promise.resolve(new Response(JSON.stringify({ok: true}), {status: 200}))
@@ -38,7 +38,7 @@ describe('fetchSourceBody', () => {
 	})
 
 	test("a Carleton source's relative href resolves against Carleton's server", async () => {
-		setCarletonApiRoot(new URL('https://carleton.example.test/v1/'))
+		registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://carleton.example.test/v1/calendar/named/sumo-schedule')
 			return Promise.resolve(new Response(JSON.stringify([]), {status: 200}))
@@ -51,7 +51,7 @@ describe('fetchSourceBody', () => {
 			controller.signal,
 			'Calendar',
 			'json',
-			'carleton',
+			'edu.carleton',
 		)
 
 		expect(body).toEqual([])
@@ -187,7 +187,7 @@ describe('fetchSourceBody', () => {
 		await assertion
 	})
 
-	test('a relative href in text format resolves through stolafClient as text, not json', async () => {
+	test("a relative href in text format resolves through St. Olaf's client as text, not json", async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/rss-feed')
 			return Promise.resolve(new Response('<rss>not json</rss>', {status: 200}))

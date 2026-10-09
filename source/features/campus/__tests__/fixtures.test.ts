@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {UnknownCampusError} from '../domains'
+import {UnknownCampusError} from '../../../campuses'
 import {
 	fixtureKey,
 	installCampusFixtures,
@@ -10,17 +10,17 @@ import {
 } from '../fixtures'
 
 const roots = {
-	'stolaf.edu': new URL('http://localhost:3000/v1/'),
-	'carleton.edu': new URL('https://carleton.api.frogpond.tech/v1/'),
+	'edu.stolaf': new URL('http://localhost:3000/v1/'),
+	'edu.carleton': new URL('https://carleton.api.frogpond.tech/v1/'),
 }
 
 describe('fixtureKey', () => {
-	test("writes a campus server's root by the campus's domain, whatever the server", () => {
+	test("writes a campus server's root by the campus's id, whatever the server", () => {
 		expect(fixtureKey('GET', 'http://localhost:3000/v1/spaces/hours', roots)).toBe(
-			'GET {server:stolaf.edu}/spaces/hours',
+			'GET {server:edu.stolaf}/spaces/hours',
 		)
 		expect(fixtureKey('get', 'https://carleton.api.frogpond.tech/v1/dictionary', roots)).toBe(
-			'GET {server:carleton.edu}/dictionary',
+			'GET {server:edu.carleton}/dictionary',
 		)
 	})
 
@@ -57,52 +57,52 @@ describe('fixtureKey', () => {
 
 describe('serveFixture', () => {
 	const table = {
-		'GET {server:carleton.edu}/dictionary': {
+		'GET {server:edu.carleton}/dictionary': {
 			status: 200,
 			contentType: 'application/json',
 			body: '{"data":[]}',
 		},
-		'GET {server:carleton.edu}/gone': {status: 404, contentType: null, body: ''},
+		'GET {server:edu.carleton}/gone': {status: 404, contentType: null, body: ''},
 	}
 
 	test('answers with what was recorded', async () => {
 		let request = new Request('https://carleton.api.frogpond.tech/v1/dictionary')
-		let response = serveFixture('carleton.edu', table, request, roots)
+		let response = serveFixture('edu.carleton', table, request, roots)
 		expect(response.status).toBe(200)
 		expect(await response.json()).toEqual({data: []})
 	})
 
 	test('answers a recorded failure with its status', () => {
 		let request = new Request('https://carleton.api.frogpond.tech/v1/gone')
-		expect(serveFixture('carleton.edu', table, request, roots).status).toBe(404)
+		expect(serveFixture('edu.carleton', table, request, roots).status).toBe(404)
 	})
 
 	test('refuses a request nothing recorded, naming the command that records it', () => {
 		let request = new Request('https://carleton.api.frogpond.tech/v1/contacts')
-		expect(() => serveFixture('carleton.edu', table, request, roots)).toThrow(MissingCampusFixture)
-		expect(() => serveFixture('carleton.edu', table, request, roots)).toThrow(
-			/GET \{server:carleton\.edu\}\/contacts.*mise run update-campus-fixtures carleton\.edu/u,
+		expect(() => serveFixture('edu.carleton', table, request, roots)).toThrow(MissingCampusFixture)
+		expect(() => serveFixture('edu.carleton', table, request, roots)).toThrow(
+			/GET \{server:edu\.carleton\}\/contacts.*mise run update-campus-fixtures edu\.carleton/u,
 		)
 	})
 })
 
 describe('tableFrom', () => {
 	test('reads a JSON answer back as the text it was', () => {
-		let table = tableFrom('stolaf.edu', [
+		let table = tableFrom('edu.stolaf', [
 			{
-				key: 'GET {server:stolaf.edu}/contacts',
+				key: 'GET {server:edu.stolaf}/contacts',
 				status: 200,
 				contentType: 'application/json',
 				json: {data: []},
 			},
-			{key: 'GET {server:stolaf.edu}/feed', status: 200, contentType: 'text/xml', text: '<rss/>'},
+			{key: 'GET {server:edu.stolaf}/feed', status: 200, contentType: 'text/xml', text: '<rss/>'},
 		])
-		expect(table['GET {server:stolaf.edu}/contacts'].body).toBe('{"data":[]}')
-		expect(table['GET {server:stolaf.edu}/feed'].body).toBe('<rss/>')
+		expect(table['GET {server:edu.stolaf}/contacts'].body).toBe('{"data":[]}')
+		expect(table['GET {server:edu.stolaf}/feed'].body).toBe('<rss/>')
 	})
 
 	test('refuses recordings a release bundle emptied', () => {
-		expect(() => tableFrom('stolaf.edu', [{}])).toThrow(/stolaf\.edu.*KEEP_UITEST_FIXTURES/u)
+		expect(() => tableFrom('edu.stolaf', [{}])).toThrow(/edu\.stolaf.*KEEP_UITEST_FIXTURES/u)
 	})
 })
 
@@ -110,7 +110,7 @@ describe('installCampusFixtures', () => {
 	test('refuses a campus no campus here has, naming the ones there are', () => {
 		expect(() => installCampusFixtures('luther.edu', 'serve')).toThrow(UnknownCampusError)
 		expect(() => installCampusFixtures('luther.edu', 'serve')).toThrow(
-			/stolaf\.edu, carleton\.edu/u,
+			/--campus names luther.edu, but the campuses are edu\.stolaf, edu\.carleton/u,
 		)
 	})
 })

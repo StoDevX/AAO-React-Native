@@ -176,8 +176,8 @@ workflow sets its own in its environment.
 | `carls-dev` | `com.rives.carls.dev` | CARLS Dev | `carls` |
 
 The two All About Olaf variants share the windmill icon, so tell them apart by
-name. The CARLS variants build the same code as Carleton's app: `extra.app`
-fixes the campus to Carleton (`source/lib/app-identity.ts`), the penguin is the
+name. The CARLS variants build the same code as Carleton's app: `extra.defaultCampus`
+opens them on Carleton (`source/lib/app-identity.ts`), the penguin is the
 primary icon, and no St. Olaf icon is bundled. `com.rives.carls` is the CARLS
 app's own identifier, so a release build updates CARLS on the App Store.
 
@@ -409,9 +409,9 @@ post, which tells a schedule left over from an earlier term apart.
 ### UI Test Fixtures
 
 A UI test class can name a campus: `override class var campus: Campus? { .carleton }`,
-with a `/// Tags: campus:carleton.edu` marker. The app then answers every
+with a `/// Tags: campus:edu.carleton` marker. The app then answers every
 request made through `apiFetch` (both campus servers, the papers' own sites
-and the calendars) from `source/features/campus/__fixtures__/<domain>/`, one
+and the calendars) from `source/features/campus/__fixtures__/<campus id>/`, one
 file per request, and a request with no recording fails naming the fix. A few
 features fetch around `apiFetch` (the directory search, login, balances,
 StoPrint, the course catalog), so a smoke test on one of them reads live data
@@ -419,7 +419,7 @@ until it moves onto `apiFetch`. Rerecord a campus with a
 simulator booted and Metro running:
 
 ```bash
-mise run update-campus-fixtures carleton.edu
+mise run update-campus-fixtures edu.carleton
 ```
 
 It writes nothing if a test fails, and refuses a response over 200 KB unless

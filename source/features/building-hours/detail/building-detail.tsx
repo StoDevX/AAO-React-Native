@@ -18,7 +18,8 @@ import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {BuildingCutout} from './building-cutout'
 import {resolveCutoutFeature} from '../lib/find-building-feature'
-import type {BuildingType, Campus} from '../types'
+import type {BuildingType} from '../types'
+import {campusById, type CampusId} from '../../../campuses'
 import {mapDataOptions} from '../../map/query'
 import {buildingPhoto} from '../lib/building-photo'
 import {useImageFailure} from '../../../lib/use-image-failure'
@@ -27,7 +28,6 @@ import {LinkListSection} from '../../map/card/link-list-section'
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import {CARD_INSET, SECTION_GAP, SHEET_ROW} from '../../../components/place-card/card-style'
 import {InsetImageRow} from '../../../components/inset-image-row'
-import {BRANDING} from '../../campus/branding'
 
 /// The formal name sits straight under the sheet's title, as the map card's
 /// subtitle sits under its name.
@@ -42,7 +42,7 @@ const FORMAL_NAME_ROW = [
 type Props = {
 	building: BuildingType
 	now: Moment
-	campus: Campus
+	campus: CampusId
 }
 
 /**
@@ -50,7 +50,9 @@ type Props = {
  * the card draws them, then where it is, its photo, and any links for it.
  */
 export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
-	let photo = buildingPhoto(campus, building.image)
+	// The route's campus, which a `?campus=` link can make other than the active one.
+	let {branding, hours, map} = campusById(campus)
+	let photo = buildingPhoto(hours, building.image)
 	// A photo that cannot be fetched leaves its row out, as no photo does.
 	let [photoFailed, onPhotoError] = useImageFailure(photo?.uri)
 	// The outline is given the row's width outright, since 100% inside
@@ -86,7 +88,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 	// cache instead of a spinner.
 	let {data: mapFeatures} = useQuery({
 		...mapDataOptions(campus),
-		enabled: Boolean(building.building),
+		enabled: Boolean(building.building && map),
 	})
 	// A venue can join to a record with no outline -- a point of interest rather
 	// than a building -- in which case this follows its `parent` to the building
@@ -110,12 +112,12 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 
 				<HoursSection now={now} venue={building} />
 
-				{feature ? (
+				{feature && map ? (
 					<Section>
 						{/* On a wrapping stack because RNHostView takes no modifiers of
 						    its own. */}
 						<VStack modifiers={outlineRow}>
-							<BuildingCutout campus={campus} feature={feature} width={outlineWidth} />
+							<BuildingCutout campus={campus} feature={feature} map={map} width={outlineWidth} />
 						</VStack>
 					</Section>
 				) : null}
@@ -139,7 +141,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					]}
 				>
 					Building hours subject to change without notice{'\n\n'}Data collected by the humans of{' '}
-					{BRANDING[campus].appName}
+					{branding.appName}
 				</Text>
 			</List>
 		</Host>

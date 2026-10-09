@@ -4,8 +4,7 @@ import {queryOptions} from '@tanstack/react-query'
 import {UITEST_DIRECTORY_RESULTS} from './__fixtures__/entries'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
 import {formatResults} from './helpers'
-
-let directory = ky.create({baseUrl: 'https://www.stolaf.edu/directory/'})
+import type {DirectorySection} from './campus-section'
 
 type GetDirectoryQueryArgs = {
 	query: string
@@ -38,12 +37,14 @@ const getDirectoryQuery = ({query, type}: GetDirectoryQueryArgs) => {
 }
 
 export const keys = {
-	all: (query: ReturnType<typeof getDirectoryQuery>) => ['directory', query] as const,
+	all: (searchUrl: string, query: ReturnType<typeof getDirectoryQuery>) =>
+		['directory', searchUrl, query] as const,
 }
 
 const staleTime = 1000 * 60 // 1 minute
 
 async function fetchDirectoryEntries(
+	searchUrl: string,
 	searchQuery: ReturnType<typeof getDirectoryQuery>,
 	signal?: AbortSignal,
 ): Promise<SearchResults> {
@@ -55,27 +56,36 @@ async function fetchDirectoryEntries(
 		return UITEST_DIRECTORY_RESULTS
 	}
 
-	let response = await directory.get('search', {searchParams: searchQuery, signal}).json()
+	let response = await ky
+		.get('search', {baseUrl: searchUrl, searchParams: searchQuery, signal})
+		.json()
 	return response as SearchResults
 }
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const directoryEntriesOptions = (query: string, type: DirectorySearchTypeEnum) =>
+export const directoryEntriesOptions = (
+	directory: DirectorySection,
+	query: string,
+	type: DirectorySearchTypeEnum,
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
+) =>
 	queryOptions({
-		queryKey: keys.all(getDirectoryQuery({query, type})),
-		queryFn: ({signal}) => fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
+		queryKey: keys.all(directory.searchUrl, getDirectoryQuery({query, type})),
+		queryFn: ({signal}) =>
+			fetchDirectoryEntries(directory.searchUrl, getDirectoryQuery({query, type}), signal),
 		staleTime,
 	})
 
 export const directoryContactOptions = (
+	directory: DirectorySection,
 	query: string,
 	type: DirectorySearchTypeEnum,
 	index: number,
 	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
-		queryKey: keys.all(getDirectoryQuery({query, type})),
-		queryFn: ({signal}) => fetchDirectoryEntries(getDirectoryQuery({query, type}), signal),
+		queryKey: keys.all(directory.searchUrl, getDirectoryQuery({query, type})),
+		queryFn: ({signal}) =>
+			fetchDirectoryEntries(directory.searchUrl, getDirectoryQuery({query, type}), signal),
 		staleTime,
 		select: (data) => formatResults(data.results)[index],
 	})
