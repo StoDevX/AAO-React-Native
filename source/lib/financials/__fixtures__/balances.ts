@@ -18,5 +18,5 @@ export const UITEST_BALANCES: BalancesShapeType = {
 	print: '$12.34',
 	daily: '2',
 	weekly: '10.5',
-	plan: 'Ole Unlimited',
+	plan: 'Valley Unlimited',
 }

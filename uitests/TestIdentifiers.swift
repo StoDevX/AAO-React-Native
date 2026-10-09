@@ -610,7 +610,7 @@ struct TestIdentifiers {
 		static let aPendingJob = "IMG_2259-COLLAGE.jpg"
 		/// A heading only the release screen draws.
 		static let jobInfo = "Job Info"
-		/// How every printer's name starts.
+		/// How every one of Wiki Monkeys' mocked printers' names starts.
 		static let printerPrefix = "mfc-"
 		static let print = "Print"
 	}
@@ -816,7 +816,7 @@ struct TestIdentifiers {
 		/// The one course a UI-test run's catalogue holds. Mirrors
 		/// `UITEST_COURSE_NAME` in
 		/// `source/lib/course-search/__fixtures__/courses.ts`.
-		static let aCourse = "Hybrid Test Course"
+		static let aCourse = "Introduction to Glaciology"
 	}
 
 	// MARK: - Transit
