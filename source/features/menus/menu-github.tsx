@@ -75,7 +75,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	// Shares the Hours screen's cache key, so a reader who has been there pays
 	// nothing for this.
 	let {data: venue, isLoading: isVenueLoading} = useQuery({
-		...buildingByNameOptions('stolaf', props.venue ?? ''),
+		...buildingByNameOptions('edu.stolaf', props.venue ?? ''),
 		// A disabled query is pending but never fetching, which React Query
 		// reports as `isLoading: false` -- so the header below needs no guard of
 		// its own for a screen that named no venue.

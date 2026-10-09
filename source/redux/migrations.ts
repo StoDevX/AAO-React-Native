@@ -1,7 +1,10 @@
 import type {MigrationManifest, PersistedState} from 'redux-persist'
 
-import type {FavoriteBuilding} from './parts/buildings'
+import {isCampusId} from '../campuses'
 import {DEFAULT_CALENDAR_SOURCES} from './parts/settings'
+
+/** A favourite as any version stored it: `campus` is whatever id that version used. */
+type StoredFavorite = {campus: string; name: string}
 
 /**
  * The shape of persisted root state that these migrations actually read and
@@ -11,7 +14,7 @@ import {DEFAULT_CALENDAR_SOURCES} from './parts/settings'
  */
 interface PersistedRootState {
 	settings?: {enabledCalendarSources?: string[]; [key: string]: unknown}
-	buildings?: {favorites?: Array<string> | Array<FavoriteBuilding>; [key: string]: unknown}
+	buildings?: {favorites?: Array<string> | Array<StoredFavorite>; [key: string]: unknown}
 	[key: string]: unknown
 }
 
@@ -51,9 +54,9 @@ function addPresenceCalendar(
 	return {...state, settings: {...settings, enabledCalendarSources: [...enabled, 'presence']}}
 }
 
-/** Distinguishes the old bare-name shape from the migrated `{campus, name}` shape. */
+/** Distinguishes the old bare-name shape from the campus-scoped shape. */
 function isPreCampusFavorites(
-	favorites: Array<string> | Array<FavoriteBuilding>,
+	favorites: Array<string> | Array<StoredFavorite>,
 ): favorites is Array<string> {
 	return typeof favorites[0] === 'string'
 }
@@ -65,6 +68,8 @@ function isPreCampusFavorites(
  *
  * Every favourite persisted before this version was a St. Olaf favourite,
  * because Carleton hours had never shipped, so the conversion is unambiguous.
+ * It names St. Olaf by its campus id, so the App Store installs this reaches
+ * keep their favourites through migration 5.
  */
 function scopeFavoritesToCampus(
 	state: PersistedRootState | undefined,
@@ -81,7 +86,7 @@ function scopeFavoritesToCampus(
 		...state,
 		buildings: {
 			...buildings,
-			favorites: favorites.map((name) => ({campus: 'stolaf' as const, name})),
+			favorites: favorites.map((name) => ({campus: 'edu.stolaf', name})),
 		},
 	}
 }
@@ -104,6 +109,27 @@ function addCarletonCalendar(
 	return {...state, settings: {...settings, enabledCalendarSources: [...enabled, 'carleton']}}
 }
 
+/**
+ * The 2.9 betas and release candidates keyed favourites by `stolaf` and
+ * `carleton`, which name no campus now. Those favourites are dropped rather
+ * than carried over: only TestFlight builds ever wrote them. A favourite
+ * migration 3 wrote for an App Store install already names its campus by id,
+ * and stays.
+ */
+function dropUnknownCampusFavorites(
+	state: PersistedRootState | undefined,
+): PersistedRootState | undefined {
+	let buildings = state?.buildings
+	if (!state || !buildings?.favorites) return state
+
+	let stored: Array<string | StoredFavorite> = buildings.favorites
+	let favorites = stored.filter(
+		(favorite): favorite is StoredFavorite =>
+			typeof favorite !== 'string' && isCampusId(favorite.campus),
+	)
+	return {...state, buildings: {...buildings, favorites}}
+}
+
 export const migrations: MigrationManifest = {
 	// `MigrationManifest` types every entry as taking and returning
 	// redux-persist's own opaque `PersistedState`, which cannot describe the
@@ -111,6 +137,12 @@ export const migrations: MigrationManifest = {
 	2: addPresenceCalendar as unknown as (state: PersistedState) => PersistedState,
 	3: scopeFavoritesToCampus as unknown as (state: PersistedState) => PersistedState,
 	4: addCarletonCalendar as unknown as (state: PersistedState) => PersistedState,
+	5: dropUnknownCampusFavorites as unknown as (state: PersistedState) => PersistedState,
 }
 
-export {addCarletonCalendar, addPresenceCalendar, scopeFavoritesToCampus}
+export {
+	addCarletonCalendar,
+	addPresenceCalendar,
+	dropUnknownCampusFavorites,
+	scopeFavoritesToCampus,
+}

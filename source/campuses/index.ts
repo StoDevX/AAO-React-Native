@@ -34,3 +34,15 @@ export function requireCampusId(value: string, origin: string): CampusId {
 	let known = CAMPUSES.map((campus) => campus.id).join(', ')
 	throw new UnknownCampusError(`${origin} names ${value}, but the campuses are ${known}`)
 }
+
+/**
+ * The campus a key in published data names: a campus id, or the id the 2.9
+ * release candidates published it under (`publishedAs`), which the manifest
+ * and map-categories still use until those builds expire. Undefined for any
+ * other key, which a reader skips rather than failing on.
+ */
+export function campusIdFromPublished(key: string): CampusId | undefined {
+	return CAMPUSES.find(
+		(campus) => campus.id === key || ('publishedAs' in campus && campus.publishedAs === key),
+	)?.id
+}

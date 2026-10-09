@@ -21,16 +21,19 @@ const ROW = [
 export function PhotoStrip({
 	photos,
 	name,
+	root,
 }: {
 	photos: Array<string> | undefined
 	name: string
+	/// Where the campus's photo filenames resolve; a campus without one shows no photos.
+	root: string | undefined
 }): React.ReactNode {
 	let [viewing, setViewing] = React.useState(false)
 	let photo = photos?.[0]
-	if (!photo) {
+	if (!root || !photo) {
 		return null
 	}
-	let uri = buildingPhotoUrl(photo)
+	let uri = buildingPhotoUrl(root, photo)
 	let label = `Photo of ${name}`
 	return (
 		<Section>

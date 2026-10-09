@@ -1,3 +1,5 @@
+import type {HoursSection} from '../features/building-hours/campus-section'
+import type {MapSection} from '../features/map/campus-section'
 import type {BrandingSection} from '../features/campus/campus-section'
 import type {ContactsSection} from '../features/directory/campus-section'
 import type {ApiSection} from '../features/developer/campus-section'
@@ -24,4 +26,12 @@ export type CampusDefinition = {
 	contacts?: ContactsSection
 	/** The campus's server, and its field in developer settings. */
 	api: ApiSection
+	/**
+	 * The id the 2.9 release candidates' published data names this campus by
+	 * (`carleton`). Only the parsers of that data read it; see
+	 * `campusIdFromPublished`.
+	 */
+	publishedAs?: string
+	map?: MapSection
+	hours?: HoursSection
 }

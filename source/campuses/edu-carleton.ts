@@ -37,4 +37,22 @@ export const carleton = {
 		defaultUrl: 'https://carleton.frogpond.tech/v1/',
 		storageKey: 'settings:server-address:edu.carleton',
 	},
+	publishedAs: 'carleton',
+	map: {
+		title: 'Carleton Map',
+		// Predates the map reading its campus from the route; kept exactly as it was.
+		center: [-93.15488752015, 44.460800862266],
+		credit: {label: 'Carleton College', url: 'https://www.carleton.edu/'},
+		// carls-app/map-tiles' z/x/y style, which has no dark variant.
+		style: {url: 'https://carls-app.github.io/map-tiles/style.json'},
+		// carls-app/map-data's scrape of Carleton's map. ccc-server stores bare
+		// filenames (`leighton.jpg`), so a record is useless without this prefix.
+		photoRoot: 'https://carls-app.github.io/map-data/cache/img',
+	},
+	hours: {
+		title: 'Building Hours',
+		reportLabel: 'Carleton',
+		// Carleton's map has no home tile, so Hours carries the way to it.
+		showsMapButton: true,
+	},
 } as const satisfies CampusDefinition

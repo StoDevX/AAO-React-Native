@@ -70,7 +70,7 @@ beforeEach(() => {
 		stationMenus: [],
 		corIcons: {},
 	})
-	queryClient.setQueryData(buildingByNameOptions('stolaf', PAUSE_VENUE).queryKey, [PAUSE])
+	queryClient.setQueryData(buildingByNameOptions('edu.stolaf', PAUSE_VENUE).queryKey, [PAUSE])
 	mockPublish.mockClear()
 	mockFoodMenu.mockClear()
 })

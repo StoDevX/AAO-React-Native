@@ -1,6 +1,16 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {CAMPUSES, CAMPUS_IDS, UnknownCampusError, campusById, isCampusId, requireCampusId} from '..'
+import {
+	CAMPUSES,
+	CAMPUS_IDS,
+	UnknownCampusError,
+	campusById,
+	campusIdFromPublished,
+	isCampusId,
+	requireCampusId,
+} from '..'
+import {carleton} from '../edu-carleton'
+import {stolaf} from '../edu-stolaf'
 
 describe('the campus registry', () => {
 	test('lists St. Olaf first, then Carleton, by reverse-DNS id', () => {
@@ -50,5 +60,42 @@ describe("each campus's server", () => {
 		for (let campus of CAMPUSES) {
 			expect(campus.api.defaultUrl).toMatch(/\/$/u)
 		}
+	})
+})
+
+describe('published campus keys', () => {
+	test('read the ids 2.9 published under, and reverse-DNS ids', () => {
+		expect(campusIdFromPublished('stolaf')).toBe('edu.stolaf')
+		expect(campusIdFromPublished('carleton')).toBe('edu.carleton')
+		expect(campusIdFromPublished('edu.carleton')).toBe('edu.carleton')
+	})
+
+	test('name no campus for any other key', () => {
+		expect(campusIdFromPublished('macalester')).toBeUndefined()
+		expect(campusIdFromPublished('carleton.edu')).toBeUndefined()
+	})
+})
+
+describe('the map and hours sections', () => {
+	test("keep each campus's map where it was", () => {
+		expect(stolaf.map.title).toBe('St. Olaf Map')
+		expect(stolaf.map.center).toEqual([-93.1839, 44.4618])
+		expect(carleton.map.title).toBe('Carleton Map')
+		expect(carleton.map.center).toEqual([-93.15488752015, 44.460800862266])
+	})
+
+	test("draw a dark basemap only where the campus's style has one", () => {
+		expect(stolaf.map.darkStyle).toEqual({manifestId: 'stolaf-dark'})
+		expect('darkStyle' in carleton.map).toBe(false)
+	})
+
+	test("title Hours as each campus's tile does", () => {
+		expect(stolaf.hours.title).toBe('Hours')
+		expect(carleton.hours.title).toBe('Building Hours')
+	})
+
+	test('offer the map from Hours only where the map has no tile of its own', () => {
+		expect(stolaf.hours.showsMapButton).toBe(false)
+		expect(carleton.hours.showsMapButton).toBe(true)
 	})
 })

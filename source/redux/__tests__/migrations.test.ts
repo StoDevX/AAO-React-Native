@@ -10,6 +10,7 @@ import type {PersistedState} from 'redux-persist'
 import {
 	addCarletonCalendar,
 	addPresenceCalendar,
+	dropUnknownCampusFavorites,
 	migrations,
 	scopeFavoritesToCampus,
 } from '../migrations'
@@ -58,8 +59,8 @@ describe('the campus-scoped favourites migration', () => {
 		})
 
 		expect(migrated?.buildings?.favorites).toStrictEqual([
-			{campus: 'stolaf', name: 'Bookstore'},
-			{campus: 'stolaf', name: 'Registrar'},
+			{campus: 'edu.stolaf', name: 'Bookstore'},
+			{campus: 'edu.stolaf', name: 'Registrar'},
 		])
 	})
 
@@ -101,7 +102,7 @@ describe('the migration manifest', () => {
 		}
 
 		expect(migrated.settings.enabledCalendarSources).toStrictEqual(['stolaf', 'presence'])
-		expect(migrated.buildings.favorites).toStrictEqual([{campus: 'stolaf', name: 'Bookstore'}])
+		expect(migrated.buildings.favorites).toStrictEqual([{campus: 'edu.stolaf', name: 'Bookstore'}])
 	})
 
 	it('runs only the favourites migration for an install already at version 2', async () => {
@@ -118,7 +119,7 @@ describe('the migration manifest', () => {
 
 		// Untouched: version 2 already ran for this install.
 		expect(migrated.settings.enabledCalendarSources).toStrictEqual(['stolaf'])
-		expect(migrated.buildings.favorites).toStrictEqual([{campus: 'stolaf', name: 'Bookstore'}])
+		expect(migrated.buildings.favorites).toStrictEqual([{campus: 'edu.stolaf', name: 'Bookstore'}])
 	})
 })
 
@@ -149,5 +150,56 @@ describe('the Carleton calendar migration', () => {
 		}
 
 		expect(migrated.settings.enabledCalendarSources).toStrictEqual(['stolaf', 'carleton'])
+	})
+})
+
+describe('the campus-id favourites migration', () => {
+	it("drops a 2.9 release candidate's favourites, keyed by the old ids", () => {
+		let migrated = dropUnknownCampusFavorites({
+			buildings: {
+				favorites: [
+					{campus: 'stolaf', name: 'Bookstore'},
+					{campus: 'carleton', name: 'Sayles Café'},
+				],
+			},
+		})
+		expect(migrated?.buildings?.favorites).toStrictEqual([])
+	})
+
+	it('keeps favourites that name a campus by id', () => {
+		let favorites = [{campus: 'edu.carleton', name: 'Sayles Café'}]
+		let migrated = dropUnknownCampusFavorites({buildings: {favorites}})
+		expect(migrated?.buildings?.favorites).toStrictEqual(favorites)
+	})
+
+	it('leaves state with no buildings slice alone', () => {
+		expect(dropUnknownCampusFavorites({})).toStrictEqual({})
+	})
+})
+
+describe('favourites through every migration', () => {
+	// An App Store install (2.8 and before) stored bare names, all St. Olaf's.
+	it("keeps an App Store install's favourites, on St. Olaf", async () => {
+		let stored = {
+			_persist: {version: 2, rehydrated: false},
+			settings: {enabledCalendarSources: ['stolaf', 'presence']},
+			buildings: {favorites: ['Bookstore']},
+		} as unknown as PersistedState
+		let migrated = (await createMigrate(migrations)(stored, 5)) as unknown as {
+			buildings: {favorites: Array<{campus: string; name: string}>}
+		}
+		expect(migrated.buildings.favorites).toStrictEqual([{campus: 'edu.stolaf', name: 'Bookstore'}])
+	})
+
+	it("resets a 2.9 release candidate's favourites", async () => {
+		let stored = {
+			_persist: {version: 4, rehydrated: false},
+			settings: {enabledCalendarSources: ['stolaf', 'presence', 'carleton']},
+			buildings: {favorites: [{campus: 'carleton', name: 'Sayles Café'}]},
+		} as unknown as PersistedState
+		let migrated = (await createMigrate(migrations)(stored, 5)) as unknown as {
+			buildings: {favorites: Array<{campus: string; name: string}>}
+		}
+		expect(migrated.buildings.favorites).toStrictEqual([])
 	})
 })

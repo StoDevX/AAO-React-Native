@@ -1,6 +1,5 @@
 import type {AppIconName} from '../../../images/icons'
 import type {CampusId} from '../../campuses'
-import type {Campus} from '../building-hours/types'
 import type {StationId} from '../streaming/radio/stations'
 
 /**
@@ -68,7 +67,7 @@ export type TelemetryEvent =
 	| {name: 'screen.view'; attributes: {route: RoutePattern}}
 	| {name: 'calendar.filter.apply'; attributes: {axis: 'category' | 'organization' | 'none'}}
 	| {name: 'map.search.empty'; attributes: Record<string, never>}
-	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: Campus}}
+	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: CampusId}}
 	| {name: 'campus.picked'; attributes: {campus: CampusId}}
 	| {
 			name: 'calendar.add_to_device'

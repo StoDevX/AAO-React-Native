@@ -28,11 +28,13 @@ import {useNowOverride} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 import moment from 'moment-timezone'
 
+import type {CampusId} from '../../../campuses/ids'
 import {keys} from '../query'
 import {TIME_JUMPS, type TimeJump} from './time-jumps'
 import {useForceBundledData} from './data-source-store'
 
 type Props = {
+	campus: CampusId
 	isPresented: boolean
 	onIsPresentedChange: (presented: boolean) => void
 }
@@ -46,7 +48,7 @@ function isJumpSelected(jump: TimeJump, frozen: moment.Moment | null): boolean {
  * Dev-only controls for the two things that make building hours hard to look
  * at: the clock, and where the data comes from.
  */
-export function HoursDevSheet({isPresented, onIsPresentedChange}: Props): React.ReactNode {
+export function HoursDevSheet({campus, isPresented, onIsPresentedChange}: Props): React.ReactNode {
 	let frozen = useNowOverride((state) => state.frozen)
 	let freeze = useNowOverride((state) => state.freeze)
 	let clear = useNowOverride((state) => state.clear)
@@ -63,7 +65,7 @@ export function HoursDevSheet({isPresented, onIsPresentedChange}: Props): React.
 	// on its own when the source changes underneath it.
 	let toggleSource = (next: boolean) => {
 		setForced(next)
-		queryClient.invalidateQueries({queryKey: keys.all('stolaf')})
+		queryClient.invalidateQueries({queryKey: keys.all(campus)})
 	}
 
 	return (

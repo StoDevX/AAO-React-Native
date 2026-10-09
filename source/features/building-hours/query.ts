@@ -1,68 +1,54 @@
 import {clientFor} from '@frogpond/api'
+import {groupBy} from '@frogpond/collections'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
+
+import {campusById, type CampusId} from '../../campuses'
 import {useAppSelector} from '../../redux/hooks'
 import {favoriteNamesForCampus, selectFavoriteBuildings} from '../../redux/parts/buildings'
-import bundledBuildings from '../../../docs/building-hours.json'
-import {BuildingType, Campus} from './types'
+import {sectionServer} from '../campus/section-server'
+import {BuildingType} from './types'
 import {FAVORITES_TITLE} from './lib/listed-sections'
 import {useForceBundledData} from './dev/data-source-store'
-import {groupBy} from '@frogpond/collections'
-import {isCampusId} from '../../campuses'
-import {campusIdOfLegacy, legacyCampusOf} from '../campus/store'
-
-/**
- * Narrows a route's `?campus=` param to a known `Campus`, falling back to
- * St. Olaf for anything else -- an unrecognised value should never crash the
- * screen or reach a client picked by casting an arbitrary string.
- */
-export function parseCampus(value: string | undefined): Campus {
-	// A tile's reverse-DNS id and an older link's legacy id both read, until
-	// the route's campus param is read as a campus id throughout.
-	if (isCampusId(value)) {
-		return legacyCampusOf(value)
-	}
-	return value === 'carleton' ? 'carleton' : 'stolaf'
-}
 
 export const keys = {
-	/** Campus first, so it namespaces by campus -- the two campuses' cached
+	/** Campus first, so it namespaces by campus -- two campuses' cached
 	 * buildings can never collide, even though several venue names (Bookstore,
-	 * Post Office, ...) exist on both. The map's geojson joins this namespace
-	 * when St. Olaf's lands. */
-	all: (campus: Campus) => [campus, 'buildings'] as const,
+	 * Post Office, ...) exist on both. The map's geojson joins this namespace. */
+	all: (campus: CampusId) => [campus, 'buildings'] as const,
 }
 
-function fetchBuildings(campus: Campus) {
+function fetchBuildings(campus: CampusId) {
 	return async ({signal}: {signal: AbortSignal}): Promise<BuildingType[]> => {
-		// UI tests naming no campus assert against what a screen does with a venue, so they need
-		// the same venues every run, and they need this repository's copy rather
-		// than the deployed one -- a `building` key added here only reaches the
-		// server once it merges, and a test for it would fail in between for a
-		// reason nobody could act on. Carleton's data lives outside this
-		// repository, so it still comes over the wire.
+		let hours = campusById(campus).hours
+		// UI tests naming no campus assert against what a screen does with a
+		// venue, so they need the same venues every run, and this repository's
+		// copy rather than the deployed one -- a `building` key added here only
+		// reaches the server once it merges. A campus with no bundled copy
+		// still comes over the wire.
 		//
-		// The dev override takes the same route, for the same reason: a field
-		// added here is invisible on a device until the server has it.
+		// The dev override takes the same route, for the same reason.
 		let forced = useForceBundledData.getState().forced
-		if ((servesBundledFixtures || forced) && campus === 'stolaf') {
-			return (bundledBuildings as {data: BuildingType[]}).data
+		if ((servesBundledFixtures || forced) && hours?.bundled) {
+			return [...hours.bundled]
 		}
 
-		let response = await clientFor(campusIdOfLegacy(campus)).get('spaces/hours', {signal}).json()
+		let response = await clientFor(sectionServer(campus, hours))
+			.get('spaces/hours', {signal})
+			.json()
 		return (response as {data: BuildingType[]}).data
 	}
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const buildingsOptions = (campus: Campus) =>
+export const buildingsOptions = (campus: CampusId) =>
 	queryOptions({
 		queryKey: keys.all(campus),
 		queryFn: fetchBuildings(campus),
 	})
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const buildingByNameOptions = (campus: Campus, name: string) =>
+export const buildingByNameOptions = (campus: CampusId, name: string) =>
 	queryOptions({
 		// Shares buildingsOptions' key on purpose: the detail sheet reads the
 		// list query's warm cache instead of showing its own spinner.
@@ -72,7 +58,7 @@ export const buildingByNameOptions = (campus: Campus, name: string) =>
 	})
 
 export function useGroupedBuildings(
-	campus: Campus,
+	campus: CampusId,
 ): UseQueryResult<Array<{title: string; data: BuildingType[]}>, unknown> {
 	let favoriteBuildings = useAppSelector(selectFavoriteBuildings)
 

@@ -1,22 +1,26 @@
 import {dump} from 'js-yaml'
-import type {BuildingType, Campus} from '../types'
+import type {BuildingType} from '../types'
 import {composeEmail} from '../../../components/send-email'
-import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
+import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 
-/**
- * The name a report should carry for `campus`. Five venue names (Bookstore,
- * Post Office, Business Office, Financial Aid, Registrar) exist on both
- * campuses, so a subject or issue title naming only the building is
- * ambiguous without this.
- */
-function campusLabel(campus: Campus): string {
-	return campus === 'carleton' ? 'Carleton' : 'St. Olaf'
+/** Who a report goes to, and how it names the campus. */
+export type ReportCampus = {
+	/**
+	 * The campus's name in the subject and the issue title (`hours.reportLabel`):
+	 * five venue names (Bookstore, Post Office, Business Office, Financial Aid,
+	 * Registrar) exist on both campuses, so a title naming only the building is
+	 * ambiguous.
+	 */
+	label: string
+	/** The campus's support address (`branding.supportEmail`). */
+	supportEmail: string
 }
 
+/** Mails a suggested change to a venue to its campus's support address. */
 export function submitReport(
 	current: BuildingType,
 	suggestion: BuildingType,
-	campus: Campus,
+	campus: ReportCampus,
 	note: string,
 	attachments: Array<string> = [],
 ): Promise<boolean> {
@@ -24,11 +28,11 @@ export function submitReport(
 	let before = stringifyBuilding(current).trim()
 	let after = stringifyBuilding(suggestion).trim()
 
-	let body = makeEmailBody(before, after, current.name, campus, note)
+	let body = makeEmailBody(before, after, current.name, campus.label, note)
 
 	return composeEmail({
-		to: [SUPPORT_EMAIL],
-		subject: `[building] Suggestion for ${current.name} (${campusLabel(campus)})`,
+		to: [campus.supportEmail],
+		subject: `[building] Suggestion for ${current.name} (${campus.label})`,
 		body,
 		attachments,
 	})
@@ -38,7 +42,7 @@ function makeEmailBody(
 	before: string,
 	after: string,
 	title: string,
-	campus: Campus,
+	campusLabel: string,
 	note: string,
 ): string {
 	return `
@@ -48,7 +52,7 @@ Please do not change anything below this line.
 
 ------------
 
-Project maintainers: ${makeIssueLink(before, after, title, campus, note)}
+Project maintainers: ${makeIssueLink(before, after, title, campusLabel, note)}
 
 ${makeHtmlBody(before, after)}
 `
@@ -81,15 +85,14 @@ function makeIssueLink(
 	before: string,
 	after: string,
 	title: string,
-	campus: Campus,
+	campusLabel: string,
 	note: string,
 ): string {
 	let url = new URL(GH_NEW_ISSUE_URL)
-	// `data/hours` is the label for `data/building-hours/*.yaml`, which is
-	// St. Olaf-only -- Carleton has no YAML of its own to route this label
-	// to, so a Carleton report still files here, named unambiguously instead.
+	// `data/hours` is the label for `data/building-hours/*.yaml`; a campus with
+	// no YAML here still files under it, named unambiguously.
 	url.searchParams.append('labels[]', 'data/hours')
-	url.searchParams.append('title', `Building update for ${title} (${campusLabel(campus)})`)
+	url.searchParams.append('title', `Building update for ${title} (${campusLabel})`)
 	url.searchParams.append('body', makeMarkdownBody(before, after, note))
 	return url.toString()
 }
