@@ -93,9 +93,12 @@ struct StreamingMediaScreen: Screen {
 
 	/// Drag across the logo, well past a tap's slop, and check it is still
 	/// the same logo: a scrub turns the record and must not count as a tap.
+	///
+	/// Found by label whatever its type: a station with one logo has none to
+	/// change to, so its record is an image rather than a button.
 	@discardableResult
 	func checkScrubKeepsLogo(_ label: String) -> Self {
-		let logo = app.buttonLabelled(label)
+		let logo = logoLabelled(label)
 		XCTAssertTrue(logo.waitUntilExists(timeout: 10), "\"\(label)\" should be showing before the scrub")
 
 		let start = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.25))
@@ -103,8 +106,12 @@ struct StreamingMediaScreen: Screen {
 		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
 
 		XCTAssertTrue(
-			app.buttonLabelled(label).waitUntilExists(timeout: 5),
+			logoLabelled(label).waitUntilExists(timeout: 5),
 			"A scrub should leave the logo as \"\(label)\"")
 		return self
+	}
+
+	private func logoLabelled(_ label: String) -> XCUIElement {
+		app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
 	}
 }
