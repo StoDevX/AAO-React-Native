@@ -4,6 +4,9 @@
 /** A body larger than this is refused unless asked for, so a smoke test cannot pull a whole feed in unnoticed. */
 export const LARGE_BODY_BYTES = 200 * 1024
 
+/** The St. Olaf calendar's feed (TEC), by its URL. */
+const TEC_EVENTS = /tribe\/events\/v1\/events/u
+
 /** An object's named keys alone, those it has. */
 function pick(object, keys) {
 	return Object.fromEntries(keys.filter((key) => key in object).map((key) => [key, object[key]]))
@@ -41,7 +44,7 @@ const PRESENCE_FIELDS = [
  */
 const TRIMS = [
 	{
-		matches: /tribe\/events\/v1\/events/u,
+		matches: TEC_EVENTS,
 		trim: (page) => ({...pick(page, ['next_rest_url']), events: page.events.map(tecEvent)}),
 	},
 	{
@@ -56,13 +59,125 @@ export function trimmedBody(key, body) {
 	return rule ? JSON.stringify(rule.trim(JSON.parse(body))) : body
 }
 
+/** An email address, which a recording keeps as `person@example.com`: feeds name people in their text. */
+const EMAIL = /[\w.%+-]+@[\w.-]+\.[a-z]{2,}/giu
+
+/** A body as a recording keeps it: trimmed, and with no one's email address. */
+function recordedBody(key, body) {
+	return trimmedBody(key, body).replaceAll(EMAIL, 'person@example.com')
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/**
+ * Each calendar feed's start and end times, and how it writes them: an ISO
+ * instant, with or without milliseconds, or TEC's "YYYY-MM-DD HH:MM:SS" in
+ * UTC.
+ */
+const CALENDARS = [
+	{matches: /\/calendar\/named\//u, events: (body) => body, fields: ['startTime', 'endTime']},
+	{
+		matches: /api\.presence\.io\//u,
+		events: (body) => body,
+		fields: ['startDateTimeUtc', 'endDateTimeUtc'],
+	},
+	{
+		matches: TEC_EVENTS,
+		events: (body) => body.events,
+		fields: ['utc_start_date', 'utc_end_date'],
+	},
+]
+
+/** A recorded time as an instant. */
+function instantOf(stamp) {
+	return new Date(stamp.includes('T') ? stamp : `${stamp.replace(' ', 'T')}Z`)
+}
+
+/** A recorded time moved by some days, written as its feed writes it. */
+function shiftStamp(stamp, days) {
+	let iso = new Date(instantOf(stamp).getTime() + days * DAY_MS).toISOString()
+	if (!stamp.includes('T')) return iso.slice(0, 19).replace('T', ' ')
+	return stamp.includes('.') ? iso : iso.replace(/\.\d{3}Z$/u, 'Z')
+}
+
+/** The day an instant falls on at the colleges, as YYYY-MM-DD. */
+export function campusDay(instant) {
+	return instant.toLocaleDateString('en-CA', {timeZone: 'America/Chicago'})
+}
+
+/**
+ * A campus's calendars moved back by whole days, all by the same amount, so
+ * the first day from the recording on that has an event starting becomes the
+ * UI tests' frozen day. The feeds answer from the day they are asked, so the
+ * frozen day would otherwise show nothing; this asks no feed to keep serving
+ * the past. An event that began earlier, such as a running exhibition, moves
+ * with the rest. Calendars recorded on the frozen day are left as they came.
+ */
+export function shiftCalendars(table, {frozenDay, recordedDay}) {
+	let calendars = Object.keys(table).flatMap((key) => {
+		let calendar = CALENDARS.find(({matches}) => matches.test(key))
+		return calendar ? [{key, calendar, body: JSON.parse(table[key].body)}] : []
+	})
+	let eventDays = calendars.flatMap(({calendar, body}) =>
+		calendar.events(body).flatMap((event) => {
+			let start = event[calendar.fields[0]]
+			return start ? [campusDay(instantOf(start))] : []
+		}),
+	)
+	let anchor =
+		eventDays.filter((day) => day >= recordedDay).sort((a, b) => a.localeCompare(b))[0] ??
+		recordedDay
+	let days = Math.round((Date.parse(frozenDay) - Date.parse(anchor)) / DAY_MS)
+	if (days >= 0) return table
+
+	let shifted = {...table}
+	for (let {key, calendar, body} of calendars) {
+		for (let event of calendar.events(body)) {
+			for (let field of calendar.fields) {
+				if (event[field]) event[field] = shiftStamp(event[field], days)
+			}
+		}
+		shifted[key] = {...table[key], body: JSON.stringify(body)}
+	}
+	return shifted
+}
+
+/**
+ * A TEC page's key as the app writes it: `fixtureKey` in
+ * source/features/campus/fixtures.ts writes the window's dates `{date}`.
+ */
+function tecPageKey(url) {
+	return `GET ${url.replaceAll(/([?&](?:ends_after|starts_before)=)[^&]*/gu, '$1{date}')}`
+}
+
+/**
+ * A campus's recordings with every page of the St. Olaf calendar: the app
+ * reads them one after another, and a test can finish while it still is.
+ * `fetchPage(url)` answers a page as `{status, contentType, body}`.
+ */
+export async function completeTecPages(table, fetchPage) {
+	let complete = {...table}
+	let pending = Object.keys(complete).filter((key) => TEC_EVENTS.test(key))
+	while (pending.length > 0) {
+		let next = JSON.parse(complete[pending.shift()].body).next_rest_url
+		if (!next || tecPageKey(next) in complete) continue
+		let key = tecPageKey(next)
+		// Sequential by nature: each page names the next.
+		// oxlint-disable-next-line eslint/no-await-in-loop
+		let {status, contentType, body} = await fetchPage(next)
+		complete[key] = {status, contentType, body: recordedBody(key, body)}
+		pending.push(key)
+	}
+	return complete
+}
+
 /** The recording's lines as the fixture table, keys sorted, the last answer to each request kept. */
 export function mergeCampusRecordings(lines, {allowLarge = false} = {}) {
 	let table = {}
 	for (let text of lines) {
 		if (!text.trim()) continue
 		let {key, status, contentType, body: answered} = JSON.parse(text)
-		let body = trimmedBody(key, answered)
+		let body = recordedBody(key, answered)
 		let bytes = Buffer.byteLength(body)
 		if (!allowLarge && bytes > LARGE_BODY_BYTES) {
 			throw new Error(`${key} answered ${bytes} bytes; rerun with --allow-large to keep it`)

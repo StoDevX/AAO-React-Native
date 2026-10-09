@@ -1,0 +1,65 @@
+{
+	"contentType": "application/json; charset=utf-8",
+	"json": {
+		"data": [
+			{
+				"category": "Bus",
+				"description": "Northfield Lines shuttle operates only immediately before and after break. You must buy tickets 48 hours in advance.",
+				"name": "Break Airport Shuttles",
+				"synopsis": "Northfield Lines shuttle operates only immediately before and after break. You must buy tickets 48 hours in advance.",
+				"url": "https://northfield.betterez.com/cart/5787e3b01f39300a1a000085"
+			},
+			{
+				"category": "Maps",
+				"description": "A map that showcases places that would be of interest to students, but that Carls might not know about.",
+				"name": "A Carl’s Guide to the Twin Cities",
+				"synopsis": "Showcases places that would be of interest to students, but that Carls might not know about.",
+				"url": "https://apps.carleton.edu/carlsguide/"
+			},
+			{
+				"category": "Bus",
+				"description": "EcoTrans provides safe, reliable, door-to-door personal transportation services.",
+				"name": "EcoTrans",
+				"synopsis": "EcoTrans provides safe, reliable, door-to-door personal transportation services.",
+				"url": "https://www.goecotrans.com"
+			},
+			{
+				"category": "Car",
+				"description": "Car sharing program for business, school, or personal use.",
+				"name": "Enterprise CarShare",
+				"synopsis": "Car sharing program for business, school, or personal use.",
+				"url": "https://www.enterprisecarshare.com/us/en/programs/university/st-olaf.html"
+			},
+			{
+				"category": "Bus",
+				"description": "Shuttle service to and from MSP airports, bus and train depots, local shuttle, medical appointments, casinos, and package delivery.",
+				"name": "First Choice Shuttle",
+				"synopsis": "Shuttle service to and from MSP airports, bus and train depots, local shuttle, medical appointments, casinos, and package delivery.",
+				"url": "http://youarriveontime.com"
+			},
+			{
+				"category": "Bus",
+				"description": "Free route bus that stops at both colleges, Division Street, Target/Cub, and El Tequila/Culvers.",
+				"name": "Hiawathaland Transit",
+				"synopsis": "Free route bus that stops at both colleges, Division Street, Target/Cub, and El Tequila/Culvers.",
+				"url": "https://wp.stolaf.edu/sa/transportation/localexpressbus/"
+			},
+			{
+				"category": "Car",
+				"description": "Post a ride or look for a ride with students.",
+				"name": "Ride Board",
+				"synopsis": "Post a ride or look for a ride with students.",
+				"url": "https://www.stolaf.edu/apps/rideboard/index.cfm?fuseaction=browse"
+			},
+			{
+				"category": "Bus",
+				"description": "A handy online bus schedule viewer, made by [Tate Bosler '19](https://www.tatebosler.com/).",
+				"name": "SaylesHill.xyz Bus List",
+				"synopsis": "A handy online bus schedule viewer, made by Tate Bosler '19",
+				"url": "https://www.sayleshill.xyz/buses/"
+			}
+		]
+	},
+	"key": "GET {server:carleton.edu}/transit/modes",
+	"status": 200
+}

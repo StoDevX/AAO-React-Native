@@ -1,0 +1,53 @@
+{
+	"contentType": "application/json; charset=utf-8",
+	"json": {
+		"cafe": {
+			"address": "",
+			"city": "",
+			"days": [
+				{
+					"date": "2026-10-08",
+					"dayparts": [
+						{
+							"endtime": "10:00",
+							"id": "1",
+							"label": "Breakfast",
+							"message": "",
+							"starttime": "07:30"
+						},
+						{
+							"endtime": "13:30",
+							"id": "3",
+							"label": "Lunch",
+							"message": "",
+							"starttime": "11:30"
+						},
+						{
+							"endtime": "20:00",
+							"id": "4",
+							"label": "Dinner",
+							"message": "",
+							"starttime": "17:45"
+						}
+					],
+					"message": false,
+					"status": ""
+				}
+			],
+			"description": "",
+			"eod": "",
+			"latitude": "",
+			"longitude": "",
+			"menu_html": "",
+			"menu_type": "",
+			"message": "",
+			"name": "Burton",
+			"state": "",
+			"timezone": "",
+			"weekly_schedule": "",
+			"zip": ""
+		}
+	},
+	"key": "GET {server:stolaf.edu}/food/named/cafe/burton",
+	"status": 200
+}

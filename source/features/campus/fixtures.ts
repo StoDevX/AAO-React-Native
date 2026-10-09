@@ -52,6 +52,13 @@ export function tableFrom(domain: string, files: ReadonlyArray<CampusRecordingFi
 export const CAMPUS_RECORDING_FILE = 'campus-fixture-recording.jsonl'
 
 /**
+ * The St. Olaf calendar's window, which `tecWindow` takes from the day's date:
+ * written `{date}` so a recording answers on any day. The recorder moves the
+ * recorded events onto the frozen day to match.
+ */
+const DATED_PARAMS = /([?&](?:ends_after|starts_before)=)[^&]*/gu
+
+/**
  * A request's key: its method and URL, with each campus server's root written
  * `{server:<domain>}`, so a recording against one server serves any other.
  */
@@ -60,13 +67,14 @@ export function fixtureKey(
 	url: string,
 	roots: Readonly<Record<string, URL | undefined>>,
 ): string {
+	let undated = url.replaceAll(DATED_PARAMS, '$1{date}')
 	for (let [domain, root] of Object.entries(roots)) {
 		let prefix = root?.href.replace(/\/$/u, '')
-		if (prefix && url.startsWith(`${prefix}/`)) {
-			return `${method.toUpperCase()} {server:${domain}}${url.slice(prefix.length)}`
+		if (prefix && undated.startsWith(`${prefix}/`)) {
+			return `${method.toUpperCase()} {server:${domain}}${undated.slice(prefix.length)}`
 		}
 	}
-	return `${method.toUpperCase()} ${url}`
+	return `${method.toUpperCase()} ${undated}`
 }
 
 /** A request a campus test made that its recordings cannot answer. */

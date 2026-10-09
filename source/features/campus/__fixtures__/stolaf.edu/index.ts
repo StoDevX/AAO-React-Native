@@ -11,9 +11,9 @@ import f8 from './GET-sources.json'
 import f9 from './GET-spaces-hours.json'
 import f10 from './GET-transit-bus.json'
 import f11 from './GET-transit-modes.json'
-import f12 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-ends_after-2026-09-04-starts_before-2026-10-05.json'
-import f13 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-status-publish-starts_before-2026-10-05-23-3A59-3A59-ends_after-2026-09-04-23-3A59-3A59-page-2.json'
-import f14 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-status-publish-starts_before-2026-10-05-23-3A59-3A59-ends_after-2026-09-04-23-3A59-3A59-page-3.json'
-import f15 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-status-publish-starts_before-2026-10-05-23-3A59-3A59-ends_after-2026-09-04-23-3A59-3A59-page-4.json'
+import f12 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-ends_after-date-starts_before-date.json'
+import f13 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-status-publish-starts_before-date-ends_after-date-page-2.json'
+import f14 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-status-publish-starts_before-date-ends_after-date-page-3.json'
+import f15 from './GET-wp.stolaf.edu-calendar-wp-json-tribe-events-v1-events-per_page-50-status-publish-starts_before-date-ends_after-date-page-4.json'
 
 export default [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15]

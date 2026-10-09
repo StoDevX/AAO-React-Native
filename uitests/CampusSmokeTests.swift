@@ -85,7 +85,14 @@ class CampusSmokeTests: UITestCaseUnbooted {
 
 	func testCalendarListsARecordedEvent() throws {
 		opens("/calendar", waitingFor: app.navigationBars["Calendar"])
-		CalendarScreen(app: app).verifyRowPresent(expected.calendarEvent)
+		let calendar = CalendarScreen(app: app)
+		if isRecordingFixtures {
+			// A live calendar may hold nothing yet on the frozen day: the recorder
+			// moves its events there after the run, so only the fetch is needed now.
+			XCTAssertTrue(calendar.waitUntilDayLoads(), "the calendar should finish loading")
+			throw XCTSkip("the recorder shifts the calendars onto the frozen day after the run")
+		}
+		calendar.verifyRowPresent(expected.calendarEvent)
 	}
 
 	func testSupportOffersTheCampusEmergencyLine() throws {
@@ -113,7 +120,66 @@ final class StOlafSmokeTests: CampusSmokeTests {
 			busLine: "Express Bus",
 			menusRoute: "/menus",
 			cafe: "Stav Hall",
-			calendarEvent: "Orientation for new students",
+			calendarEvent: "St. Olaf Vaccine Clinic",
 			emergencyButton: "PubSafe")
+	}
+}
+
+/// Tags: campus:carleton.edu
+final class CarletonSmokeTests: CampusSmokeTests {
+	override class var campus: Campus? { .carleton }
+
+	override var expected: CampusExpectations {
+		CampusExpectations(
+			homeTitle: "CARLS",
+			hoursRoute: "/hours?campus=carleton",
+			hoursTitle: TestIdentifiers.Hours.carletonTitle,
+			building: "Burton",
+			mapRoute: "/map?campus=carleton",
+			mapPlace: "Boliou Hall",
+			contactsTitle: "Important Contacts",
+			contact: "Security Services",
+			word: "A & I",
+			transitTitle: "Transportation",
+			busLine: "Carls-Go! Route 1",
+			menusRoute: "/menus/burton",
+			cafe: "Burton",
+			calendarEvent: "First-Gen Friday",
+			emergencyButton: "Security")
+	}
+
+	/// Some element on screen whose label holds `text`: a headline sits inside a
+	/// row's label, alongside its byline.
+	private func shows(_ text: String) -> XCUIElement {
+		app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
+	}
+
+	func testCarletonianShowsAnIssue() throws {
+		HomeScreen(app: app).open(route: "/carletonian", mountedWhen: app.navigationBars["The Carletonian"])
+		let story = "A small adventure"
+		XCTAssertTrue(shows(story).waitUntilExists(timeout: 30), "\(story) should be on the front page")
+	}
+
+	func testCarletonNewsOpensAStory() throws {
+		HomeScreen(app: app).open(route: "/carleton-news", mountedWhen: app.navigationBars["Carleton News"])
+		let story = shows("Carnegie classification for sustainability")
+		XCTAssertTrue(story.waitUntilExists(timeout: 30), "a recorded story should be listed")
+		story.tap()
+		XCTAssertTrue(app.navigationBars.buttons.firstMatch.waitUntilExists(timeout: 30))
+	}
+
+	func testSumoListsRecordedFilms() throws {
+		HomeScreen(app: app).open(route: "/carleton-sumo", mountedWhen: app.navigationBars["SUMO"])
+		let film = "I Love Boosters"
+		XCTAssertTrue(shows(film).waitUntilExists(timeout: 30), "\(film) should be listed")
+	}
+
+	func testConvoListsUpcomingAndArchived() throws {
+		HomeScreen(app: app).open(route: "/carleton-convos", mountedWhen: app.tabBars.buttons["Archives"])
+		let upcoming = "Family Weekend Convocation with Jack El-Hai"
+		XCTAssertTrue(shows(upcoming).waitUntilExists(timeout: 30), "\(upcoming) should be upcoming")
+		app.tabBars.buttons["Archives"].tap()
+		let archived = "Carleton Opening Convo with Governor Tim Walz"
+		XCTAssertTrue(shows(archived).waitUntilExists(timeout: 30), "\(archived) should be archived")
 	}
 }

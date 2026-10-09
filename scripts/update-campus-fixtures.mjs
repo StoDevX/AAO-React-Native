@@ -7,7 +7,13 @@
 
 import {existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
-import {campusFixtureFiles, mergeCampusRecordings} from './campus-fixtures.mjs'
+import {
+	campusDay,
+	campusFixtureFiles,
+	completeTecPages,
+	mergeCampusRecordings,
+	shiftCalendars,
+} from './campus-fixtures.mjs'
 import {summarizeKeys} from './mess-fixtures.mjs'
 import {
 	appDataPath,
@@ -60,7 +66,29 @@ let recording = recordingPath()
 if (!existsSync(recording)) {
 	throw new Error(`nothing was recorded; ${domain}'s fixtures are left as they were`)
 }
-let table = mergeCampusRecordings(readFileSync(recording, 'utf8').split('\n'), {allowLarge})
+/** The UI tests' frozen day, read from `UITEST_FROZEN_DATE` so the two cannot drift. */
+function frozenDay() {
+	let source = readFileSync('modules/timer/index.ts', 'utf8')
+	let day = /UITEST_FROZEN_DATE = '(\d{4}-\d{2}-\d{2})/u.exec(source)?.[1]
+	if (!day) throw new Error('no UITEST_FROZEN_DATE in modules/timer/index.ts')
+	return day
+}
+
+/** A page of a feed, fetched live, as a recording holds it. */
+async function fetchPage(url) {
+	let response = await fetch(url)
+	return {
+		status: response.status,
+		contentType: response.headers.get('content-type'),
+		body: await response.text(),
+	}
+}
+
+let recorded = mergeCampusRecordings(readFileSync(recording, 'utf8').split('\n'), {allowLarge})
+let table = shiftCalendars(await completeTecPages(recorded, fetchPage), {
+	frozenDay: frozenDay(),
+	recordedDay: campusDay(new Date()),
+})
 
 /** The keys of the recordings already on disk, so the summary can say what moved. */
 function recordedKeys() {

@@ -404,17 +404,28 @@ describe('the real suite', () => {
 		assert.deepEqual(placed.sort(), classes.map((c) => c.className).sort())
 	})
 
-	it('places every method in the suite exactly once', () => {
+	it('places every method in the suite exactly once, an inherited one once per subclass', () => {
 		// Counted straight from the Swift text rather than from discoverTests, so
 		// a method the planner drops or names twice cannot also shrink the target.
-		const declared = realTestFiles().flatMap((file) => [
-			...file.text.matchAll(/func\s+(test\w+)\s*\(/gu),
-		])
+		// Each top-level class runs its own methods, and those of a template it
+		// extends; a template runs none itself.
+		const classes = realTestFiles().flatMap((file) => {
+			let starts = [...file.text.matchAll(/^(?:final\s+)?class\s+(\w+)\s*:\s*(\w+)/gmu)]
+			return starts.map((start, i) => {
+				let body = file.text.slice(start.index, starts[i + 1]?.index)
+				let methods = [...body.matchAll(/func\s+(test\w+)\s*\(/gu)].length
+				return {name: start[1], parent: start[2], methods}
+			})
+		})
+		const methodsOf = new Map(classes.map((c) => [c.name, c.methods]))
+		const templates = new Set(classes.map((c) => c.parent).filter((name) => methodsOf.has(name)))
+		const runnable = classes.filter((c) => !templates.has(c.name))
+		const expected = runnable.reduce((n, c) => n + c.methods + (methodsOf.get(c.parent) ?? 0), 0)
 		const placed = packShards(weighMethods(discoverTests(realTestFiles()), {}), 3)
 			.flat()
 			.map((i) => i.name)
 
-		assert.equal(placed.length, declared.length)
+		assert.equal(placed.length, expected)
 		assert.equal(new Set(placed).size, placed.length)
 	})
 

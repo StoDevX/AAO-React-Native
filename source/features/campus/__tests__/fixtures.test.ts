@@ -22,6 +22,24 @@ describe('fixtureKey', () => {
 			fixtureKey('GET', 'https://thecarletonian.com/wp-json/wp/v2/posts?per_page=50', roots),
 		).toBe('GET https://thecarletonian.com/wp-json/wp/v2/posts?per_page=50')
 	})
+
+	test("writes the St. Olaf calendar's window as {date}, so a recording answers on any day", () => {
+		let events = 'https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events'
+		expect(
+			fixtureKey(
+				'GET',
+				`${events}?per_page=50&ends_after=2026-10-07&starts_before=2026-11-08`,
+				roots,
+			),
+		).toBe(`GET ${events}?per_page=50&ends_after={date}&starts_before={date}`)
+		expect(
+			fixtureKey(
+				'GET',
+				`${events}/?per_page=50&starts_before=2026-11-08+23%3A59%3A59&ends_after=2026-10-07+23%3A59%3A59&page=2`,
+				roots,
+			),
+		).toBe(`GET ${events}/?per_page=50&starts_before={date}&ends_after={date}&page=2`)
+	})
 })
 
 describe('serveFixture', () => {

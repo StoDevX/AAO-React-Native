@@ -69,10 +69,16 @@ class UITestCaseUnbooted: XCTestCase {
 		add(attachment)
 	}
 
+	/// Whether this run records what the app fetches: the test runner was started
+	/// with `TEST_RUNNER_AAO_RECORD_FIXTURES=1`, as the fixture tasks do.
+	var isRecordingFixtures: Bool {
+		ProcessInfo.processInfo.environment["AAO_RECORD_FIXTURES"] == "1"
+	}
+
 	/// Has the app record what it fetches, when the test runner was started with
 	/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1` -- as `mise run update-mess-fixtures` does.
 	func appendRecordFixturesIfAsked() {
-		if ProcessInfo.processInfo.environment["AAO_RECORD_FIXTURES"] == "1" {
+		if isRecordingFixtures {
 			app.launchArguments.append(TestIdentifiers.LaunchArguments.recordFixtures)
 		}
 	}
