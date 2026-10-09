@@ -6,11 +6,24 @@ export const keys = {
 	all: ['routes'] as const,
 }
 
+/** One thing a route reads from its request, as the server's sitemap describes it. */
+export interface RouteInput {
+	name: string
+	in: 'path' | 'query'
+	required: boolean
+	/** The complete set of accepted values. */
+	values?: {value: string; label?: string}[]
+	/** Known-good values for a free-form input. */
+	examples?: string[]
+	format?: 'date'
+}
+
 export interface ServerRoute {
 	displayName: string
 	path: string
 	methods: string[]
 	params: string[]
+	inputs: RouteInput[]
 }
 
 /** One method on one route: what a row in the API Tester sends. */
@@ -21,6 +34,8 @@ export interface RouteEntry {
 	path: string
 	displayName: string
 	params: string[]
+	/** What the route reads from a request. */
+	inputs: RouteInput[]
 }
 
 /**
@@ -35,6 +50,7 @@ export function groupRoutes(routes: ServerRoute[]): {title: string; data: RouteE
 			path: route.path,
 			displayName: route.displayName,
 			params: route.params,
+			inputs: route.inputs,
 		})),
 	)
 	let grouped = groupBy(entries, (entry) => entry.path.split('/').find((v) => v) ?? '/')
