@@ -1,4 +1,4 @@
-import {describe, expect, jest, test} from '@jest/globals'
+import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {QueryClient} from '@tanstack/react-query'
 import moment from 'moment-timezone'
 import {format as formatDate} from 'date-fns'
@@ -6,9 +6,6 @@ import {format as formatDate} from 'date-fns'
 import type {WireEvent} from '../parsers/events'
 import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf, tecWindow} from '../query'
 import {REMOTE_SOURCES} from '../sources'
-import uitestFixturesJson from '../fixtures/uitest-events.json'
-
-let uitestFixtures = uitestFixturesJson as WireEvent[]
 import {groupEvents} from '@frogpond/event-list/sections'
 import {now} from '@frogpond/timer'
 import {getRunner} from '../../../source/database/client'
@@ -80,16 +77,21 @@ function makeWireEvent(overrides: Partial<WireEvent> = {}): WireEvent {
 }
 
 describe('sourceRankOf', () => {
-	// `scripts/jest-setup.js` mocks `@frogpond/launch-arguments` to
-	// `isUITesting: true` for every test in this repo, so `REMOTE_SOURCES` here
-	// is always the single-entry UI-test fixture list, never `[stolaf,
-	// presence]` -- reading the id straight off it, rather than hardcoding
-	// `'stolaf'`, keeps this test honest about which list it is checking.
 	let [firstSource] = REMOTE_SOURCES
 	if (!firstSource) throw new Error('REMOTE_SOURCES must not be empty')
 
 	test('ranks a source by its position in REMOTE_SOURCES', () => {
 		expect(sourceRankOf(firstSource.id)).toBe(0)
+	})
+
+	// Every calendar, in UI tests too: no fixture calendar stands in for them.
+	test('ranks the campus calendars in their dedupe order', () => {
+		expect(REMOTE_SOURCES.map((source) => source.id)).toEqual([
+			'stolaf',
+			'presence',
+			'carleton',
+			'wiki-monkeys',
+		])
 	})
 
 	test('an id REMOTE_SOURCES does not list ranks past the end, never 0 ahead of the first', () => {
@@ -101,22 +103,28 @@ describe('sourceRankOf', () => {
 /**
  * `namedCalendarOptions` writes the fetched wire straight into the database
  * and resolves to a receipt of that write, not the events themselves.
- * `'uitest'` is used throughout so these run against the bundled fixture
- * rather than the network, the same way the rest of this file avoids it.
+ * Carleton's calendar is used throughout: its page fetch is mocked to answer
+ * with `wire`, so these run without the network.
  */
 describe('namedCalendarOptions', () => {
+	let wire = [makeWireEvent(), makeWireEvent({title: 'Convocation'})]
+
+	beforeEach(() => {
+		jest.mocked(fetchSourceBody).mockResolvedValue(wire)
+	})
+
 	afterEach(() => {
 		jest.clearAllMocks()
 	})
 
 	test('writes the fetched wire events into the database, ranked and retained', async () => {
-		await ingestFor('uitest')()
+		await ingestFor('carleton')()
 
 		expect(writeSource).toHaveBeenCalledWith(
 			getRunner(),
-			'uitest',
-			sourceRankOf('uitest'),
-			uitestFixtures,
+			'carleton',
+			sourceRankOf('carleton'),
+			wire,
 			'the-retention' as never,
 		)
 	})
@@ -127,13 +135,13 @@ describe('namedCalendarOptions', () => {
 			// The app's client keeps a query for a day; React Query's default of
 			// five minutes would drop it before the hour was up.
 			let client = new QueryClient({defaultOptions: {queries: {gcTime: 24 * 60 * 60 * 1000}}})
-			await client.query(namedCalendarOptions('uitest'))
+			await client.query(namedCalendarOptions('carleton'))
 			jest.advanceTimersByTime(59 * 60 * 1000)
-			await client.query(namedCalendarOptions('uitest'))
+			await client.query(namedCalendarOptions('carleton'))
 			expect(writeSource).toHaveBeenCalledTimes(1)
 
 			jest.advanceTimersByTime(2 * 60 * 1000)
-			await client.query(namedCalendarOptions('uitest'))
+			await client.query(namedCalendarOptions('carleton'))
 			expect(writeSource).toHaveBeenCalledTimes(2)
 			client.clear()
 		} finally {
@@ -142,15 +150,15 @@ describe('namedCalendarOptions', () => {
 	})
 
 	test('bumps the calendar revision after a successful write', async () => {
-		await ingestFor('uitest')()
+		await ingestFor('carleton')()
 
 		expect(bumpCalendarRevision).toHaveBeenCalledTimes(1)
 	})
 
 	test('resolves to a receipt describing the write, not the events', async () => {
-		let receipt = await ingestFor('uitest')()
+		let receipt = await ingestFor('carleton')()
 
-		expect(receipt).toEqual({writtenAt: expect.any(Number), count: uitestFixtures.length})
+		expect(receipt).toEqual({writtenAt: expect.any(Number), count: wire.length})
 	})
 
 	// The one failure here that would otherwise be invisible: the revision
@@ -163,7 +171,7 @@ describe('namedCalendarOptions', () => {
 			throw error
 		})
 
-		await expect(ingestFor('uitest')()).rejects.toThrow(error)
+		await expect(ingestFor('carleton')()).rejects.toThrow(error)
 
 		expect(Sentry.captureException).toHaveBeenCalledWith(error)
 		expect(bumpCalendarRevision).not.toHaveBeenCalled()

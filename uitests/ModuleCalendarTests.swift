@@ -1,6 +1,8 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleCalendarDayModeTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
 
 	/// Choosing a category from the toolbar picker narrows the day's list, and
 	/// Reset Filters brings it back. The picker is an `@expo/ui` Menu of
@@ -79,7 +81,7 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     let empty = TestIdentifiers.Calendar.anEmptyDay
     XCTAssertFalse(
       screen.dayHasEvents(empty),
-      "\(empty) should carry no events in the fixture calendar")
+      "\(empty) should carry no events in Wiki Monkeys' calendar")
 
     screen.tapDay(empty)
     XCTAssertEqual(

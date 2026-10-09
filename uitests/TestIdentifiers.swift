@@ -406,14 +406,14 @@ struct TestIdentifiers {
 	}
 
 	enum Calendar {
-		/// Days in the fixture calendar: one with events in the week after
+		/// Days in Wiki Monkeys' calendar: one with events in the week after
 		/// `frozenNow`'s, and one with none in the week after that.
 		static let aDayWithEvents = "2026-09-07"
 		static let anEmptyDay = "2026-09-19"
 		static let picker = "Calendar filter"
 		/// Categories the picker offers, written as the menu draws them: the
-		/// name, then how many events carry it. The counts come from
-		/// `modules/ccc-calendar/fixtures/uitest-events.json` read at the app's
+		/// name, then how many events carry it. The counts come from Wiki
+		/// Monkeys' `GET-calendar-named-wiki-monkeys.yaml` read at the app's
 		/// frozen clock, so they hold for as long as that fixture does. A count
 		/// covers the list's whole window, finished events included: Welcome
 		/// Convocation ended that morning and still counts toward Academic Year.

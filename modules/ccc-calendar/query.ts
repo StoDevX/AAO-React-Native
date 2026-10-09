@@ -9,7 +9,6 @@ import {getRunner} from '../../source/database/client'
 import {bumpCalendarRevision} from '../../source/database/calendar/revision'
 import {retentionFor, writeSource} from '../../source/database/calendar/write'
 import {convertEvents, type EventMapper} from './convert'
-import uitestFixtures from './fixtures/uitest-events.json'
 import {parseEvents, type WireEvent} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parsePresenceEvents} from './parsers/presence'
@@ -73,11 +72,6 @@ export function tecWindow(now: Date): {from: Date; until: Date} {
 }
 
 async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
-	// UI test fixture calendar returns bundled data instead of network fetch
-	if (calendar === 'uitest') {
-		return uitestFixtures as WireEvent[]
-	}
-
 	let manifest = await fetchManifest(queryClient)
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
