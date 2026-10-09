@@ -110,6 +110,24 @@ function addCarletonCalendar(
 }
 
 /**
+ * Wiki Monkeys' calendar is on by default too. Only a developer can switch to
+ * Wiki Monkeys, but one with an existing install would otherwise find its
+ * calendar empty until they turned the source on by hand.
+ */
+function addWikiMonkeysCalendar(
+	state: PersistedRootState | undefined,
+): PersistedRootState | undefined {
+	let settings = state?.settings
+	if (!state || !settings) return state
+
+	let enabled = settings.enabledCalendarSources
+	// No stored list still reads the defaults, which name Wiki Monkeys.
+	if (!enabled || enabled.includes('wiki-monkeys')) return state
+
+	return {...state, settings: {...settings, enabledCalendarSources: [...enabled, 'wiki-monkeys']}}
+}
+
+/**
  * The 2.9 betas and release candidates keyed favourites by `stolaf` and
  * `carleton`, which name no campus now. Those favourites are dropped rather
  * than carried over: only TestFlight builds ever wrote them. A favourite
@@ -138,11 +156,13 @@ export const migrations: MigrationManifest = {
 	3: scopeFavoritesToCampus as unknown as (state: PersistedState) => PersistedState,
 	4: addCarletonCalendar as unknown as (state: PersistedState) => PersistedState,
 	5: dropUnknownCampusFavorites as unknown as (state: PersistedState) => PersistedState,
+	6: addWikiMonkeysCalendar as unknown as (state: PersistedState) => PersistedState,
 }
 
 export {
 	addCarletonCalendar,
 	addPresenceCalendar,
+	addWikiMonkeysCalendar,
 	dropUnknownCampusFavorites,
 	scopeFavoritesToCampus,
 }
