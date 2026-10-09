@@ -1,6 +1,7 @@
-import {readFileSync, readdirSync} from 'node:fs'
+import {readFileSync, readdirSync, realpathSync} from 'node:fs'
 import {join} from 'node:path'
 import Ajv from 'ajv'
+import type {ValidateFunction} from 'ajv'
 import addFormats from 'ajv-formats'
 import {load} from 'js-yaml'
 import type {
@@ -20,14 +21,20 @@ import {validateSchedules} from './validate-schedules.ts'
 /** Labels identify the input in structural and cross-file errors. */
 export type ScheduleDataInput = {label: string; data: unknown}
 
-/** Validated schedules retain every field and unresolved reference. */
+/** Validated schedules retain authored fields and unresolved references. */
 export type ScheduleData = {
 	calendar: BreakCalendar<NamedBuildingScheduleType>
 	spaces: Array<{
 		label: string
-		data: BuildingType<string | Schedule<NamedBuildingScheduleType>>
+		data: PublishedSpace
 	}>
 }
+
+/** Published spaces always carry normalized exceptions and a validated kind. */
+type PublishedSpace = BuildingType<string | Schedule<NamedBuildingScheduleType>> &
+	Schedule<NamedBuildingScheduleType> & {
+		kind: NonNullable<BuildingType['kind']>
+	}
 
 /** YAML permits shorthand arrays and omitted exceptions before normalization. */
 type ScheduleInput =
@@ -47,7 +54,8 @@ type CalendarInput = Omit<BreakCalendar<NamedBuildingScheduleType>, 'breaks' | '
 	templates?: Record<string, ScheduleInput>
 }
 
-type SpaceInput = Omit<BuildingType, 'breakSchedule'> & {
+type SpaceInput = Omit<BuildingType, 'breakSchedule' | 'kind'> & {
+	kind: PublishedSpace['kind']
 	breakSchedule?: Record<string, string | ScheduleInput>
 }
 
@@ -96,23 +104,10 @@ function normalizeTemplates(input: Record<string, ScheduleInput>) {
 	)
 }
 
-/**
- * Parses paired inputs, normalizes schedules and validates the complete reference graph.
- * No output is written and no date-dependent selection or reference resolution occurs.
- */
-export function parseScheduleData(
-	calendarInput: ScheduleDataInput,
-	spaceInputs: readonly ScheduleDataInput[],
-): ScheduleData {
-	validators ??= createValidators()
-	let {ajv, calendar: validateCalendar, space: validateSpace} = validators
-	if (!validateCalendar(calendarInput.data)) {
-		throw new Error(
-			ajv.errorsText(validateCalendar.errors, {dataVar: calendarInput.label, separator: '; '}),
-		)
-	}
-	let {breaks, templates, ...calendarFields} = calendarInput.data
-	let calendar: ScheduleData['calendar'] = {
+/** Normalizes each calendar policy while retaining its names and dates. */
+function normalizeCalendar(input: CalendarInput): ScheduleData['calendar'] {
+	let {breaks, templates, ...calendarFields} = input
+	return {
 		...calendarFields,
 		breaks: Object.fromEntries(
 			Object.entries(breaks).map(([key, entry]) => {
@@ -131,25 +126,46 @@ export function parseScheduleData(
 		),
 		...(templates !== undefined ? {templates: normalizeTemplates(templates)} : {}),
 	}
-	let spaces: ScheduleData['spaces'] = spaceInputs.map(({label, data}) => {
-		if (!validateSpace(data)) {
-			throw new Error(ajv.errorsText(validateSpace.errors, {dataVar: label, separator: '; '}))
-		}
-		let {breakSchedule, ...fields} = data
-		return {
-			label,
-			data: {
-				...fields,
-				...(breakSchedule !== undefined
-					? {
-							breakSchedule: Object.fromEntries(
-								Object.entries(breakSchedule).map(([key, value]) => [key, normalizeEntry(value)]),
-							),
-						}
-					: {}),
-			},
-		}
-	})
+}
+
+/** Keeps omitted break policies absent and normal exceptions explicit. */
+function normalizeSpace(input: SpaceInput): PublishedSpace {
+	let {breakSchedule, ...fields} = input
+	return {
+		...fields,
+		exceptions: fields.exceptions ?? [],
+		...(breakSchedule !== undefined
+			? {
+					breakSchedule: Object.fromEntries(
+						Object.entries(breakSchedule).map(([key, value]) => [key, normalizeEntry(value)]),
+					),
+				}
+			: {}),
+	}
+}
+
+/** Checks unknown input once and retains its authored location in errors. */
+function validateInput<T>(input: ScheduleDataInput, validate: ValidateFunction<T>, ajv: Ajv): T {
+	if (!validate(input.data)) {
+		throw new Error(ajv.errorsText(validate.errors, {dataVar: input.label, separator: '; '}))
+	}
+	return input.data
+}
+
+/** Checks structure, normalizes policies, then validates the complete reference graph. */
+export function parseScheduleData(
+	calendarInput: ScheduleDataInput,
+	spaceInputs: readonly ScheduleDataInput[],
+): ScheduleData {
+	validators ??= createValidators()
+	let {ajv, calendar: validateCalendar, space: validateSpace} = validators
+	let authoredCalendar = validateInput(calendarInput, validateCalendar, ajv)
+	let authoredSpaces = spaceInputs.map((input) => ({
+		label: input.label,
+		data: validateInput(input, validateSpace, ajv),
+	}))
+	let calendar = normalizeCalendar(authoredCalendar)
+	let spaces = authoredSpaces.map(({label, data}) => ({label, data: normalizeSpace(data)}))
 	validateSchedules(
 		calendar,
 		spaces.map(({label, data}) => ({label, schedules: data})),
@@ -158,18 +174,42 @@ export function parseScheduleData(
 	return {calendar, spaces}
 }
 
+/** Constructs both publication envelopes from a fully validated schedule pair. */
+export function scheduleArtifacts({
+	calendar,
+	spaces,
+}: ScheduleData): [
+	{filename: 'building-hours.json'; data: {data: PublishedSpace[]}},
+	{filename: 'breaks.json'; data: {data: ScheduleData['calendar']}},
+] {
+	return [
+		{filename: 'building-hours.json', data: {data: spaces.map(({data}) => data)}},
+		{filename: 'breaks.json', data: {data: calendar}},
+	]
+}
+
 /** Retains the filename in both YAML syntax errors and validation errors. */
 function readInput(filename: string): ScheduleDataInput {
 	return {label: filename, data: load(readFileSync(filename, 'utf8'), {filename})}
 }
 
-/** Reads and validates the complete calendar and hours before generation starts. */
-export function loadScheduleData(fromDir: string): ScheduleData {
+/** A selected file replaces its authored input, or adds a new space to the pair. */
+type ScheduleSelection = {kind: 'calendar' | 'space'; filename: string}
+
+/** Reads a consistently ordered pair, applies any selection, then prepares it for publication. */
+export function loadScheduleData(fromDir: string, selection?: ScheduleSelection): ScheduleData {
 	let hoursDir = join(fromDir, 'building-hours')
 	let files = readdirSync(hoursDir).filter(isDataEntry)
 	files.sort(new Intl.Collator(undefined, {numeric: true}).compare)
+	let spaceFiles = files.map((file) => join(hoursDir, file))
+	if (selection?.kind === 'space') {
+		let selectedPath = realpathSync.native(selection.filename)
+		let index = spaceFiles.findIndex((filename) => realpathSync.native(filename) === selectedPath)
+		if (index === -1) spaceFiles.push(selection.filename)
+		else spaceFiles[index] = selection.filename
+	}
 	return parseScheduleData(
-		readInput(join(fromDir, 'breaks.yaml')),
-		files.map((file) => readInput(join(hoursDir, file))),
+		readInput(selection?.kind === 'calendar' ? selection.filename : join(fromDir, 'breaks.yaml')),
+		spaceFiles.map(readInput),
 	)
 }

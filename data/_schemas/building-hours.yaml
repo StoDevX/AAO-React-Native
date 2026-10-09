@@ -5,7 +5,7 @@ type: object
 additionalProperties: false
 required: [name, category, kind, schedule]
 properties:
-  name: {type: string}
+  name: {$ref: 'schedules.json#/definitions/text'}
   subtitle: {type: string}
   abbreviation: {type: string}
   category: {type: string}

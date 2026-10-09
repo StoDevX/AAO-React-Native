@@ -11,12 +11,18 @@ definitions:
     format: date
     pattern: '^\d{4}-\d{2}-\d{2}$'
 
+  time:
+    type: string
+    pattern: '^(?:[1-9]|1[0-2]):[0-5]\d[ap]m$'
+
   hours-row:
     allOf:
       - {$ref: '_defs.json#/definitions/day'}
       - type: object
         properties:
           days: {type: array, minItems: 1, uniqueItems: true}
+          from: {$ref: '#/definitions/time'}
+          to: {$ref: '#/definitions/time'}
 
   service-block:
     type: object
