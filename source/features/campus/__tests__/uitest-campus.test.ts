@@ -7,6 +7,8 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	servesBundledFixtures: false,
 }))
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import {useCampusStore} from '../store'
 
 describe('a UI test that names a campus', () => {
@@ -15,6 +17,7 @@ describe('a UI test that names a campus', () => {
 	})
 
 	test('ignores a campus an earlier test saved', async () => {
+		await AsyncStorage.setItem('campus', JSON.stringify({state: {campus: 'stolaf'}, version: 1}))
 		await useCampusStore.persist.rehydrate()
 		expect(useCampusStore.getState().campus).toBe('carleton')
 	})
