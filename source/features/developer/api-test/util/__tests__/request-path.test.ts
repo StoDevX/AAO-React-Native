@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {buildRequestPath} from '../request-path'
+import {buildRequestPath, clientPath} from '../request-path'
 
 describe('buildRequestPath', () => {
 	test('leaves a path without parameters alone', () => {
@@ -51,5 +51,17 @@ describe('buildRequestPath', () => {
 		expect(
 			buildRequestPath('/v1/news/rss', {}, [{name: 'url', value: 'https://x.test/feed?a=1&b=2'}]),
 		).toBe('/v1/news/rss?url=https%3A%2F%2Fx.test%2Ffeed%3Fa%3D1%26b%3D2')
+	})
+})
+
+describe('clientPath', () => {
+	// the client's base is the server's `/v1/`, wherever the server is mounted
+	test('reaches a path from the server root through the base above `/v1/`', () => {
+		expect(clientPath('/ping')).toBe('../ping')
+		expect(clientPath('/v1/food/menu/262?x=1')).toBe('../v1/food/menu/262?x=1')
+	})
+
+	test('leaves a path typed relative to the base alone', () => {
+		expect(clientPath('food/menu/262')).toBe('food/menu/262')
 	})
 })

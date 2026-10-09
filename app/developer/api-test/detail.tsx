@@ -13,6 +13,7 @@ import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
 import {DebugView} from '../../../source/features/developer/debug'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
+import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
 import {
 	isErrorStatus,
 	statusLine,
@@ -29,13 +30,21 @@ export default function APITestDetailPage(): React.ReactNode {
 		path = '',
 		method = 'GET',
 		route,
-	} = useLocalSearchParams<{path?: string; method?: string; route?: string}>()
+		request,
+		sentAt,
+	} = useLocalSearchParams<{
+		path?: string
+		method?: string
+		route?: string
+		request?: string
+		sentAt?: string
+	}>()
 	let router = useRouter()
 
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
 	let {data, isLoading, error} = useQuery<ApiResponse | null, Error>({
-		queryKey: ['api-test', method, path],
+		queryKey: ['api-test', method, path, sentAt],
 		queryFn: async ({signal}) => {
 			if (!path) {
 				return null
@@ -43,7 +52,12 @@ export default function APITestDetailPage(): React.ReactNode {
 			// An error status is a response worth reading, not a failure. And a
 			// confirmed DELETE or POST goes out once: ky would retry a DELETE on a
 			// 5xx, as the query would on a failure, focus or reconnect.
-			let response = await client(path, {method, signal, throwHttpErrors: false, retry: 0})
+			let response = await client(clientPath(path), {
+				method,
+				signal,
+				throwHttpErrors: false,
+				retry: 0,
+			})
 			return {status: response.status, statusText: response.statusText, body: await response.text()}
 		},
 		staleTime: 0,
@@ -78,11 +92,11 @@ export default function APITestDetailPage(): React.ReactNode {
 				{route ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Edit Request"
-						icon="slider.horizontal.3"
+						icon="pencil"
 						onPress={() =>
 							router.navigate({
 								pathname: '/developer/api-test/compose',
-								params: {path: route, method},
+								params: {path: route, method, request},
 							})
 						}
 					/>

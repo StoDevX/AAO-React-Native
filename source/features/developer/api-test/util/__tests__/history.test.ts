@@ -106,19 +106,15 @@ describe('querySuggestions', () => {
 		expect(querySuggestions([], google)).toEqual([])
 	})
 
-	test("offers this route's names first, each with its newest value", () => {
-		let history = recordRequest([], rss, {pathValues: {}, query: [{name: 'url', value: 'feed'}]})
-		history = recordRequest(history, google, withId('old'))
+	test("offers this route's names, each once with its newest value", () => {
+		let history = recordRequest([], google, withId('old'))
 		history = recordRequest(history, google, withId('new'))
-		expect(querySuggestions(history, google)).toEqual([
-			{name: 'id', value: 'new'},
-			{name: 'url', value: 'feed'},
-		])
+		expect(querySuggestions(history, google)).toEqual([{name: 'id', value: 'new'}])
 	})
 
-	test('offers a name once even when several routes used it', () => {
-		let history = recordRequest([], rss, withId('from-rss'))
-		history = recordRequest(history, 'GET /v1/calendar/ics', withId('from-ics'))
-		expect(querySuggestions(history, google)).toEqual([{name: 'id', value: 'from-ics'}])
+	test('offers nothing another route sent, even under the same name', () => {
+		let history = recordRequest([], rss, {pathValues: {}, query: [{name: 'url', value: 'feed'}]})
+		history = recordRequest(history, 'GET /v1/news/mess/wp/v2/:resource/:id', withId('37207'))
+		expect(querySuggestions(history, google)).toEqual([])
 	})
 })

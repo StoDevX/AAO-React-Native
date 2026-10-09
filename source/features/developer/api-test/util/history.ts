@@ -80,22 +80,15 @@ export function removeRequest(
 
 /**
  * Query names to offer when adding a row, each with the newest value it was
- * sent with: this route's first, then those from the other routes, most
- * recently used first.
+ * sent with. Only this route's: the same name on another route can mean
+ * something else, as `id` does on a calendar and on a Messenger post.
  */
 export function querySuggestions(history: RequestHistory, route: string): QueryRow[] {
-	let ordered = [
-		...history.filter((entry) => entry.route === route),
-		...history.filter((entry) => entry.route !== route),
-	]
-
 	let suggestions = new Map<string, string>()
-	for (let entry of ordered) {
-		for (let request of entry.requests) {
-			for (let row of request.query) {
-				if (!suggestions.has(row.name)) {
-					suggestions.set(row.name, row.value)
-				}
+	for (let request of recentRequests(history, route)) {
+		for (let row of request.query) {
+			if (!suggestions.has(row.name)) {
+				suggestions.set(row.name, row.value)
 			}
 		}
 	}

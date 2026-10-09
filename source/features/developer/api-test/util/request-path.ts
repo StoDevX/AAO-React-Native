@@ -27,3 +27,12 @@ export function buildRequestPath(
 
 	return pairs.length ? `${filled}?${pairs.join('&')}` : filled
 }
+
+/**
+ * What the client is asked for: a path from the server's root goes through the
+ * client's base, which is the server's `/v1/`, so `/ping` is `../ping`. A path
+ * typed relative to that base is left as it is.
+ */
+export function clientPath(path: string): string {
+	return path.startsWith('/') ? `..${path}` : path
+}

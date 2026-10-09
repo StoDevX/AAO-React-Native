@@ -11,7 +11,13 @@ import {
 	SwipeActions,
 	Text,
 } from '@expo/ui/swift-ui'
-import {accessibilityLabel, font, foregroundStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
+import {
+	accessibilityLabel,
+	font,
+	foregroundStyle,
+	imageScale,
+	textSelection,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {useQuery} from '@tanstack/react-query'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
@@ -34,6 +40,7 @@ import {
 	defaultFor,
 	initialValues,
 	missingInputs,
+	startingRequest,
 	suggestionsFor,
 } from '../../../source/features/developer/api-test/util/inputs'
 import {methodColor} from '../../../source/features/developer/api-test/util/method'
@@ -56,7 +63,10 @@ function toRows(query: QueryRow[], inputs: RouteInput[]): EditableRow[] {
 	}))
 }
 
-/** An input's value: a picker for a set of accepted values, else a field with its suggestions. */
+/**
+ * An input's row: a picker for a set of accepted values, else its name with the
+ * value beside it, trailing, and the value's suggestions in a menu.
+ */
 function InputValue(props: {
 	input: RouteInput
 	value: string
@@ -83,15 +93,24 @@ function InputValue(props: {
 	}
 	return (
 		<HStack spacing={8}>
+			<Text>{input.name}</Text>
 			<SyncedTextField
+				alignment="trailing"
 				autocapitalization="never"
+				keyboardType={input.format === 'integer' ? 'numeric' : undefined}
 				onChangeText={onChange}
 				placeholder={input.format === 'date' ? 'YYYY-MM-DD' : input.name}
 				value={value}
 			/>
 			{suggestions.length ? (
 				<Menu
-					label={<Image systemName="chevron.down.circle" />}
+					label={
+						// sized to sit beside the value like a picker's own chevrons, not over it
+						<Image
+							modifiers={[font({textStyle: 'footnote', weight: 'semibold'}), imageScale('small')]}
+							systemName="chevron.down"
+						/>
+					}
 					modifiers={[accessibilityLabel(`Suggestions for ${input.name}`)]}
 				>
 					{suggestions.map((suggestion) => (
@@ -106,7 +125,11 @@ function InputValue(props: {
 /** Fills a request in: the route's path and query values, ready to send. */
 export default function APITestComposePage(): React.ReactNode {
 	let router = useRouter()
-	let {path = '', method = 'GET'} = useLocalSearchParams<{path?: string; method?: string}>()
+	let {
+		path = '',
+		method = 'GET',
+		request: sent,
+	} = useLocalSearchParams<{path?: string; method?: string; request?: string}>()
 	let route = routeKey(method, path)
 
 	let {data: sections = []} = useQuery(serverRoutesOptions)
@@ -128,7 +151,7 @@ export default function APITestComposePage(): React.ReactNode {
 
 	// Starts from the last request sent to this route, so sending it again is
 	// one tap; or, for a route never sent, from values the server accepts.
-	let [initial] = React.useState(() => initialValues(inputs, recent[0]))
+	let [initial] = React.useState(() => initialValues(inputs, startingRequest(sent, recent)))
 	let [pathValues, setPathValues] = React.useState(initial.pathValues)
 	let [rows, setRows] = React.useState(() => toRows(initial.query, inputs))
 	let touched = React.useRef(false)
@@ -146,7 +169,7 @@ export default function APITestComposePage(): React.ReactNode {
 	React.useEffect(() => {
 		if (inputs.length && !filledFromInputs.current && !touched.current) {
 			filledFromInputs.current = true
-			fill(recent[0] ?? {pathValues: {}, query: []})
+			fill(startingRequest(sent, recent) ?? {pathValues: {}, query: []})
 		}
 		// Only the arrival of the inputs should trigger this; `fill` and `recent`
 		// are read as they are at that moment.
@@ -183,9 +206,17 @@ export default function APITestComposePage(): React.ReactNode {
 
 	let send = () => {
 		record(route, {pathValues, query})
+		// `sentAt` makes every send its own: an identical request already on the
+		// stack would otherwise be shown again rather than sent
 		router.navigate({
 			pathname: '/developer/api-test/detail',
-			params: {path: requestPath, method, route: path},
+			params: {
+				path: requestPath,
+				method,
+				route: path,
+				request: JSON.stringify({pathValues, query}),
+				sentAt: String(Date.now()),
+			},
 		})
 	}
 
@@ -249,25 +280,14 @@ export default function APITestComposePage(): React.ReactNode {
 					>
 						{rows.map((row) => {
 							let control = row.input ? (
-								row.input.values ? (
-									<InputValue
-										input={row.input}
-										onChange={(value) => updateRow(row.id, {value})}
-										suggestions={[]}
-										value={row.value}
-									/>
-								) : (
-									<HStack spacing={8}>
-										<Text>{row.name}</Text>
-										<Text modifiers={[foregroundStyle(c.secondaryLabel)]}>=</Text>
-										<InputValue
-											input={row.input}
-											onChange={(value) => updateRow(row.id, {value})}
-											suggestions={suggestionsFor(row.input, history, route, today)}
-											value={row.value}
-										/>
-									</HStack>
-								)
+								<InputValue
+									input={row.input}
+									onChange={(value) => updateRow(row.id, {value})}
+									suggestions={
+										row.input.values ? [] : suggestionsFor(row.input, history, route, today)
+									}
+									value={row.value}
+								/>
 							) : (
 								<HStack spacing={8}>
 									<SyncedTextField

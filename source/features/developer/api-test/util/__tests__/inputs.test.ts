@@ -9,6 +9,7 @@ import {
 	localDate,
 	missingInputs,
 	nextStep,
+	startingRequest,
 	suggestionsFor,
 } from '../inputs'
 
@@ -125,21 +126,21 @@ describe('suggestionsFor', () => {
 	const route = 'GET /v1/calendar/google'
 	const today = new Date(2026, 9, 8, 12)
 
-	test('offers what was sent before ahead of the server’s examples, each once', () => {
-		let history = recordRequest([], 'GET /v1/calendar/ics', {
-			pathValues: {},
-			query: [{name: 'id', value: 'elsewhere'}],
-		})
-		history = recordRequest(history, route, {pathValues: {}, query: [{name: 'id', value: 'here'}]})
+	test('offers what this route sent before ahead of the server’s examples, each once', () => {
+		let history = recordRequest([], route, {pathValues: {}, query: [{name: 'id', value: 'here'}]})
 		history = recordRequest(history, route, {
 			pathValues: {},
 			query: [{name: 'id', value: 'krlx@x.test'}],
 		})
-		expect(suggestionsFor(calendarId, history, route, today)).toEqual([
-			'krlx@x.test',
-			'here',
-			'elsewhere',
-		])
+		expect(suggestionsFor(calendarId, history, route, today)).toEqual(['krlx@x.test', 'here'])
+	})
+
+	test('offers nothing another route sent under the same name', () => {
+		let history = recordRequest([], 'GET /v1/news/mess/wp/v2/:resource/:id', {
+			pathValues: {},
+			query: [{name: 'id', value: '37207'}],
+		})
+		expect(suggestionsFor(calendarId, history, route, today)).toEqual(['krlx@x.test'])
 	})
 
 	test('offers a path input’s past values', () => {
@@ -153,5 +154,23 @@ describe('suggestionsFor', () => {
 	test('offers today for a date input', () => {
 		let dateTo: RouteInput = {name: 'dateTo', in: 'query', required: false, format: 'date'}
 		expect(suggestionsFor(dateTo, [], route, today)).toEqual(['2026-10-08'])
+	})
+})
+
+describe('startingRequest', () => {
+	const recent = [{pathValues: {cafeId: '262'}, query: []}]
+
+	test('starts from the request just sent, when the form was opened from its result', () => {
+		let sent = {pathValues: {}, query: [{name: 'sort', value: 'descending'}]}
+		expect(startingRequest(JSON.stringify(sent), recent)).toEqual(sent)
+	})
+
+	test('starts from the last request remembered, when nothing was just sent', () => {
+		expect(startingRequest(undefined, recent)).toEqual(recent[0])
+	})
+
+	test('falls back to what is remembered when the request it was handed is not one', () => {
+		expect(startingRequest('{not json', recent)).toEqual(recent[0])
+		expect(startingRequest('{"query": 3}', recent)).toEqual(recent[0])
 	})
 })

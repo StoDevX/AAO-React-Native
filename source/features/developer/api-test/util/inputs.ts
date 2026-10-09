@@ -1,5 +1,5 @@
 import type {RouteEntry, RouteInput} from '../query'
-import {type RequestHistory, type SavedRequest} from './history'
+import {recentRequests, type RequestHistory, type SavedRequest} from './history'
 import {isSafeMethod} from './method'
 
 /** A route's inputs as a row's detail line: `cafeId`, or `dateFrom? · sort?`. */
@@ -80,9 +80,10 @@ export function localDate(date: Date): string {
 }
 
 /**
- * Values to offer for an input: what was sent for it before, this route's
- * first and newest first, then the server's accepted values and examples,
- * then today for a date -- each once.
+ * Values to offer for an input: what this route sent for it before, newest
+ * first, then the server's accepted values and examples, then today for a
+ * date -- each once. Another route's values are left out, since the same name
+ * there can mean something else.
  */
 export function suggestionsFor(
 	input: RouteInput,
@@ -90,16 +91,10 @@ export function suggestionsFor(
 	route: string,
 	today: Date,
 ): string[] {
-	let ordered = [
-		...history.filter((entry) => entry.route === route),
-		...history.filter((entry) => entry.route !== route),
-	]
-	let sent = ordered.flatMap((entry) =>
-		entry.requests.flatMap((request) =>
-			input.in === 'path'
-				? [request.pathValues[input.name] ?? '']
-				: request.query.filter((row) => row.name === input.name).map((row) => row.value),
-		),
+	let sent = recentRequests(history, route).flatMap((request) =>
+		input.in === 'path'
+			? [request.pathValues[input.name] ?? '']
+			: request.query.filter((row) => row.name === input.name).map((row) => row.value),
 	)
 	let fromServer = [
 		...(input.values?.map((option) => option.value) ?? []),
@@ -107,4 +102,45 @@ export function suggestionsFor(
 	]
 	let dated = input.format === 'date' ? [localDate(today)] : []
 	return [...new Set([...sent, ...fromServer, ...dated].filter((value) => value.trim()))]
+}
+
+function isSavedRequest(value: unknown): value is SavedRequest {
+	if (typeof value !== 'object' || value === null) {
+		return false
+	}
+	let {pathValues, query} = value as Record<string, unknown>
+	return (
+		typeof pathValues === 'object' &&
+		pathValues !== null &&
+		Object.values(pathValues).every((each) => typeof each === 'string') &&
+		Array.isArray(query) &&
+		query.every(
+			(row: unknown) =>
+				typeof row === 'object' &&
+				row !== null &&
+				typeof (row as Record<string, unknown>).name === 'string' &&
+				typeof (row as Record<string, unknown>).value === 'string',
+		)
+	)
+}
+
+/**
+ * The request a form starts from: the one just sent, when the form was opened
+ * from its result, handed over as JSON; otherwise the last one remembered.
+ */
+export function startingRequest(
+	sent: string | undefined,
+	recent: SavedRequest[],
+): SavedRequest | undefined {
+	if (sent) {
+		try {
+			let parsed: unknown = JSON.parse(sent)
+			if (isSavedRequest(parsed)) {
+				return parsed
+			}
+		} catch {
+			// not a request; fall back to what is remembered
+		}
+	}
+	return recent[0]
 }

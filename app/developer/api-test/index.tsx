@@ -41,10 +41,18 @@ export default function APITestPage(): React.ReactNode {
 
 	const openRoute = React.useCallback(
 		(route: RouteEntry) => {
+			// `sentAt` makes every send its own: an identical request already on
+			// the stack would otherwise be shown again rather than sent
 			let send = () =>
 				router.navigate({
 					pathname: '/developer/api-test/detail',
-					params: {path: route.path, method: route.method, route: route.path},
+					params: {
+						path: route.path,
+						method: route.method,
+						route: route.path,
+						request: JSON.stringify({pathValues: {}, query: []}),
+						sentAt: String(Date.now()),
+					},
 				})
 			if (nextStep(route) === 'form') {
 				editRoute(route)
@@ -109,7 +117,7 @@ export default function APITestPage(): React.ReactNode {
 												<Button
 													label="Edit Request…"
 													onPress={() => editRoute(route)}
-													systemImage="slider.horizontal.3"
+													systemImage="pencil"
 												/>
 											</ContextMenu.Items>
 										</ContextMenu>

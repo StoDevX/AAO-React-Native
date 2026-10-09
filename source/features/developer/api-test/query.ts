@@ -15,7 +15,8 @@ export interface RouteInput {
 	values?: {value: string; label?: string}[]
 	/** Known-good values for a free-form input. */
 	examples?: string[]
-	format?: 'date'
+	/** A hint for entry: a date placeholder for `date`, a number pad for `integer`. */
+	format?: 'date' | 'integer'
 }
 
 export interface ServerRoute {
@@ -38,20 +39,37 @@ export interface RouteEntry {
 	inputs: RouteInput[]
 }
 
+const SITEMAP_PATH = '/v1/routes'
+
+/**
+ * Where the server mounts its routes, read off the sitemap's own entry: `/stolaf`
+ * when it lists itself at `/stolaf/v1/routes`. Behind a proxy that strips that
+ * mount, the app reaches each route without it.
+ */
+function mountOf(routes: ServerRoute[]): string {
+	let sitemap = routes.find((route) => route.path.endsWith(SITEMAP_PATH))
+	return sitemap ? sitemap.path.slice(0, -SITEMAP_PATH.length) : ''
+}
+
 /**
  * The routes as the API Tester lists them, one entry per method, grouped under
- * the first segment of their path.
+ * the first segment of their path. Each path is given from the server's root,
+ * without its mount.
  */
 export function groupRoutes(routes: ServerRoute[]): {title: string; data: RouteEntry[]}[] {
+	let mount = mountOf(routes)
 	let entries = routes.flatMap((route) =>
-		route.methods.map((method) => ({
-			key: `${method} ${route.path}`,
-			method,
-			path: route.path,
-			displayName: route.displayName,
-			params: route.params,
-			inputs: route.inputs,
-		})),
+		route.methods.map((method) => {
+			let path = route.path.slice(mount.length)
+			return {
+				key: `${method} ${path}`,
+				method,
+				path,
+				displayName: route.displayName,
+				params: route.params,
+				inputs: route.inputs,
+			}
+		}),
 	)
 	let grouped = groupBy(entries, (entry) => entry.path.split('/').find((v) => v) ?? '/')
 	return Object.entries(grouped).map(([title, data]) => ({title, data}))

@@ -47,4 +47,28 @@ describe('groupRoutes', () => {
 		let sections = groupRoutes([route('/ping', ['GET']), route('/v1/news/rss', ['GET'])])
 		expect(sections.map((section) => section.title)).toEqual(['ping', 'v1'])
 	})
+
+	test("drops the server's mount from each path, as the sitemap's own entry shows it", () => {
+		// behind a proxy the app reaches /ping, though the server mounts it at /stolaf/ping
+		let sections = groupRoutes([
+			route('/stolaf/ping', ['GET']),
+			route('/stolaf/v1/routes', ['GET']),
+			route('/stolaf/v1/food/menu/:cafeId', ['GET']),
+		])
+		let entries = sections.flatMap((section) => section.data)
+		expect(entries.map((entry) => entry.path)).toEqual([
+			'/ping',
+			'/v1/routes',
+			'/v1/food/menu/:cafeId',
+		])
+		expect(entries.map((entry) => entry.key)).toContain('GET /ping')
+	})
+
+	test('leaves paths alone on a server mounted at its root', () => {
+		let sections = groupRoutes([route('/ping', ['GET']), route('/v1/routes', ['GET'])])
+		expect(sections.flatMap((section) => section.data).map((entry) => entry.path)).toEqual([
+			'/ping',
+			'/v1/routes',
+		])
+	})
 })
