@@ -4,6 +4,7 @@ import {describe, it} from 'node:test'
 import {
 	campusFixtureFiles,
 	completeTecPages,
+	failedKeys,
 	LARGE_BODY_BYTES,
 	mergeCampusRecordings,
 	shiftCalendars,
@@ -386,6 +387,20 @@ describe('email addresses', () => {
 		])
 	})
 
+	it('leave an image named for its scale alone', () => {
+		let key = 'GET {server:stolaf.edu}/contacts'
+		let body = JSON.stringify({image: 'https://x.example/logo@2x.png'})
+		assert.equal(mergeCampusRecordings([line(key, body)])[key].body, body)
+	})
+
+	it('are looked for quickly in a long run of text with none', () => {
+		let key = 'GET {server:stolaf.edu}/contacts'
+		let body = JSON.stringify({image: 'x'.repeat(LARGE_BODY_BYTES / 2)})
+		let started = performance.now()
+		mergeCampusRecordings([line(key, body)])
+		assert.ok(performance.now() - started < 1000, 'a 100 KB run should take well under a second')
+	})
+
 	it('are written person@example.com in a page fetched to finish a run', async () => {
 		const EVENTS = 'https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events'
 		let first = {
@@ -404,5 +419,72 @@ describe('email addresses', () => {
 			JSON.parse(table[`GET ${EVENTS}?page=2`].body).events[0].description,
 			'person@example.com',
 		)
+	})
+})
+
+describe('an answer that is not a feed', () => {
+	const TEC = 'GET https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events?per_page=50'
+	const HTML = '<html>Service Unavailable</html>'
+
+	it('is kept as it came, rather than trimmed', () => {
+		let table = mergeCampusRecordings([
+			JSON.stringify({key: TEC, status: 503, contentType: 'text/html', body: HTML}),
+		])
+		assert.equal(table[TEC].body, HTML)
+	})
+
+	it('is left out of the calendar shift', () => {
+		let table = {[TEC]: {status: 503, contentType: 'text/html', body: HTML}}
+		assert.deepEqual(
+			shiftCalendars(table, {frozenDay: '2026-09-05', recordedDay: '2026-10-08'}),
+			table,
+		)
+	})
+
+	it('is named in the recording summary', () => {
+		let table = {
+			[TEC]: {status: 503, contentType: 'text/html', body: HTML},
+			'GET {server:stolaf.edu}/contacts': {
+				status: 200,
+				contentType: 'application/json',
+				body: '{}',
+			},
+		}
+		assert.deepEqual(failedKeys(table), [`${TEC} (503)`])
+	})
+})
+
+describe('completeTecPages, against a feed that misbehaves', () => {
+	const EVENTS = 'https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events'
+	const json = (body, status = 200) => ({
+		status,
+		contentType: 'application/json',
+		body: JSON.stringify(body),
+	})
+	const first = {[`GET ${EVENTS}?page=1`]: json({events: [], next_rest_url: `${EVENTS}?page=2`})}
+
+	it('stops where the app does, past ten pages', async () => {
+		let endless = (url) => {
+			let n = Number(new URL(url).searchParams.get('page'))
+			return Promise.resolve(json({events: [], next_rest_url: `${EVENTS}?page=${n + 1}`}))
+		}
+		await assert.rejects(completeTecPages(first, endless), /ran past 10 pages/u)
+	})
+
+	it('records a page that failed without following it', async () => {
+		let asked = []
+		let table = await completeTecPages(first, (url) => {
+			asked.push(url)
+			return Promise.resolve({status: 500, contentType: 'text/html', body: '<html>oops</html>'})
+		})
+		assert.deepEqual(asked, [`${EVENTS}?page=2`])
+		assert.equal(table[`GET ${EVENTS}?page=2`].status, 500)
+	})
+
+	it('refuses a page over 200 KB unless large ones are allowed', async () => {
+		let big = () =>
+			Promise.resolve(json({events: [{title: 'x', description: 'x'.repeat(LARGE_BODY_BYTES)}]}))
+		await assert.rejects(completeTecPages(first, big), /--allow-large/u)
+		await completeTecPages(first, big, {allowLarge: true})
 	})
 })

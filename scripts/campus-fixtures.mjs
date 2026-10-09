@@ -1,6 +1,7 @@
 // A campus's UI-test recordings: what a recording run of its campus tests
 // fetched, keyed as source/features/campus/fixtures.ts looks them up.
 
+import {TEC_MAX_PAGES} from '../modules/ccc-calendar/parsers/tec-pages.ts'
 import {TEC_EVENTS, undatedUrl} from '../source/features/campus/fixture-dates.ts'
 
 /** A body larger than this is refused unless asked for, so a smoke test cannot pull a whole feed in unnoticed. */
@@ -58,12 +59,47 @@ export function trimmedBody(key, body) {
 	return rule ? JSON.stringify(rule.trim(JSON.parse(body))) : body
 }
 
-/** An email address, which a recording keeps as `person@example.com`: feeds name people in their text. */
-const EMAIL = /[\w.%+-]+@[\w.-]+\.[a-z]{2,}/giu
+/**
+ * An email address, which a recording keeps as `person@example.com`: feeds name
+ * people in their text. A match starts only where a run of address characters
+ * does, or a long run with no `@` would be tried from every one of its
+ * characters; and an image named for its scale, `logo@2x.png`, is no address.
+ */
+const EMAIL = /(?<![\w.%+-])[\w.%+-]+@[\w.-]+\.(?!(?:png|jpe?g|gif|webp|svg)\b)[a-z]{2,}\b/giu
 
-/** A body as a recording keeps it: trimmed, and with no one's email address. */
-function recordedBody(key, body) {
-	return trimmedBody(key, body).replaceAll(EMAIL, 'person@example.com')
+/**
+ * A feed's answer, parsed, or undefined for an error or a body that is not
+ * JSON: those are kept as they came, for the recording to say what went wrong.
+ */
+function feedOf({status, body}) {
+	if (status < 200 || status >= 300) return
+	try {
+		return JSON.parse(body)
+	} catch {
+		return
+	}
+}
+
+/** An answer's body as a recording keeps it: trimmed, and with no one's email address. */
+function recordedBody(key, answer) {
+	let kept = feedOf(answer) === undefined ? answer.body : trimmedBody(key, answer.body)
+	return kept.replaceAll(EMAIL, 'person@example.com')
+}
+
+/** `body`, unless it is over 200 KB and large ones were not allowed. */
+function checkedSize(key, body, allowLarge) {
+	let bytes = Buffer.byteLength(body)
+	if (!allowLarge && bytes > LARGE_BODY_BYTES) {
+		throw new Error(`${key} answered ${bytes} bytes; rerun with --allow-large to keep it`)
+	}
+	return body
+}
+
+/** The requests that did not answer 2xx, with their status, for the summary. */
+export function failedKeys(table) {
+	return Object.entries(table)
+		.filter(([, {status}]) => status < 200 || status >= 300)
+		.map(([key, {status}]) => `${key} (${status})`)
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -122,7 +158,8 @@ function daysBetween(from, to) {
 export function shiftCalendars(table, {frozenDay, recordedDay}) {
 	let calendars = Object.keys(table).flatMap((key) => {
 		let calendar = CALENDARS.find(({matches}) => matches.test(key))
-		return calendar ? [{key, calendar, body: JSON.parse(table[key].body)}] : []
+		let body = calendar && feedOf(table[key])
+		return body ? [{key, calendar, body}] : []
 	})
 	let eventDays = calendars
 		.flatMap(({calendar, body}) =>
@@ -163,17 +200,23 @@ function tecPageKey(url) {
  * reads them one after another, and a test can finish while it still is.
  * `fetchPage(url)` answers a page as `{status, contentType, body}`.
  */
-export async function completeTecPages(table, fetchPage) {
+export async function completeTecPages(table, fetchPage, {allowLarge = false} = {}) {
 	let complete = {...table}
 	let pending = Object.keys(complete).filter((key) => TEC_EVENTS.test(key))
+	let pages = pending.length
 	while (pending.length > 0) {
-		let next = JSON.parse(complete[pending.shift()].body).next_rest_url
+		let next = feedOf(complete[pending.shift()])?.next_rest_url
 		if (!next || tecPageKey(next) in complete) continue
+		if (pages === TEC_MAX_PAGES) {
+			throw new Error(`the TEC feed ran past ${TEC_MAX_PAGES} pages, where the app stops too`)
+		}
 		let key = tecPageKey(next)
 		// Sequential by nature: each page names the next.
 		// oxlint-disable-next-line eslint/no-await-in-loop
-		let {status, contentType, body} = await fetchPage(next)
-		complete[key] = {status, contentType, body: recordedBody(key, body)}
+		let answer = await fetchPage(next)
+		let body = checkedSize(key, recordedBody(key, answer), allowLarge)
+		complete[key] = {status: answer.status, contentType: answer.contentType, body}
+		pages += 1
 		pending.push(key)
 	}
 	return complete
@@ -185,11 +228,7 @@ export function mergeCampusRecordings(lines, {allowLarge = false} = {}) {
 	for (let text of lines) {
 		if (!text.trim()) continue
 		let {key, status, contentType, body: answered} = JSON.parse(text)
-		let body = recordedBody(key, answered)
-		let bytes = Buffer.byteLength(body)
-		if (!allowLarge && bytes > LARGE_BODY_BYTES) {
-			throw new Error(`${key} answered ${bytes} bytes; rerun with --allow-large to keep it`)
-		}
+		let body = checkedSize(key, recordedBody(key, {status, body: answered}), allowLarge)
 		table[key] = {status, contentType, body}
 	}
 	if (Object.keys(table).length === 0) {

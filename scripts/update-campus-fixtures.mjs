@@ -11,6 +11,7 @@ import {
 	campusDay,
 	campusFixtureFiles,
 	completeTecPages,
+	failedKeys,
 	mergeCampusRecordings,
 	shiftCalendars,
 } from './campus-fixtures.mjs'
@@ -85,7 +86,7 @@ async function fetchPage(url) {
 }
 
 let recorded = mergeCampusRecordings(readFileSync(recording, 'utf8').split('\n'), {allowLarge})
-let table = shiftCalendars(await completeTecPages(recorded, fetchPage), {
+let table = shiftCalendars(await completeTecPages(recorded, fetchPage, {allowLarge}), {
 	frozenDay: frozenDay(),
 	recordedDay: campusDay(new Date()),
 })
@@ -110,3 +111,7 @@ writeFileSync(join(FIXTURES, 'index.ts'), index)
 console.log(`${domain}: ${Object.keys(before).length} → ${Object.keys(table).length} recordings`)
 if (added.length) console.log(`  added:\n    ${added.join('\n    ')}`)
 if (removed.length) console.log(`  removed:\n    ${removed.join('\n    ')}`)
+let failed = failedKeys(table)
+if (failed.length) {
+	console.log(`  answered with an error, recorded as it came:\n    ${failed.join('\n    ')}`)
+}
