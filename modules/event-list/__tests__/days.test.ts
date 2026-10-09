@@ -39,9 +39,30 @@ describe('deriveDays', () => {
 		])
 	})
 
-	test('yields the current week when every event is past or ongoing', () => {
-		let events = [event('2026-08-22T10:00:00Z'), event('2026-09-15T10:00:00Z', undefined, true)]
+	test('yields the current week when every event is ongoing', () => {
+		let events = [event('2026-09-15T10:00:00Z', undefined, true)]
 		expect(deriveDays(events, NOW)).toHaveLength(7)
+	})
+
+	// The calendar keeps a month of past events, and the strip dots the days
+	// they fell on. A dotted day has to be one the reader can reach.
+	test('reaches back to the Sunday before the earliest past event', () => {
+		// Wed 2026-08-12 sits in the week of Sun 2026-08-09.
+		let result = deriveDays([event('2026-08-12T10:00:00Z'), event('2026-08-25T10:00:00Z')], NOW)
+		expect(isoDays(result)[0]).toBe('2026-08-09')
+		expect(isoDays(result).at(-1)).toBe('2026-08-29')
+		expect(result).toHaveLength(21)
+	})
+
+	test('leaves the start alone for an ongoing event that began weeks ago', () => {
+		let running = event('2026-07-01T10:00:00Z', '2026-09-30T10:00:00Z', true)
+		expect(isoDays(deriveDays([running], NOW))[0]).toBe('2026-08-23')
+	})
+
+	test('reaches back only to the last day of a long event that has ended', () => {
+		// Ran Jul 1 to Fri 2026-08-14, so the strip opens on Sun 2026-08-09.
+		let exhibition = event('2026-07-01T10:00:00Z', '2026-08-14T10:00:00Z')
+		expect(isoDays(deriveDays([exhibition], NOW))[0]).toBe('2026-08-09')
 	})
 
 	test('spans whole weeks, Sunday through Saturday', () => {
@@ -82,7 +103,7 @@ describe('deriveDays', () => {
 
 	test('excludes past and ongoing events from the range end', () => {
 		let events = [
-			event('2026-08-22T10:00:00Z'),
+			event('2026-08-23T08:00:00Z'),
 			event('2026-09-20T10:00:00Z', undefined, true),
 			event('2026-08-24T10:00:00Z'),
 		]

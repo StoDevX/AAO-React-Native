@@ -74,6 +74,27 @@ describe('DayPickerStrip', () => {
 		expect(selectedDay.format('YYYY-MM-DD')).toBe('2026-08-24')
 	})
 
+	test('lets a day before today be chosen', async () => {
+		let days = [moment('2026-08-22T12:00:00Z'), moment('2026-08-23T12:00:00Z')]
+		let onSelectDay = jest.fn()
+
+		await render(
+			<DayPickerStrip
+				days={days}
+				daysWithEvents={new Set(['2026-08-22'])}
+				now={NOW}
+				onSelectDay={onSelectDay}
+				selectedDay={days[1]}
+			/>,
+		)
+
+		fireEvent.press(screen.getByText('22'))
+
+		expect(onSelectDay).toHaveBeenCalledTimes(1)
+		let selectedDay = onSelectDay.mock.calls[0][0] as moment.Moment
+		expect(selectedDay.format('YYYY-MM-DD')).toBe('2026-08-22')
+	})
+
 	test('renders nothing when days is empty', async () => {
 		let result = await render(
 			<DayPickerStrip
