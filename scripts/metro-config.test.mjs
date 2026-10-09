@@ -32,3 +32,12 @@ test('Metro hands Expo a .yaml file as a module exporting its JSON, and anything
 	transformer.transform({filename: 'b.ts', src: 'export {}'})
 	assert.deepEqual(seen, ['module.exports = {"name":"Summit Library"};\n', 'export {}'])
 })
+
+test("Metro's cache key changes with the .yaml loader, not only with Expo's", async () => {
+	let {createHash} = await import('node:crypto')
+	let {readFileSync} = await import('node:fs')
+	let {withYaml} = await import('./metro-yaml-transformer.mjs')
+	let loader = readFileSync(join(import.meta.dirname, 'yaml-module.mjs'))
+	let transformer = withYaml({transform: () => {}, getCacheKey: () => 'expo'})
+	assert.equal(transformer.getCacheKey(), `expo${createHash('sha1').update(loader).digest('hex')}`)
+})
