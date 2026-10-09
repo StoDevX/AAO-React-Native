@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import {CustomizeScreen} from '../../../source/features/mess/customize-screen'
-import {newspaperRoute} from '../../../source/features/mess/newspaper-route'
+import {CustomizeScreen} from '../../../source/features/newspaper/customize-screen'
+import {newspaperRoute} from '../../../source/features/newspaper/newspaper-route'
 
 function NewspaperCustomizePage(): React.ReactNode {
 	return <CustomizeScreen />

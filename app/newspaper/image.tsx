@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {useLocalSearchParams} from 'expo-router'
 
-import {ImageViewer} from '../../source/features/mess/image-viewer'
-import {newspaperRoute} from '../../source/features/mess/newspaper-route'
+import {ImageViewer} from '../../source/features/newspaper/image-viewer'
+import {newspaperRoute} from '../../source/features/newspaper/newspaper-route'
 
 function NewspaperImagePage(): React.ReactNode {
 	let {id, index, url} = useLocalSearchParams<{id: string; index?: string; url?: string}>()

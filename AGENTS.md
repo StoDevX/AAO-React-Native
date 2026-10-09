@@ -460,7 +460,7 @@ WordPress site written as fixtures (`GET-echo.college.example-*.yaml` beside
 the map). It holds what the tests open: two pages of issues (2026 on the
 first, 2025 on the second), the newest issue and the special edition before
 it, Variety and its Comic, Horoscopes and Photo columns, and each Variety
-story on its own. `source/features/mess/__tests__/valley-echo-fixture.test.ts`
+story on its own. `source/features/newspaper/__tests__/valley-echo-fixture.test.ts`
 says what has to stay true of it for those tests to mean anything.
 
 ### Chaos Runs

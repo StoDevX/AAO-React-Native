@@ -2,9 +2,9 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 import {NoticeView} from '@frogpond/notice'
 
-import {CrosswordsScreen} from '../../source/features/mess/crosswords-screen'
-import {newspaperRoute} from '../../source/features/mess/newspaper-route'
-import {usePaper} from '../../source/features/mess/paper-context'
+import {CrosswordsScreen} from '../../source/features/newspaper/crosswords-screen'
+import {newspaperRoute} from '../../source/features/newspaper/newspaper-route'
+import {usePaper} from '../../source/features/newspaper/paper-context'
 
 /** The paper's crosswords; a paper that publishes none says so. */
 function NewspaperCrosswordsPage(): React.ReactNode {

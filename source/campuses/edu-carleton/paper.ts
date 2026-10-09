@@ -1,4 +1,4 @@
-import type {Paper} from '../../features/mess/campus-section'
+import type {Paper} from '../../features/newspaper/campus-section'
 
 /**
  * Carleton's student paper. Sports sits under News on its site, and Comics, Horoscope and

@@ -1,4 +1,4 @@
-import type {Paper} from '../../features/mess/campus-section'
+import type {Paper} from '../../features/newspaper/campus-section'
 
 /** St. Olaf's student paper. */
 export const MESSENGER: Paper = {
