@@ -15,6 +15,7 @@ import {DebugView} from '../../../source/features/developer/debug'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
 import {useCampusId} from '../../../source/features/campus/store'
 import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
+import {routeParam} from '../../../source/features/developer/api-test/util/route-param'
 import {startingRequest} from '../../../source/features/developer/api-test/util/inputs'
 import {
 	isErrorStatus,
@@ -133,7 +134,11 @@ export default function APITestDetailPage(): React.ReactNode {
 						onPress={() =>
 							router.navigate({
 								pathname: '/developer/api-test/compose',
-								params: {path: route, method, request},
+								params: {
+									path: routeParam(route),
+									method,
+									...(request ? {request: routeParam(request)} : {}),
+								},
 							})
 						}
 					/>

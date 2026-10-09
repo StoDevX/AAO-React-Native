@@ -48,6 +48,7 @@ import {
 	suggestionsFor,
 } from '../../../source/features/developer/api-test/util/inputs'
 import {methodColor} from '../../../source/features/developer/api-test/util/method'
+import {routeParam} from '../../../source/features/developer/api-test/util/route-param'
 import {
 	buildRequestPath,
 	type QueryRow,
@@ -256,10 +257,10 @@ export default function APITestComposePage(): React.ReactNode {
 		router.navigate({
 			pathname: '/developer/api-test/detail',
 			params: {
-				path: requestPath,
+				path: routeParam(requestPath),
 				method,
-				route: path,
-				request: JSON.stringify({pathValues, query, bodyValues: body}),
+				route: routeParam(path),
+				request: routeParam(JSON.stringify({pathValues, query, bodyValues: body})),
 				sentAt: String(Date.now()),
 			},
 		})

@@ -13,6 +13,7 @@ import {RouteEntry, serverRoutesOptions} from '../../../source/features/develope
 import {sendAfterConfirming} from '../../../source/features/developer/api-test/confirm-send'
 import {inputSummary, nextStep} from '../../../source/features/developer/api-test/util/inputs'
 import {methodColor} from '../../../source/features/developer/api-test/util/method'
+import {routeParam} from '../../../source/features/developer/api-test/util/route-param'
 import {useCampusId} from '../../../source/features/campus/store'
 
 export default function APITestPage(): React.ReactNode {
@@ -36,7 +37,7 @@ export default function APITestPage(): React.ReactNode {
 		(route: RouteEntry) =>
 			router.navigate({
 				pathname: '/developer/api-test/compose',
-				params: {path: route.path, method: route.method},
+				params: {path: routeParam(route.path), method: route.method},
 			}),
 		[router],
 	)
@@ -49,10 +50,10 @@ export default function APITestPage(): React.ReactNode {
 				router.navigate({
 					pathname: '/developer/api-test/detail',
 					params: {
-						path: route.path,
+						path: routeParam(route.path),
 						method: route.method,
-						route: route.path,
-						request: JSON.stringify({pathValues: {}, query: []}),
+						route: routeParam(route.path),
+						request: routeParam(JSON.stringify({pathValues: {}, query: []})),
 						sentAt: String(Date.now()),
 					},
 				})
@@ -79,7 +80,7 @@ export default function APITestPage(): React.ReactNode {
 				onSearchButtonPress={(ev) => {
 					router.navigate({
 						pathname: '/developer/api-test/detail',
-						params: {path: ev.nativeEvent.text.trim()},
+						params: {path: routeParam(ev.nativeEvent.text.trim())},
 					})
 				}}
 				placeholder="/path/to/uri"
