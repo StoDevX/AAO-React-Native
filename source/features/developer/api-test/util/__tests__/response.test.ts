@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {bodyKind, byteSize, isErrorStatus, statusLine} from '../response'
+import {bodyKind, isErrorStatus, statusLine} from '../response'
 
 describe('statusLine', () => {
 	test('reads the status with its reason', () => {
@@ -49,13 +49,5 @@ describe('bodyKind', () => {
 		expect(bodyKind('application/octet-stream')).toBe('binary')
 		expect(bodyKind('application/vnd.sqlite3')).toBe('binary')
 		expect(bodyKind('application/zip')).toBe('binary')
-	})
-})
-
-describe('byteSize', () => {
-	test('reads a size in the largest unit it fills', () => {
-		expect(byteSize(512)).toBe('512 bytes')
-		expect(byteSize(2048)).toBe('2 KB')
-		expect(byteSize(4780032)).toBe('4.6 MB')
 	})
 })

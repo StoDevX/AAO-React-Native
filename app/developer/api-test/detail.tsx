@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Image, StyleSheet} from 'react-native'
+import prettyBytes from 'pretty-bytes'
 import {SafeAreaView} from 'react-native-safe-area-context'
 
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -20,7 +21,6 @@ import {startingRequest} from '../../../source/features/developer/api-test/util/
 import {
 	isErrorStatus,
 	bodyKind,
-	byteSize,
 	statusLine,
 	type ApiResponse,
 } from '../../../source/features/developer/api-test/util/response'
@@ -214,7 +214,7 @@ export default function APITestDetailPage(): React.ReactNode {
 					/>
 				) : data.binary ? (
 					<NoticeView
-						description={`${statusLine(data)} · ${data.binary.contentType} · ${byteSize(data.binary.size)}`}
+						description={`${statusLine(data)} · ${data.binary.contentType} · ${prettyBytes(data.binary.size)}`}
 						systemImage="doc.zipper"
 						title="Binary Response"
 					/>

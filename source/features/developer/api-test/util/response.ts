@@ -41,18 +41,3 @@ export function bodyKind(contentType: string): 'image' | 'text' | 'binary' {
 	}
 	return 'binary'
 }
-
-/** A byte count in the largest unit it fills, to one decimal place. */
-export function byteSize(bytes: number): string {
-	if (bytes < 1024) {
-		return `${bytes} bytes`
-	}
-	let units = ['KB', 'MB', 'GB']
-	let size = bytes / 1024
-	let unit = 0
-	while (size >= 1024 && unit < units.length - 1) {
-		size /= 1024
-		unit++
-	}
-	return `${Number(size.toFixed(1))} ${units[unit]}`
-}

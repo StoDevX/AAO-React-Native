@@ -66,6 +66,13 @@ describe('recordRequest', () => {
 		expect(recentRequests(history, route)).toHaveLength(2)
 	})
 
+	test('treats the same values given in another order as the same request', () => {
+		let route = 'GET /v1/news/mess/wp/v2/:resource/:id'
+		let history = recordRequest([], route, {pathValues: {resource: 'posts', id: '1'}, query: []})
+		history = recordRequest(history, route, {pathValues: {id: '1', resource: 'posts'}, query: []})
+		expect(recentRequests(history, route)).toHaveLength(1)
+	})
+
 	test('does not remember a request with nothing in it to fill back in', () => {
 		let history = recordRequest([], '/ping', {pathValues: {}, query: [{name: ' ', value: ''}]})
 		expect(history).toEqual([])

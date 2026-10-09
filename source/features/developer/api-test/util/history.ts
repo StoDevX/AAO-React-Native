@@ -1,3 +1,5 @@
+import {stringify} from 'safe-stable-stringify'
+
 import type {QueryRow} from './request-path'
 
 /** What the API Tester fills back in for a route: its path and query values. */
@@ -38,8 +40,9 @@ function normalized(request: SavedRequest): SavedRequest {
 	return Object.keys(bodyValues).length ? {pathValues, query, bodyValues} : {pathValues, query}
 }
 
+/** Whether two requests send the same thing, whatever order their values were given in. */
 function isSame(a: SavedRequest, b: SavedRequest): boolean {
-	return JSON.stringify(normalized(a)) === JSON.stringify(normalized(b))
+	return stringify(normalized(a)) === stringify(normalized(b))
 }
 
 /** The route's remembered requests, newest first. */
