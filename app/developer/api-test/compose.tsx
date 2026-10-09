@@ -14,9 +14,9 @@ import {
 	type SavedRequest,
 } from '../../../source/features/developer/api-test/util/history'
 import {isSafeMethod, methodColor} from '../../../source/features/developer/api-test/util/method'
+import {missingInputs} from '../../../source/features/developer/api-test/util/inputs'
 import {
 	buildRequestPath,
-	missingPathParams,
 	type QueryRow,
 } from '../../../source/features/developer/api-test/util/request-path'
 
@@ -66,7 +66,10 @@ export default function APITestComposePage(): React.ReactNode {
 
 	let query = rows.map(({name, value}) => ({name, value}))
 	let requestPath = buildRequestPath(path, pathValues, query)
-	let missing = missingPathParams(params, pathValues)
+	let missing = missingInputs(
+		params.map((name) => ({name, in: 'path' as const, required: true})),
+		{pathValues, query},
+	)
 
 	let send = () => {
 		record(route, {pathValues, query})

@@ -1,7 +1,16 @@
 import {describe, expect, test} from '@jest/globals'
 
 import type {RouteInput} from '../../query'
-import {inputSummary, nextStep} from '../inputs'
+import {recordRequest} from '../history'
+import {
+	defaultFor,
+	initialValues,
+	inputSummary,
+	localDate,
+	missingInputs,
+	nextStep,
+	suggestionsFor,
+} from '../inputs'
 
 const cafeId: RouteInput = {name: 'cafeId', in: 'path', required: true}
 const sort: RouteInput = {name: 'sort', in: 'query', required: false}
@@ -33,5 +42,116 @@ describe('nextStep', () => {
 	test('opens the form for a route with a required input', () => {
 		expect(nextStep({method: 'GET', inputs: [cafeId]})).toBe('form')
 		expect(nextStep({method: 'DELETE', inputs: [cafeId]})).toBe('form')
+	})
+})
+
+const cafe: RouteInput = {
+	name: 'cafeId',
+	in: 'path',
+	required: true,
+	values: [
+		{value: '261', label: 'stav'},
+		{value: '262', label: 'cage'},
+	],
+}
+const calendarId: RouteInput = {name: 'id', in: 'query', required: true, examples: ['krlx@x.test']}
+const itemId: RouteInput = {name: 'itemId', in: 'path', required: true}
+
+describe('defaultFor', () => {
+	test('starts an input at its first accepted value, else its first example, else empty', () => {
+		expect(defaultFor(cafe)).toBe('261')
+		expect(defaultFor(calendarId)).toBe('krlx@x.test')
+		expect(defaultFor(itemId)).toBe('')
+	})
+})
+
+describe('initialValues', () => {
+	test('starts a route never sent at each required input’s default', () => {
+		expect(initialValues([cafe, calendarId, sort], undefined)).toEqual({
+			pathValues: {cafeId: '261'},
+			query: [{name: 'id', value: 'krlx@x.test'}],
+		})
+	})
+
+	test('starts from the last request sent to the route', () => {
+		let last = {pathValues: {cafeId: '262'}, query: [{name: 'id', value: 'mine'}]}
+		expect(initialValues([cafe, calendarId], last)).toEqual(last)
+	})
+
+	test('adds a required query input the last request did not have', () => {
+		expect(initialValues([calendarId], {pathValues: {}, query: []})).toEqual({
+			pathValues: {},
+			query: [{name: 'id', value: 'krlx@x.test'}],
+		})
+	})
+
+	test('replaces a remembered value the route no longer accepts', () => {
+		expect(initialValues([cafe], {pathValues: {cafeId: '999'}, query: []})).toEqual({
+			pathValues: {cafeId: '261'},
+			query: [],
+		})
+	})
+})
+
+describe('missingInputs', () => {
+	test('names the required inputs still without a value', () => {
+		expect(
+			missingInputs([itemId, calendarId, sort], {
+				pathValues: {itemId: '  '},
+				query: [{name: 'id', value: ''}],
+			}),
+		).toEqual(['itemId', 'id'])
+	})
+
+	test('is empty once every required input has a value', () => {
+		expect(
+			missingInputs([itemId, calendarId], {
+				pathValues: {itemId: '7'},
+				query: [{name: 'id', value: 'x'}],
+			}),
+		).toEqual([])
+	})
+})
+
+describe('localDate', () => {
+	test('reads the date on the device, not in UTC', () => {
+		// 23:30 local on the 8th is already the 9th in UTC for any zone west of it
+		expect(localDate(new Date(2026, 9, 8, 23, 30))).toBe('2026-10-08')
+		expect(localDate(new Date(2026, 0, 2, 0, 5))).toBe('2026-01-02')
+	})
+})
+
+describe('suggestionsFor', () => {
+	const route = 'GET /v1/calendar/google'
+	const today = new Date(2026, 9, 8, 12)
+
+	test('offers what was sent before ahead of the server’s examples, each once', () => {
+		let history = recordRequest([], 'GET /v1/calendar/ics', {
+			pathValues: {},
+			query: [{name: 'id', value: 'elsewhere'}],
+		})
+		history = recordRequest(history, route, {pathValues: {}, query: [{name: 'id', value: 'here'}]})
+		history = recordRequest(history, route, {
+			pathValues: {},
+			query: [{name: 'id', value: 'krlx@x.test'}],
+		})
+		expect(suggestionsFor(calendarId, history, route, today)).toEqual([
+			'krlx@x.test',
+			'here',
+			'elsewhere',
+		])
+	})
+
+	test('offers a path input’s past values', () => {
+		let history = recordRequest([], 'GET /v1/food/item/:itemId', {
+			pathValues: {itemId: '7'},
+			query: [],
+		})
+		expect(suggestionsFor(itemId, history, 'GET /v1/food/item/:itemId', today)).toEqual(['7'])
+	})
+
+	test('offers today for a date input', () => {
+		let dateTo: RouteInput = {name: 'dateTo', in: 'query', required: false, format: 'date'}
+		expect(suggestionsFor(dateTo, [], route, today)).toEqual(['2026-10-08'])
 	})
 })

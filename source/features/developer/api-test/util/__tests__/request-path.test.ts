@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {buildRequestPath, missingPathParams} from '../request-path'
+import {buildRequestPath} from '../request-path'
 
 describe('buildRequestPath', () => {
 	test('leaves a path without parameters alone', () => {
@@ -51,15 +51,5 @@ describe('buildRequestPath', () => {
 		expect(
 			buildRequestPath('/v1/news/rss', {}, [{name: 'url', value: 'https://x.test/feed?a=1&b=2'}]),
 		).toBe('/v1/news/rss?url=https%3A%2F%2Fx.test%2Ffeed%3Fa%3D1%26b%3D2')
-	})
-})
-
-describe('missingPathParams', () => {
-	test('names the path parameters still without a value', () => {
-		expect(missingPathParams(['resource', 'id'], {resource: 'posts', id: '  '})).toEqual(['id'])
-	})
-
-	test('is empty once every parameter has a value', () => {
-		expect(missingPathParams(['cafeId'], {cafeId: '262'})).toEqual([])
 	})
 })

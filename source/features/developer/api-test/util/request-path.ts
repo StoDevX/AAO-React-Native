@@ -27,8 +27,3 @@ export function buildRequestPath(
 
 	return pairs.length ? `${filled}?${pairs.join('&')}` : filled
 }
-
-/** The path parameters that still have no value, which a request cannot go without. */
-export function missingPathParams(params: string[], pathValues: Record<string, string>): string[] {
-	return params.filter((name) => !pathValues[name]?.trim())
-}
