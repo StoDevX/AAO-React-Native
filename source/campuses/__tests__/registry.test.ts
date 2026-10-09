@@ -73,3 +73,22 @@ describe('published campus keys', () => {
 		expect(campusIdFromPublished('carleton.edu')).toBeUndefined()
 	})
 })
+
+describe('links between sections', () => {
+	test.each(CAMPUSES.map((campus) => [campus.id, campus] as const))(
+		'%s offers its map from Hours only if it has a map',
+		(_id, campus) => {
+			if (campus.hours?.showsMapButton) {
+				expect(campus.map).toBeDefined()
+			}
+		},
+	)
+	test.each(CAMPUSES.map((campus) => [campus.id, campus] as const))(
+		"%s offers a student org's events only if it has a calendar",
+		(_id, campus) => {
+			if (campus.studentOrgs) {
+				expect(campus.calendar).toBeDefined()
+			}
+		},
+	)
+})

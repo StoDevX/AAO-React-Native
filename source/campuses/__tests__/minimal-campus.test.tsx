@@ -152,6 +152,13 @@ describe('a campus with only the required sections, on each screen it can reach'
 		)
 	}
 
+	test("Support offers no FAQs, which the campus doesn't have", async () => {
+		await renderScreen(SupportPage)
+
+		expect(screen.queryByText('FAQs')).toBeNull()
+		expect(screen.getByText('Send Feedback')).toBeTruthy()
+	})
+
 	test.each([
 		['Home', HomePage],
 		['Support', SupportPage],
