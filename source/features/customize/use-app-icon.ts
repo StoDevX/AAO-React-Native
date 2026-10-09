@@ -15,20 +15,28 @@ async function setIcon(type: AppIconName): Promise<void> {
 	reportIconChange(type)
 }
 
+/** The campus icon change under way, which the next one waits for. */
+let pendingIconSwitch: Promise<void> = Promise.resolve()
+
 /**
  * Moves the app icon to `campus`'s own when it wears the other campus's. iOS
  * may refuse, and then the icon simply stays; the gallery still offers the
- * campus's own.
+ * campus's own. Each change waits for the one before it, so switching campus
+ * twice in quick succession reads the icon the first change left and ends on
+ * the campus chosen last.
  */
-export async function switchIconForCampus(campus: Campus): Promise<void> {
-	try {
-		let next = iconForCampus(iconFor(await getIcon()), campus)
-		if (next) {
-			await setIcon(next)
+export function switchIconForCampus(campus: Campus): Promise<void> {
+	pendingIconSwitch = pendingIconSwitch.then(async () => {
+		try {
+			let next = iconForCampus(iconFor(await getIcon()), campus)
+			if (next) {
+				await setIcon(next)
+			}
+		} catch {
+			// iOS refused the change, or cannot change icons at all.
 		}
-	} catch {
-		// iOS refused the change, or cannot change icons at all.
-	}
+	})
+	return pendingIconSwitch
 }
 
 /**

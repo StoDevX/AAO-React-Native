@@ -84,6 +84,13 @@ describe('switchIconForCampus', () => {
 		expect(mockAlternateIconName).toBe('old-main')
 	})
 
+	it('ends on the campus chosen last, however quickly the choices come', async () => {
+		let toCarleton = switchIconForCampus('carleton')
+		let backToStOlaf = switchIconForCampus('stolaf')
+		await Promise.all([toCarleton, backToStOlaf])
+		expect(mockAlternateIconName).toBeNull()
+	})
+
 	it('keeps the icon iOS refuses to change, without throwing', async () => {
 		mockRefusesChanges = true
 		await expect(switchIconForCampus('carleton')).resolves.toBeUndefined()
