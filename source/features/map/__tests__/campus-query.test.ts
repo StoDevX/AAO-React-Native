@@ -30,5 +30,5 @@ afterEach(() => {
 // manifest's, so the building picker's grid has groups to show.
 test("a campus's map categories come from its own server", async () => {
 	let table = await client.query({...mapCategoriesOptions, retry: false})
-	expect(Object.keys(table).length).toBeGreaterThan(0)
+	expect(Object.keys(table ?? {}).length).toBeGreaterThan(0)
 })
