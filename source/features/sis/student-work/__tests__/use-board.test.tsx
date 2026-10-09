@@ -24,6 +24,7 @@ beforeEach(() => {
 
 // A client's garbage-collection timers would keep Jest from exiting.
 afterEach(() => {
+	useCampusStore.setState(useCampusStore.getInitialState())
 	client.clear()
 	// The manifest is cached on the app's own client, whose collection timer would hold Jest open.
 	appQueryClient.clear()

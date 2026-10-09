@@ -24,7 +24,7 @@ afterEach(() => {
 	// The manifest is cached on the app's own client, whose collection timer would hold Jest open.
 	appQueryClient.clear()
 	setFetchInterceptor(null)
-	useCampusStore.setState({campus: 'edu.stolaf'})
+	useCampusStore.setState(useCampusStore.getInitialState())
 })
 
 // The manifest names Wiki Monkeys' A–Z by a path on Wiki Monkeys' server, not the manifest's.

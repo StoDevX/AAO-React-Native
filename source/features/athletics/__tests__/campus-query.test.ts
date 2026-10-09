@@ -15,6 +15,7 @@ beforeEach(() => {
 	client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 })
 afterEach(() => {
+	useCampusStore.setState(useCampusStore.getInitialState())
 	client.clear()
 	setFetchInterceptor(null)
 })

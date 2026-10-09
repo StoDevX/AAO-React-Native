@@ -6,8 +6,11 @@ function grep(pattern: string): string {
 		return execFileSync('git', ['grep', '-n', pattern, '--', 'source', 'modules', 'app'], {
 			encoding: 'utf8',
 		})
-	} catch {
-		return ''
+	} catch (error) {
+		// git grep exits 1 when nothing matches; anything else, such as no git or
+		// no checkout, means nothing was searched, and must not read as a pass.
+		if ((error as {status?: number}).status === 1) return ''
+		throw error
 	}
 }
 
