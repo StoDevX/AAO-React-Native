@@ -99,9 +99,15 @@ describe('transit', () => {
 })
 
 describe('dictionary', () => {
-	test("only St. Olaf's takes suggestions", () => {
+	test("St. Olaf's takes suggestions and Carleton's does not", () => {
 		expect(campusById('edu.stolaf').dictionary?.acceptsSuggestions).toBe(true)
 		expect(campusById('edu.carleton').dictionary?.acceptsSuggestions).toBe(false)
+	})
+
+	// The dictionary's edit UI tests run on Wiki Monkeys; a suggestion goes to its
+	// help@college.example, in the reserved .example domain.
+	test("Wiki Monkeys' takes suggestions, so Suggest an Edit can be tested on it", () => {
+		expect(campusById('example.college').dictionary?.acceptsSuggestions).toBe(true)
 	})
 })
 

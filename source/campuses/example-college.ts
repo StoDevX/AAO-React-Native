@@ -61,7 +61,7 @@ export const exampleCollege = {
 	hours: {title: 'Building Hours', reportLabel: 'Wiki Monkeys', showsMapButton: false},
 	menus,
 	transit: {title: 'Transit'},
-	dictionary: {acceptsSuggestions: false},
+	dictionary: {acceptsSuggestions: true},
 	directory: {searchUrl: 'https://directory.college.example/search'},
 	calendar: {sources: ['wiki-monkeys']},
 	radio: {stations: [KMNK]},
