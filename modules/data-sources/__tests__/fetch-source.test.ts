@@ -1,5 +1,6 @@
 import {isHTTPError, registerCampusServer} from '@frogpond/api'
 import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
+import {setManifestServer} from '../manifest-server'
 
 describe('isAbsoluteHref', () => {
 	test('an absolute href has a scheme', () => {
@@ -16,6 +17,7 @@ describe('fetchSourceBody', () => {
 
 	beforeEach(() => {
 		registerCampusServer('edu.stolaf', new URL('https://example.test/'))
+		setManifestServer('edu.stolaf')
 	})
 
 	afterEach(() => {
@@ -34,6 +36,20 @@ describe('fetchSourceBody', () => {
 		let body = await fetchSourceBody('news/named/mess', controller.signal, 'News')
 
 		expect(body).toEqual({ok: true})
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	test("a relative href naming no campus resolves against the manifest's own server", async () => {
+		registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
+		setManifestServer('edu.carleton')
+		let fetchMock = jest.fn((request: Request) => {
+			expect(request.url).toBe('https://carleton.example.test/v1/jobs')
+			return Promise.resolve(new Response(JSON.stringify([]), {status: 200}))
+		})
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		await fetchSourceBody('jobs', new AbortController().signal, 'Jobs')
+
 		expect(fetchMock).toHaveBeenCalledTimes(1)
 	})
 

@@ -25,6 +25,7 @@ jest.mock('@frogpond/api', () => ({
 	clientFor: () => ({get: () => mockGet()}),
 }))
 
+// The app names the manifest's server at boot; these tests boot no app.
 const EMPTY: Jrd = {subject: 'https://stolaf.edu', links: []}
 
 function manifestWith(...links: Jrd['links']): Jrd {

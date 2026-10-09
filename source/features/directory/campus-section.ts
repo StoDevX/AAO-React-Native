@@ -6,6 +6,12 @@ export type ContactsSection = {
 	title: string
 	/** The server the contacts come from; the campus's own when absent. */
 	server?: CampusId
+	/**
+	 * The college's own directory, on the web, for a campus whose people the
+	 * app cannot search itself. The Contacts screen offers it in the search
+	 * bar's place.
+	 */
+	directoryUrl?: string
 }
 
 export type DirectorySection = {

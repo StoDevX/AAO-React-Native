@@ -12,6 +12,14 @@ import type {QuickActionsSection} from '../features/quick-actions/campus-section
 import type {AppIconsSection} from '../features/customize/campus-section'
 import type {AboutSection} from '../features/about/campus-section'
 import type {FaqsSection} from '../features/faqs/campus-section'
+import type {StudentOrgsSection} from '../features/student-orgs/campus-section'
+import type {StreamingSection} from '../features/streaming/campus-section'
+import type {AthleticsSection} from '../features/athletics/campus-section'
+import type {PrintingSection} from '../lib/stoprint/campus-section'
+import type {BalancesSection} from '../features/sis/campus-section'
+import type {MoreSection} from '../features/more/campus-section'
+import type {CourseCatalogSection} from '../features/sis/course-search/campus-section'
+import type {StudentWorkSection} from '../features/sis/student-work/campus-section'
 import type {MenusSection} from '../features/menus/campus-section'
 import type {TransitSection} from '../features/transit/campus-section'
 import type {ApiSection} from '../features/developer/campus-section'
@@ -61,4 +69,20 @@ export type CampusDefinition = {
 	appIcons?: AppIconsSection
 	about?: AboutSection
 	faqs?: FaqsSection
+	/** Student organizations; St. Olaf's alone. */
+	studentOrgs?: StudentOrgsSection
+	/** Webcams and streamed events; St. Olaf's alone. */
+	streaming?: StreamingSection
+	/** Athletics scores and schedules; St. Olaf's alone. */
+	athletics?: AthleticsSection
+	/** stoPrint print jobs; St. Olaf's alone. */
+	printing?: PrintingSection
+	/** Dining and OneCard balances; St. Olaf's alone. */
+	balances?: BalancesSection
+	/** The A–Z of campus links; St. Olaf's alone. */
+	more?: MoreSection
+	/** The course catalog; St. Olaf's alone. */
+	courseCatalog?: CourseCatalogSection
+	/** Student job postings; St. Olaf's alone. */
+	studentWork?: StudentWorkSection
 }

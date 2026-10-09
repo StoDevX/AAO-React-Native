@@ -1,6 +1,6 @@
-import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {Webcam} from './types'
+import {clientForSection} from '../../campus/section-client'
 
 export const keys = {
 	all: ['streaming', 'webcams'] as const,
@@ -9,8 +9,7 @@ export const keys = {
 export const webcamsOptions = queryOptions({
 	queryKey: keys.all,
 	queryFn: async ({signal}) => {
-		// St. Olaf's server: only St. Olaf's Home offers webcams.
-		let response = await clientFor('edu.stolaf').get('webcams', {signal}).json()
+		let response = await clientForSection('streaming').get('webcams', {signal}).json()
 		return (response as {data: Webcam[]}).data
 	},
 })

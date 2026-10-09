@@ -16,13 +16,14 @@ import {
 } from '../../source/redux/parts/buildings'
 
 import {timezone} from '@frogpond/constants'
-import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer, useNowOverride} from '@frogpond/timer'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {HoursDevSheet} from '../../source/features/building-hours/dev/hours-dev-sheet'
 import {useForceBundledData} from '../../source/features/building-hours/dev/data-source-store'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 type Props = {
 	campus: CampusId
@@ -155,24 +156,14 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 	)
 }
 
-export default function HoursPage(): React.ReactNode {
+function HoursPage(): React.ReactNode {
 	// No campus, or one this build doesn't know, is the active campus.
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
 	let campus = useCampusParam(campusParam)
 	let hours = campusById(campus).hours
 
-	if (!hours) {
-		return (
-			<>
-				<Stack.Title>Hours</Stack.Title>
-				<NoticeView
-					description="This campus has no building hours."
-					systemImage="clock"
-					title="No Hours"
-				/>
-			</>
-		)
-	}
+	// The section gate, below, draws the notice for a campus without hours.
+	if (!hours) return null
 
 	return (
 		<>
@@ -181,3 +172,9 @@ export default function HoursPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	HoursPage,
+)

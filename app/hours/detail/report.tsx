@@ -44,6 +44,7 @@ import {
 import {submitReport} from '../../../source/features/building-hours/report/submit'
 import type {BuildingAction} from '../../../source/features/building-hours/report/building-reducer'
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 function useBuildingEditor(initialBuilding: BuildingType, campus: CampusId) {
 	let router = useRouter()
@@ -483,7 +484,7 @@ function HoursProblemReportLoader(): React.ReactNode {
 	)
 }
 
-export default function HoursProblemReportPage(): React.ReactNode {
+function HoursProblemReportPage(): React.ReactNode {
 	const navigation = useNavigation()
 
 	return (
@@ -514,3 +515,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	HoursProblemReportPage,
+)

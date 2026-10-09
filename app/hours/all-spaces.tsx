@@ -15,10 +15,11 @@ import {timezone} from '@frogpond/constants'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 /// Every venue on the campus by category, including those the Hours list
 /// leaves out of its sections.
-export default function AllSpacesPage(): React.ReactNode {
+function AllSpacesPage(): React.ReactNode {
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
 	let campus = useCampusParam(campusParam)
 	let router = useRouter()
@@ -84,3 +85,9 @@ export default function AllSpacesPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	AllSpacesPage,
+)

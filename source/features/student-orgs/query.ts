@@ -1,9 +1,9 @@
-import {clientFor} from '@frogpond/api'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {isHTTPError} from 'ky'
 import {queryOptions} from '@tanstack/react-query'
 import type {StudentOrgDetailType, StudentOrgType} from './types'
 import uitestOrgs from './fixtures/uitest-orgs.json'
+import {clientForSection} from '../campus/section-client'
 
 export const keys = {
 	all: ['orgs'] as const,
@@ -21,8 +21,7 @@ async function fetchStudentOrgs({signal}: {signal: AbortSignal}) {
 	if (servesBundledFixtures) {
 		return uitestOrgs as StudentOrgType[]
 	}
-	// St. Olaf's server: only St. Olaf's Home offers student orgs.
-	let response = await clientFor('edu.stolaf').get('orgs', {signal}).json()
+	let response = await clientForSection('studentOrgs').get('orgs', {signal}).json()
 	return response as StudentOrgType[]
 }
 
@@ -48,8 +47,7 @@ async function fetchOrgDetail(
 	{signal}: {signal: AbortSignal},
 ): Promise<StudentOrgDetailType | null> {
 	try {
-		// St. Olaf's server: only St. Olaf's Home offers student orgs.
-		let response = await clientFor('edu.stolaf')
+		let response = await clientForSection('studentOrgs')
 			.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal})
 			.json()
 		return response as StudentOrgDetailType

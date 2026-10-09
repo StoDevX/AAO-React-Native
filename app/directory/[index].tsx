@@ -25,8 +25,9 @@ import type {
 	DirectorySearchTypeEnum,
 } from '../../source/features/directory/types'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
-export default function DirectoryDetailPage(): React.ReactNode {
+function DirectoryDetailPage(): React.ReactNode {
 	let {index, query, type} = useLocalSearchParams<{
 		index: string
 		query?: string
@@ -201,3 +202,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'directory',
+	{title: 'Directory', noun: 'a people directory', systemImage: 'person.2'},
+	DirectoryDetailPage,
+)

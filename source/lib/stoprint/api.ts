@@ -24,7 +24,7 @@ import type {
 } from './types'
 import {type Options} from 'ky'
 import {LoginFailedError} from '../login'
-import {clientFor} from '@frogpond/api'
+import {clientForSection} from '../../features/campus/section-client'
 
 export class PapercutJobReleaseError extends Error {}
 
@@ -100,8 +100,7 @@ export async function fetchColorPrinters(options: Options): Promise<string[]> {
 		return mockFetchColorPrinters()
 	}
 
-	// St. Olaf's server: printing is St. Olaf's.
-	let response = await clientFor('edu.stolaf')
+	let response = await clientForSection('printing')
 		.get<ColorPrintersResponse>('printing/color-printers', options)
 		.json()
 	return response.data.colorPrinters

@@ -10,6 +10,7 @@ import {NavigationRow} from '../../source/components/rows'
 import {noticesInForce} from '../../source/features/faqs/notices'
 import {useCampus} from '../../source/features/campus/store'
 import {faqsOptionsFor} from '../../source/features/faqs/query'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -61,7 +62,7 @@ function NoticesList(): React.ReactNode {
 }
 
 /// The banners now in force, each opening its FAQ.
-export default function NoticesPage(): React.ReactNode {
+function NoticesPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Notices</Stack.Title>
@@ -70,3 +71,9 @@ export default function NoticesPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'faqs',
+	{title: 'Notices', noun: 'notices', systemImage: 'bell'},
+	NoticesPage,
+)

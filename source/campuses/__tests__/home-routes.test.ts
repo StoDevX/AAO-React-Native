@@ -2,7 +2,8 @@ import {readdirSync} from 'node:fs'
 import {join, relative, sep} from 'node:path'
 import {describe, expect, test} from '@jest/globals'
 
-import {CAMPUSES} from '..'
+import {CAMPUSES, campusById} from '..'
+import {sectionForRoute} from '../../testing/route-sections'
 import {viewTarget} from '../../features/views'
 
 const APP = join(__dirname, '../../../app')
@@ -81,7 +82,7 @@ const TILES = CAMPUSES.flatMap((campus) =>
 	campus.home.tiles.map((tile) => [campus.id, tile.title, viewTarget(tile), tile] as const),
 )
 
-describe.each(TILES)('%s’s %s tile, to %s', (_campus, _title, _target, tile) => {
+describe.each(TILES)('%s’s %s tile, to %s', (campusId, _title, _target, tile) => {
 	test('opens a screen that exists, or a secure web page, or a station', () => {
 		if (tile.type === 'view') {
 			expect(routeExists(viewTarget(tile))).toBe(true)
@@ -96,6 +97,13 @@ describe.each(TILES)('%s’s %s tile, to %s', (_campus, _title, _target, tile) =
 		let campusParam = new URL(viewTarget(tile), 'app://route').searchParams.get('campus')
 		if (campusParam !== null) {
 			expect(CAMPUSES.map((campus) => campus.id)).toContain(campusParam)
+		}
+	})
+
+	test('opens a feature its campus has, rather than a notice that it has none', () => {
+		let section = tile.type === 'view' ? sectionForRoute(viewTarget(tile)) : undefined
+		if (section !== undefined) {
+			expect(campusById(campusId)[section]).toBeDefined()
 		}
 	})
 })

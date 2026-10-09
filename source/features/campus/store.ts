@@ -93,33 +93,3 @@ export function currentCampusId(): CampusId {
 export function currentCampus(): CampusDefinition {
 	return campusById(currentCampusId())
 }
-
-// MARK: Legacy bridge, deleted by the last PR of this stack once nothing calls it.
-
-/** The id features compared against before campus definitions. */
-export type LegacyCampus = 'stolaf' | 'carleton'
-
-/** The pre-registry name for LegacyCampus, still imported by unmigrated features. */
-export type Campus = LegacyCampus
-
-const LEGACY: Record<CampusId, LegacyCampus> = {'edu.stolaf': 'stolaf', 'edu.carleton': 'carleton'}
-
-/** Bridge only: read a section of `useCampus()` instead. */
-export function legacyCampusOf(id: CampusId): LegacyCampus {
-	return LEGACY[id]
-}
-
-/** The id a legacy campus name stands for. */
-export function campusIdOfLegacy(campus: LegacyCampus): CampusId {
-	return campus === 'stolaf' ? 'edu.stolaf' : 'edu.carleton'
-}
-
-/** Bridge only: read a section of `useCampus()` instead. */
-export function useLegacyCampus(): LegacyCampus {
-	return legacyCampusOf(useCampusId())
-}
-
-/** Bridge only: read a section of `currentCampus()` instead. */
-export function currentLegacyCampus(): LegacyCampus {
-	return legacyCampusOf(currentCampusId())
-}

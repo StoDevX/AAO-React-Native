@@ -47,17 +47,11 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 		icon: 'calendar',
 		gradient: c.violetGradient,
 	},
-	{
-		type: 'url',
-		url: 'https://www.carleton.edu/directory/',
-		title: 'Directory',
-		icon: 'person.crop.rectangle.fill',
-		gradient: c.redGradient,
-	},
+	// Carleton's contacts, with its web directory a tap away; CARLS had a tile for each.
 	{
 		type: 'view',
 		view: '/contacts',
-		title: 'Important Contacts',
+		title: 'Directory',
 		icon: 'phone.fill',
 		gradient: c.orangeGradient,
 	},

@@ -9,15 +9,14 @@ import {useCampusStore} from '../../campus/store'
 loadBeforeTests('Image')
 
 jest.mock('expo-router', () => ({
-	Stack: {Screen: () => null},
+	Stack: {Screen: () => null, Title: () => null},
 	useLocalSearchParams: jest.fn(),
 	useRouter: () => ({navigate: jest.fn()}),
 }))
 
 describe('the directory detail page', () => {
-	// A campus without a directory, as a URL can reach the page on one.
 	beforeEach(() => {
-		useCampusStore.setState({campus: 'edu.carleton'})
+		useCampusStore.setState({campus: 'edu.stolaf'})
 	})
 
 	/// A link like `AllAboutOlaf://directory/0` names an index but not the
@@ -28,5 +27,14 @@ describe('the directory detail page', () => {
 		await render(<DirectoryDetailPage />)
 
 		expect(screen.getByText('Entry Not Found')).toBeOnTheScreen()
+	})
+	// A URL can reach the page on a campus without one.
+	it('says a campus without a directory has none', async () => {
+		useCampusStore.setState({campus: 'edu.carleton'})
+		jest.mocked(useLocalSearchParams).mockReturnValue({index: '0'})
+
+		await render(<DirectoryDetailPage />)
+
+		expect(screen.getByText('No Directory')).toBeOnTheScreen()
 	})
 })

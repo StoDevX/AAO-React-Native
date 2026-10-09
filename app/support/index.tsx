@@ -101,7 +101,9 @@ export default function SupportPage(): React.ReactNode {
 						</HStack>
 
 						<Section>
-							<NavigationRow onPress={() => router.navigate('/faq')} title="FAQs" />
+							{campus.faqs ? (
+								<NavigationRow onPress={() => router.navigate('/faq')} title="FAQs" />
+							) : null}
 							<NavigationRow
 								onPress={() => router.navigate('/report-problem')}
 								title="Send Feedback"

@@ -36,7 +36,7 @@ export const carleton = {
 			phoneNumber: '5072225999',
 		},
 	},
-	contacts: {title: 'Important Contacts'},
+	contacts: {title: 'Directory', directoryUrl: 'https://www.carleton.edu/directory/'},
 	api: {
 		defaultUrl: 'https://carleton.frogpond.tech/v1/',
 		storageKey: 'settings:server-address:edu.carleton',
@@ -78,4 +78,10 @@ export const carleton = {
 	about: carletonAbout,
 	// St. Olaf's server serves both campuses' notices; moving Carleton's onto its own is for later.
 	faqs: {server: 'edu.stolaf'},
+	// No printing yet. Carleton runs PaperCut too, at
+	// https://print.ads.carleton.edu:9192/ (its sign-in page is /user), where
+	// St. Olaf's is papercut.stolaf.edu, which source/lib/stoprint/urls.ts
+	// hard-codes. Turning it on means giving `PrintingSection` the PaperCut
+	// address, port included, building stoPrint's clients from the active
+	// campus's section rather than from urls.ts, then adding `printing` here.
 } as const satisfies CampusDefinition

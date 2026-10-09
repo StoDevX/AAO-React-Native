@@ -1,8 +1,9 @@
 import * as React from 'react'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {RadioTabAccessory} from '../../source/features/streaming/radio'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
-export default function StreamingMediaLayout(): React.ReactNode {
+function StreamingMediaLayout(): React.ReactNode {
 	return (
 		// The radio's home, so the mini-player is always here, saying "Not
 		// Playing" until a station starts; Home's switch hides only Home's.
@@ -23,3 +24,9 @@ export default function StreamingMediaLayout(): React.ReactNode {
 		</NativeTabs>
 	)
 }
+
+export default requiresSection(
+	'streaming',
+	{title: 'Streaming Media', noun: 'webcams or streams', systemImage: 'video'},
+	StreamingMediaLayout,
+)

@@ -1,5 +1,6 @@
 import {Image} from 'react-native'
 import {apiUrl} from './api-url'
+import {PLATFORM_SERVER} from '../campuses'
 
 /**
  * The folders ccc-server serves images from, one per kind of picture. They
@@ -27,8 +28,8 @@ export type RemoteImage = {uri: string; cache: 'force-cache'}
  * server is the one to ask.
  */
 export function imageUrl(group: ImageGroup, name: string): string {
-	// St. Olaf's server publishes every campus's images (images/groups.json).
-	return apiUrl('edu.stolaf', `images/${group}/${name}.webp`)
+	// The platform server publishes every campus's images (images/groups.json).
+	return apiUrl(PLATFORM_SERVER, `images/${group}/${name}.webp`)
 }
 
 /**

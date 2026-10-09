@@ -41,6 +41,8 @@ export const REMOTE_SOURCES: CalendarSource[] = servesBundledFixtures
  * naming no campus, offers the fixture alone.
  */
 export function remoteSourcesFor(sourceIds: readonly string[]): CalendarSource[] {
-	if (servesBundledFixtures) return REMOTE_SOURCES
+	// A UI test's one calendar stands in for a campus's own, and a campus that
+	// names none still has none.
+	if (servesBundledFixtures) return sourceIds.length > 0 ? REMOTE_SOURCES : []
 	return REMOTE_SOURCES.filter((source) => sourceIds.includes(source.id))
 }

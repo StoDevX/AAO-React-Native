@@ -1,6 +1,8 @@
 import {onlineManager, QueryClient} from '@tanstack/react-query'
 import bundled from '../bundled.json'
+import {expect, jest, test} from '@jest/globals'
 import {fetchManifest, hasBundledSource, resolveSource, resolveSources} from '../resolve'
+import {setManifestServer} from '../manifest-server'
 import {
 	CAMPUS_PROPERTY,
 	ID_PROPERTY,
@@ -187,6 +189,19 @@ test('fetchManifest resolves to the bundled document rather than hanging while o
 	}
 })
 
+test('asks for the manifest only once the app has named its server', async () => {
+	let fresh: typeof import('../resolve') | undefined
+	jest.isolateModules(() => {
+		fresh = jest.requireActual<typeof import('../resolve')>('../resolve')
+	})
+	let queryFn = fresh?.manifestOptions.queryFn as (context: {
+		signal: AbortSignal
+	}) => Promise<unknown>
+	await expect(queryFn({signal: new AbortController().signal})).rejects.toThrow(
+		'setManifestServer has not run; source/init/api.ts calls it at boot',
+	)
+})
+
 test('the bundled manifest offers Presence as a calendar', () => {
 	let link = bundled.links.find(
 		(entry) =>
@@ -205,25 +220,50 @@ test("a source marked Carleton's resolves against Carleton's server", () => {
 	expect(source.href).toBe('calendar/named/sumo-schedule')
 })
 
-test("a source with no campus resolves against St. Olaf's", () => {
+test("a source with no campus resolves against the manifest's own server", () => {
 	expect(resolveSource(manifest, REL_CALENDAR, 'krlx-schedule', EVENTS).campus).toBe('edu.stolaf')
+
+	setManifestServer('edu.carleton')
+	try {
+		expect(resolveSource(manifest, REL_CALENDAR, 'krlx-schedule', EVENTS).campus).toBe(
+			'edu.carleton',
+		)
+	} finally {
+		setManifestServer('edu.stolaf')
+	}
 })
 
-test('a campus this build does not know reads as St. Olaf, without failing the manifest', () => {
-	const document = JrdSchema.parse({
+/** A manifest with one calendar entry, `id`, that names `campus`. */
+function naming(id: string, campus: string) {
+	return JrdSchema.parse({
 		subject: 'https://stolaf.edu',
 		links: [
 			{
 				rel: REL_CALENDAR,
-				href: 'calendar/named/elsewhere',
+				href: `calendar/named/${id}`,
 				type: EVENTS[0],
-				properties: {[ID_PROPERTY]: 'elsewhere', [CAMPUS_PROPERTY]: 'macalester'},
+				properties: {[ID_PROPERTY]: id, [CAMPUS_PROPERTY]: campus},
 			},
 		],
 	})
-	expect(
-		resolveSources(document, REL_CALENDAR, EVENTS).find((s) => s.id === 'elsewhere')?.campus,
-	).toBe('edu.stolaf')
+}
+
+test('an entry for a campus this build does not know is left alone, without failing the manifest', () => {
+	let sources = resolveSources(naming('elsewhere', 'edu.macalester'), REL_CALENDAR, EVENTS)
+
+	expect(sources.find((source) => source.id === 'elsewhere')).toBeUndefined()
+	expect(sources.length).toBeGreaterThan(0)
+})
+
+test("an entry for a campus this build does not know falls back to the bundled entry, not another campus's server", () => {
+	let source = resolveSource(
+		naming('sumo-schedule', 'edu.macalester'),
+		REL_CALENDAR,
+		'sumo-schedule',
+		EVENTS,
+	)
+
+	expect(source.campus).toBe('edu.carleton')
 })
 
 test.each([

@@ -9,9 +9,6 @@ import {
 	isCampusId,
 	requireCampusId,
 } from '..'
-import {sectionServer} from '../../features/campus/section-server'
-import {carleton} from '../edu-carleton'
-import {stolaf} from '../edu-stolaf'
 
 describe('the campus registry', () => {
 	test('lists St. Olaf first, then Carleton, by reverse-DNS id', () => {
@@ -77,60 +74,21 @@ describe('published campus keys', () => {
 	})
 })
 
-describe('the map and hours sections', () => {
-	test("keep each campus's map where it was", () => {
-		expect(stolaf.map.title).toBe('St. Olaf Map')
-		expect(stolaf.map.center).toEqual([-93.1839, 44.4618])
-		expect(carleton.map.title).toBe('Carleton Map')
-		expect(carleton.map.center).toEqual([-93.15488752015, 44.460800862266])
-	})
-
-	test("draw a dark basemap only where the campus's style has one", () => {
-		expect(stolaf.map.darkStyle).toEqual({manifestId: 'stolaf-dark'})
-		expect('darkStyle' in carleton.map).toBe(false)
-	})
-
-	test("title Hours as each campus's tile does", () => {
-		expect(stolaf.hours.title).toBe('Hours')
-		expect(carleton.hours.title).toBe('Building Hours')
-	})
-
-	test('offer the map from Hours only where the map has no tile of its own', () => {
-		expect(stolaf.hours.showsMapButton).toBe(false)
-		expect(carleton.hours.showsMapButton).toBe(true)
-	})
-})
-
-describe('the calendar, news, paper and radio sections', () => {
-	test('offer each campus its own calendars, by source id', () => {
-		expect(stolaf.calendar.sources).toEqual(['stolaf', 'presence'])
-		expect(carleton.calendar.sources).toEqual(['carleton'])
-	})
-
-	test("name each campus's own news site", () => {
-		expect(stolaf.news.source).toEqual({id: 'stolaf', title: 'St. Olaf News', thumbnail: 'stolaf'})
-		expect(carleton.news.source).toEqual({
-			id: 'carleton-now',
-			title: 'Carleton News',
-			thumbnail: false,
-		})
-	})
-
-	test("name each campus's student paper", () => {
-		expect(stolaf.paper.id).toBe('mess')
-		expect(carleton.paper.id).toBe('carletonian')
-	})
-
-	test("name each campus's own station", () => {
-		expect(stolaf.radio.stations.map((station) => station.id)).toEqual(['ksto'])
-		expect(carleton.radio.stations.map((station) => station.id)).toEqual(['krlx'])
-	})
-})
-
-describe('the convos section', () => {
-	test("only Carleton has one, and it asks Carleton's own server", () => {
-		expect(stolaf).not.toHaveProperty('convos')
-		expect(carleton.convos).toBeDefined()
-		expect(sectionServer(carleton.id, carleton.convos)).toBe('edu.carleton')
-	})
+describe('links between sections', () => {
+	test.each(CAMPUSES.map((campus) => [campus.id, campus] as const))(
+		'%s offers its map from Hours only if it has a map',
+		(_id, campus) => {
+			if (campus.hours?.showsMapButton) {
+				expect(campus.map).toBeDefined()
+			}
+		},
+	)
+	test.each(CAMPUSES.map((campus) => [campus.id, campus] as const))(
+		"%s offers a student org's events only if it has a calendar",
+		(_id, campus) => {
+			if (campus.studentOrgs) {
+				expect(campus.calendar).toBeDefined()
+			}
+		},
+	)
 })

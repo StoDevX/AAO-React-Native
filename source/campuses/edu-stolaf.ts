@@ -74,4 +74,12 @@ export const stolaf = {
 	appIcons: {groups: ['Classic', 'Windmill']},
 	about: stolafAbout,
 	faqs: {showsLegacyText: true},
+	studentOrgs: {},
+	streaming: {},
+	athletics: {},
+	printing: {},
+	balances: {},
+	more: {},
+	courseCatalog: {},
+	studentWork: {},
 } as const satisfies CampusDefinition

@@ -1,4 +1,5 @@
 import {apiFetch, clientFor, isHTTPError} from '@frogpond/api'
+import {requireManifestServer} from './manifest-server'
 import type {SourceCampus} from './types'
 
 const FETCH_TIMEOUT_MS = 10_000
@@ -90,18 +91,18 @@ async function errorBody(response: Response): Promise<unknown> {
 /// WordPress's REST API, `'text'` for sources whose media type is not JSON —
 /// RSS (`application/rss+xml`), for instance.
 ///
-/// `campus` picks that server, by campus id: St. Olaf's, where the manifest
-/// names none, or the one it names.
+/// `campus` picks that server, by campus id: the one the manifest names, or
+/// the manifest's own server where it names none.
 export async function fetchSourceBody(
 	href: string,
 	signal: AbortSignal,
 	label: string,
 	format: 'json' | 'text' = 'json',
-	campus: SourceCampus = 'edu.stolaf',
+	campus?: SourceCampus,
 ): Promise<unknown> {
 	if (!isAbsoluteHref(href)) {
 		try {
-			let request = clientFor(campus).get(href, {signal})
+			let request = clientFor(campus ?? requireManifestServer()).get(href, {signal})
 			return await (format === 'text' ? request.text() : request.json())
 		} catch (error) {
 			// The same error an absolute source's refusal throws, so a caller reads a

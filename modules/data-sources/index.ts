@@ -6,6 +6,7 @@ export {
 	resolveSource,
 	resolveSources,
 } from './resolve'
+export {setManifestServer} from './manifest-server'
 export {useManifest} from './use-manifest'
 export {
 	CAMPUS_PROPERTY,
