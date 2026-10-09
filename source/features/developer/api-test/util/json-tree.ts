@@ -35,3 +35,28 @@ export function jsonLeaf(value: unknown): {
 	}
 	return {text: 'null', kind: 'null'}
 }
+
+/// The most values a group can hold, all the way down, and still start open:
+/// enough for a short object to read at a glance, few enough that a long one
+/// stays a single row.
+export const SMALL_GROUP = 12
+
+/** How many values a group holds all the way down, counting no further than `limit + 1`. */
+function valueCount(value: unknown, limit: number): number {
+	if (!isContainer(value)) {
+		return 1
+	}
+	let count = 0
+	for (let item of Array.isArray(value) ? value : Object.values(value)) {
+		count += valueCount(item, limit - count)
+		if (count > limit) {
+			break
+		}
+	}
+	return count
+}
+
+/** Whether a group starts open: it holds no more than a few values, however deep. */
+export function startsOpen(value: Record<string, unknown> | unknown[]): boolean {
+	return valueCount(value, SMALL_GROUP) <= SMALL_GROUP
+}

@@ -11,11 +11,26 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {isContainer, jsonEntries, jsonLeaf, jsonSummary, type JsonEntry} from './util/json-tree'
+import {
+	isContainer,
+	jsonEntries,
+	jsonLeaf,
+	jsonSummary,
+	startsOpen,
+	type JsonEntry,
+} from './util/json-tree'
 
 /// How many of an object's or array's entries show before a "show more" row,
 /// so opening a long array does not build every row at once.
 const PAGE = 100
+
+/**
+ * The last Expand All or Collapse All, for every group in a tree to follow.
+ * `count` goes up with each one, so pressing the same one twice still acts.
+ */
+export type ExpandCommand = {mode: 'all' | 'none' | null; count: number}
+
+const ExpandContext = React.createContext<ExpandCommand>({mode: null, count: 0})
 
 /// The colours the raw view highlights each kind of value in.
 const LEAF_COLORS: Record<ReturnType<typeof jsonLeaf>['kind'], ColorValue> = {
@@ -45,8 +60,20 @@ function Row(props: {name: string; value: string; color: ColorValue}): React.Rea
 
 /** One entry: a closed group for an object or array, opened on a tap; else its value. */
 function Entry({entry}: {entry: JsonEntry}): React.ReactNode {
-	let [isOpen, setOpen] = React.useState(false)
 	let {key, value} = entry
+	let command = React.useContext(ExpandContext)
+	// A group opened after Expand or Collapse All follows it; otherwise it
+	// starts open when it holds only a few values.
+	let [isOpen, setOpen] = React.useState(() =>
+		command.mode === null ? isContainer(value) && startsOpen(value) : command.mode === 'all',
+	)
+	let seenCount = React.useRef(command.count)
+	React.useEffect(() => {
+		if (command.count !== seenCount.current) {
+			seenCount.current = command.count
+			setOpen(command.mode === 'all')
+		}
+	}, [command])
 
 	if (!isContainer(value)) {
 		let leaf = jsonLeaf(value)
@@ -89,23 +116,27 @@ function Entries({value}: {value: Record<string, unknown> | unknown[]}): React.R
 
 /**
  * A JSON value to explore: its top level listed, each object or array in it a
- * group that opens to show what it holds.
+ * group that opens to show what it holds -- open from the start when it holds
+ * only a few values, and all at once on `expand`.
  */
-export function JsonTree({value}: {value: unknown}): React.ReactNode {
+export function JsonTree(props: {value: unknown; expand?: ExpandCommand}): React.ReactNode {
+	let {value, expand = {mode: null, count: 0}} = props
 	return (
-		<Host style={styles.host}>
-			<List modifiers={[listStyle('insetGrouped')]}>
-				{isContainer(value) ? (
-					<Entries value={value} />
-				) : (
-					<Row
-						color={LEAF_COLORS[jsonLeaf(value).kind]}
-						name="value"
-						value={jsonLeaf(value).text}
-					/>
-				)}
-			</List>
-		</Host>
+		<ExpandContext.Provider value={expand}>
+			<Host style={styles.host}>
+				<List modifiers={[listStyle('insetGrouped')]}>
+					{isContainer(value) ? (
+						<Entries value={value} />
+					) : (
+						<Row
+							color={LEAF_COLORS[jsonLeaf(value).kind]}
+							name="value"
+							value={jsonLeaf(value).text}
+						/>
+					)}
+				</List>
+			</Host>
+		</ExpandContext.Provider>
 	)
 }
 

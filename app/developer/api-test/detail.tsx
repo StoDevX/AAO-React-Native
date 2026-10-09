@@ -11,7 +11,7 @@ import {clientFor} from '@frogpond/api'
 import {HtmlContent, type HtmlContentHandle} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
-import {JsonTree} from '../../../source/features/developer/api-test/json-tree'
+import {JsonTree, type ExpandCommand} from '../../../source/features/developer/api-test/json-tree'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
 import {useCampusId} from '../../../source/features/campus/store'
 import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
@@ -62,6 +62,9 @@ export default function APITestDetailPage(): React.ReactNode {
 
 	let campus = useCampusId()
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
+	let [expand, setExpand] = React.useState<ExpandCommand>({mode: null, count: 0})
+	let expandAll = (mode: 'all' | 'none') =>
+		setExpand((current) => ({mode, count: current.count + 1}))
 
 	let {data, isLoading, error} = useQuery<ApiResponse | null, Error>({
 		queryKey: ['api-test', campus, method, path, request, sentAt],
@@ -156,6 +159,22 @@ export default function APITestDetailPage(): React.ReactNode {
 								Find on Page
 							</Stack.Toolbar.MenuAction>
 						) : null}
+						{displayMode === 'tree' ? (
+							<Stack.Toolbar.MenuAction
+								icon="arrow.up.left.and.arrow.down.right"
+								onPress={() => expandAll('all')}
+							>
+								Expand All
+							</Stack.Toolbar.MenuAction>
+						) : null}
+						{displayMode === 'tree' ? (
+							<Stack.Toolbar.MenuAction
+								icon="arrow.down.right.and.arrow.up.left"
+								onPress={() => expandAll('none')}
+							>
+								Collapse All
+							</Stack.Toolbar.MenuAction>
+						) : null}
 						<Stack.Toolbar.MenuAction
 							icon="curlybraces"
 							isOn={displayMode === 'raw'}
@@ -206,7 +225,7 @@ export default function APITestDetailPage(): React.ReactNode {
 				) : displayMode === 'raw' ? (
 					jsonViewContent
 				) : (
-					<JsonTree value={body.value} />
+					<JsonTree expand={expand} value={body.value} />
 				)}
 			</SafeAreaView>
 		</>

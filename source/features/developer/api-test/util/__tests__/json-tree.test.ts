@@ -1,6 +1,13 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {isContainer, jsonEntries, jsonLeaf, jsonSummary} from '../json-tree'
+import {
+	isContainer,
+	jsonEntries,
+	jsonLeaf,
+	jsonSummary,
+	SMALL_GROUP,
+	startsOpen,
+} from '../json-tree'
 
 describe('isContainer', () => {
 	test('opens objects and arrays, and nothing else', () => {
@@ -46,5 +53,30 @@ describe('jsonLeaf', () => {
 		expect(jsonLeaf(262)).toEqual({text: '262', kind: 'number'})
 		expect(jsonLeaf(false)).toEqual({text: 'false', kind: 'boolean'})
 		expect(jsonLeaf(null)).toEqual({text: 'null', kind: 'null'})
+	})
+})
+
+describe('startsOpen', () => {
+	test('opens a group whose whole contents are a few values', () => {
+		expect(startsOpen({value: '262', label: 'cage'})).toBe(true)
+		expect(startsOpen(['GET'])).toBe(true)
+		expect(startsOpen({in: 'query', values: [{value: 'a'}, {value: 'b'}]})).toBe(true)
+	})
+
+	test(`keeps a group closed once it holds more than ${SMALL_GROUP} values, however deep`, () => {
+		let many = Array.from({length: SMALL_GROUP + 1}, (_, index) => index)
+		expect(startsOpen(many)).toBe(false)
+		expect(startsOpen({nested: {deeper: many}})).toBe(false)
+	})
+
+	test('opens a group of exactly the limit', () => {
+		expect(startsOpen(Array.from({length: SMALL_GROUP}, (_, index) => index))).toBe(true)
+	})
+
+	test('stops counting a huge group at the limit', () => {
+		let huge = Array.from({length: 100_000}, (_, index) => ({index}))
+		let started = performance.now()
+		expect(startsOpen(huge)).toBe(false)
+		expect(performance.now() - started).toBeLessThan(50)
 	})
 })
