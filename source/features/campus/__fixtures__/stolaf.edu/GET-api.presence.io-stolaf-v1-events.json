@@ -14,24 +14,24 @@
 		},
 		{
 			"description": "<p>Students who are interested in studying abroad/away during the fall 2027 semester, spring 2028 semester, and 2027-2028 academic year should attend this Fair to learn more about the available domestic and international programs.  Applications will open after the Fair and the deadine to apply will be December 1, 2026 or February 16, 2027 (varies based on program).  </p>",
-			"endDateTimeUtc": "2026-10-06T23:30:00Z",
+			"endDateTimeUtc": "2026-10-06T22:30:00Z",
 			"eventName": "Study Abroad/Away Fair for 2027-2028 Semester & Year Programs",
 			"hasCoverImage": true,
 			"location": "Buntrock Commons Ballrooms",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "1070e0b3-59ff-4c9e-bd6d-2fa0f6d6568a.png?v=0",
-			"startDateTimeUtc": "2026-10-06T22:00:00Z",
+			"startDateTimeUtc": "2026-10-06T21:00:00Z",
 			"uri": "study-abroad-away-fair-for-2027-2028-semester-year-programs"
 		},
 		{
 			"description": "<p>Students who are interested in studying abroad/away on a January Term 2028 program should attend the Fair.  Applications will open after the Fair and remain open until the deadline of April 19, 2027.  </p>",
-			"endDateTimeUtc": "2027-03-02T22:30:00Z",
+			"endDateTimeUtc": "2027-03-02T23:30:00Z",
 			"eventName": "Study Abroad/Away Fair January Term 2028 Programs",
 			"hasCoverImage": true,
 			"location": "Buntrock Commons Ballrooms",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "1070e0b3-59ff-4c9e-bd6d-2fa0f6d6568a.png?v=0",
-			"startDateTimeUtc": "2027-03-02T21:00:00Z",
+			"startDateTimeUtc": "2027-03-02T22:00:00Z",
 			"uri": "study-abroad-away-fair-january-term-2028-programs"
 		},
 		{
@@ -58,13 +58,13 @@
 		},
 		{
 			"description": "<p>Are you interested in studying abroad for a semester program led by a St. Olaf professor?  Attend this information session to learn more about <a href=\"https://stolaf.studioabroad.com/index.cfm?FuseAction=Programs.ViewProgramAngular&amp;id=10124\" target=\"\">Global Semester</a> for fall 2027.  Applications will open November 11 and close on February 16, 2027.  </p>",
-			"endDateTimeUtc": "2026-10-09T00:00:00Z",
+			"endDateTimeUtc": "2026-10-08T23:00:00Z",
 			"eventName": "Global Semester Fall 2027 Info Session",
 			"hasCoverImage": true,
 			"location": "Viking Theater in Buntrock Commons",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "880f05b7-1227-4c00-bc8f-a49db34ea892.png?v=0",
-			"startDateTimeUtc": "2026-10-08T23:00:00Z",
+			"startDateTimeUtc": "2026-10-08T22:00:00Z",
 			"uri": "global-semester-fall-2027-info-session"
 		},
 		{
@@ -201,13 +201,13 @@
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2026-10-02T03:00:00Z",
+			"endDateTimeUtc": "2026-10-02T02:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2026-10-02T02:00:00Z",
+			"startDateTimeUtc": "2026-10-02T01:00:00Z",
 			"uri": "thursday-night-trivia-210"
 		},
 		{
@@ -223,35 +223,35 @@
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2026-10-09T03:00:00Z",
+			"endDateTimeUtc": "2026-10-09T02:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2026-10-09T02:00:00Z",
+			"startDateTimeUtc": "2026-10-09T01:00:00Z",
 			"uri": "thursday-night-trivia-212"
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2026-10-16T03:00:00Z",
+			"endDateTimeUtc": "2026-10-16T02:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2026-10-16T02:00:00Z",
+			"startDateTimeUtc": "2026-10-16T01:00:00Z",
 			"uri": "thursday-night-trivia-213"
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2026-10-30T03:00:00Z",
+			"endDateTimeUtc": "2026-10-30T02:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2026-10-30T02:00:00Z",
+			"startDateTimeUtc": "2026-10-30T01:00:00Z",
 			"uri": "thursday-night-trivia-214"
 		},
 		{
@@ -377,46 +377,46 @@
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2027-02-12T02:00:00Z",
+			"endDateTimeUtc": "2027-02-12T03:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2027-02-12T01:00:00Z",
+			"startDateTimeUtc": "2027-02-12T02:00:00Z",
 			"uri": "thursday-night-trivia-226"
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2027-02-19T02:00:00Z",
+			"endDateTimeUtc": "2027-02-19T03:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2027-02-19T01:00:00Z",
+			"startDateTimeUtc": "2027-02-19T02:00:00Z",
 			"uri": "thursday-night-trivia-227"
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2027-03-05T02:00:00Z",
+			"endDateTimeUtc": "2027-03-05T03:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2027-03-05T01:00:00Z",
+			"startDateTimeUtc": "2027-03-05T02:00:00Z",
 			"uri": "thursday-night-trivia-228"
 		},
 		{
 			"description": "<p>All are welcome at Thursday Night Trivia!</p>",
-			"endDateTimeUtc": "2027-03-12T02:00:00Z",
+			"endDateTimeUtc": "2027-03-12T03:00:00Z",
 			"eventName": "Thursday Night Trivia",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "5a3b6428-892c-4744-8e9a-e830f58b9a68.png?v=0",
-			"startDateTimeUtc": "2027-03-12T01:00:00Z",
+			"startDateTimeUtc": "2027-03-12T02:00:00Z",
 			"uri": "thursday-night-trivia-229"
 		},
 		{
@@ -685,24 +685,24 @@
 		},
 		{
 			"description": "<p>Join us on the St. Olaf Cross Country Course near Tostrud Center to cheer on the Oles to victory!<br/></p>",
-			"endDateTimeUtc": "2026-10-02T01:01:00Z",
+			"endDateTimeUtc": "2026-10-02T00:01:00Z",
 			"eventName": "Men's and Women's Cross Country - AECMR",
 			"hasCoverImage": true,
 			"location": "Tostrud Fields",
 			"organizationName": "St. Olaf Athletics",
 			"photoUriWithVersion": "61ffcf72-29c5-44ac-9ec1-051a1fd07c3f.png?v=0",
-			"startDateTimeUtc": "2026-10-01T23:00:00Z",
+			"startDateTimeUtc": "2026-10-01T22:00:00Z",
 			"uri": "mens-and-womens-cross-country-aecmr"
 		},
 		{
 			"description": "<p>Join us on the St. Olaf Cross Country Course near Tostrud Center to cheer on the Oles to victory!<br/></p>",
-			"endDateTimeUtc": "2026-10-10T21:01:00Z",
+			"endDateTimeUtc": "2026-10-10T20:01:00Z",
 			"eventName": "Men's and Women's Cross Country - NCAA Division III North Region Championships",
 			"hasCoverImage": true,
 			"location": "Tostrud Fields",
 			"organizationName": "St. Olaf Athletics",
 			"photoUriWithVersion": "61ffcf72-29c5-44ac-9ec1-051a1fd07c3f.png?v=0",
-			"startDateTimeUtc": "2026-10-10T18:00:00Z",
+			"startDateTimeUtc": "2026-10-10T17:00:00Z",
 			"uri": "mens-and-womens-cross-country-ncaa-division-iii-north-region-championships"
 		},
 		{
@@ -960,13 +960,13 @@
 		},
 		{
 			"description": "<p>Join us in Skoglund to cheer on the Oles to victory!<br/></p>",
-			"endDateTimeUtc": "2026-10-04T04:01:00Z",
+			"endDateTimeUtc": "2026-10-04T03:01:00Z",
 			"eventName": "Volleyball vs. Wartburg College",
 			"hasCoverImage": true,
 			"location": "Skoglund",
 			"organizationName": "St. Olaf Athletics",
 			"photoUriWithVersion": "1a03134e-8365-4f9e-a88f-4d501a382130.png?v=0",
-			"startDateTimeUtc": "2026-10-04T02:00:00Z",
+			"startDateTimeUtc": "2026-10-04T01:00:00Z",
 			"uri": "volleyball-vs-wartburg-college-2"
 		},
 		{
@@ -1267,13 +1267,13 @@
 		},
 		{
 			"description": "<p>¡PRESENTE! will be hosting our annual Concha Fundraiser, where we will be selling Mexican sweet bread to raised money for our multicultural organization!<br/></p>",
-			"endDateTimeUtc": "2026-10-29T23:00:00Z",
+			"endDateTimeUtc": "2026-10-29T22:00:00Z",
 			"eventName": "¡PRESENTE! Concha Fundraiser",
 			"hasCoverImage": true,
 			"location": "Buntrock Commons Crossroads Atrium",
 			"organizationName": "¡Presente!",
 			"photoUriWithVersion": "4cb1a259-734e-47c3-9f6b-42b06bae062e.png?v=0",
-			"startDateTimeUtc": "2026-10-29T20:00:00Z",
+			"startDateTimeUtc": "2026-10-29T19:00:00Z",
 			"uri": "presente-concha-fundraiser-2"
 		},
 		{
@@ -1289,13 +1289,13 @@
 		},
 		{
 			"description": "<p>Join us for a fun night of pop, indie, jazz, rock, and other genres of tunes! Bring your friends, and enjoy some a cappella singing! </p>",
-			"endDateTimeUtc": "2026-10-16T03:00:00Z",
+			"endDateTimeUtc": "2026-10-16T02:00:00Z",
 			"eventName": "Agnes A Cappella Fall Concert",
 			"hasCoverImage": true,
 			"location": "Lion's Pause Mane Stage",
 			"organizationName": "Agnes A Cappella",
 			"photoUriWithVersion": "4df5ffe2-f336-41eb-b0dd-8243a7e89c76.jpg?v=0",
-			"startDateTimeUtc": "2026-10-16T01:30:00Z",
+			"startDateTimeUtc": "2026-10-16T00:30:00Z",
 			"uri": "agnes-a-cappella-fall-concert-5"
 		},
 		{
@@ -1344,13 +1344,13 @@
 		},
 		{
 			"description": "<p>St. Olaf Taiko's fall concert for the 2026-27 school year. Join us for a fun night of drumming!</p>",
-			"endDateTimeUtc": "2026-10-20T02:00:00Z",
+			"endDateTimeUtc": "2026-10-20T01:00:00Z",
 			"eventName": "St. Olaf Taiko 2026-27 Fall Concert",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Taiko Drumming Group",
 			"photoUriWithVersion": "8504af61-60c4-463c-9afe-69c6ffff15eb.png?v=0",
-			"startDateTimeUtc": "2026-10-20T01:00:00Z",
+			"startDateTimeUtc": "2026-10-20T00:00:00Z",
 			"uri": "st-olaf-taiko-2026-27-fall-concert"
 		},
 		{
@@ -1498,13 +1498,13 @@
 		},
 		{
 			"description": "<p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-0b796732-7fff-b2d2-0486-65d4a298f7f8\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Logan Rasmussen, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>trumpet</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">8:15 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p></p>",
-			"endDateTimeUtc": "2026-10-12T03:16:00Z",
+			"endDateTimeUtc": "2026-10-12T02:16:00Z",
 			"eventName": "Senior Recital: Logan Rasmussen, trumpet",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "6e69d30b-2704-4c63-beca-62d7f065f6a4.jpg?v=0",
-			"startDateTimeUtc": "2026-10-12T02:15:00Z",
+			"startDateTimeUtc": "2026-10-12T01:15:00Z",
 			"uri": "student-recital-16"
 		},
 		{
@@ -1674,13 +1674,13 @@
 		},
 		{
 			"description": "<p>Time for community, worship, games, and a message. </p>",
-			"endDateTimeUtc": "2026-09-29T02:30:00Z",
+			"endDateTimeUtc": "2026-09-29T01:30:00Z",
 			"eventName": "InterVarsity Large Group",
 			"hasCoverImage": true,
 			"location": "RML 525",
 			"organizationName": "Intervarsity Christian Fellowship",
 			"photoUriWithVersion": "310218d8-32f3-4d38-9495-e77c70bb0a17.png?v=0",
-			"startDateTimeUtc": "2026-09-29T01:00:00Z",
+			"startDateTimeUtc": "2026-09-29T00:00:00Z",
 			"uri": "intervarsity-large-group-32"
 		},
 		{
@@ -1839,35 +1839,35 @@
 		},
 		{
 			"description": "<p>One of the few nights of the year that all members of the St. Olaf community look forward to! KARIBU's African and Caribbean Night! Students with their friends and family proudly represent their nations and places of origin through song, dance, theater, and visual art, and at the end, a lively flag walk fashion show. Of course people stay for the performance but also the delicious food/dinner that is provided by an outside vendor of either African or Caribbean origin! AC Night brings everyone together in a warm and welcoming atmosphere to celebrate each other.<br/><br/></p>",
-			"endDateTimeUtc": "2026-10-11T02:00:00Z",
+			"endDateTimeUtc": "2026-10-11T01:00:00Z",
 			"eventName": "KARIBU: African and Caribbean Night!",
 			"hasCoverImage": true,
 			"location": "Pause Main Stage",
 			"organizationName": "Karibu Association",
 			"photoUriWithVersion": "0fbe600f-ba41-47a6-b298-09d7014028a4.png?v=0",
-			"startDateTimeUtc": "2026-10-10T23:45:00Z",
+			"startDateTimeUtc": "2026-10-10T22:45:00Z",
 			"uri": "karibu-african-and-caribbean-night-3"
 		},
 		{
 			"description": "<p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 16px;\">Come out and support the club hockey team as we take on Macalester Men's Club at home!</p><!--EndFragment--><p><br/></p><p><br/></p>",
-			"endDateTimeUtc": "2026-10-04T21:30:00Z",
+			"endDateTimeUtc": "2026-10-04T20:30:00Z",
 			"eventName": "Women's Club Hockey vs Macalester Men's",
 			"hasCoverImage": true,
 			"location": "Skoglund Ice Arena",
 			"organizationName": "Women's Club Hockey",
 			"photoUriWithVersion": "252b991a-6cc4-4fda-923a-bf68951562f8.jpg?v=0",
-			"startDateTimeUtc": "2026-10-04T19:30:00Z",
+			"startDateTimeUtc": "2026-10-04T18:30:00Z",
 			"uri": "womens-club-hockey-vs-macalester-mens"
 		},
 		{
 			"description": "<p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-834cb587-7fff-a8c3-8177-3f9bbbfcd99b\"></b></p><p dir=\"ltr\" style=\"background-color: #ffffff;\"><span style=\"font-size: 12pt;color: #555555;background-color: transparent;vertical-align: baseline;\">Come out and support the club hockey team as we take on 4 The Love of Puck at home!</span></p><!--EndFragment--><p><br/></p><p><br/></p>",
-			"endDateTimeUtc": "2026-10-18T21:30:00Z",
+			"endDateTimeUtc": "2026-10-18T20:30:00Z",
 			"eventName": "Women's Club Hockey vs 4 The Love of Puck",
 			"hasCoverImage": true,
 			"location": "Skoglund Ice Arena",
 			"organizationName": "Women's Club Hockey",
 			"photoUriWithVersion": "1918f724-0d46-4141-b7ab-083007a41ce6.jpg?v=0",
-			"startDateTimeUtc": "2026-10-18T19:30:00Z",
+			"startDateTimeUtc": "2026-10-18T18:30:00Z",
 			"uri": "womens-club-hockey-vs-4-the-love-of-puck"
 		},
 		{
@@ -1960,35 +1960,35 @@
 		},
 		{
 			"description": "<p>ESL will bring its club members to volunteer at Surad Academy, they will tutor and help children and adults. <br/></p>",
-			"endDateTimeUtc": "2026-10-03T21:30:00Z",
+			"endDateTimeUtc": "2026-10-03T20:30:00Z",
 			"eventName": "ESL Volunteering at Waano",
 			"hasCoverImage": true,
 			"location": "128 Eighth Ave NW Faribault, MN",
 			"organizationName": "Teaching English 2nd Language",
 			"photoUriWithVersion": "5e8c76cc-f126-483b-b593-f39f0c24e87f.jpg?v=0",
-			"startDateTimeUtc": "2026-10-02T16:30:31Z",
+			"startDateTimeUtc": "2026-10-02T15:30:31Z",
 			"uri": "esl-volunteering-at-waano-4"
 		},
 		{
 			"description": "<p>ESL will bring its club members to volunteer at Surad Academy, they will tutor and help children and adults. <br/></p>",
-			"endDateTimeUtc": "2026-10-10T21:30:00Z",
+			"endDateTimeUtc": "2026-10-10T20:30:00Z",
 			"eventName": "ESL Volunteer at Waano",
 			"hasCoverImage": true,
 			"location": "128 Eighth Ave NW Faribault MN",
 			"organizationName": "Teaching English 2nd Language",
 			"photoUriWithVersion": "626d8111-cccd-49bf-9174-f6f7e6227696.jpg?v=0",
-			"startDateTimeUtc": "2026-10-09T16:30:44Z",
+			"startDateTimeUtc": "2026-10-09T15:30:44Z",
 			"uri": "esl-volunteer-at-waano-2"
 		},
 		{
 			"description": "<p>ESL will bring its club members to volunteer at Surad Academy, they will tutor and help children and adults. <br/></p>",
-			"endDateTimeUtc": "2026-10-31T21:30:00Z",
+			"endDateTimeUtc": "2026-10-31T20:30:00Z",
 			"eventName": "ESL Volunteer at Waano",
 			"hasCoverImage": true,
 			"location": "128 Eighth Ave NW Faribault MN",
 			"organizationName": "Teaching English 2nd Language",
 			"photoUriWithVersion": "87c8db6d-2388-4ff9-905f-f4cdefb77ae8.jpg?v=0",
-			"startDateTimeUtc": "2026-10-30T16:30:25Z",
+			"startDateTimeUtc": "2026-10-30T15:30:25Z",
 			"uri": "esl-volunteer-at-waano-3"
 		},
 		{
@@ -2004,13 +2004,13 @@
 		},
 		{
 			"description": "<p>ESL will take its club members at Surad Academy to tutor and help children and adults who struggle understanding english. We will be leaving campus at 10;30, we will arrive around 11;00 which we will stay until 3;00 and get on campus around 3;30<br/></p>",
-			"endDateTimeUtc": "2026-10-17T21:30:00Z",
+			"endDateTimeUtc": "2026-10-17T20:30:00Z",
 			"eventName": "ESL Volunteering at Waano",
 			"hasCoverImage": true,
 			"location": "128 Eighth Ave NW Faribault, MN",
 			"organizationName": "Teaching English 2nd Language",
 			"photoUriWithVersion": "e166540e-7806-476e-b916-e3b183b1b3ea.jpg?v=0",
-			"startDateTimeUtc": "2026-10-17T16:30:49Z",
+			"startDateTimeUtc": "2026-10-17T15:30:49Z",
 			"uri": "esl-volunteering-at-waano-7"
 		},
 		{
@@ -2026,13 +2026,13 @@
 		},
 		{
 			"description": "<p>We will be selling handmade fiber art crafts and donating the proceeds to a local charity!</p>",
-			"endDateTimeUtc": "2026-10-31T01:30:00Z",
+			"endDateTimeUtc": "2026-10-31T00:30:00Z",
 			"eventName": "St. Olaf Stitches Winter Fundraiser",
 			"hasCoverImage": true,
 			"location": "Cage Tabling",
 			"organizationName": "Stitches",
 			"photoUriWithVersion": "043efd47-57b9-4963-97c1-b2e22ac1a975.jpg?v=0",
-			"startDateTimeUtc": "2026-10-30T20:00:00Z",
+			"startDateTimeUtc": "2026-10-30T19:00:00Z",
 			"uri": "st-olaf-stitches-winter-fundraiser"
 		},
 		{
@@ -2125,24 +2125,24 @@
 		},
 		{
 			"description": "<p>Are you interested in studying abroad/away and not sure where to get started?  This is the session for you.  Here you will learn how to apply, what programs are available to you, financial information, and much more! </p>",
-			"endDateTimeUtc": "2026-10-08T18:30:00Z",
+			"endDateTimeUtc": "2026-10-08T17:30:00Z",
 			"eventName": "Study Abroad/Away 101 Session",
 			"hasCoverImage": true,
 			"location": "Tomson Hall 308",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "edab8b9e-a0bc-493e-84dc-e840d903251d.png?v=0",
-			"startDateTimeUtc": "2026-10-08T17:30:00Z",
+			"startDateTimeUtc": "2026-10-08T16:30:00Z",
 			"uri": "study-abroad-away-101-session-11"
 		},
 		{
 			"description": "<p>Are you interested in studying abroad/away and not sure where to get started?  This is the session for you.  Here you will learn how to apply, what programs are available to you, financial information, and much more! </p>",
-			"endDateTimeUtc": "2026-10-29T18:30:00Z",
+			"endDateTimeUtc": "2026-10-29T17:30:00Z",
 			"eventName": "Study Abroad/Away 101 Session",
 			"hasCoverImage": true,
 			"location": "Tomson Hall 308",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "edab8b9e-a0bc-493e-84dc-e840d903251d.png?v=0",
-			"startDateTimeUtc": "2026-10-29T17:30:00Z",
+			"startDateTimeUtc": "2026-10-29T16:30:00Z",
 			"uri": "study-abroad-away-101-session-12"
 		},
 		{
@@ -2389,35 +2389,35 @@
 		},
 		{
 			"description": "<p>Learn how to apply to study abroad, all about scholarships, and where to start.  This session will be done virtually via Googlemeet.  Information on how to join-</p><p>INFO SESSION: Study Abroad/Away 101 <br/>Monday, November 16 · 6:00 – 7:00pm<br/>Time zone: America/Chicago<br/>Google Meet joining info<br/>Video call link: https://meet.google.com/goi-tfej-hay<br/>Or dial: &#8234;(US) +1 929-367-7675&#8236; PIN: &#8234;197 479 669&#8236;#<br/>More phone numbers: https://tel.meet/goi-tfej-hay?pin=6358019183331<br/></p>",
-			"endDateTimeUtc": "2026-10-13T01:00:00Z",
+			"endDateTimeUtc": "2026-10-13T00:00:00Z",
 			"eventName": "Study Abroad/Away 101 Virtual Info Session",
 			"hasCoverImage": true,
 			"location": "Google Meet - meet.google.com/goi-tfej-hay",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "53daf742-183e-45b7-a87d-8700909edf10.png?v=0",
-			"startDateTimeUtc": "2026-10-13T00:00:00Z",
+			"startDateTimeUtc": "2026-10-12T23:00:00Z",
 			"uri": "study-abroad-away-101-virtual-info-session"
 		},
 		{
 			"description": "<p>Are you interested studying abroad/away?  Learn about the new semester or year programs we will have in 2027-2028.  </p>",
-			"endDateTimeUtc": "2026-10-13T23:00:00Z",
+			"endDateTimeUtc": "2026-10-13T22:00:00Z",
 			"eventName": "New and Unique Study Abroad/Away Programs Info Session",
 			"hasCoverImage": true,
 			"location": "Buntrock Commons 144",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "82384c48-97f5-4515-950f-2da26e41f1b6.png?v=0",
-			"startDateTimeUtc": "2026-10-13T22:00:00Z",
+			"startDateTimeUtc": "2026-10-13T21:00:00Z",
 			"uri": "new-and-unique-study-abroad-away-programs-info-session"
 		},
 		{
 			"description": "<p>Are you interested in doing an internship or research abroad as part of your study abroad/away program?  Attend this session to learn about the programs that offer an internship or research as a course.  </p>",
-			"endDateTimeUtc": "2026-10-15T23:00:00Z",
+			"endDateTimeUtc": "2026-10-15T22:00:00Z",
 			"eventName": "Internship and Research Study Abroad/Away Programs Info Session",
 			"hasCoverImage": true,
 			"location": "Buntrock Commons 144",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "537e1c13-339c-49d4-83fa-0091557e7bd0.png?v=0",
-			"startDateTimeUtc": "2026-10-15T22:00:00Z",
+			"startDateTimeUtc": "2026-10-15T21:00:00Z",
 			"uri": "internship-and-research-study-abroad-away-programs-info-session"
 		},
 		{
@@ -2521,13 +2521,13 @@
 		},
 		{
 			"description": "<p>We are travelling down to St. Mary's University in Winona to play their club hockey team.</p>",
-			"endDateTimeUtc": "2026-10-10T23:59:00Z",
+			"endDateTimeUtc": "2026-10-10T22:59:00Z",
 			"eventName": "Men's Club Hockey @ SMU",
 			"hasCoverImage": true,
 			"location": "Saint Mary's University Ice Rink",
 			"organizationName": "Men's Club Hockey",
 			"photoUriWithVersion": "16642b7d-47b4-4663-b46a-ccf4356bf8b1.jpeg?v=0",
-			"startDateTimeUtc": "2026-10-10T22:00:00Z",
+			"startDateTimeUtc": "2026-10-10T21:00:00Z",
 			"uri": "mens-club-hockey-smu-2"
 		},
 		{
@@ -2620,24 +2620,24 @@
 		},
 		{
 			"description": "<p>Join the Wellness Center QPR team for a comprehensive suicide prevention training. This hour-long training works to empower community members to recognize and address mental health crises. Those who participate will be certified in QPR for a year following the training. A wellness-swiped event!<br/></p>",
-			"endDateTimeUtc": "2026-10-14T01:30:00Z",
+			"endDateTimeUtc": "2026-10-14T00:30:00Z",
 			"eventName": "QPR Training",
 			"hasCoverImage": true,
 			"location": "Holland Hall 111",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "edba1d71-6337-4652-98d4-b8ce6bda882f.png?v=0",
-			"startDateTimeUtc": "2026-10-14T00:30:00Z",
+			"startDateTimeUtc": "2026-10-13T23:30:00Z",
 			"uri": "qpr-training-2"
 		},
 		{
 			"description": "<p>Want to understand the details of the midterms? Come debrief with the St. Olaf DFL!</p>",
-			"endDateTimeUtc": "2026-10-08T02:00:00Z",
+			"endDateTimeUtc": "2026-10-08T01:00:00Z",
 			"eventName": "Election Debrief w/ the St. Olaf DFL",
 			"hasCoverImage": true,
 			"location": "Holland Hall 502",
 			"organizationName": "Democratic-Farmer-Labor Club",
 			"photoUriWithVersion": "ecc4dd5a-68f4-4e4b-a2c2-42befd8a58d3.png?v=0",
-			"startDateTimeUtc": "2026-10-08T01:00:00Z",
+			"startDateTimeUtc": "2026-10-08T00:00:00Z",
 			"uri": "election-debrief-w-the-st-olaf-dfl"
 		},
 		{
@@ -2686,13 +2686,13 @@
 		},
 		{
 			"description": "<p><span style=\"font-size: 14px;float: none;\">Want to help senior citizens? Join us for our monthly Letter Writing for Senior Citizens tabling! Senior citizens are nominated because they are experiencing loneliness, and we work to send letters all across the country to these wonderful individuals. It only takes 5 minutes to brighten a senior's day!</span><!--EndFragment--><br/><br/><br/></p>",
-			"endDateTimeUtc": "2026-10-08T01:30:00Z",
+			"endDateTimeUtc": "2026-10-08T00:30:00Z",
 			"eventName": "Letter Writing for Senior Citizens",
 			"hasCoverImage": true,
 			"location": "The Cage - Tabling",
 			"organizationName": "Community Connections",
 			"photoUriWithVersion": "db77c41f-29f5-4397-b705-bde13b6f0ee5.jpg?v=0",
-			"startDateTimeUtc": "2026-10-08T00:00:00Z",
+			"startDateTimeUtc": "2026-10-07T23:00:00Z",
 			"uri": "letter-writing-for-senior-citizens-3"
 		},
 		{
@@ -2884,13 +2884,13 @@
 		},
 		{
 			"description": "<p><span style=\"font-size: 15.2px;float: none;\"><span style=\"font-size: 16px;float: none;\">Escape for a refreshing autumn day at Willow River State Park in Wisconsin. In early November, the park offers a peaceful seasonal atmosphere, with crisp air, colorful leaves lingering on the trails, and the dramatic Willow River Falls surrounded by the changing landscape. <span style=\"font-size: 16px;float: none;\">Expect cool temperatures and potentially muddy or slippery trails, so warm layers and sturdy walking shoes are recommended. As the day winds down, we’ll head back home after enjoying a quiet autumn day surrounded by nature.</span></span></span></p><p><!--StartFragment--><span style=\"font-size: 15.2px;float: none;\"> This is a low intensity trip meant for those wanted to get outside and enjoy the cool autumn weather before it gets too cold. </span><br/></p><p><span style=\"font-size: 15.2px;\">We provide knowledgeable guides, detailed itinerary, food, transportation, and any essential gear. <span id=\"selectionBoundary_1790021311513_5982765678917161\" class=\"rangySelectionBoundary\">&#65279;</span></span></p><p><span style=\"font-size: 15.2px;float: none;\">Registration is live on <a href=\"https://www.imleagues.com/mobile\" target=\"\">IMLeagues</a>. If registration fills, you will be placed on the waitlist. <br/></span><br/><br/></p>",
-			"endDateTimeUtc": "2026-10-03T21:00:00Z",
+			"endDateTimeUtc": "2026-10-03T20:00:00Z",
 			"eventName": "Hiking at Willow River",
 			"hasCoverImage": true,
 			"location": "Skoglund",
 			"organizationName": "Recreation",
 			"photoUriWithVersion": "5cc203ce-0528-456a-a26f-ce6164ba82a8.jpg?v=0",
-			"startDateTimeUtc": "2026-10-03T14:00:50Z",
+			"startDateTimeUtc": "2026-10-03T13:00:50Z",
 			"uri": "hiking-at-willow-river"
 		},
 		{
@@ -2972,67 +2972,67 @@
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this faculty/guest recital featuring Instructor of Music at St. Olaf College <a href=\"https://www.stolaf.edu/profile/shows\" style=\"background-color: transparent;\">Ray Shows</a>, <em>violin </em>with John Jensen, <em>piano. </em> </p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-09-29T02:00:00Z",
+			"endDateTimeUtc": "2026-09-29T01:00:00Z",
 			"eventName": "Faculty Recital: Ray Shows, violin with John Jensen, piano",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-09-29T01:00:00Z",
+			"startDateTimeUtc": "2026-09-29T00:00:00Z",
 			"uri": "faculty-recital-ray-shows-violin-with-john-jensen-piano"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this faculty/guest masterclass featuring Kimberly Cole Luevano, <em>clarinet</em>.</p><p style=\"font-size: 18px;\">Luevano is a member of Haven trio and serves as Regents Professor of Clarinet and Director of Chamber Music at University of North Texas College of Music, among other notable accomplishments.</p><p style=\"font-size: 18px;\">This event is free an open to the public</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-01T01:30:00Z",
+			"endDateTimeUtc": "2026-10-01T00:30:00Z",
 			"eventName": "Guest Masterclass: Kimberly Cole Luevano, clarinet",
 			"hasCoverImage": true,
 			"location": "Studio A | Skifter Hall",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-01T00:00:00Z",
+			"startDateTimeUtc": "2026-09-30T23:00:00Z",
 			"uri": "guest-masterclass-kimberly-cole-luevano-clarinet"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this faculty/guest masterclass featuring the Haven Trio: Lindsay Kesselman, <em>soprano,</em> Kimberly Cole Luevano, <em>clarinet, </em>Midori Koga, <em>piano.</em></p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-01T18:30:00Z",
+			"endDateTimeUtc": "2026-10-01T17:30:00Z",
 			"eventName": "Guest Masterclass: Haven Trio",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-01T17:30:00Z",
+			"startDateTimeUtc": "2026-10-01T16:30:00Z",
 			"uri": "guest-masterclass-haven-trio"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-02T03:16:00Z",
+			"endDateTimeUtc": "2026-10-02T02:16:00Z",
 			"eventName": "Student Recital",
 			"hasCoverImage": true,
 			"location": "Boe Memorial Chapel",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-02T02:15:00Z",
+			"startDateTimeUtc": "2026-10-02T01:15:00Z",
 			"uri": "student-recital-20"
 		},
 		{
 			"description": "<h1 style=\"font-size: 36px;\">Vaccine Clinic - Wellness Center</h1><p style=\"font-size: 14px;\">Health services is hosting monthly vaccine clinics in the Wellness Center.  The November clinic is on <b><b>Friday, November 6th, from 1pm - 4 pm</b></b>.<br/><br/>Schedule your appointment in the OleCare Portal or by calling 507-786-3063. </p><p style=\"font-size: 14px;\"><b><b>These immunizations are available: </b></b></p><div style=\"font-size: small;\">MMR</div><div style=\"font-size: small;\">Tdap</div><div style=\"font-size: small;\">HPV</div><div style=\"font-size: small;\">Hepatitis A</div><div style=\"font-size: small;\">Hepatitis B</div><div style=\"font-size: small;\">Meningitis</div><div style=\"font-size: small;\">RSV</div><div style=\"font-size: small;\">Pneumonia </div><div style=\"font-size: small;\">Influenza</div><div style=\"font-size: small;\">COVID</div><p style=\"font-size: 14px;\"><br/></p><p style=\"font-size: 14px;\">A limited number of flu and COVID shots will be available for walk-ins.</p><!--EndFragment--><p><br/></p><p><br/></p>",
-			"endDateTimeUtc": "2026-10-02T22:00:00Z",
+			"endDateTimeUtc": "2026-10-02T21:00:00Z",
 			"eventName": "Monthly Vaccine Clinic",
 			"hasCoverImage": true,
 			"location": "Wellness Center Buntrock",
 			"organizationName": "Health Services",
 			"photoUriWithVersion": "3a098412-b15d-41d7-9c42-10df15207e58.jpg?v=0",
-			"startDateTimeUtc": "2026-10-02T19:00:00Z",
+			"startDateTimeUtc": "2026-10-02T18:00:00Z",
 			"uri": "monthly-vaccine-clinic-2"
 		},
 		{
-			"endDateTimeUtc": "2026-10-30T22:00:00Z",
+			"endDateTimeUtc": "2026-10-30T21:00:00Z",
 			"eventName": "Monthly Vaccine Clinic",
 			"hasCoverImage": true,
 			"location": "Wellness Center Buntrock",
 			"organizationName": "Health Services",
 			"photoUriWithVersion": "61c9e930-a476-4f15-97cb-da0bef09460c.jpg?v=0",
-			"startDateTimeUtc": "2026-10-30T19:00:00Z",
+			"startDateTimeUtc": "2026-10-30T18:00:00Z",
 			"uri": "monthly-vaccine-clinic-3"
 		},
 		{
@@ -3092,13 +3092,13 @@
 		},
 		{
 			"description": "<p style=\"font-size: 14px;\"><span style=\"font-size: 15.2px;float: none;\"><span style=\"font-size: 16px;float: none;\">Escape for a refreshing autumn day at Willow River State Park in Wisconsin. In early November, the park offers a peaceful seasonal atmosphere, with crisp air, colorful leaves lingering on the trails, and the dramatic Willow River Falls surrounded by the changing landscape. <span style=\"font-size: 16px;float: none;\">Expect cool temperatures and potentially muddy or slippery trails, so warm layers and sturdy walking shoes are recommended. As the day winds down, we’ll head back home after enjoying a quiet autumn day surrounded by nature.</span></span></span></p><p style=\"font-size: 14px;\"><span style=\"font-size: 15.2px;float: none;\"> This is a low intensity trip meant for those wanted to get outside and enjoy the cool autumn weather before it gets too cold. </span><br/></p><p style=\"font-size: 14px;\"><span style=\"font-size: 15.2px;\">We provide knowledgeable guides, detailed itinerary, food, transportation, and any essential gear. </span></p><p style=\"font-size: 14px;\"><span style=\"font-size: 15.2px;float: none;\">Registration is live on <a href=\"https://www.imleagues.com/mobile\" target=\"\" style=\"background-color: transparent;\">IMLeagues</a>. If registration fills, you will be placed on the waitlist. </span></p><!--EndFragment--><p><br/></p><p><br/></p>",
-			"endDateTimeUtc": "2026-10-04T21:00:00Z",
+			"endDateTimeUtc": "2026-10-04T20:00:00Z",
 			"eventName": "Hiking at Willow River",
 			"hasCoverImage": true,
 			"location": "Skoglund",
 			"organizationName": "Recreation",
 			"photoUriWithVersion": "ff9049fb-fac0-4f19-8c34-5212e01ec96b.jpg?v=0",
-			"startDateTimeUtc": "2026-10-04T14:00:01Z",
+			"startDateTimeUtc": "2026-10-04T13:00:01Z",
 			"uri": "hiking-at-willow-river-2"
 		},
 		{
@@ -3180,13 +3180,13 @@
 		},
 		{
 			"description": "<p><b id=\"docs-internal-guid-2bd30a40-7fff-53e8-e00c-d3fbce19ed09\"></b></p><p dir=\"ltr\"><span style=\"font-size: 10.5pt;color: #555555;background-color: transparent;vertical-align: baseline;\">The St Olaf Rowing Club will be canvassing Northfield and tabling outside of local businesses on Sunday, November 8, for our third annual Holiday Wreath Fundraiser in order to raise money for boat repair and maintenance, equipment purchases, regatta travel expenses, and team social events.</span></p>",
-			"endDateTimeUtc": "2026-10-04T23:00:00Z",
+			"endDateTimeUtc": "2026-10-04T22:00:00Z",
 			"eventName": "Holiday Wreath Fundraiser",
 			"hasCoverImage": true,
 			"location": "Northfield, MN",
 			"organizationName": "Rowing Club",
 			"photoUriWithVersion": "7ac5f83a-ea6a-4c70-b0b9-99d12a9c1549.jpg?v=0",
-			"startDateTimeUtc": "2026-10-04T14:00:00Z",
+			"startDateTimeUtc": "2026-10-04T13:00:00Z",
 			"uri": "holiday-wreath-fundraiser"
 		},
 		{
@@ -3301,13 +3301,13 @@
 		},
 		{
 			"description": "<p><br/></p><p><br/></p><!--StartFragment--><h1 style=\"font-size: 36px;\">Vaccine Clinic - Wellness Center</h1><p style=\"font-size: 14px;\">Health services is hosting monthly vaccine clinics in the Wellness Center.  The April clinic is on <b><b></b><b><b>Friday, April 9th, from 1pm - 4 pm</b></b></b>.<br/><br/>Schedule your appointment in the OleCare Portal or by calling 507-786-3063. </p><p style=\"font-size: 14px;\"><b><b></b><b><b>These immunizations are available: </b></b></b></p><div style=\"font-size: small;\">MMR</div><div style=\"font-size: small;\">Tdap</div><div style=\"font-size: small;\">HPV</div><div style=\"font-size: small;\">Hepatitis A</div><div style=\"font-size: small;\">Hepatitis B</div><div style=\"font-size: small;\">Meningitis</div><div style=\"font-size: small;\">RSV</div><div style=\"font-size: small;\">Pneumonia </div><div style=\"font-size: small;\">Influenza</div><div style=\"font-size: small;\">COVID</div><p style=\"font-size: 14px;\"><br/></p><p style=\"font-size: 14px;\">A limited number of flu and COVID shots will be available for walk-ins.</p><!--EndFragment--><p><br/></p><p><br/></p>",
-			"endDateTimeUtc": "2027-03-05T21:00:00Z",
+			"endDateTimeUtc": "2027-03-05T22:00:00Z",
 			"eventName": "Monthly Vaccination Clinic",
 			"hasCoverImage": true,
 			"location": "Wellness Center Buntrock",
 			"organizationName": "Health Services",
 			"photoUriWithVersion": "1663fe91-bca2-4423-94d7-b9b037179456.jpg?v=0",
-			"startDateTimeUtc": "2027-03-05T18:00:00Z",
+			"startDateTimeUtc": "2027-03-05T19:00:00Z",
 			"uri": "monthly-vaccination-clinic-4"
 		},
 		{
@@ -3356,24 +3356,24 @@
 		},
 		{
 			"description": "<p>Join the St. Olaf Wellness Center for our weekly Paw Program! Come visit with dogs every Thursday from 4:00-5:00 pm in the Lion's Pause for an opportunity to take a break and socialize with some furry friends!</p>",
-			"endDateTimeUtc": "2026-10-29T23:00:00Z",
+			"endDateTimeUtc": "2026-10-29T22:00:00Z",
 			"eventName": "Paw Program",
 			"hasCoverImage": true,
 			"location": "Lion's Pause",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "c4544416-be00-477f-bddb-e4c12d6f2d77.png?v=0",
-			"startDateTimeUtc": "2026-10-29T22:00:00Z",
+			"startDateTimeUtc": "2026-10-29T21:00:00Z",
 			"uri": "paw-program-121"
 		},
 		{
 			"description": "<p>Join the St. Olaf Wellness Center for our weekly Paw Program! Come visit with dogs every Thursday from 4:00-5:00 pm in the Lion's Pause for an opportunity to take a break and socialize with some furry friends!</p>",
-			"endDateTimeUtc": "2026-10-15T23:00:00Z",
+			"endDateTimeUtc": "2026-10-15T22:00:00Z",
 			"eventName": "Paw Program",
 			"hasCoverImage": true,
 			"location": "Lion's Pause",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "c4544416-be00-477f-bddb-e4c12d6f2d77.png?v=0",
-			"startDateTimeUtc": "2026-10-15T22:00:00Z",
+			"startDateTimeUtc": "2026-10-15T21:00:00Z",
 			"uri": "paw-program-122"
 		},
 		{
@@ -3400,13 +3400,13 @@
 		},
 		{
 			"description": "<p>Join the St. Olaf Wellness Center for our weekly Paw Program! Come visit with dogs every Thursday from 4:00-5:00 pm in the Lion's Pause for an opportunity to take a break and socialize with some furry friends!</p>",
-			"endDateTimeUtc": "2026-10-01T23:00:00Z",
+			"endDateTimeUtc": "2026-10-01T22:00:00Z",
 			"eventName": "Paw Program",
 			"hasCoverImage": true,
 			"location": "Lion's Pause",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "c4544416-be00-477f-bddb-e4c12d6f2d77.png?v=0",
-			"startDateTimeUtc": "2026-10-01T22:00:00Z",
+			"startDateTimeUtc": "2026-10-01T21:00:00Z",
 			"uri": "paw-program-125"
 		},
 		{
@@ -3466,13 +3466,13 @@
 		},
 		{
 			"description": "<p>Join the St. Olaf Wellness Center for our weekly Paw Program! Come visit with dogs every Thursday from 4:00-5:00 pm in the Lion's Pause for an opportunity to take a break and socialize with some furry friends!</p>",
-			"endDateTimeUtc": "2026-10-08T23:00:00Z",
+			"endDateTimeUtc": "2026-10-08T22:00:00Z",
 			"eventName": "Paw Program",
 			"hasCoverImage": true,
 			"location": "Lion's Pause",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "c4544416-be00-477f-bddb-e4c12d6f2d77.png?v=0",
-			"startDateTimeUtc": "2026-10-08T22:00:00Z",
+			"startDateTimeUtc": "2026-10-08T21:00:00Z",
 			"uri": "paw-program-131"
 		},
 		{
@@ -3488,112 +3488,112 @@
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Composition Reading featuring the Haven Trio: Lindsay Kesselman, <em>soprano,</em> Kimberly Cole Luevano, <em>clarinet, </em>Midori Koga, <em>piano. </em>The Haven Trio will read and perform student works and then workshop them in this more informal performance.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-02T22:30:00Z",
+			"endDateTimeUtc": "2026-10-02T21:30:00Z",
 			"eventName": "Composition Readings with Haven Trio",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-02T21:00:00Z",
+			"startDateTimeUtc": "2026-10-02T20:00:00Z",
 			"uri": "composition-readings-with-haven-trio"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this faculty/guest recital featuring the Haven Trio: Lindsay Kesselman, <em>soprano,</em> Kimberly Cole Luevano, <em>clarinet, </em>Midori Koga, <em>piano.</em><br/></p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-03T02:01:00Z",
+			"endDateTimeUtc": "2026-10-03T01:01:00Z",
 			"eventName": "Guest Recital: Haven Trio",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-03T01:00:00Z",
+			"startDateTimeUtc": "2026-10-03T00:00:00Z",
 			"uri": "guest-recital-haven-trio"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-07T02:01:00Z",
+			"endDateTimeUtc": "2026-10-07T01:01:00Z",
 			"eventName": "Student Recital: Instrumental B.M. Music Ed, Church Choral Entrance/Continuance",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-07T01:00:00Z",
+			"startDateTimeUtc": "2026-10-07T00:00:00Z",
 			"uri": "student-recital-instrumental-b-m-music-ed-church-choral-entrance-continuance"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-07T02:01:00Z",
+			"endDateTimeUtc": "2026-10-07T01:01:00Z",
 			"eventName": "Student Recital: Vocal B.M. Music Ed, Church Choral Entrance/Continuance",
 			"hasCoverImage": true,
 			"location": "Studio A | Skifter Hall",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-07T01:00:00Z",
+			"startDateTimeUtc": "2026-10-07T00:00:00Z",
 			"uri": "student-recital-vocal-b-m-music-ed-church-choral-entrance-continuance"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-07T03:16:00Z",
+			"endDateTimeUtc": "2026-10-07T02:16:00Z",
 			"eventName": "Student Recital: Vocal B.M. Music Ed, Church Choral Entrance/Continuance",
 			"hasCoverImage": true,
 			"location": "Studio A | Skifter Hall",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-07T02:15:00Z",
+			"startDateTimeUtc": "2026-10-07T01:15:00Z",
 			"uri": "student-recital-vocal-b-m-music-ed-church-choral-entrance-continuance-2"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-08T17:31:00Z",
+			"endDateTimeUtc": "2026-10-08T16:31:00Z",
 			"eventName": "Student Recital",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-08T17:30:00Z",
+			"startDateTimeUtc": "2026-10-08T16:30:00Z",
 			"uri": "student-recital-21"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">The St. Olaf Orchestra, conducted by Associate Professor of Music Chung Park, will perform its family concert in Boe Memorial Chapel on Saturday, November 14, from 3:30-5 p.m.</p><p style=\"font-size: 18px;\">Widely recognized as one of the finest undergraduate orchestras in the United States, the St. Olaf Orchestra has been featured on NPR and PBS and was the 2013 and 2019 winner of the American Prize in Orchestral Performance.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-10T23:00:00Z",
+			"endDateTimeUtc": "2026-10-10T22:00:00Z",
 			"eventName": "St. Olaf Orchestra Family Concert",
 			"hasCoverImage": true,
 			"location": "Boe Memorial Chapel",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-10T21:30:00Z",
+			"startDateTimeUtc": "2026-10-10T20:30:00Z",
 			"uri": "st-olaf-orchestra-family-concert-2"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-541a918f-7fff-0b73-5982-7a0fd75d7863\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Marita Stryker, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>director</i></span></b></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-10T02:01:00Z",
+			"endDateTimeUtc": "2026-10-10T01:01:00Z",
 			"eventName": "Musical Theater Lab Showcase",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-10T01:00:00Z",
+			"startDateTimeUtc": "2026-10-10T00:00:00Z",
 			"uri": "musical-theater-lab-showcase"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-541a918f-7fff-0b73-5982-7a0fd75d7863\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Marita Stryker, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>director</i></span></b></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-11T02:01:00Z",
+			"endDateTimeUtc": "2026-10-11T01:01:00Z",
 			"eventName": "Musical Theater Lab Showcase",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-11T01:00:00Z",
+			"startDateTimeUtc": "2026-10-11T00:00:00Z",
 			"uri": "musical-theater-lab-showcase-2"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-541a918f-7fff-0b73-5982-7a0fd75d7863\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Marita Stryker, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>director</i></span></b></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-11T21:01:00Z",
+			"endDateTimeUtc": "2026-10-11T20:01:00Z",
 			"eventName": "Musical Theater Lab Showcase",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-11T20:00:00Z",
+			"startDateTimeUtc": "2026-10-11T19:00:00Z",
 			"uri": "musical-theater-lab-showcase-3"
 		},
 		{
@@ -3686,13 +3686,13 @@
 		},
 		{
 			"description": "<p><span style=\"font-size: 12.0pt;\">Join the Taylor Center, ¡PRESENTE! &amp; SOMOS to honor an ancient tradition that celebrates the lives of the departed and learn more about a celebration named by the UNESCO as an Oral and Intangible Heritage of Humanity.</span></p><p><span style=\"font-size: 12.0pt;\">Enjoy tamales, <i>pan de muerto, </i>traditional drinks, activities and more! </span><span style=\"font-size: 12pt;\">For those participating in the </span><i style=\"font-size: 12pt;\">Altar de Ofrendas</i><span style=\"font-size: 12pt;\"> to honor a loved one that passed away bring a 4x6 photo and a picture frame will be provided.</span></p><p></p><p>Taylor Center Lounge| 5-7 P.M.</p><p></p>",
-			"endDateTimeUtc": "2026-09-29T01:00:00Z",
+			"endDateTimeUtc": "2026-09-29T00:00:00Z",
 			"eventName": "Día de los Muertos/Day of the Dead Celebration",
 			"hasCoverImage": true,
 			"location": "Taylor Center Lounge [BC111]",
 			"organizationName": "Taylor Center for Equity and Inclusion",
 			"photoUriWithVersion": "0013345f-69e4-46d1-9222-7a8f9587f63c.jpg?v=0",
-			"startDateTimeUtc": "2026-09-28T23:00:00Z",
+			"startDateTimeUtc": "2026-09-28T22:00:00Z",
 			"uri": "d-a-de-los-muertos-day-of-the-dead-celebration"
 		},
 		{
@@ -3752,46 +3752,46 @@
 		},
 		{
 			"description": "<p>Auditions for the St. Olaf Shakespeare Troupe's fall showcase- Shakespeare Re-Imagined. </p>",
-			"endDateTimeUtc": "2026-10-03T21:00:00Z",
+			"endDateTimeUtc": "2026-10-03T20:00:00Z",
 			"eventName": "Shakespeare Re-Imagined Auditions",
 			"hasCoverImage": true,
 			"location": "TB 227",
 			"organizationName": "Shakespeare Troupe",
 			"photoUriWithVersion": "1c0fa7d9-9278-4919-b686-71b2757b9b22.jpg?v=0",
-			"startDateTimeUtc": "2026-10-03T18:00:00Z",
+			"startDateTimeUtc": "2026-10-03T17:00:00Z",
 			"uri": "shakespeare-re-imagined-auditions"
 		},
 		{
 			"description": "<p>Dress rehearsal for fall showcase- Shakespeare Re-Imagined in Haugen Theater.</p>",
-			"endDateTimeUtc": "2026-10-09T04:00:00Z",
+			"endDateTimeUtc": "2026-10-09T03:00:00Z",
 			"eventName": "SOST- Shakespeare Re-Imagined Dress Rehearsal",
 			"hasCoverImage": true,
 			"location": "TB Haugen Theater",
 			"organizationName": "Shakespeare Troupe",
 			"photoUriWithVersion": "e24d667c-fd2b-4592-b52c-381a135c567b.jpg?v=0",
-			"startDateTimeUtc": "2026-10-09T00:00:00Z",
+			"startDateTimeUtc": "2026-10-08T23:00:00Z",
 			"uri": "sost-shakespeare-re-imagined-dress-rehearsal"
 		},
 		{
 			"description": "<p>Students are invited to the Shakespeare Re-Imagined showcase of student works. The event will include both the students on the acting/performance/tech side, as well as the students who wish to watch the show.</p>",
-			"endDateTimeUtc": "2026-10-10T03:30:00Z",
+			"endDateTimeUtc": "2026-10-10T02:30:00Z",
 			"eventName": "SOST- Shakespeare Re-Imagined Showcase",
 			"hasCoverImage": true,
 			"location": "TB Haugen Theater",
 			"organizationName": "Shakespeare Troupe",
 			"photoUriWithVersion": "455991ff-092e-46d6-9489-df97c85bd277.jpg?v=0",
-			"startDateTimeUtc": "2026-10-10T01:00:00Z",
+			"startDateTimeUtc": "2026-10-10T00:00:00Z",
 			"uri": "sost-shakespeare-re-imagined-showcase"
 		},
 		{
 			"description": "<p>St. Olaf Men's Club Hockey is taking on the University of Northwestern St. Paul in Tostrud Ice Arena.</p>",
-			"endDateTimeUtc": "2026-11-01T03:00:00Z",
+			"endDateTimeUtc": "2026-11-01T02:00:00Z",
 			"eventName": "Men's Club Hockey Vs University of Northwestern St. Paul",
 			"hasCoverImage": true,
 			"location": "Tostrud Ice Center",
 			"organizationName": "Men's Club Hockey",
 			"photoUriWithVersion": "579c4dc4-c6f0-419b-9186-639cb885913f.jpeg?v=0",
-			"startDateTimeUtc": "2026-11-01T01:00:00Z",
+			"startDateTimeUtc": "2026-11-01T00:00:00Z",
 			"uri": "mens-club-hockey-vs-university-of-northwestern-st-paul"
 		},
 		{
@@ -3906,57 +3906,57 @@
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-48c25261-7fff-508a-2777-0d593fcc093a\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">John Rasmussen, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>baritone</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">2 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-04T21:01:00Z",
+			"endDateTimeUtc": "2026-10-04T20:01:00Z",
 			"eventName": "Senior Recital: John Rasmussen, baritone",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-04T20:00:00Z",
+			"startDateTimeUtc": "2026-10-04T19:00:00Z",
 			"uri": "senior-recital-john-rasmussen-baritone"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-b4cbb544-7fff-7145-ff98-a8286d51adb8\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Avery Calhoon, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>violin</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">3:15 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-04T22:16:00Z",
+			"endDateTimeUtc": "2026-10-04T21:16:00Z",
 			"eventName": "Senior Recital: Avery Calhoon, violin",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-04T21:15:00Z",
+			"startDateTimeUtc": "2026-10-04T20:15:00Z",
 			"uri": "senior-recital-avery-calhoon-violin"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-34edc0fe-7fff-d38e-6cbe-b6acbc849a58\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Audrey Jensen, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>mezzo soprano</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Ryan Hemingway, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>bass-baritone</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">7 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-05T02:01:00Z",
+			"endDateTimeUtc": "2026-10-05T01:01:00Z",
 			"eventName": "Senior Recital: Audrey Jensen, mezzo soprano & Ryan Hemingway, bass-bariton",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-05T01:00:00Z",
+			"startDateTimeUtc": "2026-10-05T00:00:00Z",
 			"uri": "senior-recital-audrey-jensen-mezzo-soprano-ryan-hemingway-bass-bariton"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-3e70e11a-7fff-2343-d1b5-0294efe951b0\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Shayla Gleason, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>mezzo soprano</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">8:15 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-05T03:16:00Z",
+			"endDateTimeUtc": "2026-10-05T02:16:00Z",
 			"eventName": "Senior Recital: Shayla Gleason, mezzo soprano",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-05T02:15:00Z",
+			"startDateTimeUtc": "2026-10-05T01:15:00Z",
 			"uri": "senior-recital-shayla-gleason-mezzo-soprano"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-d30e58e5-7fff-351c-cedc-adf8de9a6cc4\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">William Kroner, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>trombone</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">7 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-12T02:01:00Z",
+			"endDateTimeUtc": "2026-10-12T01:01:00Z",
 			"eventName": "Senior Recital: William Kroner, trombone",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-12T01:00:00Z",
+			"startDateTimeUtc": "2026-10-12T00:00:00Z",
 			"uri": "senior-recital-william-kroner-trombone"
 		},
 		{
@@ -3972,24 +3972,24 @@
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-8ebaffcc-7fff-43d5-f423-57451606287f\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Faculty Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Martin Hodel, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>trumpet</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Catherine Ramirez,</span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i> flute</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Christopher Atzinger, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>piano</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">8:15 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-13T03:16:00Z",
+			"endDateTimeUtc": "2026-10-13T02:16:00Z",
 			"eventName": "Faculty Recital: Hodel, Ramirez, and Atzinger",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-13T02:15:00Z",
+			"startDateTimeUtc": "2026-10-13T01:15:00Z",
 			"uri": "faculty-recital-hodel-ramirez-and-atzinger"
 		},
 		{
 			"description": "<p>Are you interested in studying abroad for a semester in Barcelona, Spain or Sydney, Australia?  Attend this info sesion to learn more about these programs.  </p>",
-			"endDateTimeUtc": "2026-10-07T17:00:00Z",
+			"endDateTimeUtc": "2026-10-07T16:00:00Z",
 			"eventName": "CEA CAPA: Study in Barcelona and Sydney Semester Study Abroad Info Session",
 			"hasCoverImage": true,
 			"location": "BC144",
 			"organizationName": "Smith Center for Global Engagement",
 			"photoUriWithVersion": "115f66c8-0adb-4abc-af64-1243b751e658.png?v=0",
-			"startDateTimeUtc": "2026-10-07T16:00:00Z",
+			"startDateTimeUtc": "2026-10-07T15:00:00Z",
 			"uri": "cea-capa-study-in-barcelona-and-sydney-semester-study-abroad-info-session"
 		},
 		{
@@ -4005,13 +4005,13 @@
 		},
 		{
 			"description": "<p>Join the OSA for our OrgEssentials student organization leader training! OrgEssentials is required for student organization leaders to complete annually.</p>",
-			"endDateTimeUtc": "2026-10-02T23:00:00Z",
+			"endDateTimeUtc": "2026-10-02T22:00:00Z",
 			"eventName": "OrgEssentials Training",
 			"hasCoverImage": true,
 			"location": "BC144",
 			"organizationName": "Office of Student Activities",
 			"photoUriWithVersion": "e92ab47f-5b44-40b9-8bd4-82d721da640b.png?v=0",
-			"startDateTimeUtc": "2026-10-02T22:00:00Z",
+			"startDateTimeUtc": "2026-10-02T21:00:00Z",
 			"uri": "orgessentials-training-26"
 		},
 		{
@@ -4038,24 +4038,24 @@
 		},
 		{
 			"description": "<p>Karibu Student Association is one of the biggest nights a year where students of African and Caribbean origin showcase their culture through song, dance, performance arts, and theater. All are welcome to participate and support the student performers or even stay for the delicious food!</p>",
-			"endDateTimeUtc": "2026-10-11T02:00:00Z",
+			"endDateTimeUtc": "2026-10-11T01:00:00Z",
 			"eventName": "Karibu Association: African and Caribbean Night",
 			"hasCoverImage": true,
 			"location": "The Pause Main Stage",
 			"organizationName": "Karibu Association",
 			"photoUriWithVersion": "35c0f78e-324b-41cf-b350-4783664891e1.png?v=0",
-			"startDateTimeUtc": "2026-10-11T00:00:21Z",
+			"startDateTimeUtc": "2026-10-10T23:00:21Z",
 			"uri": "karibu-association-african-and-caribbean-night"
 		},
 		{
 			"description": "<p><b id=\"docs-internal-guid-94be2037-7fff-b933-b2ca-794ddff4c6c2\"><span style=\"font-size: 10pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Come join PB in the Jungle for an Open Mic Night on November 6th at 8PM! Share your songs, your poems, your talent with others! Refreshments will be provided.</span></b><br/></p>",
-			"endDateTimeUtc": "2026-10-03T04:00:00Z",
+			"endDateTimeUtc": "2026-10-03T03:00:00Z",
 			"eventName": "Open Mic Night",
 			"hasCoverImage": true,
 			"location": "Jungle",
 			"organizationName": "Programming Board",
 			"photoUriWithVersion": "b816566f-7f1b-4a67-b66b-c9075fa304f5.jpg?v=0",
-			"startDateTimeUtc": "2026-10-03T02:00:00Z",
+			"startDateTimeUtc": "2026-10-03T01:00:00Z",
 			"uri": "open-mic-night-3"
 		},
 		{
@@ -4071,13 +4071,13 @@
 		},
 		{
 			"description": "<p><b id=\"docs-internal-guid-671d3aad-7fff-8e76-3494-fdec96ee78dc\"><span style=\"font-size: 10pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Calling all musicians! Interested in finding others to form a band or simply enjoy playing with others? Want to hang out and listen to people jam? Come to the Pause Mane Stage on Sunday, November 15 at 1:30PM! Bring your own instrument, but cords, a drumset, and refreshing drinks will be provided!</span></b><br/></p>",
-			"endDateTimeUtc": "2026-10-11T21:30:00Z",
+			"endDateTimeUtc": "2026-10-11T20:30:00Z",
 			"eventName": "Sunday Jam Session",
 			"hasCoverImage": true,
 			"location": "Pause Mane Stage",
 			"organizationName": "Programming Board",
 			"photoUriWithVersion": "ab9b0581-9115-48f0-8ffb-02126533ed99.jpg?v=0",
-			"startDateTimeUtc": "2026-10-11T19:30:00Z",
+			"startDateTimeUtc": "2026-10-11T18:30:00Z",
 			"uri": "sunday-jam-session-2"
 		},
 		{
@@ -4137,13 +4137,13 @@
 		},
 		{
 			"description": "<p>Come join Programming Board for a showing of Spider-Man: Brand New Day, featuring boba from Tin Tea, located in Viking Theater from 8-10 PM on Saturday, November 7th!</p>",
-			"endDateTimeUtc": "2026-10-04T04:30:00Z",
+			"endDateTimeUtc": "2026-10-04T03:30:00Z",
 			"eventName": "Spider-Boba: Brand New Day",
 			"hasCoverImage": true,
 			"location": "Viking Theater + Viking Theater Lobby",
 			"organizationName": "Programming Board",
 			"photoUriWithVersion": "6ffeff7e-c99f-4dd0-91d1-4b76e8b30556.jpg?v=0",
-			"startDateTimeUtc": "2026-10-04T02:00:00Z",
+			"startDateTimeUtc": "2026-10-04T01:00:00Z",
 			"uri": "spider-boba-brand-new-day"
 		},
 		{
@@ -4192,112 +4192,112 @@
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-14T02:00:00Z",
+			"endDateTimeUtc": "2026-10-14T01:00:00Z",
 			"eventName": "Student Recital: B.M. Vocal Performance, Elective Studies Entrance/Continuance",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-14T01:00:00Z",
+			"startDateTimeUtc": "2026-10-14T00:00:00Z",
 			"uri": "student-recital-b-m-vocal-performance-elective-studies-entrance-continuance"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-13b797b5-7fff-38fa-03ae-1c6830f35273\"></b></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Grace Nemec, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>mezzo soprano</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">7 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-15T02:01:00Z",
+			"endDateTimeUtc": "2026-10-15T01:01:00Z",
 			"eventName": "Senior Recital: Grace Nemec, mezzo soprano",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-15T01:00:00Z",
+			"startDateTimeUtc": "2026-10-15T00:00:00Z",
 			"uri": "senior-recital-grace-nemec-mezzo-soprano"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-f78192d1-7fff-0596-f08a-71a2b5b2ce1b\"></b></p><p dir=\"ltr\"><span style=\"font-size: 16pt;color: #e3a026;background-color: transparent;vertical-align: baseline;\">THURSDAY, November 19th</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Jazz Masterclass</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Ashlin Parker, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>trumpet</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">11:30 AM ● Orchestra Room (CHM 140)</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-15T18:30:00Z",
+			"endDateTimeUtc": "2026-10-15T17:30:00Z",
 			"eventName": "Jazz Masterclass: Ashlin Parker, trumpet",
 			"hasCoverImage": true,
 			"location": "Orchestra Room | CHM 140",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-15T17:30:00Z",
+			"startDateTimeUtc": "2026-10-15T16:30:00Z",
 			"uri": "jazz-masterclass-ashlin-parker-trumpet"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><div class=\"tribe-events-single-event-description tribe-events-content\" style=\"width: 903px;font-size: 18px;\"><div><p style=\"font-size: 18px;\">The St. Olaf Percussion Ensemble will present their fall concert under the direction of Visiting Associate Professor of Music Matthew McClung. This event is free and open to the public</p></div></div><div class=\"tribe-events tribe-common\" style=\"width: 903px;font-size: 18px;\"><div class=\"tribe-events-c-subscribe-dropdown__container\"></div></div><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-16T03:16:00Z",
+			"endDateTimeUtc": "2026-10-16T02:16:00Z",
 			"eventName": "Percussion Ensemble",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-16T02:15:00Z",
+			"startDateTimeUtc": "2026-10-16T01:15:00Z",
 			"uri": "percussion-ensemble"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p><b id=\"docs-internal-guid-3ef2d869-7fff-2144-845c-08d56cb233d7\"></b></p><p dir=\"ltr\"><span style=\"font-size: 16pt;color: #e3a026;background-color: transparent;vertical-align: baseline;\">SUNDAY, November 22nd</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Senior Recital</span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Maisy Scheuneman, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>soprano</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Amelia Wise, </span><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><i>soprano</i></span></p><p dir=\"ltr\"><span style=\"font-size: 13pt;color: #000000;background-color: transparent;vertical-align: baseline;\">2 PM ● Urness Recital Hall</span></p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-18T21:01:00Z",
+			"endDateTimeUtc": "2026-10-18T20:01:00Z",
 			"eventName": "Senior Recital: Maisy Scheuneman, soprano and Amelia Wise, soprano",
 			"hasCoverImage": true,
 			"location": "Urness Recital Hall | CHM 100",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-18T20:00:00Z",
+			"startDateTimeUtc": "2026-10-18T19:00:00Z",
 			"uri": "senior-recital-maisy-scheuneman-soprano-and-amelia-wise-soprano"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">The St. Olaf Jazz Orchestra will present their fall concert in the Lion’s Pause, directed by Associate Professor of Music Joseph L. Jefferson. </p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-17T03:00:00Z",
+			"endDateTimeUtc": "2026-10-17T02:00:00Z",
 			"eventName": "Concert: St. Olaf Jazz Orchestra",
 			"hasCoverImage": true,
 			"location": "The Lion's Pause",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-17T01:30:00Z",
+			"startDateTimeUtc": "2026-10-17T00:30:00Z",
 			"uri": "concert-st-olaf-jazz-orchestra"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">The St. Olaf Philharmonia, conducted by Keehun Nam, and the Norseman Band, conducted by Michael Buck, present a joint concert.</p><p style=\"font-size: 18px;\">The Norseman Band is one of two symphonic bands at St. Olaf and has developed a reputation in recent years as a dynamic and exciting concert ensemble. The band strives to program for a wide and diverse audience.</p><p style=\"font-size: 18px;\">The St. Olaf Philharmonia was established in 1975 to accommodate the college’s growing numbers of strong players. The orchestra performs music from all periods, including repertoire for string orchestra, chamber orchestra, and symphony orchestra.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-18T03:31:00Z",
+			"endDateTimeUtc": "2026-10-18T02:31:00Z",
 			"eventName": "St. Olaf Philharmonia and Norseman Band Concert",
 			"hasCoverImage": true,
 			"location": "Boe Memorial Chapel",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-18T01:30:00Z",
+			"startDateTimeUtc": "2026-10-18T00:30:00Z",
 			"uri": "st-olaf-philharmonia-and-norseman-band-concert-3"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">The St. Olaf Jazz Ensembles will present a concert in the Lion’s Pause, directed by Associate Professor of Music Joseph L. Jefferson. </p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-18T23:00:00Z",
+			"endDateTimeUtc": "2026-10-18T22:00:00Z",
 			"eventName": "Concert: St. Olaf Jazz Ensembles & Jazz Combos",
 			"hasCoverImage": true,
 			"location": "The Lion's Pause",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-18T21:30:00Z",
+			"startDateTimeUtc": "2026-10-18T20:30:00Z",
 			"uri": "concert-st-olaf-jazz-ensembles-jazz-combos"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">The St. Olaf Chamber Singers will present their fall concert in Boe Memorial Chapel, conducted by Associate Professor of Practice and Robert Scholz Endowed Chair in Music Therees Tkach Hibbard. </p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-19T03:00:00Z",
+			"endDateTimeUtc": "2026-10-19T02:00:00Z",
 			"eventName": "Concert: St. Olaf Chamber Singers",
 			"hasCoverImage": true,
 			"location": "Boe Memorial Chapel",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-19T01:30:00Z",
+			"startDateTimeUtc": "2026-10-19T00:30:00Z",
 			"uri": "concert-st-olaf-chamber-singers"
 		},
 		{
 			"description": "<p style=\"font-size: 18px;\"></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p><br/></p><p><br/></p><!--StartFragment--><p style=\"font-size: 18px;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</p><p style=\"font-size: 18px;\">This event is free and open to the public.</p><!--EndFragment--><p><br/></p><p><br/></p><p><br/></p><p style=\"font-size: 18px;\"></p>",
-			"endDateTimeUtc": "2026-10-29T18:30:00Z",
+			"endDateTimeUtc": "2026-10-29T17:30:00Z",
 			"eventName": "Student Recital",
 			"hasCoverImage": true,
 			"location": "Studio A | Skifter Hall",
 			"organizationName": "Music Department",
 			"photoUriWithVersion": "a19f721d-9601-4946-9f9b-b72801662355.jpg?v=0",
-			"startDateTimeUtc": "2026-10-29T17:30:00Z",
+			"startDateTimeUtc": "2026-10-29T16:30:00Z",
 			"uri": "student-recital-22"
 		},
 		{
@@ -4335,13 +4335,13 @@
 		},
 		{
 			"description": "<div><p>​A casual dinner for sophomores and professors.</p>SOPHOMORES, RSVP by Friday, October 30th at 9:00 AM to reserve your spot: <a href=\"http://forms.gle/VZ2NwWyx7oCmqZUR8\" target=\"\">http://forms.gle/VZ2NwWyx7oCmqZUR8</a></div><p>NOTE: This event is only open to the Class of 2029.</p>",
-			"endDateTimeUtc": "2026-10-02T01:30:00Z",
+			"endDateTimeUtc": "2026-10-02T00:30:00Z",
 			"eventName": "Sophomore Connection: Soph-Prof Dinner",
 			"hasCoverImage": true,
 			"location": "Kings Dining Room",
 			"organizationName": "Orientation & Transition Experiences",
 			"photoUriWithVersion": "f71b8d13-7e66-49be-ad3c-bdaef197da69.png?v=0",
-			"startDateTimeUtc": "2026-10-02T00:00:00Z",
+			"startDateTimeUtc": "2026-10-01T23:00:00Z",
 			"uri": "sophomore-connection-soph-prof-dinner"
 		},
 		{
@@ -4522,24 +4522,24 @@
 		},
 		{
 			"description": "<p dir=\"ltr\"><span style=\"font-size: 12pt;color: #000000;background-color: transparent;vertical-align: baseline;\">SGA is partnering with the Institute of Freedom and Community and the Lutheran Center to host Dinner with 6 Strangers, an event encouraging St. Olaf students to connect with people they may not have otherwise met. This event will be held on November 18th from 6:30-8PM in the Valhalla Dining Room. We will ask students to fill out a questionnaire and will place them at tables with potential strangers. IFC fellows, Lutheran Center fellows, and SGA representatives will work together to come up with a list of discussion topics for the evening. The Institute of Freedom and Community will provide an array of desserts at this event for students attending! </span></p><p><br/></p><p><br/></p><ul><li dir=\"ltr\" style=\"font-size: 12pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><p dir=\"ltr\"><span style=\"font-size: 12pt;color: #000000;background-color: transparent;vertical-align: baseline;\">What are you passionate about? When was the last time you surprised yourself? What did the people who raised you teach you about love? Has a stranger ever changed your life? </span></p></li></ul><p><br/></p><ul><li dir=\"ltr\" style=\"font-size: 12pt;color: #000000;background-color: transparent;vertical-align: baseline;\"><p dir=\"ltr\"><span style=\"font-size: 12pt;color: #000000;background-color: transparent;vertical-align: baseline;\">Thinking about answering these questions to a group of people may seem scary. As college students growing up with a vast array of technology, we have pretty much mastered the art of connecting with other people online. However, in-person communication has become, for many people, something to be avoided or kept at surface level. This event encourages us to challenge this fear and connect with people face to face.</span></p></li></ul><!--EndFragment--><p><br/></p><p><br/></p>",
-			"endDateTimeUtc": "2026-10-15T02:00:00Z",
+			"endDateTimeUtc": "2026-10-15T01:00:00Z",
 			"eventName": "Dinner with Six Strangers",
 			"hasCoverImage": true,
 			"location": "Valhalla Dining Room",
 			"organizationName": "SGA Community Impact Board",
 			"photoUriWithVersion": "c36a7d9a-f717-4313-be81-67faaee76c13.png?v=0",
-			"startDateTimeUtc": "2026-10-15T00:30:00Z",
+			"startDateTimeUtc": "2026-10-14T23:30:00Z",
 			"uri": "dinner-with-six-strangers-2"
 		},
 		{
 			"description": "<p>Join yoga club for a Saturday morning flow! Mats are available, first come - first served.</p>",
-			"endDateTimeUtc": "2026-10-03T17:00:00Z",
+			"endDateTimeUtc": "2026-10-03T16:00:00Z",
 			"eventName": "Yoga Session",
 			"hasCoverImage": true,
 			"location": "CAD 330 - Studio 1",
 			"organizationName": "Yoga Club",
 			"photoUriWithVersion": "d586b3b5-64b0-4838-89b6-7eea53c3eafb.png?v=0",
-			"startDateTimeUtc": "2026-10-03T16:00:43Z",
+			"startDateTimeUtc": "2026-10-03T15:00:43Z",
 			"uri": "yoga-session"
 		},
 		{
@@ -4610,13 +4610,13 @@
 		},
 		{
 			"description": "<p>Come join Ole Thrift Shop for our fall sale! We sell clothing at &#34;thrift store prices&#34; and donate all proceeds to charity. Come find your new fall wardrobe with Ole Thrift Shop!    </p>",
-			"endDateTimeUtc": "2026-10-10T21:00:00Z",
+			"endDateTimeUtc": "2026-10-10T20:00:00Z",
 			"eventName": "Ole Thrift Shop Fall Sale",
 			"hasCoverImage": true,
 			"location": "Crossroads Atrium & Viking Theater",
 			"organizationName": "Ole Thrift Shop",
 			"photoUriWithVersion": "38609c52-ad21-4495-95af-ae4e0bddf8f4.png?v=0",
-			"startDateTimeUtc": "2026-10-10T18:00:00Z",
+			"startDateTimeUtc": "2026-10-10T17:00:00Z",
 			"uri": "ole-thrift-shop-fall-sale-5"
 		},
 		{
@@ -4797,13 +4797,13 @@
 		},
 		{
 			"description": "<p>This is QOI's annual Transgender Day of Remembrance Vigil that we host in Boe Chapel. It is a time for us to remember our trans community members who have lost their lives to anti-trans violence over the last year and grieve for them. We have already cleared the date and time with Paster Matt, who directed us to fill out presence and 25live. </p>",
-			"endDateTimeUtc": "2026-10-17T02:00:00Z",
+			"endDateTimeUtc": "2026-10-17T01:00:00Z",
 			"eventName": "Transgender Day of Remembrance",
 			"hasCoverImage": true,
 			"location": "Boe Chapel",
 			"organizationName": "Queer Ole Individuals (QOI)",
 			"photoUriWithVersion": "7821cdbe-c7e2-4940-9ce5-ff6c00aa62a1.png?v=0",
-			"startDateTimeUtc": "2026-10-17T01:00:00Z",
+			"startDateTimeUtc": "2026-10-17T00:00:00Z",
 			"uri": "transgender-day-of-remembrance-2025"
 		},
 		{
@@ -4885,35 +4885,35 @@
 		},
 		{
 			"description": "<p>Musicians Guide to Fest is a workshop put on in collaboration between the Wellness Center and the Music Department Student Committee. Join one of three different sessions to learn about and apply strategies to navigate Christmas Fest. We will discuss and practice physical, spiritual, mental, academic, and emotional wellbeing during Fest season. Performers from all participating choirs and orchestra are welcome and encouraged to attend! </p>",
-			"endDateTimeUtc": "2026-10-06T02:00:00Z",
+			"endDateTimeUtc": "2026-10-06T01:00:00Z",
 			"eventName": "Musicians Guide to Fest (1/3)",
 			"hasCoverImage": true,
 			"location": "BC210 (King's Dining, Trollhaugen Room)",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "b0de4785-9075-4d91-a471-af92ea275da5.png?v=0",
-			"startDateTimeUtc": "2026-10-06T01:00:00Z",
+			"startDateTimeUtc": "2026-10-06T00:00:00Z",
 			"uri": "musicians-guide-to-fest-1-3"
 		},
 		{
 			"description": "<p>Musicians Guide to Fest is a workshop put on in collaboration between the Wellness Center and the Music Department Student Committee. Join one of three different sessions to learn about and apply strategies to navigate Christmas Fest. We will discuss and practice physical, spiritual, mental, academic, and emotional wellbeing during Fest season. Performers from all participating choirs and orchestra are welcome and encouraged to attend! </p>",
-			"endDateTimeUtc": "2026-10-08T02:00:00Z",
+			"endDateTimeUtc": "2026-10-08T01:00:00Z",
 			"eventName": "Musicians Guide to Fest (2/3)",
 			"hasCoverImage": true,
 			"location": "BC210 (King's Dining, Trollhaugen Room)",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "40ea7cd6-70bb-47a6-aec0-ee32a7f3fdac.png?v=0",
-			"startDateTimeUtc": "2026-10-08T01:00:00Z",
+			"startDateTimeUtc": "2026-10-08T00:00:00Z",
 			"uri": "musicians-guide-to-fest-2-3"
 		},
 		{
 			"description": "<p>Musicians Guide to Fest is a workshop put on in collaboration between the Wellness Center and the Music Department Student Committee. Join one of three different sessions to learn about and apply strategies to navigate Christmas Fest. We will discuss and practice physical, spiritual, mental, academic, and emotional wellbeing during Fest season. Performers from all participating choirs and orchestra are welcome and encouraged to attend!</p><p><span id=\"selectionBoundary_1791488214103_7179299827236594\" class=\"rangySelectionBoundary\">&#65279;</span></p>",
-			"endDateTimeUtc": "2026-10-13T02:00:00Z",
+			"endDateTimeUtc": "2026-10-13T01:00:00Z",
 			"eventName": "Musicians Guide to Fest (3/3)",
 			"hasCoverImage": true,
 			"location": "BC210 (King's Dining, Trollhaugen Room)",
 			"organizationName": "Wellness Center",
 			"photoUriWithVersion": "b4b535ef-0af0-42fb-a1dc-4d049946f434.png?v=0",
-			"startDateTimeUtc": "2026-10-13T01:00:00Z",
+			"startDateTimeUtc": "2026-10-13T00:00:00Z",
 			"uri": "musicians-guide-to-fest-3-3"
 		}
 	],

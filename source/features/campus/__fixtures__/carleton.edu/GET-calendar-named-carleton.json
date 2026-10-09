@@ -5605,7 +5605,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Event Details:\nhttps://apps.carleton.edu/campus/registrar/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/usUB",
-			"endTime": "2026-09-29T00:00:00.000Z",
+			"endTime": "2026-09-28T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://apps.carleton.edu/campus/registrar",
@@ -7475,7 +7475,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Observance\nTo hide observances, go to Google Calendar Settings > Holidays in United States\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/null",
-			"endTime": "2026-09-28T00:00:00.000Z",
+			"endTime": "2026-09-27T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/null"
@@ -7495,7 +7495,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Men's Basketball at University of Minnesota Duluth - Exhibition\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-09-27T15:30:00.000Z",
+			"endTime": "2026-09-27T14:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -7504,7 +7504,7 @@
 			"metadata": {
 				"uid": "vcal_11037-athletics.carleton.edu"
 			},
-			"startTime": "2026-09-27T13:30:00.000Z",
+			"startTime": "2026-09-27T12:30:00.000Z",
 			"title": "Carleton College Men's Basketball at University of Minnesota Duluth - Exhibition"
 		},
 		{
@@ -7515,7 +7515,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The MARS Radio Hour offers an hour of conversation, music, and readings from and about the world before ca. 1700.  We also invite guests for interviews about upcoming events and opportunities.\n\n\nEvent Contact: person@example.com\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ro4k",
-			"endTime": "2026-09-27T15:00:00.000Z",
+			"endTime": "2026-09-27T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://carleton.edu",
@@ -7525,7 +7525,7 @@
 			"metadata": {
 				"uid": "l639akasu57lkumfd9d8krkcmc_20261101T200000Z"
 			},
-			"startTime": "2026-09-27T14:00:00.000Z",
+			"startTime": "2026-09-27T13:00:00.000Z",
 			"title": "The MARS Radio Hour"
 		},
 		{
@@ -7536,7 +7536,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Learn about the history of the Lower Arboretum on this walking tour led by student naturalists and Arboretum staff.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut4m",
-			"endTime": "2026-09-27T16:30:00.000Z",
+			"endTime": "2026-09-27T15:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut4m"
@@ -7545,7 +7545,7 @@
 			"metadata": {
 				"uid": "venc25k7gil16r710e7pff50qs"
 			},
-			"startTime": "2026-09-27T15:00:00.000Z",
+			"startTime": "2026-09-27T14:00:00.000Z",
 			"title": "Arboretum History Walking Tour"
 		},
 		{
@@ -7556,7 +7556,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students can drop in for help with math, statistics, data, and graphs in any QRE course. To make an appointment or to see who's working, go to go.carleton.edu/QRC\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roUP",
-			"endTime": "2026-09-27T22:00:00.000Z",
+			"endTime": "2026-09-27T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://go.carleton.edu/QRC",
@@ -7566,7 +7566,7 @@
 			"metadata": {
 				"uid": "gmnm0o160ok6onorumja1oafng_20261101T220000Z"
 			},
-			"startTime": "2026-09-27T16:00:00.000Z",
+			"startTime": "2026-09-27T15:00:00.000Z",
 			"title": "QRC drop-in tutoring"
 		},
 		{
@@ -7577,7 +7577,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Catholic Student Association will be reading through the Gospel according to Matthew and holding weekly conversations to foster growth and understanding.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roPQ",
-			"endTime": "2026-09-27T20:00:00.000Z",
+			"endTime": "2026-09-27T19:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roPQ"
@@ -7586,7 +7586,7 @@
 			"metadata": {
 				"uid": "d32qaac9f8nuo3460859id79ig_20261102T010000Z"
 			},
-			"startTime": "2026-09-27T19:00:00.000Z",
+			"startTime": "2026-09-27T18:00:00.000Z",
 			"title": "Catholic Bible Study"
 		},
 		{
@@ -7597,7 +7597,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Come worship with Fellowship in Christ!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roSw",
-			"endTime": "2026-09-27T21:00:00.000Z",
+			"endTime": "2026-09-27T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roSw"
@@ -7606,7 +7606,7 @@
 			"metadata": {
 				"uid": "11opjeh4vo8tlhfl3lmiuugt1c_20261102T020000Z"
 			},
-			"startTime": "2026-09-27T20:00:00.000Z",
+			"startTime": "2026-09-27T19:00:00.000Z",
 			"title": "Mustard Seed Worship"
 		},
 		{
@@ -7617,7 +7617,7 @@
 			},
 			"dataSource": "ical",
 			"description": "David Whetstone will be playing the sitar while also reciting poetry. The sitar accentuates the soothing and contemplative aspect of Indian music during these tense and troubled times.\n\nAll are welcome!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uujb",
-			"endTime": "2026-09-27T21:00:00.000Z",
+			"endTime": "2026-09-27T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uujb"
@@ -7626,7 +7626,7 @@
 			"metadata": {
 				"uid": "42v71cosqjad83u2pjdjq2p4a0"
 			},
-			"startTime": "2026-09-27T20:00:00.000Z",
+			"startTime": "2026-09-27T19:00:00.000Z",
 			"title": "Sitar Meditation"
 		},
 		{
@@ -7637,7 +7637,7 @@
 			},
 			"dataSource": "ical",
 			"description": "IFSA is a nonprofit study abroad company that operations 120 programs in 18 different countries\n\nEvent Details:\nhttps://ifsa-butler.org/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uumD",
-			"endTime": "2026-09-28T14:00:00.000Z",
+			"endTime": "2026-09-28T13:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://ifsa-butler.org",
@@ -7647,7 +7647,7 @@
 			"metadata": {
 				"uid": "soeeoomj8664cal5kljhshpkek"
 			},
-			"startTime": "2026-09-28T11:00:00.000Z",
+			"startTime": "2026-09-28T10:00:00.000Z",
 			"title": "IFSA Info Table"
 		},
 		{
@@ -7658,7 +7658,7 @@
 			},
 			"dataSource": "ical",
 			"description": "IFSA is a nonprofit study abroad company that operations 120 programs in 18 different countries\n\nEvent Details:\nhttps://ifsa-butler.org/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uumF",
-			"endTime": "2026-09-28T14:00:00.000Z",
+			"endTime": "2026-09-28T13:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://ifsa-butler.org",
@@ -7668,7 +7668,7 @@
 			"metadata": {
 				"uid": "4vu6h4n92on6htbnlcppldu218"
 			},
-			"startTime": "2026-09-28T11:00:00.000Z",
+			"startTime": "2026-09-28T10:00:00.000Z",
 			"title": "IFSA Info Table"
 		},
 		{
@@ -7679,7 +7679,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us for questions connected to instructional technologies.\nMondays and Thursdays, 2-4 pm.\nAT Drop-in\n\nIf these times do not work for you, check out our individual AT appointment schedules on our AT Availability page.\n\nOther Academic Technologists are also available for consultations.\n\nConnect to Virtual Event:\nhttps://meet.google.com/yof-zkpr-cpr?authuser=0\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rohk",
-			"endTime": "2026-09-28T16:00:00.000Z",
+			"endTime": "2026-09-28T15:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://meet.google.com/yof-zkpr-cpr?authuser=0",
@@ -7689,7 +7689,7 @@
 			"metadata": {
 				"uid": "i4umlvsli3of279qsqll1leq9k_20261102T200000Z"
 			},
-			"startTime": "2026-09-28T14:00:00.000Z",
+			"startTime": "2026-09-28T13:00:00.000Z",
 			"title": "AT Drop-in Hours"
 		},
 		{
@@ -7700,7 +7700,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students can drop in for help with math, statistics, data, and graphs in any QRE course. To make an appointment or to see who's working, go to go.carleton.edu/QRC\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roUQ",
-			"endTime": "2026-09-28T22:00:00.000Z",
+			"endTime": "2026-09-28T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://go.carleton.edu/QRC",
@@ -7710,7 +7710,7 @@
 			"metadata": {
 				"uid": "gmnm0o160ok6onorumja1oafng_20261102T220000Z"
 			},
-			"startTime": "2026-09-28T16:00:00.000Z",
+			"startTime": "2026-09-28T15:00:00.000Z",
 			"title": "QRC drop-in tutoring"
 		},
 		{
@@ -7721,7 +7721,7 @@
 			},
 			"dataSource": "ical",
 			"description": "TRIO Student? TRIO House Study Sessions in partnership with the QRC and MSSC! Come with questions for the tutor or to study with other TRIO students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVg",
-			"endTime": "2026-09-28T17:00:00.000Z",
+			"endTime": "2026-09-28T16:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVg"
@@ -7730,7 +7730,7 @@
 			"metadata": {
 				"uid": "hhf7rs1rkiaevqjooartmmr7ts_20261102T220000Z"
 			},
-			"startTime": "2026-09-28T16:00:00.000Z",
+			"startTime": "2026-09-28T15:00:00.000Z",
 			"title": "TRIO House Study Sessions"
 		},
 		{
@@ -7741,7 +7741,7 @@
 			},
 			"dataSource": "ical",
 			"description": "View this event on the Carleton College website:\nhttps://www.carleton.edu/_c/utXQ",
-			"endTime": "2026-09-28T18:00:00.000Z",
+			"endTime": "2026-09-28T17:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/utXQ"
@@ -7750,7 +7750,7 @@
 			"metadata": {
 				"uid": "1dbr93e2lmghbbppou3dj7926s"
 			},
-			"startTime": "2026-09-28T16:30:00.000Z",
+			"startTime": "2026-09-28T15:30:00.000Z",
 			"title": "Faculty Meeting"
 		},
 		{
@@ -7761,7 +7761,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Twice weekly meditation open to all. Gently guided meditations on Monday afternoons. Silent meditations on Friday mornings. Drop in as you are able or make it part of your weekly routine! Led by students; no experience necessary.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roOy",
-			"endTime": "2026-09-28T17:45:00.000Z",
+			"endTime": "2026-09-28T16:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roOy"
@@ -7770,7 +7770,7 @@
 			"metadata": {
 				"uid": "2140ara7fq34g0c72dqac3cu88_20261102T230000Z"
 			},
-			"startTime": "2026-09-28T17:00:00.000Z",
+			"startTime": "2026-09-28T16:00:00.000Z",
 			"title": "Time to Meditate - Monday Evening"
 		},
 		{
@@ -7781,7 +7781,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The celebration and service will include Aztec dancers, Folklorico dance, stories, ofrenda and dinner from El Triunfo. Día de Muertos is a time to celebrate deceased loved ones and keep their memories alive. \n\nCo-hosted with LASO.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut0e",
-			"endTime": "2026-09-28T20:00:00.000Z",
+			"endTime": "2026-09-28T19:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut0e"
@@ -7790,7 +7790,7 @@
 			"metadata": {
 				"uid": "hapklm8miv4tcksiiqpoj55fp8"
 			},
-			"startTime": "2026-09-28T18:00:00.000Z",
+			"startTime": "2026-09-28T17:00:00.000Z",
 			"title": "Día de Muertos"
 		},
 		{
@@ -7801,7 +7801,7 @@
 			},
 			"dataSource": "ical",
 			"description": "A Poet [Un poeta] (Simón Mesa Soto, Colombia/Germany/Sweden, 2025, 123 min.)\n\n\"Oscar Restrepo’s obsession with poetry brought him no glory. Aging and erratic, he has succumbed to the cliché of the poet in the shadows. Meeting Yurlady, a teenage girl from humble roots, and helping her cultivate her talent brings some light to his days, but dragging her into the world of poets may not be the way.” (Cannes Film Festival)\n\nWatch the Trailer\n\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uumk",
-			"endTime": "2026-09-28T21:00:00.000Z",
+			"endTime": "2026-09-28T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uumk"
@@ -7810,7 +7810,7 @@
 			"metadata": {
 				"uid": "27b95sdiajb49p7q3fns66vafo"
 			},
-			"startTime": "2026-09-28T19:00:00.000Z",
+			"startTime": "2026-09-28T18:00:00.000Z",
 			"title": "International Film Forum: A Poet"
 		},
 		{
@@ -7821,7 +7821,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Men's Soccer vs MIAC Playoffs - Quarterfinals (if necessary)\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-09-30T00:00:00.000Z",
+			"endTime": "2026-09-29T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -7830,7 +7830,7 @@
 			"metadata": {
 				"uid": "vcal_10875-athletics.carleton.edu"
 			},
-			"startTime": "2026-09-29T00:00:00.000Z",
+			"startTime": "2026-09-28T23:00:00.000Z",
 			"title": "Carleton College Men's Soccer vs MIAC Playoffs - Quarterfinals (if necessary)"
 		},
 		{
@@ -7841,7 +7841,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Women's Soccer vs MIAC Playoffs - Quarterfinals (if necessary)\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-09-30T00:00:00.000Z",
+			"endTime": "2026-09-29T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -7850,7 +7850,7 @@
 			"metadata": {
 				"uid": "vcal_10774-athletics.carleton.edu"
 			},
-			"startTime": "2026-09-29T00:00:00.000Z",
+			"startTime": "2026-09-28T23:00:00.000Z",
 			"title": "Carleton College Women's Soccer vs MIAC Playoffs - Quarterfinals (if necessary)"
 		},
 		{
@@ -7861,7 +7861,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Observance\nTo hide observances, go to Google Calendar Settings > Holidays in United States\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/null",
-			"endTime": "2026-09-30T00:00:00.000Z",
+			"endTime": "2026-09-29T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/null"
@@ -7870,7 +7870,7 @@
 			"metadata": {
 				"uid": "20261103_lg3dpstk14ft6g9m5k35jlkg14"
 			},
-			"startTime": "2026-09-29T00:00:00.000Z",
+			"startTime": "2026-09-28T23:00:00.000Z",
 			"title": "Election Day"
 		},
 		{
@@ -7881,7 +7881,7 @@
 			},
 			"dataSource": "ical",
 			"description": "TRIO Student? TRIO House Study Sessions in partnership with the QRC and MSSC! Come with questions for the tutor or to study with other TRIO students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVy",
-			"endTime": "2026-09-29T12:00:00.000Z",
+			"endTime": "2026-09-29T11:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVy"
@@ -7890,7 +7890,7 @@
 			"metadata": {
 				"uid": "ckd1jlpuqb47rq42rpcphq4oto_20261103T160000Z"
 			},
-			"startTime": "2026-09-29T10:00:00.000Z",
+			"startTime": "2026-09-29T09:00:00.000Z",
 			"title": "TRIO House Study Sessions"
 		},
 		{
@@ -7901,7 +7901,7 @@
 			},
 			"dataSource": "ical",
 			"description": "When studying with SFS, you’ll develop practical skills through hands-on, field-based learning in the world’s most unique ecosystems. We offer immersive semester and summer programs in places like Kenya, Australia, Bhutan, and Croatia. You’ll step outside the typical classroom to research today’s most critical environmental issues while earning college credit. https://vimeo.com/user64861532\n\nEvent Details:\nhttps://fieldstudies.org/program-finder/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uunz",
-			"endTime": "2026-09-29T14:00:00.000Z",
+			"endTime": "2026-09-29T13:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://vimeo.com/user64861532",
@@ -7912,7 +7912,7 @@
 			"metadata": {
 				"uid": "nev3dqd8kc68t5cm18mdhq134c"
 			},
-			"startTime": "2026-09-29T11:00:00.000Z",
+			"startTime": "2026-09-29T10:00:00.000Z",
 			"title": "School for Field Studies Info Table"
 		},
 		{
@@ -7923,7 +7923,7 @@
 			},
 			"dataSource": "ical",
 			"description": "COLLOBORATIVE COMMUNITY BUILDING: A FACULTY-STAFF INITIATIVE AT MACALESTER\nThis session highlights a successful \"classroom community\" project we launched at Macalester College. Over 400 students across 35 courses participated. We'll share key findings and important insights from our faculty-institutional research collaboration.\n*This event counts towards IDE Community Education.\nDevavani Chattergea, Professor of Environmental Studies\nNancy Bostrom, Director of Assessment, Macalester College\nBethany Miller, Associate Provost & Chief Data Officer Macalester College\nStudents are welcome to attend.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uufK",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uufK"
@@ -7932,7 +7932,7 @@
 			"metadata": {
 				"uid": "8hg1l5auejsvj23pmc1m3va9ns"
 			},
-			"startTime": "2026-09-29T11:45:00.000Z",
+			"startTime": "2026-09-29T10:45:00.000Z",
 			"title": "Collaborative Community Building: A Faculty-Staff Initiative at Macalester"
 		},
 		{
@@ -7943,7 +7943,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join the Arabic Program in the LDC Dining Hall each Tuesday, 12 - 1 PM, to practice Arabic and enjoy each other's company.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roXT",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roXT"
@@ -7952,7 +7952,7 @@
 			"metadata": {
 				"uid": "985sifefjnaa0sldpuds5ejclg_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Arabic Lunch Table"
 		},
 		{
@@ -7963,7 +7963,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Navigating the complexities of eldercare—from managing medical appointments and legal paperwork to the emotional weight of changing family roles—is a journey few of us are prepared for. Whether you are currently providing daily care for an aging parent, supporting an adult friend through a health crisis, or simply beginning to plan for the future, you don't have to manage it in isolation. \nWe hope to provide a dedicated space where we can find both practical resources and authentic peer support. By coming together, we can share vetted local resources, navigate insurance and healthcare hurdles, and offer a listening ear to those balancing professional excellence with personal sacrifice.\n\n\n \tResource Sharing: Access to curated lists of local home-health services, elder law specialists, and respite care.\n \tRegular Meet-ups: Informal gatherings to discuss challenges and successes.\n \tExpert Guest Speakers: Occasional sessions with professionals in gerontology, financial planning, and mental health.\n\nTaking care of those who once took care of us is a profound responsibility, but it can also be an exhausting one. We invite you to join us for our inaugural meeting to help shape this group into a community that truly serves your needs. Together, we can ensure that as we care for others, we are also caring for ourselves.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rn1j",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/rn1j"
@@ -7972,7 +7972,7 @@
 			"metadata": {
 				"uid": "ot433qfpn068rjfq2qjtcu8kvs_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Caring for Aging Parents for Staff and Faculty"
 		},
 		{
@@ -7983,7 +7983,7 @@
 			},
 			"dataSource": "ical",
 			"description": "On Tuesdays, feel free to join us at LDC Dining at 12 pm to enjoy a meal and have conversations in Chinese with our lǎoshīmen (teachers) and tóngxuémen (classmates).\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roQH",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roQH"
@@ -7992,7 +7992,7 @@
 			"metadata": {
 				"uid": "2qcj2iii7tpl75o4qetduodt78_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Chinese Lunch Table in the LDC Dining Hall"
 		},
 		{
@@ -8003,7 +8003,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Practice your French at the French lunch table while having lunch in the LDC!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rmm9",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/rmm9"
@@ -8012,7 +8012,7 @@
 			"metadata": {
 				"uid": "5240rdel36acn227492qkj05uk_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "French Lunch Table"
 		},
 		{
@@ -8023,7 +8023,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Chat in German or Denglisch with professors, students and friends.\n\n\n\n \n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roRX",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roRX"
@@ -8032,7 +8032,7 @@
 			"metadata": {
 				"uid": "419kkkb4kme7j2ehj9upbd0sso_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "German Lunch Table"
 		},
 		{
@@ -8043,7 +8043,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Mesa de español - Join us at Mesa de español (Spanish Language Table) every Tuesday and Thursday during Common Time at LDC Dining Hall. The Spanish Table is for anyone who wants to meet people,  talk in Spanish and practice it. Our Language Associate (LA) leads this informal meeting. Come and join us. You are welcome!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roSk",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roSk"
@@ -8052,7 +8052,7 @@
 			"metadata": {
 				"uid": "938gsirvmnnn5m9n8jdp4il3q4_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Mesa de español"
 		},
 		{
@@ -8063,7 +8063,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Do you present data about your programs and wish your graphs were better? Do you wish you had graphs, but you're not sure how to make them? Bring your graphs, data, or ideas to the QRC (4th Libe, East Wing) on the first Tuesday of the month during common time (12:00 - 1:00 pm) to get feedback or brainstorm with Lin, the QRC director.\n\nConnect to Virtual Event:\nhttps://meet.google.com/kzv-bshb-aeg\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rovW",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://meet.google.com/kzv-bshb-aeg",
@@ -8073,7 +8073,7 @@
 			"metadata": {
 				"uid": "b6viqmiui57u2862ei4kv6rcp4_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Monthly Graph Clinic for staff"
 		},
 		{
@@ -8084,7 +8084,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Gather with folks who are interested in Physics!  Come have lunch with us, regardless of your experience level with Physics coursework, and meet students, faculty, and staff from the department.  If you are off board, let the cashier know you are coming in for Physics Table.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rozx",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/rozx"
@@ -8093,7 +8093,7 @@
 			"metadata": {
 				"uid": "31h4pr3batbap9ga7msg721e74_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Physics Table"
 		},
 		{
@@ -8104,7 +8104,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Please come by the Title IX Office to say hi to Nathan Riel-Elness, the Title IX Coordinator, ask questions, or just see the office suite.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roq4",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roq4"
@@ -8113,7 +8113,7 @@
 			"metadata": {
 				"uid": "5bnaivcu76pphv8lkshb4e20kc_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Title IX Open Office Hours"
 		},
 		{
@@ -8124,7 +8124,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Weekly Bible study led by students. Prior biblical knowledge is not a requirement. All levels of familiarity, faith, doubt, and questioning are welcome! Lunch provided.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roPb",
-			"endTime": "2026-09-29T13:00:00.000Z",
+			"endTime": "2026-09-29T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roPb"
@@ -8133,7 +8133,7 @@
 			"metadata": {
 				"uid": "i8fah0rvgt5g3ti28gviotmfs8_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Transformation Tuesday: Weekly Bible Study"
 		},
 		{
@@ -8144,7 +8144,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Stop by Rav Michaela's table in Sayles to eat a snack, do a quick craft, or ask a burning Jewish question!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roPl",
-			"endTime": "2026-09-29T14:00:00.000Z",
+			"endTime": "2026-09-29T13:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roPl"
@@ -8153,7 +8153,7 @@
 			"metadata": {
 				"uid": "bsc0d84nhl25ntcdfkffcbv6u4_20261103T180000Z"
 			},
-			"startTime": "2026-09-29T12:00:00.000Z",
+			"startTime": "2026-09-29T11:00:00.000Z",
 			"title": "Tuesday Schmooze-Day"
 		},
 		{
@@ -8164,7 +8164,7 @@
 			},
 			"dataSource": "ical",
 			"description": "TRIO Student? TRIO House Study Sessions in partnership with the QRC and MSSC! Come with questions for the tutor or to study with other TRIO students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVQ",
-			"endTime": "2026-09-29T15:00:00.000Z",
+			"endTime": "2026-09-29T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVQ"
@@ -8173,7 +8173,7 @@
 			"metadata": {
 				"uid": "ekqptk0epirv487e4971kvg1d4_20261103T190000Z"
 			},
-			"startTime": "2026-09-29T13:00:00.000Z",
+			"startTime": "2026-09-29T12:00:00.000Z",
 			"title": "TRIO House Study Sessions"
 		},
 		{
@@ -8184,7 +8184,7 @@
 			},
 			"dataSource": "ical",
 			"description": "First Years: Join us for a supportive space to process the transition to college, connect with peers, and navigate the ups and downs of your first term.  \n\nBloom Up will be facilitated by licensed therapists Lucy Baquero Oja, LMFT, and Leah Ernste, LPCC.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ro45",
-			"endTime": "2026-09-29T15:00:00.000Z",
+			"endTime": "2026-09-29T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ro45"
@@ -8193,7 +8193,7 @@
 			"metadata": {
 				"uid": "i0fpiubmjvvb320d7hjhlrk69k_20261103T200000Z"
 			},
-			"startTime": "2026-09-29T14:00:00.000Z",
+			"startTime": "2026-09-29T13:00:00.000Z",
 			"title": "Bloom Up Therapy Group"
 		},
 		{
@@ -8204,7 +8204,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Classroom Technology continues to evolve.  Get pointers on how to use the existing technology effectively and learn what is on the horizon.\n\nFor a list of all Ed Tech Teas and to register your interest, visit Ed Tech Teas.\n\nEvent Details:\nhttps://www.carleton.edu/its/about/teams/academic-technology/ed-tech-lunches/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut4e",
-			"endTime": "2026-09-29T16:30:00.000Z",
+			"endTime": "2026-09-29T15:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/its/about/teams/academic-technology/ed-tech-lunches",
@@ -8214,7 +8214,7 @@
 			"metadata": {
 				"uid": "famaafi0haq7i6s852co3nd2hk"
 			},
-			"startTime": "2026-09-29T15:30:00.000Z",
+			"startTime": "2026-09-29T14:30:00.000Z",
 			"title": "Ed Tech Tea:  ADA Compliance - CarlSites"
 		},
 		{
@@ -8225,7 +8225,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students can drop in for help with math, statistics, data, and graphs in any QRE course. To make an appointment or to see who's working, go to go.carleton.edu/QRC\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roUR",
-			"endTime": "2026-09-29T22:00:00.000Z",
+			"endTime": "2026-09-29T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://go.carleton.edu/QRC",
@@ -8235,7 +8235,7 @@
 			"metadata": {
 				"uid": "gmnm0o160ok6onorumja1oafng_20261103T220000Z"
 			},
-			"startTime": "2026-09-29T16:00:00.000Z",
+			"startTime": "2026-09-29T15:00:00.000Z",
 			"title": "QRC drop-in tutoring"
 		},
 		{
@@ -8246,7 +8246,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Interfaith discussion of life's big questions with catered dinner. Open to all students.\n\nTopic on October 6: CRU on Screen: Faith in Movies, TV, and Other Media.\n\nBoba from Tin Tea and food from El Tri!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ro4f",
-			"endTime": "2026-09-29T18:15:00.000Z",
+			"endTime": "2026-09-29T17:15:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ro4f"
@@ -8255,7 +8255,7 @@
 			"metadata": {
 				"uid": "drgfdom0fqlkei8m0cpc0a2jqg_20261103T231500Z"
 			},
-			"startTime": "2026-09-29T17:15:00.000Z",
+			"startTime": "2026-09-29T16:15:00.000Z",
 			"title": "Carls for Religious Understanding (CRU)"
 		},
 		{
@@ -8266,7 +8266,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Watch the results for the 2026 election in community with others.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut1a",
-			"endTime": "2026-09-29T22:30:00.000Z",
+			"endTime": "2026-09-29T21:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut1a"
@@ -8275,7 +8275,7 @@
 			"metadata": {
 				"uid": "hnd1imaja57d5g7iul2rrboc5k"
 			},
-			"startTime": "2026-09-29T19:00:00.000Z",
+			"startTime": "2026-09-29T18:00:00.000Z",
 			"title": "Election Night Watch Party"
 		},
 		{
@@ -8286,7 +8286,7 @@
 			},
 			"dataSource": "ical",
 			"description": "In addition to being centers of global capital, Mumbai and Seoul are two of the most culturally vibrant cities in the world. The Hindi cinema industry centered in Mumbai is massively popular both within India and outside. Korean cinema and popular culture in turn may have been a later to arrive on the global scene but is now arguably even more significant in its global reach, popularity and influence, not least in India. On this off-campus study program students will explore various cultural facets of both cities and study their representations in and contributions to film, popular culture and literature. We will examine the connections and differences between the globally popular productions of these two cities and the cultural and historical contexts they emerge from.\n\nEvent Details:\nhttps://www.carleton.edu/ocs/mumbai\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uuag",
-			"endTime": "2026-09-29T20:00:00.000Z",
+			"endTime": "2026-09-29T19:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/ocs/mumbai",
@@ -8296,7 +8296,7 @@
 			"metadata": {
 				"uid": "4vood0up3vbv9usq4una9ubs1c"
 			},
-			"startTime": "2026-09-29T19:00:00.000Z",
+			"startTime": "2026-09-29T18:00:00.000Z",
 			"title": "Film, Literature and Culture in Mumbai &amp; Seoul"
 		},
 		{
@@ -8307,7 +8307,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Drop by German Study Time to get help with German coursework from German Language Associate, Lina!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roYu",
-			"endTime": "2026-09-29T20:30:00.000Z",
+			"endTime": "2026-09-29T19:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roYu"
@@ -8316,7 +8316,7 @@
 			"metadata": {
 				"uid": "v81mrje6qhn03rdvcs5g9b82lg_20261104T010000Z"
 			},
-			"startTime": "2026-09-29T19:00:00.000Z",
+			"startTime": "2026-09-29T18:00:00.000Z",
 			"title": "German Study Time"
 		},
 		{
@@ -8327,7 +8327,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Interfaith Social Action meets weekly to engage issues that intersect with faith and social justice. We work across faith traditions to take action on challenges that affect both Carleton, the Northfield community, state, national, and even global communities. We practice our values through meaningful dialogue, learning, advocacy, community service, and activism. Most recently IFSA has responded to transportation deficiencies and food insecurity on campus, and the needs of immigrant neighbors during Operation Metro Surge. We welcome anyone to join us at any point during the year, whether you are a person of faith, or a person of good conscience who wants to make a difference.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roP0",
-			"endTime": "2026-09-29T20:00:00.000Z",
+			"endTime": "2026-09-29T19:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roP0"
@@ -8336,7 +8336,7 @@
 			"metadata": {
 				"uid": "n700ge60gebgodv01bq9be05so_20261104T010000Z"
 			},
-			"startTime": "2026-09-29T19:00:00.000Z",
+			"startTime": "2026-09-29T18:00:00.000Z",
 			"title": "Interfaith Social Action (IFSA)"
 		},
 		{
@@ -8347,7 +8347,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Chapel Radio Hour is a brand-new show run by student Chaplains' Associates aimed at educating the community about Carleton's active and diverse religious communities. We will discuss upcoming religious holidays and cultural events, interview clergy and other religious leaders, and play music from a variety of religious traditions. \n\nListen live on the KRLX website.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ro5Q",
-			"endTime": "2026-09-30T16:00:00.000Z",
+			"endTime": "2026-09-30T15:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ro5Q"
@@ -8356,7 +8356,7 @@
 			"metadata": {
 				"uid": "1kgr70rnj12043uim2c9ooqqik_20261104T210000Z"
 			},
-			"startTime": "2026-09-30T15:00:00.000Z",
+			"startTime": "2026-09-30T14:00:00.000Z",
 			"title": "Chapel Radio Hour"
 		},
 		{
@@ -8367,7 +8367,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The one-stop weekly shop for faculty and staff to find help with data and digital projects. Get support from data librarians, academic technologists, digital humanities, and QRC staff all in one place.\n\nConnect to Virtual Event:\nhttps://meet.google.com/wxb-jpux-jom\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roW3",
-			"endTime": "2026-09-30T16:30:00.000Z",
+			"endTime": "2026-09-30T15:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://meet.google.com/wxb-jpux-jom",
@@ -8377,7 +8377,7 @@
 			"metadata": {
 				"uid": "l524cfkuik0gcgif597aakes0c_20261104T210000Z"
 			},
-			"startTime": "2026-09-30T15:00:00.000Z",
+			"startTime": "2026-09-30T14:00:00.000Z",
 			"title": "Data/DH Drop-Ins"
 		},
 		{
@@ -8388,7 +8388,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students can drop in for help with math, statistics, data, and graphs in any QRE course. To make an appointment or to see who's working, go to go.carleton.edu/QRC\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roUS",
-			"endTime": "2026-09-30T22:00:00.000Z",
+			"endTime": "2026-09-30T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://go.carleton.edu/QRC",
@@ -8398,7 +8398,7 @@
 			"metadata": {
 				"uid": "gmnm0o160ok6onorumja1oafng_20261104T220000Z"
 			},
-			"startTime": "2026-09-30T16:00:00.000Z",
+			"startTime": "2026-09-30T15:00:00.000Z",
 			"title": "QRC drop-in tutoring"
 		},
 		{
@@ -8409,7 +8409,7 @@
 			},
 			"dataSource": "ical",
 			"description": "TRIO Student? TRIO House Study Sessions in partnership with the QRC and MSSC! Come with questions for the tutor or to study with other TRIO students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVh",
-			"endTime": "2026-09-30T17:00:00.000Z",
+			"endTime": "2026-09-30T16:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVh"
@@ -8418,7 +8418,7 @@
 			"metadata": {
 				"uid": "hhf7rs1rkiaevqjooartmmr7ts_20261104T220000Z"
 			},
-			"startTime": "2026-09-30T16:00:00.000Z",
+			"startTime": "2026-09-30T15:00:00.000Z",
 			"title": "TRIO House Study Sessions"
 		},
 		{
@@ -8429,7 +8429,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Across these two remarkably different novels, Díaz returns to some of the foundational myths of American culture—the frontier, the self-made individual, money, power, and the creation of enormous wealth—while radically reinventing the literary forms through which those myths have traditionally been told. In the Distance reimagines the Western from the perspective of a lost immigrant moving against the great westward migration; Trust takes apart the novel of wealth and finance by telling the same story through four competing narratives. In both, Díaz inhabits recognizable American genres only to estrange them from within, asking who gets to tell the stories through which America imagines itself.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uuoV",
-			"endTime": "2026-09-30T18:00:00.000Z",
+			"endTime": "2026-09-30T17:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uuoV"
@@ -8438,7 +8438,7 @@
 			"metadata": {
 				"uid": "ove3pmbgfed6crbn0cmbm7b5o4"
 			},
-			"startTime": "2026-09-30T17:00:00.000Z",
+			"startTime": "2026-09-30T16:00:00.000Z",
 			"title": "A Conversation with Hernán Díaz, Winner of the 2023 Pulitzer Prize for Fiction: His Work and His Place in American Literature"
 		},
 		{
@@ -8449,7 +8449,7 @@
 			},
 			"dataSource": "ical",
 			"description": "As two countries with sizable Black populations but very different histories, Colombia and Brazil offer a fascinating contrast for understanding blackness in Latin America.  Historically, Colombia largely denied its black population’s importance to its national identity, yet Afro-Colombian culture has thrived and influenced the larger culture in multiple ways.  In contrast, Brazil declared itself a multiracial nation as early as the 1930s–but this did not lead to the racial democracy that was officially declared by the government.   Both countries have gone through significant political and social changes in the past three decades that have impacted and shaped Afrodescendant communities and identities.  In this program, we explore contemporary Afro-Brazilian and Afro-Colombian identities, cultures, and communities with a particular focus on regional differences and social change and movements. As a two-country program that takes place in four cities, this program offers multiple opportunities for intellectually rich comparisons and reflections on transnational blackness, national and regional identities, and culture and power in Latin America.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uumC",
-			"endTime": "2026-09-30T17:00:00.000Z",
+			"endTime": "2026-09-30T16:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uumC"
@@ -8458,7 +8458,7 @@
 			"metadata": {
 				"uid": "c698sbksll761b8622rg1e7vgg"
 			},
-			"startTime": "2026-09-30T17:00:00.000Z",
+			"startTime": "2026-09-30T16:00:00.000Z",
 			"title": "Afro-descendant Identities in Colombia &amp; Brazil"
 		},
 		{
@@ -8469,7 +8469,7 @@
 			},
 			"dataSource": "ical",
 			"description": "View this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uum6",
-			"endTime": "2026-09-30T19:30:00.000Z",
+			"endTime": "2026-09-30T18:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uum6"
@@ -8478,7 +8478,7 @@
 			"metadata": {
 				"uid": "4o38str5ct7qf1b3tspdfmfnt4"
 			},
-			"startTime": "2026-09-30T18:00:00.000Z",
+			"startTime": "2026-09-30T17:00:00.000Z",
 			"title": "First-Gen Student, Staff, &amp; Faculty Dinner"
 		},
 		{
@@ -8489,7 +8489,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Elections can be times of intense emotions. Often, we are anxious beforehand, and depending on the outcome, may feel a deep sense of relief, joy, despair, or even fear. Join us the evening following election day to come together to process whatever has happened or is happening: to share how you are feeling, to listen to the reflections of others, to contemplate what comes next, and be in community together. All are welcome.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut09",
-			"endTime": "2026-09-30T20:00:00.000Z",
+			"endTime": "2026-09-30T19:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut09"
@@ -8498,7 +8498,7 @@
 			"metadata": {
 				"uid": "ph2187p2v63qk7n0bult4cuh7o"
 			},
-			"startTime": "2026-09-30T19:00:00.000Z",
+			"startTime": "2026-09-30T18:00:00.000Z",
 			"title": "Election Results Processing Space"
 		},
 		{
@@ -8509,7 +8509,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Drop by German Study Time to get help with German coursework from German Language Associate, Lina!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roYv",
-			"endTime": "2026-09-30T20:30:00.000Z",
+			"endTime": "2026-09-30T19:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roYv"
@@ -8518,7 +8518,7 @@
 			"metadata": {
 				"uid": "v81mrje6qhn03rdvcs5g9b82lg_20261105T010000Z"
 			},
-			"startTime": "2026-09-30T19:00:00.000Z",
+			"startTime": "2026-09-30T18:00:00.000Z",
 			"title": "German Study Time"
 		},
 		{
@@ -8529,7 +8529,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us for our weekly contemplative Christian vespers service with music, readings & meditative silence. Holy Communion is offered on \neven numbered weeks of Fall Term. The service is led in the style of the Taizé community and has been offered at Carleton for over 30 years. \n\nTaizé Evensong is led by Chaplains' Associates, and other students. Hot chocolate & tea are served after the service. Please don't hesitate to be in touch with any questions or to get involved. All are welcome - we hope to see you soon!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roPv",
-			"endTime": "2026-09-30T21:00:00.000Z",
+			"endTime": "2026-09-30T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roPv"
@@ -8538,7 +8538,7 @@
 			"metadata": {
 				"uid": "j0kcvegiuknjec6qa1kmkt5his_20261105T023000Z"
 			},
-			"startTime": "2026-09-30T20:30:00.000Z",
+			"startTime": "2026-09-30T19:30:00.000Z",
 			"title": "Taizé Evensong: Contemplative Christian Song &amp; Prayer"
 		},
 		{
@@ -8549,7 +8549,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Men's Soccer vs MIAC Playoffs - Semifinals (if necessary)\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-02T00:00:00.000Z",
+			"endTime": "2026-10-01T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -8558,7 +8558,7 @@
 			"metadata": {
 				"uid": "vcal_10876-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-01T00:00:00.000Z",
+			"startTime": "2026-09-30T23:00:00.000Z",
 			"title": "Carleton College Men's Soccer vs MIAC Playoffs - Semifinals (if necessary)"
 		},
 		{
@@ -8569,7 +8569,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Women's Soccer vs MIAC Playoffs - Semifinals (if necessary)\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-02T00:00:00.000Z",
+			"endTime": "2026-10-01T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -8578,7 +8578,7 @@
 			"metadata": {
 				"uid": "vcal_10775-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-01T00:00:00.000Z",
+			"startTime": "2026-09-30T23:00:00.000Z",
 			"title": "Carleton College Women's Soccer vs MIAC Playoffs - Semifinals (if necessary)"
 		},
 		{
@@ -8589,7 +8589,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us as we continue a weekly practice of meditation at Carleton, intended specifically for staff and faculty! We hope you will join us each Thursday from 8:45-9:15am in the sanctuary of Skinner Memorial Chapel. \n\nKnow that all current and former employees of the college are welcome and that there are no expectations beyond just being present when your schedule allows. All meditation skill levels are welcome. \n\nA joint collaboration between the Office of the Chaplain and the Office of Health Promotion, sessions are facilitated by experienced mindfulness practitioners with the option of learning to facilitate oneself. It is a chance to embed meditation and mindfulness more fully into our collective daily life, offering an opportunity to find grounding amongst each other as colleagues and human beings. \n\nShould you have any questions, don't hesitate to be in touch with Schuyler Vogel or Patrick Gordon. We hope to see you Thursday!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ro4Z",
-			"endTime": "2026-10-01T09:15:00.000Z",
+			"endTime": "2026-10-01T08:15:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ro4Z"
@@ -8598,7 +8598,7 @@
 			"metadata": {
 				"uid": "e612bakn7huu7vlb38gp0tek50_20261105T144500Z"
 			},
-			"startTime": "2026-10-01T08:45:00.000Z",
+			"startTime": "2026-10-01T07:45:00.000Z",
 			"title": "Staff &amp; Faculty Meditation"
 		},
 		{
@@ -8609,7 +8609,7 @@
 			},
 			"dataSource": "ical",
 			"description": "TRIO Student? TRIO House Study Sessions in partnership with the QRC and MSSC! Come with questions for the tutor or to study with other TRIO students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVz",
-			"endTime": "2026-10-01T12:00:00.000Z",
+			"endTime": "2026-10-01T11:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVz"
@@ -8618,7 +8618,7 @@
 			"metadata": {
 				"uid": "ckd1jlpuqb47rq42rpcphq4oto_20261105T160000Z"
 			},
-			"startTime": "2026-10-01T10:00:00.000Z",
+			"startTime": "2026-10-01T09:00:00.000Z",
 			"title": "TRIO House Study Sessions"
 		},
 		{
@@ -8629,7 +8629,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Please come by the Title IX Office to say hi to Nathan Riel-Elness, the Title IX Coordinator, ask questions, or just see the office suite.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rore",
-			"endTime": "2026-10-01T12:00:00.000Z",
+			"endTime": "2026-10-01T11:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/rore"
@@ -8638,7 +8638,7 @@
 			"metadata": {
 				"uid": "39b80cni6t5srnk2vp8itg3vsc_20261105T170000Z"
 			},
-			"startTime": "2026-10-01T11:00:00.000Z",
+			"startTime": "2026-10-01T10:00:00.000Z",
 			"title": "Title IX Open Office Hours"
 		},
 		{
@@ -8649,7 +8649,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us for games, food, and good conversation with other BIPOC students!\n\nLunch is provided, and registration is not required.\n\nThe BIPOC Mental Health Collective (BIPOC MHC) at Carleton College provides a community for Black Indigenous and People of Color students to engage in restorative practices that support their mental health and well-being. The BIPOC MHC is led by staff from Student Health and Counseling and the Office of Intercultural Life. Contact Lucy Baquero Oja to be added to our Google group.\n\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut7N",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut7N"
@@ -8658,7 +8658,7 @@
 			"metadata": {
 				"uid": "u1sktq7lf34m25bf9kobepoq0k"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "BIPOC Mental Health Collective (BIPOC MHC)"
 		},
 		{
@@ -8669,7 +8669,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Zhiming Zhao ’05, Marcus Lee ’99, Dave Gold ’03, and Jeff Holschuh ’05, will be sharing their career paths through our CarlsChat program.\n\nThis is a great way to explore and network with alumni in career paths that you may have interest in.\n\nEvent Details:\nhttps://carleton.joinhandshake.com/edu/events/2031206\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uuno",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.joinhandshake.com/edu/events/2031206",
@@ -8679,7 +8679,7 @@
 			"metadata": {
 				"uid": "g4b9lgni2ko4dfdva9o8a28r1c"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "CarlsChat with Cybersecurity Group"
 		},
 		{
@@ -8690,7 +8690,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Talk (in English) to professors, majors, potential majors, and people just interested in Classical Studies.\n \tTopics of interest include:\n\n \tWeather\n \tMovies about classics (i.e. 300, Troy, Gladiator)\n \tHow to deal with stress at Carleton\n \tAnything else that may strike your interest\n\n\n \tStudents: If you’re not on a meal plan, any of the Classics faculty can swipe you in.\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rovk",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/rovk"
@@ -8699,7 +8699,7 @@
 			"metadata": {
 				"uid": "i9cgviiho0joehj9v5qpq5hals_20261105T180000Z"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "Classics Table in LDC East Dining Hall"
 		},
 		{
@@ -8710,7 +8710,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students, staff, and faculty are welcome to bring their own project, work on a Pause & Play community project, or simply take a break from the busy week! Come and stay for as long as you'd like, and interact with campus members from all over.\n\nThis event will occur every Thursday during common hour (noon-1pm) while classes are in session during the Fall term. For more information, please contact Katie Lewis (klewis).\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roV7",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roV7"
@@ -8719,7 +8719,7 @@
 			"metadata": {
 				"uid": "j9atgndmqklj7v7aqvf2vksnnc_20261105T180000Z"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "Craft Circle @ The Libe"
 		},
 		{
@@ -8730,7 +8730,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Practice your French at the French lunch table while having lunch in the LDC!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rmna",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/rmna"
@@ -8739,7 +8739,7 @@
 			"metadata": {
 				"uid": "5240rdel36acn227492qkj05uk_20261105T180000Z"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "French Lunch Table"
 		},
 		{
@@ -8750,7 +8750,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Chat in German or Denglisch with professors, students and friends.\n\n\n\n \n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roRY",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roRY"
@@ -8759,7 +8759,7 @@
 			"metadata": {
 				"uid": "419kkkb4kme7j2ehj9upbd0sso_20261105T180000Z"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "German Lunch Table"
 		},
 		{
@@ -8770,7 +8770,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Let’s enjoy eating and talking in Japanese. Don’t worry if you are not fluent in Japanese. We can talk about Japanese culture in English. You're more than welcome to bring your friends or come on your own!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roQx",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roQx"
@@ -8779,7 +8779,7 @@
 			"metadata": {
 				"uid": "ha1nk9u86r03q4jc20prlbfcqo_20261105T180000Z"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "Japanese Lunch Table in the LDC Dining Hall"
 		},
 		{
@@ -8790,7 +8790,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Mesa de español - Join us at Mesa de español (Spanish Language Table) every Tuesday and Thursday during Common Time at LDC Dining Hall. The Spanish Table is for anyone who wants to meet people,  talk in Spanish and practice it. Our Language Associate (LA) leads this informal meeting. Come and join us. You are welcome!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roSl",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roSl"
@@ -8799,7 +8799,7 @@
 			"metadata": {
 				"uid": "938gsirvmnnn5m9n8jdp4il3q4_20261105T180000Z"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "Mesa de español"
 		},
 		{
@@ -8810,7 +8810,7 @@
 			},
 			"dataSource": "ical",
 			"description": "A weekly gathering for chemistry majors and enthusiasts. Join us Thursdays at 12:00 PM for informal discussions and camaraderie.\n\nIf you are off board, the department will cover your lunch. Go to the Schulze Cafe in the Daugherty Atrium and ask for the chemistry charge. Any questions, contact Danielle Morisette\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roWr",
-			"endTime": "2026-10-01T13:00:00.000Z",
+			"endTime": "2026-10-01T12:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roWr"
@@ -8819,7 +8819,7 @@
 			"metadata": {
 				"uid": "a8sr7enls1ljq87gn7am9jot98_20261105T180000Z"
 			},
-			"startTime": "2026-10-01T12:00:00.000Z",
+			"startTime": "2026-10-01T11:00:00.000Z",
 			"title": "Periodic Table"
 		},
 		{
@@ -8830,7 +8830,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us for a BLT with Eric Hillemann, Librarian and Senior Associate in Archives! We will meet in the exhibit space outside The Writing Center to learn about the history of the Cowling Arboretum. Eric will talk about the materials on view, which range from the Arb's nineteenth-century roots through subsequent growth and evolution as we celebrate the 100th year of the Arb.\n\n \n\nLearn more about Cowling Arboretum and centennial events.\n\nEvent Details:\nhttps://www.carleton.edu/library/exhibitions/news/coming-soon-100-years-of-the-arb/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uubw",
-			"endTime": "2026-10-01T12:45:00.000Z",
+			"endTime": "2026-10-01T11:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/library/exhibitions/news/coming-soon-100-years-of-the-arb",
@@ -8840,7 +8840,7 @@
 			"metadata": {
 				"uid": "a8knog68lfpf827soaovkrjq5s"
 			},
-			"startTime": "2026-10-01T12:05:00.000Z",
+			"startTime": "2026-10-01T11:05:00.000Z",
 			"title": "100 Years of the Arb: a Bite-sized Lunchtime Talk (BLT) with Eric Hillemann"
 		},
 		{
@@ -8851,7 +8851,7 @@
 			},
 			"dataSource": "ical",
 			"description": "TRIO Student? TRIO House Study Sessions in partnership with the QRC and MSSC! Come with questions for the tutor or to study with other TRIO students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVR",
-			"endTime": "2026-10-01T15:00:00.000Z",
+			"endTime": "2026-10-01T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVR"
@@ -8860,7 +8860,7 @@
 			"metadata": {
 				"uid": "ekqptk0epirv487e4971kvg1d4_20261105T190000Z"
 			},
-			"startTime": "2026-10-01T13:00:00.000Z",
+			"startTime": "2026-10-01T12:00:00.000Z",
 			"title": "TRIO House Study Sessions"
 		},
 		{
@@ -8871,7 +8871,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us for questions connected to instructional technologies.\nMondays and Thursdays, 2-4 pm.\nAT Drop-in\n\nIf these times do not work for you, check out our individual AT appointment schedules on our AT Availability page.\n\nOther Academic Technologists are also available for consultations.\n\nConnect to Virtual Event:\nhttps://meet.google.com/yof-zkpr-cpr?authuser=0\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rohl",
-			"endTime": "2026-10-01T16:00:00.000Z",
+			"endTime": "2026-10-01T15:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://meet.google.com/yof-zkpr-cpr?authuser=0",
@@ -8881,7 +8881,7 @@
 			"metadata": {
 				"uid": "i4umlvsli3of279qsqll1leq9k_20261105T200000Z"
 			},
-			"startTime": "2026-10-01T14:00:00.000Z",
+			"startTime": "2026-10-01T13:00:00.000Z",
 			"title": "AT Drop-in Hours"
 		},
 		{
@@ -8892,7 +8892,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The region in which Carleton is located has been regarded by Dakota as homelands for time immemorial. Join Indigenous Communities Liaison, Marcy Averill, to explore how we can move beyond acknowledgement of our position within these lands into allyship and partnership. In this workshop, we will challenge ourselves to consider ethical and reciprocal engagement practices and partnerships as defined by Dakota leaders. Historical context will be examined, mapped to current challenges, and connected to expanding initiatives in Indigenous Engagement at Carleton.\n\nThis event forms part of IDE Community Education.\n\nRegister on Workday\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut8S",
-			"endTime": "2026-10-01T16:00:00.000Z",
+			"endTime": "2026-10-01T15:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut8S"
@@ -8901,7 +8901,7 @@
 			"metadata": {
 				"uid": "nqucd8t8l6rkrh4dgn65f3ah58"
 			},
-			"startTime": "2026-10-01T14:00:00.000Z",
+			"startTime": "2026-10-01T13:00:00.000Z",
 			"title": "Indigenous Engagement: Our Presence on Dakota Land"
 		},
 		{
@@ -8912,7 +8912,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Critical AI Literacy Certificate for Employees offers one-hour session during the academic term.  Some of the sessions are required to earn the certificate, others are elective sessions.  For a full list of this term's offerings and to register your interest, please visit the website.\n\nEvent Details:\nhttps://www.carleton.edu/ai/support-resources/critical-ai-literacy-certificate-for-employees/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut36",
-			"endTime": "2026-10-01T16:30:00.000Z",
+			"endTime": "2026-10-01T15:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/ai/support-resources/critical-ai-literacy-certificate-for-employees",
@@ -8922,7 +8922,7 @@
 			"metadata": {
 				"uid": "rc2fggti2rq4f495ob8ag52u1g"
 			},
-			"startTime": "2026-10-01T15:30:00.000Z",
+			"startTime": "2026-10-01T14:30:00.000Z",
 			"title": "Critical AI Literacy Certificate:  AI, Sustainability, Environmental concerns (elective)"
 		},
 		{
@@ -8933,7 +8933,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students can drop in for help with math, statistics, data, and graphs in any QRE course. To make an appointment or to see who's working, go to go.carleton.edu/QRC\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roUT",
-			"endTime": "2026-10-01T22:00:00.000Z",
+			"endTime": "2026-10-01T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://go.carleton.edu/QRC",
@@ -8943,7 +8943,7 @@
 			"metadata": {
 				"uid": "gmnm0o160ok6onorumja1oafng_20261105T220000Z"
 			},
-			"startTime": "2026-10-01T16:00:00.000Z",
+			"startTime": "2026-10-01T15:00:00.000Z",
 			"title": "QRC drop-in tutoring"
 		},
 		{
@@ -8954,7 +8954,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Hernán Díaz, one of the most distinctive voices in contemporary American fiction, will visit Carleton on November 4–5 as the special guest of the Light Lectureship.\nIn anticipation of his visit, we invite faculty and staff to join a reading group devoted to his Pulitzer Prize-winning novel Trust, culminating in a conversation with Diaz himself.\nDíaz’s first novel, In the Distance, was a finalist for the Pulitzer Prize; his second, Trust, won the 2023 Pulitzer Prize for Fiction.\nAcross these two remarkably different novels, Díaz returns to some of the foundational myths of American culture — the frontier, the self-made individual, money, power, and the creation of enormous wealth — while radically reinventing the literary forms through which those myths have traditionally been told. In the Distance reimagines the western from the perspective of a lost immigrant moving against the great westward migration; Trust takes apart the novel of wealth and finance by telling the same story through four competing narratives. In both, Diaz inhabits recognizable American genres only to estrange them from within, asking who gets to tell the stories through which America imagines itself.\nThe reading group will meet once to discuss Trust (date/time TBD). On November 4, Díaz will give a talk about his fiction and how he situates his work within American literature. On November 5, members of the group will have the opportunity to discuss Trust with Díaz himself — a rare chance to continue our reading in conversation with the author.\nThe reading group is sponsored by the Department of Spanish in collaboration with the Humanities Center. Copies of Trust will be available for all participants interested in joining the group. If you would like to participate and receive a copy of the novel, please contact Jorge Brioso (person@example.com) and Dan Groll (person@example.com) by September 30.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uub8",
-			"endTime": "2026-10-01T17:00:00.000Z",
+			"endTime": "2026-10-01T16:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://carleton.edu",
@@ -8964,7 +8964,7 @@
 			"metadata": {
 				"uid": "u38e88i3lb3l5tldgcnvgodjks"
 			},
-			"startTime": "2026-10-01T16:00:00.000Z",
+			"startTime": "2026-10-01T15:00:00.000Z",
 			"title": "Reading *Trust* with Hernán Díaz"
 		},
 		{
@@ -8975,7 +8975,7 @@
 			},
 			"dataSource": "ical",
 			"description": "In this session, you will learn how to effectively tell your research story and start writing your professional CV that can be used for future research opportunities and/or graduate school.\n\nIn this workshop you will learn how to analyze a CV’s effectiveness, draft a Research Experience entry to add to your CV, and equip you with tools to use to effectively solicit strong letters of recommendation.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut33",
-			"endTime": "2026-10-01T18:00:00.000Z",
+			"endTime": "2026-10-01T17:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut33"
@@ -8984,7 +8984,7 @@
 			"metadata": {
 				"uid": "99fmbihsg1ismgl5jandnortvg"
 			},
-			"startTime": "2026-10-01T17:00:00.000Z",
+			"startTime": "2026-10-01T16:00:00.000Z",
 			"title": "Crafting Your Academic Story: CVs and Letters of Recommendation"
 		},
 		{
@@ -8995,7 +8995,7 @@
 			},
 			"dataSource": "ical",
 			"description": "No matter your major or career path, this workshop delivers real-world money skills you'll actually use.\n\nJoin Andrew Harvey ’15, CPWA®, AIF®, CPFA™, for a one-hour session on finance, including investing money, saving and budgeting, buying a home, managing credit and debt, taxes, and what a career in financial advising looks like.\n\nCome with your workbook and lots of questions. Andrew is here to answer your questions.\n\nProfessional Background\nAndrew Harvey serves as the Chief Operating Officer and a Financial Advisor at Opus 111 Group. Leading the Retirement Plan Consulting division, Andrew collaborates with companies to sponsor retirement plans for their employees. He founded Opus’ SYFI Program for young professionals and is passionate about helping people approach their financial future with intention and confidence. Andrew holds the Certified Plan Fiduciary Advisor (CPFA™) designation from the National Association of Plan Advisors (NAPA).\n\nEducational Background\nAndrew graduated magna cum laude and Phi Beta Kappa from Carleton College with a double major in Ancient & Medieval History and Theater Arts.\n\nPersonal and Civic Background\nOutside of Opus, Andrew spent over a decade as a sports broadcaster, calling soccer games at every level of the American soccer pyramid, including Major League Soccer for Seattle Sounders FC. He also served as the primary play-by-play voice for USL League 2 side Ballard FC, the MASL’s Tacoma Stars, and the Seattle University Redhawks. In 2024, Andrew joined the Board of Trustees for the Seattle Children’s Theatre, where he continues to foster his passion for theater and the performing arts. In his spare time, Andrew plays hurling and Gaelic football for USGAA side Tacoma Rangers. He lives in Kent, Washington, with his wife Lauren, and their two cats, Bella and Leeloo.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uuof",
-			"endTime": "2026-10-01T19:00:00.000Z",
+			"endTime": "2026-10-01T18:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uuof"
@@ -9004,7 +9004,7 @@
 			"metadata": {
 				"uid": "sgacbkn4aq9j5kb0lt4djmlm50"
 			},
-			"startTime": "2026-10-01T18:00:00.000Z",
+			"startTime": "2026-10-01T17:00:00.000Z",
 			"title": "Money 101: What You Should Know about Finance and Investing"
 		},
 		{
@@ -9015,7 +9015,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Carleton Jazz Ensemble presents their fall concert!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uua0",
-			"endTime": "2026-10-01T20:30:00.000Z",
+			"endTime": "2026-10-01T19:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uua0"
@@ -9024,7 +9024,7 @@
 			"metadata": {
 				"uid": "dq6ubr8n3butv01lfq6hlurjtg"
 			},
-			"startTime": "2026-10-01T19:00:00.000Z",
+			"startTime": "2026-10-01T18:00:00.000Z",
 			"title": "Jazz Area Concert"
 		},
 		{
@@ -9035,7 +9035,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Twice weekly meditation open to all. Gently guided meditations on Monday afternoons. Silent meditations on Friday mornings. Drop in as you are able or make it part of your weekly routine! Led by students; no experience necessary.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roWB",
-			"endTime": "2026-10-02T07:45:00.000Z",
+			"endTime": "2026-10-02T06:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roWB"
@@ -9044,7 +9044,7 @@
 			"metadata": {
 				"uid": "hpm2hjj681kvagbne69o06t8ng_20261106T130000Z"
 			},
-			"startTime": "2026-10-02T07:00:00.000Z",
+			"startTime": "2026-10-02T06:00:00.000Z",
 			"title": "Time to Meditate - Friday Morning"
 		},
 		{
@@ -9055,7 +9055,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Enjoy free coffee & donuts while visiting with the Center for Community and Civic Engagement staff and Fellows. Spend time with other students, faculty, and staff from all over campus.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uuiR",
-			"endTime": "2026-10-02T11:00:00.000Z",
+			"endTime": "2026-10-02T10:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uuiR"
@@ -9064,7 +9064,7 @@
 			"metadata": {
 				"uid": "ev4a9usjbc8j0kft0kn49nmch4"
 			},
-			"startTime": "2026-10-02T10:00:00.000Z",
+			"startTime": "2026-10-02T09:00:00.000Z",
 			"title": "Coffee &amp; Donuts"
 		},
 		{
@@ -9075,7 +9075,7 @@
 			},
 			"dataSource": "ical",
 			"description": "A Native American activist, Harvard-educated economist and author, Winona LaDuke has devoted her life to advocating for indigenous people’s rights; environmental justice; women's and children's rights; rural development, economic, food, and energy sovereignty.\n\nThe Convocation presentation is called Creating a Multicultural Democracy - Religion, Culture, and Identity in America! \n\nIn 1985, LaDuke co-founded and co-chaired the Indigenous Women’s Network (IWN), a coalition dedicated to empowering women to take active roles in tribal politics and culture. In 1989, she founded the White Earth Land Recovery Project (WELRP), a reservation-based land acquisition, environmental advocacy, and cultural organization and one of the largest reservation-based nonprofits in the country. She is a former board member of Greenpeace USA. In 1993, she collaborated with the Indigo Girls to co-found Honor the Earth, an advocacy group working on behalf of Native environmental groups.\n\nIn 1994, LaDuke was nominated by Time Magazine as one of America’s 50 most promising leaders under the age of 40. She was awarded The Thomas Merton Award in 1996, The Biha Community Service Award in n 1997, The Ann Bancroft Award for Women’s Leadership Fellowship, and The Reebok Human Rights Award (which she used to begin the White Earth Land Recovery Project). LaDuke was a two-time Green Party running mate for Ralph Nader in 1996 and 2000, and she is an international thought leader and lecturer in climate justice, renewable energy and environmental justice, plus an advocate for protecting Indigenous plants and heritage foods from patenting and genetic engineering.\n\nIn 1998, Ms. Magazine named her one of their Women of the Year. In 2021, LaDuke was named to the first Forbes list of “50 Over 50 Women of Impact” in partnership with Mika Brzezinski’s “Know Your Value,” a program dedicated to shining a light on women over the age of 50 who have achieved significant success later in life, often overcoming formidable odds or barriers. She was a leader at the 2016 Dakota Access Pipeline protests that sought to protect water access and sacred Indigenous lands in North Dakota, and her work inspired the 2017 documentary First Daughter and the Black Snake. In 2017, LaDuke also won the University of California’s Alice and Clifford Spendlove Prize in Social Justice, Diplomacy and Tolerance.\n\nLaDuke has published six acclaimed nonfiction titles, including: The Militarization of Indian Country; Recovering the Sacred: The Power of Naming and Claiming; All Our Relations: Native Struggles for Land and Life; The Winona LaDuke Chronicles: Stories from the Front Lines in the Battle for Environmental Justice; The Winona LaDuke Reader: A Collection of Essential Writings; and most recently, To Be a Water Protector: Rise of the Wiindigoo Slayers—a book that deals with her activism battling Line 3, an Enbridge tar sands oil pipeline in northern Minnesota. She is also the author of one novel, Last Standing Woman.\n\nToday, Winona LaDuke lives and works on the White Earth reservation in northern Minnesota, and she is active with multiple organizations, including the Anishinaabe Agriculture Institute, Akiing. Her latest effort is Winona’s Hemp and Heritage, a farm and nonprofit agency whose mission is to create an Indigenous women-led economy that is kind to the Earth.\n\nThis convocation is also presented as a virtual webinar. Please register in advance if you would like to attend via Zoom. After registering, you will receive a confirmation email containing information about joining the webinar.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut5R",
-			"endTime": "2026-10-02T11:50:00.000Z",
+			"endTime": "2026-10-02T10:50:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut5R"
@@ -9084,7 +9084,7 @@
 			"metadata": {
 				"uid": "se7m5u85lf5qfqcdtpfb9lctb8"
 			},
-			"startTime": "2026-10-02T10:50:00.000Z",
+			"startTime": "2026-10-02T09:50:00.000Z",
 			"title": "Convocation with Winona LaDuke"
 		},
 		{
@@ -9095,7 +9095,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Event Details:\nhttps://carleton.joinhandshake.com/edu/events/2033596/schedule?page=1&per_page=25\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uunp",
-			"endTime": "2026-10-02T15:00:00.000Z",
+			"endTime": "2026-10-02T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.joinhandshake.com/edu/events/2033596/schedule?page=1&per_page=25",
@@ -9105,7 +9105,7 @@
 			"metadata": {
 				"uid": "q6alm445hvffraeq6350peg5fo"
 			},
-			"startTime": "2026-10-02T13:00:00.000Z",
+			"startTime": "2026-10-02T12:00:00.000Z",
 			"title": "CarlsChat with Aaron Mann ’98, Chief Executive Officer, Windgap Medical, Inc."
 		},
 		{
@@ -9116,7 +9116,7 @@
 			},
 			"dataSource": "ical",
 			"description": "A full khutbah (sermon) is delivered followed immediately by prayer.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rou0",
-			"endTime": "2026-10-02T13:40:00.000Z",
+			"endTime": "2026-10-02T12:40:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/rou0"
@@ -9125,7 +9125,7 @@
 			"metadata": {
 				"uid": "h7t3np2cflhnheevp60cg5j4s8_20261106T191000Z"
 			},
-			"startTime": "2026-10-02T13:10:00.000Z",
+			"startTime": "2026-10-02T12:10:00.000Z",
 			"title": "Jummah (Friday) Prayers"
 		},
 		{
@@ -9136,7 +9136,7 @@
 			},
 			"dataSource": "ical",
 			"description": "View this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uugW",
-			"endTime": "2026-10-02T16:30:00.000Z",
+			"endTime": "2026-10-02T15:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uugW"
@@ -9145,7 +9145,7 @@
 			"metadata": {
 				"uid": "ev2ksc5trra24832uret8mpjbg"
 			},
-			"startTime": "2026-10-02T15:00:00.000Z",
+			"startTime": "2026-10-02T14:00:00.000Z",
 			"title": "Tea Time: Watch &amp; Swig w/ SLOMW"
 		},
 		{
@@ -9156,7 +9156,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Field Notes presents new work by Carleton studio art faculty in response to the Carleton College Cowling Arboretum’s landscapes, histories, and ecological significance. It marks the 100th anniversary of the Arboretum, an 800-acre living laboratory of prairie, forest, and river habitats that has shaped teaching, research, and life on campus since the 1920s.\n\nThe accompanying events program will include talks by participating studio art faculty, offering insight into their creative processes.\n\nAt the end of each faculty artist talk, one lucky attendee will be raffled a Field Notes Expedition waterproof notebook, a perfect accompaniment to your adventures in the Arb and beyond!\n\nToday's featured speakers: Kelly Connole, Jade Hoyer and David Lefkowitz\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uujo",
-			"endTime": "2026-10-02T17:30:00.000Z",
+			"endTime": "2026-10-02T16:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uujo"
@@ -9165,7 +9165,7 @@
 			"metadata": {
 				"uid": "ujefetplmer36en1g0jslkgi6o"
 			},
-			"startTime": "2026-10-02T16:00:00.000Z",
+			"startTime": "2026-10-02T15:00:00.000Z",
 			"title": "Field Notes Artist Talk #3"
 		},
 		{
@@ -9176,7 +9176,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Event Details:\nhttps://apps.carleton.edu/campus/registrar/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/usUE",
-			"endTime": "2026-10-02T17:00:00.000Z",
+			"endTime": "2026-10-02T16:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://apps.carleton.edu/campus/registrar",
@@ -9186,7 +9186,7 @@
 			"metadata": {
 				"uid": "jqnltgou0cvbvn4tq7kt0ii3qk"
 			},
-			"startTime": "2026-10-02T17:00:00.000Z",
+			"startTime": "2026-10-02T16:00:00.000Z",
 			"title": "Second Five Week Course Late Drop Deadline and S/CR/NC Deadline"
 		},
 		{
@@ -9197,7 +9197,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Open gatherings for Muslims and anyone interested in Islam on topics of Muslim identity and practice, current events, and religious and spiritual learning rooted in Islamic texts.\n\nMeets weeks 1,4,7,8 during fall term.\n\nDinner provided.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uudL",
-			"endTime": "2026-10-02T19:00:00.000Z",
+			"endTime": "2026-10-02T18:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uudL"
@@ -9206,7 +9206,7 @@
 			"metadata": {
 				"uid": "nlkkr4ivl9qj1op8gi4c1hl744"
 			},
-			"startTime": "2026-10-02T18:00:00.000Z",
+			"startTime": "2026-10-02T17:00:00.000Z",
 			"title": "Community Halaqah"
 		},
 		{
@@ -9217,7 +9217,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Services followed by dinner around 7pm. Led by Rav Michaela Brown or students.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roQb",
-			"endTime": "2026-10-02T20:15:00.000Z",
+			"endTime": "2026-10-02T19:15:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roQb"
@@ -9226,7 +9226,7 @@
 			"metadata": {
 				"uid": "5jfrhk2tv07u5oqqnoifue6loo_20261107T001500Z"
 			},
-			"startTime": "2026-10-02T18:15:00.000Z",
+			"startTime": "2026-10-02T17:15:00.000Z",
 			"title": "Shabbat Services &amp; Dinner"
 		},
 		{
@@ -9237,7 +9237,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Men's Basketball vs Wartburg College\nStreaming Video: https://www.miacsportsnetwork.com/carleton/?B=4111991\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-02T21:00:00.000Z",
+			"endTime": "2026-10-02T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://miacsportsnetwork.com/carleton?B=4111991",
@@ -9247,7 +9247,7 @@
 			"metadata": {
 				"uid": "vcal_10894-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-02T19:00:00.000Z",
+			"startTime": "2026-10-02T18:00:00.000Z",
 			"title": "Carleton College Men's Basketball vs Wartburg College"
 		},
 		{
@@ -9258,7 +9258,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Women's Basketball at Wartburg College\nStreaming Video: https://rollriversnetwork.com/wartburg/?B=4198090\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-02T21:00:00.000Z",
+			"endTime": "2026-10-02T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://rollriversnetwork.com/wartburg?B=4198090",
@@ -9268,7 +9268,7 @@
 			"metadata": {
 				"uid": "vcal_10919-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-02T19:00:00.000Z",
+			"startTime": "2026-10-02T18:00:00.000Z",
 			"title": "Carleton College Women's Basketball at Wartburg College"
 		},
 		{
@@ -9279,7 +9279,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Theater and Dance Department presents the Fall Dance Concert featuring works by faculty, students, and guest choreographers.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut82",
-			"endTime": "2026-10-02T20:30:00.000Z",
+			"endTime": "2026-10-02T19:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut82"
@@ -9288,7 +9288,7 @@
 			"metadata": {
 				"uid": "qu3vmp5sksat583u1o0r09m8mo"
 			},
-			"startTime": "2026-10-02T19:00:00.000Z",
+			"startTime": "2026-10-02T18:00:00.000Z",
 			"title": "Fall Dance Concert"
 		},
 		{
@@ -9299,7 +9299,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Resident astronomers and astronomy students will be on hand to facilitate viewing of the sky and galactic objects we can see from our location, using historical and modern telescopes.  Be sure to dress for the weather!  Check the Observatory webpage for last-minute cancellations due to weather.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/utYs",
-			"endTime": "2026-10-02T21:00:00.000Z",
+			"endTime": "2026-10-02T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/utYs"
@@ -9308,7 +9308,7 @@
 			"metadata": {
 				"uid": "kco18ll85r1hsr8ititktmhess"
 			},
-			"startTime": "2026-10-02T19:00:00.000Z",
+			"startTime": "2026-10-02T18:00:00.000Z",
 			"title": "Goodsell Observatory Open House"
 		},
 		{
@@ -9319,7 +9319,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, 10 Things I Hate About You. Closed captioning equipment and assistive listening devices are available. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6d",
-			"endTime": "2026-10-02T20:45:00.000Z",
+			"endTime": "2026-10-02T19:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -9329,7 +9329,7 @@
 			"metadata": {
 				"uid": "ad054cqvdmbv0a0uhi7bnit0d0"
 			},
-			"startTime": "2026-10-02T19:00:00.000Z",
+			"startTime": "2026-10-02T18:00:00.000Z",
 			"title": "SUMO Movie: 10 Things I Hate About You"
 		},
 		{
@@ -9340,7 +9340,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Carleton Global Chamber Ensemble and Chinese Music Ensemble present their fall concert!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uujy",
-			"endTime": "2026-10-02T20:30:00.000Z",
+			"endTime": "2026-10-02T19:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uujy"
@@ -9349,7 +9349,7 @@
 			"metadata": {
 				"uid": "sohu8o9mmlovjr2lek30becjfk"
 			},
-			"startTime": "2026-10-02T19:30:00.000Z",
+			"startTime": "2026-10-02T18:30:00.000Z",
 			"title": "Chinese Music Ensemble Concert"
 		},
 		{
@@ -9360,7 +9360,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, (500) Days of Summer. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6f",
-			"endTime": "2026-10-02T23:35:00.000Z",
+			"endTime": "2026-10-02T22:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -9370,7 +9370,7 @@
 			"metadata": {
 				"uid": "f9b79pcer47lnbknqot6qjd598"
 			},
-			"startTime": "2026-10-02T22:00:00.000Z",
+			"startTime": "2026-10-02T21:00:00.000Z",
 			"title": "SUMO Movie: (500) Days of Summer"
 		},
 		{
@@ -9381,7 +9381,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Men's Soccer vs MIAC Playoffs - Finals (if necessary)\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-04T00:00:00.000Z",
+			"endTime": "2026-10-03T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -9390,7 +9390,7 @@
 			"metadata": {
 				"uid": "vcal_10877-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-03T00:00:00.000Z",
+			"startTime": "2026-10-02T23:00:00.000Z",
 			"title": "Carleton College Men's Soccer vs MIAC Playoffs - Finals (if necessary)"
 		},
 		{
@@ -9401,7 +9401,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Women's Soccer vs MIAC Playoffs - Finals (if necessary)\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-04T00:00:00.000Z",
+			"endTime": "2026-10-03T23:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -9410,7 +9410,7 @@
 			"metadata": {
 				"uid": "vcal_10776-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-03T00:00:00.000Z",
+			"startTime": "2026-10-02T23:00:00.000Z",
 			"title": "Carleton College Women's Soccer vs MIAC Playoffs - Finals (if necessary)"
 		},
 		{
@@ -9421,7 +9421,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Men's Swimming and Diving at Macalester College\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-03T14:00:00.000Z",
+			"endTime": "2026-10-03T13:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -9430,7 +9430,7 @@
 			"metadata": {
 				"uid": "vcal_10811-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-03T11:00:00.000Z",
+			"startTime": "2026-10-03T10:00:00.000Z",
 			"title": "Carleton College Men's Swimming and Diving at Macalester College"
 		},
 		{
@@ -9441,7 +9441,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Women's Swimming and Diving at Macalester College\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-03T14:00:00.000Z",
+			"endTime": "2026-10-03T13:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/undefined"
@@ -9450,7 +9450,7 @@
 			"metadata": {
 				"uid": "vcal_10836-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-03T11:00:00.000Z",
+			"startTime": "2026-10-03T10:00:00.000Z",
 			"title": "Carleton College Women's Swimming and Diving at Macalester College"
 		},
 		{
@@ -9461,7 +9461,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Football vs Bethel University\nStreaming Video: https://www.miacsportsnetwork.com/carleton/?B=4349310\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-03T15:00:00.000Z",
+			"endTime": "2026-10-03T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://miacsportsnetwork.com/carleton?B=4349310",
@@ -9471,7 +9471,7 @@
 			"metadata": {
 				"uid": "vcal_10712-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-03T12:00:00.000Z",
+			"startTime": "2026-10-03T11:00:00.000Z",
 			"title": "Carleton College Football vs Bethel University"
 		},
 		{
@@ -9482,7 +9482,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Women's Basketball vs University of Dubuque\nStreaming Video: https://rollriversnetwork.com/wartburg/?B=4198088\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-03T15:00:00.000Z",
+			"endTime": "2026-10-03T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://rollriversnetwork.com/wartburg?B=4198088",
@@ -9492,7 +9492,7 @@
 			"metadata": {
 				"uid": "vcal_10920-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-03T13:00:00.000Z",
+			"startTime": "2026-10-03T12:00:00.000Z",
 			"title": "Carleton College Women's Basketball vs University of Dubuque"
 		},
 		{
@@ -9503,7 +9503,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in preparing and eating religiously and culturally significant foods. Drop in anytime, 1-3pm: Saturdays of weeks 2,4,6,8 in the Multicultural Center\n\nOur goal is to provide new cultural experiences through food. If you have any questions or any suggestions on what we should make next, don’t hesitate to reach out to us.\n\n-Issac, James, Nina, Madeleine\n\nOn September 26th, we will be making apple crisp, a desert with apples and honey emblematic of the Jewish High Holidays season and hope for a sweet new year.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVZ",
-			"endTime": "2026-10-03T15:00:00.000Z",
+			"endTime": "2026-10-03T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVZ"
@@ -9512,7 +9512,7 @@
 			"metadata": {
 				"uid": "j70j2aajo81uml2h1vcvsarlqs_20261107T190000Z"
 			},
-			"startTime": "2026-10-03T13:00:00.000Z",
+			"startTime": "2026-10-03T12:00:00.000Z",
 			"title": "Foods of Faith"
 		},
 		{
@@ -9523,7 +9523,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Reformed Druids of North America meet for community of those interested in Earth-centered spirituality.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roZF",
-			"endTime": "2026-10-03T14:00:00.000Z",
+			"endTime": "2026-10-03T13:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roZF"
@@ -9532,7 +9532,7 @@
 			"metadata": {
 				"uid": "4pokvkqjcd1s7havfs7k8l2ft0_20261107T190000Z"
 			},
-			"startTime": "2026-10-03T13:00:00.000Z",
+			"startTime": "2026-10-03T12:00:00.000Z",
 			"title": "Reformed Druids of North America"
 		},
 		{
@@ -9543,7 +9543,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Diwali is the Hindu festival of lights with its variations also celebrated in other Indian religions. It symbolizes the spiritual victory of light over darkness, good over evil, and knowledge over ignorance.\n\nThis celebration at Carleton will include musical and dance performances followed by a catered dinner.\n\nThis event is co-sponsored by MOSAIC.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uujR",
-			"endTime": "2026-10-03T17:00:00.000Z",
+			"endTime": "2026-10-03T16:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uujR"
@@ -9552,7 +9552,7 @@
 			"metadata": {
 				"uid": "kvsmvihcce8r9si8ihqkv0eeas"
 			},
-			"startTime": "2026-10-03T15:00:00.000Z",
+			"startTime": "2026-10-03T14:00:00.000Z",
 			"title": "Diwali"
 		},
 		{
@@ -9563,7 +9563,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us each Saturday to learn a new mending skill and apply the principles of contemplation and mindfulness to daily life. Led by students, with support from experienced menders in the campus community. Skills you might learn range from sewing to bike repair… and everything in between!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roPI",
-			"endTime": "2026-10-03T16:00:00.000Z",
+			"endTime": "2026-10-03T15:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roPI"
@@ -9572,7 +9572,7 @@
 			"metadata": {
 				"uid": "j5pqthp3lbitmul50sb3p9gotc_20261107T210000Z"
 			},
-			"startTime": "2026-10-03T15:00:00.000Z",
+			"startTime": "2026-10-03T14:00:00.000Z",
 			"title": "Mindful Mending"
 		},
 		{
@@ -9583,7 +9583,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Carleton College Women's Volleyball at College of Saint Benedict\nStreaming Video: https://www.miacsportsnetwork.com/carleton/?B=4135122\n\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/undefined",
-			"endTime": "2026-10-03T21:00:00.000Z",
+			"endTime": "2026-10-03T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://miacsportsnetwork.com/carleton?B=4135122",
@@ -9593,7 +9593,7 @@
 			"metadata": {
 				"uid": "vcal_10802-athletics.carleton.edu"
 			},
-			"startTime": "2026-10-03T19:00:00.000Z",
+			"startTime": "2026-10-03T18:00:00.000Z",
 			"title": "Carleton College Women's Volleyball at College of Saint Benedict"
 		},
 		{
@@ -9604,7 +9604,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Theater and Dance Department presents the Fall Dance Concert featuring works by faculty, students, and guest choreographers.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut8Z",
-			"endTime": "2026-10-03T20:30:00.000Z",
+			"endTime": "2026-10-03T19:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut8Z"
@@ -9613,7 +9613,7 @@
 			"metadata": {
 				"uid": "6pb387japnftjid0aienqenn4k"
 			},
-			"startTime": "2026-10-03T19:00:00.000Z",
+			"startTime": "2026-10-03T18:00:00.000Z",
 			"title": "Fall Dance Concert"
 		},
 		{
@@ -9624,7 +9624,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, (500) Days of Summer. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6g",
-			"endTime": "2026-10-03T20:35:00.000Z",
+			"endTime": "2026-10-03T19:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -9634,7 +9634,7 @@
 			"metadata": {
 				"uid": "prfh71a9fnb4n108hvcgl7eg74"
 			},
-			"startTime": "2026-10-03T19:00:00.000Z",
+			"startTime": "2026-10-03T18:00:00.000Z",
 			"title": "SUMO Movie: (500) Days of Summer"
 		},
 		{
@@ -9645,7 +9645,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, 10 Things I Hate About You. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6e",
-			"endTime": "2026-10-03T23:45:00.000Z",
+			"endTime": "2026-10-03T22:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -9655,7 +9655,7 @@
 			"metadata": {
 				"uid": "q56tlo9pci3u6eqqp095aq62js"
 			},
-			"startTime": "2026-10-03T22:00:00.000Z",
+			"startTime": "2026-10-03T21:00:00.000Z",
 			"title": "SUMO Movie: 10 Things I Hate About You"
 		},
 		{
@@ -9666,7 +9666,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Theater and Dance Department presents the Fall Dance Concert featuring works by faculty, students, and guest choreographers.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut81",
-			"endTime": "2026-10-04T15:30:00.000Z",
+			"endTime": "2026-10-04T14:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut81"
@@ -9675,7 +9675,7 @@
 			"metadata": {
 				"uid": "328r62260jq0u5q7rkd8tug2g4"
 			},
-			"startTime": "2026-10-04T14:00:00.000Z",
+			"startTime": "2026-10-04T13:00:00.000Z",
 			"title": "Fall Dance Concert"
 		},
 		{
@@ -9686,7 +9686,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The MARS Radio Hour offers an hour of conversation, music, and readings from and about the world before ca. 1700.  We also invite guests for interviews about upcoming events and opportunities.\n\n\nEvent Contact: person@example.com\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ro4l",
-			"endTime": "2026-10-04T15:00:00.000Z",
+			"endTime": "2026-10-04T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://carleton.edu",
@@ -9696,7 +9696,7 @@
 			"metadata": {
 				"uid": "l639akasu57lkumfd9d8krkcmc_20261108T200000Z"
 			},
-			"startTime": "2026-10-04T14:00:00.000Z",
+			"startTime": "2026-10-04T13:00:00.000Z",
 			"title": "The MARS Radio Hour"
 		},
 		{
@@ -9707,7 +9707,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Carleton Voice Studies Program presents a fall recital showcasing performances by voice students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/uugn",
-			"endTime": "2026-10-04T15:00:00.000Z",
+			"endTime": "2026-10-04T14:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/uugn"
@@ -9716,7 +9716,7 @@
 			"metadata": {
 				"uid": "ecli5j2l8flqchso9foa4rkj90"
 			},
-			"startTime": "2026-10-04T14:00:00.000Z",
+			"startTime": "2026-10-04T13:00:00.000Z",
 			"title": "Voice Showcase Recital"
 		},
 		{
@@ -9727,7 +9727,7 @@
 			},
 			"dataSource": "ical",
 			"description": "\"When we walk into a 'natural'  area, it can feel like we're entering an eternal space. This can deceive. The area that is now Carleton College's Arb has changed and changed again over its human history, and how people have regarded the land has changed, too. We'll look at the Arboretum as Dakota land; as small farms; in its first era as Carleton's Arboretum and Farm; in its role as a rougher, unchaperoned space in the turbulent 1960s; and in its newest transformation over the last 50 years into a treasured, organized part of the Carleton project.\"\n\nPlease join us for the second presentation of the Arboretum Centennial Speaker Series, The Six Lives of the Cowling Arboretum with Ingrid Case '90 and Nat Case ('88), co-authors of the recently published book, Into the Arb : a history of the Cowling Arboretum at Carleton College.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6v",
-			"endTime": "2026-10-04T16:00:00.000Z",
+			"endTime": "2026-10-04T15:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut6v"
@@ -9736,7 +9736,7 @@
 			"metadata": {
 				"uid": "9pd8gar61u0atkai8hnfsjhmv4"
 			},
-			"startTime": "2026-10-04T15:00:00.000Z",
+			"startTime": "2026-10-04T14:00:00.000Z",
 			"title": "Arboretum Centennial Speaker Series: The Six Lives of the Cowling Arboretum with Ingrid Case '90 and Nat Case '88"
 		},
 		{
@@ -9747,7 +9747,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students can drop in for help with math, statistics, data, and graphs in any QRE course. To make an appointment or to see who's working, go to go.carleton.edu/QRC\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roUU",
-			"endTime": "2026-10-04T22:00:00.000Z",
+			"endTime": "2026-10-04T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://go.carleton.edu/QRC",
@@ -9757,7 +9757,7 @@
 			"metadata": {
 				"uid": "gmnm0o160ok6onorumja1oafng_20261108T220000Z"
 			},
-			"startTime": "2026-10-04T16:00:00.000Z",
+			"startTime": "2026-10-04T15:00:00.000Z",
 			"title": "QRC drop-in tutoring"
 		},
 		{
@@ -9768,7 +9768,7 @@
 			},
 			"dataSource": "ical",
 			"description": "The Catholic Student Association will be reading through the Gospel according to Matthew and holding weekly conversations to foster growth and understanding.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roPR",
-			"endTime": "2026-10-04T20:00:00.000Z",
+			"endTime": "2026-10-04T19:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roPR"
@@ -9777,7 +9777,7 @@
 			"metadata": {
 				"uid": "d32qaac9f8nuo3460859id79ig_20261109T010000Z"
 			},
-			"startTime": "2026-10-04T19:00:00.000Z",
+			"startTime": "2026-10-04T18:00:00.000Z",
 			"title": "Catholic Bible Study"
 		},
 		{
@@ -9788,7 +9788,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Come worship with Fellowship in Christ!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roSx",
-			"endTime": "2026-10-04T21:00:00.000Z",
+			"endTime": "2026-10-04T20:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roSx"
@@ -9797,7 +9797,7 @@
 			"metadata": {
 				"uid": "11opjeh4vo8tlhfl3lmiuugt1c_20261109T020000Z"
 			},
-			"startTime": "2026-10-04T20:00:00.000Z",
+			"startTime": "2026-10-04T19:00:00.000Z",
 			"title": "Mustard Seed Worship"
 		},
 		{
@@ -9808,7 +9808,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us for questions connected to instructional technologies.\nMondays and Thursdays, 2-4 pm.\nAT Drop-in\n\nIf these times do not work for you, check out our individual AT appointment schedules on our AT Availability page.\n\nOther Academic Technologists are also available for consultations.\n\nConnect to Virtual Event:\nhttps://meet.google.com/yof-zkpr-cpr?authuser=0\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/rohm",
-			"endTime": "2026-10-05T16:00:00.000Z",
+			"endTime": "2026-10-05T15:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://meet.google.com/yof-zkpr-cpr?authuser=0",
@@ -9818,7 +9818,7 @@
 			"metadata": {
 				"uid": "i4umlvsli3of279qsqll1leq9k_20261109T200000Z"
 			},
-			"startTime": "2026-10-05T14:00:00.000Z",
+			"startTime": "2026-10-05T13:00:00.000Z",
 			"title": "AT Drop-in Hours"
 		},
 		{
@@ -9829,7 +9829,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Students can drop in for help with math, statistics, data, and graphs in any QRE course. To make an appointment or to see who's working, go to go.carleton.edu/QRC\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roUV",
-			"endTime": "2026-10-05T22:00:00.000Z",
+			"endTime": "2026-10-05T21:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"http://go.carleton.edu/QRC",
@@ -9839,7 +9839,7 @@
 			"metadata": {
 				"uid": "gmnm0o160ok6onorumja1oafng_20261109T220000Z"
 			},
-			"startTime": "2026-10-05T16:00:00.000Z",
+			"startTime": "2026-10-05T15:00:00.000Z",
 			"title": "QRC drop-in tutoring"
 		},
 		{
@@ -9850,7 +9850,7 @@
 			},
 			"dataSource": "ical",
 			"description": "TRIO Student? TRIO House Study Sessions in partnership with the QRC and MSSC! Come with questions for the tutor or to study with other TRIO students!\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roVi",
-			"endTime": "2026-10-05T17:00:00.000Z",
+			"endTime": "2026-10-05T16:00:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roVi"
@@ -9859,7 +9859,7 @@
 			"metadata": {
 				"uid": "hhf7rs1rkiaevqjooartmmr7ts_20261109T220000Z"
 			},
-			"startTime": "2026-10-05T16:00:00.000Z",
+			"startTime": "2026-10-05T15:00:00.000Z",
 			"title": "TRIO House Study Sessions"
 		},
 		{
@@ -9870,7 +9870,7 @@
 			},
 			"dataSource": "ical",
 			"description": "View this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut4r",
-			"endTime": "2026-10-05T17:30:00.000Z",
+			"endTime": "2026-10-05T16:30:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/ut4r"
@@ -9879,7 +9879,7 @@
 			"metadata": {
 				"uid": "k5u230jm8c9nq41lcf7enustuk"
 			},
-			"startTime": "2026-10-05T16:15:00.000Z",
+			"startTime": "2026-10-05T15:15:00.000Z",
 			"title": "College Council Meeting"
 		},
 		{
@@ -9890,7 +9890,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Twice weekly meditation open to all. Gently guided meditations on Monday afternoons. Silent meditations on Friday mornings. Drop in as you are able or make it part of your weekly routine! Led by students; no experience necessary.\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/roOz",
-			"endTime": "2026-10-05T17:45:00.000Z",
+			"endTime": "2026-10-05T16:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/_c/roOz"
@@ -9899,7 +9899,7 @@
 			"metadata": {
 				"uid": "2140ara7fq34g0c72dqac3cu88_20261109T230000Z"
 			},
-			"startTime": "2026-10-05T17:00:00.000Z",
+			"startTime": "2026-10-05T16:00:00.000Z",
 			"title": "Time to Meditate - Monday Evening"
 		}
 	],

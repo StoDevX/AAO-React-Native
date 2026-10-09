@@ -345,7 +345,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema at 7pm for this week's Sumo movie, 10 Things I Hate About You. Closed captioning equipment and assistive listening devices are available. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6d",
-			"endTime": "2026-10-02T20:45:00.000Z",
+			"endTime": "2026-10-02T19:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -355,7 +355,7 @@
 			"metadata": {
 				"uid": "ad054cqvdmbv0a0uhi7bnit0d0"
 			},
-			"startTime": "2026-10-02T19:00:00.000Z",
+			"startTime": "2026-10-02T18:00:00.000Z",
 			"title": "SUMO Movie: 10 Things I Hate About You"
 		},
 		{
@@ -366,7 +366,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, (500) Days of Summer. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6f",
-			"endTime": "2026-10-02T23:35:00.000Z",
+			"endTime": "2026-10-02T22:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -376,7 +376,7 @@
 			"metadata": {
 				"uid": "f9b79pcer47lnbknqot6qjd598"
 			},
-			"startTime": "2026-10-02T22:00:00.000Z",
+			"startTime": "2026-10-02T21:00:00.000Z",
 			"title": "SUMO Movie: (500) Days of Summer"
 		},
 		{
@@ -387,7 +387,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, (500) Days of Summer. Closed captioning equipment and assistive listening devices are available. The Saturday showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6g",
-			"endTime": "2026-10-03T20:35:00.000Z",
+			"endTime": "2026-10-03T19:35:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -397,7 +397,7 @@
 			"metadata": {
 				"uid": "prfh71a9fnb4n108hvcgl7eg74"
 			},
-			"startTime": "2026-10-03T19:00:00.000Z",
+			"startTime": "2026-10-03T18:00:00.000Z",
 			"title": "SUMO Movie: (500) Days of Summer"
 		},
 		{
@@ -408,7 +408,7 @@
 			},
 			"dataSource": "ical",
 			"description": "Join us in the Weitz Cinema for this week's Sumo movie, 10 Things I Hate About You. The Saturday 10pm showing will be open-captioned.\n\nThis movie is rated PG-13.\n\nEvent Details:\nhttps://www.carleton.edu/student/orgs/sumo/\n\nView this event on the Carleton College website:\nhttps://www.carleton.edu/_c/ut6e",
-			"endTime": "2026-10-03T23:45:00.000Z",
+			"endTime": "2026-10-03T22:45:00.000Z",
 			"isOngoing": false,
 			"links": [
 				"https://carleton.edu/student/orgs/sumo",
@@ -418,7 +418,7 @@
 			"metadata": {
 				"uid": "q56tlo9pci3u6eqqp095aq62js"
 			},
-			"startTime": "2026-10-03T22:00:00.000Z",
+			"startTime": "2026-10-03T21:00:00.000Z",
 			"title": "SUMO Movie: 10 Things I Hate About You"
 		}
 	],

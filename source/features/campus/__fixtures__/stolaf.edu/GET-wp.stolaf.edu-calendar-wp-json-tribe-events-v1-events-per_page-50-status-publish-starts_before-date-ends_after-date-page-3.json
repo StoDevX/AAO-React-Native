@@ -931,8 +931,8 @@
 				],
 				"title": "Sunday Morning Worship: All Saints Sunday",
 				"url": "https://wp.stolaf.edu/calendar/event/sunday-morning-worship-all-saints-sunday/",
-				"utc_end_date": "2026-09-27 17:30:00",
-				"utc_start_date": "2026-09-27 16:30:00",
+				"utc_end_date": "2026-09-27 16:30:00",
+				"utc_start_date": "2026-09-27 15:30:00",
 				"venue": {
 					"venue": "Boe Memorial Chapel"
 				}
@@ -948,8 +948,8 @@
 				"organizer": [],
 				"title": "Women&#8217;s Hockey at University of Wisconsin-Stevens Point",
 				"url": "https://wp.stolaf.edu/calendar/event/womens-hockey-at-university-of-wisconsin-stevens-point-4/",
-				"utc_end_date": "2026-09-28 00:00:00",
-				"utc_start_date": "2026-09-27 21:00:00",
+				"utc_end_date": "2026-09-27 23:00:00",
+				"utc_start_date": "2026-09-27 20:00:00",
 				"venue": {
 					"venue": "Stevens Point, Wis. / K.B. Willett Arena"
 				}
@@ -965,8 +965,8 @@
 				"organizer": [],
 				"title": "Registration for J-Term",
 				"url": "https://wp.stolaf.edu/calendar/event/registration-for-j-term-3/",
-				"utc_end_date": "2026-09-29 05:59:59",
-				"utc_start_date": "2026-09-28 06:00:00",
+				"utc_end_date": "2026-09-29 04:59:59",
+				"utc_start_date": "2026-09-28 05:00:00",
 				"venue": []
 			},
 			{
@@ -990,8 +990,8 @@
 				],
 				"title": "First-Generation College Celebration Week!",
 				"url": "https://wp.stolaf.edu/calendar/event/first-generation-college-celebration-week/",
-				"utc_end_date": "2026-10-04 23:00:00",
-				"utc_start_date": "2026-09-28 14:00:00",
+				"utc_end_date": "2026-10-04 22:00:00",
+				"utc_start_date": "2026-09-28 13:00:00",
 				"venue": []
 			}
 		],

@@ -43,23 +43,6 @@
 						"name": "Athletics"
 					}
 				],
-				"description": "<div data-modular-content-collection><p>Volleyball at Macalester College<br />\nStreaming Video: https://miacsportsnetwork.com/macalester/</p>\n</div>",
-				"organizer": [],
-				"title": "Volleyball at Macalester College",
-				"url": "https://wp.stolaf.edu/calendar/event/volleyball-at-macalester-college/",
-				"utc_end_date": "2026-09-12 20:00:00",
-				"utc_start_date": "2026-09-12 18:00:00",
-				"venue": {
-					"venue": "St. Paul, Minn. / Leonard Center"
-				}
-			},
-			{
-				"all_day": false,
-				"categories": [
-					{
-						"name": "Athletics"
-					}
-				],
 				"description": "<div data-modular-content-collection><p>Women&#8217;s Soccer at Macalester College<br />\nStreaming Video: https://miacsportsnetwork.com/macalester/</p>\n</div>",
 				"organizer": [],
 				"title": "Women&#8217;s Soccer at Macalester College",
@@ -85,6 +68,23 @@
 				"utc_start_date": "2026-09-12 18:00:00",
 				"venue": {
 					"venue": "Northfield, Minn., Klein Field at Manitou"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball at Macalester College<br />\nStreaming Video: https://miacsportsnetwork.com/macalester/</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball at Macalester College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-at-macalester-college/",
+				"utc_end_date": "2026-09-12 20:00:00",
+				"utc_start_date": "2026-09-12 18:00:00",
+				"venue": {
+					"venue": "St. Paul, Minn. / Leonard Center"
 				}
 			},
 			{
@@ -859,14 +859,14 @@
 						"name": "Athletics"
 					}
 				],
-				"description": "<div data-modular-content-collection><p>Football at College of St. Scholastica<br />\nStreaming Video: https://miacsportsnetwork.com/stscholastica/</p>\n</div>",
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Soccer at Bethel University<br />\nStreaming Video: https://miacsportsnetwork.com/bethelmn/</p>\n</div>",
 				"organizer": [],
-				"title": "Football at College of St. Scholastica",
-				"url": "https://wp.stolaf.edu/calendar/event/football-at-college-of-st-scholastica/",
-				"utc_end_date": "2026-09-19 21:00:00",
+				"title": "Women&#8217;s Soccer at Bethel University",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-at-bethel-university-2/",
+				"utc_end_date": "2026-09-19 20:00:00",
 				"utc_start_date": "2026-09-19 18:00:00",
 				"venue": {
-					"venue": "Duluth, Minn. / Public Schools Stadium"
+					"venue": "Arden Hills, Minn. / Royal Stadium"
 				}
 			},
 			{
@@ -876,14 +876,14 @@
 						"name": "Athletics"
 					}
 				],
-				"description": "<div data-modular-content-collection><p>Women&#8217;s Soccer at Bethel University<br />\nStreaming Video: https://miacsportsnetwork.com/bethelmn/</p>\n</div>",
+				"description": "<div data-modular-content-collection><p>Football at College of St. Scholastica<br />\nStreaming Video: https://miacsportsnetwork.com/stscholastica/</p>\n</div>",
 				"organizer": [],
-				"title": "Women&#8217;s Soccer at Bethel University",
-				"url": "https://wp.stolaf.edu/calendar/event/womens-soccer-at-bethel-university-2/",
-				"utc_end_date": "2026-09-19 20:00:00",
+				"title": "Football at College of St. Scholastica",
+				"url": "https://wp.stolaf.edu/calendar/event/football-at-college-of-st-scholastica/",
+				"utc_end_date": "2026-09-19 21:00:00",
 				"utc_start_date": "2026-09-19 18:00:00",
 				"venue": {
-					"venue": "Arden Hills, Minn. / Royal Stadium"
+					"venue": "Duluth, Minn. / Public Schools Stadium"
 				}
 			},
 			{
