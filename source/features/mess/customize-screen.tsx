@@ -10,7 +10,6 @@ import {SheetCloseButton} from '../../components/sheet-close-button'
 import {IssueStainsRow} from './issue-stains-row'
 import {PhotoToneRow} from './photo-tone-row'
 import {useMessStore} from './store'
-import {probe} from '../../lib/probe'
 
 const styles = StyleSheet.create({
 	// A sheet paints its own background; a Form left to the default shows glass.
@@ -24,16 +23,6 @@ const styles = StyleSheet.create({
 export function CustomizeScreen(): React.ReactNode {
 	let keepPhotoStoriesDark = useMessStore((state) => state.keepPhotoStoriesDark)
 	let setKeepPhotoStoriesDark = useMessStore((state) => state.setKeepPhotoStoriesDark)
-
-	React.useEffect(() => {
-		probe(`keepPhotoStoriesDark rendered as ${keepPhotoStoriesDark}`)
-	}, [keepPhotoStoriesDark])
-
-	let onKeepPhotoStoriesDarkChange = (keep: boolean) => {
-		probe(`keepPhotoStoriesDark change asked for ${keep}`)
-		setKeepPhotoStoriesDark(keep)
-		probe(`keepPhotoStoriesDark store now ${useMessStore.getState().keepPhotoStoriesDark}`)
-	}
 
 	return (
 		<>
@@ -50,7 +39,7 @@ export function CustomizeScreen(): React.ReactNode {
 							isOn={keepPhotoStoriesDark}
 							label="Dark page for Photo stories"
 							modifiers={[accessibilityIdentifier('keep-photo-stories-dark')]}
-							onIsOnChange={onKeepPhotoStoriesDarkChange}
+							onIsOnChange={setKeepPhotoStoriesDark}
 						/>
 					</SheetSection>
 				</Form>
