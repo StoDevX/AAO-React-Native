@@ -15,8 +15,8 @@ import {
 	frozenDay,
 	mergeCampusRecordings,
 	shiftCalendars,
+	summarizeKeys,
 } from './campus-fixtures.mjs'
-import {summarizeKeys} from './mess-fixtures.mjs'
 import {
 	appDataPath,
 	bootedSimulator,

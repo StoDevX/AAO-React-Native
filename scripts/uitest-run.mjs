@@ -1,11 +1,9 @@
 // Building and running the XCUITests against a booted simulator, for scripts
-// that need a UI test run's side effects: update-mess-fixtures and chaos.
+// that need a UI test run's side effects: update-campus-fixtures and chaos.
 
 import {execFileSync} from 'node:child_process'
 import {cpSync, existsSync, rmSync} from 'node:fs'
 import {join} from 'node:path'
-
-import {pickSimulator} from './mess-fixtures.mjs'
 
 export const BUNDLE = 'NFMTHAZVS9.com.drewvolz.stolaf'
 
@@ -16,6 +14,24 @@ export function isNotInstalled(stderr) {
 
 export function run(command, args, options = {}) {
 	return execFileSync(command, args, {encoding: 'utf8', ...options})
+}
+
+/**
+ * The simulator to run on: the one `udid` names, or the only one booted. It refuses to
+ * guess among several, since a run reinstalls the app on whichever it picks.
+ */
+export function pickSimulator(booted, udid) {
+	if (udid) {
+		let named = booted.find((device) => device.udid === udid)
+		if (!named) throw new Error(`simulator ${udid} is not booted`)
+		return named
+	}
+	if (booted.length === 0) throw new Error('boot a simulator with the app installed first')
+	if (booted.length > 1) {
+		let list = booted.map((device) => `${device.udid} (${device.name})`).join(', ')
+		throw new Error(`several simulators are booted; name one with SIMULATOR_UDID: ${list}`)
+	}
+	return booted[0]
 }
 
 /** The booted simulator to use, or the one SIMULATOR_UDID names. */

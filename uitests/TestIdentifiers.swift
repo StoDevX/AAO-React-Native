@@ -12,8 +12,8 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
-		/// Records each fetch a feature with fixtures makes, for
-		/// `mise run update-mess-fixtures`. Added when the runner is started with
+		/// Records each fetch a campus test makes, for
+		/// `mise run update-campus-fixtures`. Added when the runner is started with
 		/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1`.
 		static let recordFixtures = "--record-fixtures"
 		/// The campus a campus test names, by reverse-DNS id; the app then serves that
@@ -514,9 +514,10 @@ struct TestIdentifiers {
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
-		/// The Mess section whose columns the Variety templates draw, and the columns
-		/// the tests open, as the section chips and column chips in source/features/mess/
-		/// name them. They are the paper's own category names, from olafmessenger.com.
+		/// The section whose columns the Variety templates draw, and the columns the
+		/// tests open, as the section chips and column chips in source/features/mess/
+		/// name them. They are The Valley Echo's category names, in Wiki Monkeys'
+		/// fixtures.
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"

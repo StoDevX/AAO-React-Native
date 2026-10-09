@@ -1,0 +1,12 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/pages?slug=contact&_fields=content
+json:
+  - content:
+      protected: false
+      rendered: |-
+        <h2>For general inquiries…</h2>
+        <p><strong>Editors</strong><br />
+        <a href="mailto:echo@college.example">echo@college.example</a></p>
+        <h2>Submissions…</h2>
+        <p>Letters to the editor run up to 400 words. Send them by Tuesday noon for that Friday’s paper.</p>

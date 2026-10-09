@@ -1,6 +1,6 @@
 import XCTest
 
-/// One issue of the Olaf Messenger, opened from its tile: the lead story, a sideways shelf per
+/// One issue of a paper, opened from its tile: the lead story, a sideways shelf per
 /// print section headed by "All ›", then the stories from no print section in a grid under More.
 /// "All ›" opens a list of the section's stories from this issue, over the issue.
 struct MessIssueScreen: Screen {

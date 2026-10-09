@@ -7,7 +7,7 @@ export const VALLEY_ECHO: Paper = {
 	shortTitle: 'The Echo',
 	label: 'Valley Echo',
 	site: 'echo.college.example',
-	mainSections: ['News', 'Opinion', 'Slopes', 'Arts'],
+	mainSections: ['News', 'Opinion', 'Slopes', 'Arts', 'Variety'],
 	logoMediaIds: new Set(),
 	contactPageSlug: 'contact',
 	masthead: null,

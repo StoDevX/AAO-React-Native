@@ -1,6 +1,6 @@
 import XCTest
 
-/// The Olaf Messenger's front page: a navigation bar titled with the paper's castle, with a
+/// A paper's front page: a navigation bar titled with the paper's masthead, with a
 /// paintbrush and a view menu at its right; then the grid of issues with the newest on top, or
 /// Latest's stories, which the menu narrows to one section and its columns.
 struct MessFrontPage: Screen {

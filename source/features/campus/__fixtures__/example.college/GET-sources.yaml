@@ -5,7 +5,7 @@ json:
   subject: https://college.example
   links:
     - rel: https://frogpond.tech/rel/news
-      href: https://echo.college.example/wp-json/wp/v2/posts?per_page=50&_embed=true
+      href: https://echo.college.example/wp-json/wp/v2/posts?per_page=20&_embed=true
       type: application/vnd.wordpress.v2.posts+json
       titles:
         und: The Valley Echo

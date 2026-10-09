@@ -93,7 +93,7 @@ jest.mock('expo-localization', () => ({
 	getCalendars: () => [{uses24hourClock: false}],
 }))
 // expo-file-system wires up a native event emitter when imported, and Jest has
-// none. Only a recording run of the UI tests writes a file (mess/lib/fixtures.ts).
+// none. Only a recording run of the UI tests writes a file (campus/fixtures.ts).
 jest.mock('expo-file-system', () => ({
 	File: jest.fn(),
 	Paths: {document: 'documents'},

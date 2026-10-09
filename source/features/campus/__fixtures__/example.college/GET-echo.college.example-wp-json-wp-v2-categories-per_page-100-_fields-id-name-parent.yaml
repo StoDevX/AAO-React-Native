@@ -1,0 +1,43 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/categories?per_page=100&_fields=id,name,parent
+json:
+  - id: 1
+    name: Uncategorized
+    parent: 0
+  - id: 2
+    name: News
+    parent: 0
+  - id: 3
+    name: Opinion
+    parent: 0
+  - id: 4
+    name: Slopes
+    parent: 0
+  - id: 5
+    name: Arts
+    parent: 0
+  - id: 6
+    name: Variety
+    parent: 0
+  - id: 7
+    name: Special Edition
+    parent: 0
+  - id: 8
+    name: Featured
+    parent: 0
+  - id: 21
+    name: Campus
+    parent: 2
+  - id: 41
+    name: Race Results
+    parent: 4
+  - id: 61
+    name: Comic
+    parent: 6
+  - id: 62
+    name: Horoscopes
+    parent: 6
+  - id: 63
+    name: Photo
+    parent: 6

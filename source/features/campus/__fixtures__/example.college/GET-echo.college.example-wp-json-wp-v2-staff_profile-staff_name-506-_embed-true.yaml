@@ -1,0 +1,4 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=506&_embed=true
+json: []

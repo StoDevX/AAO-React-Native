@@ -1,6 +1,6 @@
 import XCTest
 
-/// The Messenger's paintbrush sheet: paper stains, front page photos, and dark Photo stories.
+/// A paper's paintbrush sheet: paper stains, front page photos, and dark Photo stories.
 struct MessCustomizeScreen: Screen {
 	let app: XCUIApplication
 
@@ -13,7 +13,7 @@ struct MessCustomizeScreen: Screen {
 
 	@discardableResult
 	func checkOpen() -> Self {
-		XCTAssertTrue(sheet.waitUntilExists(timeout: 10), "the Messenger's Customize should open")
+		XCTAssertTrue(sheet.waitUntilExists(timeout: 10), "the paper's Customize should open")
 		XCTAssertTrue(
 			issueStains.waitUntilExists(timeout: 10), "Customize should offer Paper Stains")
 		return self
