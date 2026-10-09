@@ -344,7 +344,8 @@ In dev mode (turned on from the long-press menu on Home's notice; it starts off 
 To use this:
 1. Start `ccc-server` with mDNS advertisement enabled: `mise run start:with-server` starts it beside Metro, from a `ccc-server` checkout next to this one (set `CCC_SERVER_DIR` for one elsewhere). Metro keeps the terminal, and Ctrl-C stops both. To run the server alone, `mise run stolaf-college:mdns` in the `ccc-server` repo
 2. Run a debug build of the app on a device on the same network
-3. Navigate to Settings → Server URL — the server will appear automatically
+3. Turn dev mode on: long-press the notice at the bottom of Home and choose "Enable dev mode"
+4. Navigate to Settings → Server URL — the server will appear automatically
 
 The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run prebuild`), discovery is silently skipped — the screen won't crash.
 
