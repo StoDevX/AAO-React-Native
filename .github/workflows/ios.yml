@@ -773,7 +773,13 @@ jobs:
             | gzip > uitest-evidence/simulator.log.gz \
             || echo "Could not read the simulator's log."
 
+      # The uploads keep what a failure needs, but a runner that cannot reach
+      # GitHub's artifact store fails them after the tests have run, and that
+      # is no verdict on the tests. So they never fail the shard; the last step
+      # turns any that did into a warning instead.
       - name: Upload the stall evidence
+        id: upload-evidence
+        continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
@@ -783,6 +789,8 @@ jobs:
           retention-days: 7
 
       - name: Upload the shard's report
+        id: upload-report
+        continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
@@ -802,6 +810,8 @@ jobs:
           echo "Found ${screenshot_count} attachments(s)"
 
       - name: Upload failure attachments
+        id: upload-attachments
+        continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         with:
@@ -810,11 +820,28 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload XCResult bundle
+        id: upload-xcresult
+        continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/
+
+      - name: Warn about uploads that failed
+        if: always()
+        env:
+          OUTCOMES: >-
+            evidence=${{ steps.upload-evidence.outcome }}
+            report=${{ steps.upload-report.outcome }}
+            attachments=${{ steps.upload-attachments.outcome }}
+            xcresult=${{ steps.upload-xcresult.outcome }}
+        run: |
+          for outcome in $OUTCOMES; do
+            if [ "${outcome#*=}" = failure ]; then
+              echo "::warning title=Artifact upload failed::The ${outcome%=*} upload failed; the tests' result stands."
+            fi
+          done
 
   # The UI-test half of the pull request report. pr-report.yml cannot depend on
   # a job here, so this publishes the shards' figures as an artifact, which
