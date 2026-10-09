@@ -33,7 +33,11 @@ import {
 	serverRoutesOptions,
 	type RouteInput,
 } from '../../../source/features/developer/api-test/query'
-import {routeKey, useApiTestStore} from '../../../source/features/developer/api-test/store'
+import {
+	historyKey,
+	routeKey,
+	useApiTestStore,
+} from '../../../source/features/developer/api-test/store'
 import {
 	querySuggestions,
 	recentRequests,
@@ -172,6 +176,7 @@ export default function APITestComposePage(): React.ReactNode {
 
 	let campus = useCampusId()
 	let {data: sections = []} = useQuery(serverRoutesOptions(campus))
+	let remembered = historyKey(campus, route)
 	let inputs = React.useMemo(
 		() =>
 			sections.flatMap((section) => section.data).find((entry) => entry.key === route)?.inputs ??
@@ -186,8 +191,8 @@ export default function APITestComposePage(): React.ReactNode {
 	let record = useApiTestStore((state) => state.record)
 	let remove = useApiTestStore((state) => state.remove)
 	let clear = useApiTestStore((state) => state.clear)
-	let recent = recentRequests(history, route)
-	let suggestions = querySuggestions(history, route)
+	let recent = recentRequests(history, remembered)
+	let suggestions = querySuggestions(history, remembered)
 
 	// Starts from the last request sent to this route, so sending it again is
 	// one tap; or, for a route never sent, from values the server accepts.
@@ -252,7 +257,7 @@ export default function APITestComposePage(): React.ReactNode {
 	)
 
 	let send = () => {
-		record(route, {pathValues, query, bodyValues: body})
+		record(remembered, {pathValues, query, bodyValues: body})
 		// `sentAt` makes every send its own: an identical request already on the
 		// stack would otherwise be shown again rather than sent
 		router.navigate({
@@ -325,7 +330,7 @@ export default function APITestComposePage(): React.ReactNode {
 									input={input}
 									key={input.name}
 									onChange={(value) => setPathValue(input.name, value)}
-									suggestions={suggestionsFor(input, history, route, today)}
+									suggestions={suggestionsFor(input, history, remembered, today)}
 									value={pathValues[input.name] ?? ''}
 								/>
 							))}
@@ -339,7 +344,7 @@ export default function APITestComposePage(): React.ReactNode {
 									input={input}
 									key={input.name}
 									onChange={(value) => setBodyValue(input.name, value)}
-									suggestions={suggestionsFor(input, history, route, today)}
+									suggestions={suggestionsFor(input, history, remembered, today)}
 									value={bodyValues?.[input.name] ?? ''}
 								/>
 							))}
@@ -356,7 +361,7 @@ export default function APITestComposePage(): React.ReactNode {
 									input={row.input}
 									onChange={(value) => updateRow(row.id, {value})}
 									suggestions={
-										row.input.values ? [] : suggestionsFor(row.input, history, route, today)
+										row.input.values ? [] : suggestionsFor(row.input, history, remembered, today)
 									}
 									value={row.value}
 								/>
@@ -452,7 +457,7 @@ export default function APITestComposePage(): React.ReactNode {
 										<SwipeActions.Actions allowsFullSwipe={true} edge="trailing">
 											<Button
 												label="Forget"
-												onPress={() => remove(route, request)}
+												onPress={() => remove(remembered, request)}
 												role="destructive"
 												systemImage="trash"
 											/>

@@ -35,3 +35,12 @@ export const useApiTestStore = create<ApiTestStore>()(
 export function routeKey(method: string, path: string): string {
 	return `${method} ${path}`
 }
+
+/**
+ * The key a route's remembered requests are filed under: the campus too, since
+ * each campus has its own server, and values sent to one (a cafe id, a calendar)
+ * mean nothing to another's.
+ */
+export function historyKey(campus: string, route: string): string {
+	return `${campus} ${route}`
+}
