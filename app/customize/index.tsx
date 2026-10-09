@@ -10,6 +10,7 @@ import {previewFor} from '../../images/icons'
 import {MenuPickerRow} from '../../source/components/menu-picker-row'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
+import {useCampusSection} from '../../source/features/campus/store'
 import {type LinkTarget, useOpenLinksIn} from '../../source/features/customize/open-links-in'
 import {type HomeLayout, useHomeLayoutStore} from '../../source/features/home/store'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
@@ -52,6 +53,8 @@ export default function CustomizePage(): React.ReactNode {
 	let [showRadio, setShowRadio] = useRadioPlayerSetting()
 	let homeLayout = useHomeLayoutStore((state) => state.layout)
 	let setHomeLayout = useHomeLayoutStore((state) => state.setLayout)
+	let appIcons = useCampusSection('appIcons')
+	let quickActions = useCampusSection('quickActions')
 
 	return (
 		<>
@@ -59,19 +62,21 @@ export default function CustomizePage(): React.ReactNode {
 			<SheetCloseButton />
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-customize')]}>
 				<Form>
-					<SheetSection>
-						<DisclosureRow
-							detail={[current.title]}
-							identifier="app-icon-row"
-							image={{
-								source: previewFor(current.type, scheme),
-								width: ROW_ICON_SIZE,
-								height: ROW_ICON_SIZE,
-							}}
-							onPress={() => router.navigate('/customize/app-icon')}
-							title="App Icon"
-						/>
-					</SheetSection>
+					{appIcons ? (
+						<SheetSection>
+							<DisclosureRow
+								detail={[current.title]}
+								identifier="app-icon-row"
+								image={{
+									source: previewFor(current.type, scheme),
+									width: ROW_ICON_SIZE,
+									height: ROW_ICON_SIZE,
+								}}
+								onPress={() => router.navigate('/customize/app-icon')}
+								title="App Icon"
+							/>
+						</SheetSection>
+					) : null}
 					<SheetSection title="Browsing">
 						<MenuPickerRow
 							id="open-links-in"
@@ -95,10 +100,12 @@ export default function CustomizePage(): React.ReactNode {
 							modifiers={[accessibilityIdentifier('show-radio-player')]}
 							onIsOnChange={setShowRadio}
 						/>
-						<NavigationRow
-							onPress={() => router.navigate('/customize/quick-actions')}
-							title="Quick Actions"
-						/>
+						{quickActions ? (
+							<NavigationRow
+								onPress={() => router.navigate('/customize/quick-actions')}
+								title="Quick Actions"
+							/>
+						) : null}
 					</SheetSection>
 				</Form>
 			</Host>

@@ -1,5 +1,4 @@
 import type {CampusDefinition} from '../../campuses'
-import {legacyCampusOf} from '../campus/store'
 import type {ViewType} from '../views'
 
 /** A screen a Home Screen quick action can open. */
@@ -15,53 +14,28 @@ export type QuickActionDestination = {
 /** iOS shows at most four quick actions. */
 export const MAX_QUICK_ACTIONS = 4
 
-export const DEFAULT_QUICK_ACTIONS: string[] = [
-	'Stav Menu',
-	'Cage Menu',
-	'Olaf Messenger',
-	'Transit',
-]
-
-/** A Carleton install's starting picks: the CARLS tiles reached most. */
-export const DEFAULT_CARLETON_QUICK_ACTIONS: string[] = ['Menus', 'Building Hours', 'SUMO', 'Convo']
-
-/**
- * Whether `campus` keeps its picks in the store's St. Olaf slot and offers
- * St. Olaf's café menus.
- */
-export function isStOlafsQuickActions(campus: CampusDefinition): boolean {
-	return legacyCampusOf(campus.id) === 'stolaf'
+/** `view` as a destination, if it opens a screen in the app by a plain path. */
+function destinationOf(view: ViewType): QuickActionDestination[] {
+	if (view.type !== 'view' || typeof view.view !== 'string') {
+		return []
+	}
+	return [{id: view.title, title: view.title, icon: view.icon, href: view.view}]
 }
 
-/** The starting picks for `campus`. */
-export function defaultQuickActions(campus: CampusDefinition): string[] {
-	return isStOlafsQuickActions(campus) ? DEFAULT_QUICK_ACTIONS : DEFAULT_CARLETON_QUICK_ACTIONS
-}
-
-/** Cafés get an action each, though the home grid has one Menus tile for all of them. */
-const CAFE_MENUS: QuickActionDestination[] = [
-	{id: 'Stav Menu', title: 'Stav Menu', icon: 'fork.knife', href: '/menus'},
-	{id: 'Cage Menu', title: 'Cage Menu', icon: 'cup.and.saucer.fill', href: '/menus/the-cage'},
-]
-
 /**
- * Every screen the quick-action picker offers on `campus`: St. Olaf's café
- * menus, then each of the campus's home tiles that opens a screen in the app.
- * St. Olaf's bare Menus tile is left out, since it opens the same screen as
- * Stav Menu.
+ * Every screen the quick-action picker offers on `campus`: its café menus, an
+ * action each though Home has one Menus tile for all of them, then each Home
+ * tile that opens a screen in the app. A tile that opens a café's screen is
+ * left out, since that café's action already does.
  */
 export function quickActionDestinations(campus: CampusDefinition): QuickActionDestination[] {
-	let tiles = campus.home.tiles.flatMap((view): QuickActionDestination[] => {
-		if (view.type !== 'view' || view.disabled || view.devOnly) {
-			return []
-		}
-		if (typeof view.view !== 'string' || view.view === '/menus') {
-			return []
-		}
-		return [{id: view.title, title: view.title, icon: view.icon, href: view.view}]
-	})
-
-	return isStOlafsQuickActions(campus) ? [...CAFE_MENUS, ...tiles] : tiles
+	let cafes = (campus.menus?.quickActions ?? []).flatMap(destinationOf)
+	let cafeHrefs = new Set(cafes.map((cafe) => cafe.href))
+	let tiles = campus.home.tiles
+		.filter((view) => !view.disabled && !view.devOnly)
+		.flatMap(destinationOf)
+		.filter((tile) => !cafeHrefs.has(tile.href))
+	return [...cafes, ...tiles]
 }
 
 /**

@@ -8,6 +8,10 @@ import type {NewsSection} from '../features/news/campus-section'
 import type {RadioSection} from '../features/streaming/radio/campus-section'
 import type {PaperSection} from '../features/mess/campus-section'
 import type {ConvosSection} from '../features/carleton/campus-section'
+import type {QuickActionsSection} from '../features/quick-actions/campus-section'
+import type {AppIconsSection} from '../features/customize/campus-section'
+import type {AboutSection} from '../features/about/campus-section'
+import type {FaqsSection} from '../features/faqs/campus-section'
 import type {MenusSection} from '../features/menus/campus-section'
 import type {TransitSection} from '../features/transit/campus-section'
 import type {ApiSection} from '../features/developer/campus-section'
@@ -53,4 +57,8 @@ export type CampusDefinition = {
 	radio?: RadioSection
 	paper?: PaperSection
 	convos?: ConvosSection
+	quickActions?: QuickActionsSection
+	appIcons?: AppIconsSection
+	about?: AboutSection
+	faqs?: FaqsSection
 }

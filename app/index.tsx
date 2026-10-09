@@ -34,12 +34,7 @@ import {Restart} from 'react-native-restart-newarch'
 
 import {visibleViews, type ViewType} from '../source/features/views'
 import {CAMPUSES} from '../source/campuses'
-import {
-	legacyCampusOf,
-	useCampus,
-	useCampusSection,
-	useCampusStore,
-} from '../source/features/campus/store'
+import {useCampus, useCampusSection, useCampusStore} from '../source/features/campus/store'
 import {switchIconForCampus} from '../source/features/customize/use-app-icon'
 import {
 	FILL_WIDTH,
@@ -164,7 +159,7 @@ function UnofficialAppNotice(): React.ReactNode {
 								label={option.name}
 								onIsOnChange={() => {
 									setCampus(option.id)
-									switchIconForCampus(legacyCampusOf(option.id))
+									switchIconForCampus(option)
 								}}
 							/>
 						))}

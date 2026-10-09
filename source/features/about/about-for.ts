@@ -1,9 +1,6 @@
-import type {Campus} from '../campus/store'
-import {acknowledgements, carlsContributors, contributors} from './credits'
-import {timeline, type TimelineEra} from './timeline'
+import type {AboutSection, Credit, TimelineEra} from './campus-section'
 
-/** A list of people About credits, under its heading. */
-export type Credit = {id: string; heading: string; names: ReadonlyArray<string>}
+export type {Credit}
 
 /** What About shows on one campus: its history, and whom it credits. */
 export type About = {
@@ -11,20 +8,10 @@ export type About = {
 	credits: ReadonlyArray<Credit>
 }
 
-/**
- * Each campus's About. CARLS' is the CARLS app's own: its
- * writers, with no history and no one else to thank, so those sections go.
- */
-export function aboutFor(campus: Campus): About {
-	let credits: Credit[] =
-		campus === 'carleton'
-			? [{id: 'contributors', heading: 'Contributors', names: carlsContributors}]
-			: [
-					{id: 'contributors', heading: 'Contributors', names: contributors},
-					{id: 'acknowledgements', heading: 'Acknowledgements', names: acknowledgements},
-				]
+/** The About a campus's `about` section describes, with any empty credit left off. */
+export function aboutFor(about: AboutSection | undefined): About {
 	return {
-		story: campus === 'carleton' ? [] : timeline,
-		credits: credits.filter((credit) => credit.names.length > 0),
+		story: about?.story ?? [],
+		credits: (about?.credits ?? []).filter((credit) => credit.names.length > 0),
 	}
 }
