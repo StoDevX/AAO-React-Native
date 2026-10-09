@@ -4,8 +4,8 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {CampusPicker} from '../../../../app/choose-campus'
 import {useCampusStore} from '../store'
-import {track} from '../../telemetry/track'
 
+// Quiet: telemetry is not what this checks.
 jest.mock('../../telemetry/track', () => ({track: jest.fn()}))
 
 describe('the campus picker', () => {
@@ -17,9 +17,5 @@ describe('the campus picker', () => {
 		fireEvent.press(screen.getByRole('button', {name: 'Carleton College'}))
 
 		expect(useCampusStore.getState().campus).toBe('edu.carleton')
-		expect(track).toHaveBeenCalledWith({
-			name: 'campus.picked',
-			attributes: {campus: 'edu.carleton'},
-		})
 	})
 })

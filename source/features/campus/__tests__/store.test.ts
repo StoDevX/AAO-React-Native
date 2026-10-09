@@ -8,7 +8,7 @@ type Setup = {defaultCampus: string | null; uiTestCampus: string | null}
  */
 async function loadStoreWithSaved(setup: Setup, campus: string) {
 	jest.resetModules()
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	// oxlint-disable-next-line typescript/no-require-imports
 	let AsyncStorage = require('@react-native-async-storage/async-storage')
 		.default as typeof import('@react-native-async-storage/async-storage').default
 	await AsyncStorage.setItem('campus', JSON.stringify({state: {campus}, version: 1}))
@@ -28,7 +28,7 @@ function loadStore({defaultCampus, uiTestCampus}: Setup, {reset = true} = {}) {
 		uiTestCampus,
 		servesBundledFixtures: false,
 	}))
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../store') as typeof import('../store')
 }
 
