@@ -75,11 +75,25 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 		live: ['https://stolaf.frogpond.tech/v1/orgs/categories'],
 	},
 	{
-		pattern: 'GET {server}/orgs/category-styles',
+		pattern: 'GET {server}/orgs/named/:id/category-styles',
 		schema: 'org-category-styles',
 		live: ['https://stolaf.frogpond.tech/v1/orgs/category-styles'],
 	},
-	{pattern: 'GET {server}/orgs/named/:id/category-styles', schema: 'org-category-styles'},
+	{
+		pattern: 'GET {server}/student-work/named/:id/areas',
+		schema: 'student-work-areas',
+		live: ['https://stolaf.frogpond.tech/v1/student-work/areas'],
+	},
+	{
+		pattern: 'GET {server}/student-work/named/:id/wages',
+		schema: 'student-wages',
+		live: ['https://stolaf.frogpond.tech/v1/student-work/wages'],
+	},
+	{
+		pattern: 'GET {server}/student-work/named/:id/units',
+		schema: 'student-work-units',
+		live: ['https://stolaf.frogpond.tech/v1/student-work/units'],
+	},
 	{pattern: 'GET {server}/transit/bus', schema: 'transit-bus'},
 	{pattern: 'GET {server}/transit/modes', schema: 'transit-modes'},
 	{pattern: 'GET {server}/calendar/named/:id', schema: 'calendar-named'},
@@ -130,6 +144,17 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 		live: [
 			'https://olafmessenger.com/wp-json/wp/v2/staff_year?hide_empty=true&per_page=100&_fields=id,name',
 		],
+	},
+	{
+		pattern: 'GET https://:host/hcmRestApi/resources/latest/recruitingCEJobRequisitions?*',
+		schema: 'oracle-job-requisitions',
+		live: [
+			'https://fa-ewur-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList&finder=findReqs%3BsiteNumber%3DCX_1%2Climit%3D200%2CsortBy%3DPOSTING_DATES_DESC',
+		],
+	},
+	{
+		pattern: 'GET https://:host/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails?*',
+		schema: 'oracle-job-details',
 	},
 ]
 

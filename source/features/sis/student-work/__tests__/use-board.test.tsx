@@ -1,19 +1,33 @@
 import * as React from 'react'
 import {act, renderHook, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, useQueryClient} from '@tanstack/react-query'
+import {registerCampusServer, setFetchInterceptor} from '@frogpond/api'
 import {keys, postingUnitsOptions, type PostingUnits} from '@frogpond/ccc-jobs'
-import {UITEST_POSTING_UNITS} from '@frogpond/ccc-jobs/fixtures/uitest-postings'
+import {setManifestServer} from '@frogpond/data-sources'
+import {installCampusFixtures} from '../../../campus/fixtures'
+import {useCampusStore} from '../../../campus/store'
+import {queryClient as appQueryClient} from '../../../../init/tanstack-query'
 import {useStudentWorkBoard} from '../use-board'
 
 let client = new QueryClient()
 
+// Wiki Monkeys' board, whose fixtures answer: the Treeline Commons Server (30103) is in
+// Dining, and the Undergraduate Research Assistant (30101) its first in Research.
 beforeEach(() => {
+	useCampusStore.setState({campus: 'example.college'})
+	setManifestServer('edu.stolaf')
+	registerCampusServer('edu.stolaf', new URL('https://stolaf.example.invalid/'))
+	registerCampusServer('example.college', new URL('https://example.college.invalid/'))
+	installCampusFixtures('example.college', 'serve')
 	client = new QueryClient()
 })
 
 // A client's garbage-collection timers would keep Jest from exiting.
 afterEach(() => {
 	client.clear()
+	// The manifest is cached on the app's own client, whose collection timer would hold Jest open.
+	appQueryClient.clear()
+	setFetchInterceptor(null)
 	jest.restoreAllMocks()
 })
 
@@ -54,20 +68,21 @@ describe('useStudentWorkBoard', () => {
 		let {result} = await renderHook(() => useStudentWorkBoard(), {wrapper: Wrapper})
 
 		await waitFor(() =>
-			expect(result.current.context.membership.get('dining')?.ids).toEqual(new Set(['uitest-3'])),
+			expect(result.current.context.membership.get('dining')?.ids).toContain('30103'),
 		)
 	})
 
 	test('files a posting the map lacks in no area, and reads no details', async () => {
-		let {'uitest-3': _dining, ...withoutDining} = UITEST_POSTING_UNITS
+		let units = await client.query(postingUnitsOptions)
+		let {'30103': _dining, ...withoutDining} = units
 		client.setQueryData<PostingUnits>(keys.postingUnits, withoutDining)
 
 		let {result} = await renderHook(() => useStudentWorkBoard(), {wrapper: Wrapper})
 
 		await waitFor(() => expect(result.current.availability).toBe('ready'))
 		await waitFor(() => expect(result.current.jobs.length).toBeGreaterThan(0))
-		expect(result.current.context.membership.get('dining')?.ids).toEqual(new Set())
-		expect(result.current.context.membership.get('research')?.ids).toEqual(new Set(['uitest-1']))
+		expect(result.current.context.membership.get('dining')?.ids).not.toContain('30103')
+		expect(result.current.context.membership.get('research')?.ids).toContain('30101')
 		expect(client.getQueryCache().findAll({queryKey: ['jobs', 'detail']})).toEqual([])
 	})
 

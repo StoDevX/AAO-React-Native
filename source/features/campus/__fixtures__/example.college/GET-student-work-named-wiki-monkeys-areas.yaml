@@ -1,0 +1,48 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/student-work/named/wiki-monkeys/areas
+json:
+  data:
+    - name: Treeline Commons Dining
+      slug: dining
+      icon: fork.knife
+      gradient: green
+      units:
+        - '42010'
+    - name: Glaciology Research
+      slug: research
+      icon: flask.fill
+      gradient: indigo
+      units:
+        - '41001'
+    - name: Residence Life
+      slug: residence-life
+      icon: house.fill
+      gradient: orange
+      units:
+        - '43020'
+    - name: Ski Patrol & Recreation
+      slug: recreation
+      icon: figure.skiing.downhill
+      gradient: red
+      units:
+        - '44030'
+        - '44031'
+    - name: Summit Library & Technology
+      slug: library-technology
+      icon: desktopcomputer
+      gradient: light-blue
+      units:
+        - '45001'
+    - name: Chapel & Vocation
+      slug: faith-vocation
+      icon: sparkles
+      gradient: pale-gold
+      units:
+        - '46001'
+    - name: Other
+      slug: other
+      icon: ellipsis.circle.fill
+      gradient: gray
+      units:
+        - other

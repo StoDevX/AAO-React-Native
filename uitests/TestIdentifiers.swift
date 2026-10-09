@@ -295,13 +295,13 @@ struct TestIdentifiers {
 		/// Matches AREA_ROW_ID_PREFIX in source/features/sis/student-work/area-section.tsx.
 		/// Each area row's identifier is this followed by the area's slug.
 		static let areaRowPrefix = "student-work-area:"
-		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
-		/// a field long enough to wrap, one with only short fields.
+		/// A posting on Wiki Monkeys' board with a field long enough to wrap, from the
+		/// `GET-jobs.college.example-…` fixtures.
 		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
 		/// Matches JOB_DESCRIPTION_TITLE in source/features/sis/student-work/lib.ts,
 		/// the title of both the row and the screen it opens.
 		static let jobDescriptionRow = "Description"
-		/// The start of a paragraph in the fixture postings' description.
+		/// The start of a paragraph in Wiki Monkeys' postings' descriptions.
 		static let fixtureJobDescriptionParagraph = "Transferable Skills:"
 		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-section.tsx.
 		static let areaGrid = "student-work-area-grid"

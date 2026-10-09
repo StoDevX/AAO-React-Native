@@ -1,19 +1,7 @@
-import {
-	fetchManifest,
-	fetchSourceBody,
-	REL_JOBS,
-	REL_STUDENT_WORK_UNITS,
-	resolveSource,
-} from '@frogpond/data-sources'
-import {servesBundledFixtures} from '@frogpond/launch-arguments'
+import {fetchSourceBody, REL_JOBS, REL_STUDENT_WORK_UNITS} from '@frogpond/data-sources'
 import {queryOptions} from '@tanstack/react-query'
 import {z} from 'zod'
-import {queryClient} from '../../source/init/tanstack-query'
-import {
-	UITEST_JOB_CATEGORIES,
-	UITEST_JOB_DETAILS,
-	UITEST_POSTING_UNITS,
-} from './fixtures/uitest-postings'
+import {studentWorkSource} from '../../source/features/sis/student-work/source'
 import {parseDetail} from './parsers/description'
 import {parseCategories, parseRequisitions} from './parsers/requisitions'
 import type {JobCategory, JobDetail} from './types'
@@ -21,7 +9,6 @@ import {categoriesUrl, detailUrl, jobPageUrl, parseSiteHref, requisitionsUrl} fr
 
 const ORACLE_RECRUITING = 'application/vnd.oracle.recruiting-ce+json'
 const SOURCE_TYPES = [ORACLE_RECRUITING]
-const SOURCE_ID = 'stolaf'
 const LABEL = 'Jobs'
 
 export const keys = {
@@ -31,8 +18,7 @@ export const keys = {
 }
 
 async function resolveJobSite(): Promise<string> {
-	let manifest = await fetchManifest(queryClient)
-	return resolveSource(manifest, REL_JOBS, SOURCE_ID, SOURCE_TYPES).href
+	return (await studentWorkSource(REL_JOBS, SOURCE_TYPES)).href
 }
 
 export const jobPostingsOptions = queryOptions({
@@ -41,12 +27,6 @@ export const jobPostingsOptions = queryOptions({
 	// a list would otherwise refetch it; pull-to-refresh still does.
 	staleTime: 5 * 60 * 1000,
 	queryFn: async ({signal}): Promise<JobCategory[]> => {
-		// The live board is whatever St. Olaf is hiring for this week, which a
-		// test cannot name -- see `fixtures/uitest-postings.ts`.
-		if (servesBundledFixtures) {
-			return UITEST_JOB_CATEGORIES
-		}
-
 		let href = await resolveJobSite()
 		let site = parseSiteHref(href)
 
@@ -71,14 +51,6 @@ export const jobDetailOptions = (id: string) =>
 	queryOptions({
 		queryKey: keys.detail(id),
 		queryFn: async ({signal}): Promise<JobDetail> => {
-			if (servesBundledFixtures) {
-				let fixture = UITEST_JOB_DETAILS.find((job) => job.id === id)
-				if (!fixture) {
-					throw new Error(`no UI-test fixture for job "${id}"`)
-				}
-				return fixture
-			}
-
 			let href = await resolveJobSite()
 			let site = parseSiteHref(href)
 
@@ -106,12 +78,9 @@ export const postingUnitsOptions = queryOptions({
 	queryKey: keys.postingUnits,
 	staleTime: POSTING_UNITS_STALE_TIME,
 	queryFn: async ({signal}): Promise<PostingUnits> => {
-		if (servesBundledFixtures) {
-			return UITEST_POSTING_UNITS
-		}
-
-		let manifest = await fetchManifest(queryClient)
-		let source = resolveSource(manifest, REL_STUDENT_WORK_UNITS, SOURCE_ID, [UNITS_TYPE])
-		return PostingUnitsSchema.parse(await fetchSourceBody(source.href, signal, UNITS_LABEL))
+		let source = await studentWorkSource(REL_STUDENT_WORK_UNITS, [UNITS_TYPE])
+		return PostingUnitsSchema.parse(
+			await fetchSourceBody(source.href, signal, UNITS_LABEL, 'json', source.campus),
+		)
 	},
 })

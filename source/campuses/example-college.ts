@@ -76,5 +76,5 @@ export const exampleCollege = {
 	balances: {},
 	more: {},
 	courseCatalog: {},
-	studentWork: {},
+	studentWork: {source: 'wiki-monkeys'},
 } as const satisfies CampusDefinition

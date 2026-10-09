@@ -5,6 +5,7 @@ import {QueryClient} from '@tanstack/react-query'
 
 import {installCampusFixtures} from '../../campus/fixtures'
 import {useCampusStore} from '../../campus/store'
+import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {categoryMembershipsOptions} from '../category-memberships-query'
 import {orgCategoryIconsOptions} from '../category-icons-query'
 import {studentOrgsOptions} from '../query'
@@ -23,6 +24,8 @@ beforeEach(() => {
 })
 afterEach(() => {
 	client.clear()
+	// The manifest is cached on the app's own client, whose collection timer would hold Jest open.
+	appQueryClient.clear()
 	setFetchInterceptor(null)
 })
 

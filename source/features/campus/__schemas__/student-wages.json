@@ -1,0 +1,38 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"data": {
+			"type": "object",
+			"properties": {
+				"NST": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "number"
+					}
+				},
+				"OSA": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "number"
+					}
+				},
+				"ST": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "number"
+					}
+				}
+			},
+			"required": [
+				"NST",
+				"OSA",
+				"ST"
+			]
+		}
+	},
+	"required": [
+		"data"
+	]
+}
