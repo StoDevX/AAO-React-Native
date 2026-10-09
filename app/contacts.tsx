@@ -1,12 +1,13 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {Host, List} from '@expo/ui/swift-ui'
-import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {Button, Host, List} from '@expo/ui/swift-ui'
+import {buttonStyle, controlSize, frame, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
 import {NoticeView} from '@frogpond/notice'
+import {openUrl} from '@frogpond/open-url'
 
 import {contactsOptionsFor} from '../source/features/directory/contacts-query'
 import {useCampusId, useCampusSection} from '../source/features/campus/store'
@@ -63,7 +64,37 @@ function ContactsPage(): React.ReactNode {
 					/>
 				</List>
 			</Host>
+			{section.directoryUrl ? <OpenDirectoryButton url={section.directoryUrl} /> : null}
 		</>
+	)
+}
+
+/** Where a search bar's edges sit in the bottom toolbar, from the screen's. */
+const TOOLBAR_MARGIN = 16
+
+/**
+ * The college's own directory, on the web, in the bottom toolbar where the
+ * Directory screen's search bar sits, and as wide.
+ */
+function OpenDirectoryButton({url}: {url: string}): React.ReactNode {
+	let {width} = useWindowDimensions()
+	return (
+		<Stack.Toolbar placement="bottom">
+			<Stack.Toolbar.View>
+				<Host matchContents={true}>
+					<Button
+						label="Open the Directory"
+						modifiers={[
+							buttonStyle('glass'),
+							controlSize('large'),
+							frame({width: width - 2 * TOOLBAR_MARGIN}),
+						]}
+						onPress={() => openUrl(url)}
+						systemImage="arrow.up.right"
+					/>
+				</Host>
+			</Stack.Toolbar.View>
+		</Stack.Toolbar>
 	)
 }
 

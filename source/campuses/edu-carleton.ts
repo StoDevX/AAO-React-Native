@@ -36,7 +36,7 @@ export const carleton = {
 			phoneNumber: '5072225999',
 		},
 	},
-	contacts: {title: 'Important Contacts'},
+	contacts: {title: 'Directory', directoryUrl: 'https://www.carleton.edu/directory/'},
 	api: {
 		defaultUrl: 'https://carleton.frogpond.tech/v1/',
 		storageKey: 'settings:server-address:edu.carleton',
