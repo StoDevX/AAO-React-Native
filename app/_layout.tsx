@@ -38,7 +38,7 @@ import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
 import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
 import {useUITestReset} from '../source/lib/uitest-reset'
 import {useCampusStore} from '../source/features/campus/store'
-import {CampusPicker} from './choose-campus'
+import {CampusPicker} from '../source/features/campus/campus-picker'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
