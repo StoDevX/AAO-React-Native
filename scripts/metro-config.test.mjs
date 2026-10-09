@@ -38,6 +38,6 @@ test("Metro's cache key changes with the .yaml loader, not only with Expo's", as
 	let {readFileSync} = await import('node:fs')
 	let {withYaml} = await import('./metro-yaml-transformer.mjs')
 	let loader = readFileSync(join(import.meta.dirname, 'yaml-module.mjs'))
-	let transformer = withYaml({transform: () => {}, getCacheKey: () => 'expo'})
+	let transformer = withYaml({transform: (args) => args, getCacheKey: () => 'expo'})
 	assert.equal(transformer.getCacheKey(), `expo${createHash('sha1').update(loader).digest('hex')}`)
 })

@@ -15,7 +15,7 @@ let campus = createStore<{campus: CampusId | null; hydrated: boolean}>(() => ({
 	campus: 'example.college',
 	hydrated: true,
 }))
-let uninstall: () => void = () => {}
+let uninstall: (() => void) | null = null
 let network: jest.Mock<typeof fetch>
 
 beforeEach(() => {
@@ -26,7 +26,8 @@ beforeEach(() => {
 	campus.setState({campus: 'example.college', hydrated: true})
 })
 afterEach(() => {
-	uninstall()
+	uninstall?.()
+	uninstall = null
 	setFetchInterceptor(null)
 })
 
