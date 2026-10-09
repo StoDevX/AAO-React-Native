@@ -401,9 +401,6 @@ importers:
       '@babel/preset-typescript':
         specifier: 7.29.7
         version: 7.29.7(@babel/core@7.29.7)(supports-color@8.1.1)
-      '@bgotink/kdl':
-        specifier: 0.4.0
-        version: 0.4.0
       '@expo/config-plugins':
         specifier: 57.0.9
         version: 57.0.9(supports-color@8.1.1)(typescript@7.0.2)
@@ -1651,9 +1648,6 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-
-  '@bgotink/kdl@0.4.0':
-    resolution: {integrity: sha512-F0uJCjo5FQvFdcGF5QbYVNfcGiRWlocuzyIdQxottZF2+gu6L2xjMGEu9PIpse2hifAca/19vIospgaETCKxIg==}
 
   '@cacheable/memory@2.2.0':
     resolution: {integrity: sha512-CTLKqLItRCEixEAewD3/j9DB3/o96gpTPD4eJ1v+DGOlxZRZncRQkGYqqnAGCscYd6RNeXfGeiuCphsPtqyIfQ==}
@@ -6282,8 +6276,6 @@ snapshots:
       '@babel/helper-validator-identifier': 7.29.7
 
   '@bcoe/v8-coverage@0.2.3': {}
-
-  '@bgotink/kdl@0.4.0': {}
 
   '@cacheable/memory@2.2.0':
     dependencies:

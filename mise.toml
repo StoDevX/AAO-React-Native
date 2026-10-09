@@ -439,13 +439,13 @@ run = '''
 node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/update-campus-fixtures.mjs "$usage_campus" ${usage_allow_large:+--allow-large}
 '''
 
-[tasks."fixture-to-kdl"]
-description = "Start a Wiki Monkeys fixture from a recording, as KDL under its new key"
+[tasks."fixture-to-yaml"]
+description = "Start a Wiki Monkeys fixture from a recording, as YAML under its new key"
 usage = '''
   arg "<recording>" help="A St. Olaf or Carleton recording's .json file"
   arg "<key>" help="The request Wiki Monkeys makes, as \"GET {server:example.college}/path\""
 '''
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fixture-to-kdl.mjs "$usage_recording" "$usage_key"'
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fixture-to-yaml.mjs "$usage_recording" "$usage_key"'
 
 # Fetches the endpoints' live samples, so it stays out of validate-data.
 [tasks."update-fixture-schemas"]
