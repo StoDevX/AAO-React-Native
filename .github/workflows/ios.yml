@@ -902,11 +902,18 @@ jobs:
   # even though it skips the shards after it. What stays green is a skip nobody
   # failed to cause: the gate found nothing to test, the `ci/skip-e2e` label is
   # on, or a cache hit skipped the build.
+  #
+  # A run that a newer run of the same commit cancelled through `concurrency`
+  # still gets here, with its needs cancelled. That run defers to the newer one
+  # instead of failing, so the commit doesn't carry a red check that no test
+  # caused. A run cancelled with nothing newer behind it still fails.
   uitest-conclusion:
     name: UITest Conclusion
     needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check, ios-uitest]
     runs-on: ubuntu-slim
     if: always()
+    permissions:
+      actions: read
     steps:
       - name: Report what the suite did
         env:
@@ -916,6 +923,18 @@ jobs:
 
       - name: Fail if anything failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ANY_FAILED: ${{ contains(needs.*.result, 'failure') }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          if [ "$ANY_FAILED" = false ]; then
+            others=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$HEAD_SHA&event=$GITHUB_EVENT_NAME&per_page=100" \
+              --jq "[.workflow_runs[] | select(.name == \"$GITHUB_WORKFLOW\" and .id != $GITHUB_RUN_ID and .conclusion != \"cancelled\")] | length")
+            if [ "$others" -gt 0 ]; then
+              echo "::notice::A newer run of this commit superseded this one; its UITest Conclusion is the one that counts."
+              exit 0
+            fi
+          fi
           echo "A job the UITests depend on failed or was cancelled." >&2
           exit 1
