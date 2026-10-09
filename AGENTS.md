@@ -129,6 +129,12 @@ Six more kinds of test cost upkeep and catch nothing:
   the screen (a tile is offered, a card shows a field) breaks on data, not on
   the app. Test the decision in Jest and put simulator screenshots on the PR.
 
+**Campus smoke tests are the exception.** `uitests/CampusSmokeTests.swift`
+checks that each campus's data reaches its screens, which is a data-flow test,
+but it reads committed recordings (`source/features/campus/__fixtures__/`),
+never live data, so it breaks only when someone rerecords and the diff shows
+what moved.
+
 In Claude Code, the `test-writing-reminder` mod in
 `.claude/skills/test-writing-reminder/` refuses each agent's first write to
 each test file and lists these kinds; a subagent gets its own reminder, and so
@@ -401,6 +407,36 @@ shows the wrong hour outside Minnesota. `updated` is when KSTO last edited the
 post, which tells a schedule left over from an earlier term apart.
 
 ### UI Test Fixtures
+
+A UI test class can name a campus: `override class var campus: Campus? { .carleton }`,
+with a `/// Tags: campus:carleton.edu` marker. The app then answers every
+request, from both campus servers and the papers' own sites, from
+`source/features/campus/__fixtures__/<domain>/`, one file per request, and a
+request with no recording fails naming the fix. Rerecord a campus with a
+simulator booted and Metro running:
+
+```bash
+mise run update-campus-fixtures carleton.edu
+```
+
+It writes nothing if a test fails, and refuses a response over 200 KB unless
+run with `--allow-large`. What it writes differs from what the servers sent in
+four ways, all in `scripts/campus-fixtures.mjs`:
+
+- **Calendar dates move back.** The feeds answer from the day they are asked,
+  so the recorder moves a campus's events back by whole days until the first
+  day from the recording on with an event is the UI tests' frozen day
+  (`UITEST_FROZEN_DATE`). While recording, the calendar test only waits for the
+  day to load, and skips its check.
+- **The St. Olaf calendar's dates are `{date}` in its keys**, since its window
+  comes from the day's date, and the recorder fetches any page of it the run
+  ended before asking for.
+- **Calendar answers keep only the fields their parsers read** (`TRIMS`). A
+  parser that starts reading a field adds it there.
+- **Every email address is `person@example.com`.** The feeds name people in
+  their event text.
+
+Tests naming no campus keep the per-feature fixtures below.
 
 Under UI tests the map reads copies of each campus's `map/geojson` from
 `source/features/map/__fixtures__/`, not ccc-server, so a data publish cannot

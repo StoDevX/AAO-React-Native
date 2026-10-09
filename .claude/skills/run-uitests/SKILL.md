@@ -40,6 +40,8 @@ TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 xcodebuild test-without-building \
   -resultBundlePath /tmp/results
 ```
 
+One campus's smoke tests: `-only-testing:AllAboutAnythingUITests/CarletonSmokeTests`.
+
 Pipe step 4 through `grep -E "^Test Case|error:|XCTAssert|Executed|\*\*"`.
 Unfiltered xcodebuild output is thousands of lines, most of it exported build
 settings, and it will bury the one assertion message you ran the test for.
