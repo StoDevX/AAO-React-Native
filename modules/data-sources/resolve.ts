@@ -1,6 +1,7 @@
 import {clientFor} from '@frogpond/api'
 import {queryOptions, type QueryClient} from '@tanstack/react-query'
 import bundledJson from './bundled.json'
+import {requireManifestServer} from './manifest-server'
 import {
 	CAMPUS_PROPERTY,
 	ID_PROPERTY,
@@ -18,20 +19,6 @@ const bundled: Jrd = JrdSchema.parse(bundledJson)
 
 export const keys = {
 	manifest: ['data-sources', 'manifest'] as const,
-}
-
-/** The server that publishes the sources manifest; the app sets it at boot. */
-let manifestServer: SourceCampus | undefined
-
-export function setManifestServer(id: SourceCampus): void {
-	manifestServer = id
-}
-
-function requireManifestServer(): SourceCampus {
-	if (manifestServer === undefined) {
-		throw new Error('setManifestServer has not run; source/init/api.ts calls it at boot')
-	}
-	return manifestServer
 }
 
 export const manifestOptions = queryOptions({
@@ -75,28 +62,23 @@ const CAMPUS_IDS = new Map<string, SourceCampus>([
 	['edu.carleton', 'edu.carleton'],
 ])
 
-/// A link's campus. Absent, or a campus this build does not know, is St. Olaf's,
-/// the server a manifest entry names when it names none.
-function campusOf(link: Jrd['links'][number]): SourceCampus {
+/// A link's campus: the manifest's own server when it names none, and
+/// undefined for a campus this build does not know.
+function campusOf(link: Jrd['links'][number]): SourceCampus | undefined {
 	let named = link.properties[CAMPUS_PROPERTY]
-	return (named === undefined ? undefined : CAMPUS_IDS.get(named)) ?? 'edu.stolaf'
-}
-
-function toResolved(link: Jrd['links'][number]): ResolvedSource {
-	return {
-		id: link.properties[ID_PROPERTY],
-		href: link.href,
-		type: link.type,
-		title: link.titles?.['und'],
-		campus: campusOf(link),
-	}
+	return named === undefined ? requireManifestServer() : CAMPUS_IDS.get(named)
 }
 
 function find(manifest: Jrd, rel: string, id: string): ResolvedSource | undefined {
-	let link = manifest.links.find(
-		(entry) => entry.rel === rel && entry.properties[ID_PROPERTY] === id,
-	)
-	return link ? toResolved(link) : undefined
+	for (let link of manifest.links) {
+		if (link.rel !== rel || link.properties[ID_PROPERTY] !== id) continue
+		// An entry for a campus this build does not know is left alone, as if
+		// absent, rather than asked of some other campus's server.
+		let campus = campusOf(link)
+		if (campus === undefined) continue
+		return {id, href: link.href, type: link.type, title: link.titles?.['und'], campus}
+	}
+	return undefined
 }
 
 /// Whether the bundled manifest has an entry for `rel` and `id`, of any type.

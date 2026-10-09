@@ -122,6 +122,10 @@ function publishedEtag(etag: string, {ignoresIfNoneMatch = false} = {}) {
 
 beforeEach(() => {
 	jest.isolateModules(() => {
+		// A fresh copy of the modules, so boot's naming of the manifest's server is redone here.
+		jest
+			.requireActual<typeof import('@frogpond/data-sources')>('@frogpond/data-sources')
+			.setManifestServer('edu.stolaf')
 		;({refreshCatalog, shouldRetryCatalog, CatalogRejectedError} =
 			jest.requireActual<RefreshModule>('../refresh'))
 	})

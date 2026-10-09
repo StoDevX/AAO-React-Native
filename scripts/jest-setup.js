@@ -155,3 +155,7 @@ jest.mock('react-native/Libraries/Settings/NativeSettingsManager', () => ({
 		deleteValues: jest.fn(),
 	},
 }))
+
+// Boot names the server that publishes the sources manifest (source/init/api.ts);
+// a test starts where boot leaves the app.
+require('../modules/data-sources/manifest-server').setManifestServer('edu.stolaf')
