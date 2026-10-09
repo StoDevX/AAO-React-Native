@@ -44,7 +44,12 @@ import {cardVenuesOptions} from '../../source/features/map/card-queries'
 import {PlaceStackCard} from '../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../source/features/map/building-picker'
-import {framingFor, type Framing, type MapPins} from '../../source/features/map/lib/map-pins'
+import {
+	framingFor,
+	onlyPin,
+	type Framing,
+	type MapPins,
+} from '../../source/features/map/lib/map-pins'
 import {placeForTap, tapCandidates} from '../../source/features/map/lib/place-for-tap'
 import {
 	highlightedFootprint,
@@ -274,6 +279,17 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	// What the sheet is listing, pinned. The picker stays mounted under a
 	// card, so these persist while a card is open.
 	let [pins, setPins] = React.useState<MapPins | null>(null)
+	// A place opened from a search result is the only search pin drawn while
+	// its card is open; the rest come back when it closes. A place opened any
+	// other way -- a pin, a building, a group's row -- leaves the pins alone.
+	let [searchedId, setSearchedId] = React.useState<string | null>(null)
+	// Cleared during render rather than in an effect, as React recommends for
+	// state that follows other state, so the other pins never wait a render.
+	if (searchedId && openedId !== searchedId) {
+		setSearchedId(null)
+	}
+	// Memoized, so the pins' layer does not rebuild its source every render.
+	let shownPins = React.useMemo(() => onlyPin(pins, searchedId), [pins, searchedId])
 
 	// Frames what a Framing asks for in the map above the sheet and below the
 	// header: a box fitted, one place eased to at the selection zoom.
@@ -421,7 +437,7 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 				</GeoJSONSource>
 
 				<MapPinImages />
-				<MapPinsLayer onCluster={frameCluster} onSelect={openPlace} pins={pins} />
+				<MapPinsLayer onCluster={frameCluster} onSelect={openPlace} pins={shownPins} />
 
 				<MapSelectionLayer selection={selection} />
 			</Map>
@@ -497,9 +513,10 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 											focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
 										)
 									}
-									onSelect={(id) => {
+									onSelect={(id, from) => {
 										dispatchStack({type: 'start', id})
 										dispatchSheet({type: 'row-tapped'})
+										setSearchedId(from === 'search' ? id : null)
 									}}
 								/>
 							</Group>
