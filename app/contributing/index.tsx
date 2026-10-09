@@ -8,8 +8,7 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import {Stack, useRouter} from 'expo-router'
 
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
-import {useCampusSection, useLegacyCampus} from '../../source/features/campus/store'
-import {dataSourcesFor} from '../../source/features/contributing/data-sources'
+import {useCampusSection} from '../../source/features/campus/store'
 import {openEmail} from '../../source/features/support/open-email'
 import {GH_BASE_URL} from '../../source/lib/constants'
 
@@ -34,8 +33,8 @@ function Blurb({children}: {children: string}): React.ReactNode {
 /// How to help build the app and its data, and where that data comes from.
 export default function ContributingPage(): React.ReactNode {
 	let router = useRouter()
-	let campus = useLegacyCampus()
 	let {appName} = useCampusSection('branding')
+	let dataSources = useCampusSection('about')?.dataSources ?? []
 
 	return (
 		<>
@@ -84,17 +83,19 @@ export default function ContributingPage(): React.ReactNode {
 						/>
 					</SheetSection>
 
-					<SheetSection title="Data sources">
-						{dataSourcesFor(campus).map((source) => (
-							<DisclosureRow
-								destination="external"
-								detail={source.provides}
-								key={source.name}
-								onPress={() => trackedOpenUrl({url: source.url})}
-								title={source.name}
-							/>
-						))}
-					</SheetSection>
+					{dataSources.length > 0 ? (
+						<SheetSection title="Data sources">
+							{dataSources.map((source) => (
+								<DisclosureRow
+									destination="external"
+									detail={source.provides}
+									key={source.name}
+									onPress={() => trackedOpenUrl({url: source.url})}
+									title={source.name}
+								/>
+							))}
+						</SheetSection>
+					) : null}
 				</Form>
 			</Host>
 		</>

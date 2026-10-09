@@ -2,13 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Sentry from '@sentry/react-native'
 import {setQuickActions} from '@frogpond/quick-actions'
 
-import {DEFAULT_QUICK_ACTIONS, resolveQuickActions} from '../destinations'
+import {resolveQuickActions} from '../destinations'
 import {useQuickActionsStore} from '../store'
 import {startQuickActionSync, toQuickActions} from '../sync'
 import {useCampusStore} from '../../campus/store'
 import {campusById} from '../../../campuses'
 
 const stolaf = campusById('edu.stolaf')
+const STOLAF_DEFAULTS = ['Stav Menu', 'Cage Menu', 'Olaf Messenger', 'Transit']
 
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
@@ -17,7 +18,7 @@ let pushedIds = () => mockSet.mock.lastCall?.[0].map((action) => action.id)
 
 // Each test starts as a fresh install: nothing stored, nothing pushed.
 beforeEach(async () => {
-	useQuickActionsStore.setState({quickActions: DEFAULT_QUICK_ACTIONS})
+	useQuickActionsStore.setState({picked: {}})
 	useCampusStore.setState({campus: 'edu.stolaf'})
 	await AsyncStorage.clear()
 	mockSet.mockClear()
@@ -64,7 +65,7 @@ describe('startQuickActionSync', () => {
 	test('pushes the defaults once hydrated, with nothing stored', async () => {
 		let stop = startQuickActionSync()
 		await useQuickActionsStore.persist.rehydrate()
-		expect(pushedIds()).toStrictEqual(DEFAULT_QUICK_ACTIONS)
+		expect(pushedIds()).toStrictEqual(STOLAF_DEFAULTS)
 		stop()
 	})
 
@@ -91,7 +92,15 @@ describe('startQuickActionSync', () => {
 		useCampusStore.getState().setCampus('edu.carleton')
 		expect(pushedIds()).toStrictEqual(['Menus', 'Building Hours', 'SUMO', 'Convo'])
 		useCampusStore.getState().setCampus('edu.stolaf')
-		expect(pushedIds()).toStrictEqual(DEFAULT_QUICK_ACTIONS)
+		expect(pushedIds()).toStrictEqual(STOLAF_DEFAULTS)
+		stop()
+	})
+
+	test('pushes nothing, and does not throw, before a campus is chosen', async () => {
+		useCampusStore.setState({campus: null})
+		let stop = startQuickActionSync()
+		await useQuickActionsStore.persist.rehydrate()
+		expect(mockSet).not.toHaveBeenCalled()
 		stop()
 	})
 

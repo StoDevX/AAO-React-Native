@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {type AppIconName, DEFAULT_ICON, iconFor} from '../../../images/icons'
-import type {Campus} from '../campus/store'
+import type {CampusDefinition} from '../../campuses'
 import {reportIconChange} from './telemetry'
 import {type IconEntry, currentIconEntry, iconForCampus} from './icons'
 
@@ -19,16 +19,16 @@ async function setIcon(type: AppIconName): Promise<void> {
 let pendingIconSwitch: Promise<void> = Promise.resolve()
 
 /**
- * Moves the app icon to `campus`'s own when it wears the other campus's. iOS
+ * Moves the app icon to `campus`'s own when it wears another campus's. iOS
  * may refuse, and then the icon simply stays; the gallery still offers the
  * campus's own. Each change waits for the one before it, so switching campus
  * twice in quick succession reads the icon the first change left and ends on
  * the campus chosen last.
  */
-export function switchIconForCampus(campus: Campus): Promise<void> {
+export function switchIconForCampus(campus: CampusDefinition): Promise<void> {
 	pendingIconSwitch = pendingIconSwitch.then(async () => {
 		try {
-			let next = iconForCampus(iconFor(await getIcon()), campus)
+			let next = iconForCampus(iconFor(await getIcon()), campus.appIcons)
 			if (next) {
 				await setIcon(next)
 			}

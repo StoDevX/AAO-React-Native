@@ -17,7 +17,7 @@ import {SymbolView} from 'expo-symbols'
 import type {SFSymbol} from 'sf-symbols-typescript'
 
 import {faqsOptionsFor} from './query'
-import {useLegacyCampus} from '../campus/store'
+import {useCampus} from '../campus/store'
 import {useQuery} from '@tanstack/react-query'
 import {getFaqVersion, useFaqBannerStore} from './store'
 import {useDevBannerStore} from './dev-banner-store'
@@ -52,7 +52,7 @@ type Props = {
 }
 
 export function FaqBanner({style, target, faqId, onPressOverride}: Props): React.ReactNode {
-	let {data} = useQuery(faqsOptionsFor(useLegacyCampus()))
+	let {data} = useQuery(faqsOptionsFor(useCampus()))
 	let dismissFaq = useFaqBannerStore((state) => state.dismissFaq)
 	let dismissedMap = useFaqBannerStore((state) => state.dismissed)
 	let devBanners = useDevBannerStore((state) => state.devBanners)
@@ -174,7 +174,7 @@ type GroupProps = {
 }
 
 export function FaqBannerGroup({target, style, onPressFaq}: GroupProps): React.ReactNode {
-	let {data} = useQuery(faqsOptionsFor(useLegacyCampus()))
+	let {data} = useQuery(faqsOptionsFor(useCampus()))
 	let devBanners = useDevBannerStore((state) => state.devBanners)
 	let devEnabled = useDevBannerStore((state) => state.enabled)
 

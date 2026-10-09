@@ -1,4 +1,5 @@
 import type {CampusDefinition} from './definition'
+import {carletonAbout} from './edu-carleton/about'
 import {carletonHomeTiles} from './edu-carleton/home-tiles'
 import {menus} from './edu-carleton/menus'
 import {CARLETONIAN} from './edu-carleton/paper'
@@ -71,4 +72,10 @@ export const carleton = {
 	radio: {stations: [KRLX]},
 	convos: {},
 	paper: CARLETONIAN,
+	// A Carleton install's starting picks: the CARLS tiles reached most.
+	quickActions: {defaults: ['Menus', 'Building Hours', 'SUMO', 'Convo']},
+	appIcons: {groups: ['CARLS'], default: 'carls-penguin'},
+	about: carletonAbout,
+	// St. Olaf's server serves both campuses' notices; moving Carleton's onto its own is for later.
+	faqs: {server: 'edu.stolaf'},
 } as const satisfies CampusDefinition

@@ -1,4 +1,5 @@
 import type {CampusDefinition} from './definition'
+import {stolafAbout} from './edu-stolaf/about'
 import {BUNDLED_DIRECTORIES, BUNDLED_HOURS} from './edu-stolaf/bundled'
 import {stolafHomeTiles} from './edu-stolaf/home-tiles'
 import {menus} from './edu-stolaf/menus'
@@ -69,4 +70,8 @@ export const stolaf = {
 	},
 	radio: {stations: [KSTO]},
 	paper: MESSENGER,
+	quickActions: {defaults: ['Stav Menu', 'Cage Menu', 'Olaf Messenger', 'Transit']},
+	appIcons: {groups: ['Classic', 'Windmill']},
+	about: stolafAbout,
+	faqs: {showsLegacyText: true},
 } as const satisfies CampusDefinition

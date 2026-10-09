@@ -2,8 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import {setQuickActions} from '@frogpond/quick-actions'
 import type {QuickAction} from '@frogpond/quick-actions'
 
-import {campusById} from '../../campuses'
-import {useCampusStore} from '../campus/store'
+import {currentCampus, useCampusStore} from '../campus/store'
 import {iconImage} from '../views'
 import {resolveQuickActions} from './destinations'
 import type {QuickActionDestination} from './destinations'
@@ -20,13 +19,14 @@ export function toQuickActions(destinations: QuickActionDestination[]): QuickAct
 }
 
 function pushQuickActions(): void {
-	let id = useCampusStore.getState().campus
-	// Nothing to offer until someone picks a campus.
-	if (id === null) {
+	// A build with no default campus shows the picker first, and has none yet.
+	if (useCampusStore.getState().campus === null) {
 		return
 	}
-	let campus = campusById(id)
-	let destinations = resolveQuickActions(pickedFor(useQuickActionsStore.getState(), campus), campus)
+	let campus = currentCampus()
+	let destinations = campus.quickActions
+		? resolveQuickActions(pickedFor(useQuickActionsStore.getState(), campus), campus)
+		: []
 	// The menu is a convenience; a failure is worth knowing about, not showing.
 	setQuickActions(toQuickActions(destinations)).catch((error: unknown) => {
 		Sentry.captureException(error)
@@ -45,10 +45,7 @@ export function startQuickActionSync(): () => void {
 	let stopOnHydration = useQuickActionsStore.persist.onFinishHydration(pushQuickActions)
 	let stopOnCampusHydration = useCampusStore.persist.onFinishHydration(pushQuickActions)
 	let stopOnChange = useQuickActionsStore.subscribe((state, previous) => {
-		if (
-			state.quickActions !== previous.quickActions ||
-			state.carletonQuickActions !== previous.carletonQuickActions
-		) {
+		if (state.picked !== previous.picked) {
 			pushQuickActions()
 		}
 	})

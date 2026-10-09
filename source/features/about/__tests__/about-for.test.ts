@@ -1,19 +1,24 @@
 import {describe, expect, test} from '@jest/globals'
 
+import {campusById} from '../../../campuses'
 import {aboutFor} from '../about-for'
 
 describe("each campus's About", () => {
 	test("All About Olaf's tells its story and credits both its writers and its helpers", () => {
-		let about = aboutFor('stolaf')
+		let about = aboutFor(campusById('edu.stolaf').about)
 		expect(about.story.length).toBeGreaterThan(0)
 		expect(about.credits.map((credit) => credit.id)).toEqual(['contributors', 'acknowledgements'])
 	})
 
 	// CARLS' own credits name its writers alone, and tell no history.
-	test("CARLS' shows its own intro and writers, and no story or empty list", () => {
-		let about = aboutFor('carleton')
+	test("CARLS' shows its own writers, and no story or empty list", () => {
+		let about = aboutFor(campusById('edu.carleton').about)
 		expect(about.story).toEqual([])
 		expect(about.credits.map((credit) => credit.id)).toEqual(['contributors'])
 		expect(about.credits[0].names).toContain('Grace Pipes')
+	})
+
+	test('is empty for a campus without an About section', () => {
+		expect(aboutFor(undefined)).toEqual({story: [], credits: []})
 	})
 })

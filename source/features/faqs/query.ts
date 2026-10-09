@@ -1,47 +1,61 @@
 import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import bundledFaqs from '../../../docs/faqs.json'
+import type {CampusDefinition, CampusId} from '../../campuses'
 import {defaultConditionContext, evaluateConditions} from './conditions'
 import {parseFaqMetadata} from './schema'
 import type {Faq, FaqQueryData, FaqTarget} from './types'
-import {type Campus, campusIdOfLegacy} from '../campus/store'
 
 export const keys = {
-	all: ['faqs'] as const,
+	/** One list per server; the campuses that read the same server share it. */
+	forServer: (server: CampusId) => [server, 'faqs'] as const,
+}
+
+/** The server `campus`'s notices come from. */
+function serverFor(campus: CampusDefinition): CampusId {
+	return campus.faqs?.server ?? campus.id
 }
 
 /**
  * Both apps' notices are one list, the one `data/faqs.yaml` publishes; each
  * campus keeps those whose conditions name it, or no campus.
  */
-const optionsFor = (campus: Campus) =>
+const optionsFor = (campus: CampusDefinition) =>
 	queryOptions<unknown, unknown, FaqQueryData>({
-		queryKey: keys.all,
-		// St. Olaf's server answers every campus's FAQs.
-		queryFn: ({signal}) => clientFor('edu.stolaf').get('faqs', {signal}).json(),
+		queryKey: keys.forServer(serverFor(campus)),
+		queryFn: ({signal}) => clientFor(serverFor(campus)).get('faqs', {signal}).json(),
 		select: (raw) => faqsFor(raw, campus),
+		enabled: campus.faqs !== undefined,
 	})
 
 // Built once per campus, so `select` keeps its identity and runs only when the data changes.
-const OPTIONS = {stolaf: optionsFor('stolaf'), carleton: optionsFor('carleton')}
+const OPTIONS = new Map<CampusId, ReturnType<typeof optionsFor>>()
 
 /** The FAQs and notices `campus`'s app shows. */
-export function faqsOptionsFor(campus: Campus): ReturnType<typeof optionsFor> {
-	return OPTIONS[campus]
+export function faqsOptionsFor(campus: CampusDefinition): ReturnType<typeof optionsFor> {
+	let options = OPTIONS.get(campus.id)
+	if (!options) {
+		options = optionsFor(campus)
+		OPTIONS.set(campus.id, options)
+	}
+	return options
 }
 
 /** What `campus`'s FAQ screen shows before its data arrives: the copy bundled with the app. */
-export function emptyFaqDataFor(campus: Campus): FaqQueryData {
+export function emptyFaqDataFor(campus: CampusDefinition): FaqQueryData {
 	return faqsFor(bundledFaqs, campus)
 }
 
 /** The notices in `raw` that `campus`'s app shows, falling back on the bundled copy's. */
-export function faqsFor(raw: unknown, campus: Campus): FaqQueryData {
+export function faqsFor(raw: unknown, campus: CampusDefinition): FaqQueryData {
+	if (!campus.faqs) {
+		return {faqs: [], legacyText: ''}
+	}
 	if (!isRecord(raw)) {
 		return emptyFaqDataFor(campus)
 	}
 
-	let context = {...defaultConditionContext(), campus: campusIdOfLegacy(campus)}
+	let context = {...defaultConditionContext(), campus: campus.id}
 	let faqs = Array.isArray(raw.faqs)
 		? (raw.faqs as unknown[])
 				.map(normalizeFaq)
@@ -53,9 +67,9 @@ export function faqsFor(raw: unknown, campus: Campus): FaqQueryData {
 		faqs = emptyFaqDataFor(campus).faqs
 	}
 
-	// The free-form text predates the list and is All About Olaf's alone.
+	// The free-form text predates the list, and only a campus that asks shows it.
 	let legacyText = ''
-	if (campus === 'stolaf') {
+	if (campus.faqs.showsLegacyText) {
 		legacyText = typeof raw.text === 'string' ? raw.text : bundledFaqs.text
 	}
 
