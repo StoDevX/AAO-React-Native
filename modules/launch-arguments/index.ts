@@ -59,12 +59,6 @@ export const isDebugNativeBuild: boolean = LaunchArguments.isDebugNativeBuild
 export const uiTestCampus: string | null = LaunchArguments.uiTestCampus()
 
 /**
- * Whether features serve their own bundled UI-test data. A test that names a
- * campus reads that campus's recordings instead, through `fetch`.
- */
-export const servesBundledFixtures: boolean = isUITesting && uiTestCampus === null
-
-/**
  * Calls `listener` whenever the UI test runner asks to reset the app in place;
  * see UITestResetChannel.swift. Never calls it outside the UI tests.
  */

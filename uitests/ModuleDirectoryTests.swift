@@ -10,8 +10,6 @@ import XCTest
 // driven at a speed a runner cannot misread.
 /// Tags: campus:example.college
 class ModuleDirectoryTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 
 	/// The landing grid and a contact's sheet, from opening to swiping away.
 	///

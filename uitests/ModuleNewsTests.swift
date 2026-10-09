@@ -2,8 +2,6 @@ import XCTest
 
 /// Tags: campus:example.college
 class ModuleNewsTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	/// The paper opens By Issue on its grid of issues, and a real scroll down the grid pages
 	/// back through older issues.
 	func testThePaperOpensOnTheIssueGridAndLoadsOlderPages() throws {

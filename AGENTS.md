@@ -446,7 +446,8 @@ expects may have moved on: that check skips, naming the value, and the recorder
 still writes. Take each skipped value from the new files into the subclass's
 `expected`, then run the campus's tests once more without recording.
 
-Tests naming no campus keep the per-feature fixtures below.
+The deep UI tests run on Wiki Monkeys, whose fixtures are hand-written YAML;
+`uitests/AGENTS.md` says how to add one. A few are worth knowing about.
 
 The map's UI tests run on Wiki Monkeys, whose map is a fixture
 (`source/features/campus/__fixtures__/example.college/GET-map-geojson.yaml`):

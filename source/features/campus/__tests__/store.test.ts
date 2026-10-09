@@ -26,7 +26,6 @@ function loadStore({defaultCampus, uiTestCampus}: Setup, {reset = true} = {}) {
 	jest.doMock('@frogpond/launch-arguments', () => ({
 		isUITesting: uiTestCampus !== null,
 		uiTestCampus,
-		servesBundledFixtures: false,
 	}))
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../store') as typeof import('../store')

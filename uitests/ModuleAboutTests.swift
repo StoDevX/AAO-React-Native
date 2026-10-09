@@ -9,8 +9,6 @@ import XCTest
 ///
 /// Tags: campus:example.college
 class ModuleAboutTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	/// The version, then the story's timeline, which opens on its newest era
 	/// and follows a swipe to the next one.
 	func testTheStoryOpensOnItsNewestEraAndSwipesToTheNext() throws {

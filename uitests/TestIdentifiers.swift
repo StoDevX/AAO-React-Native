@@ -142,8 +142,6 @@ struct TestIdentifiers {
 		static let directory = "Directory"
 		static let map = "Map"
 		static let more = "More"
-		static let olafMessenger = "Olaf Messenger"
-		static let stOlafNews = "St. Olaf News"
 		static let stoPrint = "stoPrint"
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
@@ -482,8 +480,6 @@ struct TestIdentifiers {
 	enum News {
 		/// A print section's shelf's "All ›", by the label VoiceOver reads.
 		static func allStories(in section: String) -> String { "All \(section)" }
-		/// St. Olaf News's navigation bar title, in app/st-olaf-news.tsx.
-		static let stOlafTitle = "St. Olaf News"
 		/// The views the front page's menu offers, and the start of the menu button's label, which
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let latest = "Latest"

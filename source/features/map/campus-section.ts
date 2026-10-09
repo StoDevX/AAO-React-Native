@@ -34,7 +34,7 @@ export type MapSection = {
 	venuesByBuilding?: true
 	/** Each building's floor directory, read from `spaces/directory`. */
 	buildingDirectory?: {
-		/** This repository's copy, read by UI tests naming no campus and by the dev override. */
+		/** This repository's copy, read by the dev override. */
 		bundled?: ReadonlyArray<BuildingDirectory>
 	}
 }

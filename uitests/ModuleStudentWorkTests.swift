@@ -2,8 +2,6 @@ import XCTest
 
 /// Tags: campus:example.college
 class ModuleStudentWorkTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	private typealias IDs = TestIdentifiers.StudentWork
 
 	/// The layout menu draws the areas as rows and back as tiles, the one

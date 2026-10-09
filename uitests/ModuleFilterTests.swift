@@ -10,8 +10,6 @@ import XCTest
 /// shape.
 /// Tags: campus:example.college
 class ModuleFilterTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	private typealias Keys = TestIdentifiers.Filter.MenusKeys
 
 	// MARK: - The menu

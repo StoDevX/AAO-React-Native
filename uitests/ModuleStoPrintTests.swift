@@ -10,8 +10,6 @@ import XCTest
 ///
 /// Tags: campus:example.college
 class ModuleStoPrintTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	/// A job already sent opens the release screen directly. A Pending Release
 	/// job's row instead pushes the printer list, and a printer chosen there
 	/// opens the release screen with Print offered.

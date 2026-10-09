@@ -157,27 +157,35 @@ A reachability test is still worth keeping when it is a class's *only* test —
 
 ## Campus tests
 
-`CampusSmokeTests.swift` holds one template, `CampusSmokeTests`, and a
-subclass per campus that sets `campus` and `expected` and carries a
-`/// Tags: campus:<id>` marker. XCTest runs the template's tests in each
-subclass; the template's own `defaultTestSuite` is empty, and
-`scripts/split-uitests.mjs` never schedules a class other test classes inherit
-from. A new campus is one subclass plus its recording
-(`mise run update-campus-fixtures <id>`). `--campus` is the one launch
-argument an in-place reset may change, so campus tests interleave with the
-rest in the same shards without relaunching.
+Every test names a campus. The deep tests, every `Module*Tests` class, run on
+The College of the Norway Valley Wiki Monkeys (`example.college`), the default
+`campus` in `UITestCase.swift`: a made-up campus with no server, whose every
+request is answered from the hand-written `.yaml` fixtures in
+`source/features/campus/__fixtures__/example.college/`, in any mode, so it has
+nothing to record. A class on it carries `/// Tags: campus:example.college`. No
+feature has a test-only data branch; a test reads what the app reads.
 
-`ExampleCollegeTests.swift` runs on The College of the Norway Valley Wiki
-Monkeys (`example.college`), a made-up campus with no server: every request
-it makes is answered from the hand-written `.yaml` fixtures in
-`source/features/campus/__fixtures__/example.college/`, in any mode, so it
-has nothing to record.
+A new request on Wiki Monkeys is a new `.yaml` (start one from
+`mise run fixture-to-yaml`), an endpoint pattern in
+`source/features/campus/fixture-endpoints.ts`, and `mise run
+update-fixture-schemas`; `fixture-schemas.test.ts` checks every fixture against
+its endpoint's schema.
+
+St. Olaf and Carleton have only their smoke tests. `CampusSmokeTests.swift`
+holds one template, `CampusSmokeTests`, and a subclass per campus that sets
+`campus` and `expected` and carries a `/// Tags: campus:<id>` marker. XCTest
+runs the template's tests in each subclass; the template's own
+`defaultTestSuite` is empty, and `scripts/split-uitests.mjs` never schedules a
+class other test classes inherit from. A new campus is one subclass plus its
+recording, re-recorded with `mise run update-campus-fixtures <id>`. `--campus`
+is the one launch argument an in-place reset may change, so campus tests
+interleave with the rest in the same shards without relaunching.
 
 Missing fixtures are strict. A request no fixture answers is listed in
 `missing-fixtures.jsonl` in the reset channel's directory, and `UITestCase`
-fails the test naming each missing key, even a test that otherwise passed
-(`MissingFixtureReportTests` pins this). Write the named fixture, or re-record
-the campus, rather than loosening the check.
+fails the test with "Missing fixtures for <campus>: <keys>", even a test that
+otherwise passed (`MissingFixtureReportTests` pins this). Write the named
+fixture, or re-record the campus, rather than loosening the check.
 
 A check on a value from a recording goes through `verifyRecorded`. On replay a
 missing value fails. While recording it skips instead, naming the value: live

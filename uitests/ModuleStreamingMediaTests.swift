@@ -2,8 +2,6 @@ import XCTest
 
 /// Tags: campus:example.college
 class ModuleStreamingMediaTests: UITestCase {
-	override class var campus: Campus? { .example }
-
 	/// The bar on Home opens the sheet on KMNK, Wiki Monkeys' one station. The
 	/// player's controls are buttons VoiceOver can name. Pausing leaves the
 	/// station loaded, with Play to start it again.

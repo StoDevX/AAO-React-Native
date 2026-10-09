@@ -100,9 +100,8 @@ jest.mock('expo-file-system', () => ({
 }))
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
-	// An untagged UI test: no campus named, so features serve their bundled data.
+	// No campus named, as outside a UI test.
 	uiTestCampus: null,
-	servesBundledFixtures: true,
 	// Live, so a test that stubs fetchSourceBody gets its stub, not a fixture.
 	fixtureMode: 'live',
 	isChaos: false,
