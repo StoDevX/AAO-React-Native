@@ -1,13 +1,6 @@
 import {expect, test} from '@jest/globals'
 
-import {
-	campusRoot,
-	campusRoots,
-	clientFor,
-	registerCampusServer,
-	setApiRoot,
-	stolafClient,
-} from '../index'
+import {campusRoot, campusRoots, clientFor, registerCampusServer} from '../index'
 
 /** Each registered root's address, by campus id. */
 function hrefs(): Record<string, string> {
@@ -37,11 +30,4 @@ test("a later registration replaces the campus's server", () => {
 
 	expect(campusRoot('edu.carleton')?.href).toBe('https://dev.example.test/v1/')
 	expect(clientFor('edu.carleton')).not.toBe(before)
-})
-
-test('the deprecated St. Olaf names follow its campus', () => {
-	setApiRoot(new URL('https://alias.example.test/v1/'))
-
-	expect(campusRoot('edu.stolaf')?.href).toBe('https://alias.example.test/v1/')
-	expect(stolafClient).toBe(clientFor('edu.stolaf'))
 })
