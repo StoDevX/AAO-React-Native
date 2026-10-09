@@ -65,6 +65,9 @@ export const directoryEntriesOptions = (
 		queryFn: ({signal}) =>
 			fetchDirectoryEntries(directory.searchUrl, getDirectoryQuery({query, type}), signal),
 		staleTime,
+		// The landing and the Keep Typing notice show no results, so there is nothing to ask for
+		// until there are two letters.
+		enabled: query.trim().length >= 2,
 	})
 
 export const directoryContactOptions = (
