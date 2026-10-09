@@ -76,6 +76,16 @@ describe('installFixtureServer', () => {
 		expect(response.status).toBe(200)
 		expect(network).not.toHaveBeenCalled()
 	})
+	// A developer pointing Wiki Monkeys at a local ccc-server St. Olaf also uses.
+	test("keeps answering when the campus's server is moved to another campus's address", async () => {
+		installFixtureServer(() => active)
+		registerCampusServer('example.college', new URL('https://stolaf.frogpond.tech/v1/'))
+		let response = await apiFetch('https://stolaf.frogpond.tech/v1/faqs')
+		expect(response.status).toBe(200)
+		let manifest = await (await apiFetch('https://stolaf.frogpond.tech/v1/sources')).json()
+		expect(JSON.stringify(manifest)).toContain('valley-echo')
+		expect(network).not.toHaveBeenCalled()
+	})
 })
 
 describe('fixtureCampusChanged', () => {

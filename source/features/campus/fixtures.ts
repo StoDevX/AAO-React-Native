@@ -88,8 +88,11 @@ export function serveFixture(
 	request: Request,
 	roots: Readonly<Record<string, URL | undefined>>,
 ): Response {
-	let key = fixtureKey(request.method, request.url, roots)
-	let recording = table[key]
+	// The campus's own server first: one moved to another campus's address
+	// still names its own paths. A recording keyed by another campus's server,
+	// such as the platform manifest, is found by the usual order.
+	let key = fixtureKey(request.method, request.url, {[campus]: roots[campus], ...roots})
+	let recording = table[key] ?? table[fixtureKey(request.method, request.url, roots)]
 	if (!recording) {
 		reportMissingFixture(campus, key)
 		throw new MissingCampusFixture(campus, key)
