@@ -1,6 +1,9 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleCampusDictionaryTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	/// A search made from far down the list starts its results at the top.
 	/// The first word then opens a half-height sheet whose lone sense lines up
 	/// with the headword, and the sheet closes again.

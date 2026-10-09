@@ -167,18 +167,18 @@ struct TestIdentifiers {
 		static let list = "dictionary-list"
 		static let definitionSheet = "dictionary-definition-sheet"
 		static let suggestAnEdit = "Suggest an Edit"
-		/// A copy of the iOS dictionary's own "change" entry, present only under
-		/// `--uitesting`, for comparing this sheet against a screenshot of
-		/// Apple's.
+		/// Wiki Monkeys' copy of the iOS dictionary's own "change" entry, for
+		/// comparing this sheet against a screenshot of Apple's: the one entry
+		/// with a pronunciation, a part of speech and nested senses.
 		static let referenceEntry = "change"
-		/// The entry `openFirstWord()` lands on under `--uitesting`, from
-		/// `docs/dictionary.json`. It has a single sense.
-		static let firstEntry = "AAC"
-		static let firstEntryDefinition = "The Academic Advising Center"
+		/// The entry `openFirstWord()` lands on, from Wiki Monkeys' dictionary.
+		/// It has a single sense.
+		static let firstEntry = "Avalanche Hour"
+		static let firstEntryDefinition = "The hour after the last lift closes"
 		/// A query whose results begin with `firstEntry` and run to several
-		/// screens -- 20 entries in `docs/dictionary.json`, AAC through Tomson --
-		/// so they can only be seen from the top if the list scrolls there.
-		static let firstEntrySearchTerm = "academic"
+		/// screens -- most of Wiki Monkeys' words mention the lift -- so they
+		/// can only be seen from the top if the list scrolls there.
+		static let firstEntrySearchTerm = "lift"
 
 		/// The edit form's navigation bar, which carries `suggestAnEdit`'s
 		/// wording because that action is what opens it. Queries for the form's

@@ -16,12 +16,42 @@ export type FixtureEndpoint = {
 	schema: string
 	/** Live URLs of the same endpoint, sampled when no recording covers it. */
 	live?: readonly string[]
+	/**
+	 * Answers written out by hand, for a form the server sends that no
+	 * recording or live sample happens to use.
+	 */
+	samples?: ReadonlyArray<unknown>
 }
 
 export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	{pattern: 'GET {server}/sources', schema: 'sources'},
 	{pattern: 'GET {server}/contacts', schema: 'contacts'},
-	{pattern: 'GET {server}/dictionary', schema: 'dictionary'},
+	{
+		pattern: 'GET {server}/dictionary',
+		schema: 'dictionary',
+		// An entry in the structured form, which the server sends for any word
+		// its YAML writes with senses; neither campus's dictionary has one yet.
+		samples: [
+			{
+				data: [
+					{
+						word: 'change',
+						pronunciation: 'CHānj',
+						partOfSpeech: 'verb',
+						senses: [
+							{
+								grammar: 'with object',
+								definition: 'make (someone or something) different',
+								examples: ['fame has not changed her one bit'],
+								subsenses: [{grammar: 'no object', definition: 'become different', examples: []}],
+							},
+							{definition: 'replace with another'},
+						],
+					},
+				],
+			},
+		],
+	},
 	{
 		pattern: 'GET {server}/directory/departments',
 		schema: 'directory-departments',
