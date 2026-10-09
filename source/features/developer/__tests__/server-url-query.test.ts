@@ -19,7 +19,7 @@ test('reads the address saved under the key it is given', async () => {
 	)
 	// No garbage collection, whose timer would hold Jest open.
 	let client = new QueryClient({defaultOptions: {queries: {gcTime: Infinity}}})
-	await expect(
-		client.query(serverUrlOptions('settings:server-address:edu.stolaf')),
-	).resolves.toBe('https://dev.example.test/v1/')
+	await expect(client.query(serverUrlOptions('settings:server-address:edu.stolaf'))).resolves.toBe(
+		'https://dev.example.test/v1/',
+	)
 })

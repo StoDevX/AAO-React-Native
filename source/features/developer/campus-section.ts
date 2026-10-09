@@ -11,8 +11,4 @@ export type ApiSection = {
 	defaultUrl: string
 	/** The storage key a developer's override is saved under. */
 	storageKey: string
-	/** The heading of the campus's server field in developer settings. */
-	devTitle: string
-	/** Whether developer settings also list servers found on the local network. */
-	discoverable?: true
 }

@@ -19,7 +19,7 @@ const isHttpUrl = (value: string): boolean => {
 }
 
 type Props = {
-	/** The campus whose server this section sets. A discoverable one also lists the servers found nearby. */
+	/** The campus whose server this section sets. */
 	campus: CampusDefinition
 }
 
@@ -33,7 +33,6 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 	let {isLoading} = serverUrlQuery
 
 	const discoveredServers = useServerDiscovery()
-	const showsDiscovery = api.discoverable === true
 
 	React.useEffect(() => {
 		if (serverUrlQuery.data !== undefined) {
@@ -58,7 +57,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 
 	return (
 		<>
-			<Section footer={<Text>Empty means we will use the default URL.</Text>} title={api.devTitle}>
+			<Section footer={<Text>Empty means we will use the default URL.</Text>} title="Server URL">
 				{isLoading ? (
 					<TextField
 						modifiers={[disabled(true)]}
@@ -85,7 +84,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 					</>
 				)}
 			</Section>
-			{showsDiscovery && discoveredServers.length > 0 && (
+			{discoveredServers.length > 0 && (
 				<Section footer={<Text>Tap a server to use it.</Text>} title="Local Servers">
 					{discoveredServers.map((server) => (
 						<NavigationRow

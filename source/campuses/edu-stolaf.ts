@@ -33,7 +33,5 @@ export const stolaf = {
 	api: {
 		defaultUrl: 'https://stolaf.frogpond.tech/v1/',
 		storageKey: 'settings:server-address:edu.stolaf',
-		devTitle: 'Server URL',
-		discoverable: true,
 	},
 } as const satisfies CampusDefinition

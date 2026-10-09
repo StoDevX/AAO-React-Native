@@ -36,6 +36,5 @@ export const carleton = {
 	api: {
 		defaultUrl: 'https://carleton.frogpond.tech/v1/',
 		storageKey: 'settings:server-address:edu.carleton',
-		devTitle: 'Carleton Server URL',
 	},
 } as const satisfies CampusDefinition
