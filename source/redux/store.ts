@@ -21,8 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const persistConfig = {
 	key: 'root',
-	// Bumped to drop 2.9's favourites, keyed by old campus ids -- see ./migrations.
-	version: 5,
+	// Bumped to let the dev mode toggle follow the build again -- see ./migrations.
+	version: 6,
 	migrate: createMigrate(migrations),
 	storage: AsyncStorage,
 }

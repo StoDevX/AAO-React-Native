@@ -6,7 +6,8 @@ import type {RootState} from '../store'
 
 type State = {
 	unofficialityAcknowledged: boolean
-	devModeOverride: boolean
+	/** The dev mode toggle's choice, or null to follow the build. */
+	devModeOverride: boolean | null
 	enabledCalendarSources: string[]
 	directoryResultsView: 'list' | 'tiles'
 }
@@ -29,7 +30,7 @@ export const DEFAULT_CALENDAR_SOURCES: string[] = servesBundledFixtures
 // why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
 const initialState = {
 	unofficialityAcknowledged: false,
-	devModeOverride: false,
+	devModeOverride: null,
 	enabledCalendarSources: DEFAULT_CALENDAR_SOURCES,
 	// Faces read faster than a list of names, so search results open as tiles.
 	directoryResultsView: 'tiles',
@@ -72,7 +73,7 @@ export const selectAcknowledgement = (state: RootState): State['unofficialityAck
 	state.settings.unofficialityAcknowledged
 
 export const selectDevModeOverride = (state: RootState): State['devModeOverride'] =>
-	state.settings.devModeOverride
+	state.settings.devModeOverride ?? null
 
 export const selectEnabledCalendarSources = (state: RootState): State['enabledCalendarSources'] =>
 	state.settings.enabledCalendarSources ?? DEFAULT_CALENDAR_SOURCES
