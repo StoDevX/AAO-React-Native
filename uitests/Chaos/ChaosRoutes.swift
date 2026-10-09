@@ -26,6 +26,7 @@ enum ChaosRoutes {
 		"carletonian/staff",
 		"carletonian/staff/[id]",
 		"carletonian/story",
+		"choose-campus",
 		"contacts",
 		"contributing",
 		"course-search",
