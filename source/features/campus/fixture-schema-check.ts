@@ -8,7 +8,7 @@ const ajv = new Ajv2020({allErrors: true, strict: false})
 /**
  * What is wrong with a fixture, as lines naming its key and field: "no schema"
  * when its request matches no endpoint, else each place its JSON departs from
- * the endpoint's schema. Empty when it is fine.
+ * the endpoint's schema. An error answer's body is not checked. Empty when it is fine.
  */
 export function validateFixture(
 	file: CampusRecordingFile,
@@ -19,7 +19,8 @@ export function validateFixture(
 	if (!endpoint) {
 		return [`no schema for ${key}; add its endpoint to fixture-endpoints.ts`]
 	}
-	if (file.json === undefined) {
+	// An error's body is the server's error rather than the endpoint's answer.
+	if (file.json === undefined || (file.status !== undefined && file.status >= 400)) {
 		return []
 	}
 	let validate = ajv.getSchema(endpoint.schema) ?? compile(endpoint.schema, schemaFor)

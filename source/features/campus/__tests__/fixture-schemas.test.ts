@@ -37,6 +37,21 @@ describe('the fixture schema check', () => {
 		expect(errors.join('\n')).toMatch('GET {server:example.college}/dictionary: /data')
 	})
 
+	// A failed request's body is the server's error, not the endpoint's answer: WordPress's 400
+	// past a list's last page is how the Carletonian's issues end.
+	test("leaves an error answer's body to the server's own shape", () => {
+		expect(
+			validateFixture(
+				{
+					key: 'GET {server:example.college}/dictionary',
+					status: 400,
+					json: {code: 'rest_post_invalid_page_number'},
+				},
+				schemaFor,
+			),
+		).toEqual([])
+	})
+
 	test('refuses a fixture whose request no endpoint lists', () => {
 		expect(
 			validateFixture({key: 'GET {server:example.college}/nowhere', status: 200}, schemaFor),

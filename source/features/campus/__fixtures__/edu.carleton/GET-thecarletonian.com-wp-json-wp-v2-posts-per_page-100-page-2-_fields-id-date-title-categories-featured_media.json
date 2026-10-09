@@ -1,0 +1,12 @@
+{
+	"contentType": "application/json; charset=UTF-8",
+	"json": {
+		"code": "rest_post_invalid_page_number",
+		"data": {
+			"status": 400
+		},
+		"message": "The page number requested is larger than the number of pages available."
+	},
+	"key": "GET https://thecarletonian.com/wp-json/wp/v2/posts?per_page=100&page=2&_fields=id,date,title,categories,featured_media",
+	"status": 400
+}
