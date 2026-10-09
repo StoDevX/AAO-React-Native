@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import * as c from '@frogpond/colors'
 
-import {isSafeMethod, methodColor} from '../method'
+import {methodColor, sendsWithoutAsking} from '../method'
 
 describe('methodColor', () => {
 	test('colours each common method by what it does', () => {
@@ -16,13 +16,15 @@ describe('methodColor', () => {
 	})
 })
 
-describe('isSafeMethod', () => {
-	test('lets a GET go without asking', () => {
-		expect(isSafeMethod('GET')).toBe(true)
+describe('sendsWithoutAsking', () => {
+	test('lets a GET or a POST go without asking', () => {
+		expect(sendsWithoutAsking('GET')).toBe(true)
+		expect(sendsWithoutAsking('POST')).toBe(true)
 	})
 
-	test('asks before anything that can change the server', () => {
-		expect(isSafeMethod('POST')).toBe(false)
-		expect(isSafeMethod('DELETE')).toBe(false)
+	test('asks before a method meant to change what the server holds', () => {
+		expect(sendsWithoutAsking('DELETE')).toBe(false)
+		expect(sendsWithoutAsking('PUT')).toBe(false)
+		expect(sendsWithoutAsking('PATCH')).toBe(false)
 	})
 })

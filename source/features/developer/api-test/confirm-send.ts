@@ -1,10 +1,10 @@
 import {Alert} from 'react-native'
 
-import {isSafeMethod} from './util/method'
+import {sendsWithoutAsking} from './util/method'
 
-/** Sends a GET at once; asks first before anything that can change the server. */
+/** Sends a request at once, or asks first when its method is meant to change the server. */
 export function sendAfterConfirming(method: string, path: string, send: () => void): void {
-	if (isSafeMethod(method)) {
+	if (sendsWithoutAsking(method)) {
 		send()
 		return
 	}

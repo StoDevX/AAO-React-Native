@@ -1,6 +1,6 @@
 import type {RouteEntry, RouteInput} from '../query'
 import {recentRequests, type RequestHistory, type SavedRequest} from './history'
-import {isSafeMethod} from './method'
+import {sendsWithoutAsking} from './method'
 
 /** A route's inputs as a row's detail line: `cafeId`, or `dateFrom? · sort?`. */
 export function inputSummary(inputs: RouteInput[]): string | undefined {
@@ -20,7 +20,7 @@ export function nextStep(
 	if (entry.inputs.some((input) => input.required)) {
 		return 'form'
 	}
-	return isSafeMethod(entry.method) ? 'send' : 'confirm'
+	return sendsWithoutAsking(entry.method) ? 'send' : 'confirm'
 }
 
 /** Where an input starts: its first accepted value, else its first example, else empty. */

@@ -36,9 +36,9 @@ describe('nextStep', () => {
 		expect(nextStep({method: 'GET', inputs: [dateFrom, sort]})).toBe('send')
 	})
 
-	test('asks before sending anything else that needs nothing', () => {
+	test('asks before a DELETE that needs nothing, and sends a POST at once', () => {
 		expect(nextStep({method: 'DELETE', inputs: [key]})).toBe('confirm')
-		expect(nextStep({method: 'POST', inputs: []})).toBe('confirm')
+		expect(nextStep({method: 'POST', inputs: []})).toBe('send')
 	})
 
 	test('opens the form for a route with a required input', () => {
