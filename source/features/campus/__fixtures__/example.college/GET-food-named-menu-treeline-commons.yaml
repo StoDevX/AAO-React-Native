@@ -167,7 +167,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon:
         '1': Vegetarian
@@ -215,7 +215,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon:
         '4': Vegan
@@ -263,7 +263,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon:
         '1': Vegetarian
@@ -311,7 +311,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon:
         '1': Vegetarian
@@ -359,7 +359,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon: {}
       monotony: {}
@@ -406,7 +406,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon:
         '4': Vegan
@@ -454,7 +454,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon:
         '1': Vegetarian
@@ -501,7 +501,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon: {}
       monotony: {}
@@ -548,7 +548,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon: {}
       monotony: {}
@@ -595,7 +595,7 @@ json:
       sub_station: ''
       sub_station_id: ''
       sub_station_order: ''
-      tier: 3
+      tier: 1
       zero_entree: '0'
       cor_icon:
         '1': Vegetarian

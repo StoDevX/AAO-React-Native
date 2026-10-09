@@ -51,7 +51,8 @@ export const exampleCollege = {
 		credit: {label: 'Wiki Monkeys', url: 'https://college.example/'},
 		// MapLibre's public demo style: the tiles load natively, outside the fixtures.
 		style: {url: 'https://demotiles.maplibre.org/style.json'},
-		// The demo style serves Open Sans, not the Noto Sans the other campuses' styles do.
+		// The demo style's glyphs are Open Sans and Noto Sans Regular and Bold; it has no Noto Sans
+		// Medium, the pins' usual face, and a label in a face it lacks draws no pin at all.
 		labelFont: 'Open Sans Semibold',
 		venuesByBuilding: true,
 		buildingDirectory: {},

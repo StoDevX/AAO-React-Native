@@ -4,11 +4,18 @@ import {timezone} from '@frogpond/constants'
 import {UITEST_FROZEN_DATE} from '@frogpond/timer'
 
 import {findMenu} from '../../../../modules/food-menu/lib/find-menu'
-import type {DayPartsCollectionType} from '../../../../modules/food-menu/types'
+import {isFeatured} from '../../../../modules/food-menu/lib/is-featured'
+import type {DayPartsCollectionType, MenuItemType} from '../../../../modules/food-menu/types'
 import recording from '../../campus/__fixtures__/example.college/GET-food-named-menu-treeline-commons.yaml'
 import type {EditedBonAppMenuInfoType} from '../types'
 
-type Item = {label: string; special?: number; cor_icon: Record<string, string>; station: string}
+type Item = {
+	label: string
+	special?: number
+	tier?: number
+	cor_icon: Record<string, string>
+	station: string
+}
 
 const menu = (recording as {json: EditedBonAppMenuInfoType}).json
 const dayparts = menu.days[0].cafe.dayparts as unknown as DayPartsCollectionType
@@ -42,6 +49,13 @@ describe("Treeline Commons' fixture", () => {
 	test('Lunch carries Vegan dishes and dishes that are not', () => {
 		expect(itemsIn('Lunch').filter(isVegan).length).toBeGreaterThan(0)
 		expect(itemsIn('Lunch').filter((item) => !isVegan(item)).length).toBeGreaterThan(0)
+	})
+
+	// The menu goes by an item's tier before its mark: a meal with nothing in
+	// the featured tiers greys the toggle out and forces it off.
+	test('Lunch features something, so Specials Only starts on', () => {
+		let featured = itemsIn('Lunch').filter((item) => isFeatured(item as unknown as MenuItemType))
+		expect(featured.length).toBeGreaterThan(0)
 	})
 
 	test('Lunch serves a Vegan special, so Specials Only does not empty the list', () => {

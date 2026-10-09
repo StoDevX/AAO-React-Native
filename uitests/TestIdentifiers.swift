@@ -283,10 +283,10 @@ struct TestIdentifiers {
 		/// in app/map/index.tsx.
 		static let attribution = "About this map"
 		/// A Wiki Monkeys building near the top of the list, so the expanded
-		/// sheet shows it without scrolling -- and absent from the other
-		/// campuses' maps, so selecting it fails if the map drew another
-		/// campus's.
-		static let aBuilding = "Treeline Commons"
+		/// sheet shows it without scrolling -- the list is lazy, so a row below
+		/// the fold is never built -- and absent from the other campuses'
+		/// maps, so selecting it fails if the map drew another campus's.
+		static let aBuilding = "Gentian Hall"
 	}
 
 	// MARK: - Student Work
