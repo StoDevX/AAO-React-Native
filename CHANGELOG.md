@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.9.0-rc.5
+
+### Patch Changes
+
+- 709091e: The campus map tints the open place's building gold, and for a room or office inside a building, tints the building around it.
+- f015f08: The Olaf Messenger's image viewer now shows a picture's caption, or its alt text when the paper wrote words in it, and a long caption opens to its full length and scrolls.
+
 ## 2.9.0-rc.4
 
 ### Minor Changes
