@@ -59,6 +59,9 @@ export function groupRoutes(routes: ServerRoute[]): {title: string; data: RouteE
 
 export const serverRoutesOptions = queryOptions({
 	queryKey: keys.all,
+	// The routes of whichever server the app points at now: restored from
+	// storage they could be another server's, or an older shape of this one's.
+	meta: {persist: false},
 	queryFn: async ({signal}) => {
 		let response = await client.get('routes', {signal}).json()
 		return response as ServerRoute[]
