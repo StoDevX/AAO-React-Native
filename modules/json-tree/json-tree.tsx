@@ -1,17 +1,19 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import type {ColorValue} from 'react-native'
-import {Button, DisclosureGroup, Host, HStack, List, Spacer, Text} from '@expo/ui/swift-ui'
-import {
-	font,
-	foregroundStyle,
-	lineLimit,
-	listStyle,
-	textSelection,
-} from '@expo/ui/swift-ui/modifiers'
+import {Button, DisclosureGroup, Host, HStack, List, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {font, foregroundStyle, frame, listStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {isContainer, jsonEntries, jsonLeaf, jsonSummary, startsOpen, type JsonEntry} from './tree'
+import {
+	isContainer,
+	jsonEntries,
+	jsonLeaf,
+	jsonSummary,
+	stacksValue,
+	startsOpen,
+	type JsonEntry,
+} from './tree'
 
 /// How many of an object's or array's entries show before a "show more" row,
 /// so opening a long array does not build every row at once.
@@ -36,17 +38,33 @@ const LEAF_COLORS: Record<ReturnType<typeof jsonLeaf>['kind'], ColorValue> = {
 const KEY_FONT = font({textStyle: 'body', design: 'monospaced'})
 const VALUE_FONT = font({textStyle: 'footnote', design: 'monospaced'})
 
-/** A row: the key on the left, and on the right what it holds or a summary of it. */
+/**
+ * A row: the key, and what it holds or a summary of it -- beside the key when
+ * short, under it when long, and never cut short.
+ */
 function Row(props: {name: string; value: string; color: ColorValue}): React.ReactNode {
+	let value = (
+		<Text modifiers={[VALUE_FONT, foregroundStyle(props.color), textSelection(true)]}>
+			{props.value}
+		</Text>
+	)
+	if (stacksValue(props.value)) {
+		return (
+			<VStack
+				alignment="leading"
+				modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}
+				spacing={4}
+			>
+				<Text modifiers={[KEY_FONT]}>{props.name}</Text>
+				{value}
+			</VStack>
+		)
+	}
 	return (
 		<HStack spacing={8}>
 			<Text modifiers={[KEY_FONT]}>{props.name}</Text>
 			<Spacer />
-			<Text
-				modifiers={[VALUE_FONT, foregroundStyle(props.color), lineLimit(4), textSelection(true)]}
-			>
-				{props.value}
-			</Text>
+			{value}
 		</HStack>
 	)
 }

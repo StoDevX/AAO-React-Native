@@ -1,6 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {isContainer, jsonEntries, jsonLeaf, jsonSummary, SMALL_GROUP, startsOpen} from '../tree'
+import {
+	isContainer,
+	jsonEntries,
+	jsonLeaf,
+	jsonSummary,
+	SMALL_GROUP,
+	stacksValue,
+	startsOpen,
+} from '../tree'
 
 describe('isContainer', () => {
 	test('opens objects and arrays, and nothing else', () => {
@@ -78,5 +86,25 @@ describe('startsOpen', () => {
 			})
 		}
 		expect(startsOpen(huge)).toBe(false)
+	})
+})
+
+describe('stacksValue', () => {
+	test('keeps a short value beside its key', () => {
+		expect(stacksValue('"/_cache"')).toBe(false)
+		expect(stacksValue('262')).toBe(false)
+	})
+
+	test('puts a long value under its key, where it has the row to itself', () => {
+		expect(
+			stacksValue(
+				'"Email us at [allaboutolaf@frog-pond.tech](mailto:allaboutolaf@frog-pond.tech)"',
+			),
+		).toBe(true)
+	})
+
+	test('puts a value that runs over several lines under its key', () => {
+		// as a row shows it: jsonLeaf writes the line break as \n
+		expect(stacksValue(jsonLeaf('one\ntwo').text)).toBe(true)
 	})
 })

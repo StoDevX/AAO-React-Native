@@ -60,3 +60,15 @@ function valueCount(value: unknown, limit: number): number {
 export function startsOpen(value: Record<string, unknown> | unknown[]): boolean {
 	return valueCount(value, SMALL_GROUP) <= SMALL_GROUP
 }
+
+/// About the most of a value that fits beside its key on a phone.
+const INLINE_LENGTH = 32
+
+/**
+ * Whether a value goes under its key, with the row to itself, rather than
+ * beside it: a long one would be squeezed into a narrow column there. A string
+ * holding line breaks reads as several lines, so it goes under too.
+ */
+export function stacksValue(text: string): boolean {
+	return text.length > INLINE_LENGTH || text.includes('\\n')
+}
