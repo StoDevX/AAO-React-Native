@@ -1,5 +1,5 @@
 import {CAMPUSES, type CampusDefinition, type CampusId} from '../../../campuses'
-import {imageUrl, remoteImage, type RemoteImage} from '../../../lib/remote-images'
+import {remoteImage, type RemoteImage} from '../../../lib/remote-images'
 import type {Station, StationId} from './campus-section'
 import type {RadioLogo} from './theme'
 
@@ -47,9 +47,3 @@ export const STATIONS = Object.fromEntries(
 
 /** A logo as an `<Image source>`, fetched from the server when it is drawn. */
 export const logoImage = (logo: RadioLogo): RemoteImage => remoteImage('streaming', logo.imageName)
-
-/** Every logo of every station, for fetching before the sheet opens. */
-export const allStationImageUrls = (): string[] =>
-	Object.values(STATIONS).flatMap((station) =>
-		station.logos.map((logo) => imageUrl('streaming', logo.imageName)),
-	)
