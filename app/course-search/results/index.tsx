@@ -29,6 +29,7 @@ import {
 	COURSE_OFFLINE_NOTICE,
 	courseListState,
 } from '../../../source/features/sis/course-search/lib/list-state'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 function CourseSearchResultsView(): React.ReactNode {
 	let dispatch = useAppDispatch()
@@ -213,7 +214,7 @@ let styles = StyleSheet.create({
 	},
 })
 
-export default function CourseSearchResultsPage(): React.ReactNode {
+function CourseSearchResultsPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Course Catalog</Stack.Title>
@@ -221,3 +222,9 @@ export default function CourseSearchResultsPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'courseCatalog',
+	{title: 'Course Catalog', noun: 'a course catalog', systemImage: 'graduationcap'},
+	CourseSearchResultsPage,
+)

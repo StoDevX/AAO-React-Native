@@ -10,6 +10,7 @@ import {faqsOptionsFor, emptyFaqDataFor} from '../source/features/faqs/query'
 import {useCampus} from '../source/features/campus/store'
 import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from '../source/features/faqs/types'
+import {requiresSection} from '../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	container: {
@@ -113,7 +114,7 @@ function FaqView(): React.ReactNode {
 	)
 }
 
-export default function FaqPage(): React.ReactNode {
+function FaqPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>FAQs</Stack.Title>
@@ -122,3 +123,9 @@ export default function FaqPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'faqs',
+	{title: 'FAQs', noun: 'FAQs', systemImage: 'questionmark.circle'},
+	FaqPage,
+)

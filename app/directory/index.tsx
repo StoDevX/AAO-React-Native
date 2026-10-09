@@ -23,6 +23,7 @@ import {resolveSearch, searchHeading} from '../../source/features/directory/reso
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../source/features/directory/types'
 import {ImportantContactsGrid} from '../../source/features/directory/important-contacts-grid'
 import {useDirectory} from '../../source/features/directory/use-directory'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 function DirectoryView(): React.ReactNode {
 	let router = useRouter()
@@ -187,7 +188,7 @@ function DirectoryView(): React.ReactNode {
 	)
 }
 
-export default function DirectoryPage(): React.ReactNode {
+function DirectoryPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
@@ -289,3 +290,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 })
+
+export default requiresSection(
+	'directory',
+	{title: 'Directory', noun: 'a people directory', systemImage: 'person.2'},
+	DirectoryPage,
+)

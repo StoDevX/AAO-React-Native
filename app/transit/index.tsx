@@ -18,6 +18,7 @@ import {useCampusId, useCampusSection} from '../../source/features/campus/store'
 import {sectionServer} from '../../source/features/campus/section-server'
 import {BusLineWidget} from '../../source/features/transit/bus/widget'
 import {otherModesGroupedOptionsFor} from '../../source/features/transit/other-modes/query'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
  * drives every widget: a clock per line would have them ticking over at
  * slightly different moments.
  */
-export default function TransitPage(): React.ReactNode {
+function TransitPage(): React.ReactNode {
 	let transit = useCampusSection('transit')
 	let server = sectionServer(useCampusId(), transit)
 	let footerMessage = useBusFooterMessage()
@@ -165,3 +166,9 @@ export default function TransitPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'transit',
+	{title: 'Transit', noun: 'transit', systemImage: 'bus'},
+	TransitPage,
+)

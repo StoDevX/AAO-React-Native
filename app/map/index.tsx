@@ -40,7 +40,6 @@ import {openUrl} from '@frogpond/open-url'
 import {campusById, type CampusId} from '../../source/campuses'
 import type {MapSection} from '../../source/features/map/campus-section'
 import {useCampusParam} from '../../source/features/campus/campus-param'
-import {NoticeView} from '@frogpond/notice'
 import {cardVenuesOptions} from '../../source/features/map/card-queries'
 import {PlaceStackCard} from '../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../source/features/map/lib/place-stack'
@@ -70,6 +69,7 @@ import {useRecentPlacesStore} from '../../source/features/map/store'
 import type {Building, Feature} from '../../source/features/map/types'
 import {useMapStyleUrl} from '../../source/features/map/style-query'
 import {mapCredits} from '../../source/features/map/urls'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
@@ -93,21 +93,15 @@ const HEADER_CLEARANCE = 44
 /// layer from the tree.
 const SELECTED_FOOTPRINT_OPACITY = 0.3
 
-export default function MapPage(): React.ReactNode {
+function MapPage(): React.ReactNode {
 	// A link with no campus, or one this build doesn't know -- `?campus=carleton`
 	// from a 2.9 Home Screen quick action -- opens the active campus's map.
 	// Every link the app draws names its campus.
 	let {campus: campusParam, place} = useLocalSearchParams<{campus?: string; place?: string}>()
 	let campus = useCampusParam(campusParam)
 	let map = campusById(campus).map
-	if (!map) {
-		return (
-			<>
-				<Stack.Screen options={{title: 'Map'}} />
-				<NoticeView description="This campus has no map." systemImage="map" title="No Map" />
-			</>
-		)
-	}
+	// The section gate, below, draws the notice for a campus without a map.
+	if (!map) return null
 	return <CampusMap campus={campus} map={map} placeParam={place} />
 }
 
@@ -549,3 +543,9 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 })
+
+export default requiresSection(
+	'map',
+	{title: 'Map', noun: 'a campus map', systemImage: 'map'},
+	MapPage,
+)

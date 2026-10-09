@@ -5,8 +5,9 @@ import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {useCampusId} from '../../source/features/campus/store'
 import {MenuHeaderHost, MenuHeaderProvider} from '../../source/features/menus/menu-header'
 import {MENU_TABS, menuCampusOf} from '../../source/features/menus/menu-tabs'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
-export default function MenusLayout(): React.ReactNode {
+function MenusLayout(): React.ReactNode {
 	// The tab bar shows one campus's cafés: those of the campus whose tab is
 	// open. Each campus's Menus tile opens on its own first café.
 	let campus = menuCampusOf(usePathname(), useCampusId())
@@ -28,3 +29,9 @@ export default function MenusLayout(): React.ReactNode {
 		</MenuHeaderProvider>
 	)
 }
+
+export default requiresSection(
+	'menus',
+	{title: 'Menus', noun: 'dining menus', systemImage: 'fork.knife'},
+	MenusLayout,
+)

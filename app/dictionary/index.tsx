@@ -16,6 +16,7 @@ import {dictionaryOptionsFor} from '../../source/features/dictionary/query'
 import {useCampusId, useCampusSection} from '../../source/features/campus/store'
 import {sectionServer} from '../../source/features/campus/section-server'
 import type {NormalizedEntry} from '../../source/features/dictionary/types'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -67,7 +68,7 @@ function DictionaryView(): React.ReactNode {
 	)
 }
 
-export default function DictionaryPage(): React.ReactNode {
+function DictionaryPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Dictionary</Stack.Title>
@@ -75,3 +76,9 @@ export default function DictionaryPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'dictionary',
+	{title: 'Dictionary', noun: 'a campus dictionary', systemImage: 'book'},
+	DictionaryPage,
+)

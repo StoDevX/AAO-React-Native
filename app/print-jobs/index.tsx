@@ -21,6 +21,7 @@ import {printJobsOptions} from '../../source/features/stoprint/query'
 import {credentialsOptions, invalidateCredentials, resetCredentials} from '../../source/lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {groupBy, sortBy} from '@frogpond/collections'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 function PrintJobsView(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
@@ -140,7 +141,7 @@ async function signOut(): Promise<void> {
 	await invalidateCredentials()
 }
 
-export default function PrintJobsPage(): React.ReactNode {
+function PrintJobsPage(): React.ReactNode {
 	let {data: credentials} = useQuery(credentialsOptions)
 
 	return (
@@ -159,3 +160,9 @@ export default function PrintJobsPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'printing',
+	{title: 'stoPrint', noun: 'printing', systemImage: 'printer'},
+	PrintJobsPage,
+)

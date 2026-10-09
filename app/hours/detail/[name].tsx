@@ -15,8 +15,9 @@ import {
 	selectFavoriteBuildings,
 	toggleFavoriteBuilding,
 } from '../../../source/redux/parts/buildings'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
-export default function HoursDetailPage(): React.ReactNode {
+function HoursDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let router = useRouter()
 
@@ -113,3 +114,9 @@ export default function HoursDetailPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	HoursDetailPage,
+)

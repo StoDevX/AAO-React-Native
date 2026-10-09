@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 /**
  * The contact sheet's own navigation stack, holding the header the sheet
@@ -17,6 +18,12 @@ import {Stack} from 'expo-router'
  * reason this route does not share: a screen pushed while the sheet is up
  * needs somewhere to get a back button. Nothing pushes from a contact.
  */
-export default function DirectoryNamedLayout(): React.ReactNode {
+function DirectoryNamedLayout(): React.ReactNode {
 	return <Stack />
 }
+
+export default requiresSection(
+	'contacts',
+	{title: 'Contacts', noun: 'important contacts', systemImage: 'phone'},
+	DirectoryNamedLayout,
+)

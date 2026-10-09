@@ -22,6 +22,7 @@ import {
 	courseDetailState,
 } from '../../../source/features/sis/course-search/lib/list-state'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -153,7 +154,7 @@ const SUBTITLE_MODIFIERS = [
 	multilineTextAlignment('center'),
 ]
 
-export default function CourseDetailPage(): React.ReactNode {
+function CourseDetailPage(): React.ReactNode {
 	let {clbid} = useLocalSearchParams<{clbid: string; term: string}>()
 	let catalog = useCourseCatalog()
 	let {course, failed, retry: retryRead} = useCourse(Number(clbid))
@@ -216,3 +217,9 @@ export default function CourseDetailPage(): React.ReactNode {
 			)
 	}
 }
+
+export default requiresSection(
+	'courseCatalog',
+	{title: 'Course Catalog', noun: 'a course catalog', systemImage: 'graduationcap'},
+	CourseDetailPage,
+)

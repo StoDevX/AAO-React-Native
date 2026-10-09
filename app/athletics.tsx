@@ -17,6 +17,7 @@ import {SportsMenu} from '../source/features/athletics/sports-menu'
 import {useFilterStore} from '../source/features/athletics/store'
 import type {DaySection, ProcessedScore} from '../source/features/athletics/types'
 import {daySections, filterBySport, sportFilterSections} from '../source/features/athletics/utils'
+import {requiresSection} from '../source/features/campus/section-gate'
 
 // Stable so a pending query's default `[]` doesn't invalidate the memos and
 // effect below on every render.
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default function AthleticsPage(): React.ReactNode {
+function AthleticsPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Athletics</Stack.Title>
@@ -157,3 +158,9 @@ export default function AthleticsPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'athletics',
+	{title: 'Athletics', noun: 'scores and schedules', systemImage: 'sportscourt'},
+	AthleticsPage,
+)

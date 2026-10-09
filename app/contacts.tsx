@@ -11,11 +11,12 @@ import {NoticeView} from '@frogpond/notice'
 import {contactsOptionsFor} from '../source/features/directory/contacts-query'
 import {useCampusId, useCampusSection} from '../source/features/campus/store'
 import {ImportantContactsGrid} from '../source/features/directory/important-contacts-grid'
+import {requiresSection} from '../source/features/campus/section-gate'
 
 /// The curated campus contacts on their own, for the Help group on home. The
 /// same grid heads the Directory, where it shares the screen with the
 /// department roster.
-export default function ContactsPage(): React.ReactNode {
+function ContactsPage(): React.ReactNode {
 	let router = useRouter()
 	let section = useCampusSection('contacts')
 	let {college} = useCampusSection('branding')
@@ -72,3 +73,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'contacts',
+	{title: 'Contacts', noun: 'important contacts', systemImage: 'phone'},
+	ContactsPage,
+)
