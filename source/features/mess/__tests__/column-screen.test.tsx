@@ -16,6 +16,7 @@ import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import {useMessStore} from '../store'
 import type {MessStory} from '../types'
+import {InMessenger} from './in-messenger'
 
 jest.mock(
 	'react-native-safe-area-context',
@@ -81,7 +82,9 @@ afterEach(() => {
 function renderColumn() {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<ColumnScreen id={GOOD_QUESTIONS} />
+			<InMessenger>
+				<ColumnScreen id={GOOD_QUESTIONS} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

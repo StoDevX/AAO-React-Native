@@ -8,12 +8,23 @@ import {REMOTE_SOURCES, remoteSourcesFor} from '../sources'
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 
 describe('remoteSourcesFor', () => {
-	test("offers St. Olaf's own calendar and Presence on St. Olaf", () => {
-		expect(remoteSourcesFor('stolaf').map((source) => source.id)).toEqual(['stolaf', 'presence'])
+	test('offers the calendars a campus names, in dedupe order', () => {
+		expect(remoteSourcesFor(['presence', 'stolaf']).map((source) => source.id)).toEqual([
+			'stolaf',
+			'presence',
+		])
 	})
 
-	test("offers Carleton's calendar alone on Carleton", () => {
-		expect(remoteSourcesFor('carleton').map((source) => source.id)).toEqual(['carleton'])
+	test("offers Carleton's calendar alone when it is named alone", () => {
+		expect(remoteSourcesFor(['carleton']).map((source) => source.id)).toEqual(['carleton'])
+	})
+
+	test('offers nothing to a campus naming no calendars', () => {
+		expect(remoteSourcesFor([])).toEqual([])
+	})
+
+	test('skips an id naming no calendar', () => {
+		expect(remoteSourcesFor(['northfield']).map((source) => source.id)).toEqual([])
 	})
 
 	test('ranks each campus by the one list of every calendar', () => {

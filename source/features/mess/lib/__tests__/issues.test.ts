@@ -11,10 +11,11 @@ import {
 	withPhotoUrls,
 } from '../issues'
 import {parseMessCategories} from '../posts'
+import {MESSENGER} from '../../../../campuses/edu-stolaf/paper'
 
 const categories = parseMessCategories(categoriesJson)
 /** This spring's posts, Feb 18 to May 12, newest first. */
-const spring = parseLightPosts(springPosts, categories)
+const spring = parseLightPosts(springPosts, categories, MESSENGER)
 
 /** Each issue as its day and how many posts it holds. */
 const outline = (issues: MessIssue[]) => issues.map((issue) => [issue.day, issue.count])
@@ -58,7 +59,11 @@ describe('parseLightPosts', () => {
 	})
 
 	it('marks a special-edition post filed under a print section too', () => {
-		let [post] = parseLightPosts([{...springPosts[0], categories: [7, 1139]}], categories)
+		let [post] = parseLightPosts(
+			[{...springPosts[0], categories: [7, 1139]}],
+			categories,
+			MESSENGER,
+		)
 		expect(post).toMatchObject({section: 'News', special: true})
 	})
 
@@ -69,11 +74,13 @@ describe('parseLightPosts', () => {
 	})
 
 	it('skips a malformed post', () => {
-		expect(parseLightPosts([{id: 1}, springPosts[0]], categories)).toHaveLength(1)
+		expect(parseLightPosts([{id: 1}, springPosts[0]], categories, MESSENGER)).toHaveLength(1)
 	})
 
 	it('throws when every post is malformed', () => {
-		expect(() => parseLightPosts([{id: 1}], categories)).toThrow('every Mess post was malformed')
+		expect(() => parseLightPosts([{id: 1}], categories, MESSENGER)).toThrow(
+			'every Mess post was malformed',
+		)
 	})
 })
 

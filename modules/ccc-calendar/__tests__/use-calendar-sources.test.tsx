@@ -14,7 +14,7 @@ function wrapper({children}: {children: React.ReactNode}) {
 
 describe('useCalendarSources', () => {
 	test('toggling a source changes what is enabled', async () => {
-		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
+		let {result} = await renderHook(() => useCalendarSources(['stolaf']), {wrapper})
 
 		await act(() => {
 			result.current.toggle('uitest')
@@ -35,7 +35,7 @@ describe('useCalendarSources', () => {
 		let withStore = ({children}: {children: React.ReactNode}) => (
 			<Provider store={store}>{children}</Provider>
 		)
-		let {result} = await renderHook(() => useCalendarSources(), {wrapper: withStore})
+		let {result} = await renderHook(() => useCalendarSources(['stolaf']), {wrapper: withStore})
 
 		await act(() => {
 			result.current.toggle('device:ABC')

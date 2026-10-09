@@ -4,11 +4,8 @@ import {parseEach} from '@frogpond/data-sources/parse-each'
 import {readableAlt} from './alt'
 import {parseBlocks} from './blocks'
 import {chooseLayout} from './layout'
-import {OLAF_MESSENGER_PAPER, type Paper} from '../paper'
+import type {Paper} from '../campus-section'
 import type {Byline, MessCategory, MessStory} from '../types'
-
-/** The Mess logos, which the site uses as a stand-in when a story has no photo. */
-export const MESS_LOGO_MEDIA_IDS: ReadonlySet<number> = OLAF_MESSENGER_PAPER.logoMediaIds
 
 const CategorySchema = z.object({id: z.number(), name: z.string(), parent: z.number()})
 
@@ -59,9 +56,6 @@ type Post = z.infer<typeof PostSchema>
 /** Whether a category is one of the site's Featured flags rather than a section. */
 const isFeaturedFlag = (name: string): boolean => /^featured\b/iu.test(name)
 
-/** The Mess's sections, which name a story whenever one is present, ahead of any other top-level category. */
-export const MAIN_SECTIONS: readonly string[] = OLAF_MESSENGER_PAPER.mainSections
-
 /** The section a special edition's posts sit in, and nothing else. */
 export const SPECIAL_EDITION = 'Special Edition'
 
@@ -90,7 +84,7 @@ export function inSpecialEdition(ids: number[], byId: Map<number, MessCategory>)
 export function placement(
 	ids: number[],
 	byId: Map<number, MessCategory>,
-	mainSections: readonly string[] = MAIN_SECTIONS,
+	mainSections: readonly string[],
 ): Pick<MessStory, 'section' | 'column' | 'featured'> {
 	let placed = ids.flatMap((id) => {
 		let category = byId.get(id)
@@ -183,7 +177,7 @@ function toStory(post: Post, byId: Map<number, MessCategory>, paper: Paper): Mes
 export function parseMessPosts(
 	body: unknown,
 	categories: MessCategory[],
-	paper: Paper = OLAF_MESSENGER_PAPER,
+	paper: Paper,
 ): MessStory[] {
 	let items = z.array(z.unknown()).parse(body)
 	let byId = new Map(categories.map((c) => [c.id, c]))

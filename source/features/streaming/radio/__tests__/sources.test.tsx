@@ -2,7 +2,9 @@ import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {IsRestoringProvider, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {renderHook, waitFor} from '@testing-library/react-native'
+import {registerCampusServer} from '@frogpond/api'
 import {
+	CAMPUS_PROPERTY,
 	ID_PROPERTY,
 	manifestOptions,
 	REL_RADIO_PLAYER_PAGE,
@@ -82,6 +84,19 @@ describe('stationSources', () => {
 			link(REL_RADIO_STREAM, 'ksto', 'radio/ksto.m3u8', 'application/vnd.apple.mpegurl'),
 		)
 		expect(stationSources(manifest, 'ksto').streamSourceUrl).toBe(`${STOLAF_URL}radio/ksto.m3u8`)
+	})
+
+	// A station whose feeds a campus's own server proxies, as a new campus's
+	// station's would be: the address is on that campus's server, not St. Olaf's.
+	test("makes a stream proxied by Carleton's server an address on Carleton's server", () => {
+		registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
+		let manifest = manifestWith({
+			...link(REL_RADIO_STREAM, 'krlx', 'radio/krlx.m3u8', 'application/vnd.apple.mpegurl'),
+			properties: {[ID_PROPERTY]: 'krlx', [CAMPUS_PROPERTY]: 'edu.carleton'},
+		})
+		expect(stationSources(manifest, 'krlx').streamSourceUrl).toBe(
+			'https://carleton.example.test/v1/radio/krlx.m3u8',
+		)
 	})
 
 	test("keeps KSTO's shipped player page when the published one is on another site", () => {

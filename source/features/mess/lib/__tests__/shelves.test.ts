@@ -1,6 +1,7 @@
 import {describe, expect, it} from '@jest/globals'
 import type {MessStory} from '../../types'
 import {leadStory, sectionStories, shelvesOf} from '../shelves'
+import {MESSENGER} from '../../../../campuses/edu-stolaf/paper'
 
 const PHOTO = {url: 'https://olafmessenger.com/photo.jpg', width: 1200, height: 800, caption: ''}
 
@@ -73,7 +74,7 @@ describe('shelvesOf', () => {
 			story(3, null),
 			story(2, 'News'),
 		]
-		let shelves = shelvesOf(stories, undefined)
+		let shelves = shelvesOf(stories, undefined, MESSENGER.mainSections)
 		expect(shelves.map((shelf) => shelf.section)).toStrictEqual([
 			'News',
 			'Opinions',
@@ -87,19 +88,21 @@ describe('shelvesOf', () => {
 	})
 
 	it('leaves the lead story off its shelf', () => {
-		let shelves = shelvesOf([story(3, 'News'), story(2, 'News')], 3)
+		let shelves = shelvesOf([story(3, 'News'), story(2, 'News')], 3, MESSENGER.mainSections)
 		expect(ids(shelves[0]?.stories)).toStrictEqual([2])
 	})
 
 	it('gives an empty section no shelf, and drops a shelf the lead emptied', () => {
-		let shelves = shelvesOf([story(3, 'News'), story(2, 'Sports')], 3)
+		let shelves = shelvesOf([story(3, 'News'), story(2, 'Sports')], 3, MESSENGER.mainSections)
 		expect(shelves.map((shelf) => shelf.section)).toStrictEqual(['Sports'])
 	})
 
 	it('has no More shelf when every story has a print section', () => {
-		expect(shelvesOf([story(1, 'News')], undefined).map((shelf) => shelf.section)).toStrictEqual([
-			'News',
-		])
+		expect(
+			shelvesOf([story(1, 'News')], undefined, MESSENGER.mainSections).map(
+				(shelf) => shelf.section,
+			),
+		).toStrictEqual(['News'])
 	})
 })
 

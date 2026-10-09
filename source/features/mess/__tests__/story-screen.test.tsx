@@ -32,6 +32,7 @@ import {LINE_SPACING} from '../poem-view'
 import {BLOCK_SPACING, BODY_ID} from '../story-blocks'
 import type {MessStory, StaffProfile} from '../types'
 import {loadBeforeTests} from '../../../testing/load-before-tests'
+import {InMessenger} from './in-messenger'
 
 loadBeforeTests('Image')
 
@@ -429,7 +430,9 @@ function serve(answer: (href: string) => unknown): void {
 function renderStory(id: number) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<StoryScreen id={id} />
+			<InMessenger>
+				<StoryScreen id={id} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

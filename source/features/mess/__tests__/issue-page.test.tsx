@@ -12,6 +12,7 @@ import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {IssuePage, MORE_GRID_ROW_ID} from '../issue-page'
 import {messKeys} from '../lib/keys'
 import type {MessIssue, MessStory} from '../types'
+import {InMessenger} from './in-messenger'
 
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
@@ -105,7 +106,9 @@ afterEach(() => {
 function renderIssue(issue: MessIssue = ISSUE) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<IssuePage columnWidth={350} issue={issue} onShowSection={onShowSection} />
+			<InMessenger>
+				<IssuePage columnWidth={350} issue={issue} onShowSection={onShowSection} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

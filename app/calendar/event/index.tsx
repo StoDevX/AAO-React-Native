@@ -17,7 +17,8 @@ import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {addToCalendarEvents} from '../../../source/features/telemetry/calendar-events'
 import {track} from '../../../source/features/telemetry/track'
-import {scheduleEventOptions, useCalendarSource, useCalendarSources} from '@frogpond/ccc-calendar'
+import {scheduleEventOptions, useCalendarSource} from '@frogpond/ccc-calendar'
+import {useCampusCalendarSources} from '../../../source/features/calendar/use-campus-calendar'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {
 	HIDDEN_FROM_CALENDAR,
@@ -114,7 +115,7 @@ export default function EventDetailPage(): React.ReactNode {
 		...scheduleEventOptions(source, eventKey, {eventMapper: TITLE_MAPPERS[source]}),
 		enabled: scheduleSource,
 	})
-	let {enabled} = useCalendarSources()
+	let {enabled} = useCampusCalendarSources()
 
 	let enabledIds = React.useMemo(() => enabled.map((source) => source.id), [enabled])
 
@@ -156,7 +157,7 @@ export default function EventDetailPage(): React.ReactNode {
 	}, [enabled])
 
 	// The radio schedules route here too, and their events never enter
-	// `useCalendarSources` -- so there are no neighbours to draw and no timeline.
+	// `useCampusCalendarSources` -- so there are no neighbours to draw and no timeline.
 	// `timelineWindow` rules out all-day events on its own, by returning null.
 	let isCalendarSource = REMOTE_SOURCE_IDS.has(source)
 	let windowRange = event && isCalendarSource ? timelineWindow(event) : null

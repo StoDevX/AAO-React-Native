@@ -1,5 +1,6 @@
 import * as c from '@frogpond/colors'
 import type {CalendarSource, SourcedEvent} from '@frogpond/event-list'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 
 /**
  * `SourcedEvent` (an event tagged with the calendar it came from) and
@@ -11,22 +12,19 @@ import type {CalendarSource, SourcedEvent} from '@frogpond/event-list'
  */
 export type {CalendarSource, SourcedEvent}
 
-import {servesBundledFixtures} from '@frogpond/launch-arguments'
-
-/** The campus whose calendar screen offers a calendar, by its pre-registry id. */
-type CalendarCampus = 'stolaf' | 'carleton'
-
-/** A calendar, and the campus whose calendar screen offers it. */
-type CampusSource = CalendarSource & {campus: CalendarCampus}
-
-const LIVE_SOURCES: CampusSource[] = [
-	{id: 'stolaf', title: 'St. Olaf', color: c.systemBlue, campus: 'stolaf'},
-	{id: 'presence', title: 'Presence', color: c.systemIndigo, campus: 'stolaf'},
-	{id: 'carleton', title: 'Carleton', color: c.systemBlue, campus: 'carleton'},
+/**
+ * Every calendar the app reads, by its id in the sources manifest. Which of
+ * them a campus's calendar screen offers is the campus's to say; the app
+ * passes those ids to `remoteSourcesFor`.
+ */
+const LIVE_SOURCES: CalendarSource[] = [
+	{id: 'stolaf', title: 'St. Olaf', color: c.systemBlue},
+	{id: 'presence', title: 'Presence', color: c.systemIndigo},
+	{id: 'carleton', title: 'Carleton', color: c.systemBlue},
 ]
 
 /**
- * Every calendar the app reads, on either campus. Their colours are ours to
+ * Every calendar the app reads, on any campus. Their colours are ours to
  * pick. The order is the dedupe order `sourceRankOf` reads, so a source's
  * place here decides which copy of a duplicated event survives.
  *
@@ -35,14 +33,14 @@ const LIVE_SOURCES: CampusSource[] = [
  */
 export const REMOTE_SOURCES: CalendarSource[] = servesBundledFixtures
 	? [{id: 'uitest', title: 'UI Test Fixtures', color: c.systemBlue}]
-	: LIVE_SOURCES.map(({campus: _campus, ...source}) => source)
+	: LIVE_SOURCES
 
 /**
- * The calendars `campus`'s calendar screen offers. St. Olaf's has its own and
- * Presence; Carleton's has Carleton's. UI test mode, naming no campus, offers the fixture alone.
+ * The calendars a calendar screen offers, from the source ids its campus
+ * names, in dedupe order. An id naming no calendar is skipped. UI test mode,
+ * naming no campus, offers the fixture alone.
  */
-export function remoteSourcesFor(campus: CalendarCampus): CalendarSource[] {
+export function remoteSourcesFor(sourceIds: readonly string[]): CalendarSource[] {
 	if (servesBundledFixtures) return REMOTE_SOURCES
-	let ids = new Set(LIVE_SOURCES.filter((source) => source.campus === campus).map((s) => s.id))
-	return REMOTE_SOURCES.filter((source) => ids.has(source.id))
+	return REMOTE_SOURCES.filter((source) => sourceIds.includes(source.id))
 }

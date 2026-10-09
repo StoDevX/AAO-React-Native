@@ -1,4 +1,4 @@
-import {MAIN_SECTIONS, SPECIAL_EDITION} from './posts'
+import {SPECIAL_EDITION} from './posts'
 import type {MessCategory} from '../types'
 
 /** One section the filter offers, with its columns A–Z. */
@@ -11,7 +11,7 @@ export type FilterBranch = {section: MessCategory; columns: MessCategory[]}
  */
 export function filterTree(
 	categories: MessCategory[],
-	mainSections: readonly string[] = MAIN_SECTIONS,
+	mainSections: readonly string[],
 ): FilterBranch[] {
 	return [...mainSections, SPECIAL_EDITION].flatMap((name) => {
 		let section = categories.find((c) => c.parent === 0 && c.name === name)

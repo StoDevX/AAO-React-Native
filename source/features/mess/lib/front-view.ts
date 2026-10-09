@@ -1,5 +1,3 @@
-import {MAIN_SECTIONS} from './posts'
-
 /**
  * The Mess front page's view: issues as a grid, or the latest stories, and the section Latest is
  * narrowed to. The section is kept while By Issue shows, so Latest comes back as it was left.
@@ -18,10 +16,7 @@ export function viewKey(view: MessView): string {
  * The view a saved key names. Anything else opens By Issue with no section: nothing saved, or a
  * key an installed copy may still hold that names no view, such as `Top` or a section's name.
  */
-export function viewOf(
-	saved: string | null,
-	mainSections: readonly string[] = MAIN_SECTIONS,
-): MessView {
+export function viewOf(saved: string | null, mainSections: readonly string[]): MessView {
 	let [mode, ...rest] = (saved ?? '').split(':')
 	let section = rest.join(':')
 	let known = section === '' ? null : mainSections.includes(section) ? section : undefined
@@ -38,7 +33,7 @@ export function viewOf(
 export function linkedView(
 	view: string | undefined,
 	section: string | undefined,
-	mainSections: readonly string[] = MAIN_SECTIONS,
+	mainSections: readonly string[],
 ): MessView | null {
 	if (view !== MODES.issues && view !== MODES.latest) return null
 	let key = section === undefined ? view : `${view}:${section}`

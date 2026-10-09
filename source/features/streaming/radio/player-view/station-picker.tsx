@@ -4,10 +4,10 @@ import {Host, Picker, Text} from '@expo/ui/swift-ui'
 import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 
 import {track} from '../../../telemetry/track'
-import {STATIONS, type StationId} from '../stations'
+import {STATION_LIST, STATIONS, type StationId} from '../stations'
 import {useRadioStore} from '../store'
 
-const ORDER: StationId[] = ['ksto', 'krlx']
+const ORDER: StationId[] = STATION_LIST.map((station) => station.id)
 
 /** Which station the player shows. Browsing only: it never changes what plays. */
 export function StationPicker(): React.ReactNode {

@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {CARLETONIAN_PAPER} from '../../paper'
+import {CARLETONIAN} from '../../../../campuses/edu-carleton/paper'
 import {viewOf} from '../front-view'
 import {placement} from '../posts'
 import {shelvesOf} from '../shelves'
@@ -19,7 +19,7 @@ const CATEGORIES: MessCategory[] = [
 ]
 
 const byId = new Map(CATEGORIES.map((c) => [c.id, c]))
-const sections = CARLETONIAN_PAPER.mainSections
+const sections = CARLETONIAN.mainSections
 
 describe("the Carletonian's sections", () => {
 	test('places a Sports story in News, under its Sports column', () => {

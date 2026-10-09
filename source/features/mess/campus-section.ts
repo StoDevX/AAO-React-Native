@@ -43,57 +43,5 @@ export type PaperRoutes = {
 	customize: '/messenger/customize' | '/carletonian/customize'
 }
 
-/** St. Olaf's student paper. */
-export const OLAF_MESSENGER_PAPER: Paper = {
-	id: 'mess',
-	title: 'The Olaf Messenger',
-	shortTitle: 'The Mess',
-	label: 'Olaf Messenger',
-	site: 'olafmessenger.com',
-	mainSections: ['News', 'Opinions', 'Arts & Entertainment', 'Sports', 'Variety'],
-	// 28499 is the white logo that older Poetry and Short Story posts carry.
-	logoMediaIds: new Set([35393, 22795, 28499]),
-	contactPageSlug: 'about',
-	masthead: {assetName: 'olaf-messenger-castle'},
-	routes: {
-		front: '/messenger',
-		story: '/messenger/story',
-		image: '/messenger/image',
-		column: '/messenger/column',
-		issue: '/messenger/issue',
-		issueSection: '/messenger/issue-section',
-		about: '/messenger/about',
-		staff: '/messenger/staff',
-		staffMember: '/messenger/staff/[id]',
-		customize: '/messenger/customize',
-	},
-}
-
-/**
- * Carleton's student paper. Sports sits under News on its site, and Comics, Horoscope and
- * Crosswords under The Bald Spot, its satire, so those are columns rather than sections. Its
- * `about` page is SNO's placeholder; the Contact page is the one it filled in.
- */
-export const CARLETONIAN_PAPER: Paper = {
-	id: 'carletonian',
-	title: 'The Carletonian',
-	shortTitle: 'The Carletonian',
-	label: 'Carletonian',
-	site: 'thecarletonian.com',
-	mainSections: ['News', 'Viewpoint', 'Features and Arts', 'The Bald Spot', 'Arb Notes'],
-	logoMediaIds: new Set(),
-	contactPageSlug: 'contact',
-	masthead: {assetName: 'carletonian'},
-	routes: {
-		front: '/carletonian',
-		story: '/carletonian/story',
-		image: '/carletonian/image',
-		column: '/carletonian/column',
-		issue: '/carletonian/issue',
-		issueSection: '/carletonian/issue-section',
-		about: '/carletonian/about',
-		staff: '/carletonian/staff',
-		staffMember: '/carletonian/staff/[id]',
-		customize: '/carletonian/customize',
-	},
-}
+/** A campus's student paper, which its route tree under `app/` shows. */
+export type PaperSection = Paper

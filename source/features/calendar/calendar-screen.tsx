@@ -6,7 +6,6 @@ import {
 	CalendarModePicker,
 	CalendarPicker,
 	type SourcedEvent,
-	useCalendarSources,
 	useMergedEvents,
 } from '@frogpond/ccc-calendar'
 import {type CalendarBodyHandle, DayView, EventList} from '@frogpond/event-list'
@@ -15,6 +14,7 @@ import {useMomentTimer} from '@frogpond/timer'
 import {dayWindow, useFacets, useOccurrences} from '../../database/calendar/read'
 import {calendarView} from './scope'
 import {useCalendarFilterStore} from './store'
+import {useCampusCalendarSources} from './use-campus-calendar'
 
 type Props = {
 	/**
@@ -28,7 +28,7 @@ type Props = {
 export function CalendarScreen({organization}: Props): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000})
-	let {all, enabled, toggle} = useCalendarSources()
+	let {all, enabled, toggle} = useCampusCalendarSources()
 	let bodyRef = React.useRef<CalendarBodyHandle>(null)
 
 	let saved = useCalendarFilterStore()

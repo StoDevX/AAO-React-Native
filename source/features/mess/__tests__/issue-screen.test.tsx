@@ -10,9 +10,9 @@ import {navigationTitleLines} from '../../../testing/navigation-title'
 import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {IssueScreen} from '../issue-screen'
 import {messKeys} from '../lib/keys'
-import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
+import {InMessenger, MESSENGER} from './in-messenger'
 
 jest.mock(
 	'react-native-safe-area-context',
@@ -98,7 +98,9 @@ afterEach(() => {
 function renderIssue(issueKey: string) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<IssueScreen issueKey={issueKey} />
+			<InMessenger>
+				<IssueScreen issueKey={issueKey} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }
@@ -159,7 +161,7 @@ describe('IssueScreen', () => {
 			],
 		])
 		expect(mockBack).not.toHaveBeenCalled()
-		expect(useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]).toBeUndefined()
+		expect(useNewsFilterStore.getState().selectedCategories[MESSENGER.id]).toBeUndefined()
 	})
 
 	// The newest issue is the front page's top tile, whose query is saved for the next launch.

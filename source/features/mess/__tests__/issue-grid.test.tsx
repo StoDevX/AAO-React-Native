@@ -15,6 +15,7 @@ import {useMessStore} from '../store'
 import type {LightPost, MessIssue, MessStory} from '../types'
 import {useMessIssues} from '../use-mess-issues'
 import {tileEvents} from './mess-issue-tile-mock'
+import {InMessenger} from './in-messenger'
 
 jest.mock('@frogpond/mess-issue-tile', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -142,7 +143,9 @@ async function renderGrid({
 	if (stories) queryClient.setQueryData(messKeys.issue(top), stories)
 	await render(
 		<QueryClientProvider client={queryClient}>
-			<Grid landscape={landscape} />
+			<InMessenger>
+				<Grid landscape={landscape} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 	if (stories) await waitForQueriesToSettle(queryClient)
@@ -263,7 +266,9 @@ describe('IssueGrid', () => {
 		queryClient.setQueryData(messKeys.issues, {pages: [unfound], pageParams: [1]})
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<Grid landscape={false} />
+				<InMessenger>
+					<Grid landscape={false} />
+				</InMessenger>
 			</QueryClientProvider>,
 		)
 		await waitForQueriesToSettle(queryClient)
@@ -286,7 +291,9 @@ describe('IssueGrid', () => {
 		serve(springPage)
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<Grid landscape={false} />
+				<InMessenger>
+					<Grid landscape={false} />
+				</InMessenger>
 			</QueryClientProvider>,
 		)
 
@@ -303,7 +310,9 @@ describe('IssueGrid', () => {
 		)
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<Grid landscape={false} />
+				<InMessenger>
+					<Grid landscape={false} />
+				</InMessenger>
 			</QueryClientProvider>,
 		)
 

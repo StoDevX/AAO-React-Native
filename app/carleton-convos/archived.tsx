@@ -8,11 +8,16 @@ import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {useQuery} from '@tanstack/react-query'
 
+import {carleton} from '../../source/campuses/edu-carleton'
 import {DisclosureRow} from '../../source/components/rows'
+import {sectionServer} from '../../source/features/campus/section-server'
 import {archivedConvosOptions} from '../../source/features/carleton/convos'
 
+/** Carleton's screen, reachable by URL from any campus, so it asks Carleton's convos server. */
+const SERVER = sectionServer(carleton.id, carleton.convos)
+
 export default function ArchivedConvosPage(): React.ReactNode {
-	let {data, error, refetch, isLoading} = useQuery(archivedConvosOptions)
+	let {data, error, refetch, isLoading} = useQuery(archivedConvosOptions(SERVER))
 
 	if (isLoading) {
 		return <LoadingView />

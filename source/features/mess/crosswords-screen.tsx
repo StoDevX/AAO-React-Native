@@ -4,7 +4,7 @@ import {useQuery} from '@tanstack/react-query'
 import {ColumnScreen} from './column-screen'
 import {MessPage, PAPER_BAR, PaperTitle} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
-import {messCategoriesOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {CROSSWORD_COLUMN, crosswordColumnId} from './lib/puzzle'
 
 /**
@@ -12,7 +12,8 @@ import {CROSSWORD_COLUMN, crosswordColumnId} from './lib/puzzle'
  * by name, so the home tile keeps working if the paper's WordPress renumbers it.
  */
 export function CrosswordsScreen(): React.ReactNode {
-	let categories = useQuery(messCategoriesOptions)
+	let {categoriesOptions} = usePaperQueries()
+	let categories = useQuery(categoriesOptions)
 	let id = categories.data ? crosswordColumnId(categories.data) : undefined
 
 	if (id !== undefined) {

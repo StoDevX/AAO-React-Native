@@ -2,7 +2,7 @@ import {decode} from '@frogpond/html-lib'
 import {z} from 'zod'
 import {parseEach} from '@frogpond/data-sources/parse-each'
 import {SPECIAL_EDITION, inSpecialEdition, placement} from './posts'
-import {OLAF_MESSENGER_PAPER, type Paper} from '../paper'
+import type {Paper} from '../campus-section'
 import {leadStory} from './shelves'
 import type {LightPost, MessCategory, MessIssue} from '../types'
 
@@ -28,7 +28,7 @@ const LightPostSchema = z.object({
 export function parseLightPosts(
 	body: unknown,
 	categories: MessCategory[],
-	paper: Paper = OLAF_MESSENGER_PAPER,
+	paper: Paper,
 ): LightPost[] {
 	let items = z.array(z.unknown()).parse(body)
 	let byId = new Map(categories.map((category) => [category.id, category]))

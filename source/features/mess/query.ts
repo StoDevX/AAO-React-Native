@@ -13,7 +13,7 @@ import {findSpotifyRef} from './lib/spotify'
 import {messFetch} from './lib/fixtures'
 import {wpRoot} from './lib/wp-root'
 import {paperKeys} from './lib/keys'
-import {OLAF_MESSENGER_PAPER, type Paper} from './paper'
+import type {Paper} from './campus-section'
 import {emptyPastLastPage, nextPage, pageHref} from './lib/paging'
 import type {
 	AboutSection,
@@ -460,20 +460,3 @@ export function paperQueries(paper: Paper): PaperQueries {
 	}
 	return queries
 }
-
-const mess = paperQueries(OLAF_MESSENGER_PAPER)
-
-/** The Mess's queries, by the names its screens and tests have always used. */
-export const messCategoriesOptions = mess.categoriesOptions
-export const messFeedOptions = mess.feedOptions
-export const messStoryOptions = mess.storyOptions
-export const messLeadTextOptions = mess.leadTextOptions
-export const messCategoryOptions = mess.categoryOptions
-export const messIssuesOptions = mess.issuesOptions
-export const messIssueOptions = mess.issueOptions
-export const messSeriesOptions = mess.seriesOptions
-export const messPlaylistPageOptions = mess.playlistPageOptions
-export const messGalleryOptions = mess.galleryOptions
-export const staffProfileOptions = mess.staffProfileOptions
-export const messAboutOptions = mess.aboutOptions
-export const messStaffOptions = mess.staffOptions

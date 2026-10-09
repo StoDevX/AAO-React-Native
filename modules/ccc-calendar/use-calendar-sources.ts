@@ -2,7 +2,6 @@ import * as React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 
 import {selectEnabledCalendarSources, toggleCalendarSource} from '../../source/redux/parts/settings'
-import {useLegacyCampus} from '../../source/features/campus/store'
 import {type CalendarSource, REMOTE_SOURCES, remoteSourcesFor} from './sources'
 
 type CalendarSourcesState = {
@@ -11,13 +10,15 @@ type CalendarSourcesState = {
 	toggle: (id: string) => void
 }
 
-export function useCalendarSources(): CalendarSourcesState {
+/**
+ * The calendars `sourceIds` name, as the calendar screen offers them, with the
+ * reader's on and off. The app passes its campus's ids: switching campus swaps
+ * the list, while each calendar keeps the on or off the reader last gave it.
+ */
+export function useCalendarSources(sourceIds: readonly string[]): CalendarSourcesState {
 	let dispatch = useDispatch()
 	let enabledIds = useSelector(selectEnabledCalendarSources)
-	// The campus's own calendars: switching campus swaps the list, while each
-	// calendar keeps the on or off the reader last gave it.
-	let campus = useLegacyCampus()
-	let all = React.useMemo(() => remoteSourcesFor(campus), [campus])
+	let all = React.useMemo(() => remoteSourcesFor(sourceIds), [sourceIds])
 
 	// Filter to only IDs that exist in `all` -- persisted state can reference
 	// sources that no longer exist (e.g., 'uitest' from a UI test run, or a
