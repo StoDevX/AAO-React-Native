@@ -8,10 +8,19 @@ import {parseBlocks} from '../blocks'
 import {parseMessCategories, parseMessPosts} from '../posts'
 import {chooseLayout} from '../layout'
 import type {Block} from '../../types'
+import {MESSENGER} from '../../../../campuses/edu-stolaf/paper'
 
-let varietyStories = parseMessPosts(variety, parseMessCategories(categoriesJson))
-let puzzleStories = parseMessPosts(crosswordPlaylist, parseMessCategories(categoriesJson))
-let recipeFeatureStories = parseMessPosts(recipeFeature, parseMessCategories(categoriesJson))
+let varietyStories = parseMessPosts(variety, parseMessCategories(categoriesJson), MESSENGER)
+let puzzleStories = parseMessPosts(
+	crosswordPlaylist,
+	parseMessCategories(categoriesJson),
+	MESSENGER,
+)
+let recipeFeatureStories = parseMessPosts(
+	recipeFeature,
+	parseMessCategories(categoriesJson),
+	MESSENGER,
+)
 
 describe('chooseLayout', () => {
 	it('lays a Photo story out around its pictures, taking them out of the body', () => {
@@ -246,7 +255,7 @@ describe('chooseLayout', () => {
 
 describe('parseMessPosts', () => {
 	it('sets a layout on every story, from its column', () => {
-		let stories = parseMessPosts(posts, parseMessCategories(categoriesJson))
+		let stories = parseMessPosts(posts, parseMessCategories(categoriesJson), MESSENGER)
 		expect(stories.map((s) => [s.id, s.layout.kind])).toStrictEqual([
 			[36859, 'article'],
 			[36911, 'article'],

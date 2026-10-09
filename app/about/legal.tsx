@@ -5,6 +5,8 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 
+import {useCampusSection} from '../../source/features/campus/store'
+
 const styles = StyleSheet.create({
 	scroll: {
 		backgroundColor: c.systemBackground,
@@ -13,7 +15,8 @@ const styles = StyleSheet.create({
 	},
 })
 
-const legalMarkdown = `## The MIT License (MIT)
+/** The license and notices, disclaiming sponsorship by `college`. */
+const legalMarkdown = (college: string) => `## The MIT License (MIT)
 
 Copyright (c) 2018 StoDevX
 
@@ -23,7 +26,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-This software is in no way supported by or sponsored by St. Olaf College.
+This software is in no way supported by or sponsored by ${college}.
 
 Google Play and the Google Play logo are trademarks of Google LLC.
 
@@ -31,13 +34,15 @@ Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered
 `
 
 export default function LegalPage(): React.ReactNode {
+	let {college} = useCampusSection('branding')
+
 	return (
 		<>
 			<Stack.Title>Legal</Stack.Title>
 
 			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scroll}>
 				<SafeAreaView edges={['left', 'right']}>
-					<Markdown source={legalMarkdown} />
+					<Markdown source={legalMarkdown(college)} />
 				</SafeAreaView>
 			</ScrollView>
 		</>

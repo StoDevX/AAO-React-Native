@@ -1,6 +1,6 @@
 import {expect, jest, test} from '@jest/globals'
 
-jest.mock('@frogpond/launch-arguments', () => ({fixtureMode: 'serve'}))
+jest.mock('@frogpond/launch-arguments', () => ({fixtureMode: 'serve', servesBundledFixtures: true}))
 // What a release bundle carries in place of the fixture (metro.config.js).
 jest.mock('../../__fixtures__/mess.json', () => ({}))
 

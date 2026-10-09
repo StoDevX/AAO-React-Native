@@ -2,10 +2,11 @@ import * as Sentry from '@sentry/react-native'
 import {setQuickActions} from '@frogpond/quick-actions'
 import type {QuickAction} from '@frogpond/quick-actions'
 
+import {currentCampus, useCampusStore} from '../campus/store'
 import {iconImage} from '../views'
 import {resolveQuickActions} from './destinations'
 import type {QuickActionDestination} from './destinations'
-import {useQuickActionsStore} from './store'
+import {pickedFor, useQuickActionsStore} from './store'
 
 /** The module's items for `destinations`. Routes are percent-encoded, since Swift's URL(string:) rejects a character such as a space. */
 export function toQuickActions(destinations: QuickActionDestination[]): QuickAction[] {
@@ -18,7 +19,14 @@ export function toQuickActions(destinations: QuickActionDestination[]): QuickAct
 }
 
 function pushQuickActions(): void {
-	let destinations = resolveQuickActions(useQuickActionsStore.getState().quickActions)
+	// A build with no default campus shows the picker first, and has none yet.
+	if (useCampusStore.getState().campus === null) {
+		return
+	}
+	let campus = currentCampus()
+	let destinations = campus.quickActions
+		? resolveQuickActions(pickedFor(useQuickActionsStore.getState(), campus), campus)
+		: []
 	// The menu is a convenience; a failure is worth knowing about, not showing.
 	setQuickActions(toQuickActions(destinations)).catch((error: unknown) => {
 		Sentry.captureException(error)
@@ -26,16 +34,23 @@ function pushQuickActions(): void {
 }
 
 /**
- * Keep the app icon's quick actions in step with the store: once it has
- * loaded, then on every change. Pushing on each launch also replaces items an
- * older version left pointing at a route that has since moved.
+ * Keep the app icon's quick actions in step with the store and the campus:
+ * once each has loaded, then on every change. Pushing on each launch also
+ * replaces items an older version left pointing at a route that has since
+ * moved.
  *
  * Returns a function that stops it.
  */
 export function startQuickActionSync(): () => void {
 	let stopOnHydration = useQuickActionsStore.persist.onFinishHydration(pushQuickActions)
+	let stopOnCampusHydration = useCampusStore.persist.onFinishHydration(pushQuickActions)
 	let stopOnChange = useQuickActionsStore.subscribe((state, previous) => {
-		if (state.quickActions !== previous.quickActions) {
+		if (state.picked !== previous.picked) {
+			pushQuickActions()
+		}
+	})
+	let stopOnCampusChange = useCampusStore.subscribe((state, previous) => {
+		if (state.campus !== previous.campus) {
 			pushQuickActions()
 		}
 	})
@@ -45,6 +60,8 @@ export function startQuickActionSync(): () => void {
 
 	return () => {
 		stopOnHydration()
+		stopOnCampusHydration()
 		stopOnChange()
+		stopOnCampusChange()
 	}
 }

@@ -2,7 +2,9 @@ import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {IsRestoringProvider, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {renderHook, waitFor} from '@testing-library/react-native'
+import {registerCampusServer} from '@frogpond/api'
 import {
+	CAMPUS_PROPERTY,
 	ID_PROPERTY,
 	manifestOptions,
 	REL_RADIO_PLAYER_PAGE,
@@ -10,17 +12,20 @@ import {
 	type Jrd,
 } from '@frogpond/data-sources'
 
-import {DEFAULT_URL} from '../../../../lib/constants'
+import {campusById} from '../../../../campuses'
 import {stationSources, useStationSources} from '../sources'
 import {STATIONS, type StationId} from '../stations'
+
+const STOLAF_URL = campusById('edu.stolaf').api.defaultUrl
 
 // The manifest is asked for over the network; each test says how that goes.
 const mockGet = jest.fn<() => {json: () => Promise<unknown>}>()
 jest.mock('@frogpond/api', () => ({
 	...(jest.requireActual('@frogpond/api') as object),
-	client: {get: () => mockGet()},
+	clientFor: () => ({get: () => mockGet()}),
 }))
 
+// The app names the manifest's server at boot; these tests boot no app.
 const EMPTY: Jrd = {subject: 'https://stolaf.edu', links: []}
 
 function manifestWith(...links: Jrd['links']): Jrd {
@@ -79,7 +84,20 @@ describe('stationSources', () => {
 		let manifest = manifestWith(
 			link(REL_RADIO_STREAM, 'ksto', 'radio/ksto.m3u8', 'application/vnd.apple.mpegurl'),
 		)
-		expect(stationSources(manifest, 'ksto').streamSourceUrl).toBe(`${DEFAULT_URL}radio/ksto.m3u8`)
+		expect(stationSources(manifest, 'ksto').streamSourceUrl).toBe(`${STOLAF_URL}radio/ksto.m3u8`)
+	})
+
+	// A station whose feeds a campus's own server proxies, as a new campus's
+	// station's would be: the address is on that campus's server, not St. Olaf's.
+	test("makes a stream proxied by Carleton's server an address on Carleton's server", () => {
+		registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
+		let manifest = manifestWith({
+			...link(REL_RADIO_STREAM, 'krlx', 'radio/krlx.m3u8', 'application/vnd.apple.mpegurl'),
+			properties: {[ID_PROPERTY]: 'krlx', [CAMPUS_PROPERTY]: 'edu.carleton'},
+		})
+		expect(stationSources(manifest, 'krlx').streamSourceUrl).toBe(
+			'https://carleton.example.test/v1/radio/krlx.m3u8',
+		)
 	})
 
 	test("keeps KSTO's shipped player page when the published one is on another site", () => {

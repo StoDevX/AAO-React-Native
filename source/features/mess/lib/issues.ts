@@ -1,7 +1,8 @@
 import {decode} from '@frogpond/html-lib'
 import {z} from 'zod'
 import {parseEach} from '@frogpond/data-sources/parse-each'
-import {MESS_LOGO_MEDIA_IDS, SPECIAL_EDITION, inSpecialEdition, placement} from './posts'
+import {SPECIAL_EDITION, inSpecialEdition, placement} from './posts'
+import type {Paper} from '../campus-section'
 import {leadStory} from './shelves'
 import type {LightPost, MessCategory, MessIssue} from '../types'
 
@@ -24,14 +25,18 @@ const LightPostSchema = z.object({
  * A page of the issue list's light posts. A malformed post is skipped so one bad item does not
  * blank the list; a non-empty page that yields nothing means the shape changed, and throws.
  */
-export function parseLightPosts(body: unknown, categories: MessCategory[]): LightPost[] {
+export function parseLightPosts(
+	body: unknown,
+	categories: MessCategory[],
+	paper: Paper,
+): LightPost[] {
 	let items = z.array(z.unknown()).parse(body)
 	let byId = new Map(categories.map((category) => [category.id, category]))
 	let posts = parseEach(items, (raw) => LightPostSchema.safeParse(raw).data, 'Mess post')
 	return posts.map((post): LightPost => {
 		let {id, date, title, categories: ids, featured_media: media} = post
-		let {section, featured} = placement(ids, byId)
-		let hasPhoto = media !== 0 && !MESS_LOGO_MEDIA_IDS.has(media)
+		let {section, featured} = placement(ids, byId, paper.mainSections)
+		let hasPhoto = media !== 0 && !paper.logoMediaIds.has(media)
 		return {
 			id,
 			day: date.slice(0, 10),

@@ -7,12 +7,13 @@ import * as c from '@frogpond/colors'
 
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {client} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {HtmlContent, type HtmlContentHandle} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
 import {DebugView} from '../../../source/features/developer/debug'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
+import {useCampusId} from '../../../source/features/campus/store'
 import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
 import {
 	isErrorStatus,
@@ -55,10 +56,11 @@ export default function APITestDetailPage(): React.ReactNode {
 	}>()
 	let router = useRouter()
 
+	let campus = useCampusId()
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
 	let {data, isLoading, error} = useQuery<ApiResponse | null, Error>({
-		queryKey: ['api-test', method, path, sentAt],
+		queryKey: ['api-test', campus, method, path, sentAt],
 		queryFn: async ({signal}) => {
 			if (!path) {
 				return null
@@ -66,7 +68,8 @@ export default function APITestDetailPage(): React.ReactNode {
 			// An error status is a response worth reading, not a failure. And a
 			// confirmed DELETE or POST goes out once: ky would retry a DELETE on a
 			// 5xx, as the query would on a failure, focus or reconnect.
-			let response = await client(clientPath(path), {
+			// The API Tester asks the server of the campus dev mode is on.
+			let response = await clientFor(campus)(clientPath(path), {
 				method,
 				signal,
 				throwHttpErrors: false,

@@ -22,7 +22,7 @@ export const CATALOG_TYPE = 'application/vnd.sqlite3'
 async function catalogUrl(): Promise<string> {
 	let manifest = await fetchManifest(queryClient)
 	let source = resolveSource(manifest, REL_COURSE_CATALOG, 'stolaf', [CATALOG_TYPE])
-	return apiUrl(source.href)
+	return apiUrl(source.campus, source.href)
 }
 
 /** A published catalog that failed its check, and would fail it again. */

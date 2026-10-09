@@ -13,7 +13,7 @@ import {
 	selectDirectoryResultsView,
 	setDirectoryResultsView,
 } from '../../source/redux/parts/settings'
-import {contactsOptions} from '../../source/features/directory/contacts-query'
+import {contactsOptionsFor} from '../../source/features/directory/contacts-query'
 import {DepartmentsList} from '../../source/features/directory/departments-list'
 import {directoryDepartmentsOptions} from '../../source/features/directory/departments-query'
 import {DirectoryResultsGrid} from '../../source/features/directory/directory-results-grid'
@@ -22,9 +22,12 @@ import {directoryEntriesOptions} from '../../source/features/directory/query'
 import {resolveSearch, searchHeading} from '../../source/features/directory/resolve-search'
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../source/features/directory/types'
 import {ImportantContactsGrid} from '../../source/features/directory/important-contacts-grid'
+import {useDirectory} from '../../source/features/directory/use-directory'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 function DirectoryView(): React.ReactNode {
 	let router = useRouter()
+	let {directory} = useDirectory()
 	let dispatch = useDispatch()
 	let resultsView = useSelector(selectDirectoryResultsView)
 
@@ -54,7 +57,7 @@ function DirectoryView(): React.ReactNode {
 		refetch,
 		isError,
 		isLoading,
-	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
+	} = useQuery(directoryEntriesOptions(directory, searchQuery, searchQueryType))
 
 	let items = data.results ? formatResults(data.results) : []
 
@@ -185,7 +188,7 @@ function DirectoryView(): React.ReactNode {
 	)
 }
 
-export default function DirectoryPage(): React.ReactNode {
+function DirectoryPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
@@ -205,12 +208,13 @@ export default function DirectoryPage(): React.ReactNode {
  */
 function DirectoryLanding(): React.ReactNode {
 	let router = useRouter()
-	let contacts = useQuery(contactsOptions)
+	let {campus, server} = useDirectory()
+	let contacts = useQuery(contactsOptionsFor(campus))
 	let {
 		data: departments,
 		isLoading: departmentsLoading,
 		refetch: refetchDepartments,
-	} = useQuery(directoryDepartmentsOptions)
+	} = useQuery(directoryDepartmentsOptions(server))
 
 	let refreshContacts = contacts.refetch
 	let refresh = React.useCallback(async () => {
@@ -286,3 +290,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 })
+
+export default requiresSection(
+	'directory',
+	{title: 'Directory', noun: 'a people directory', systemImage: 'person.2'},
+	DirectoryPage,
+)

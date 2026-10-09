@@ -10,6 +10,7 @@ import {ActionRow} from '../../../source/components/rows'
 import {SyncedTextField} from '../../../source/components/synced-text-field'
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
 import {useDismissOnce} from '../../../source/lib/use-dismiss-once'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 /**
  * One of a venue's links: what it is called, and where it goes.
@@ -18,7 +19,7 @@ import {useDismissOnce} from '../../../source/lib/use-dismiss-once'
  * changes, and that person can add a missing scheme -- refusing to submit over
  * one would strand a reporter on a half-height sheet.
  */
-export default function BuildingLinkEditorPage(): React.ReactNode {
+function BuildingLinkEditorPage(): React.ReactNode {
 	let {linkIndex: linkIndexParam} = useLocalSearchParams<{linkIndex: string}>()
 	let linkIndex = Number(linkIndexParam)
 
@@ -76,3 +77,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	BuildingLinkEditorPage,
+)

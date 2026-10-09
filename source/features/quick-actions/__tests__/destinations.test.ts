@@ -1,26 +1,29 @@
-import {
-	DEFAULT_QUICK_ACTIONS,
-	MAX_QUICK_ACTIONS,
-	quickActionDestinations,
-	resolveQuickActions,
-} from '../destinations'
+import {describe, expect, test} from '@jest/globals'
 
-let ids = () => quickActionDestinations().map((d) => d.id)
+import {campusById} from '../../../campuses'
+import type {CampusDefinition} from '../../../campuses'
+import {MAX_QUICK_ACTIONS, quickActionDestinations, resolveQuickActions} from '../destinations'
+
+const stolaf = campusById('edu.stolaf')
+const carleton = campusById('edu.carleton')
+
+let ids = (campus: CampusDefinition = stolaf) => quickActionDestinations(campus).map((d) => d.id)
 
 describe('quickActionDestinations', () => {
-	test('offers the Stav and Cage menus', () => {
-		let byId = new Map(quickActionDestinations().map((d) => [d.id, d.href]))
-		expect(byId.get('Stav Menu')).toBe('/menus')
-		expect(byId.get('Cage Menu')).toBe('/menus/the-cage')
+	test("offers St. Olaf's café menus first, from its menus section", () => {
+		expect(quickActionDestinations(stolaf).slice(0, 2)).toStrictEqual([
+			{id: 'Stav Menu', title: 'Stav Menu', icon: 'fork.knife', href: '/menus'},
+			{id: 'Cage Menu', title: 'Cage Menu', icon: 'cup.and.saucer.fill', href: '/menus/the-cage'},
+		])
 	})
 
 	test('offers no Pause menu', () => {
-		expect(quickActionDestinations().some((d) => d.href.includes('the-pause'))).toBe(false)
+		expect(quickActionDestinations(stolaf).some((d) => d.href.includes('the-pause'))).toBe(false)
 	})
 
 	test('leaves out the bare Menus tile, which Stav Menu already opens', () => {
 		expect(ids()).not.toContain('Menus')
-		expect(quickActionDestinations().filter((d) => d.href === '/menus')).toHaveLength(1)
+		expect(quickActionDestinations(stolaf).filter((d) => d.href === '/menus')).toHaveLength(1)
 	})
 
 	test('offers in-app home tiles', () => {
@@ -30,40 +33,80 @@ describe('quickActionDestinations', () => {
 	})
 
 	test('leaves out tiles that open a web page, and disabled or dev-only tiles', () => {
-		// Balances opens SIS on the web; its native screen is disabled.
 		expect(ids()).not.toContain('Balances')
 		expect(ids()).not.toContain('Athletics')
-		expect(ids()).not.toContain('Carleton Campus')
+		expect(ids()).not.toContain('Developer')
 	})
 
-	test('has unique ids', () => {
-		expect(new Set(ids()).size).toBe(ids().length)
+	test.each([stolaf, carleton])('has unique ids on $id', (campus) => {
+		expect(new Set(ids(campus)).size).toBe(ids(campus).length)
 	})
 })
 
-describe('defaults', () => {
+describe.each([stolaf, carleton])("$id's defaults", (campus) => {
 	test('fill the four slots', () => {
-		expect(DEFAULT_QUICK_ACTIONS).toHaveLength(MAX_QUICK_ACTIONS)
+		expect(campus.quickActions?.defaults).toHaveLength(MAX_QUICK_ACTIONS)
 	})
 
 	test('all resolve', () => {
-		expect(resolveQuickActions(DEFAULT_QUICK_ACTIONS).map((d) => d.id)).toStrictEqual(
-			DEFAULT_QUICK_ACTIONS,
-		)
+		let defaults = campus.quickActions?.defaults ?? []
+		expect(resolveQuickActions(defaults, campus).map((d) => d.id)).toStrictEqual(defaults)
 	})
+})
+
+test("St. Olaf's defaults are the ones it shipped with", () => {
+	expect(stolaf.quickActions?.defaults).toStrictEqual([
+		'Stav Menu',
+		'Cage Menu',
+		'Olaf Messenger',
+		'Transit',
+	])
 })
 
 describe('resolveQuickActions', () => {
 	test('keeps the order it is given', () => {
-		expect(resolveQuickActions(['Transit', 'Stav Menu']).map((d) => d.id)).toStrictEqual([
+		expect(resolveQuickActions(['Transit', 'Stav Menu'], stolaf).map((d) => d.id)).toStrictEqual([
 			'Transit',
 			'Stav Menu',
 		])
 	})
 
 	test('drops unknown ids', () => {
-		expect(resolveQuickActions(['Renamed Tile', 'Transit']).map((d) => d.id)).toStrictEqual([
-			'Transit',
+		expect(resolveQuickActions(['Renamed Tile', 'Transit'], stolaf).map((d) => d.id)).toStrictEqual(
+			['Transit'],
+		)
+	})
+})
+
+describe('on Carleton', () => {
+	test("offers Carleton's in-app tiles, and none of St. Olaf's cafés", () => {
+		expect(ids(carleton)).toStrictEqual([
+			'Menus',
+			'Building Hours',
+			'Calendar',
+			'Directory',
+			'SUMO',
+			'The Carletonian',
+			'Transportation',
+			'Convo',
+			'Campus Map',
+			'Dictionary',
+			'Carleton News',
+		])
+	})
+
+	test('starts from the CARLS picks', () => {
+		expect(carleton.quickActions?.defaults).toStrictEqual([
+			'Menus',
+			'Building Hours',
+			'SUMO',
+			'Convo',
+		])
+	})
+
+	test("drops St. Olaf's picks", () => {
+		expect(resolveQuickActions(['Stav Menu', 'SUMO'], carleton).map((d) => d.id)).toStrictEqual([
+			'SUMO',
 		])
 	})
 })

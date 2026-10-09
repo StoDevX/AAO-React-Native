@@ -1,6 +1,6 @@
 {
-  "name": "all-about-olaf",
-  "version": "2.9.0-rc.4",
+  "name": "all-about-anything",
+  "version": "2.9.0-rc.5",
   "private": true,
   "dependencies": {
     "@babel/runtime": "7.29.7",
@@ -151,7 +151,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@12.9.0",
+  "packageManager": "pnpm@12.10.0",
   "enriched-markdown": {
     "enableCodeHighlight": false,
     "enableMath": false

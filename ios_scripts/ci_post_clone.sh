@@ -6,7 +6,16 @@ export MISE_RUBY_COMPILE='false'
 export MISE_AUTO_INSTALL='false'
 
 export SENTRY_ORG='frog-pond-labs'
-export SENTRY_PROJECT='all-about-olaf'
+# Each Xcode Cloud workflow names its app in APP_VARIANT, which app.config.ts
+# requires: aao or carls.
+case "${APP_VARIANT:-}" in
+  aao) export SENTRY_PROJECT='all-about-olaf' ;;
+  carls) export SENTRY_PROJECT='carls' ;;
+  *)
+    echo "error: set APP_VARIANT to aao or carls in this Xcode Cloud workflow's environment" >&2
+    exit 1
+    ;;
+esac
 
 # Xcode Cloud runs this with ci_scripts as the working directory, and it must
 # live beside the .xcworkspace, so the repository root is two levels up.
@@ -77,7 +86,7 @@ mise run prebuild
 # never be committed. Keep the file beside this script and put it in place
 # instead. The ios-build job in ios.yml resolves from scratch and diffs
 # against it, so a MapLibre version bump fails there rather than here.
-resolved_dir='ios/AllAboutOlaf.xcworkspace/xcshareddata/swiftpm'
+resolved_dir='ios/AllAboutAnything.xcworkspace/xcshareddata/swiftpm'
 mkdir -p "${resolved_dir}"
 cp ios_scripts/Package.resolved "${resolved_dir}/Package.resolved"
 

@@ -17,6 +17,7 @@ import {
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
+import {useCampusId, useCampusSection} from '../../../source/features/campus/store'
 import {remoteImage, type RemoteImage} from '../../../source/lib/remote-images'
 import {useImageFailure} from '../../../source/lib/use-image-failure'
 import {callPhone} from '../../../source/components/call-phone'
@@ -41,7 +42,12 @@ const FOOTER_ROW = [
 
 export default function ContactsDetailPage(): React.ReactNode {
 	let {title} = useLocalSearchParams<{title: string}>()
-	let {data: contact, error, isLoading, refetch} = useQuery(contactByTitleOptions(title))
+	let {
+		data: contact,
+		error,
+		isLoading,
+		refetch,
+	} = useQuery(contactByTitleOptions(title, useCampusId()))
 
 	// Set from the route param immediately, then from the resolved contact
 	// once it loads -- so the header never falls back to the raw route name
@@ -117,6 +123,7 @@ function ContactBody({
 }): React.ReactNode {
 	// A photo that cannot be fetched leaves its row out, as no photo does.
 	let [imageFailed, onImageError] = useImageFailure(headerImage?.uri)
+	let {appName} = useCampusSection('branding')
 
 	return (
 		<Host style={styles.host}>
@@ -140,7 +147,7 @@ function ContactBody({
 						/>
 					</VStack>
 
-					<Text modifiers={FOOTER_ROW}>Collected by the humans of All About Olaf</Text>
+					<Text modifiers={FOOTER_ROW}>Collected by the humans of {appName}</Text>
 				</Section>
 			</List>
 		</Host>

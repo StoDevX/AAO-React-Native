@@ -17,7 +17,7 @@ test('builds for the named simulator without signing', () => {
 	let args = buildArgs('ABC')
 	assert.ok(args.includes('platform=iOS Simulator,id=ABC'))
 	assert.ok(args.includes('CODE_SIGNING_ALLOWED=NO'))
-	assert.ok(args.includes('-only-testing:AllAboutOlafUITests'))
+	assert.ok(args.includes('-only-testing:AllAboutAnythingUITests'))
 })
 
 test('runs only the named tests, into a result bundle when asked', () => {
@@ -25,7 +25,7 @@ test('runs only the named tests, into a result bundle when asked', () => {
 		testArgs({
 			udid: 'ABC',
 			xctestrun: 'x.xctestrun',
-			only: ['AllAboutOlafUITests/ChaosTests'],
+			only: ['AllAboutAnythingUITests/ChaosTests'],
 			resultBundle: 'out',
 		}),
 		[
@@ -34,7 +34,7 @@ test('runs only the named tests, into a result bundle when asked', () => {
 			'x.xctestrun',
 			'-destination',
 			'platform=iOS Simulator,id=ABC',
-			'-only-testing:AllAboutOlafUITests/ChaosTests',
+			'-only-testing:AllAboutAnythingUITests/ChaosTests',
 			'-resultBundlePath',
 			'out',
 		],
@@ -43,7 +43,7 @@ test('runs only the named tests, into a result bundle when asked', () => {
 
 test('refuses to install an app that was never built, saying how to build it', () => {
 	assert.throws(
-		() => installBuiltApp('ABC', '/nonexistent/AllAboutOlaf.app'),
-		/no built app at \/nonexistent\/AllAboutOlaf\.app; run without --prebuilt/u,
+		() => installBuiltApp('ABC', '/nonexistent/AllAboutAnything.app'),
+		/no built app at \/nonexistent\/AllAboutAnything\.app; run without --prebuilt/u,
 	)
 })

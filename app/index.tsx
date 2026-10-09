@@ -1,7 +1,18 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {Button, ContextMenu, Host, List, ScrollView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	ContextMenu,
+	Host,
+	List,
+	ScrollView,
+	Section,
+	Spacer,
+	Text,
+	Toggle,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
@@ -21,7 +32,10 @@ import * as c from '@frogpond/colors'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
-import {HomeViews, visibleViews, type ViewType} from '../source/features/views'
+import {visibleViews, type ViewType} from '../source/features/views'
+import {CAMPUSES} from '../source/campuses'
+import {useCampus, useCampusSection, useCampusStore} from '../source/features/campus/store'
+import {switchIconForCampus} from '../source/features/customize/use-app-icon'
 import {
 	FILL_WIDTH,
 	homeColumnsForFontScale,
@@ -43,6 +57,7 @@ import {
 	NOW_PLAYING_BAR_CLEARANCE,
 	RadioNowPlayingBar,
 	useRadioBarVisible,
+	useRadioStore,
 } from '../source/features/streaming/radio'
 
 const styles = StyleSheet.create({
@@ -62,17 +77,6 @@ const styles = StyleSheet.create({
 	},
 })
 
-const BASE_MESSAGES = [
-	'☃️ An Unofficial App Project ☃️',
-	'For students, by students',
-	'By students, for students',
-	'An unofficial St. Olaf app',
-	'For Oles, by Oles',
-	'☃️',
-	'🦁',
-	'Made with ❤️ in Northfield, MN',
-]
-
 const DEV_MESSAGES = [
 	'made with  ⃟ in Ñ̸̞͖̘̱̰̥͇̗̂͌̇̎͊ͯ̎̓̎ͥ̋̐ͤͪͭ̚͘͢͢ø̸̛̞͊̎ͩ̍̉̑ͯͫͥ̚͟ͅ ̱̬̹̱̦®̵̬͖͙̻̩͓̖̠͉͈͍̈́̅͂͛̅̀͗ͤ̓́͡†̵̧͙̥̫̫͎̘̩̲̥̖̈̌͋̀ͨ̑̽̍̆̓̒̒̄̈́͒̓̕͜ ͍̩̫̼ͅ˙̶͕̰̗͓̯̫̲̮͕̪̝͎̩̬̺̔ͯ̌̈̽̌ͨ͊͊͐̀͆̽̐̓̃́̚͢͟ ̞̞̤ƒ͚͙̤ͭͪ͑̄͆͑ͯ̆͗̆ͨ̍̀͟͢ ̙͎̝͕͔̠͉̩̯͕͚̗̤ͅî̹̗̩̫̝̝͙̠̹̣̺̤̆ͭ̾̋ͬ̂ͫ̃̏ͥͬ́͜͠é̚ ̸͔͕̗̞̰́̅̅͒ ̪̩̞̰̫͓̞̱̫̞̭̯¬ͫ̾̆ ̍ͣ̎̀ͫͪͪ̋͌̂ ̪̘̯̝̤͌̆ͮ̕͜͜͡∂̢̛͕̻͖̈͌ͮ̂̾ͪͪ̑͋͂̂̂̂̈́̈́̓̌̍̌͜͞ ͙̫̤',
 	'made with ∆ in Ñø®†˙ƒîé¬∂',
@@ -82,6 +86,8 @@ const DEV_MESSAGES = [
 
 const RESTART_ACTION = 'Restart app'
 const DEV_MODE_ACTION = 'Enable dev mode'
+/// Offered in dev mode only; the choice outlasts dev mode.
+const CAMPUS_SECTION = 'Campus'
 
 const NOTICE_RADIUS = 7
 const NOTICE_PADDING = 8
@@ -100,11 +106,14 @@ function UnofficialAppNotice(): React.ReactNode {
 	const dispatch = useDispatch()
 	const devModeOverride = useSelector(selectDevModeOverride)
 	const isDev = useIsDevMode()
+	const {notices} = useCampusSection('branding')
+	const campusId = useCampusStore((state) => state.campus)
+	const setCampus = useCampusStore((state) => state.setCampus)
 
 	const message = React.useMemo(() => {
-		const messages = isDev ? [...BASE_MESSAGES, ...DEV_MESSAGES] : BASE_MESSAGES
+		const messages = isDev ? [...notices, ...DEV_MESSAGES] : notices
 		return sample(messages)
-	}, [isDev])
+	}, [notices, isDev])
 
 	return (
 		<ContextMenu>
@@ -140,6 +149,22 @@ function UnofficialAppNotice(): React.ReactNode {
 					}}
 					systemImage={devModeOverride ? 'checkmark' : undefined}
 				/>
+				{isDev ? (
+					<Section title={CAMPUS_SECTION}>
+						{/* A Toggle, which a menu draws with the platform's own checkmark. */}
+						{CAMPUSES.map((option) => (
+							<Toggle
+								key={option.id}
+								isOn={option.id === campusId}
+								label={option.name}
+								onIsOnChange={() => {
+									setCampus(option.id)
+									switchIconForCampus(option)
+								}}
+							/>
+						))}
+					</Section>
+				) : null}
 			</ContextMenu.Items>
 		</ContextMenu>
 	)
@@ -172,6 +197,8 @@ function useOpenView(): (view: ViewType) => void {
 				openUrl(view.url)
 			} else if (view.type === 'view') {
 				router.navigate(view.view)
+			} else if (view.type === 'radio') {
+				useRadioStore.getState().openSheet(view.station)
 			} else {
 				throw new Error(`unexpected view type ${view.type}`)
 			}
@@ -188,13 +215,18 @@ export default function HomePage(): React.ReactNode {
 	let layout = useHomeLayoutStore((state) => state.layout)
 	// The saved layout loads after the first render. Drawing before then would
 	// draw the default and jump.
-	let hydrated = useHomeLayoutStore((state) => state.hydrated)
+	let layoutHydrated = useHomeLayoutStore((state) => state.hydrated)
+	// The saved campus loads after the first render too, and drawing St. Olaf's
+	// tiles before it would jump on a Carleton install.
+	let campusHydrated = useCampusStore((state) => state.hydrated)
+	let hydrated = layoutHydrated && campusHydrated
+	let {branding, home} = useCampus()
 	let barVisible = useRadioBarVisible()
-	let views = visibleViews(HomeViews(), {isDev})
+	let views = visibleViews(home.tiles, {isDev})
 
 	return (
 		<>
-			<Stack.Title>All About Olaf</Stack.Title>
+			<Stack.Title>{branding.appName}</Stack.Title>
 			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Button
 					accessibilityLabel={CUSTOMIZE_LABEL}

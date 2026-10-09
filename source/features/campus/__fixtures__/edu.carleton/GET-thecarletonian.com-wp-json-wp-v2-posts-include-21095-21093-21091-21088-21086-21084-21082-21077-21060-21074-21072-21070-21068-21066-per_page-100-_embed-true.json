@@ -1,0 +1,4072 @@
+{
+	"contentType": "application/json; charset=UTF-8",
+	"json": [
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/41",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=41"
+									}
+								]
+							},
+							"id": 41,
+							"link": "https://thecarletonian.com/category/the-bald-spot/",
+							"name": "The Bald Spot",
+							"slug": "the-bald-spot",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1244",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1244"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1244"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1244"
+									}
+								]
+							},
+							"id": 1244,
+							"link": "https://thecarletonian.com/staff_name/tabitha-jones/",
+							"name": "Tabitha Jones",
+							"slug": "tabitha-jones",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21095/revisions/21096",
+						"id": 21096
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21095"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21095",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21095/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21095"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21095",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21095",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21095",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				41
+			],
+			"class_list": [
+				"post-21095",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-the-bald-spot",
+				"staff_name-tabitha-jones"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>Since returning to campus a few weeks ago, many human students of Carleton College have noticed a steep increase in the bug population in Northfield. This has been observed by students living on all sides of campus, as well as those who frequent the arboretum. After doing some research in the highly respected U.S. Insects and Bugs Report magazine, the Carletonian’s team discovered something exciting — Northfield, Minnesota has been ranked as the 16th best place to live if you’re a bug in the U.S. this year. This new ranking has caused many middle- and upper-middle-order bugs to seek property in our town. The population surge is also promising for tourism in Northfield, and many local businesses such as Really Little Joy and Hello, Bug Monday are excitedly preparing new menu items to tempt locals. Really Little Joy is even considering selling a blood and honey latte for mosquito clients, if they can get their bug bee-r and liquor license in time for the new menu printing.</p>\n<p>U.S. Insects and Bugs Report journalists, known for their skillful hovering and buzzing, shared some intel about the ranking criteria with the Carletonian. Apparently, the combination of the arboretum and the 5,000 young, full-of-blood, sugar and caffeine-fueled students makes Northfield something of a heaven for insects: the only downside esteemed journalist Mr. Jonathan Sixleg shared is that “we literally all will die in the winter here.” It seems like many of the upper-order bugs plan to use their new residences as seasonal homes only. Those in the middle-order shared that, though it will be expensive to find somewhere to stay in the winter, they are hoping to hitch free rides with other individuals of various species leaving Northfield at that time. They may also be able to rent over the summer.</p>\n<p>As to why Carleton has become the most desirable subsection of Northfield to live in for insects, bug sociologists are considering three main features. The first is that Carleton College has long been insect-friendly. In fact, only last week, the school hosted its annual “Insect Involvement Fair,” where almost every member of the Carleton community kindly leaves a sugary wrapper, fry crumb or melted chocolate on the Bald Spot for the enjoyment of our insect friends. The second is the Bug Club, first opened two years ago — though there have been minimal updates so far this year, the crawling nightlife is an exciting attraction. Finally, the number one reason surveyed bugs state for their interest in Carleton, especially as opposed to St. Olaf, is the incredibly open and welcoming abundance of holes in campus window screens and sealants. On any rainy or chilly night, it takes a bug almost no effort at all to worm their way into Nourse, Leighton or a townhouse of their choosing. The insects hope that Carleton will continue to integrate their campus and are campaigning with the administration for the right to volunteer at the blood drive.</p>\n"
+			},
+			"date": "2026-10-02T13:42:42",
+			"date_gmt": "2026-10-02T18:42:42",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>Since returning to campus a few weeks ago, many human students of Carleton College have noticed a steep increase in the bug population in Northfield. This has been observed by students living on all sides of campus, as well as those who frequent the arboretum. After doing some research in the highly respected U.S. Insects&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21095"
+			},
+			"id": 21095,
+			"link": "https://thecarletonian.com/21095/the-bald-spot/sudden-influx-of-bugs-to-northfield-due-to-new-rankings/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:42:42",
+			"modified_gmt": "2026-10-02T18:42:42",
+			"ping_status": "closed",
+			"slug": "sudden-influx-of-bugs-to-northfield-due-to-new-rankings",
+			"staff_name": [
+				1244
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "Sudden influx of bugs to Northfield due to new rankings"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/41",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=41"
+									}
+								]
+							},
+							"id": 41,
+							"link": "https://thecarletonian.com/category/the-bald-spot/",
+							"name": "The Bald Spot",
+							"slug": "the-bald-spot",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1481",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1481"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1481"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1481"
+									}
+								]
+							},
+							"id": 1481,
+							"link": "https://thecarletonian.com/staff_name/jacki-incorvaia/",
+							"name": "Jacki Incorvaia",
+							"slug": "jacki-incorvaia",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21093/revisions/21094",
+						"id": 21094
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21093"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21093",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21093/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21093"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21093",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21093",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21093",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				41
+			],
+			"class_list": [
+				"post-21093",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-the-bald-spot",
+				"staff_name-jacki-incorvaia"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>After only a few days of the school year, Watson’s dryers have given up, leaving many residents with piles of wet clothes. The solution that residents came up with is immediately apparent upon viewing the dorm building — Watson, like a Greek statue forced to yield to censorship laws, was absolutely covered in clothing from top to bottom. Reports claimed that they could see inhabitants seated near windows with bags of popcorn, watching intently as both the clothes (and their tears) slowly sun-dried.</p>\n<p>Resident assistants intent on keeping their 15 hr/week jobs initially claimed that the massive amount of clotheslines strung up was simply an attempt at the creation of a new holiday tradition. When asked by suspicious new students what possible holiday could require such decor, they confessed to the state of the laundry system.</p>\n<p>The severity of this issue only became more apparent when a mob of Watson students was spotted transporting wet clothes en masse to nearby dorms. Dressed in outfits that ranged from mildly damp to absolutely soaked, Hawaiian shirts to high school branded sweatpants, they stormed through the doors and began searching for the dryers. Residents were bewildered when they tried to call on the elevator and were met with upwards of 20 students crammed inside, smelling faintly of mildew and all claiming that there was surely room for one more.</p>\n<p>Eventually, campus security arrived on the scene and escorted out the mob before they could reach their destination, assuring them that all would be resolved soon. However, some were not confident in this statement and took it upon themselves to try and resolve this dire dryer disaster with a heist. Reportedly, several students snuck into Myers during the night and managed to escape with an entire dryer. Unfortunately for them, a trail of water puddles was discovered at the scene of the crime leading back to the Watson basement. The students were found gathered around the stolen dryer in their sopping wet clothes, unsure how to actually make use of their ill-gotten machine after being without one for so long.</p>\n<p>It remains to be seen if the issues and tensions raised by this laundry situation will be resolved. In the meantime, a funeral is being held to honor the now-defunct dryers for their countless decades of service in the Watson community. Snacks and refreshments such as lint, singular socks and fabric softener will be available after the ceremony.</p>\n"
+			},
+			"date": "2026-10-02T13:40:55",
+			"date_gmt": "2026-10-02T18:40:55",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>After only a few days of the school year, Watson’s dryers have given up, leaving many residents with piles of wet clothes. The solution that residents came up with is immediately apparent upon viewing the dorm building — Watson, like a Greek statue forced to yield to censorship laws, was absolutely covered in clothing from&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21093"
+			},
+			"id": 21093,
+			"link": "https://thecarletonian.com/21093/the-bald-spot/a-dire-dryer-situation/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:40:55",
+			"modified_gmt": "2026-10-02T18:40:55",
+			"ping_status": "closed",
+			"slug": "a-dire-dryer-situation",
+			"staff_name": [
+				1481
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "A dire dryer situation"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/41",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=41"
+									}
+								]
+							},
+							"id": 41,
+							"link": "https://thecarletonian.com/category/the-bald-spot/",
+							"name": "The Bald Spot",
+							"slug": "the-bald-spot",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1480",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1480"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1480"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1480"
+									}
+								]
+							},
+							"id": 1480,
+							"link": "https://thecarletonian.com/staff_name/eliza-lin/",
+							"name": "Eliza Lin",
+							"slug": "eliza-lin",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21091/revisions/21092",
+						"id": 21092
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21091"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21091",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21091/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21091"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21091",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21091",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21091",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				41
+			],
+			"class_list": [
+				"post-21091",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-the-bald-spot",
+				"staff_name-eliza-lin"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>Most freshmen begin new student week heads down, lanyards on, eyes darting about, making the same awkward conversation a hundred times; the brave, intrepid few ride their tandem bike past the unpaid screaming cows at the entrance and into campus. Remarkably, the eight boys, Luc “Park” B., Ellery “Cap of 7th Watson” R., Oskar “Bulgarian Nightmare” U., Nate “Phinneas” S., Mingda “Big Toe” D., Alex “AK” K., Evan “Kirk” H. and Mustafa “The Lion” K., did not know each other prior to new student week. During a pickup basketball game in the rec, they had decided to pool their money and purchase tandem bikes. Inside sources reveal their next investment to be magic carpets, though Santa’s sleigh isn’t off the table.</p>\n<p>Other C(arl)-suite members have proposed a taxi service-esque setup with the bikes, though whether the board shall proceed with this proposition is unknown. You can find them on Instagram (@carleton_tandem) where they announce bike events, share pictures from their rides and film reel-adjacent content (much to the admiration of Minnesota governor Tim Walz, who reportedly spends upwards of two hours a day Insta-stalking the account, to the exasperation of his constituents and his family.)</p>\n<p>Tandem biking, however, poses its own challenges. In an interview with the Carletonian staff, the tandem boys revealed their new strategy for biking when it begins to ice over later this year: buying snow tires and, just for safety, building a machine that tosses salt directly into oncoming roads to melt the ice.</p>\n<p>Additionally, it was hinted that certain members don’t pedal their due diligence, as revealed by Oskar, who may have said, “<i>cough, </i>Mingda. Keep that off the books, don’t tell him I said that.” At the end of the day though, all that matters is riding with the boys and having a good time; as the saying goes, &#8220;Ask not what you can do for your tandem partner, ask why they’re not pedaling hard enough.” &#8211; John F. Kennedy.</p>\n"
+			},
+			"date": "2026-10-02T13:38:43",
+			"date_gmt": "2026-10-02T18:38:43",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>Most freshmen begin new student week heads down, lanyards on, eyes darting about, making the same awkward conversation a hundred times; the brave, intrepid few ride their tandem bike past the unpaid screaming cows at the entrance and into campus. Remarkably, the eight boys, Luc “Park” B., Ellery “Cap of 7th Watson” R., Oskar “Bulgarian&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21091"
+			},
+			"id": 21091,
+			"link": "https://thecarletonian.com/21091/the-bald-spot/new-biker-gang-in-town-tandem-cyclists-take-tim-walz-by-storm/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:41:05",
+			"modified_gmt": "2026-10-02T18:41:05",
+			"ping_status": "closed",
+			"slug": "new-biker-gang-in-town-tandem-cyclists-take-tim-walz-by-storm",
+			"staff_name": [
+				1480
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "New biker gang in town: tandem cyclists take Tim Walz by storm"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:featuredmedia": [
+					{
+						"_links": {
+							"about": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/types/attachment"
+								}
+							],
+							"author": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+								}
+							],
+							"collection": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/media"
+								}
+							],
+							"curies": [
+								{
+									"href": "https://api.w.org/{rel}",
+									"name": "wp",
+									"templated": true
+								}
+							],
+							"replies": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21089"
+								}
+							],
+							"self": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/media/21089",
+									"targetHints": {
+										"allow": [
+											"GET"
+										]
+									}
+								}
+							],
+							"wp:attached-to": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21088",
+									"id": 21088,
+									"post_type": "post"
+								}
+							],
+							"wp:term": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21089",
+									"taxonomy": "staff_name"
+								}
+							]
+						},
+						"alt_text": "",
+						"author": 1153,
+						"caption": {
+							"rendered": "<p>Students from Dan Maxbauer’s 2024 soils class pose with their pit in the Arboretum prairie</p>\n"
+						},
+						"date": "2026-10-02T13:37:15",
+						"featured_media": 0,
+						"id": 21089,
+						"link": "https://thecarletonian.com/21088/the-bald-spot/arb-note-the-soils-of-the-prairie/attachment/prairie-pit/",
+						"media_details": {
+							"file": "2026/10/prairie-pit.jpg",
+							"filesize": 650551,
+							"height": 2001,
+							"image_meta": {
+								"alt": "",
+								"aperture": "0",
+								"camera": "",
+								"caption": "",
+								"copyright": "",
+								"created_timestamp": "0",
+								"credit": "",
+								"focal_length": "0",
+								"iso": "0",
+								"keywords": [],
+								"orientation": "0",
+								"shutter_speed": "0",
+								"title": ""
+							},
+							"sizes": {
+								"1536x1536": {
+									"file": "prairie-pit-1152x1536.jpg",
+									"filesize": 441376,
+									"height": 1536,
+									"mime_type": "image/jpeg",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit-1152x1536.jpg",
+									"width": 1152
+								},
+								"full": {
+									"file": "prairie-pit.jpg",
+									"height": 2001,
+									"mime_type": "image/jpeg",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit.jpg",
+									"width": 1501
+								},
+								"large": {
+									"file": "prairie-pit-900x1200.jpg",
+									"filesize": 287116,
+									"height": 1200,
+									"mime_type": "image/jpeg",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit-900x1200.jpg",
+									"width": 900
+								},
+								"medium": {
+									"file": "prairie-pit-450x600.jpg",
+									"filesize": 78386,
+									"height": 600,
+									"mime_type": "image/jpeg",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit-450x600.jpg",
+									"width": 450
+								},
+								"medium_large": {
+									"file": "prairie-pit-768x1024.jpg",
+									"filesize": 213922,
+									"height": 1024,
+									"mime_type": "image/jpeg",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit-768x1024.jpg",
+									"width": 768
+								},
+								"small": {
+									"file": "prairie-pit-225x300.jpg",
+									"filesize": 21212,
+									"height": 300,
+									"mime_type": "image/jpeg",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit-225x300.jpg",
+									"width": 225
+								},
+								"thumbnail": {
+									"file": "prairie-pit-70x70.jpg",
+									"filesize": 2586,
+									"height": 70,
+									"mime_type": "image/jpeg",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit-70x70.jpg",
+									"width": 70
+								}
+							},
+							"width": 1501
+						},
+						"media_type": "image",
+						"mime_type": "image/jpeg",
+						"slug": "prairie-pit",
+						"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit.jpg",
+						"title": {
+							"rendered": "prairie pit"
+						},
+						"type": "attachment"
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/43",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=43"
+									}
+								]
+							},
+							"id": 43,
+							"link": "https://thecarletonian.com/category/arb-notes/",
+							"name": "Arb Notes",
+							"slug": "arb-notes",
+							"taxonomy": "category"
+						},
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/41",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=41"
+									}
+								]
+							},
+							"id": 41,
+							"link": "https://thecarletonian.com/category/the-bald-spot/",
+							"name": "The Bald Spot",
+							"slug": "the-bald-spot",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1437",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1437"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1437"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1437"
+									}
+								]
+							},
+							"id": 1437,
+							"link": "https://thecarletonian.com/staff_name/max-posner/",
+							"name": "Max Posner",
+							"slug": "max-posner",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21088/revisions/21090",
+						"id": 21090
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21088"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21088",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21088/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21088"
+					}
+				],
+				"wp:featuredmedia": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media/21089"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21088",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21088",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21088",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				43,
+				41
+			],
+			"class_list": [
+				"post-21088",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"has-post-thumbnail",
+				"hentry",
+				"category-arb-notes",
+				"category-the-bald-spot",
+				"staff_name-max-posner"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>Prairie soils (what scientists call mollisols) are as complex as the prairie community above the ground. In Minnesota, prairie soils developed since the last glacier retreated, over the past 10–15 thousand years. They have formed in response to geologic parent material, topography, climate, organisms and time. Healthy soils are vital to the long-term resilience of prairies.</p>\n<p>Prairie soils have vast underground ecosystems; they are alive! There are more soil microorganisms in a teaspoon of soil than there are people on earth. The microscopic and macroscopic life in soils — including bacteria, algae, insects, earthworms, beetles, ants and fungi — represent the greatest concentration of biomass anywhere on the planet.</p>\n<p>Prairie soils also host a diverse network of native grasses and flowering plants. These plants have adapted to harsh winters and frequent fire by developing deep root systems, in some cases more than three times deeper than the plants are tall. These root systems trap and filter water and nutrients, sequester carbon in soils and reduce erosion.</p>\n<p>This fall, GEOL 358: Soils and Lab, taught by Associate Professor of Geology Dan Maxbauer, is conducting basic soil surveys throughout the Arb. Students dig pits up to two m deep and describe color, texture, structure and chemical properties of different soil layers (called horizons). Learning about soils offers a gateway to understanding the important and fascinating processes occurring below the ground.</p>\n<p>&nbsp;</p>\n<p>Sources: Minnesota Department of Natural Resources, USDA Natural Resource Conservation Service</p>\n"
+			},
+			"date": "2026-10-02T13:37:43",
+			"date_gmt": "2026-10-02T18:37:43",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>Prairie soils (what scientists call mollisols) are as complex as the prairie community above the ground. In Minnesota, prairie soils developed since the last glacier retreated, over the past 10–15 thousand years. They have formed in response to geologic parent material, topography, climate, organisms and time. Healthy soils are vital to the long-term resilience of&#8230;</p>\n"
+			},
+			"featured_media": 21089,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21088"
+			},
+			"id": 21088,
+			"link": "https://thecarletonian.com/21088/the-bald-spot/arb-note-the-soils-of-the-prairie/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:37:43",
+			"modified_gmt": "2026-10-02T18:37:43",
+			"ping_status": "closed",
+			"slug": "arb-note-the-soils-of-the-prairie",
+			"staff_name": [
+				1437
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "ARB NOTE: the soils of the prairie"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/38",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=38"
+									}
+								]
+							},
+							"id": 38,
+							"link": "https://thecarletonian.com/category/arts-and-features/",
+							"name": "Features and Arts",
+							"slug": "arts-and-features",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1478",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1478"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1478"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1478"
+									}
+								]
+							},
+							"id": 1478,
+							"link": "https://thecarletonian.com/staff_name/ulysses-mckittrick/",
+							"name": "Ulysses McKittrick",
+							"slug": "ulysses-mckittrick",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21086/revisions/21087",
+						"id": 21087
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21086"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21086",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21086/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21086"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21086",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21086",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21086",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				38
+			],
+			"class_list": [
+				"post-21086",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-arts-and-features",
+				"staff_name-ulysses-mckittrick"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>Incoming college students will have their fair share of worries. Maybe they’re apprehensive about the new living environment. Maybe they fret about finding a new social circle. Then, of course, there’s the impending schoolwork, the difficulties of living alone and the financial burdens that come with college life. These worries are familiar to students across the country. But in recent decades, another, less-obvious concern has crept into the national psyche.</p>\n<p>In a recently published blog, the University of Kansas Health System delves into weight fluctuations commonly experienced by college freshmen. Headlined “The Hidden Threat to College Students,” the blog attributes weight gain to what it calls “the pizza problem.” More specifically, it blames the consumption of “convenience food, alcohol and sugary drinks” for a sudden increase in caloric intake in college. This blog, one that has populated the internet recently, highlights one of the most intimidating aspects of college in the eyes of today’s youth: the Freshman 15.</p>\n<p>The Freshman 15 refers to a phenomenon of weight gain experienced by college first-years. Whether due to overwhelming dining hall selections, abundant dessert bars, or increased drinking, the diet shift is dreaded in modern media. On Instagram alone, there are numerous videos related to the Freshman 15, titled: “Freshman 15: How to STOP it!” and “Freshman 15 Prevention Plan.”</p>\n<p>Yet, in 2011, Jay L. Zagorsky and Patricia K. Smith published a study titled, “The Freshman 15: A Critical Time for Obesity Intervention or Media Myth?” Their results showed that freshmen typically only gained around 3.5 pounds, a much lower average than the Freshman 15. The conclusion was simple: “the Freshman 15 is a media myth.” To some, the Freshman 15 may be another college cliché. But, as the internet’s obsession with the legend shows, many also view the weight change as a real and dangerous threat.</p>\n<p>So, just how valid is the Freshman 15? Does it actually haunt the buffet lines of the LDC and Burton?</p>\n<p>“In a way, you eat less food overall [while at college],” said Riley Jones ’30, describing his first couple weeks in the dining hall. “Even though you basically have unlimited food every meal, you can only eat at specific times.”</p>\n<p>Given the active lifestyle that college promotes, meals can sometimes feel insufficient. “Walking to class, walking across campus, walking to the gym…[you’re] doing way more stuff in college than you were in high school,” Jones said.</p>\n<p>To Jones,  “The habits that going to college builds…doesn’t really work well with” the idea of weight gain. In fact, he thinks college “clashes against” any possibility of gaining weight. Jones has observed a similar phenomenon among his friends who attend different colleges: “some of my friends who would [walk] 3,000 steps a day, are now going like 10,000 steps a day, because of just going to class.” So, maybe the Freshman 15 is nowhere near a real threat: in fact, weight gain might be made more difficult by college life.</p>\n<p>Tom Kirkpatrick ’29, argued from his point of view. “I think it’s real, I think it does happen. I don’t think it happens to everyone, but there’s definitely some people it happened to,” said Kirkpatrick. Kirkpatrick experienced freshman-year weight gain himself, but it was more intentional than the cliché suggests. “I came in trying to gain weight, and I did gain weight. But that’s…different.”</p>\n<p>In addition to this, Kirkpatrick highlighted a nuance in how different identity groups may perceive the Freshman 15. “A lot of guys maybe wouldn’t mind gaining fifteen pounds,” said Kirkpatrick. On the other hand, he said, “worrying about your weight” is a condition pushed upon women much more forcefully. Thus, depending on one’s identity and society’s stereotypes for different groups, the Freshman 15 might be an opportunity or a source of fear.</p>\n<p>Lena Williams ’30 elaborated on this nuance. “I think most of it is on social media,” said Williams. “I don’t think I’ve heard many people talk about the Freshman 15…in real life.” According to Williams, it is “usually girls” who are behind these social media posts. “I’ve seen videos about the Freshman 15 from guys, but those ones I feel like have been more jokes.” The ones by women, however, “tend to be more… serious… like, the Freshman 15 would be the end of the world,” continued Williams.</p>\n<p>“I feel like especially at our age…I’ve seen dudes that are trying to gain weight,” while “most girls think that gaining weight… is not good.” To her, the fad perpetuates an “unhealthy relationship” with eating. “It’s not focusing on what the food’s doing for you,” Williams said. “It’s not what makes you feel good, it’s about what makes you look good.”</p>\n<p>Williams tries to look at the bigger picture. “I feel like there’s enough to worry about in freshman year,” said Williams. “It’s a new place…new environment… gaining fifteen pounds is the least of your worries.” At the end of the day, to Williams, “What it says on the scale isn’t important.”</p>\n<p>Alissa Petee, a mental health counselor at SHAC, who specializes in disordered eating, encounters similar fears in her patients. While not always “named as the Freshman 15,” a “diet mentality” where “weight gain is almost always a bad thing” is common among students. Yet, nutrition challenges come in different forms. She has worked with “people who have all different kinds of relationships with food,” including those “who might lose their appetite when they&#8217;re stressed or forget to eat.”</p>\n<p>Petee then reflected on the drawbacks of Freshman 15: “I think it puts the emphasis on …weight gain alone…without any other context or information.” As such, natural bodily changes may be misinterpreted as undesirable. “And there are a lot of reasons why someone&#8217;s body would change when they come into college, right?” “Developmentally,” says Petee, “[physical change] is appropriate for young adults.”</p>\n<p>Petee said that “the majority of students who seek help” for “issues related to disordered eating,” tend to be women or “trans or gender-nonconforming folks.” According to her, the mental health world is still asking itself, “How do we recognize signs of eating disorders in men… how do we support them?”</p>\n<p>Regardless of gender, Petee fears that more people struggle with disordered eating than may admit it. “I think sometimes people might get caught up in wondering if they fit… the official criteria for an eating disorder diagnosis,” said Petee. “You don&#8217;t have to have an official diagnosis to be suffering and to be deserving of support.”</p>\n<p>The myth of the Freshman 15 reveals a larger concern about weight, whether it is gaining or losing. To address this anxiety, Petee preaches food neutrality.</p>\n<p>“I… hope that people are thinking about food and the other purposes that it serves, right? Allowing food to be a source of pleasure sometimes, like a source of comfort…shared among friends.” Petee says that food is more than fuel: it is crucial to “feeling connected to others,” and the challenge we face is that of “decentering weight.” According to Petee, weight is not the issue at stake. Rather, what truly matters is “the bigger picture of someone&#8217;s well-being.”</p>\n"
+			},
+			"date": "2026-10-02T13:34:12",
+			"date_gmt": "2026-10-02T18:34:12",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>Incoming college students will have their fair share of worries. Maybe they’re apprehensive about the new living environment. Maybe they fret about finding a new social circle. Then, of course, there’s the impending schoolwork, the difficulties of living alone and the financial burdens that come with college life. These worries are familiar to students across&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21086"
+			},
+			"id": 21086,
+			"link": "https://thecarletonian.com/21086/arts-and-features/the-freshman-fifteen-fact-or-fiction/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:34:12",
+			"modified_gmt": "2026-10-02T18:34:12",
+			"ping_status": "closed",
+			"slug": "the-freshman-fifteen-fact-or-fiction",
+			"staff_name": [
+				1478
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "The Freshman fifteen: fact or fiction?"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/38",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=38"
+									}
+								]
+							},
+							"id": 38,
+							"link": "https://thecarletonian.com/category/arts-and-features/",
+							"name": "Features and Arts",
+							"slug": "arts-and-features",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1477",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1477"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1477"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1477"
+									}
+								]
+							},
+							"id": 1477,
+							"link": "https://thecarletonian.com/staff_name/aria-boehler/",
+							"name": "Aria Boehler",
+							"slug": "aria-boehler",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21084/revisions/21085",
+						"id": 21085
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21084"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21084",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21084/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21084"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21084",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21084",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21084",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				38
+			],
+			"class_list": [
+				"post-21084",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-arts-and-features",
+				"staff_name-aria-boehler"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>Watching the news or scrolling on social media, it can seem unlikely that a political debate would ever leave participants with more understanding of the other side. Carleton’s new BridgeUSA club, however, is working to prove that discussing contentious cultural and political issues need not be a recipe for hostility.</p>\n<p>According to Carleton chapter president Cordelia Whitman ’27, BridgeUSA will host a range of events throughout the term to promote healthy discussion and community engagement across campus. “We&#8217;re hosting bi-weekly meetings, and then we&#8217;re also hoping to collaborate with CarlsVote this term to do some voter engagement things, like a meeting about knowing what&#8217;s on your ballot or how to fill out a ballot,” said Whitman. “We have a couple other activities that club execs haven&#8217;t finalized yet, but keep your ear to the ground because we&#8217;re hoping to do some sort of panel or discussion with local politicians and things like that.”</p>\n<p>BridgeUSA was founded in 2017 by University of California-Berkeley students aiming to resist political polarization in the wake of violent protests over a conservative campus speaker. As partisan hostility has persisted and even intensified since, campus chapters have sprung up across the country, now numbering 132 nationwide.</p>\n<p>While Carleton does not face the same political hostility that inspired the initiation of BridgeUSA, Whitman believes the organization will help fill a hole in the college’s civic culture.</p>\n<p>“I did feel coming to Carleton [that] we&#8217;re a little bit in an echo chamber… we have one kind of dominating viewpoint on campus, and so I was interested in doing something with political depolarization work on campus,” said Whitman. “This organization is amazing because their mission is to invite everybody into a conversation. There’s definitely a diversity of perspectives on campus, but sometimes, if there is a majority viewpoint on something, I think that other voices might not be as comfortable speaking about their opinions.”</p>\n<p>While the college already has several student groups committed to civic engagement, such as CarlsVote and the Alexander Hamilton Society, Nathan Hawkins ’27, who attended BridgeUSA’s first meeting at Carleton, believes that the new club has something unique to offer.</p>\n<p>“I think what’s different about [BridgeUSA] is that it’s not trying to be partisan, but it is comfortable with engaging with political discussions, engaging with these viewpoints and talking them out as opposed to providing the infrastructure needed for people to express those viewpoints through voting,” Hawkins said.</p>\n<p>Hawkins was drawn to the club as a way to broaden his own perspective on different issues. Hawkins grew up in a conservative community in rural Indiana and now finds himself surrounded mostly by left-leaning friends and peers at Carleton, which has shown him that it is not always easy to participate in dialogue across ideological lines. He, however, sees such conversation as part of civic responsibility.</p>\n<p>“Being able to hold different ideas in mind, even if you identify with one versus the other, just shows a great amount of perspective. It shows a willingness to accept a diverse world, which is how the world is,” he said. “We are always going to be encountering different perspectives. Things are going to shift one way or the other with every election, and so I think the health of a democracy depends on being able to have dialogue across political lines.”</p>\n<p>Though the primary goal of BridgeUSA is making space for respectful disagreement on campus, Whitman says that the group will also host events to find agreement and build solidarity. “It wouldn’t even be to come talk about a topic, it would just be more informal opportunities for people to get to know each other on campus, to connect people who are interested in political depolarization work,” Whitman said. She would also like to see some of these events include members of the wider Northfield community, though these plans are much more speculative.</p>\n<p>Ben Tipson ’30, who also attended BridgeUSA’s first meeting, believes that making such connections is the first step to productive debate, and suggested that the group might focus on issues with general bipartisan agreement, such as data centers, at its first meetings.</p>\n<p>“Of course, the point is to have a respectful disagreement, but I think this seems to be a launching point where we both have some things in common, and I think that just allows us to build trust to explore things we might disagree about more,” Tipson said. “I think the type of disagreement we see now in politics in this country is probably indifferent at best and hostile at worst, and I think that is really damaging to what we could accomplish as a people or as a country. It just misguides us and steers us away from the truth.”</p>\n<p>Whitman agrees with the importance of building a foundation of respect and trust among BridgeUSA participants, which is why the chapter’s leaders are planning to hold discussions about less controversial topics as the group builds its presence on campus.</p>\n<p>“We want people to feel like they can come to a meeting and it’s not necessarily divided along red or blue lines. It’s just coming in with your own perspective and your own take,” Whitman said. “We definitely want to get there. We have had a lot of interest [from students] in Second Amendment rights and gun rights, so I think that it could be interesting to aim for, at the end of the term, having that be the topic that we do.”</p>\n<p>At the chapter’s first meeting, discussion was both non-partisan and hyper-local, centering on last year’s “Halt the Hub” controversy and the broader relationship between Carleton and Northfield. As a first-year student, this was the first Tipson had heard of the debate surrounding the transit hub relocation and College Street pedestrian walk construction, and he valued the discussion, even if it didn’t always feel particularly personal.</p>\n<p>“Some of the other things we touched on — like what Carleton&#8217;s role is in the community and what the power dynamic between the community and Carleton looks like or should look like — I thought that was productive, and we saw a lot of varying opinions there,” he said.</p>\n<p>Even with his own perspectives formed from living through Halt the Hub last year, Hawkins found the opportunity to consider new aspects of the issue, such as accessibility for mobility-challenged students, at the BridgeUSA discussion.</p>\n<p>“I felt like the environment was healthy and supportive, and people were willing to listen,” Hawkins said. “I feel that way about Carleton in general, that it generally is an open environment. People are curious, willing to hear you out, regardless of what you think.”</p>\n<p>Bringing this culture of openness and diversity to BridgeUSA meetings is a priority for Whitman moving forward.</p>\n<p>“We really want it to be a space for the whole community,” Whitman said. “No matter what your perspective is or no matter what your level of engagement is with politics or big cultural, societal events, you feel like you have a place there even to just come and listen. You know you’ll be welcome to the club.”</p>\n"
+			},
+			"date": "2026-10-02T13:33:27",
+			"date_gmt": "2026-10-02T18:33:27",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>Watching the news or scrolling on social media, it can seem unlikely that a political debate would ever leave participants with more understanding of the other side. Carleton’s new BridgeUSA club, however, is working to prove that discussing contentious cultural and political issues need not be a recipe for hostility. According to Carleton chapter president&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21084"
+			},
+			"id": 21084,
+			"link": "https://thecarletonian.com/21084/arts-and-features/new-carleton-club-bridges-political-gaps/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:33:27",
+			"modified_gmt": "2026-10-02T18:33:27",
+			"ping_status": "closed",
+			"slug": "new-carleton-club-bridges-political-gaps",
+			"staff_name": [
+				1477
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "New Carleton club bridges political gaps"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/38",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=38"
+									}
+								]
+							},
+							"id": 38,
+							"link": "https://thecarletonian.com/category/arts-and-features/",
+							"name": "Features and Arts",
+							"slug": "arts-and-features",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1440",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1440"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1440"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1440"
+									}
+								]
+							},
+							"id": 1440,
+							"link": "https://thecarletonian.com/staff_name/joey-chan/",
+							"name": "Joey Chan",
+							"slug": "joey-chan",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21082/revisions/21083",
+						"id": 21083
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21082"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21082",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21082/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21082"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21082",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21082",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21082",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				38
+			],
+			"class_list": [
+				"post-21082",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-arts-and-features",
+				"staff_name-joey-chan"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>Carleton has recently started a round of Artificial Intelligence Literacy Certificate programs for employees, and it asks employees a question that has become increasingly difficult to avoid: what role should AI play at Carleton?</p>\n<p>Carleton has defined 2024 as the “year of curiosity,” and 2025 as the “year of exploration.” The certificate, therefore, is designed to help faculty and staff to understand what AI technology can do in current and future workspaces, experiment with it and decide where it belongs in their work.</p>\n<p>Wiebke Kuhn, Director of Academic Technology, said the certificate grew out of several years of campus discussion. The program emerged because staff members had fewer opportunities to examine how AI might affect their work. The program held three summer sessions and drew about 60 participants. Roughly 20 more are participating this fall.</p>\n<p>“The key for us is this idea of, it’s not about using AI. It’s about understanding AI, experimenting a little bit and thinking about what it means. And then making decisions based on that,” said Kuhn.</p>\n<p>The AI policy page on Carleton’s website states that existing rules on data security and ethics still apply to AI. Employees are warned against entering sensitive or proprietary information into most generative AI systems. Carleton has also revised its Academic Integrity policy to emphasize that students must complete the “core intellectual substance” of an assignment themselves. At Carleton, however, faculty members can determine what kinds of AI use make sense for their courses.</p>\n<p>“I like how Carleton, so far, has allowed a lot of autonomy to professors and departments to figure out their own approaches,” said Austin Mason, Director of Digital Arts and Humanities and Senior Lecturer in History. “The decisions themselves need to be context-dependent and department-specific.”</p>\n<p>Mason also believed that AI will continue to impact Carleton. “I think people are coming to terms with the fact that something we’ll call AI, based on the current large language models, will be with us for a long time and will have an impact. I don’t think many people are saying that&#8217;s not true. But what that looks like, and how much it&#8217;s regulated — all of that is what people are wrestling with this year,” said Mason.</p>\n<p>“I feel like the school’s doing a pretty good job right now because each professor has their different AI-using policy,” an anonymous student majoring in computer science said. “I feel like, in general, it really depends on which subject you’re working on and how you’re using it. For example, for subjects like math and science, where there is a lot of logical reasoning, you have to figure out the problem yourself. Using large language models is destroying the purpose of learning because it just gives you the next steps.”</p>\n<p>The harder question is determining where that line falls.</p>\n<p>Kuhn believed this question differs across academic disciplines. “When I talk with faculty in the humanities, there is a greater sense of, no, this is essentially taking a shortcut. Taking shortcuts takes away from practicing skills: critical reading, critical thinking, analyzing, summarizing. Those are skill sets that, if you use AI, you don&#8217;t practice them, ” said Kuhn.</p>\n<p>This difference is one reason Carleton has continued to leave individual classroom policies to faculty members. There is currently “no Carleton policy that says this is what you need to do with generative AI in your classroom.”</p>\n<p>For Mason, the issue is whether people understand what they are giving up when they use it. “Everybody, both faculty and students, could start to ask themselves this question before using AI: is this something that I want to outsource mentally? Or is this actually the point? Is this the work? And if I outsource it, is that negating the point of the work?” said Mason.</p>\n<p>“I would say 2026 feels to me more like a year of AI negotiation…This year, the conversation [and] the societal conversation seems to have shifted into a place where people are feeling increasingly powerless about the pace of the changes and how they’re being enforced on people. People are either wanting to opt out or figure out how to harness some of these capabilities without necessarily feeling like they’re signing over their data, their privacy rights or their agency to big corporations or whoever else,” said Mason.</p>\n"
+			},
+			"date": "2026-10-02T13:32:40",
+			"date_gmt": "2026-10-02T18:32:40",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>Carleton has recently started a round of Artificial Intelligence Literacy Certificate programs for employees, and it asks employees a question that has become increasingly difficult to avoid: what role should AI play at Carleton? Carleton has defined 2024 as the “year of curiosity,” and 2025 as the “year of exploration.” The certificate, therefore, is designed&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21082"
+			},
+			"id": 21082,
+			"link": "https://thecarletonian.com/21082/arts-and-features/2026-the-year-of-ai-negotiation/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:32:40",
+			"modified_gmt": "2026-10-02T18:32:40",
+			"ping_status": "closed",
+			"slug": "2026-the-year-of-ai-negotiation",
+			"staff_name": [
+				1440
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "2026: the year of AI negotiation"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:featuredmedia": [
+					{
+						"_links": {
+							"about": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/types/attachment"
+								}
+							],
+							"author": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+								}
+							],
+							"collection": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/media"
+								}
+							],
+							"curies": [
+								{
+									"href": "https://api.w.org/{rel}",
+									"name": "wp",
+									"templated": true
+								}
+							],
+							"replies": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21078"
+								}
+							],
+							"self": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/media/21078",
+									"targetHints": {
+										"allow": [
+											"GET"
+										]
+									}
+								}
+							],
+							"wp:attached-to": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21077",
+									"id": 21077,
+									"post_type": "post"
+								}
+							],
+							"wp:term": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21078",
+									"taxonomy": "staff_name"
+								}
+							]
+						},
+						"alt_text": "",
+						"author": 1153,
+						"caption": {
+							"rendered": "<p>Carleton’s Title IX Office lives in the Class of Class of 1974 Center. Carleton’s Title IX Coordinator, Nathan Riel-Elness, started the job after a multi-year search.</p>\n"
+						},
+						"date": "2026-10-02T13:26:47",
+						"featured_media": 0,
+						"id": 21078,
+						"link": "https://thecarletonian.com/21077/news/judge-denies-motion-for-summary-judgment-in-alum-sexual-abuse-case-against-carleton/attachment/screenshot-2026-10-02-at-1-26-40-pm/",
+						"media_details": {
+							"file": "2026/10/Screenshot-2026-10-02-at-1.26.40-PM.png",
+							"filesize": 2520002,
+							"height": 940,
+							"image_meta": {
+								"alt": "",
+								"aperture": "0",
+								"camera": "",
+								"caption": "",
+								"copyright": "",
+								"created_timestamp": "0",
+								"credit": "",
+								"focal_length": "0",
+								"iso": "0",
+								"keywords": [],
+								"orientation": "0",
+								"shutter_speed": "0",
+								"title": ""
+							},
+							"sizes": {
+								"full": {
+									"file": "Screenshot-2026-10-02-at-1.26.40-PM.png",
+									"height": 940,
+									"mime_type": "image/png",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM.png",
+									"width": 1224
+								},
+								"large": {
+									"file": "Screenshot-2026-10-02-at-1.26.40-PM-1200x922.png",
+									"filesize": 1744568,
+									"height": 922,
+									"mime_type": "image/png",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM-1200x922.png",
+									"width": 1200
+								},
+								"medium": {
+									"file": "Screenshot-2026-10-02-at-1.26.40-PM-600x461.png",
+									"filesize": 477087,
+									"height": 461,
+									"mime_type": "image/png",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM-600x461.png",
+									"width": 600
+								},
+								"medium_large": {
+									"file": "Screenshot-2026-10-02-at-1.26.40-PM-768x590.png",
+									"filesize": 758586,
+									"height": 590,
+									"mime_type": "image/png",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM-768x590.png",
+									"width": 768
+								},
+								"small": {
+									"file": "Screenshot-2026-10-02-at-1.26.40-PM-300x230.png",
+									"filesize": 131127,
+									"height": 230,
+									"mime_type": "image/png",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM-300x230.png",
+									"width": 300
+								},
+								"thumbnail": {
+									"file": "Screenshot-2026-10-02-at-1.26.40-PM-70x70.png",
+									"filesize": 10487,
+									"height": 70,
+									"mime_type": "image/png",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM-70x70.png",
+									"width": 70
+								}
+							},
+							"width": 1224
+						},
+						"media_type": "image",
+						"mime_type": "image/png",
+						"slug": "screenshot-2026-10-02-at-1-26-40-pm",
+						"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM.png",
+						"title": {
+							"rendered": "Screenshot 2026-10-02 at 1.26.40 PM"
+						},
+						"type": "attachment"
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/7",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=7"
+									}
+								]
+							},
+							"id": 7,
+							"link": "https://thecarletonian.com/category/news/",
+							"name": "News",
+							"slug": "news",
+							"taxonomy": "category"
+						},
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/11",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=11"
+									}
+								]
+							},
+							"id": 11,
+							"link": "https://thecarletonian.com/category/showcase/",
+							"name": "Showcase",
+							"slug": "showcase",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1344",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1344"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1344"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1344"
+									}
+								]
+							},
+							"id": 1344,
+							"link": "https://thecarletonian.com/staff_name/clare-oconnor/",
+							"name": "Clare O'Connor",
+							"slug": "clare-oconnor",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21077/revisions/21099",
+						"id": 21099
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21077"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21077",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 4,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21077/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21077"
+					}
+				],
+				"wp:featuredmedia": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media/21078"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21077",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21077",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21077",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				7,
+				11
+			],
+			"class_list": [
+				"post-21077",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"has-post-thumbnail",
+				"hentry",
+				"category-news",
+				"category-showcase",
+				"staff_name-clare-oconnor"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>On June 17, 2024, a Class of ’22 Carleton alum referred to as Jane Doe filed a legal complaint against Carleton College on several counts related to Doe’s experience of sexual abuse when she was a student. Her abuser, Donald Smith, was a Data Research Associate and Salsa Dance Instructor for Carleton at the time. Doe alleges that Smith used his position as a Carleton employee to perpetrate grooming and abuse, and that the school was negligent in supervising his actions and slow to respond to her complaints. Carleton argues it is not liable for Smith’s misconduct and took action against Smith as soon as the danger he posed could reasonably be recognized.</p>\n<p>The suit has moved through various stages of the legal process over the past two years, but on Aug. 20, 2026, Senior U.S. District Judge Donovan W. Frank denied, in part, Carleton’s motion for summary judgment, which would have closed the case.</p>\n<p>“Counts 1, 2, 3 and 4 survive summary judgment, but Counts 5 and 6 do not,” the Opinion and Order reads.</p>\n<p>This means that Counts 1 (Vicarious Liability Assault and Battery), 2 (Vicarious Liability Sexual Abuse), 3 (Negligent Retention) and 4 (Negligent Supervision) were deemed to have enough evidence to warrant a full trial. The court granted summary judgment in Carleton’s favor on counts 5 (Vicarious Liability Negligence) and 6 (Negligent Hiring), so those counts against the college were dismissed as not viable.</p>\n<p>“The Court encourages the parties to consider settlement rather than further litigation. Settling this case is in the best interests of both parties,” the Opinion and Order reads.</p>\n<p>The trial was set for Oct. 12, but settlement negotiations have been scheduled for Oct. 13.</p>\n<p>A comment to the Carletonian from the Carleton Communications Department provided by Helen Clarke reads, “The wellbeing of our students is a top priority, and allegations of misconduct are [JUMP]taken seriously and acted on swiftly. We have robust and effective processes in place to prevent, report, and respond to sexual misconduct, and these processes were utilized in supporting Ms. Doe. We continue to care for Ms. Doe as a member of our alumni community.”</p>\n<p>In a comment to the Carletonian, Tamara Holder, one of Jane Doe’s attorneys, said that Doe is pursuing justice “not only for herself but for everyone in the Carleton community.”</p>\n<p>“We remain hopeful that Carleton College will do the right thing,” Holder wrote.</p>\n<p>The Opinion and Order, as well as Doe’s initial Complaint, lay out the details and timeline of Smith’s misconduct.</p>\n<p>Doe, an international student, first interacted with Smith in Fall Term of her freshman year at a salsa dance workshop hosted by the Social Dance Club. The school approved Smith’s request to teach a Salsa Dance I PE course that winter, and Doe enrolled in the class.</p>\n<p>Smith’s grooming of Doe took place over the next several years and included monetary gifts, special attention, inappropriate comments and one-on-one meetings.</p>\n<p>In fall of 2021, Doe became Smith’s co-instructor for Salsa I.</p>\n<p>According to the Opinion and Order, “He offered to pay her $17.25 per hour for her time…. Smith’s PEAR supervisor was unaware that Smith had a co-instructor for Salsa I…. Smith paid Doe via personal check.”</p>\n<p>The two planned lessons in Smith’s house on weekends. During this time, Smith&#8217;s behavior reportedly escalated.</p>\n<p>Then, according to the Opinion and Order, “at the start of winter break 2021, Doe spent two nights at Smith’s home during the two-day gap between the closure of her dorm and her flight to visit family.” During this time, according to Doe’s account, “Smith poured her a drink, and after she finished it, Doe began to feel &#8216;weird and ill.’” When she woke up the next morning, Doe recalled finding red marks on her neck that she had no memory of receiving.</p>\n<p>The Opinion and Order outlines that, in Winter Term of 2022, Smith again brought Doe to his house and tried to engage her sexually, inappropriately biting and touching her. After this event, Doe spoke with her therapist, who helped her make an appointment with Associate Dean of Students, Trey Williams, on Feb. 9, 2022.</p>\n<p>“Doe told Williams that one of her teachers attacked her at his house, that it had been affecting her academically, and that she needed help making it through the term,” the Opinion and Order reads.</p>\n<p>Doe did not disclose Smith’s name at this time. After the meeting, Williams submitted a form to the Title IX office, leading former Title IX Coordinator Laura Riehle-Merrill to invite Doe to a meeting. Doe never responded, and no further action was taken at the time.</p>\n<p>Next term, Doe began an independent study with Smith as her instructor. As part of the class approval process, Doe and Smith performed a dance for Judith Howard, the Chair of the Theater and Dance Department. According to the Opinion and Order, Howard felt uncomfortable watching the two dance together, and she met with Riehle-Merrill in March, 2022 to talk about Smith.</p>\n<p>Some of Riehle-Merrill’s notes from the meeting include “Judith feels this is grooming” and “Teacher ‘gets off on this,’” according to the Opinion and Order.</p>\n<p>After that meeting, Howard met with Smith and Doe separately, and revised the independent study syllabus. No connections appear to have been drawn between this event and Doe’s earlier disclosures.</p>\n<p>Later in April, “Doe told Carolyn Livingston Carlson that she was attacked by a Carleton employee earlier in the year and asked for help,” according to the Opinion and Order.</p>\n<p>Again, Doe did not reveal Smith’s name and, again, Riehle-Merrill reached out to Doe, but she did not respond.</p>\n<p>In the same month, Doe’s boyfriend at the time became worried about her relationship with Smith. He reached out to Riehle-Merrill about his concerns and disclosed that “the individual was a Carleton employee who held two roles,” but he did not specifically name Smith, according to Order and Opinion.</p>\n<p>On May 9, 2022, Doe reported Smith by name to the Title IX Office. Riehle-Merrill took action immediately, and Smith was fired on May 13.</p>\n<p>A major point disputed in the suit is whether Carleton had a responsibility to uncover the events before May 9.</p>\n<p>The Carleton Communications Department’s comment provided by Helen Clarke reads, “Jane Doe’s allegations of serious misconduct by a now-former employee of the College prompted Carleton to take immediate action to terminate his employment, involve law enforcement and bar him from our campus. Carleton personnel provided support and assistance to Jane Doe, which she described at the time as ‘extremely effective.’”</p>\n<p>The court did rule that Doe’s accusation of Negligent Supervision was adequately evidenced to warrant trial. This does not mean that the accusation would necessarily be proven at trial.</p>\n<p>“The Court finds that there is a genuine issue of fact on foreseeability… Carleton had some information about Smith’s abuse from Doe herself and Howard. Whether that information made Smith’s conduct foreseeable is a close question that should be resolved by a jury,” according to the Opinion and Order.</p>\n<p>Currently, Nathan Riel-Elness is the Title IX Coordinator at Carleton. He was not in this role at Carleton when Doe filed the complaint, and he told the Carletonian he could not comment on the case.</p>\n<p>Riel-Elness did say that if a Carleton student today felt that they had an uncomfortable interaction with a member of the faculty or staff (or if a student suspected a friend was being treated inappropriately by a Carleton employee), they should file a Community Concern Form (CCF) or reach out to the Title IX office or the Dean of Students office directly.</p>\n<p>If a student does that, Riel-Elness will reach out to the student and ask to schedule a time to meet to discuss what options are available.</p>\n<p>“So we can talk about the formal process, our informal options or our supportive measures — that could be things like adjusting housing, assignments, work schedules, or if we need to make an adjustment to class assignments&#8230; no contact orders, things like that,” Riel-Elness said. “Then we&#8217;ll also talk about your ability to report off-campus to law enforcement, make sure that you can get connected to legal advocates and other resources.”</p>\n<p>After that meeting, a student could decide to file a formal report through the Title IX office. (Riel-Elness is able to file a formal report even if a student does not ask him to, but he stated that he would do so only in very rare circumstances where someone posed an imminent danger to campus.)</p>\n<p>“Anytime we do have a formal complaint or something is moving through the process, a no-contact order is automatically put in place,” Riel-Elness said.</p>\n<p>A formal report would trigger an investigation by a 3rd-party investigator, who would compile evidence for a formal hearing. The committee would review the evidence and decide what to do long term.</p>\n<p>“Every circumstance is going to be different. All of our sanctions have the ability to go from just written warnings… to disciplinary probation, up through suspension and expulsion,” Riel-Elness said.</p>\n<p>Everyone involved in the process must follow a no-retaliation policy enforced by the Community Standards Office. Riel-Elness said he hopes this makes it easier for students to voice concerns about faculty and staff, although he acknowledges speaking up can still be very difficult.</p>\n<p>He also acknowledged that, because of the confidentiality standards surrounding Title IX investigations, it can often look to students like nothing is being done about any given report, even when there is much going on behind the scenes.</p>\n<p>Riel-Elness said that the college has no formal policies regulating interactions between students and faculty/staff. He said, for example, that some professors invite students over for dinner at their homes, and that this is allowed depending on several factors. If a student feels uncomfortable, the school handles that on a case-by-case basis.</p>\n<p>“There are times when [an action by a member of faculty or staff] might not rise to the level of a policy violation, but it was just not a great experience. So we want to support people to either help them have that conversation or ask if I can have that conversation with [a member of faculty or staff]. Just like, ‘hey, just so you know, this is how you’re coming across. Let&#8217;s talk about a way to improve that language’ or things like that,” Riel-Elness said.</p>\n<p>He qualified this by adding that the Policy Against Sexual Misconduct outlines examples of inappropriate behavior, and the school follows applicable state/federal laws, policy and guidance. Faculty and staff also complete mandatory Title IX training, and Riel-Elness said the school has several policies regulating how faculty, staff and students can interact with minors on campus.</p>\n"
+			},
+			"date": "2026-10-02T13:31:59",
+			"date_gmt": "2026-10-02T18:31:59",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>On June 17, 2024, a Class of ’22 Carleton alum referred to as Jane Doe filed a legal complaint against Carleton College on several counts related to Doe’s experience of sexual abuse when she was a student. Her abuser, Donald Smith, was a Data Research Associate and Salsa Dance Instructor for Carleton at the time&#8230;.</p>\n"
+			},
+			"featured_media": 21078,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21077"
+			},
+			"id": 21077,
+			"link": "https://thecarletonian.com/21077/news/judge-denies-motion-for-summary-judgment-in-alum-sexual-abuse-case-against-carleton/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T14:56:58",
+			"modified_gmt": "2026-10-02T19:56:58",
+			"ping_status": "closed",
+			"slug": "judge-denies-motion-for-summary-judgment-in-alum-sexual-abuse-case-against-carleton",
+			"staff_name": [
+				1344
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "Judge denies motion for summary judgment in alum sexual abuse case against Carleton"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/11",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=11"
+									}
+								]
+							},
+							"id": 11,
+							"link": "https://thecarletonian.com/category/showcase/",
+							"name": "Showcase",
+							"slug": "showcase",
+							"taxonomy": "category"
+						},
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/6",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=6"
+									}
+								]
+							},
+							"id": 6,
+							"link": "https://thecarletonian.com/category/viewpoint/",
+							"name": "Viewpoint",
+							"slug": "viewpoint",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1468",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1468"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1468"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1468"
+									}
+								]
+							},
+							"id": 1468,
+							"link": "https://thecarletonian.com/staff_name/angie-hattery/",
+							"name": "Angie Hattery",
+							"slug": "angie-hattery",
+							"taxonomy": "staff_name"
+						},
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1469",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1469"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1469"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1469"
+									}
+								]
+							},
+							"id": 1469,
+							"link": "https://thecarletonian.com/staff_name/austin-dahl/",
+							"name": "Austin Dahl",
+							"slug": "austin-dahl",
+							"taxonomy": "staff_name"
+						},
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1482",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1482"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1482"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1482"
+									}
+								]
+							},
+							"id": 1482,
+							"link": "https://thecarletonian.com/staff_name/emily-emma-cohen-campus-assault-survivor/",
+							"name": "Emily “Emma” Cohen (campus assault survivor)",
+							"slug": "emily-emma-cohen-campus-assault-survivor",
+							"taxonomy": "staff_name"
+						},
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1471",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1471"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1471"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1471"
+									}
+								]
+							},
+							"id": 1471,
+							"link": "https://thecarletonian.com/staff_name/xandria-birk/",
+							"name": "Xandria Birk",
+							"slug": "xandria-birk",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21060/revisions/21097",
+						"id": 21097
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21060"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21060",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 5,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21060/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21060"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21060",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21060",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21060",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				11,
+				6
+			],
+			"class_list": [
+				"post-21060",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-showcase",
+				"category-viewpoint",
+				"staff_name-angie-hattery",
+				"staff_name-austin-dahl",
+				"staff_name-emily-emma-cohen-campus-assault-survivor",
+				"staff_name-xandria-birk"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>In 2024 a recent graduate sued Carleton in federal court alleging she had told administrators that her dance instructor had<a href=\"https://www.reckonreformrepair.org/spotlights/2020s-runaround-sue\"><span style=\"text-decoration: underline;\"> groomed her and sexually assaulted</span></a> her at his house near campus. The instructor, who was also employed in the college’s IT department, was eventually fired, but “Jane Doe,” as she’s anonymized<span style=\"text-decoration: underline;\"><a href=\"https://drive.google.com/file/d/1VoNYrpvFm0EC4vs2-vh0Ge9c_fc6tRoj/view\"> in the suit</a></span>, charged that delays in taking action to protect her after she sought help from administrators led to more abuse. The college’s motion for dismissal did not dispute her basic facts, which raise significant concerns about how the administration handled her reports. (Trial was set for October 12 of this year, but a settlement negotiation has been scheduled for October 13.)</p>\n<p>Sexual violence happens at Carleton. We know this because we are part of an organization of alums who have spent several years studying sexual misconduct at the college — as well as student activism and leadership — administrators’ responses to reports of assault, and related policy and personnel changes. We’ve posted our research and survivors’ personal testimony on timelines and in “spotlight” articles at<span style=\"text-decoration: underline;\"><a href=\"https://www.reckonreformrepair.org/home\"> ReckonReformRepair.org</a></span>, partly to demonstrate that even good intentions can produce destructive patterns and undesirable outcomes.</p>\n<p>Carleton’s mission statement includes a characterization of the college that we want to believe perfectly describes our alma mater: it describes the school as “a collaborative environment balancing serious work, playful humor and a healthy mind, body and spirit.” But we are appalled and angry that, for decades, assault survivors have been excluded from the protection those community values seemed to imply.</p>\n<p>We are well aware that when someone is accused of sexual misconduct, colleges and universities are bound to follow the law–specifically Title IX, which requires that legal protections and resources be provided to both parties. But as scholars have shown (and we ourselves have observed), too often the rights of the accused seem to have superseded those of the accuser. For just one historic example, in the late 1980s and early ’90s Carleton allowed at least two serial predators to remain on campus despite multiple complaints against them. Four survivors sued the college for failing to protect them, roiling the campus and receiving national media. That may have been a wakeup call, but there has been too little progress since then.</p>\n<p>In court records, in the <i>Carletonian</i> and in our interviews, these survivors and others have described the process of seeking help from administrators as a bureaucratic nightmare. Then, after taking their cases through official adjudication, some faced stalking and retaliation from the rapists. Some describe developing tactics after their proceedings to avoid their attackers in daily life, including skipping classes, meals and social events. Survivors’ mental health and grades often plummeted, and, instead of receiving support, some were suspended. Some of those who returned were “re-classed,” losing connections to their original cohort. Others opted to leave the school permanently, becoming exiled from Carleton altogether — unlike their perpetrators.</p>\n<p>Survivors aren&#8217;t the only ones who experience cognitive dissonance when abusers are allowed to stay on campus. Their presence threatens everyone’s sense of security and signals that if you are harmed, there’s a possibility that even if you file a complaint, you might not be protected.</p>\n<p>A Class of 2015 graduate<span style=\"text-decoration: underline;\"><a href=\"https://drive.google.com/file/d/11ou3kc0tWZsECo5JkhzNlWw2r0MwsfHY/view?usp=drive_link\"> filed a federal suit against Carleton in 2016</a>.</span> She alleged that “Carleton placed the burden on [her] to get over the rapes, act as if nothing had happened and focus on her studies instead, without offering her the meaningful help, services or accommodations to which she was entitled.” And she pointed out that, though the adjudication board found that a student had raped her, he was permitted, sure enough, to remain on campus.</p>\n<p>Sadly, sexual violence isn’t unique to Carleton. The<span style=\"text-decoration: underline;\"><a href=\"https://rainn.org/red-zone/campus-sexual-violence-statistics/\"> statistics for campus sexual assault remain stubbornly constant</a></span>: one in four or five women experiences nonconsensual physical contact, and 13 percent are raped or sexually assaulted while attending college. The rate is<span style=\"text-decoration: underline;\"><a href=\"https://williamsinstitute.law.ucla.edu/publications/lgbtq-colleges-grad-school/\"> five times higher for students</a></span> who identify as LGBTQ+. Not even cisgender, heterosexual men are safe: 7.8 percent report being sexually assaulted in college. Most sexual violence complaints begin with a college’s Title IX office. The Title IX coordinator who handled Jane Doe’s reports had been promoted from her previous role as director of the program for student volunteering. She left quietly the same month Doe filed suit, and her eventual replacement was another internal hire, from the student activities office.</p>\n<p>While Carleton’s responses to sexual assault may be typical compared to those at other colleges or universities, Carleton is our community, and typical is not good enough. We don&#8217;t want you, your friends, or any of your classmates to encounter sexual misconduct at Carleton. But if you do, you shouldn’t have to fight for justice or a fair and compassionate resolution.</p>\n<p>We urge you to take a look at our website, be inspired by your predecessors, and sign up to stay informed about our work. Trust yourselves to ask the right questions and demand the best your college can do. If you ever need support from alums, we’ve got your backs.</p>\n"
+			},
+			"date": "2026-10-02T13:30:42",
+			"date_gmt": "2026-10-02T18:30:42",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>In 2024 a recent graduate sued Carleton in federal court alleging she had told administrators that her dance instructor had groomed her and sexually assaulted her at his house near campus. The instructor, who was also employed in the college’s IT department, was eventually fired, but “Jane Doe,” as she’s anonymized in the suit, charged&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21060"
+			},
+			"id": 21060,
+			"link": "https://thecarletonian.com/21060/viewpoint/a-carleton-wed-be-proud-of-a-letter-to-current-students-from-alumni/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:50:47",
+			"modified_gmt": "2026-10-02T18:50:47",
+			"ping_status": "closed",
+			"slug": "a-carleton-wed-be-proud-of-a-letter-to-current-students-from-alumni",
+			"staff_name": [
+				1468,
+				1469,
+				1482,
+				1471
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "A Carleton we&#8217;d be proud of: a letter to current students from Alumni"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:featuredmedia": [
+					{
+						"_links": {
+							"about": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/types/attachment"
+								}
+							],
+							"author": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+								}
+							],
+							"collection": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/media"
+								}
+							],
+							"curies": [
+								{
+									"href": "https://api.w.org/{rel}",
+									"name": "wp",
+									"templated": true
+								}
+							],
+							"replies": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21075"
+								}
+							],
+							"self": [
+								{
+									"href": "https://thecarletonian.com/wp-json/wp/v2/media/21075",
+									"targetHints": {
+										"allow": [
+											"GET"
+										]
+									}
+								}
+							],
+							"wp:attached-to": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21074",
+									"id": 21074,
+									"post_type": "post"
+								}
+							],
+							"wp:term": [
+								{
+									"embeddable": true,
+									"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21075",
+									"taxonomy": "staff_name"
+								}
+							]
+						},
+						"alt_text": "",
+						"author": 1153,
+						"caption": {
+							"rendered": "<p>Carleton Knights football players pose with the eagle statue, which was turned towards Carleton following the Knights’ victory over St. Olaf.</p>\n"
+						},
+						"date": "2026-10-02T13:23:16",
+						"featured_media": 0,
+						"id": 21075,
+						"link": "https://thecarletonian.com/21074/news/carleton-football-takes-down-st-olaf-away-for-the-first-time-since-2013/attachment/gallery_image/",
+						"media_details": {
+							"file": "2026/10/gallery_image.webp",
+							"filesize": 291228,
+							"height": 1333,
+							"image_meta": {
+								"alt": "",
+								"aperture": "0",
+								"camera": "",
+								"caption": "",
+								"copyright": "",
+								"created_timestamp": "0",
+								"credit": "",
+								"focal_length": "0",
+								"iso": "0",
+								"keywords": [],
+								"orientation": "0",
+								"shutter_speed": "0",
+								"title": ""
+							},
+							"sizes": {
+								"1536x1536": {
+									"file": "gallery_image-1536x1024.webp",
+									"filesize": 255062,
+									"height": 1024,
+									"mime_type": "image/webp",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image-1536x1024.webp",
+									"width": 1536
+								},
+								"full": {
+									"file": "gallery_image.webp",
+									"height": 1333,
+									"mime_type": "image/webp",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image.webp",
+									"width": 2000
+								},
+								"large": {
+									"file": "gallery_image-1200x800.webp",
+									"filesize": 183814,
+									"height": 800,
+									"mime_type": "image/webp",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image-1200x800.webp",
+									"width": 1200
+								},
+								"medium": {
+									"file": "gallery_image-600x400.webp",
+									"filesize": 64866,
+									"height": 400,
+									"mime_type": "image/webp",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image-600x400.webp",
+									"width": 600
+								},
+								"medium_large": {
+									"file": "gallery_image-768x512.webp",
+									"filesize": 94614,
+									"height": 512,
+									"mime_type": "image/webp",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image-768x512.webp",
+									"width": 768
+								},
+								"small": {
+									"file": "gallery_image-300x200.webp",
+									"filesize": 20864,
+									"height": 200,
+									"mime_type": "image/webp",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image-300x200.webp",
+									"width": 300
+								},
+								"thumbnail": {
+									"file": "gallery_image-70x70.webp",
+									"filesize": 2568,
+									"height": 70,
+									"mime_type": "image/webp",
+									"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image-70x70.webp",
+									"width": 70
+								}
+							},
+							"width": 2000
+						},
+						"media_type": "image",
+						"mime_type": "image/webp",
+						"slug": "gallery_image",
+						"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image.webp",
+						"title": {
+							"rendered": "gallery_image"
+						},
+						"type": "attachment"
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/7",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=7"
+									}
+								]
+							},
+							"id": 7,
+							"link": "https://thecarletonian.com/category/news/",
+							"name": "News",
+							"slug": "news",
+							"taxonomy": "category"
+						},
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/8",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"up": [
+									{
+										"embeddable": true,
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/7"
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=8"
+									}
+								]
+							},
+							"id": 8,
+							"link": "https://thecarletonian.com/category/news/sports/",
+							"name": "Sports",
+							"slug": "sports",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1363",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1363"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1363"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1363"
+									}
+								]
+							},
+							"id": 1363,
+							"link": "https://thecarletonian.com/staff_name/madeleine-goldberger/",
+							"name": "Madeleine Goldberger",
+							"slug": "madeleine-goldberger",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21074/revisions/21076",
+						"id": 21076
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21074"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21074",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21074/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21074"
+					}
+				],
+				"wp:featuredmedia": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media/21075"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21074",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21074",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21074",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				7,
+				8
+			],
+			"class_list": [
+				"post-21074",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"has-post-thumbnail",
+				"hentry",
+				"category-news",
+				"category-sports",
+				"staff_name-madeleine-goldberger"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>For the second year in a row, the eagle statue in Bridge Square points toward Carleton’s campus. This historic signifier indicates that Carleton’s football team has again defeated  St. Olaf in their most important rivalry game of the season.</p>\n<p>On Sep. 26, Carleton defeated local rival St. Olaf 37-7 on the Oles’ turf, Klein Field at Manitou, for the first time since 2013.</p>\n<p>St. Olaf opened the game with a long touchdown run just over one minute into the first quarter. That was St. Olaf’s only score, as the Carleton Knights’ defense shut out the Oles for the remainder of the game.</p>\n<p>Carleton’s defense was the highlight of the game. Carleton’s defenders grabbed three interceptions for 128 yards in total, including one touchdown. Safety Ronan Thomas ’28 and linebacker Jack Centurelli ’28 hauled in one interception each while the “pick-six” was scored by linebacker Jackson LeBlanc ’27. For LeBlanc, it was his first interception in his college career.</p>\n<p>“It felt surreal. My teammates and I work hard every week to make plays on Saturdays. To see it pay off like that was so incredible,” he said. “The appreciation I received from my friends, family and fans really made the moment special.”</p>\n<p>The Knights’ offense also played well and maintained  possession for over 40 minutes during the game compared to the Ole’s possession of less than  20 minutes. Carleton was efficient with the ball, and quarterback Tyler Mastronardi ’28 completed 21 out of his 28 passing attempts for 146 yards, including one touchdown.</p>\n<p>The real star of the show was the Knights’ rushing attack: four players gained more than 50 yards. Tyler Dimond ’27 led the attack with six attempts for 86 yards while Evan Olds ’29 had 21 attempts for 70 yards.</p>\n<p>After the big win, the Knights claimed both the Goat Trophy and Cereal Bowl Trophy before marching the mile-and-a-half trek to Bridge Square. The Goat Trophy is made out of wood and is shaped like a cartoonish goat. The back of the trophy lists scores from previous games between the two schools.</p>\n<p>Safety Bryce Bevan ’28 commented on the meaning of the win and what led Carleton to success.</p>\n<p>“For me, our dominant victory this past Saturday is a testament to the persisting grit that the Knights play, practice and recruit with,” he said. “Since the hiring of Coach Tom Journell, the Knights have continuously improved. Our win at Klein Field simply encapsulates the relentless determination that the Knights players and coaches have shown.”</p>\n<p>The rivalry game is informally known as the “Cereal Bowl” as Northfield is also home to the Post Factory. The Cereal Bowl Trophy represents the shared connection between the schools to Northfield. Both trophies are passed back and forth between Carleton and St. Olaf, depending on the winner of the game. Carleton has now had both trophies for two years in a row.</p>\n<p>Bevan explained the importance of the cross-town rivals competing for the trophies and the added motivation that the awards give.</p>\n<p>“[The trophies’] place in our stadium is never safe, so we must work to keep them in our possession. These trophies act as a common goal for both teams to work towards, which builds team culture as well as heightens the competition between Carleton and St. Olaf,” Bevan said.</p>\n<p>The team, along with several fans, gathered in downtown Northfield as every senior on the team turned the eagle atop the Northfield Civil War monument 360 degrees. This decades-old tradition points the eagle toward the campus that won that season’s rivalry football game.</p>\n<p>“To accomplish something that hasn’t been [done] since 2013 during my senior year was a very satisfying feeling. Every one of us works our whole career to turn the eagle our senior year, so to do it in the fashion in which we did by making history was just so satisfying,” said LeBlanc.</p>\n"
+			},
+			"date": "2026-10-02T13:24:32",
+			"date_gmt": "2026-10-02T18:24:32",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>For the second year in a row, the eagle statue in Bridge Square points toward Carleton’s campus. This historic signifier indicates that Carleton’s football team has again defeated  St. Olaf in their most important rivalry game of the season. On Sep. 26, Carleton defeated local rival St. Olaf 37-7 on the Oles’ turf, Klein Field&#8230;</p>\n"
+			},
+			"featured_media": 21075,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21074"
+			},
+			"id": 21074,
+			"link": "https://thecarletonian.com/21074/news/carleton-football-takes-down-st-olaf-away-for-the-first-time-since-2013/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:24:32",
+			"modified_gmt": "2026-10-02T18:24:32",
+			"ping_status": "closed",
+			"slug": "carleton-football-takes-down-st-olaf-away-for-the-first-time-since-2013",
+			"staff_name": [
+				1363
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "Carleton football takes down St. Olaf away for the first time since 2013"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/7",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=7"
+									}
+								]
+							},
+							"id": 7,
+							"link": "https://thecarletonian.com/category/news/",
+							"name": "News",
+							"slug": "news",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1475",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1475"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1475"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1475"
+									}
+								]
+							},
+							"id": 1475,
+							"link": "https://thecarletonian.com/staff_name/abby-paulsen/",
+							"name": "Abby Paulsen",
+							"slug": "abby-paulsen",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21072/revisions/21073",
+						"id": 21073
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21072"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21072",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21072/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21072"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21072",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21072",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21072",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				7
+			],
+			"class_list": [
+				"post-21072",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-news",
+				"staff_name-abby-paulsen"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>Provost and Vice President for Academic Affairs Michelle Mattson will retire on June 30, 2027, and the search has begun for her successor. On Wednesday, Sep. 23, a team from the executive search firm Isaacson, Miller visited campus to learn about student and faculty aspirations for the role and to get to know the Carleton community.</p>\n<p>Mattson, who joined Carleton in July 2022, holds numerous leadership positions as a member of the President’s Cabinet. She played a key role in developing “Carleton 2033: The Liberal Arts in Action,” a plan penned in 2023 as a guide for Carleton’s continued growth. The program has, among other initiatives, expanded financial aid, guided recent campus construction and accelerated sustainability efforts.</p>\n<p>Isaacson, Miller, a national executive search firm hired by the college, will work alongside a search committee chaired by Professor of History Susannah Ottaway and President Alison Byerly to conduct the hiring process. The Provost Search Committee represents the Carleton community and consists of faculty, staff, administrators, a trustee and a student.</p>\n<p>On Wednesday, the Isaacson, Miller team held a listening session so students could share their thoughts on the search.  During the session, students discussed their experiences with advisor and professor relationships, course registration accessibility and unconventional learning opportunities such as fellowships and study abroad.</p>\n<p>When asked about anticipations for the next provost, Benedict Le ’28 said, “I really hope that they push learning outside of the classroom.”</p>\n<p>Students also expressed appreciation for Carleton’s academic culture, which a team member of Isaacson, Miller described as “driven but not competitive academics.”</p>\n<p>Members of the Isaacson, Miller team emphasized the particularly wide range of responsibilities that the Carleton provost holds as Chief Academic Officer. The Office of the Provost manages oversight of the overall academic enterprise of the college, which at Carleton extends not just to faculty, but to the library, the registrar, IT, study abroad, athletics and the Arb.</p>\n<p>Describing the traits that they intend to look for in the next provost, a member of the Isaacson, Miller team said that, given their impressions of Carleton, they intend to look for “someone who respects faculty autonomy and wants to work closely within a shared governance system.” Another team member added, “Someone who is eager to be a part of this community and wants to help advance everyone’s ambitions and goals.”</p>\n<p>At the close of the listening session, members of the Isaacson, Miller team defined part of their job as being able to “help give [potential candidates] a sense of what it might be like to be a part of this community” and “to really be able to bring Carleton to light.” The organization reasserted its dedication to facilitating complementary relationships between new hires and clients as they walked through how the hiring process will play out over the next several months.</p>\n<p>To build an initial candidate pool, Isaacson, Miller will draw from their proprietary database and conduct outreach. Several rounds of interviews will be conducted in partnership with the Provost Search Committee, which will narrow down the pool to a number of finalists. The finalists will visit campus in early 2027, where they will be met by President Byerly, stakeholders and the search committee.</p>\n<p>President Byerly will consult with college stakeholders and the Provost Search Committee, but she ultimately holds the power to make the final decision about who to hire as Carleton’s next Provost and Vice President for Academic Affairs. This decision will be publicly announced between late winter and early spring in 2027.</p>\n"
+			},
+			"date": "2026-10-02T13:21:39",
+			"date_gmt": "2026-10-02T18:21:39",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>Provost and Vice President for Academic Affairs Michelle Mattson will retire on June 30, 2027, and the search has begun for her successor. On Wednesday, Sep. 23, a team from the executive search firm Isaacson, Miller visited campus to learn about student and faculty aspirations for the role and to get to know the Carleton&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21072"
+			},
+			"id": 21072,
+			"link": "https://thecarletonian.com/21072/news/the-search-begins-for-carletons-next-provost/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:21:39",
+			"modified_gmt": "2026-10-02T18:21:39",
+			"ping_status": "closed",
+			"slug": "the-search-begins-for-carletons-next-provost",
+			"staff_name": [
+				1475
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "The search begins for Carleton’s next provost"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/6",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=6"
+									}
+								]
+							},
+							"id": 6,
+							"link": "https://thecarletonian.com/category/viewpoint/",
+							"name": "Viewpoint",
+							"slug": "viewpoint",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1474",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1474"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1474"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1474"
+									}
+								]
+							},
+							"id": 1474,
+							"link": "https://thecarletonian.com/staff_name/gloria-manzano/",
+							"name": "Gloria Manzano",
+							"slug": "gloria-manzano",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21070/revisions/21071",
+						"id": 21071
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21070"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21070",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21070/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21070"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21070",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21070",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21070",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				6
+			],
+			"class_list": [
+				"post-21070",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-viewpoint",
+				"staff_name-gloria-manzano"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>I was in the Human Resources department on the basement level of the Class of 1974  building, just trying to complete the infamous I-9 documents for my work-study position, when I discovered I actually had no way to fly back home.</p>\n<p>My driver’s license had expired, and my passport was misspelled.</p>\n<p>It was only the second day of classes and my first day as a new CarlTech for the ITS Help Desk.</p>\n<p>That was the most defining moment of my first week at Carleton College. But between such a mishap were the little moments where shivers would run down my spine as I completely underestimated the Minnesotan version of 50 degrees, where the bottom of my pants would be soaked in water from rain puddles, and the continuous intimidation of college classes.</p>\n<p>That Monday, Sep. 14, I woke up at 6:45 a.m. to leave my dorm at Goodhue by 8:00 a.m. to trek all the way to Weitz for my 8:30 a.m. observational drawing class. I struggled to find an adequate outfit, but ultimately settled for a pair of grey sweatpants, a black quarter-sleeved shirt and a pair of Uggs. The forecast predicted rain around noon, so I figured I could come back to my dorm and change into something more appropriate for the rain, but, when I walked out of class at 10:40 a.m., the rain had begun and created unavoidable puddles. I opened my umbrella in defeat and began my journey back to Goodhue, walking very slowly so as to not get water on the suede of my Uggs and probably being a nuisance to anyone trying to pick up their own pace.</p>\n<p>I made it back to my dorm, the bottom of my sweatpants dark grey, drenched in water, and my Uggs with some water stains. At 11:23 a.m., I began to scarf down a small bag of Goldfish in my lounge shorts and slippers when my friend Cristopher texted me, “We have class rn Gloria.”</p>\n<p>Running up the steep hill from Goodhue to the rest of campus was only made worse by the wind and rain fighting against my ascent. I eventually made it to class just as attendance was being taken.</p>\n<p>Once class was over, I figured I would’ve had some time until my next class, Spanish 204. Once again, Cristopher opened up his phone and showed me the schedule that my next class was at 12:50 and in the Language-Dining Center, it was 12:43 and I was in Laird.</p>\n<p>Out of breath from speedwalking (practically running) up three flights of stairs, I made it to my Spanish class, although I was the last one there. It was all a blur as we read through the syllabus, but once it was over, I felt as though I was finally able to breathe. I returned back to my dorm, made a mess and freshened up before Convocation.</p>\n<p>Waiting in line for Convocation, breathing was all I could focus on as the wind roared, bringing the rain with it too. Being in the second to last row of seats in the chapel, I barely made it and nearly slipped onto the benches, but I eventually settled down.</p>\n<p>Needless to say, the unique Convocation schedule completely threw me off. I went to sleep grateful that the day was over.</p>\n<p>Tuesday spoke for itself.</p>\n<p>After an unfortunately eventful first day, all I could think about was what awaited me at home in Houston: a cold house (unlike the strangely humid Goodhue), a warm bed, my family and beloved cat. It wasn’t until my documents were barely submitted that I realized just how distant home was.</p>\n<p>Wednesday, my first normal day of classes, went surprisingly well — until it was time to study. It wasn’t the journey in between classes that would terrorize me, but the journey back to my dorm from the Cassat lounge.</p>\n<p>Watching Charlie Chaplin’s “The Immigrant”<i>, </i>I could hear the downpour outside through my headphones. Out of curiosity, I wandered to the lobby of Cassat and opened the front door, only for it to fly open with the blasts of the wind and bring some of the downpour with it. The rain did not calm down for the additional half hour my friends and I waited to leave; it actually seemed to get stronger with every minute we spent waiting.</p>\n<p>We accepted our fate, rolling up our pants. My friend, Rylah, and I took off our flip-flops. We ran through the rain and against the wind, down the hill in front of Evans and over the bridge to Goodhue. Half of us were barefoot, and the other half of us didn’t have umbrellas. The dorm was colder than usual, so I quivered myself to sleep that night.</p>\n<p>Thursday and Friday were strangely calm compared to the first three days of the week, but strangely filled with spontaneous headaches that I could feel in my eyelids.</p>\n<p>As I recall the utter exhaustion and absolute horror that defined my first week of classes and my welcome to college life, a sense of appreciation overwhelms my existence despite the tragedy. Maybe it was the notion that the bad makes the good seem better than it actually is.</p>\n<p>Or maybe it was the fact that at the end of every seemingly disastrous day, my friends and I always made an effort to have a “family style” dinner together. It was the conversations I had at the ITS Help Desk with my coworkers that raised my spirits after realizing home was farther than I thought. It was the exchanges of laughter that my friends and I sneakily let out while studying together in Cassat, intending to hold each other accountable before getting caught up in the booming thunderstorm outside. It was the walks downtown by myself after waking up early on Mondays and Wednesdays. It was the reassuring words of my mentors that validated my struggles.</p>\n<p>Despite the battle, I am finally here.</p>\n"
+			},
+			"date": "2026-10-02T13:19:52",
+			"date_gmt": "2026-10-02T18:19:52",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>I was in the Human Resources department on the basement level of the Class of 1974  building, just trying to complete the infamous I-9 documents for my work-study position, when I discovered I actually had no way to fly back home. My driver’s license had expired, and my passport was misspelled. It was only the&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21070"
+			},
+			"id": 21070,
+			"link": "https://thecarletonian.com/21070/viewpoint/goodbye-welcome-week/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:19:52",
+			"modified_gmt": "2026-10-02T18:19:52",
+			"ping_status": "closed",
+			"slug": "goodbye-welcome-week",
+			"staff_name": [
+				1474
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "Goodbye Welcome Week!"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/6",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=6"
+									}
+								]
+							},
+							"id": 6,
+							"link": "https://thecarletonian.com/category/viewpoint/",
+							"name": "Viewpoint",
+							"slug": "viewpoint",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1473",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1473"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1473"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1473"
+									}
+								]
+							},
+							"id": 1473,
+							"link": "https://thecarletonian.com/staff_name/zoe-zhou/",
+							"name": "Zoe Zhou",
+							"slug": "zoe-zhou",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21068/revisions/21069",
+						"id": 21069
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21068"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21068",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21068/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21068"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21068",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21068",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21068",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				6
+			],
+			"class_list": [
+				"post-21068",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-viewpoint",
+				"staff_name-zoe-zhou"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>As the new freshmen prepared for their first term of college at Carleton, they had to attend three rounds of safety talks — presentations on the topics of alcohol, cannabis, interpersonal relationships and mental wellbeing. There was also a session during International Student Orientation — thus international students like me had to go through this process four times. I certainly found it tiring to watch all the videos, which took up more than six hours of my time in the summer; some people confessed they didn’t pay attention to them at all. It wasn’t a pleasant experience to go through the training videos the first time, and having to go through similar content multiple times made it even more boring than it had to be. But in my opinion, this repetition is not only tedious; it is detrimental.</p>\n<p>Spending so much time watching the training videos, I certainly did learn things that I did not know before — for instance, how to be a good bystander. Hence, once I had arrived on campus, I was surprised to learn that these lessons were to be repeated for a second, third and fourth time. Different formats were used for each session: online lectures, discussions and educational videos and team quizzes. The in-person sessions were also more specific in regard to Carleton statistics and resources. However, they were fundamentally about the same things. Of the many different regards of the talks, what I found most damaging was the redundancy and the overuse of statistics.</p>\n<p>Repetition is especially helpful when revising for an important exam, but it is dubious to use repetition for training students in practical knowledge and skills. The most important part of practical training is, of course, practicality. And the only way to really learn practical skills is to gain practical experience. Even when information has been reiterated over and over again, and you know it by heart, you can still become panic-stricken, nervous or simply unsure if you face the dilemmas described in the training for the first time in real life. Then, you’ll find yourself unable to act according to your training. No amount of verbal repetition will prepare you for a real-life situation.</p>\n<p>However, hearing the facts multiple times encourages overconfidence in one’s abilities — You think you have mastered all the necessary skills, when you actually haven’t. Repetition’s helpfulness for exams does not transfer to practical skills, since skills cannot be rote learned. It is not that rote learning itself is inherently dangerous, but the overestimation of your ability to act can be. Overconfidence may make real-life situations more difficult to deal with, as there may be a delay in taking action while you try to recall what to do. On the other hand, had you not received the training but had a sound estimation of your own abilities, you might choose to call security immediately. Alternatively, another consequence of repetition is it discourages people from listening to the content carefully. The fact that there is so much content to go through, and that they repeated multiple times, encourages people to think that they do not need to listen carefully this time or that they are justified in not paying attention, because it will be repeated some time in the future. This means that for some, less information may be retained from multiple rounds of sessions. And when there is new information in a later session, the arrangement of the sessions encourages people to not take it seriously, as it is embedded in content which they have already heard before. Seemingly a large amount of time has been spent on safety education, but it is unclear how much information has been retained by the students. Responsibility has been effectively transferred from the organizers to the students, as it is only possible not to know what to do if you were not listening carefully.</p>\n<p>Additionally, the use of statistics was also problematic. Take, for instance, “96% of Carls agree that it is essential to practice self-care on a daily basis.” These statistics were the emphasis of the Knightly Norms, and seemed to be a straightforward way to quiz our knowledge and enable us to learn more about the Carleton community. However, “percentages” are often an extremely simplified view of reality. These statistics come from student surveys, often done on busy students who want to finish the survey as quickly as possible. Of course everyone knows the “correct” answer is that self-care is important, so who would disagree, even if they weren’t adhering to it themselves? Additionally, seeing people collectively as a set of data on a screen encourages us to ignore personal experiences (for instance, 4% disagree with the above statement — 4% is actually a substantial number of people, if we consider the whole student population). Just because people mainly entered the same answer in a yes/no survey does not mean that they are having similar experiences.</p>\n<p>Some may argue that it would be impractical to give practical training to all incoming students, and that it is necessary that we should at least be given the opportunity to obtain the information that might one day be helpful. Given the restraints, it might be argued, this is the best that any college could reasonably do. While I do agree that practical constraints should be taken into account, the arrangements of the sessions could definitely be greatly improved. The safety training schedule could be restructured so that the amount of repetition is reduced and the practical aspects of safety are emphasized. Additionally, a quick and easy-to-recall overview of the campus resources (campus security, CCFs, the OHP and SWAs, the Title IX coordinator and others) should be provided separately. That information should not be buried among the dozens of other emails and notices that we receive during the term to avoid information overload. In addition, statistics should not be pulled out in isolation, even if it seems to be a clear way to present information.</p>\n<p>Additionally, while I sympathize deeply with everyone who found the talks extremely long and dull, I do believe that as Carls, we all are committed to taking care of our own safety and wellbeing, and that of those around us. I’m equally sure that if you aren’t sure how at this moment, you are willing to learn more about it, even if you are exhausted from the talks that you have already been through.</p>\n"
+			},
+			"date": "2026-10-02T13:18:42",
+			"date_gmt": "2026-10-02T18:18:42",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>As the new freshmen prepared for their first term of college at Carleton, they had to attend three rounds of safety talks — presentations on the topics of alcohol, cannabis, interpersonal relationships and mental wellbeing. There was also a session during International Student Orientation — thus international students like me had to go through this&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21068"
+			},
+			"id": 21068,
+			"link": "https://thecarletonian.com/21068/viewpoint/why-repetitive-safety-training-is-unnecessary-and-harmful/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:18:42",
+			"modified_gmt": "2026-10-02T18:18:42",
+			"ping_status": "closed",
+			"slug": "why-repetitive-safety-training-is-unnecessary-and-harmful",
+			"staff_name": [
+				1473
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "Why repetitive safety training is unnecessary — and harmful"
+			},
+			"type": "post"
+		},
+		{
+			"_embedded": {
+				"author": [
+					{
+						"code": "rest_no_route",
+						"data": {
+							"status": 404
+						},
+						"message": "No route was found matching the URL and request method."
+					}
+				],
+				"wp:term": [
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/category"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/categories/6",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?categories=6"
+									}
+								]
+							},
+							"id": 6,
+							"link": "https://thecarletonian.com/category/viewpoint/",
+							"name": "Viewpoint",
+							"slug": "viewpoint",
+							"taxonomy": "category"
+						}
+					],
+					[],
+					[
+						{
+							"_links": {
+								"about": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/taxonomies/staff_name"
+									}
+								],
+								"collection": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name"
+									}
+								],
+								"curies": [
+									{
+										"href": "https://api.w.org/{rel}",
+										"name": "wp",
+										"templated": true
+									}
+								],
+								"self": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name/1472",
+										"targetHints": {
+											"allow": [
+												"GET"
+											]
+										}
+									}
+								],
+								"wp:post_type": [
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/staff_profile?staff_name=1472"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/posts?staff_name=1472"
+									},
+									{
+										"href": "https://thecarletonian.com/wp-json/wp/v2/media?staff_name=1472"
+									}
+								]
+							},
+							"id": 1472,
+							"link": "https://thecarletonian.com/staff_name/christopher-rios-pastor/",
+							"name": "Christopher Rios Pastor",
+							"slug": "christopher-rios-pastor",
+							"taxonomy": "staff_name"
+						}
+					]
+				]
+			},
+			"_links": {
+				"about": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/types/post"
+					}
+				],
+				"author": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/users/1153"
+					}
+				],
+				"collection": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts"
+					}
+				],
+				"curies": [
+					{
+						"href": "https://api.w.org/{rel}",
+						"name": "wp",
+						"templated": true
+					}
+				],
+				"predecessor-version": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21066/revisions/21067",
+						"id": 21067
+					}
+				],
+				"replies": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/comments?post=21066"
+					}
+				],
+				"self": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21066",
+						"targetHints": {
+							"allow": [
+								"GET"
+							]
+						}
+					}
+				],
+				"version-history": [
+					{
+						"count": 1,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/posts/21066/revisions"
+					}
+				],
+				"wp:attachment": [
+					{
+						"href": "https://thecarletonian.com/wp-json/wp/v2/media?parent=21066"
+					}
+				],
+				"wp:term": [
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/categories?post=21066",
+						"taxonomy": "category"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/tags?post=21066",
+						"taxonomy": "post_tag"
+					},
+					{
+						"embeddable": true,
+						"href": "https://thecarletonian.com/wp-json/wp/v2/staff_name?post=21066",
+						"taxonomy": "staff_name"
+					}
+				]
+			},
+			"author": 1153,
+			"categories": [
+				6
+			],
+			"class_list": [
+				"post-21066",
+				"post",
+				"type-post",
+				"status-publish",
+				"format-standard",
+				"hentry",
+				"category-viewpoint",
+				"staff_name-christopher-rios-pastor"
+			],
+			"comment_status": "open",
+			"content": {
+				"protected": false,
+				"rendered": "<p>This past August, the Republic of Cuba held nationwide celebrations to commemorate the 100th anniversary of revolutionary hero Fidel Castro’s birth, who served as Cuba’s leader from 1965 to 2011 after the Cuban Revolution. Despite the significance of the occasion for Cubans, it was a bittersweet moment. Months earlier, in Jan. 2026, the Trump administration had escalated economic pressures on Cuba and initiated an increase in oil embargoes and trade sanctions on the country. Today, the degrading power grid has resulted in blackouts, some lasting more than a day, which have trapped the Cubans in a humanitarian crisis that affects both nations and the international community.</p>\n<p>Before looking into the crisis facing Cuba, it is important to understand the history of Cuban-American relations. In the early 19th century, President James Monroe addressed the nation and proposed that any foreign involvement in the land that resides within the Americas would be considered a hostile act towards the United States. The Monroe Doctrine was largely ignored by the international community as the United States was in its infancy and did not have enough power to threaten any nation. However, around the turn of the 20th century, rapid industrialization and imperialism transformed the United States into a global superpower. Armed with one of the most advanced armies and navies, President William McKinley was pushed into war with Spanish-owned Cuba.</p>\n<p>For decades following the Spanish-American War, the United States virtually held power over Cuba despite not officially ruling it. Through the Platt Amendment and the backing of corrupt pro-American dictators like Fulgencio Batista, America had a major say in Cuba’s domestic and foreign policies. America’s influence over Cuba came to an end after the Cuban Revolution of 1959, when Fidel Castro overthrew Batista and gained recognition from the United States. Despite the U.S. recognizing Castro’s government, it started to impose a trade embargo on oil and other goods.</p>\n<p>America’s century-long imperial notions have culminated in the ongoing U.S. military and surveillance campaign titled “Operation Southern Spear.” Originating with the U.S. Navy’s stated justification of &#8220;enhancing security and stability across the Western Hemisphere by detecting, disrupting, and degrading transnational criminal and illicit maritime networks,” this campaign has seen the United States starting to encroach heavily on Latin America and the Caribbean territory.</p>\n<p>Part of this campaign included the removal of Venezuelan President Nicolás Maduro and the suspected coercion of its government to meet U.S. demands in early January. As a result, the United States forced the immediate end of all Venezuelan oil imports to Cuba. Additionally, the United States placed an oil embargo on Cuba and threatened to place tariffs on any country, specifically México, that wanted to export oil to the island. In a little over two months, Cuba lost seventy percent of its oil supply.</p>\n<p>Because of this escalation from the U.S., there have been rolling multi-hour blackouts which have shortened hours of operation for hospitals, universities and businesses (many of which have been forced to close). The shortage of oil and gasoline has also put a halt on transportation in Cuba, both personal and tourism-related, the latter being a significant source of income for Cuba. Additionally, the national water system — which relies heavily on the country’s diesel supply — has not been able to meet its minimum power requirements, leaving millions to struggle for access to water. Most importantly, the Cubans are in a food crisis, as Cuba previously imported 80% of its food; the lack of imports and shortage of gasoline have left Cubans without a reliable source of food, leaving millions of Cubans hungry.</p>\n<p>Members of the international community have used the term “silent genocide” in reference to the crisis, highlighting how the U.S. government and media coverage are actively masking the humanitarian crisis caused by U.S. action and instead shifting the narrative to one criticizing the “inherent” failures of a communist state.</p>\n<p>A notable example of the silence that Cubans have faced is the trouble they have to go through in order to receive outside aid. Many humanitarian aid groups, notably Nuestra America, have scheduled aid flotillas to supply local populations with necessities. The United States, in response, has secretly been targeting any unauthorized boats in Cuban waters, resulting in casualties among civilian crews on small fishing boats.</p>\n<p>We must put aside the Western and American preconceived notions of Cuba. My goal in writing this is not to convince you of Marxist politics, nor that communist Cuba has been fundamentally more prosperous than “democratic” Cuba, nor that Cuba is the perfect model of democracy that we assume America is.</p>\n<p>Rather, if you care about the freedom and health of Cuba like the U.S. claims to do, then you would be willing to put aside your political ideas and actively voice your support in giving the Cubans humanitarian aid. Cuba has now accepted a series of economic reform packages that will privatize certain sectors of the Cuban economy, effectively starting the process of transitioning Cuba into a mixed or soft-capitalist economy. The freedom that Americans preach is not achieved by starving a country of necessary resources to assert dominance until it essentially becomes a puppet state.</p>\n<p>As of Sep. 2026, President Trump has made it unclear whether he wants to see peace in Cuba through diplomacy or a military operation. There have been reports that the U.S. Army is looking into coordinating logistics for a possible military invasion of the island. In a recent speech made to the UN General Assembly, Trump stated, “It&#8217;s failing like never before, and it will fall.”</p>\n<p>Cuba is succumbing to the pressures placed on its people by the United States. We can no longer let this crisis be referred to as a secondary issue, nor can we ignore the complicity of the United States. If we let this issue grow, then our silence will make us complicit in the struggle of Cubans.</p>\n"
+			},
+			"date": "2026-10-02T13:17:52",
+			"date_gmt": "2026-10-02T18:17:52",
+			"excerpt": {
+				"protected": false,
+				"rendered": "<p>This past August, the Republic of Cuba held nationwide celebrations to commemorate the 100th anniversary of revolutionary hero Fidel Castro’s birth, who served as Cuba’s leader from 1965 to 2011 after the Cuban Revolution. Despite the significance of the occasion for Cubans, it was a bittersweet moment. Months earlier, in Jan. 2026, the Trump administration&#8230;</p>\n"
+			},
+			"featured_media": 0,
+			"format": "standard",
+			"guid": {
+				"rendered": "https://thecarletonian.com/?p=21066"
+			},
+			"id": 21066,
+			"link": "https://thecarletonian.com/21066/viewpoint/cuba-is-in-crisis-and-no-one-is-talking-about-it/",
+			"meta": {
+				"footnotes": ""
+			},
+			"modified": "2026-10-02T13:17:52",
+			"modified_gmt": "2026-10-02T18:17:52",
+			"ping_status": "closed",
+			"slug": "cuba-is-in-crisis-and-no-one-is-talking-about-it",
+			"staff_name": [
+				1472
+			],
+			"status": "publish",
+			"sticky": false,
+			"tags": [],
+			"template": "",
+			"title": {
+				"rendered": "Cuba is in crisis, and no one is talking about it"
+			},
+			"type": "post"
+		}
+	],
+	"key": "GET https://thecarletonian.com/wp-json/wp/v2/posts?include=21095,21093,21091,21088,21086,21084,21082,21077,21060,21074,21072,21070,21068,21066&per_page=100&_embed=true",
+	"status": 200
+}

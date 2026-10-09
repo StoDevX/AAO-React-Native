@@ -32,6 +32,7 @@ declare class LaunchArgumentsModule extends NativeModule<LaunchArgumentsEvents> 
 	isDebugNativeBuild: boolean
 	finishReset(id: string, url: string): Promise<void>
 	takePendingResetURL(): string | null
+	uiTestCampus(): string | null
 }
 
 const LaunchArguments = requireNativeModule<LaunchArgumentsModule>('LaunchArguments')
@@ -48,6 +49,19 @@ export const chaosProfile: ChaosProfile = LaunchArguments.chaosProfile
 export const isSimulator: boolean = LaunchArguments.isSimulator
 /** The native code was built in the Debug configuration, as the UI tests' and `mise run device`'s are. */
 export const isDebugNativeBuild: boolean = LaunchArguments.isDebugNativeBuild
+
+/**
+ * The campus, by id (`edu.carleton`), a UI test named with `--campus`: the
+ * launch's, or the last in-place reset's. Null outside UI tests and for a test
+ * naming none. Read once per JavaScript load; a reset reloads it.
+ */
+export const uiTestCampus: string | null = LaunchArguments.uiTestCampus()
+
+/**
+ * Whether features serve their own bundled UI-test data. A test that names a
+ * campus reads that campus's recordings instead, through `fetch`.
+ */
+export const servesBundledFixtures: boolean = isUITesting && uiTestCampus === null
 
 /**
  * Calls `listener` whenever the UI test runner asks to reset the app in place;

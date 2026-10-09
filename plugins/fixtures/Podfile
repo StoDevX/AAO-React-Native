@@ -1,5 +1,5 @@
 # A copy of the Podfile `expo prebuild` generates, taken verbatim from
-# expo-template-bare-minimum with HelloWorld renamed to AllAboutOlaf.
+# expo-template-bare-minimum with HelloWorld renamed to AllAboutAnything.
 #
 # The plugins in plugins/ patch the generated Podfile for things Expo's config
 # does not express -- the nested XCUITest target, and silencing warnings from
@@ -40,7 +40,7 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '16.4'
 
 prepare_react_native_project!
 
-target 'AllAboutOlaf' do
+target 'AllAboutAnything' do
   use_expo_modules!
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'

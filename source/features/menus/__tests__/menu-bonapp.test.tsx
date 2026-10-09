@@ -4,7 +4,7 @@ import {act, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 import moment from 'moment-timezone'
 
-import {client} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {timezone} from '@frogpond/constants'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {MealHeaderState, MenuItemType} from '@frogpond/food-menu'
@@ -32,7 +32,10 @@ jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 // Every fetch fails, so a test that refetches sees what a 5xx or a captive
 // portal would hand the screen.
 jest.mock('@frogpond/api', () => ({
-	client: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
+	clientFor: (() => {
+		let client = {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))}
+		return () => client
+	})(),
 }))
 
 // One router for the whole run, as expo-router's own hook hands back.
@@ -51,7 +54,7 @@ const mockFoodMenu = FoodMenu as unknown as jest.Mock<
 		onMealHeaderChange: (header: MealHeaderState) => void
 	}) => null
 >
-const mockGet = client.get as unknown as jest.Mock
+const mockGet = clientFor('edu.stolaf').get as unknown as jest.Mock
 
 /** The Cage's one daypart, as Bon Appétit publishes it. */
 const CAGE_DAYPART = {
@@ -92,8 +95,14 @@ beforeEach(() => {
 
 	// Seeded fresh, so no query refetches through a network Jest does not have.
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, CAGE_MENU)
-	queryClient.setQueryData(bonAppCafeOptions('the-cage', '2026-09-22').queryKey, CAGE_CAFE)
+	queryClient.setQueryData(
+		bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey,
+		CAGE_MENU,
+	)
+	queryClient.setQueryData(
+		bonAppCafeOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey,
+		CAGE_CAFE,
+	)
 	mockPublish.mockClear()
 	mockFoodMenu.mockClear()
 	mockGet.mockClear()
@@ -109,7 +118,12 @@ afterEach(() => {
 function renderCage() {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<BonAppHostedMenu cafe="the-cage" loadingMessage={['Loading…']} name="The Cage" />
+			<BonAppHostedMenu
+				server="edu.stolaf"
+				cafe="the-cage"
+				loadingMessage={['Loading…']}
+				name="The Cage"
+			/>
 		</QueryClientProvider>,
 	)
 }
@@ -127,7 +141,12 @@ describe('BonAppHostedMenu', () => {
 	test('moves the line under the name on as the clock turns over', async () => {
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<BonAppHostedMenu cafe="the-cage" loadingMessage={['Loading…']} name="The Cage" />
+				<BonAppHostedMenu
+					server="edu.stolaf"
+					cafe="the-cage"
+					loadingMessage={['Loading…']}
+					name="The Cage"
+				/>
 			</QueryClientProvider>,
 		)
 
@@ -146,7 +165,12 @@ describe('BonAppHostedMenu', () => {
 	test('keeps the menu body off the per-minute tick', async () => {
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<BonAppHostedMenu cafe="the-cage" loadingMessage={['Loading…']} name="The Cage" />
+				<BonAppHostedMenu
+					server="edu.stolaf"
+					cafe="the-cage"
+					loadingMessage={['Loading…']}
+					name="The Cage"
+				/>
 			</QueryClientProvider>,
 		)
 
@@ -171,7 +195,8 @@ describe('BonAppHostedMenu', () => {
 		})
 
 		expect(
-			queryClient.getQueryState(bonAppMenuOptions('the-cage', '2026-09-22').queryKey)?.status,
+			queryClient.getQueryState(bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey)
+				?.status,
 		).toBe('error')
 		expect(screen.queryByText(/HTTP 503/u)).toBeNull()
 		expect(mockFoodMenu).toHaveBeenCalled()
@@ -180,7 +205,9 @@ describe('BonAppHostedMenu', () => {
 	// The cafe's hours and closure notices come from a second query. The menu
 	// can be shown without them.
 	test('shows the menu when only the cafe details fail to load', async () => {
-		queryClient.removeQueries({queryKey: bonAppCafeOptions('the-cage', '2026-09-22').queryKey})
+		queryClient.removeQueries({
+			queryKey: bonAppCafeOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey,
+		})
 		await renderCage()
 
 		await act(async () => {
@@ -217,7 +244,7 @@ describe('BonAppHostedMenu', () => {
 	// A cafe with no day in its menu response has nothing to show, which is not
 	// a reason to crash the screen.
 	test('says there is no menu when the response has no days', async () => {
-		queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, {
+		queryClient.setQueryData(bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey, {
 			...CAGE_MENU,
 			days: [],
 		})
@@ -246,10 +273,13 @@ describe('BonAppHostedMenu', () => {
 			await renderWithPicker()
 
 			await act(async () => {
-				queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, {
-					...CAGE_MENU,
-					days: [],
-				})
+				queryClient.setQueryData(
+					bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey,
+					{
+						...CAGE_MENU,
+						days: [],
+					},
+				)
 				await jest.runOnlyPendingTimersAsync()
 			})
 
@@ -261,9 +291,12 @@ describe('BonAppHostedMenu', () => {
 			await renderWithPicker()
 
 			await act(async () => {
-				queryClient.setQueryData(bonAppCafeOptions('the-cage', '2026-09-22').queryKey, {
-					cafe: [],
-				} as unknown as EditedBonAppCafeInfoType)
+				queryClient.setQueryData(
+					bonAppCafeOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey,
+					{
+						cafe: [],
+					} as unknown as EditedBonAppCafeInfoType,
+				)
 				await jest.runOnlyPendingTimersAsync()
 			})
 
@@ -328,7 +361,13 @@ describe('BonAppHostedMenu', () => {
 
 		expect(mockRouter.navigate).toHaveBeenCalledWith({
 			pathname: '/menu-item-detail',
-			params: {source: 'bonapp', cafe: 'the-cage', day: '2026-09-22', itemId: '42'},
+			params: {
+				source: 'bonapp',
+				server: 'edu.stolaf',
+				cafe: 'the-cage',
+				day: '2026-09-22',
+				itemId: '42',
+			},
 		})
 	})
 
@@ -336,12 +375,18 @@ describe('BonAppHostedMenu', () => {
 	// with the day before's, as Weitz's did at half past twelve.
 	test('labels a menu the server answers for an earlier day with that day', async () => {
 		jest.setSystemTime(new Date('2026-09-23T05:30:00Z'))
-		queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-23').queryKey, CAGE_MENU)
+		queryClient.setQueryData(
+			bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-23').queryKey,
+			CAGE_MENU,
+		)
 		// Today's hours, which say nothing about the day before's menu.
 		let todaysCafe = {
 			cafe: {...CAGE_CAFE.cafe, days: [{...CAGE_CAFE.cafe.days[0], date: '2026-09-23'}]},
 		}
-		queryClient.setQueryData(bonAppCafeOptions('the-cage', '2026-09-23').queryKey, todaysCafe)
+		queryClient.setQueryData(
+			bonAppCafeOptions('edu.stolaf', 'the-cage', '2026-09-23').queryKey,
+			todaysCafe,
+		)
 		await renderCage()
 
 		let menuDay = moment.tz('2026-09-22', timezone())
@@ -376,7 +421,10 @@ describe('BonAppHostedMenu', () => {
 				},
 			],
 		}
-		queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, withStation)
+		queryClient.setQueryData(
+			bonAppMenuOptions('edu.stolaf', 'the-cage', '2026-09-22').queryKey,
+			withStation,
+		)
 		await renderCage()
 
 		let props = mockFoodMenu.mock.lastCall?.[0] as unknown as {
@@ -388,12 +436,23 @@ describe('BonAppHostedMenu', () => {
 	// The BonApp Picker names its cafe by id. Flattened into the `cafe` param,
 	// the id would be read back as a cafe's name.
 	test('links an item of a cafe named by id to that cafe', async () => {
-		queryClient.setQueryData(bonAppMenuOptions({id: '261'}, '2026-09-22').queryKey, CAGE_MENU)
-		queryClient.setQueryData(bonAppCafeOptions({id: '261'}, '2026-09-22').queryKey, CAGE_CAFE)
+		queryClient.setQueryData(
+			bonAppMenuOptions('edu.stolaf', {id: '261'}, '2026-09-22').queryKey,
+			CAGE_MENU,
+		)
+		queryClient.setQueryData(
+			bonAppCafeOptions('edu.stolaf', {id: '261'}, '2026-09-22').queryKey,
+			CAGE_CAFE,
+		)
 		mockRouter.navigate.mockClear()
 		await render(
 			<QueryClientProvider client={queryClient}>
-				<BonAppHostedMenu cafe={{id: '261'}} loadingMessage={['Loading…']} name="BonApp" />
+				<BonAppHostedMenu
+					server="edu.stolaf"
+					cafe={{id: '261'}}
+					loadingMessage={['Loading…']}
+					name="BonApp"
+				/>
 			</QueryClientProvider>,
 		)
 
@@ -404,7 +463,13 @@ describe('BonAppHostedMenu', () => {
 
 		expect(mockRouter.navigate).toHaveBeenCalledWith({
 			pathname: '/menu-item-detail',
-			params: {source: 'bonapp', cafeId: '261', day: '2026-09-22', itemId: '5'},
+			params: {
+				source: 'bonapp',
+				server: 'edu.stolaf',
+				cafeId: '261',
+				day: '2026-09-22',
+				itemId: '5',
+			},
 		})
 	})
 })

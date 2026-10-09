@@ -14,35 +14,80 @@ const shippableVersion = fullVersion.split('-')[0]
 
 const BUNDLE_ID = 'NFMTHAZVS9.com.drewvolz.stolaf'
 
+/** The CARLS app's identifier, so a CARLS build updates the App Store's CARLS. */
+const CARLS_BUNDLE_ID = 'com.rives.carls'
+
+/** The windmill, an Icon Composer document. */
+const AAO_ICON = './assets/windmill.icon'
+
+/** The CARLS penguin, the CARLS app's own 1024px artwork. */
+const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/light.png'
+
 /**
- * Which build this is. Set `APP_VARIANT=development` to get an app that
- * installs alongside the real one instead of replacing it on your device.
+ * Which app this build is, which `APP_VARIANT` must name: `aao`, `carls`, or
+ * their `-dev` builds, which install alongside the App Store's instead of
+ * replacing it on your device. There is no default, so a forgotten variant
+ * fails here rather than building and launching the other app.
+ *
+ * `carls` and `carls-dev` build the same code as CARLS: Carleton's
+ * app (`extra.app`, read by source/lib/app-identity.ts), opening on Carleton,
+ * with the penguin as its icon and no St. Olaf icons to switch to.
  *
  * The identity has to differ in three places, not one: iOS keys installs on the
  * bundle identifier, the home screen shows the name, and two apps claiming the
  * same URL scheme is undefined behaviour — whichever iOS feels like wins.
+ *
+ * `defaultCampus` is the campus a fresh install opens on; any build can switch
+ * in dev mode.
  *
  * Defined inline rather than imported from a helper: Expo's config loader
  * compiles this file on its own, so `import {x} from './somewhere'` throws
  * `Cannot find module` at prebuild time. See __tests__/app.config.test.ts.
  */
 const VARIANTS = {
-	production: {
+	aao: {
+		app: 'aao',
+		defaultCampus: 'edu.stolaf',
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
+		icon: AAO_ICON,
 	},
-	development: {
+	'aao-dev': {
+		app: 'aao',
+		defaultCampus: 'edu.stolaf',
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
 		scheme: 'AllAboutOlafDev',
+		icon: AAO_ICON,
 	},
+	carls: {
+		app: 'carls',
+		defaultCampus: 'edu.carleton',
+		displayName: 'CARLS',
+		bundleIdentifier: CARLS_BUNDLE_ID,
+		// The CARLS app's own scheme, so links made for it still open it.
+		scheme: 'carls',
+		icon: CARLS_ICON,
+	},
+	'carls-dev': {
+		app: 'carls',
+		defaultCampus: 'edu.carleton',
+		displayName: 'CARLS Dev',
+		bundleIdentifier: `${CARLS_BUNDLE_ID}.dev`,
+		scheme: 'carlsDev',
+		icon: CARLS_ICON,
+	},
+} as const
+
+const requested = process.env.APP_VARIANT
+
+if (!requested) {
+	throw new Error(`APP_VARIANT is not set. Set it to one of ${Object.keys(VARIANTS).join(', ')}.`)
 }
 
-const requested = process.env.APP_VARIANT ?? 'production'
-
 if (!(requested in VARIANTS)) {
-	// Loudly, rather than quietly shipping production's identity under a typo.
+	// Loudly, rather than quietly building another app's identity under a typo.
 	throw new Error(`APP_VARIANT="${requested}" is not one of ${Object.keys(VARIANTS).join(', ')}.`)
 }
 
@@ -81,8 +126,8 @@ const config: ExpoConfig = {
 	// Constant across variants: this also names the generated Xcode project,
 	// its target, its scheme and its directory. The variant's own name goes to
 	// CFBundleDisplayName below, which is what the home screen shows.
-	name: 'All About Olaf',
-	slug: 'all-about-olaf',
+	name: 'All About Anything',
+	slug: 'all-about-anything',
 	scheme: variant.scheme,
 	version: shippableVersion,
 
@@ -118,8 +163,8 @@ const config: ExpoConfig = {
 		// Written into every target as DEVELOPMENT_TEAM. Without it, `expo run:ios
 		// --device` reads the Mac's signing certificates to pick a team itself.
 		appleTeamId: 'TMK6S7TPX2',
-		// An Icon Composer document; plugins/with-alternate-icons adds the others.
-		icon: './assets/windmill.icon',
+		// plugins/with-alternate-icons adds the others, All About Olaf's alone.
+		icon: variant.icon,
 		// Xcode Cloud's build number becomes an input to generation rather than
 		// something agvtool edits afterwards.
 		buildNumber,
@@ -265,7 +310,7 @@ const config: ExpoConfig = {
 		},
 	},
 
-	extra: {fullVersion, commit},
+	extra: {fullVersion, commit, app: variant.app, defaultCampus: variant.defaultCampus},
 
 	plugins: [
 		[
@@ -327,11 +372,13 @@ const config: ExpoConfig = {
 		'./plugins/with-sentry-debug-files-environment',
 		'./plugins/with-sentry-cli-executable',
 		'./plugins/with-tree-shaking',
+		// Xcode's own build phases read app.config.ts too, so ios/ remembers its variant.
+		['./plugins/with-app-variant', {variant: requested}],
 		[
 			'@sentry/react-native/expo',
 			{
 				organization: 'frog-pond-labs',
-				project: 'all-about-olaf',
+				project: variant.app === 'carls' ? 'carls' : 'all-about-olaf',
 			},
 		],
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
@@ -339,7 +386,8 @@ const config: ExpoConfig = {
 		'./plugins/with-app-delegate-customizations',
 		// DebugSwift, in Debug builds only; Release never links it.
 		'./plugins/with-debug-swift',
-		'./plugins/with-alternate-icons',
+		// CARLS offers no icon but its penguin, which is its primary.
+		['./plugins/with-alternate-icons', {alternates: variant.app === 'aao'}],
 		'./plugins/with-custom-symbols',
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',

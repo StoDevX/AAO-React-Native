@@ -27,11 +27,11 @@ import {FocusedFieldProvider, useBlurFocusedField} from '../../../source/compone
 import {
 	buildingByNameOptions,
 	buildingsOptions,
-	parseCampus,
 } from '../../../source/features/building-hours/query'
+import {campusById, type CampusId} from '../../../source/campuses'
+import {useCampusParam} from '../../../source/features/campus/campus-param'
 import type {
 	BuildingType,
-	Campus,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../../../source/features/building-hours/types'
@@ -44,8 +44,9 @@ import {
 import {submitReport} from '../../../source/features/building-hours/report/submit'
 import type {BuildingAction} from '../../../source/features/building-hours/report/building-reducer'
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
-function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
+function useBuildingEditor(initialBuilding: BuildingType, campus: CampusId) {
 	let router = useRouter()
 	let navigation = useNavigation()
 
@@ -145,6 +146,13 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		openLink(linkIndex)
 	}, [building.links, edit, openLink])
 
+	// Names the campus in the report and addresses it; a campus without hours
+	// never reaches this screen.
+	let reportCampus = React.useMemo(() => {
+		let {branding, hours, name} = campusById(campus)
+		return {label: hours?.reportLabel ?? name, supportEmail: branding.supportEmail}
+	}, [campus])
+
 	let submit = React.useCallback(async (): Promise<void> => {
 		// Picked images still loading would be left out of the email.
 		if (sendingNow.current || attachments.picking) {
@@ -156,7 +164,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 			let handedOff = await submitReport(
 				initialBuilding,
 				building,
-				campus,
+				reportCampus,
 				note,
 				attachments.images.map((image) => image.uri),
 			)
@@ -170,7 +178,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		} finally {
 			sendingNow.current = false
 		}
-	}, [attachments.images, attachments.picking, building, campus, initialBuilding, note])
+	}, [attachments.images, attachments.picking, building, reportCampus, initialBuilding, note])
 
 	return {
 		addLink,
@@ -187,7 +195,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 
 type Props = {
 	initialBuilding: BuildingType
-	campus: Campus
+	campus: CampusId
 }
 
 let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode => {
@@ -448,7 +456,7 @@ const TimesRow = ({set, now, onPress, zone}: TimesRowProps) => (
 
 function HoursProblemReportLoader(): React.ReactNode {
 	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
-	let campus = parseCampus(campusParam)
+	let campus = useCampusParam(campusParam)
 	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
 
 	if (isLoading) {
@@ -476,7 +484,7 @@ function HoursProblemReportLoader(): React.ReactNode {
 	)
 }
 
-export default function HoursProblemReportPage(): React.ReactNode {
+function HoursProblemReportPage(): React.ReactNode {
 	const navigation = useNavigation()
 
 	return (
@@ -507,3 +515,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	HoursProblemReportPage,
+)

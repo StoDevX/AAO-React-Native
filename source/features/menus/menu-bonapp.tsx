@@ -24,6 +24,7 @@ import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 import {OFFLINE_MESSAGE, menuView} from './lib/menu-view'
 import {sample} from '@frogpond/collections'
+import type {CampusId} from '../../campuses'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -44,6 +45,8 @@ const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null, closed: fals
 
 type Props = {
 	cafe: string | {id: string}
+	/** The menus server of the campus whose café this is. */
+	server: CampusId
 	ignoreProvidedMenus?: boolean
 	loadingMessage: string[]
 	name: string
@@ -181,14 +184,14 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// object that may change under it.
 	let day = React.useMemo(() => menuNow.format('YYYY-MM-DD'), [menuNow])
 
-	let menuQuery = useQuery(bonAppMenuOptions(props.cafe, day))
+	let menuQuery = useQuery(bonAppMenuOptions(props.server, props.cafe, day))
 	let {data: cafeMenu, refetch: menuReload} = menuQuery
 	let menu = menuView(menuQuery)
 
 	// The cafe's details carry its hours and any closure notice. The menu is
 	// shown without them when they cannot be had, so only their first load
 	// holds the screen.
-	let cafeQuery = useQuery(bonAppCafeOptions(props.cafe, day))
+	let cafeQuery = useQuery(bonAppCafeOptions(props.server, props.cafe, day))
 	let {data: cafeInfo, refetch: cafeReload} = cafeQuery
 	let isCafeLoading = menuView(cafeQuery).kind === 'loading'
 
@@ -275,11 +278,11 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 				pathname: '/menu-item-detail',
 				params:
 					typeof props.cafe === 'string'
-						? {source: 'bonapp', cafe: props.cafe, day, itemId: item.id}
-						: {source: 'bonapp', cafeId: props.cafe.id, day, itemId: item.id},
+						? {source: 'bonapp', server: props.server, cafe: props.cafe, day, itemId: item.id}
+						: {source: 'bonapp', server: props.server, cafeId: props.cafe.id, day, itemId: item.id},
 			})
 		},
-		[router, props.cafe, day],
+		[router, props.server, props.cafe, day],
 	)
 
 	let onRefresh = React.useCallback(

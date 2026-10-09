@@ -1,9 +1,10 @@
-import {client} from '@frogpond/api'
+import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {groupBy} from '@frogpond/collections'
+import type {CampusId} from '../../../campuses'
 
 export const keys = {
-	all: ['routes'] as const,
+	all: (campus: CampusId) => ['routes', campus] as const,
 }
 
 /** One thing a route reads from its request, as the server's sitemap describes it. */
@@ -75,14 +76,17 @@ export function groupRoutes(routes: ServerRoute[]): {title: string; data: RouteE
 	return Object.entries(grouped).map(([title, data]) => ({title, data}))
 }
 
-export const serverRoutesOptions = queryOptions({
-	queryKey: keys.all,
-	// The routes of whichever server the app points at now: restored from
-	// storage they could be another server's, or an older shape of this one's.
-	meta: {persist: false},
-	queryFn: async ({signal}) => {
-		let response = await client.get('routes', {signal}).json()
-		return response as ServerRoute[]
-	},
-	select: groupRoutes,
-})
+/** The routes of `campus`'s server; the API Tester asks the active campus's. */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const serverRoutesOptions = (campus: CampusId) =>
+	queryOptions({
+		queryKey: keys.all(campus),
+		// The routes of whichever server the app points at now: restored from
+		// storage they could be another server's, or an older shape of this one's.
+		meta: {persist: false},
+		queryFn: async ({signal}) => {
+			let response = await clientFor(campus).get('routes', {signal}).json()
+			return response as ServerRoute[]
+		},
+		select: groupRoutes,
+	})

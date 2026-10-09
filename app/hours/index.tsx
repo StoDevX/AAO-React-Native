@@ -1,6 +1,9 @@
 import * as React from 'react'
-import {parseCampus, useGroupedBuildings} from '../../source/features/building-hours/query'
-import {BuildingType, Campus} from '../../source/features/building-hours/types'
+import {useGroupedBuildings} from '../../source/features/building-hours/query'
+import {BuildingType} from '../../source/features/building-hours/types'
+import type {HoursSection} from '../../source/features/building-hours/campus-section'
+import {campusById, type CampusId} from '../../source/campuses'
+import {useCampusParam} from '../../source/features/campus/campus-param'
 import {BuildingList} from '../../source/features/building-hours/list'
 import {filterBuildings} from '../../source/features/building-hours/lib'
 import {hasUnlisted, listedSections} from '../../source/features/building-hours/lib/listed-sections'
@@ -20,12 +23,14 @@ import {useMomentTimer, useNowOverride} from '@frogpond/timer'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {HoursDevSheet} from '../../source/features/building-hours/dev/hours-dev-sheet'
 import {useForceBundledData} from '../../source/features/building-hours/dev/data-source-store'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 type Props = {
-	campus: Campus
+	campus: CampusId
+	hours: HoursSection
 }
 
-function HoursView({campus}: Props): React.ReactNode {
+function HoursView({campus, hours}: Props): React.ReactNode {
 	let router = useRouter()
 	let dispatch = useAppDispatch()
 	let allFavorites = useAppSelector(selectFavoriteBuildings)
@@ -80,8 +85,8 @@ function HoursView({campus}: Props): React.ReactNode {
 	// The search chrome is bound to component state (the change handler
 	// updates query), so it can't move to a static outer component. Compute
 	// it once and render it in every branch, so the user always has a search
-	// bar to type into or clear. St. Olaf's map has a home tile of its own;
-	// Carleton's has none, so its Hours screen carries the button to it.
+	// bar to type into or clear. A campus whose map has no home tile of its own
+	// carries the button to it here.
 	let chrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
@@ -96,7 +101,7 @@ function HoursView({campus}: Props): React.ReactNode {
 						onPress={() => setDevSheetPresented(true)}
 					/>
 				) : null}
-				{campus === 'carleton' ? (
+				{hours.showsMapButton ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Map"
 						icon="map"
@@ -107,7 +112,11 @@ function HoursView({campus}: Props): React.ReactNode {
 
 			<SearchBar onChangeText={setQuery} value={query} />
 
-			<HoursDevSheet isPresented={devSheetPresented} onIsPresentedChange={setDevSheetPresented} />
+			<HoursDevSheet
+				campus={campus}
+				isPresented={devSheetPresented}
+				onIsPresentedChange={setDevSheetPresented}
+			/>
 		</>
 	)
 
@@ -147,14 +156,25 @@ function HoursView({campus}: Props): React.ReactNode {
 	)
 }
 
-export default function HoursPage(): React.ReactNode {
+function HoursPage(): React.ReactNode {
+	// No campus, or one this build doesn't know, is the active campus.
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
-	let campus = parseCampus(campusParam)
+	let campus = useCampusParam(campusParam)
+	let hours = campusById(campus).hours
+
+	// The section gate, below, draws the notice for a campus without hours.
+	if (!hours) return null
 
 	return (
 		<>
-			<Stack.Title>{campus === 'carleton' ? 'Carleton Campus' : 'Hours'}</Stack.Title>
-			<HoursView campus={campus} />
+			<Stack.Title>{hours.title}</Stack.Title>
+			<HoursView campus={campus} hours={hours} />
 		</>
 	)
 }
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	HoursPage,
+)

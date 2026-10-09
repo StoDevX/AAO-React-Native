@@ -27,6 +27,7 @@ import {
 import {decode} from '@frogpond/html-lib'
 import {orgByNameOptions, orgDetailOptions} from '../../source/features/student-orgs/query'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 /**
  * The org's name, at the top of its own screen.
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default function StudentOrgsDetailPage(): React.ReactNode {
+function StudentOrgsDetailPage(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
 	let router = useRouter()
 	let {data: listed, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
@@ -259,3 +260,9 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'studentOrgs',
+	{title: 'Student Orgs', noun: 'student organizations', systemImage: 'person.3'},
+	StudentOrgsDetailPage,
+)

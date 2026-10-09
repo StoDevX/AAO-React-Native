@@ -60,12 +60,12 @@ function suite(name, children) {
 function tree(...suites) {
 	return [
 		{
-			name: 'AllAboutOlaf',
+			name: 'AllAboutAnything',
 			nodeType: 'Test Plan',
 			result: 'Passed',
 			children: [
 				{
-					name: 'AllAboutOlafUITests',
+					name: 'AllAboutAnythingUITests',
 					nodeType: 'UI test bundle',
 					result: 'Passed',
 					children: suites,

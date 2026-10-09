@@ -1,6 +1,6 @@
 import {File, Paths} from 'expo-file-system'
 import {fetchSourceBody, SourceFetchError} from '@frogpond/data-sources'
-import {fixtureMode} from '@frogpond/launch-arguments'
+import {fixtureMode, servesBundledFixtures} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../../lib/ui-test-fixture'
 import fixtures from '../__fixtures__/mess.json'
@@ -65,6 +65,7 @@ function record(entry: Recording): void {
  * fetchSourceBody for Olaf Messenger, which UI tests answer from fixtures: from the
  * network as usual, from `__fixtures__/mess.json` under UI tests, or from the network
  * with each answer saved under `--record-fixtures`, for update-mess-fixtures to collect.
+ * A campus test leaves it to the network, which its campus recordings answer.
  */
 export async function messFetch(
 	href: string,
@@ -72,11 +73,11 @@ export async function messFetch(
 	label: string,
 	format: Format = 'json',
 ): Promise<unknown> {
+	if (fixtureMode === 'live' || !servesBundledFixtures) {
+		return fetchSourceBody(href, signal, label, format)
+	}
 	if (fixtureMode === 'serve') {
 		return serve(href, format)
-	}
-	if (fixtureMode === 'live') {
-		return fetchSourceBody(href, signal, label, format)
 	}
 	try {
 		let body = await fetchSourceBody(href, signal, label, format)

@@ -4,13 +4,8 @@ import {parseEach} from '@frogpond/data-sources/parse-each'
 import {readableAlt} from './alt'
 import {parseBlocks} from './blocks'
 import {chooseLayout} from './layout'
+import type {Paper} from '../campus-section'
 import type {Byline, MessCategory, MessStory} from '../types'
-
-/**
- * The Mess logos, which the site uses as a stand-in when a story has no photo.
- * 28499 is the white logo that older Poetry and Short Story posts carry.
- */
-export const MESS_LOGO_MEDIA_IDS: ReadonlySet<number> = new Set([35393, 22795, 28499])
 
 const CategorySchema = z.object({id: z.number(), name: z.string(), parent: z.number()})
 
@@ -61,9 +56,6 @@ type Post = z.infer<typeof PostSchema>
 /** Whether a category is one of the site's Featured flags rather than a section. */
 const isFeaturedFlag = (name: string): boolean => /^featured\b/iu.test(name)
 
-/** The sections that name a story whenever one is present, ahead of any other top-level category. */
-export const MAIN_SECTIONS = ['News', 'Opinions', 'Arts & Entertainment', 'Sports', 'Variety']
-
 /** The section a special edition's posts sit in, and nothing else. */
 export const SPECIAL_EDITION = 'Special Edition'
 
@@ -92,6 +84,7 @@ export function inSpecialEdition(ids: number[], byId: Map<number, MessCategory>)
 export function placement(
 	ids: number[],
 	byId: Map<number, MessCategory>,
+	mainSections: readonly string[],
 ): Pick<MessStory, 'section' | 'column' | 'featured'> {
 	let placed = ids.flatMap((id) => {
 		let category = byId.get(id)
@@ -103,7 +96,7 @@ export function placement(
 	let candidates = placed.filter(
 		({root}) => !isFeaturedFlag(root.name) && root.name !== UNCATEGORIZED,
 	)
-	let chosen = candidates.find(({root}) => MAIN_SECTIONS.includes(root.name)) ?? candidates[0]
+	let chosen = candidates.find(({root}) => mainSections.includes(root.name)) ?? candidates[0]
 	let section = chosen?.root ?? null
 	let column = candidates.find(
 		({category, root}) => root === section && category !== section,
@@ -122,9 +115,9 @@ function bylinesOf(post: Post): Byline[] {
 	})
 }
 
-/** The story's featured photo, or null when it has none, has no size, or is the Mess logo. */
-function photoOf(post: Post): MessStory['photo'] {
-	if (post.featured_media === 0 || MESS_LOGO_MEDIA_IDS.has(post.featured_media)) return null
+/** The story's featured photo, or null when it has none, has no size, or is the paper's logo. */
+function photoOf(post: Post, logoMediaIds: ReadonlySet<number>): MessStory['photo'] {
+	if (post.featured_media === 0 || logoMediaIds.has(post.featured_media)) return null
 	let media = MediaSchema.safeParse(post._embedded?.['wp:featuredmedia']?.[0])
 	if (!media.success) return null
 	let {width, height} = media.data.media_details
@@ -153,9 +146,9 @@ function excerptOf(html: string): string {
 }
 
 /** One validated post as a story. */
-function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
-	let placed = placement(post.categories, byId)
-	let photo = photoOf(post)
+function toStory(post: Post, byId: Map<number, MessCategory>, paper: Paper): MessStory {
+	let placed = placement(post.categories, byId, paper.mainSections)
+	let photo = photoOf(post, paper.logoMediaIds)
 	let {layout, blocks} = chooseLayout({
 		column: placed.column,
 		blocks: parseBlocks(post.content.rendered),
@@ -177,13 +170,17 @@ function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
 }
 
 /**
- * The Mess's posts as stories. A malformed post is skipped so one bad item
+ * A paper's posts as stories. A malformed post is skipped so one bad item
  * does not blank the feed; a non-empty feed that yields nothing means the
  * shape changed, and throws.
  */
-export function parseMessPosts(body: unknown, categories: MessCategory[]): MessStory[] {
+export function parseMessPosts(
+	body: unknown,
+	categories: MessCategory[],
+	paper: Paper,
+): MessStory[] {
 	let items = z.array(z.unknown()).parse(body)
 	let byId = new Map(categories.map((c) => [c.id, c]))
 	let posts = parseEach(items, (raw) => PostSchema.safeParse(raw).data, 'Mess post')
-	return posts.map((post) => toStory(post, byId))
+	return posts.map((post) => toStory(post, byId, paper))
 }

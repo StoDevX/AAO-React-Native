@@ -51,14 +51,16 @@ export function getInAppLinkPreference(): Promise<openLinksInAppType> {
 	return getItemAsBoolean(openLinksInAppKey, true)
 }
 
-const serverAddressKey = 'settings:server-address'
+/// A campus's server address, under its `api.storageKey`. Empty means the
+/// campus's default. Saved with a trailing slash: ky resolves a relative path
+/// against it, so without one the last segment is replaced rather than extended.
 type serverAddressType = string
-export function setServerAddress(address: serverAddressType): Promise<void> {
+export function setServerAddressFor(storageKey: string, address: serverAddressType): Promise<void> {
 	if (address && !address.endsWith('/')) address += '/'
-	return setItem(serverAddressKey, address)
+	return setItem(storageKey, address)
 }
-export function getServerAddress(): Promise<serverAddressType> {
-	return getItemAsString(serverAddressKey)
+export function getServerAddressFor(storageKey: string): Promise<serverAddressType> {
+	return getItemAsString(storageKey)
 }
 
 /// MARK: Favorite Buildings

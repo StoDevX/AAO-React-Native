@@ -12,6 +12,7 @@ import {sendEmail} from '../../../components/send-email'
 import {AboutScreen} from '../about-screen'
 import {parseAboutPage} from '../lib/about'
 import {messKeys} from '../lib/keys'
+import {InMessenger} from './in-messenger'
 
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
@@ -44,7 +45,9 @@ afterEach(() => {
 function renderScreen() {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<AboutScreen />
+			<InMessenger>
+				<AboutScreen />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

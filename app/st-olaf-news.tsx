@@ -1,8 +1,9 @@
 import * as React from 'react'
 
+import {stolaf} from '../source/campuses/edu-stolaf'
 import {NewsScreen} from '../source/features/news/news-screen'
-import {STOLAF_NEWS} from '../source/features/news/sources'
 
+/** St. Olaf's news, reachable by this route on every campus. */
 export default function StOlafNewsPage(): React.ReactNode {
-	return <NewsScreen source={STOLAF_NEWS} />
+	return <NewsScreen source={stolaf.news.source} />
 }

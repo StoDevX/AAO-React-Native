@@ -1,5 +1,5 @@
-import {client} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {clientFor} from '@frogpond/api'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
@@ -19,6 +19,7 @@ import type {
 	StationMenuType,
 } from './types'
 import {groupBy} from '@frogpond/collections'
+import type {CampusId} from '../../campuses'
 
 /**
  * A BonApp menu and a cafe's details are each for the day they were fetched,
@@ -26,13 +27,15 @@ import {groupBy} from '@frogpond/collections'
  * fetches its own, rather than showing the last day's while it is still fresh.
  */
 export const menuKeys = {
-	bonAppCcc: (cafePath: string, day: string) => ['cafe-menu', 'bonApp', cafePath, day] as const,
-	hosted: (url: string) => ['cafe-menu', 'hosted', url] as const,
+	bonAppCcc: (server: CampusId, cafePath: string, day: string) =>
+		['cafe-menu', 'bonApp', server, cafePath, day] as const,
+	hosted: (server: CampusId, path: string) => ['cafe-menu', 'hosted', server, path] as const,
 }
 
 export const cafeKeys = {
-	bonAppCcc: (cafePath: string, day: string) => ['cafe-info', 'bonApp', cafePath, day] as const,
-	hosted: (url: string) => ['cafe-info', 'hosted', url] as const,
+	bonAppCcc: (server: CampusId, cafePath: string, day: string) =>
+		['cafe-info', 'bonApp', server, cafePath, day] as const,
+	hosted: (server: CampusId, path: string) => ['cafe-info', 'hosted', server, path] as const,
 }
 
 //
@@ -85,7 +88,7 @@ export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContain
 }
 
 /**
- * The cafes a UI test run serves from a fixture, keyed by the path that would
+ * The cafes a UI test run naming no campus serves from a fixture, keyed by the path that would
  * otherwise be fetched.
  *
  * Only Stav Hall is captured, because it is the cafe the tests land on. A cafe
@@ -101,55 +104,67 @@ const UITEST_BONAPP_CAFES: Record<string, unknown> = {
 }
 
 async function fetchBonAppMenu(
+	server: CampusId,
 	cafeParam: string | {id: string},
 	signal?: AbortSignal,
 ): Promise<EditedBonAppMenuInfoType> {
 	let path = buildMenuPath(cafeParam)
 
-	let fixture = isUITesting ? UITEST_BONAPP_MENUS[path] : undefined
+	let fixture = servesBundledFixtures ? UITEST_BONAPP_MENUS[path] : undefined
 	if (fixture) {
 		return fixture as EditedBonAppMenuInfoType
 	}
 
-	let response = await client.get(path, {signal}).json()
+	let response = await clientFor(server).get(path, {signal}).json()
 	return response as EditedBonAppMenuInfoType
 }
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppCafeOptions = (cafeParam: string | {id: string}, day: string) =>
+/** A café's details from `server`, the menus server of the campus whose café it is. */
+export const bonAppCafeOptions = (
+	server: CampusId,
+	cafeParam: string | {id: string},
+	day: string,
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
+) =>
 	queryOptions({
-		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam), day),
+		queryKey: cafeKeys.bonAppCcc(server, buildCafePath(cafeParam), day),
 		queryFn: async ({signal}) => {
 			let path = buildCafePath(cafeParam)
 
-			let fixture = isUITesting ? UITEST_BONAPP_CAFES[path] : undefined
+			let fixture = servesBundledFixtures ? UITEST_BONAPP_CAFES[path] : undefined
 			if (fixture) {
 				return fixture as EditedBonAppCafeInfoType
 			}
 
-			let response = await client.get(path, {signal}).json()
+			let response = await clientFor(server).get(path, {signal}).json()
 			return response as EditedBonAppCafeInfoType
 		},
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppMenuOptions = (cafeParam: string | {id: string}, day: string) =>
+/** A café's menu from `server`, the menus server of the campus whose café it is. */
+export const bonAppMenuOptions = (
+	server: CampusId,
+	cafeParam: string | {id: string},
+	day: string,
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
+) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam), day),
-		queryFn: ({signal}) => fetchBonAppMenu(cafeParam, signal),
+		queryKey: menuKeys.bonAppCcc(server, buildMenuPath(cafeParam), day),
+		queryFn: ({signal}) => fetchBonAppMenu(server, cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 
 export const bonAppMenuItemOptions = (
+	server: CampusId,
 	cafeParam: string | {id: string},
 	day: string,
 	itemId: string,
 	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam), day),
-		queryFn: ({signal}) => fetchBonAppMenu(cafeParam, signal),
+		queryKey: menuKeys.bonAppCcc(server, buildMenuPath(cafeParam), day),
+		queryFn: ({signal}) => fetchBonAppMenu(server, cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 		select: (data) => ({
 			item: prepareFood(data)[itemId],
@@ -161,15 +176,18 @@ export const bonAppMenuItemOptions = (
 // The Pause
 //
 
-async function fetchPauseMenu({signal}: {signal: AbortSignal}): Promise<GithubMenuResponse> {
+async function fetchPauseMenu(
+	server: CampusId,
+	{signal}: {signal: AbortSignal},
+): Promise<GithubMenuResponse> {
 	// The same menu the server would answer with: `bundle-data` builds
 	// `docs/pause-menu.json` from `data/pause-menu.yaml`, and deploying that
 	// directory is what publishes it.
-	if (isUITesting) {
+	if (servesBundledFixtures) {
 		return (bundledPauseMenu as {data: GithubMenuResponse}).data
 	}
 
-	let response = await client.get('food/named/menu/the-pause', {signal}).json()
+	let response = await clientFor(server).get('food/named/menu/the-pause', {signal}).json()
 	return (response as {data: GithubMenuResponse}).data
 }
 
@@ -203,17 +221,20 @@ function transformPauseMenu(data: GithubMenuResponse): GithubMenuType {
 	}
 }
 
-export const pauseMenuOptions = queryOptions({
-	queryKey: menuKeys.hosted('food/named/menu/the-pause'),
-	queryFn: fetchPauseMenu,
-	select: transformPauseMenu,
-})
+/** The Pause's menu from `server`, St. Olaf's menus server. */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const pauseMenuOptions = (server: CampusId) =>
+	queryOptions({
+		queryKey: menuKeys.hosted(server, 'food/named/menu/the-pause'),
+		queryFn: ({signal}) => fetchPauseMenu(server, {signal}),
+		select: transformPauseMenu,
+	})
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const pauseMenuItemOptions = (itemId: string) =>
+export const pauseMenuItemOptions = (server: CampusId, itemId: string) =>
 	queryOptions({
-		queryKey: menuKeys.hosted('food/named/menu/the-pause'),
-		queryFn: fetchPauseMenu,
+		queryKey: menuKeys.hosted(server, 'food/named/menu/the-pause'),
+		queryFn: ({signal}) => fetchPauseMenu(server, {signal}),
 		select: (data) => {
 			let {foodItems, corIcons} = transformPauseMenu(data)
 			return {item: foodItems[itemId], icons: corIcons}

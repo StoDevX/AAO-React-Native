@@ -5,6 +5,7 @@ import UIKit
 /// its words, stains, photo tone or handling, its size, the appearance, the text size or the screen's scale.
 /// A photo is named by its address; an image is only made once the photo it shows has loaded.
 struct TileImageKey: Hashable {
+	let nameplate: String
 	let title: String
 	let date: String
 	let special: Bool
@@ -28,6 +29,7 @@ struct TileImageKey: Hashable {
 		_ content: TileContent, photoUrl: URL?, size: CGSize, scheme: ColorScheme,
 		typeSize: DynamicTypeSize, scale: CGFloat
 	) {
+		nameplate = content.nameplate
 		title = content.title
 		date = content.date
 		special = content.special

@@ -6,8 +6,10 @@ export {
 	resolveSource,
 	resolveSources,
 } from './resolve'
+export {setManifestServer} from './manifest-server'
 export {useManifest} from './use-manifest'
 export {
+	CAMPUS_PROPERTY,
 	ID_PROPERTY,
 	JrdSchema,
 	REL_A_TO_Z,
@@ -26,4 +28,5 @@ export {
 	REL_STUDENT_WORK_UNITS,
 	type Jrd,
 	type ResolvedSource,
+	type SourceCampus,
 } from './types'

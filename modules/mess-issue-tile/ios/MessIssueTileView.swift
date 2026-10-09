@@ -19,6 +19,7 @@ enum TileLayout: String, Enumerable {
 }
 
 final class MessIssueTileProps: ExpoSwiftUI.ViewProps {
+	@Field var nameplate: String = ""
 	@Field var title: String = ""
 	@Field var date: String = ""
 	@Field var special: Bool = false

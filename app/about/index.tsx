@@ -25,9 +25,10 @@ import {Stack, useRouter} from 'expo-router'
 
 import {NavigationRow} from '../../source/components/rows'
 import {PagedSection, type Card} from '../../source/features/about/card-carousel'
-import {acknowledgements, contributors, creditRows} from '../../source/features/about/credits'
+import {aboutFor} from '../../source/features/about/about-for'
+import {creditRows} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
-import {INTRO, timeline} from '../../source/features/about/timeline'
+import {useCampus, useCampusSection} from '../../source/features/campus/store'
 import {versionDetails} from '../../source/features/about/version'
 
 const styles = StyleSheet.create({
@@ -42,18 +43,6 @@ const BARE_ROW = [
 	listRowSeparator('hidden'),
 ]
 
-const timelineCards: Array<Card> = timeline.map((era) => ({
-	id: era.period,
-	heading: era.period,
-	body: era.story,
-}))
-
-/** Each credit and its names. */
-const credits = [
-	{id: 'contributors', heading: 'Contributors', names: contributors},
-	{id: 'acknowledgements', heading: 'Acknowledgements', names: acknowledgements},
-]
-
 const versions = versionDetails(
 	Application.nativeApplicationVersion,
 	Application.nativeBuildVersion,
@@ -65,6 +54,13 @@ export default function AboutPage(): React.ReactNode {
 	let router = useRouter()
 	let {fontScale} = useWindowDimensions()
 	let [versionIndex, setVersionIndex] = React.useState(0)
+	let {branding} = useCampus()
+	let about = aboutFor(useCampusSection('about'))
+	let storyCards: Array<Card> = about.story.map((era) => ({
+		id: era.period,
+		heading: era.period,
+		body: era.story,
+	}))
 
 	return (
 		<>
@@ -79,7 +75,7 @@ export default function AboutPage(): React.ReactNode {
 						<Text
 							modifiers={[font({textStyle: 'title2', weight: 'bold'}), foregroundStyle(c.label)]}
 						>
-							All About Olaf
+							{branding.appName}
 						</Text>
 						<Text
 							modifiers={[
@@ -88,7 +84,7 @@ export default function AboutPage(): React.ReactNode {
 								multilineTextAlignment('center'),
 							]}
 						>
-							{INTRO}
+							{branding.intro}
 						</Text>
 					</VStack>
 
@@ -107,9 +103,9 @@ export default function AboutPage(): React.ReactNode {
 						</LabeledContent>
 					</SheetSection>
 
-					<PagedSection cards={timelineCards} title="Our story" />
+					{storyCards.length > 0 ? <PagedSection cards={storyCards} title="Our story" /> : null}
 
-					{credits.map((credit) => (
+					{about.credits.map((credit) => (
 						<SheetSection key={credit.id} title={credit.heading}>
 							<Grid alignment="topLeading" horizontalSpacing={12} verticalSpacing={4}>
 								{creditRows(credit.names, fontScale).map((row) => (

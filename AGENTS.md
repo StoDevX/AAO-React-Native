@@ -129,6 +129,12 @@ Six more kinds of test cost upkeep and catch nothing:
   the screen (a tile is offered, a card shows a field) breaks on data, not on
   the app. Test the decision in Jest and put simulator screenshots on the PR.
 
+**Campus smoke tests are the exception.** `uitests/CampusSmokeTests.swift`
+checks that each campus's data reaches its screens, which is a data-flow test,
+but it reads committed recordings (`source/features/campus/__fixtures__/`),
+never live data, so it breaks only when someone rerecords and the diff shows
+what moved.
+
 In Claude Code, the `test-writing-reminder` mod in
 `.claude/skills/test-writing-reminder/` refuses each agent's first write to
 each test file and lists these kinds; a subagent gets its own reminder, and so
@@ -150,30 +156,45 @@ mise run test         # every test
 mise run test:jest    # Jest: app, source, modules
 mise run test:node    # node:test: scripts/, plugins/
 mise run tsc          # Type check
-mise run prebuild     # Generate ios/ from app.config.ts, and install pods
+APP_VARIANT=aao mise run prebuild   # Generate ios/ from app.config.ts, and install pods
 ```
 
 ### App Variants
 
-A development build can sit alongside the shipping app on one device.
-`APP_VARIANT` selects the build at generation time; unset means production, so
-every default path is unchanged.
+`APP_VARIANT` names the app a build is, and anything that reads the app's
+config needs it: prebuild, Metro (`expo start`), `expo run:ios`,
+`bundle:ios`, the size report. It has no default, so a forgotten variant fails
+at once instead of building and launching the other app. The `-dev` builds sit
+alongside the App Store's on one device. CI sets `aao`; each Xcode Cloud
+workflow sets its own in its environment.
 
-| `APP_VARIANT` | Bundle identifier | Home screen |
-| --- | --- | --- |
-| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf |
-| `development` | `…stolaf.dev` | AAO Dev |
+| `APP_VARIANT` | Bundle identifier | Home screen | Sentry project |
+| --- | --- | --- | --- |
+| `aao` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | `all-about-olaf` |
+| `aao-dev` | `…stolaf.dev` | AAO Dev | `all-about-olaf` |
+| `carls` | `com.rives.carls` | CARLS | `carls` |
+| `carls-dev` | `com.rives.carls.dev` | CARLS Dev | `carls` |
 
-Both variants share the windmill icon, so tell them apart by name.
+The two All About Olaf variants share the windmill icon, so tell them apart by
+name. The CARLS variants build the same code as Carleton's app: `extra.defaultCampus`
+opens them on Carleton (`source/lib/app-identity.ts`), the penguin is the
+primary icon, and no St. Olaf icon is bundled. `com.rives.carls` is the CARLS
+app's own identifier, so a release build updates CARLS on the App Store.
 
 ```bash
-APP_VARIANT=development mise run prebuild   # then build to your device
+mise run aao:ios [device]     # AAO Dev, prebuilt and run
+mise run carls:ios [device]   # CARLS Dev, prebuilt and run
 ```
+
+`ios/` holds one variant at a time; `mise run prebuild` starts it afresh when
+`APP_VARIANT` changes. The app's config reaches the JavaScript through Metro,
+so a Metro started on its own needs the variant too:
+`APP_VARIANT=carls-dev mise run start`.
 
 The URL scheme varies too — two apps claiming one scheme is undefined behaviour.
 
-TestFlight and App Store builds both ship the production identity, so a
-TestFlight build replaces the App Store app as it always has.
+TestFlight and App Store builds ship `aao` or `carls`, so a TestFlight build
+replaces the App Store app as it always has.
 
 **A build to a local device needs nothing beyond `mise run device "<DEVICE
 NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
@@ -304,6 +325,10 @@ ImageMagick and potrace (`brew install imagemagick potrace`). The image's dark
 pixels become the symbol, so a white mark on a dark disc comes out as a disc
 with the mark cut out. The Messenger's came from
 `https://olafmessenger.com/wp-content/uploads/2021/02/Logo_white-e1713492149523.png`.
+The Carletonian's C came from the gray C in
+`https://thecarletonian.com/wp-content/uploads/2019/04/carletonianlogo-1.jpg`,
+with the wordmark that crosses it painted out and the stroke redrawn there
+before tracing.
 
 The template holds `Regular-S`, `Regular-M` and `Regular-L`. Other weights
 fall back to Regular, but a missing scale does not: without `Regular-L`, the
@@ -383,6 +408,45 @@ post, which tells a schedule left over from an earlier term apart.
 
 ### UI Test Fixtures
 
+A UI test class can name a campus: `override class var campus: Campus? { .carleton }`,
+with a `/// Tags: campus:edu.carleton` marker. The app then answers every
+request made through `apiFetch` (both campus servers, the papers' own sites
+and the calendars) from `source/features/campus/__fixtures__/<campus id>/`, one
+file per request, and a request with no recording fails naming the fix. A few
+features fetch around `apiFetch` (the directory search, login, balances,
+StoPrint, the course catalog), so a smoke test on one of them reads live data
+until it moves onto `apiFetch`. Rerecord a campus with a
+simulator booted and Metro running:
+
+```bash
+mise run update-campus-fixtures edu.carleton
+```
+
+It writes nothing if a test fails, and refuses a response over 200 KB unless
+run with `--allow-large`. What it writes differs from what the servers sent in
+four ways, all in `scripts/campus-fixtures.mjs`:
+
+- **Calendar dates move back.** The feeds answer from the day they are asked,
+  so the recorder moves a campus's events back by whole weeks until the first
+  day from the recording on with events, on the frozen day's weekday, is the
+  UI tests' frozen day (`UITEST_FROZEN_DATE`). Whole weeks keep each event on
+  its own weekday.
+- **The St. Olaf calendar's dates are `{date}` in its keys**, since its window
+  comes from the day's date, and the recorder fetches any page of it the run
+  ended before asking for.
+- **The St. Olaf calendar and Presence keep only the fields their parsers
+  read** (`TRIMS`). A parser that starts reading a field adds it there.
+  ccc-server's calendars come already shaped by the server and are kept whole.
+- **Every email address is `person@example.com`.** The feeds name people in
+  their event text.
+
+A recording run checks each screen against live data, where a value a test
+expects may have moved on: that check skips, naming the value, and the recorder
+still writes. Take each skipped value from the new files into the subclass's
+`expected`, then run the campus's tests once more without recording.
+
+Tests naming no campus keep the per-feature fixtures below.
+
 Under UI tests the map reads copies of each campus's `map/geojson` from
 `source/features/map/__fixtures__/`, not ccc-server, so a data publish cannot
 move what the map tests measure. Refresh them on purpose, when a test needs a
@@ -446,7 +510,7 @@ after adding a route.
 
 Versions come from Changesets. A change that belongs in the release notes adds
 a file with `mise run changeset` (a plain markdown file in `.changeset/`:
-`"all-about-olaf": patch|minor|major` in the frontmatter, the note below it).
+`"all-about-anything": patch|minor|major` in the frontmatter, the note below it).
 The Release workflow turns those into a "Version Packages" pull request, and a
 `prerelease:alpha|beta|rc|none` label on it picks the channel. Do not edit
 `version` in `package.json` or add to `CHANGELOG.md` by hand. The logic is in

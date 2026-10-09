@@ -137,6 +137,8 @@ export const monospacedDigit = bare('monospacedDigit')
 export const multilineTextAlignment = named('multilineTextAlignment', 'alignment')
 export const offset = spreading('offset')
 export const onAppear = (handler: () => void): Modifier => createModifier('onAppear', {handler})
+export const onTapGesture = (handler: () => void): Modifier =>
+	createModifier('onTapGesture', {handler})
 export const opacity = named('opacity', 'value')
 export const padding = spreading('padding')
 export const scaleEffect = named('scaleEffect', 'scale')
@@ -1234,3 +1236,17 @@ function SwipeActionsComponent({children, modifiers}: WithModifiers): React.Reac
 SwipeActionsComponent.Actions = SwipeActionsGroup
 
 export const SwipeActions = SwipeActionsComponent
+
+/**
+ * A `ContextMenu` stands in like `Menu`: nothing opens on a long press, so its
+ * trigger and its items are both always on hand. The preview is never drawn.
+ */
+function ContextMenuComponent({children, modifiers}: WithModifiers): React.ReactNode {
+	return <ForwardingView modifiers={modifiers}>{children}</ForwardingView>
+}
+
+ContextMenuComponent.Trigger = ({children}: {children?: React.ReactNode}) => children ?? null
+ContextMenuComponent.Items = ({children}: {children?: React.ReactNode}) => children ?? null
+ContextMenuComponent.Preview = (_props: {children?: React.ReactNode}) => null
+
+export const ContextMenu = ContextMenuComponent

@@ -3,7 +3,7 @@ import {join} from 'node:path'
 import {describe, expect, it} from '@jest/globals'
 
 import groups from '../../../images/groups.json'
-import {OLAF_MESSENGER, STOLAF_NEWS} from '../../features/news/sources'
+import {CAMPUSES, type CampusDefinition} from '../../campuses'
 import {STATIONS} from '../../features/streaming/radio/stations'
 import {IMAGE_GROUPS} from '../remote-images'
 
@@ -19,8 +19,9 @@ describe('the images the code names', () => {
 		let streaming = Object.values(STATIONS).flatMap((station) =>
 			station.logos.map((logo) => logo.imageName),
 		)
-		let news = [OLAF_MESSENGER, STOLAF_NEWS].flatMap((source) =>
-			source.thumbnail === false ? [] : [source.thumbnail],
+		let campuses: ReadonlyArray<CampusDefinition> = CAMPUSES
+		let news = campuses.flatMap((campus) =>
+			campus.news && campus.news.source.thumbnail !== false ? [campus.news.source.thumbnail] : [],
 		)
 
 		expect([

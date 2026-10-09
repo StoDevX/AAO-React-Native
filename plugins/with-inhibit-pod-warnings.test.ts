@@ -14,7 +14,7 @@ describe('inhibitPodWarnings', () => {
 
 	it('puts it inside the app target, where it applies to the pods', () => {
 		let result = inhibitPodWarnings(STOCK_PODFILE)
-		let target = result.indexOf("target 'AllAboutOlaf' do")
+		let target = result.indexOf("target 'AllAboutAnything' do")
 		let inhibit = result.indexOf('inhibit_all_warnings!')
 		let postInstall = result.indexOf('post_install do |installer|')
 		assert.ok(target < inhibit)

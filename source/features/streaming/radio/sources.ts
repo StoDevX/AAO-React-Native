@@ -6,6 +6,7 @@ import {
 	resolveSource,
 	useManifest,
 	type Jrd,
+	type ResolvedSource,
 } from '@frogpond/data-sources'
 import {apiUrl} from '../../../lib/api-url'
 import type {StationId} from './stations'
@@ -46,6 +47,9 @@ export type StationSources = {
 /** Resolving against a manifest with no links gives the shipped entries. */
 const SHIPPED: Jrd = {subject: '', links: []}
 
+/** Where a source is: its address, and the campus whose server a relative one names. */
+export type SourceAddress = Pick<ResolvedSource, 'href' | 'campus'>
+
 /**
  * A source a station may not have. One the app ships with is resolved as any
  * other, so a missing or unreadable published entry falls back to the shipped
@@ -54,17 +58,17 @@ const SHIPPED: Jrd = {subject: '', links: []}
  * rather than quietly dropping the source. One the app does not ship with is
  * whatever the published manifest makes of it, or nothing.
  */
-function optionalHref(
+function optionalSource(
 	manifest: Jrd,
 	rel: string,
 	id: StationId,
 	types: readonly string[],
-): string | undefined {
+): SourceAddress | undefined {
 	if (hasBundledSource(rel, id)) {
-		return resolveSource(manifest, rel, id, types).href
+		return resolveSource(manifest, rel, id, types)
 	}
 	try {
-		return resolveSource(manifest, rel, id, types).href
+		return resolveSource(manifest, rel, id, types)
 	} catch {
 		return undefined
 	}
@@ -75,9 +79,9 @@ function optionalHref(
  * schema accepts addresses `URL` cannot read, such as a port past 65535, and
  * one of those must not fail the render the radio is drawn in.
  */
-function absoluteUrl(href: string): string | undefined {
+function absoluteUrl(source: SourceAddress): string | undefined {
 	try {
-		return apiUrl(href)
+		return apiUrl(source.campus, source.href)
 	} catch {
 		return undefined
 	}
@@ -85,11 +89,9 @@ function absoluteUrl(href: string): string | undefined {
 
 /** `stationId`'s stream as `manifest` names it, or its shipped one if that is not a URL. */
 function streamUrl(manifest: Jrd, stationId: StationId): string {
-	let href = resolveSource(manifest, REL_RADIO_STREAM, stationId, STREAM_TYPES).href
-	return (
-		absoluteUrl(href) ??
-		apiUrl(resolveSource(SHIPPED, REL_RADIO_STREAM, stationId, STREAM_TYPES).href)
-	)
+	let source = resolveSource(manifest, REL_RADIO_STREAM, stationId, STREAM_TYPES)
+	let shipped = resolveSource(SHIPPED, REL_RADIO_STREAM, stationId, STREAM_TYPES)
+	return absoluteUrl(source) ?? apiUrl(shipped.campus, shipped.href)
 }
 
 /** Whether `url` is somewhere a player page may be loaded from. */
@@ -103,16 +105,16 @@ function isPlayerPageUrl(url: string): boolean {
  * is not a URL or not somewhere a page may be.
  */
 function playerPageUrl(manifest: Jrd, stationId: StationId): string | undefined {
-	let href = optionalHref(manifest, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
-	if (href === undefined) {
+	let source = optionalSource(manifest, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
+	if (source === undefined) {
 		return undefined
 	}
-	let url = absoluteUrl(href)
+	let url = absoluteUrl(source)
 	if (url !== undefined && isPlayerPageUrl(url)) {
 		return url
 	}
-	let shipped = optionalHref(SHIPPED, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
-	return shipped === undefined ? undefined : apiUrl(shipped)
+	let shipped = optionalSource(SHIPPED, REL_RADIO_PLAYER_PAGE, stationId, [PLAYER_PAGE_TYPE])
+	return shipped === undefined ? undefined : apiUrl(shipped.campus, shipped.href)
 }
 
 /**
@@ -124,13 +126,13 @@ export function stationSources(manifest: Jrd, stationId: StationId): StationSour
 	return {
 		streamSourceUrl: streamUrl(manifest, stationId),
 		embeddedPlayerUrl: playerPageUrl(manifest, stationId),
-		nowPlayingUrl: nowPlayingHref(manifest, stationId),
+		nowPlayingUrl: nowPlayingSource(manifest, stationId)?.href,
 	}
 }
 
 /** `stationId`'s song feed as `manifest` names it, else as shipped. */
-function nowPlayingHref(manifest: Jrd, stationId: StationId): string | undefined {
-	return optionalHref(manifest, REL_RADIO_NOW_PLAYING, stationId, [NOW_PLAYING_TYPE])
+function nowPlayingSource(manifest: Jrd, stationId: StationId): SourceAddress | undefined {
+	return optionalSource(manifest, REL_RADIO_NOW_PLAYING, stationId, [NOW_PLAYING_TYPE])
 }
 
 /** `stationId`'s stream as the app ships it. */
@@ -148,8 +150,8 @@ export function useStationSources(stationId: StationId): StationSources | undefi
 	return manifest === undefined ? undefined : stationSources(manifest, stationId)
 }
 
-/** `stationId`'s song feed, as `useStationSources` would give it, without the rest. */
-export function useNowPlayingHref(stationId: StationId): string | undefined {
+/** `stationId`'s song feed, as `useStationSources` would give it, with the server it names. */
+export function useNowPlayingSource(stationId: StationId): SourceAddress | undefined {
 	let manifest = useManifest()
-	return manifest === undefined ? undefined : nowPlayingHref(manifest, stationId)
+	return manifest === undefined ? undefined : nowPlayingSource(manifest, stationId)
 }

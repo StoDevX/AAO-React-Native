@@ -31,6 +31,7 @@ import {
 	TEXT_INDENT,
 } from './lib/metrics'
 import type {NormalizedEntry, Sense} from './types'
+import {useCampusSection} from '../campus/store'
 
 type Props = {
 	entry: NormalizedEntry
@@ -99,6 +100,7 @@ function SenseRow({
  * Presentational — the route that hosts it owns the title and the toolbar.
  */
 export function EntryDefinition({entry}: Props): React.ReactNode {
+	let {appName} = useCampusSection('branding')
 	let pronunciation = pronunciationText(entry.pronunciation)
 	let hasSeveralSenses = entry.senses.length > 1
 
@@ -179,7 +181,7 @@ export function EntryDefinition({entry}: Props): React.ReactNode {
 						padding({leading: TEXT_INDENT}),
 					]}
 				>
-					Collected by the humans of All About Olaf
+					Collected by the humans of {appName}
 				</Text>
 			</VStack>
 		</ScrollView>

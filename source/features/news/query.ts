@@ -47,7 +47,13 @@ export const namedNewsOptions = (source: string) =>
 			let resolved = resolveSource(manifest, REL_NEWS, queryKey[2], NEWS_TYPES)
 
 			let parser = parserFor(resolved.type)
-			let body = await fetchSourceBody(resolved.href, signal, 'News', parser.format)
+			let body = await fetchSourceBody(
+				resolved.href,
+				signal,
+				'News',
+				parser.format,
+				resolved.campus,
+			)
 
 			return parser.parse(body)
 		},

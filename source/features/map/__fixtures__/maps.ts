@@ -1,4 +1,4 @@
-import type {Campus} from '../../building-hours/types'
+import type {CampusId} from '../../../campuses/ids'
 import type {Building, FeatureCollection} from '../types'
 import carletonMap from './carleton-map.json'
 import stolafMap from './stolaf-map.json'
@@ -16,7 +16,7 @@ import stolafMap from './stolaf-map.json'
  * Cast through `unknown` because TypeScript widens a JSON file's coordinates
  * to plain number arrays, which the geometry's ring and point tuples reject.
  */
-export const UITEST_MAPS: Record<Campus, FeatureCollection<Building>> = {
-	stolaf: stolafMap as unknown as FeatureCollection<Building>,
-	carleton: carletonMap as unknown as FeatureCollection<Building>,
+export const UITEST_MAPS: Partial<Record<CampusId, FeatureCollection<Building>>> = {
+	'edu.stolaf': stolafMap as unknown as FeatureCollection<Building>,
+	'edu.carleton': carletonMap as unknown as FeatureCollection<Building>,
 }

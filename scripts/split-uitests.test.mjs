@@ -354,9 +354,12 @@ describe('describePlan', () => {
 
 describe('formatMatrix', () => {
 	it('renders one -only-testing flag per item', () => {
-		assert.deepEqual(formatMatrix([[{name: 'ModuleATests', weight: 1}]], 'AllAboutOlafUITests'), {
-			include: [{shard: 1, tests: '-only-testing:AllAboutOlafUITests/ModuleATests'}],
-		})
+		assert.deepEqual(
+			formatMatrix([[{name: 'ModuleATests', weight: 1}]], 'AllAboutAnythingUITests'),
+			{
+				include: [{shard: 1, tests: '-only-testing:AllAboutAnythingUITests/ModuleATests'}],
+			},
+		)
 	})
 })
 
@@ -401,28 +404,41 @@ describe('the real suite', () => {
 		assert.deepEqual(placed.sort(), classes.map((c) => c.className).sort())
 	})
 
-	it('places every method in the suite exactly once', () => {
+	it('places every method in the suite exactly once, an inherited one once per subclass', () => {
 		// Counted straight from the Swift text rather than from discoverTests, so
 		// a method the planner drops or names twice cannot also shrink the target.
-		const declared = realTestFiles().flatMap((file) => [
-			...file.text.matchAll(/func\s+(test\w+)\s*\(/gu),
-		])
+		// Each top-level class runs its own methods, and those of a template it
+		// extends; a template runs none itself.
+		const classes = realTestFiles().flatMap((file) => {
+			let starts = [...file.text.matchAll(/^(?:final\s+)?class\s+(\w+)\s*:\s*(\w+)/gmu)]
+			return starts.map((start, i) => {
+				let body = file.text.slice(start.index, starts[i + 1]?.index)
+				let methods = [...body.matchAll(/func\s+(test\w+)\s*\(/gu)].length
+				return {name: start[1], parent: start[2], methods}
+			})
+		})
+		const methodsOf = new Map(classes.map((c) => [c.name, c.methods]))
+		const templates = new Set(classes.map((c) => c.parent).filter((name) => methodsOf.has(name)))
+		const runnable = classes.filter((c) => !templates.has(c.name))
+		const expected = runnable.reduce((n, c) => n + c.methods + (methodsOf.get(c.parent) ?? 0), 0)
 		const placed = packShards(weighMethods(discoverTests(realTestFiles()), {}), 3)
 			.flat()
 			.map((i) => i.name)
 
-		assert.equal(placed.length, declared.length)
+		assert.equal(placed.length, expected)
 		assert.equal(new Set(placed).size, placed.length)
 	})
 
 	it('finds every test class and nothing else', () => {
 		// Test classes are the ones declared in a *Tests.swift file, in any
-		// folder, whichever base class they extend. The base classes and page
-		// objects live in other files and hold no tests, so they are absent
-		// from both lists.
-		const declared = realTestFiles()
+		// folder, whichever base class they extend, less a template other
+		// test classes inherit from. The base classes and page objects live in
+		// other files and hold no tests, so they are absent from both lists.
+		const declarations = realTestFiles()
 			.filter((file) => /^\w*Tests\.swift$/u.test(basename(file.name)))
-			.flatMap((file) => [...file.text.matchAll(/class\s+(\w+)\s*:/gu)].map((m) => m[1]))
+			.flatMap((file) => [...file.text.matchAll(/class\s+(\w+)\s*:\s*(\w+)/gu)])
+		const templates = new Set(declarations.map((m) => m[2]))
+		const declared = declarations.map((m) => m[1]).filter((name) => !templates.has(name))
 		const found = discoverTests(realTestFiles()).map((c) => c.className)
 
 		// Every class in a file, not just its first: a method credited to the
@@ -445,5 +461,37 @@ describe('the real suite', () => {
 		const heaviest = Math.max(...items.map((i) => i.weight))
 
 		assert.ok(Math.max(...totals) - Math.min(...totals) <= heaviest)
+	})
+})
+
+describe('discoverTests with campus subclasses', () => {
+	const files = [
+		{
+			name: 'CampusSmokeTests.swift',
+			text: `class CampusSmokeTests: UITestCaseUnbooted {
+	func testHome() throws {}
+	func testHours() throws {}
+}
+/// Tags: campus:edu.stolaf
+final class StOlafSmokeTests: CampusSmokeTests {
+	override class var campus: Campus? { .stolaf }
+}
+/// Tags: campus:edu.carleton
+final class CarletonSmokeTests: CampusSmokeTests {
+	override class var campus: Campus? { .carleton }
+	func testSumo() throws {}
+}`,
+		},
+	]
+
+	it('runs each subclass with the tests it inherits', () => {
+		assert.deepEqual(discoverTests(files), [
+			{className: 'StOlafSmokeTests', methods: ['testHome', 'testHours']},
+			{className: 'CarletonSmokeTests', methods: ['testHome', 'testHours', 'testSumo']},
+		])
+	})
+
+	it('never schedules the template the subclasses inherit from', () => {
+		assert.ok(!discoverTests(files).some((entry) => entry.className === 'CampusSmokeTests'))
 	})
 })

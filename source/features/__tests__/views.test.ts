@@ -3,31 +3,35 @@ import {join} from 'node:path'
 import {describe, expect, test} from '@jest/globals'
 
 import {
-	HomeViews,
 	CUSTOM_SYMBOLS,
 	iconImage,
 	opensInBrowser,
+	viewTarget,
 	visibleViews,
 	type ViewType,
 } from '../views'
+import {campusById} from '../../campuses'
+
+/** St. Olaf's Home tiles, as its definition lists them. */
+const stolafTiles = () => campusById('edu.stolaf').home.tiles
+/** Carleton's Home tiles, as its definition lists them. */
+const carletonTiles = () => campusById('edu.carleton').home.tiles
 
 describe('the views registry', () => {
 	test('no two tiles share a title and a target', () => {
-		let keys = HomeViews().map((view) =>
-			JSON.stringify([view.title, view.type === 'view' ? view.view : view.url]),
-		)
+		let keys = stolafTiles().map((view) => JSON.stringify([view.title, viewTarget(view)]))
 
 		expect(new Set(keys).size).toBe(keys.length)
 	})
 })
 
-describe('HomeViews', () => {
+describe("St. Olaf's Home tiles", () => {
 	// Written out in full so a change to a tile shows up here.
 	test('are the tiles the home screen has always had, in their order', () => {
-		let tiles = HomeViews().map((view) => ({
+		let tiles = stolafTiles().map((view) => ({
 			title: view.title,
 			icon: view.icon,
-			target: view.type === 'view' ? view.view : view.url,
+			target: viewTarget(view),
 			devOnly: view.devOnly ?? false,
 			disabled: view.disabled ?? false,
 		}))
@@ -74,7 +78,7 @@ describe('HomeViews', () => {
 			{
 				title: 'Map',
 				icon: 'map.fill',
-				target: '/map?campus=stolaf',
+				target: '/map?campus=edu.stolaf',
 				devOnly: false,
 				disabled: false,
 			},
@@ -136,13 +140,6 @@ describe('HomeViews', () => {
 				disabled: false,
 			},
 			{
-				title: 'Carleton Campus',
-				icon: 'building.2.fill',
-				target: '/hours?campus=carleton',
-				devOnly: true,
-				disabled: false,
-			},
-			{
 				title: 'Developer',
 				icon: 'hammer.fill',
 				target: '/developer',
@@ -153,9 +150,66 @@ describe('HomeViews', () => {
 	})
 })
 
+describe("Carleton's Home tiles", () => {
+	let carleton = () => carletonTiles()
+
+	test("are the CARLS app's tiles, in its order and under its names", () => {
+		expect(carleton().map((view) => [view.title, viewTarget(view)])).toEqual([
+			['Menus', '/menus/burton'],
+			['Workday', 'https://www.carleton.edu/workday/'],
+			['OneCard', 'https://get.cbord.com/carletonstolaf/full/prelogin.php'],
+			['Building Hours', '/hours?campus=edu.carleton'],
+			['Calendar', '/calendar'],
+			['Directory', '/contacts'],
+			['KRLX', 'radio:krlx'],
+			['SUMO', '/carleton-sumo'],
+			['The Carletonian', '/carletonian'],
+			['Transportation', '/transit'],
+			['Convo', '/carleton-convos'],
+			['Campus Map', '/map?campus=edu.carleton'],
+			['Dictionary', '/dictionary'],
+			['Student Orgs', 'https://www.carleton.edu/student-organizations/'],
+			['Moodle', 'https://moodle.carleton.edu/'],
+			['Carleton News', '/carleton-news'],
+			['Developer', '/developer'],
+		])
+	})
+
+	test('show every tile but Developer outside dev mode', () => {
+		let titles = visibleViews(carleton(), {isDev: false}).map((view) => view.title)
+
+		expect(titles).toHaveLength(carleton().length - 1)
+		expect(titles).not.toContain('Developer')
+	})
+
+	test("share only the screens that read each campus's own data, and Developer", () => {
+		let stOlafTargets = new Set(stolafTiles().map(viewTarget))
+		let shared = carleton()
+			.map(viewTarget)
+			.filter((target) => stOlafTargets.has(target))
+
+		expect(shared).toEqual(['/calendar', '/transit', '/dictionary', '/developer'])
+	})
+})
+
+describe('opensInBrowser for a station', () => {
+	test('is false, since a station opens the Now Playing sheet', () => {
+		let krlx = carletonView((v) => v.type === 'radio')
+		expect(opensInBrowser(krlx)).toBe(false)
+	})
+})
+
+function carletonView(matches: (view: ViewType) => boolean): ViewType {
+	let found = carletonTiles().filter(matches)
+	if (found.length !== 1) {
+		throw new Error(`expected one matching view, found ${found.length}`)
+	}
+	return found[0]
+}
+
 describe('visibleViews', () => {
 	test('leaves out disabled and dev-only views outside dev mode', () => {
-		let titles = visibleViews(HomeViews(), {isDev: false}).map((view) => view.title)
+		let titles = visibleViews(stolafTiles(), {isDev: false}).map((view) => view.title)
 
 		expect(titles).not.toContain('Athletics')
 		expect(titles).not.toContain('Developer')
@@ -163,14 +217,14 @@ describe('visibleViews', () => {
 	})
 
 	test('adds the dev-only views in dev mode, after the rest', () => {
-		let titles = visibleViews(HomeViews(), {isDev: true}).map((view) => view.title)
+		let titles = visibleViews(stolafTiles(), {isDev: true}).map((view) => view.title)
 
-		expect(titles.slice(-3)).toEqual(['Athletics', 'Carleton Campus', 'Developer'])
+		expect(titles.slice(-2)).toEqual(['Athletics', 'Developer'])
 	})
 })
 
 function onlyView(matches: (view: ViewType) => boolean): ViewType {
-	let found = HomeViews().filter(matches)
+	let found = stolafTiles().filter(matches)
 	if (found.length !== 1) {
 		throw new Error(`expected one matching view, found ${found.length}`)
 	}
@@ -224,5 +278,12 @@ describe('custom symbols', () => {
 describe('Olaf Messenger', () => {
 	test("shows the paper's castle", () => {
 		expect(onlyView((v) => v.title === 'Olaf Messenger').icon).toBe('olaf-messenger')
+	})
+})
+
+describe('The Carletonian', () => {
+	test("shows the paper's C", () => {
+		let tile = carletonTiles().find((v) => v.title === 'The Carletonian')
+		expect(tile?.icon).toBe('carletonian')
 	})
 })

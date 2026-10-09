@@ -23,6 +23,7 @@ import {useQuery} from '@tanstack/react-query'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 
 import {MenuPickerRow} from '../../../source/components/menu-picker-row'
+import {useCampusId} from '../../../source/features/campus/store'
 import {Tag} from '../../../source/components/rows'
 import {SyncedTextField} from '../../../source/components/synced-text-field'
 import {sendAfterConfirming} from '../../../source/features/developer/api-test/confirm-send'
@@ -132,7 +133,8 @@ export default function APITestComposePage(): React.ReactNode {
 	} = useLocalSearchParams<{path?: string; method?: string; request?: string}>()
 	let route = routeKey(method, path)
 
-	let {data: sections = []} = useQuery(serverRoutesOptions)
+	let campus = useCampusId()
+	let {data: sections = []} = useQuery(serverRoutesOptions(campus))
 	let inputs = React.useMemo(
 		() =>
 			sections.flatMap((section) => section.data).find((entry) => entry.key === route)?.inputs ??

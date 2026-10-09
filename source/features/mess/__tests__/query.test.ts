@@ -16,22 +16,24 @@ import {parseLightPosts} from '../lib/issues'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {QueryClient, onlineManager} from '@tanstack/react-query'
 import {queryClient} from '../../../init/tanstack-query'
-import {
-	MissingMessStoryError,
-	messAboutOptions,
-	messStaffOptions,
-	messCategoryOptions,
-	messFeedOptions,
-	messGalleryOptions,
-	messPlaylistPageOptions,
-	messSeriesOptions,
-	messStoryOptions,
-	staffProfileOptions,
-	messIssueOptions,
-	messIssuesOptions,
-} from '../query'
+import {MissingMessStoryError, paperQueries} from '../query'
 import {messKeys} from '../lib/keys'
 import type {CaptionedPhoto, LightPost, MessStory, SpotifyRef} from '../types'
+import {MESSENGER} from './in-messenger'
+
+const {
+	feedOptions: messFeedOptions,
+	storyOptions: messStoryOptions,
+	categoryOptions: messCategoryOptions,
+	issuesOptions: messIssuesOptions,
+	issueOptions: messIssueOptions,
+	seriesOptions: messSeriesOptions,
+	playlistPageOptions: messPlaylistPageOptions,
+	galleryOptions: messGalleryOptions,
+	staffProfileOptions,
+	aboutOptions: messAboutOptions,
+	staffOptions: messStaffOptions,
+} = paperQueries(MESSENGER)
 
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
@@ -58,7 +60,7 @@ function runPage<T>(options: {queryFn?: unknown}, pageParam: number): Promise<T>
 }
 
 /** This spring's posts as the issue list parses them. */
-const spring = parseLightPosts(springPosts, parseMessCategories(categories))
+const spring = parseLightPosts(springPosts, parseMessCategories(categories), MESSENGER)
 
 afterEach(() => {
 	jest.clearAllMocks()
@@ -96,7 +98,7 @@ function retitled(id: number, from: number, title: string): RawPost {
 
 /** A fixture Variety post as the app parses it. */
 function story(id: number): MessStory {
-	let [parsed] = parseMessPosts([rawPost(id)], parseMessCategories(categories))
+	let [parsed] = parseMessPosts([rawPost(id)], parseMessCategories(categories), MESSENGER)
 	if (!parsed) throw new Error(`fixture post ${id} did not parse`)
 	return parsed
 }
@@ -163,7 +165,7 @@ describe('messFeedOptions', () => {
 
 	// The manifest sets the feed's page size, so the first page stands for it.
 	test('asks for another page after one as long as the first, and none after a shorter one', () => {
-		let stories = parseMessPosts(posts, parseMessCategories(categories))
+		let stories = parseMessPosts(posts, parseMessCategories(categories), MESSENGER)
 		let short = stories.slice(0, 2)
 		expect(messFeedOptions.getNextPageParam(stories, [stories], 1, [1])).toBe(2)
 		expect(messFeedOptions.getNextPageParam(stories, [stories, stories], 2, [1, 2])).toBe(3)
@@ -360,6 +362,7 @@ describe('messSeriesOptions', () => {
 		let episode = parseMessPosts(
 			[retitled(1, 36819, 'Mouse friends episode 2: Mary! Gold!')],
 			parseMessCategories(categories),
+			MESSENGER,
 		)
 		queryClient.setQueryData(messKeys.category(63), {pages: [episode], pageParams: [1]})
 
@@ -465,6 +468,7 @@ function playlistStory(id: number): MessStory {
 	let [parsed] = parseMessPosts(
 		crosswordPlaylist.filter((p) => p.id === id),
 		parseMessCategories(categories),
+		MESSENGER,
 	)
 	if (!parsed) throw new Error(`fixture post ${id} did not parse`)
 	return parsed

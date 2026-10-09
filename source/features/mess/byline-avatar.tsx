@@ -3,7 +3,7 @@ import {Circle} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier, foregroundStyle, frame} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {wash} from './palette'
-import {staffProfileOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {RemotePhoto} from './remote-photo'
 import type {Byline} from './types'
 
@@ -22,6 +22,7 @@ const PLACEHOLDER = [
  * writers have no profile at all.
  */
 export function BylineAvatar({writer}: {writer: Byline | undefined}): React.ReactNode {
+	let {staffProfileOptions} = usePaperQueries()
 	let profile = useQuery({
 		...staffProfileOptions(writer?.id ?? 0),
 		enabled: writer !== undefined,

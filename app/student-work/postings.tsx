@@ -6,13 +6,14 @@ import {SearchBar} from '../../source/components/search-bar'
 import {NO_AREAS, studentWorkAreasOptions} from '../../source/features/sis/student-work/areas-query'
 import {prefillFromParams} from '../../source/features/sis/student-work/prefill'
 import {PostingsList} from '../../source/features/sis/student-work/postings-list'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 /// Mirrored by TestIdentifiers.StudentWork.postingsTitle.
 const TITLE = 'Job Postings'
 
 /// Student Work's postings, opened from a tile or preset with its filters
 /// prefilled from the route; see prefill.ts for the parameters.
-export default function StudentWorkPostingsPage(): React.ReactNode {
+function StudentWorkPostingsPage(): React.ReactNode {
 	let params = useLocalSearchParams<{
 		area?: string
 		posted?: string
@@ -42,3 +43,9 @@ export default function StudentWorkPostingsPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'studentWork',
+	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	StudentWorkPostingsPage,
+)

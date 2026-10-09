@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import {spawnSync} from 'node:child_process'
 import {describe, it} from 'node:test'
 import {normalizeCalendarInterval} from './index.ts'
 import type {CalendarInterval} from './index.ts'
@@ -8,6 +9,39 @@ describe('normalizeCalendarInterval', () => {
 	for (let {name, interval, timezone, expected} of CALENDAR_CASES) {
 		it(name, () => {
 			assert.deepEqual(normalizeCalendarInterval(interval, timezone), expected)
+		})
+	}
+
+	it('ends a day with a skipped midnight at the following local midnight', () => {
+		assert.deepEqual(normalizeCalendarInterval({date: '2026-09-06'}, 'America/Santiago'), {
+			startMs: Date.UTC(2026, 8, 6, 4),
+			endMs: Date.UTC(2026, 8, 7, 3),
+			calendarDays: 1,
+		})
+	})
+
+	for (let timezone of ['UTC', 'America/Los_Angeles', 'Asia/Tokyo']) {
+		it('uses calendar dates independently of process timezone ' + timezone, () => {
+			let result = spawnSync(
+				process.execPath,
+				[
+					'--input-type=module',
+					'-e',
+					'import {normalizeCalendarInterval} from ' +
+						JSON.stringify(new URL('calendar.ts', import.meta.url).href) +
+						';' +
+						'const cases = ' +
+						JSON.stringify(CALENDAR_CASES) +
+						';' +
+						'console.log(JSON.stringify(cases.map(({interval, timezone}) => normalizeCalendarInterval(interval, timezone))))',
+				],
+				{env: {...process.env, TZ: timezone}, encoding: 'utf8'},
+			)
+			assert.equal(result.status, 0, result.stderr)
+			assert.deepEqual(
+				JSON.parse(result.stdout),
+				CALENDAR_CASES.map(({expected}) => expected),
+			)
 		})
 	}
 

@@ -82,7 +82,8 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
 	let parser = parserFor(resolved.type)
-	let fetchPage = (href: string) => fetchSourceBody(href, signal, 'Calendar', parser.format)
+	let fetchPage = (href: string) =>
+		fetchSourceBody(href, signal, 'Calendar', parser.format, resolved.campus)
 	let body = parser.fetch
 		? await parser.fetch(resolved.href, fetchPage)
 		: await fetchPage(resolved.href)

@@ -2,8 +2,9 @@ import {describe, expect, it} from '@jest/globals'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
 import {parseMessCategories} from '../posts'
 import {filterTree} from '../filter'
+import {MESSENGER} from '../../../../campuses/edu-stolaf/paper'
 
-const tree = filterTree(parseMessCategories(categoriesJson))
+const tree = filterTree(parseMessCategories(categoriesJson), MESSENGER.mainSections)
 
 /** The column names under one section of the tree. */
 const columnsOf = (section: string): string[] | undefined =>
@@ -50,8 +51,8 @@ describe('filterTree', () => {
 		let withoutSpecial = parseMessCategories(categoriesJson).filter(
 			(c) => c.name !== 'Special Edition' && c.parent !== 1140,
 		)
-		expect(filterTree(withoutSpecial).map((branch) => branch.section.name)).not.toContain(
-			'Special Edition',
-		)
+		expect(
+			filterTree(withoutSpecial, MESSENGER.mainSections).map((branch) => branch.section.name),
+		).not.toContain('Special Edition')
 	})
 })

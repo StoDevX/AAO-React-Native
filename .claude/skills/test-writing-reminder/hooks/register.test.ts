@@ -44,7 +44,7 @@ describe('isTestFile', () => {
 	const OTHER_FILES = [
 		'source/features/dining/menu.ts',
 		'source/lib/testing.ts',
-		'ios/AllAboutOlaf/AppDelegate.swift',
+		'ios/AllAboutAnything/AppDelegate.swift',
 		'docs/uitests.md',
 	]
 

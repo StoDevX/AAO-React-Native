@@ -5,8 +5,9 @@ import type {Block, CaptionedPhoto} from '../../types'
 import {parseBlocks} from '../blocks'
 import {parseFeature} from '../feature'
 import {parseMessCategories, parseMessPosts} from '../posts'
+import {MESSENGER} from '../../../../campuses/edu-stolaf/paper'
 
-const stories = parseMessPosts(fixtures, parseMessCategories(categoriesJson))
+const stories = parseMessPosts(fixtures, parseMessCategories(categoriesJson), MESSENGER)
 
 /** The old St. Olaf pages site, which the older posts' body pictures still name. */
 const PAGES = 'https://pages.stolaf.edu/messenger/wp-content/uploads/sites'

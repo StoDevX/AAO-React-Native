@@ -10,6 +10,8 @@ import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {EntryDefinition} from '../../../source/features/dictionary/entry-definition'
 import {normalizeEntry} from '../../../source/features/dictionary/lib/entry'
 import {wordByTermOptions} from '../../../source/features/dictionary/query'
+import {useCampusId, useCampusSection} from '../../../source/features/campus/store'
+import {sectionServer} from '../../../source/features/campus/section-server'
 import {useDictionaryDraftStore} from '../../../source/features/dictionary/store'
 
 const styles = StyleSheet.create({
@@ -22,7 +24,9 @@ const styles = StyleSheet.create({
 export default function DictionaryEntryPage(): React.ReactNode {
 	let router = useRouter()
 	let {word} = useLocalSearchParams<{word: string}>()
-	let {data: raw, isLoading} = useQuery(wordByTermOptions(word))
+	let dictionary = useCampusSection('dictionary')
+	let server = sectionServer(useCampusId(), dictionary)
+	let {data: raw, isLoading} = useQuery(wordByTermOptions(word, server))
 
 	// Hoisted rather than normalised again down at `EntryDefinition`'s own
 	// prop: `startDraft` below needs the exact entry the reader is looking
@@ -51,13 +55,16 @@ export default function DictionaryEntryPage(): React.ReactNode {
 		<>
 			<Stack.Title>Dictionary</Stack.Title>
 			<SheetCloseButton />
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Suggest an Edit"
-					icon="exclamationmark.bubble"
-					onPress={suggestAnEdit}
-				/>
-			</Stack.Toolbar>
+			{/* Suggestions are filed against the campus's dictionary data, where it takes them. */}
+			{dictionary?.acceptsSuggestions ? (
+				<Stack.Toolbar placement="right">
+					<Stack.Toolbar.Button
+						accessibilityLabel="Suggest an Edit"
+						icon="exclamationmark.bubble"
+						onPress={suggestAnEdit}
+					/>
+				</Stack.Toolbar>
+			) : null}
 		</>
 	)
 

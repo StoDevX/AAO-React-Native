@@ -64,7 +64,18 @@
               ]
             }
           ],
-          "exceptions": []
+          "exceptions": [
+            {
+              "date": "2026-10-10",
+              "schedule": [
+                {
+                  "title": "By appointment",
+                  "notes": "Call before visiting.",
+                  "hours": []
+                }
+              ]
+            }
+          ]
         },
         "spring": {
           "schedule": [

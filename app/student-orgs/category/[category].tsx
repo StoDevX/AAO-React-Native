@@ -11,6 +11,7 @@ import {studentOrgsOptions} from '../../../source/features/student-orgs/query'
 import {filterAndGroupOrgs} from '../../../source/features/student-orgs/search'
 import type {StudentOrgType} from '../../../source/features/student-orgs/types'
 import {SearchBar} from '../../../source/components/search-bar'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 function CategoryOrgsView(): React.ReactNode {
 	let {category} = useLocalSearchParams<{category: string}>()
@@ -99,7 +100,7 @@ function CategoryOrgsView(): React.ReactNode {
 	)
 }
 
-export default function StudentOrgCategoryPage(): React.ReactNode {
+function StudentOrgCategoryPage(): React.ReactNode {
 	let {category} = useLocalSearchParams<{category: string}>()
 
 	return (
@@ -109,3 +110,9 @@ export default function StudentOrgCategoryPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'studentOrgs',
+	{title: 'Student Orgs', noun: 'student organizations', systemImage: 'person.3'},
+	StudentOrgCategoryPage,
+)

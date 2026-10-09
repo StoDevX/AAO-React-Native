@@ -1,4 +1,6 @@
-import {client, isHTTPError} from '@frogpond/api'
+import {apiFetch, clientFor, isHTTPError} from '@frogpond/api'
+import {requireManifestServer} from './manifest-server'
+import type {SourceCampus} from './types'
 
 const FETCH_TIMEOUT_MS = 10_000
 
@@ -33,7 +35,7 @@ async function fetchWithTimeout(href: string, signal: AbortSignal): Promise<Resp
 	let timer = setTimeout(abort, FETCH_TIMEOUT_MS)
 
 	try {
-		return await fetch(href, {signal: controller.signal})
+		return await apiFetch(href, {signal: controller.signal})
 	} finally {
 		clearTimeout(timer)
 		signal.removeEventListener('abort', abort)
@@ -78,9 +80,9 @@ async function errorBody(response: Response): Promise<unknown> {
 }
 
 /// Fetches and parses the body of a resolved source, dispatching on whether
-/// its href is absolute. A relative href goes through `client`, which
-/// resolves against the configured api root (honouring the Settings
-/// server-URL override and mDNS discovery) and already carries ky's 10-second
+/// its href is absolute. A relative href goes through its campus's client,
+/// which resolves against that campus's configured server (honouring the
+/// Settings server-URL override and mDNS discovery) and already carries ky's 10-second
 /// default timeout. An absolute href bypasses the api root by design, so it
 /// gets the same 10-second timeout applied manually. An error status from
 /// either kind throws `SourceFetchError`.
@@ -88,15 +90,19 @@ async function errorBody(response: Response): Promise<unknown> {
 /// `format` picks the body parser: `'json'` (the default) for sources like
 /// WordPress's REST API, `'text'` for sources whose media type is not JSON —
 /// RSS (`application/rss+xml`), for instance.
+///
+/// `campus` picks that server, by campus id: the one the manifest names, or
+/// the manifest's own server where it names none.
 export async function fetchSourceBody(
 	href: string,
 	signal: AbortSignal,
 	label: string,
 	format: 'json' | 'text' = 'json',
+	campus?: SourceCampus,
 ): Promise<unknown> {
 	if (!isAbsoluteHref(href)) {
 		try {
-			let request = client.get(href, {signal})
+			let request = clientFor(campus ?? requireManifestServer()).get(href, {signal})
 			return await (format === 'text' ? request.text() : request.json())
 		} catch (error) {
 			// The same error an absolute source's refusal throws, so a caller reads a

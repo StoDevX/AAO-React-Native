@@ -7,10 +7,20 @@ import {MenuItemDetailView} from '../../modules/food-menu/food-item-detail'
 import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../source/features/menus/query'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {OFFLINE_MESSAGE, menuView} from '../../source/features/menus/lib/menu-view'
+import {campusFromParam} from '../../source/features/campus/campus-param'
 
 export default function MenuItemDetailPage(): React.ReactNode {
-	let {source, cafe, cafeId, day, itemId} = useLocalSearchParams<{
+	let {
+		source,
+		server: serverParam,
+		cafe,
+		cafeId,
+		day,
+		itemId,
+	} = useLocalSearchParams<{
 		source: string
+		/** The menus server the café's menu came from, by campus id. */
+		server?: string
 		/** A BonApp cafe's name, as the dining screens name theirs. */
 		cafe?: string
 		/** A BonApp cafe's id, as the BonApp Picker names its cafe. */
@@ -19,14 +29,16 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		day?: string
 		itemId: string
 	}>()
+	// A link from before servers were named, or with an id this build lacks, reads the active campus's.
+	let server = campusFromParam(serverParam)
 
 	let bonAppQuery = useQuery({
-		...bonAppMenuItemOptions(cafeId ? {id: cafeId} : (cafe ?? ''), day ?? '', itemId),
+		...bonAppMenuItemOptions(server, cafeId ? {id: cafeId} : (cafe ?? ''), day ?? '', itemId),
 		enabled: source === 'bonapp',
 	})
 
 	let pauseQuery = useQuery({
-		...pauseMenuItemOptions(itemId),
+		...pauseMenuItemOptions(server, itemId),
 		enabled: source === 'pause',
 	})
 

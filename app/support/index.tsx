@@ -14,10 +14,13 @@ import {
 import {Stack, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
+import {openUrl} from '@frogpond/open-url'
+
 import {callPhone} from '../../source/components/call-phone'
-import {NavigationRow} from '../../source/components/rows'
+import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
-import {contactsOptions} from '../../source/features/directory/contacts-query'
+import {useCampus, useCampusId} from '../../source/features/campus/store'
+import {contactsOptionsFor} from '../../source/features/directory/contacts-query'
 import {FaqBannerSlot} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 import {ShareTelemetryToggle} from '../../source/features/telemetry/consent-toggle'
@@ -38,22 +41,26 @@ type EmergencyButton = {title: string; phoneNumber?: string}
 /// 911 is the one number that never changes, so it is the only one written here.
 const EMERGENCY_NUMBER = '911'
 
-/// Titles of the contacts, in data/contact-info/, whose numbers the buttons dial.
-const PUBSAFE = 'PubSafe'
-const SARN = 'SARN'
-
 const EMERGENCY_BUTTON = [buttonStyle('bordered'), frame({maxWidth: FILL_WIDTH})]
 
 /// Where to get help: campus emergency contacts, the FAQs, and the problem report.
 export default function SupportPage(): React.ReactNode {
 	let router = useRouter()
-	let {data: contacts} = useQuery(contactsOptions)
+	let campus = useCampus()
+	let {appName} = campus.branding
+	let helpdesk = campus.support?.helpdesk
+	let {data: contacts} = useQuery({
+		...contactsOptionsFor(useCampusId()),
+		enabled: campus.contacts !== undefined,
+	})
 
 	let numberFor = (title: string) =>
 		contacts?.find((contact) => contact.title === title)?.phoneNumber
 	let buttons: EmergencyButton[] = [
-		{title: PUBSAFE, phoneNumber: numberFor(PUBSAFE)},
-		{title: SARN, phoneNumber: numberFor(SARN)},
+		...(campus.support?.emergency ?? []).map(({label, contact}) => ({
+			title: label,
+			phoneNumber: numberFor(contact),
+		})),
 		{title: EMERGENCY_NUMBER, phoneNumber: EMERGENCY_NUMBER},
 	]
 
@@ -94,12 +101,37 @@ export default function SupportPage(): React.ReactNode {
 						</HStack>
 
 						<Section>
-							<NavigationRow onPress={() => router.navigate('/faq')} title="FAQs" />
+							{campus.faqs ? (
+								<NavigationRow onPress={() => router.navigate('/faq')} title="FAQs" />
+							) : null}
 							<NavigationRow
 								onPress={() => router.navigate('/report-problem')}
 								title="Send Feedback"
 							/>
 						</Section>
+
+						{helpdesk ? (
+							<Section
+								footer={
+									<Text>{`For a problem with ${appName} itself, use Send Feedback instead: ${helpdesk.name} doesn’t support the app.`}</Text>
+								}
+								title={`${helpdesk.name} Helpdesk`}
+							>
+								<DisclosureRow
+									destination="external"
+									detail={helpdesk.covers}
+									onPress={() => openUrl(helpdesk.serviceCatalog)}
+									title="Open a Ticket"
+								/>
+								<DisclosureRow
+									destination="action"
+									onPress={() =>
+										callPhone(helpdesk.phoneNumber, {title: `Call the ${helpdesk.name} Helpdesk`})
+									}
+									title="Call the Helpdesk"
+								/>
+							</Section>
+						) : null}
 
 						<Section>
 							<ShareTelemetryToggle />

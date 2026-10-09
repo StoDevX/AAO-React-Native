@@ -18,9 +18,9 @@ function testCase(name, result, durationInSeconds) {
 function tree(...cases) {
 	return [
 		{
-			name: 'AllAboutOlaf',
+			name: 'AllAboutAnything',
 			nodeType: 'Test Plan',
-			children: [{name: 'AllAboutOlafUITests', nodeType: 'Test Suite', children: cases}],
+			children: [{name: 'AllAboutAnythingUITests', nodeType: 'Test Suite', children: cases}],
 		},
 	]
 }

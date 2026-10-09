@@ -19,6 +19,7 @@ import {
 import {credentialsOptions} from '../../../source/lib/login'
 import {RecentPopularPrintersResponse} from '../../../source/lib/stoprint/types'
 import {groupBy} from '@frogpond/collections'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -202,7 +203,7 @@ function PrinterListLoader(): React.ReactNode {
 	return <PrinterListView job={job} />
 }
 
-export default function PrinterListPage(): React.ReactNode {
+function PrinterListPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Select Printer</Stack.Title>
@@ -210,3 +211,9 @@ export default function PrinterListPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'printing',
+	{title: 'stoPrint', noun: 'printing', systemImage: 'printer'},
+	PrinterListPage,
+)

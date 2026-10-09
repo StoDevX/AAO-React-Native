@@ -19,7 +19,9 @@ import {SheetSection} from '@frogpond/sheet-section'
 
 import {type AppIconName, previewFor} from '../../images/icons'
 import {type IconEntry, galleryColumns, iconsByGroup} from '../../source/features/customize/icons'
+import {useCampusSection} from '../../source/features/campus/store'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 /// Three tiles fit across an iPhone 17e's inset section with room for captions.
 const TILE = 76
@@ -56,15 +58,16 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default function AppIconPage(): React.ReactNode {
+function AppIconPage(): React.ReactNode {
 	let {current, apply} = useAppIcon()
+	let appIcons = useCampusSection('appIcons')
 
 	return (
 		<>
 			<Stack.Title>App Icon</Stack.Title>
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-app-icon')]}>
 				<Form>
-					{iconsByGroup().map(({group, icons}) => (
+					{iconsByGroup(appIcons).map(({group, icons}) => (
 						<SheetSection key={group} title={group}>
 							<IconGrid current={current.type} icons={icons} onChoose={apply} />
 						</SheetSection>
@@ -171,3 +174,9 @@ function IconTile({icon, isCurrent, onChoose}: IconTileProps): React.ReactNode {
 		</Button>
 	)
 }
+
+export default requiresSection(
+	'appIcons',
+	{title: 'App Icon', noun: 'alternate app icons', systemImage: 'app.badge'},
+	AppIconPage,
+)

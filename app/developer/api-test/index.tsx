@@ -13,9 +13,11 @@ import {RouteEntry, serverRoutesOptions} from '../../../source/features/develope
 import {sendAfterConfirming} from '../../../source/features/developer/api-test/confirm-send'
 import {inputSummary, nextStep} from '../../../source/features/developer/api-test/util/inputs'
 import {methodColor} from '../../../source/features/developer/api-test/util/method'
+import {useCampusId} from '../../../source/features/campus/store'
 
 export default function APITestPage(): React.ReactNode {
 	let router = useRouter()
+	let campus = useCampusId()
 
 	// The path is only read when the reader hits Search, but it has to be held
 	// here as well: the search field is the one place it lives otherwise, and a
@@ -28,7 +30,7 @@ export default function APITestPage(): React.ReactNode {
 		isLoading: isRoutesLoading,
 		isError: isRoutesError,
 		refetch: routesRefetch,
-	} = useQuery(serverRoutesOptions)
+	} = useQuery(serverRoutesOptions(campus))
 
 	const editRoute = React.useCallback(
 		(route: RouteEntry) =>

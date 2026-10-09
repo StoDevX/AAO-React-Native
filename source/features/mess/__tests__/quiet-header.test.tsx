@@ -6,6 +6,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {messKeys} from '../lib/keys'
 import {QuietHeader} from '../quiet-header'
 import type {MessStory, StaffProfile} from '../types'
+import {InMessenger} from './in-messenger'
 
 const POEM: MessStory = {
 	id: 37010,
@@ -55,7 +56,9 @@ afterEach(() => {
 async function renderHeader(story: MessStory) {
 	await render(
 		<QueryClientProvider client={queryClient}>
-			<QuietHeader story={story} />
+			<InMessenger>
+				<QuietHeader story={story} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

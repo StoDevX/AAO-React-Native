@@ -28,6 +28,39 @@ final class UITestResetChannel {
 	private let directory: URL
 	private let name: String
 	private let onRequest: (Request) -> Void
+	/// The campus the request being answered names, which the reloaded
+	/// JavaScript reads through `campusForTest`.
+	private var pendingCampus: String?
+
+	/// The one argument a reset may change without a relaunch: the campus a
+	/// test names (`--campus <domain>`).
+	static let campusFlag = "--campus"
+
+	/// `arguments` without the campus a test names.
+	static func withoutCampus(_ arguments: [String]) -> [String] {
+		var kept: [String] = []
+		var skipNext = false
+		for argument in arguments {
+			if skipNext {
+				skipNext = false
+				continue
+			}
+			if argument == campusFlag {
+				skipNext = true
+				continue
+			}
+			kept.append(argument)
+		}
+		return kept
+	}
+
+	/// The value after `--campus` in `arguments`, or nil.
+	static func campus(in arguments: [String]) -> String? {
+		guard let index = arguments.firstIndex(of: campusFlag), index + 1 < arguments.count else {
+			return nil
+		}
+		return arguments[index + 1]
+	}
 
 	/// The channel this launch was given, or nil when it was given none.
 	static func open(onRequest: @escaping (Request) -> Void) -> UITestResetChannel? {
@@ -63,7 +96,7 @@ final class UITestResetChannel {
 	/// The Darwin notification's name for a channel directory. The runner
 	/// builds the same name; see `UITestResetChannel` in `uitests/UITestCase.swift`.
 	static func notificationName(directory: String) -> String {
-		"AllAboutOlaf.uitest-reset:\(directory)"
+		"AllAboutAnything.uitest-reset:\(directory)"
 	}
 
 	func close() {
@@ -83,10 +116,14 @@ final class UITestResetChannel {
 		}
 		// Launched with other arguments -- another text size, or state kept
 		// from the last launch -- the app is not the one the test asked for.
-		guard request.arguments == Array(ProcessInfo.processInfo.arguments.dropFirst()) else {
+		// The campus alone may differ: the reload takes the request's.
+		guard Self.withoutCampus(request.arguments)
+			== Self.withoutCampus(Array(ProcessInfo.processInfo.arguments.dropFirst()))
+		else {
 			reply(to: request.id, "refused")
 			return
 		}
+		pendingCampus = Self.campus(in: request.arguments)
 		onRequest(request)
 	}
 
@@ -108,6 +145,7 @@ final class UITestResetChannel {
 				UserDefaults.standard.removePersistentDomain(forName: bundleId)
 			}
 
+			Self.setCurrentCampus(self.pendingCampus)
 			Self.setPendingURL(url)
 			self.reply(to: id, "ok")
 		}
@@ -157,6 +195,24 @@ final class UITestResetChannel {
 		lock.lock()
 		defer { lock.unlock() }
 		pendingURL = url
+	}
+
+	/// The campus this test names: the launch's `--campus`, then each accepted
+	/// reset's. Nil for a test that names none.
+	nonisolated(unsafe) private static var currentCampus: String? =
+		campus(in: ProcessInfo.processInfo.arguments)
+
+	private static func setCurrentCampus(_ campus: String?) {
+		lock.lock()
+		defer { lock.unlock() }
+		currentCampus = campus
+	}
+
+	/// The campus the running test names, by domain, or nil.
+	static func campusForTest() -> String? {
+		lock.lock()
+		defer { lock.unlock() }
+		return currentCampus
 	}
 
 	/// The deep link a reset asked for, once: the reloaded JavaScript opens it

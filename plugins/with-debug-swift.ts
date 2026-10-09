@@ -4,7 +4,7 @@ import type {PbxprojSection, XcodeProject} from 'xcode'
 
 type Reference = {value: string; comment?: string}
 
-const APP_TARGET = 'AllAboutOlaf'
+const APP_TARGET = 'AllAboutAnything'
 
 const PACKAGE_URL = 'https://github.com/DebugSwift/DebugSwift.git'
 const PACKAGE_COMMENT = 'XCRemoteSwiftPackageReference "DebugSwift"'

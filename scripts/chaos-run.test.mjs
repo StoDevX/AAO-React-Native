@@ -566,7 +566,7 @@ test('collects the failure messages from xcresulttool test results', () => {
 	let results = {
 		testNodes: [
 			{
-				name: 'AllAboutOlaf',
+				name: 'AllAboutAnything',
 				nodeType: 'Test Plan',
 				children: [
 					{

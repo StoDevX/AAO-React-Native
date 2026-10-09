@@ -3,6 +3,7 @@ import {decode, fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
 import {format, subDays} from 'date-fns'
 import {z} from 'zod'
 import type {WireEvent} from './events'
+import {TEC_MAX_PAGES} from './tec-pages'
 
 // The key is always present. A venued event carries an object; a venue-less
 // one carries an empty array `[]` rather than omitting the key or nulling
@@ -18,6 +19,8 @@ const TecCategorySchema = z.object({
 	name: z.string(),
 })
 
+// Campus UI-test recordings keep only these fields (`TRIMS` in
+// scripts/campus-fixtures.mjs); a field read here is added there too.
 const TecEventSchema = z.object({
 	title: z.string(),
 	description: z.string(),
@@ -58,13 +61,6 @@ const TecPageSchema = z.object({
 	events: z.array(z.unknown()),
 	next_rest_url: z.string().optional(),
 })
-
-/**
- * The most pages `fetchTecPages` will follow: 500 events, over three times
- * what the campus calendar lists in a month of term. Reaching it means a
- * feed that never stops handing out a next page.
- */
-const TEC_MAX_PAGES = 10
 
 /** TEC's largest page. Its default is 10, which would reach the cap early. */
 const TEC_PAGE_SIZE = '50'

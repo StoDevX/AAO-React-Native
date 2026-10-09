@@ -11,6 +11,7 @@ import {waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {StaffMemberScreen, StaffScreen} from '../staff-screen'
 import {messKeys} from '../lib/keys'
 import {parseStaffProfiles} from '../lib/profiles'
+import {InMessenger} from './in-messenger'
 
 jest.mock(
 	'react-native-safe-area-context',
@@ -49,7 +50,11 @@ afterEach(() => {
 })
 
 function renderWithClient(node: React.ReactNode) {
-	return render(<QueryClientProvider client={queryClient}>{node}</QueryClientProvider>)
+	return render(
+		<QueryClientProvider client={queryClient}>
+			<InMessenger>{node}</InMessenger>
+		</QueryClientProvider>,
+	)
 }
 
 /** Answers every Mess fetch with nothing to list, as a paper with no staff years would. */
@@ -100,7 +105,7 @@ describe('StaffScreen', () => {
 		await renderWithClient(<StaffScreen />)
 		await waitForQueriesToSettle(queryClient)
 
-		expect(screen.getByText('The Messenger has listed no staff yet.')).toBeTruthy()
+		expect(screen.getByText('The Mess has listed no staff yet.')).toBeTruthy()
 	})
 
 	test('says the staff failed to load, and offers to try again', async () => {

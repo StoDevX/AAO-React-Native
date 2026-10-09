@@ -22,8 +22,10 @@ import {
 } from '../../source/features/quick-actions/destinations'
 import type {QuickActionDestination} from '../../source/features/quick-actions/destinations'
 import {isPickable} from '../../source/features/quick-actions/picker'
-import {useQuickActionsStore} from '../../source/features/quick-actions/store'
+import {pickedFor, useQuickActionsStore} from '../../source/features/quick-actions/store'
+import {useCampus} from '../../source/features/campus/store'
 import {iconImage} from '../../source/features/views'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	// Pushed inside the Customize sheet, which paints no background of its own.
@@ -36,15 +38,24 @@ const styles = StyleSheet.create({
 /// Wide enough for the widest symbol, so every title starts at one edge.
 const SYMBOL_COLUMN = 28
 
-export default function QuickActionsPage(): React.ReactNode {
-	let saved = useQuickActionsStore((state) => state.quickActions)
-	let toggle = useQuickActionsStore((state) => state.toggleQuickAction)
-	let reset = useQuickActionsStore((state) => state.resetQuickActions)
+function QuickActionsPage(): React.ReactNode {
+	let campus = useCampus()
+	let saved = useQuickActionsStore((state) => pickedFor(state, campus))
+	let toggleQuickAction = useQuickActionsStore((state) => state.toggleQuickAction)
+	let resetQuickActions = useQuickActionsStore((state) => state.resetQuickActions)
+	let toggle = React.useCallback(
+		(id: string) => toggleQuickAction(id, campus),
+		[campus, toggleQuickAction],
+	)
+	let reset = React.useCallback(() => resetQuickActions(campus), [campus, resetQuickActions])
 
 	// Resolved here rather than in a store selector: a selector returning a
 	// fresh array re-renders forever under zustand 5.
-	let picked = React.useMemo(() => resolveQuickActions(saved).map((d) => d.id), [saved])
-	let destinations = React.useMemo(() => quickActionDestinations(), [])
+	let picked = React.useMemo(
+		() => resolveQuickActions(saved, campus).map((d) => d.id),
+		[saved, campus],
+	)
+	let destinations = React.useMemo(() => quickActionDestinations(campus), [campus])
 
 	return (
 		<>
@@ -108,3 +119,9 @@ const DestinationRow = React.memo(function DestinationRow(
 		</Button>
 	)
 })
+
+export default requiresSection(
+	'quickActions',
+	{title: 'Quick Actions', noun: 'quick actions', systemImage: 'bolt'},
+	QuickActionsPage,
+)

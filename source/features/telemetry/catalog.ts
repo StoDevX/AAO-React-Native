@@ -1,5 +1,5 @@
 import type {AppIconName} from '../../../images/icons'
-import type {Campus} from '../building-hours/types'
+import type {CampusId} from '../../campuses'
 import type {StationId} from '../streaming/radio/stations'
 
 /**
@@ -39,7 +39,15 @@ export type MapGroupLabel = string & {readonly __brand: 'MapGroupLabel'}
 export type QuickActionId = string & {readonly __brand: 'QuickActionId'}
 
 /** The calendar feeds an event can come from; `other` for anything unrecognized. */
-export type CalendarSourceId = 'stolaf' | 'presence' | 'ksto-schedule' | 'krlx-schedule' | 'other'
+export type CalendarSourceId =
+	| 'stolaf'
+	| 'presence'
+	| 'carleton'
+	| 'ksto-schedule'
+	| 'krlx-schedule'
+	| 'sumo-schedule'
+	| 'upcoming-convos'
+	| 'other'
 
 /**
  * Marks an anonymous log on its way to Sentry, so `beforeSendLog` knows to
@@ -59,7 +67,8 @@ export type TelemetryEvent =
 	| {name: 'screen.view'; attributes: {route: RoutePattern}}
 	| {name: 'calendar.filter.apply'; attributes: {axis: 'category' | 'organization' | 'none'}}
 	| {name: 'map.search.empty'; attributes: Record<string, never>}
-	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: Campus}}
+	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: CampusId}}
+	| {name: 'campus.picked'; attributes: {campus: CampusId}}
 	| {
 			name: 'calendar.add_to_device'
 			attributes: {result: 'saved' | 'cancelled' | 'error'; source: CalendarSourceId}
@@ -116,6 +125,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'calendar.filter.apply': 'metric',
 	'map.search.empty': 'metric',
 	'map.group.open': 'metric',
+	'campus.picked': 'metric',
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',

@@ -1,21 +1,38 @@
-import {setApiRoot, setCarletonApiRoot} from '@frogpond/api'
+import {registerCampusServer} from '@frogpond/api'
+import {setManifestServer} from '@frogpond/data-sources'
+import {fixtureMode, uiTestCampus} from '@frogpond/launch-arguments'
+
+import {CAMPUSES, PLATFORM_SERVER} from '../campuses'
+import {installCampusFixtures} from '../features/campus/fixtures'
 import * as storage from '../lib/storage'
-import {CARLETON_DEFAULT_URL, DEFAULT_URL} from '../lib/constants'
 
-// Not user-configurable, so it is set before the await rather than after it:
-// the server URL setting points at a St. Olaf server and nothing there answers
-// Carleton's map endpoints, and anything reading `carletonClient` during the
-// storage round-trip would otherwise find it undefined.
-setCarletonApiRoot(new URL(CARLETON_DEFAULT_URL))
-
-const configureApiRoot = async () => {
-	let address = await storage.getServerAddress()
-
-	if (!address) {
-		address = DEFAULT_URL
+/**
+ * Points every campus's client at its default server. Synchronous, so a client
+ * asked for while the saved addresses are still being read finds its campus.
+ */
+export function registerDefaultServers(): void {
+	for (let campus of CAMPUSES) {
+		registerCampusServer(campus.id, new URL(campus.api.defaultUrl))
 	}
-
-	setApiRoot(new URL(address))
 }
 
-configureApiRoot()
+/** Points each campus a developer gave a server of its own at that server. */
+export async function applySavedServers(): Promise<void> {
+	await Promise.all(
+		CAMPUSES.map(async (campus) => {
+			let address = await storage.getServerAddressFor(campus.api.storageKey)
+			if (address) {
+				registerCampusServer(campus.id, new URL(address))
+			}
+		}),
+	)
+}
+
+registerDefaultServers()
+setManifestServer(PLATFORM_SERVER)
+void applySavedServers()
+
+// A UI test that names a campus reads that campus's recordings for every request.
+if (typeof uiTestCampus === 'string') {
+	installCampusFixtures(uiTestCampus, fixtureMode)
+}

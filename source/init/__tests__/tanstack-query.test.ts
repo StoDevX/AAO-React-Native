@@ -182,13 +182,12 @@ describe("the API Tester's route list", () => {
 	test('stays out of storage, even when it loaded', async () => {
 		let client = new QueryClient()
 		try {
-			await client.query({...serverRoutesOptions, queryFn: () => Promise.resolve([])})
-			expect(client.getQueryState(serverRoutesOptions.queryKey)?.status).toBe('success')
+			let options = serverRoutesOptions('edu.stolaf')
+			await client.query({...options, queryFn: () => Promise.resolve([])})
+			expect(client.getQueryState(options.queryKey)?.status).toBe('success')
 
 			let dehydrated = dehydrate(client, persistOptions.dehydrateOptions)
-			expect(dehydrated.queries.map((query) => query.queryKey)).not.toContainEqual(
-				serverRoutesOptions.queryKey,
-			)
+			expect(dehydrated.queries.map((query) => query.queryKey)).not.toContainEqual(options.queryKey)
 		} finally {
 			client.clear()
 		}

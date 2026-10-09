@@ -25,7 +25,8 @@ import {
 import {issueDate} from './lib/issues'
 import {NextPageRow} from './next-page-row'
 import {faded, ink} from './palette'
-import {messIssueOptions, messLeadTextOptions} from './query'
+import {usePaper} from './paper-context'
+import {usePaperQueries} from './use-paper-queries'
 import {useMessStore} from './store'
 import type {MessIssue} from './types'
 import type {MessIssuesQuery} from './use-mess-issues'
@@ -74,6 +75,7 @@ const Tile = React.memo(function Tile({
 	layout?: 'grid' | 'topPortrait' | 'topLandscape'
 	paragraphs?: string[]
 }): React.ReactNode {
+	let {title: nameplate} = usePaper()
 	let kind = useMessStore((state) => state.stainKind)
 	let photoTone = useMessStore((state) => state.photoTone)
 	let count = stainCount(read, issue.storyIds.length)
@@ -85,6 +87,7 @@ const Tile = React.memo(function Tile({
 			accessibilityLabel={tileLabel(issue, read)}
 			date={issueDate(issue.day)}
 			layout={layout}
+			nameplate={nameplate}
 			onPress={() => onOpen(issue)}
 			paragraphs={paragraphs}
 			photoTone={photoTone}
@@ -107,7 +110,7 @@ const TopTile = React.memo(function TopTile({
 	onOpen,
 	landscape,
 }: TileProps & {landscape: boolean}): React.ReactNode {
-	let stories = useQuery(messIssueOptions(issue, {persist: true}))
+	let stories = useQuery(usePaperQueries().issueOptions(issue, {persist: true}))
 	let lead = stories.data?.find((story) => story.id === issue.leadId)
 	let paragraphs = React.useMemo(() => leadParagraphs(lead), [lead])
 	return (
@@ -123,7 +126,7 @@ const TopTile = React.memo(function TopTile({
 
 /** A grid tile with no photo, set with its lead story's words below its fold. */
 function WordsTile({issue, read, onOpen}: TileProps): React.ReactNode {
-	let words = useQuery(messLeadTextOptions(issue.leadId))
+	let words = useQuery(usePaperQueries().leadTextOptions(issue.leadId))
 	return <Tile issue={issue} onOpen={onOpen} paragraphs={words.data ?? NO_PARAGRAPHS} read={read} />
 }
 

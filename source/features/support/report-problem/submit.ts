@@ -3,7 +3,7 @@ import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 
 import {IS_REPORTING_BUILD} from '../../../init/reporting-build'
-import {SUPPORT_EMAIL} from '../../../lib/constants'
+import {currentCampus} from '../../campus/store'
 import {useTelemetryStore} from '../../telemetry/store'
 
 /** An image to send alongside a report, already read into memory. */
@@ -80,9 +80,10 @@ export function reportEmail({message, name, email}: SubmitReportArgs): {
 	body: string
 } {
 	let contact = [name && `Name: ${name}`, email && `Email: ${email}`].filter(Boolean).join('\n')
+	let {appName, supportEmail} = currentCampus().branding
 	return {
-		to: [SUPPORT_EMAIL],
-		subject: 'All About Olaf problem report',
+		to: [supportEmail],
+		subject: `${appName} problem report`,
 		body: contact ? `${message}\n\n${contact}` : message,
 	}
 }

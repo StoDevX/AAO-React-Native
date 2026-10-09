@@ -19,6 +19,17 @@ export const REL_RADIO_NOW_PLAYING = 'https://frogpond.tech/rel/radio-now-playin
 /// id is keyed by one rather than a bare string.
 export const ID_PROPERTY = 'https://frogpond.tech/ns/id'
 
+/// Names the campus whose server a relative href resolves against. Absent
+/// means the server that published the manifest. Published manifests say `carleton`, which the 2.9 RCs
+/// read, so that spelling stays readable beside the campus id `edu.carleton`.
+/// Read as a plain string, so a campus a build does not know leaves its entry
+/// alone (as if absent) rather than failing the whole manifest.
+export const CAMPUS_PROPERTY = 'https://frogpond.tech/ns/campus'
+
+/// The campuses a relative href can resolve against, by campus id. Spelt out
+/// here because a module cannot import the app's campus registry.
+export type SourceCampus = 'edu.stolaf' | 'edu.carleton'
+
 /// A proxied source's href is relative (e.g. `news/named/mess`), so it
 /// resolves against the configured api root and honours the Settings
 /// server-URL override; a direct source's href is an absolute URL. Both
@@ -35,7 +46,10 @@ const JrdLinkSchema = z.object({
 	href: HrefSchema,
 	type: z.string().min(1),
 	titles: z.record(z.string(), z.string()).optional(),
-	properties: z.object({[ID_PROPERTY]: z.string().min(1)}),
+	properties: z.object({
+		[ID_PROPERTY]: z.string().min(1),
+		[CAMPUS_PROPERTY]: z.string().min(1).optional(),
+	}),
 })
 
 export type Jrd = z.infer<typeof JrdSchema>
@@ -49,4 +63,6 @@ export interface ResolvedSource {
 	href: string
 	type: string
 	title: string | undefined
+	/** The server a relative `href` resolves against. */
+	campus: SourceCampus
 }

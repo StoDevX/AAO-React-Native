@@ -84,14 +84,14 @@ function settingsByConfiguration(project: XcodeProject, target: string) {
 
 describe('addDebugSwiftPackage', () => {
 	it('references the DebugSwift package from 1.0.0 up to the next major version', () => {
-		let project = addDebugSwiftPackage(loadProject(), 'AllAboutOlaf')
+		let project = addDebugSwiftPackage(loadProject(), 'AllAboutAnything')
 		let [reference] = Object.values(packageReferences(project))
 		assert.equal(reference.repositoryURL, '"https://github.com/DebugSwift/DebugSwift.git"')
 		assert.deepEqual(reference.requirement, {kind: 'upToNextMajorVersion', minimumVersion: '1.0.0'})
 	})
 
 	it('lists the package on the project', () => {
-		let project = addDebugSwiftPackage(loadProject(), 'AllAboutOlaf')
+		let project = addDebugSwiftPackage(loadProject(), 'AllAboutAnything')
 		let [key] = Object.keys(packageReferences(project))
 		assert.deepEqual(
 			projectPackages(project).map((entry) => entry.value),
@@ -100,27 +100,27 @@ describe('addDebugSwiftPackage', () => {
 	})
 
 	it('makes the app target depend on the DebugSwift product', () => {
-		let project = addDebugSwiftPackage(loadProject(), 'AllAboutOlaf')
+		let project = addDebugSwiftPackage(loadProject(), 'AllAboutAnything')
 		let [packageKey] = Object.keys(packageReferences(project))
 		let [[productKey, product]] = Object.entries(productDependencies(project))
 		assert.equal(product.productName, 'DebugSwift')
 		assert.equal(product.package, packageKey)
 		assert.deepEqual(
-			targetProducts(project, 'AllAboutOlaf').map((entry) => entry.value),
+			targetProducts(project, 'AllAboutAnything').map((entry) => entry.value),
 			[productKey],
 		)
 	})
 
 	// Xcode links every product a target depends on, in every configuration.
 	it('links the package in Debug alone', () => {
-		let project = addDebugSwiftPackage(loadProject(), 'AllAboutOlaf')
-		let settings = settingsByConfiguration(project, 'AllAboutOlaf')
+		let project = addDebugSwiftPackage(loadProject(), 'AllAboutAnything')
+		let settings = settingsByConfiguration(project, 'AllAboutAnything')
 		assert.equal(settings.Debug.EXCLUDED_SOURCE_FILE_NAMES, undefined)
 		assert.equal(settings.Release.EXCLUDED_SOURCE_FILE_NAMES, 'DebugSwift.o')
 	})
 
 	it('removes the package resources from the app outside Debug', () => {
-		let project = addDebugSwiftPackage(loadProject(), 'AllAboutOlaf')
+		let project = addDebugSwiftPackage(loadProject(), 'AllAboutAnything')
 		let phase = removalPhase(project)
 		assert.ok(phase, 'no removal phase')
 		let script = JSON.parse(phase.shellScript) as string
@@ -130,19 +130,21 @@ describe('addDebugSwiftPackage', () => {
 			/rm -rf "\$TARGET_BUILD_DIR\/\$WRAPPER_NAME\/DebugSwift_DebugSwift\.bundle"/u,
 		)
 
-		let native = project.pbxNativeTargetSection()[project.findTargetKey('AllAboutOlaf') as string]
+		let native =
+			project.pbxNativeTargetSection()[project.findTargetKey('AllAboutAnything') as string]
 		if (typeof native === 'string') throw new Error('no target')
 		assert.ok(native.buildPhases.some((entry) => entry.comment === REMOVAL_PHASE))
 	})
 
 	it('keeps packages already on the project and target', () => {
 		let project = loadProject()
-		let native = project.pbxNativeTargetSection()[project.findTargetKey('AllAboutOlaf') as string]
+		let native =
+			project.pbxNativeTargetSection()[project.findTargetKey('AllAboutAnything') as string]
 		if (typeof native === 'string') throw new Error('no target')
 		project.getFirstProject().firstProject.packageReferences = [{value: 'EXISTINGPACKAGE'}]
 		native.packageProductDependencies = [{value: 'EXISTINGPRODUCT'}]
 
-		addDebugSwiftPackage(project, 'AllAboutOlaf')
+		addDebugSwiftPackage(project, 'AllAboutAnything')
 		assert.deepEqual(
 			projectPackages(project)
 				.map((entry) => entry.value)
@@ -151,18 +153,18 @@ describe('addDebugSwiftPackage', () => {
 		)
 		assert.equal(projectPackages(project).length, 2)
 		assert.deepEqual(
-			targetProducts(project, 'AllAboutOlaf')
+			targetProducts(project, 'AllAboutAnything')
 				.map((entry) => entry.value)
 				.slice(0, 1),
 			['EXISTINGPRODUCT'],
 		)
-		assert.equal(targetProducts(project, 'AllAboutOlaf').length, 2)
+		assert.equal(targetProducts(project, 'AllAboutAnything').length, 2)
 	})
 
 	it('is idempotent', () => {
-		let project = addDebugSwiftPackage(loadProject(), 'AllAboutOlaf')
+		let project = addDebugSwiftPackage(loadProject(), 'AllAboutAnything')
 		let once = project.writeSync()
-		assert.equal(addDebugSwiftPackage(project, 'AllAboutOlaf').writeSync(), once)
+		assert.equal(addDebugSwiftPackage(project, 'AllAboutAnything').writeSync(), once)
 	})
 
 	it('throws when the target is missing', () => {

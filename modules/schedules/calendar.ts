@@ -1,5 +1,5 @@
 import {TZDateMini} from '@date-fns/tz'
-import {addDays, differenceInCalendarDays, format, isValid, parse} from 'date-fns'
+import {addDays, differenceInCalendarDays, format, isValid, parse, startOfDay} from 'date-fns'
 import type {CalendarDate, CalendarInterval, NormalizedInterval} from './types.ts'
 
 /** Parses a real date without allowing timestamps or rollover into another month. */
@@ -42,7 +42,8 @@ export function normalizeCalendarInterval(
 	}
 	return {
 		startMs: start.getTime(),
-		endMs: addDays(end, 1).getTime(),
+		// A skipped midnight parses as 01:00; reset the next boundary to midnight.
+		endMs: startOfDay(addDays(end, 1)).getTime(),
 		calendarDays: differenceInCalendarDays(end, start) + 1,
 	}
 }

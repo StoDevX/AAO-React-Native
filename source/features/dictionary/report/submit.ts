@@ -1,17 +1,18 @@
 import {dump} from 'js-yaml'
 import type {Sense, WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'
-import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
+import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 import wrap from 'wordwrap'
 
-export function submitReport(current: WordType, suggestion: WordType): void {
+/** Mails a suggested change to an entry to `supportEmail`, the campus's support address. */
+export function submitReport(current: WordType, suggestion: WordType, supportEmail: string): void {
 	let before = stringifyDictionaryEntry(current)
 	let after = stringifyDictionaryEntry(suggestion)
 
 	let body = makeEmailBody(before, after, current.word)
 
 	return sendEmail({
-		to: [SUPPORT_EMAIL],
+		to: [supportEmail],
 		subject: `[dictionary] Suggestion for ${current.word}`,
 		body,
 	})

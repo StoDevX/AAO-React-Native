@@ -9,6 +9,7 @@ import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import type {MessStory} from '../types'
 import {loadBeforeTests} from '../../../testing/load-before-tests'
+import {InMessenger} from './in-messenger'
 
 loadBeforeTests('ScrollView', 'Image')
 
@@ -212,7 +213,9 @@ afterEach(() => {
 function renderViewer(id: number, index?: number, url?: string) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<ImageViewer id={id} index={index} url={url} />
+			<InMessenger>
+				<ImageViewer id={id} index={index} url={url} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

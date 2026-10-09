@@ -1,6 +1,8 @@
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 
-import {DEFAULT_URL} from '../../../lib/constants'
+import {campusById} from '../../../campuses'
+
+const STOLAF_URL = campusById('edu.stolaf').api.defaultUrl
 
 const mockSteps: string[] = []
 const mockStored = {etag: 'old' as string | null, failToStore: false}
@@ -120,6 +122,10 @@ function publishedEtag(etag: string, {ignoresIfNoneMatch = false} = {}) {
 
 beforeEach(() => {
 	jest.isolateModules(() => {
+		// A fresh copy of the modules, so boot's naming of the manifest's server is redone here.
+		jest
+			.requireActual<typeof import('@frogpond/data-sources')>('@frogpond/data-sources')
+			.setManifestServer('edu.stolaf')
 		;({refreshCatalog, shouldRetryCatalog, CatalogRejectedError} =
 			jest.requireActual<RefreshModule>('../refresh'))
 	})
@@ -144,7 +150,7 @@ describe('refreshCatalog', () => {
 	test("fetches the catalog from the manifest's address on the server", async () => {
 		publishedEtag('new')
 		await refreshCatalog()
-		expect(mockUrls).toEqual([`${DEFAULT_URL}courses/catalog.db`])
+		expect(mockUrls).toEqual([`${STOLAF_URL}courses/catalog.db`])
 	})
 
 	test('downloads nothing when the ETag is unchanged', async () => {
