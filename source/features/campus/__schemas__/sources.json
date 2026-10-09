@@ -1,0 +1,60 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"links": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"href": {
+						"type": "string"
+					},
+					"properties": {
+						"type": "object",
+						"properties": {
+							"https://frogpond.tech/ns/id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"https://frogpond.tech/ns/id"
+						]
+					},
+					"rel": {
+						"type": "string"
+					},
+					"titles": {
+						"type": "object",
+						"properties": {
+							"und": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"und"
+						]
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"href",
+					"properties",
+					"rel",
+					"titles",
+					"type"
+				]
+			}
+		},
+		"subject": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"links",
+		"subject"
+	]
+}

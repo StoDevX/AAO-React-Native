@@ -59,7 +59,10 @@ const config = {
 	setupFiles: ['./scripts/jest-setup.js'],
 	transform: {
 		'^.+\\.mjs$': 'babel-jest',
+		'^.+\\.kdl$': '<rootDir>/scripts/jest-kdl-transform.mjs',
 	},
+	// .kdl for Wiki Monkeys' fixtures; scripts/jest-kdl-transform.mjs reads them.
+	moduleFileExtensions: ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'json', 'node', 'kdl'],
 	// pnpm nests every package under node_modules/.pnpm/<name>@<version>/node_modules/<name>,
 	// so the first node_modules/ segment is followed by ".pnpm", not a package
 	// name -- without letting that through, the negative lookahead trips on

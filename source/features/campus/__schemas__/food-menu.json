@@ -1,0 +1,570 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"cor_icons": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"allergen": {
+						"type": "number"
+					},
+					"description": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"is_filter": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"position": {
+						"type": "string"
+					},
+					"show_name_ds": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"sort": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"allergen",
+					"description",
+					"id",
+					"image",
+					"is_filter",
+					"label",
+					"position",
+					"show_name_ds",
+					"slug",
+					"sort",
+					"type"
+				]
+			}
+		},
+		"days": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"cafe": {
+						"type": "object",
+						"properties": {
+							"dayparts": {
+								"type": "array",
+								"items": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"abbreviation": {
+												"type": "string"
+											},
+											"endtime": {
+												"type": "string"
+											},
+											"endtime_formatted": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											},
+											"label": {
+												"type": "string"
+											},
+											"message": {
+												"type": "string"
+											},
+											"starttime": {
+												"type": "string"
+											},
+											"starttime_formatted": {
+												"type": "string"
+											},
+											"stations": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string"
+														},
+														"items": {
+															"type": "array",
+															"items": {
+																"type": "string"
+															}
+														},
+														"label": {
+															"type": "string"
+														},
+														"note": {
+															"type": "string"
+														},
+														"order_id": {
+															"type": "string"
+														},
+														"price": {
+															"type": "string"
+														},
+														"soup": {
+															"type": "number"
+														}
+													},
+													"required": [
+														"id",
+														"items",
+														"label",
+														"note",
+														"order_id",
+														"price",
+														"soup"
+													]
+												}
+											},
+											"time_formatted": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"abbreviation",
+											"endtime",
+											"endtime_formatted",
+											"id",
+											"label",
+											"message",
+											"starttime",
+											"starttime_formatted",
+											"stations",
+											"time_formatted"
+										]
+									}
+								}
+							},
+							"menu_id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"dayparts",
+							"menu_id",
+							"name"
+						]
+					},
+					"date": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"cafe",
+					"date"
+				]
+			}
+		},
+		"items": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"connector": {
+						"type": "string"
+					},
+					"cor_icon": {
+						"anyOf": [
+							{
+								"type": "object",
+								"additionalProperties": {
+									"type": "string"
+								}
+							},
+							{
+								"type": "array",
+								"items": {}
+							}
+						]
+					},
+					"description": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"monotony": {
+						"type": "object",
+						"properties": {}
+					},
+					"nutrition": {
+						"type": "object",
+						"properties": {
+							"kcal": {
+								"type": "string"
+							},
+							"well_being": {
+								"type": "string"
+							},
+							"well_being_image": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"kcal",
+							"well_being",
+							"well_being_image"
+						]
+					},
+					"nutrition_details": {
+						"type": "object",
+						"properties": {
+							"calories": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"carbohydrateContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"cholesterolContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"fatContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"fiberContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"proteinContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"saturatedFatContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"servingSize": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"sodiumContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"sugarContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							},
+							"transFatContent": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"label",
+									"unit",
+									"value"
+								]
+							}
+						}
+					},
+					"nutrition_link": {
+						"type": "string"
+					},
+					"options": {
+						"anyOf": [
+							{
+								"type": "array",
+								"items": {}
+							},
+							{
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"values": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"description": {
+													"type": [
+														"null",
+														"string"
+													]
+												},
+												"id": {
+													"type": "string"
+												},
+												"ingredients": {
+													"type": "string"
+												},
+												"label": {
+													"type": "string"
+												},
+												"nutrition": {
+													"type": "object",
+													"properties": {}
+												},
+												"side_nutrition_details": {
+													"type": "object",
+													"properties": {}
+												}
+											},
+											"required": [
+												"description",
+												"label",
+												"nutrition"
+											]
+										}
+									}
+								},
+								"required": [
+									"label",
+									"type",
+									"values"
+								]
+							}
+						]
+					},
+					"price": {
+						"type": "string"
+					},
+					"rating": {
+						"type": "string"
+					},
+					"special": {
+						"type": "number"
+					},
+					"station": {
+						"type": "string"
+					},
+					"sub_station": {
+						"type": "string"
+					},
+					"sub_station_id": {
+						"type": "string"
+					},
+					"sub_station_order": {
+						"type": "string"
+					},
+					"tier": {
+						"type": "number"
+					},
+					"zero_entree": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"connector",
+					"cor_icon",
+					"description",
+					"id",
+					"label",
+					"monotony",
+					"nutrition",
+					"nutrition_details",
+					"nutrition_link",
+					"options",
+					"price",
+					"rating",
+					"special",
+					"station",
+					"sub_station",
+					"sub_station_id",
+					"sub_station_order",
+					"tier",
+					"zero_entree"
+				]
+			}
+		}
+	},
+	"required": [
+		"cor_icons",
+		"days",
+		"items"
+	]
+}

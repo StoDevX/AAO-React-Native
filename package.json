@@ -116,6 +116,7 @@
   "devDependencies": {
     "@babel/core": "7.29.7",
     "@babel/preset-typescript": "7.29.7",
+    "@bgotink/kdl": "0.4.0",
     "@expo/config-plugins": "57.0.9",
     "@expo/metro-config": "57.0.12",
     "@flakiness/jest": "1.4.0",

@@ -1,0 +1,271 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"features": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"geometry": {
+						"type": "object",
+						"properties": {
+							"geometries": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"coordinates": {
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"type": "array",
+														"items": {
+															"anyOf": [
+																{
+																	"type": "array",
+																	"items": {
+																		"anyOf": [
+																			{
+																				"type": "number"
+																			},
+																			{
+																				"type": "array",
+																				"items": {
+																					"type": "number"
+																				}
+																			}
+																		]
+																	}
+																},
+																{
+																	"type": "number"
+																}
+															]
+														}
+													},
+													{
+														"type": "number"
+													}
+												]
+											}
+										},
+										"type": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"coordinates",
+										"type"
+									]
+								}
+							},
+							"type": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"geometries",
+							"type"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"properties": {
+						"type": "object",
+						"properties": {
+							"abbreviation": {
+								"type": [
+									"string",
+									"null"
+								]
+							},
+							"accessibility": {
+								"type": "string"
+							},
+							"address": {
+								"type": [
+									"null",
+									"string"
+								]
+							},
+							"categories": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"citations": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"href": {
+											"type": "string"
+										},
+										"label": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"href",
+										"label"
+									]
+								}
+							},
+							"departments": {
+								"type": "array",
+								"items": {
+									"anyOf": [
+										{
+											"type": "object",
+											"properties": {
+												"href": {
+													"type": "string"
+												},
+												"label": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"href",
+												"label"
+											]
+										},
+										{
+											"type": "string"
+										}
+									]
+								}
+							},
+							"description": {
+								"type": "string"
+							},
+							"floors": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"length": {
+								"type": [
+									"null",
+									"number"
+								]
+							},
+							"links": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"href": {
+											"type": "string"
+										},
+										"label": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"href",
+										"label"
+									]
+								}
+							},
+							"name": {
+								"type": "string"
+							},
+							"nickname": {
+								"type": "string"
+							},
+							"offices": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"parent": {
+								"type": [
+									"null",
+									"string"
+								]
+							},
+							"photos": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"rules": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"type": {
+								"type": [
+									"string",
+									"null"
+								]
+							},
+							"walk": {
+								"anyOf": [
+									{
+										"type": "null"
+									},
+									{
+										"type": "object",
+										"properties": {
+											"accessibility": {
+												"type": "string"
+											},
+											"minutes": {
+												"type": "array",
+												"items": {
+													"type": "number"
+												}
+											}
+										},
+										"required": [
+											"accessibility",
+											"minutes"
+										]
+									}
+								]
+							}
+						},
+						"required": [
+							"accessibility",
+							"address",
+							"categories",
+							"departments",
+							"description",
+							"floors",
+							"name",
+							"nickname",
+							"offices"
+						]
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"geometry",
+					"id",
+					"properties",
+					"type"
+				]
+			}
+		},
+		"type": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"features",
+		"type"
+	]
+}

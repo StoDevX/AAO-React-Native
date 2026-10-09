@@ -1,0 +1,79 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 3 samples; regenerate rather than edit.",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"config": {
+				"type": "object",
+				"properties": {
+					"endTime": {
+						"type": "boolean"
+					},
+					"startTime": {
+						"type": "boolean"
+					},
+					"subtitle": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"endTime",
+					"startTime",
+					"subtitle"
+				]
+			},
+			"dataSource": {
+				"type": "string"
+			},
+			"description": {
+				"type": "string"
+			},
+			"endTime": {
+				"type": "string"
+			},
+			"isOngoing": {
+				"type": "boolean"
+			},
+			"links": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			},
+			"location": {
+				"type": "string"
+			},
+			"metadata": {
+				"type": "object",
+				"properties": {
+					"uid": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"uid"
+				]
+			},
+			"startTime": {
+				"type": "string"
+			},
+			"title": {
+				"type": "string"
+			}
+		},
+		"required": [
+			"config",
+			"dataSource",
+			"description",
+			"endTime",
+			"isOngoing",
+			"links",
+			"location",
+			"metadata",
+			"startTime",
+			"title"
+		]
+	}
+}

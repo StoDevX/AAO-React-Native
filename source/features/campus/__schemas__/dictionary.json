@@ -1,0 +1,34 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"data": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"definition": {
+						"type": "string"
+					},
+					"partOfSpeech": {
+						"type": "string"
+					},
+					"pronunciation": {
+						"type": "string"
+					},
+					"word": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"definition",
+					"word"
+				]
+			}
+		}
+	},
+	"required": [
+		"data"
+	]
+}

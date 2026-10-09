@@ -32,6 +32,11 @@ const defaultConfig = getSentryExpoConfig(__dirname, {
 const upstreamResolve = defaultConfig.resolver.resolveRequest
 
 const config = {
+	transformer: {
+		// Turns Wiki Monkeys' .kdl fixtures into JSON modules, then hands every
+		// file to Expo's transformer; see scripts/metro-kdl-transformer.mjs.
+		babelTransformerPath: require.resolve('./scripts/metro-kdl-transformer.mjs'),
+	},
 	resolver: {
 		// A release bundle carries an empty object for each UI-test fixture, which
 		// only --uitesting reads; `mise run bundle:ios` keeps them, for the UI tests.
@@ -46,10 +51,11 @@ const config = {
 			}
 			return resolution
 		},
+		// kdl: Wiki Monkeys' fixtures, which the transformer above turns into JSON.
 		sourceExts:
 			process.env.APP_MODE === 'mocked'
-				? ['mock.ts', ...defaultConfig.resolver.sourceExts]
-				: defaultConfig.resolver.sourceExts,
+				? ['mock.ts', ...defaultConfig.resolver.sourceExts, 'kdl']
+				: [...defaultConfig.resolver.sourceExts, 'kdl'],
 		// Honor the package.json "exports" field so modern ESM packages with
 		// subpath exports (e.g. `entities/decode` used by htmlparser2 v12)
 		// resolve correctly. Metro ships this off-by-default in RN 0.76.
