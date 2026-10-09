@@ -23,7 +23,7 @@ describe('fetchSourceBody', () => {
 		jest.useRealTimers()
 	})
 
-	test('a relative href resolves through stolafClient, honouring the configured api root', async () => {
+	test('a relative href resolves through stolafClient, honoring the configured api root', async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/mess')
 			return Promise.resolve(new Response(JSON.stringify({ok: true}), {status: 200}))
