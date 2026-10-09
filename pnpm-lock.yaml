@@ -146,6 +146,9 @@ importers:
       '@frogpond/hyphenated-text':
         specifier: workspace:*
         version: link:modules/hyphenated-text
+      '@frogpond/json-tree':
+        specifier: workspace:*
+        version: link:modules/json-tree
       '@frogpond/launch-arguments':
         specifier: workspace:*
         version: link:modules/launch-arguments
@@ -951,6 +954,25 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.2.3
+
+  modules/json-tree:
+    dependencies:
+      '@expo/ui':
+        specifier: 57.0.21
+        version: 57.0.21(patch_hash=7ccceafb06c870f7ef3c74995e3433df4575031a1459d07460cd7bf1bb9b0e08)(@babel/core@7.29.7)(expo@57.0.26)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
   modules/launch-arguments:
     dependencies:

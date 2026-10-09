@@ -1,13 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {
-	isContainer,
-	jsonEntries,
-	jsonLeaf,
-	jsonSummary,
-	SMALL_GROUP,
-	startsOpen,
-} from '../json-tree'
+import {isContainer, jsonEntries, jsonLeaf, jsonSummary, SMALL_GROUP, startsOpen} from '../tree'
 
 describe('isContainer', () => {
 	test('opens objects and arrays, and nothing else', () => {

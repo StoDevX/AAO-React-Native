@@ -11,14 +11,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {
-	isContainer,
-	jsonEntries,
-	jsonLeaf,
-	jsonSummary,
-	startsOpen,
-	type JsonEntry,
-} from './util/json-tree'
+import {isContainer, jsonEntries, jsonLeaf, jsonSummary, startsOpen, type JsonEntry} from './tree'
 
 /// How many of an object's or array's entries show before a "show more" row,
 /// so opening a long array does not build every row at once.
@@ -32,7 +25,7 @@ export type ExpandCommand = {mode: 'all' | 'none' | null; count: number}
 
 const ExpandContext = React.createContext<ExpandCommand>({mode: null, count: 0})
 
-/// The colours the raw view highlights each kind of value in.
+/// A colour for each kind of value, as JSON syntax highlighting usually colours them.
 const LEAF_COLORS: Record<ReturnType<typeof jsonLeaf>['kind'], ColorValue> = {
 	string: c.systemGreen,
 	number: c.systemOrange,
