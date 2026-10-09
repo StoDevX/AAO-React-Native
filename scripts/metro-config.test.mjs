@@ -17,6 +17,13 @@ test("the .yaml transformer stands in front of Expo's", async () => {
 	)
 })
 
+// Expo lists yaml among its asset types, and Metro checks those first: a .yaml
+// import would bundle as an image-like asset id, not the fixture's JSON.
+test('Metro reads a .yaml file as source, not as an asset', async () => {
+	let config = await require('../metro.config.js')
+	assert.ok(!config.resolver.assetExts.includes('yaml'))
+})
+
 test('Metro hands Expo a .yaml file as a module exporting its JSON, and anything else untouched', async () => {
 	let {withYaml} = await import('./metro-yaml-transformer.mjs')
 	let seen = []

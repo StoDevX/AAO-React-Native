@@ -52,6 +52,8 @@ const config = {
 			return resolution
 		},
 		// yaml: Wiki Monkeys' fixtures, which the transformer above turns into JSON.
+		// Expo also lists yaml as an asset type, which Metro checks first.
+		assetExts: defaultConfig.resolver.assetExts.filter((ext) => ext !== 'yaml'),
 		sourceExts:
 			process.env.APP_MODE === 'mocked'
 				? ['mock.ts', ...defaultConfig.resolver.sourceExts, 'yaml']
