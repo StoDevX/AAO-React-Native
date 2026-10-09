@@ -80,11 +80,9 @@ class CampusSmokeTests: UITestCaseUnbooted {
 
 	func testMapOpensASearchedBuilding() throws {
 		opens(expected.mapRoute, waitingFor: app.searchFields.firstMatch)
-		let field = app.searchFields.firstMatch
-		field.tap()
-		field.typeText(expected.mapPlace)
+		let map = MapScreen(app: app).focusSearch().typeIntoSearch(expected.mapPlace)
 		try verifyRecorded(app.staticTexts[expected.mapPlace], expected.mapPlace)
-		MapScreen(app: app).selectBuilding(named: expected.mapPlace).verifyTopCard(expected.mapPlace)
+		map.selectBuilding(named: expected.mapPlace).verifyTopCard(expected.mapPlace)
 	}
 
 	func testContactsListTheCampusOwn() throws {
