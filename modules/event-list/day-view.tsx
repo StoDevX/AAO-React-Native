@@ -179,17 +179,12 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		}
 	}, [selectedDay, selectedIso, pager.day, driveTo])
 
-	// The strip draws whole weeks, so it offers the days before today that open
-	// the current one. Those are not days to page into -- nothing that has
-	// ended reaches this screen -- so the pager starts at today.
-	let swipeable = React.useMemo(
-		() => days.filter((day) => !day.isBefore(props.now, 'day')),
-		[days, props.now],
-	)
-
+	// Every day the strip offers is a page, the ones before today included:
+	// the calendar keeps a month of past events, and the strip dots the days
+	// they fell on.
 	let pages = React.useMemo(
-		() => pageWindow(swipeable, anchor, selectedDay, PAGE_WINDOW),
-		[swipeable, anchor, selectedDay],
+		() => pageWindow(days, anchor, selectedDay, PAGE_WINDOW),
+		[days, anchor, selectedDay],
 	)
 
 	/**

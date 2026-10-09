@@ -74,7 +74,6 @@ let DayCell = React.memo(function DayCell({
 	isToday,
 	isSelected,
 	hasEvents,
-	isPast,
 	onPress,
 	width,
 }: {
@@ -82,7 +81,6 @@ let DayCell = React.memo(function DayCell({
 	isToday: boolean
 	isSelected: boolean
 	hasEvents: boolean
-	isPast: boolean
 	onPress: (day: Moment) => void
 	width: number
 }): React.ReactNode {
@@ -105,22 +103,16 @@ let DayCell = React.memo(function DayCell({
 				: c.label
 	let weekdayColor = isToday ? c.systemRed : c.secondaryLabel
 
-	// A day already gone cannot be chosen -- there is nothing behind today to
-	// show, since anything that has ended never reaches this screen. It stays
-	// drawn so the week it opens reads whole.
-	let dimmed = isPast ? {opacity: 0.3} : null
-
 	return (
 		<Pressable
 			accessibilityLabel={
 				hasEvents ? `${formatDate(day, 'long')}, has events` : formatDate(day, 'long')
 			}
 			accessibilityRole="button"
-			accessibilityState={{disabled: isPast, selected: isSelected}}
-			disabled={isPast}
+			accessibilityState={{selected: isSelected}}
 			hitSlop={4}
 			onPress={handlePress}
-			style={[styles.cell, {width}, dimmed]}
+			style={[styles.cell, {width}]}
 			testID={`${DAY_CELL_PREFIX}${day.format('YYYY-MM-DD')}`}
 		>
 			<Text style={[styles.weekday, {color: weekdayColor}]}>{weekdayLetter}</Text>
@@ -220,7 +212,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	}, [days, offsetForIndex, rawOffsetForIndex, maxScroll])
 
 	let scrollToDay = React.useCallback(
-		(day: Moment) => {
+		(day: Moment, animated = true) => {
 			if (!scrollRef.current || containerWidth === 0) {
 				return
 			}
@@ -230,13 +222,30 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 
 			scrollRef.current.scrollTo({
 				x: offsetForIndex(Math.max(sundayIndex, 0)),
-				animated: true,
+				animated,
 			})
 		},
 		[days, containerWidth, offsetForIndex],
 	)
 
-	React.useImperativeHandle(ref, () => ({scrollToDay}), [scrollToDay])
+	React.useImperativeHandle(ref, () => ({scrollToDay: (day) => scrollToDay(day)}), [scrollToDay])
+
+	// The strip can open on weeks already gone, so an untouched strip resting
+	// at its first cell would show the oldest of them rather than today. It is
+	// put on the selected week once there is a width to measure that by, and
+	// again whenever earlier weeks are added in front -- the events arriving
+	// after the strip first drew, say -- since those push everything along
+	// beneath a strip that otherwise holds its offset.
+	let firstIso = days[0]?.format('YYYY-MM-DD')
+	let measured = containerWidth > 0
+	React.useEffect(() => {
+		if (measured && firstIso) {
+			scrollToDay(selectedDay ?? now, false)
+		}
+		// Only a new width or a new first day moves the strip here; a new
+		// selection moves it through `scrollToDay`, from whoever made it.
+		// oxlint-disable-next-line react-hooks/exhaustive-deps
+	}, [measured, firstIso])
 
 	if (days.length === 0) {
 		return null
@@ -267,7 +276,6 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 							<DayCell
 								day={day}
 								hasEvents={daysWithEvents.has(day.format('YYYY-MM-DD'))}
-								isPast={day.isBefore(now, 'day')}
 								isSelected={isSelected}
 								isToday={isToday}
 								key={day.format('YYYY-MM-DD')}

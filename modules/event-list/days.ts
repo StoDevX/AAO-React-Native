@@ -20,10 +20,12 @@ export function lastDayCovered(event: Pick<EventType, 'startTime' | 'endTime'>):
 }
 
 /**
- * Generates a continuous range of whole weeks, from Sunday of the current week
- * through the Saturday of the week holding the last day any event covers, or
- * the first day of an event running longer than a week. Whole weeks keep
- * every day sitting under a Sunday the strip can snap to.
+ * Generates a continuous range of whole weeks, from the Sunday before the
+ * earliest past day an event fell on through the Saturday of the week holding
+ * the last day any event covers. An event running longer than a week counts
+ * by its first day going forward and by its last going back, so a long one
+ * does not hang weeks of empty days off either end. Whole weeks keep every
+ * day sitting under a Sunday the strip can snap to.
  *
  * Always yields at least the current week. Day mode has nothing but the strip
  * to navigate with, so a range that could come back empty would leave that
@@ -31,9 +33,12 @@ export function lastDayCovered(event: Pick<EventType, 'startTime' | 'endTime'>):
  */
 export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment[] {
 	let today = now.clone().startOf('day')
+	let firstDay: Moment | null = null
 	let lastDay: Moment | null = null
 
 	for (let entry of events) {
+		// Running now, so it is on today -- and on every day it has already
+		// covered, which is no reason to reach back to when it opened.
 		if (entry.event.isOngoing) {
 			continue
 		}
@@ -43,8 +48,16 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 		// December is no reason to hang months of empty days off the strip.
 		let first = entry.event.startTime.clone().startOf('day')
 		let last = lastDayCovered(entry.event).clone().startOf('day')
-		let day = last.diff(first, 'days') < DAYS_PER_WEEK ? last : first
+		let short = last.diff(first, 'days') < DAYS_PER_WEEK
 
+		// Going back, the same rule from the other end: the first day of a
+		// short event, the last day of a long one.
+		let earliest = short ? first : last
+		if (earliest.isBefore(today, 'day') && (!firstDay || earliest.isBefore(firstDay, 'day'))) {
+			firstDay = earliest
+		}
+
+		let day = short ? last : first
 		if (day.isBefore(today, 'day')) {
 			continue
 		}
@@ -54,7 +67,7 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 		}
 	}
 
-	let sunday = today.clone().startOf('week')
+	let sunday = (firstDay ?? today).clone().startOf('week')
 
 	// Compared as a calendar date rather than as an instant. `now` and an
 	// event's `startTime` are both device-local, but nothing in this
