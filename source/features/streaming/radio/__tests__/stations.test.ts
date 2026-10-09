@@ -14,12 +14,8 @@ describe('the stations the player offers', () => {
 		expect(stationsOffered(campusById('edu.carleton')).map((s) => s.id)).toEqual(['ksto', 'krlx'])
 	})
 
-	test("offer a dev-only campus's stations on that campus", () => {
-		expect(stationsOffered(campusById('example.college')).map((s) => s.id)).toEqual([
-			'ksto',
-			'krlx',
-			'kmnk',
-		])
+	test('offer only its own stations on a dev-only campus', () => {
+		expect(stationsOffered(campusById('example.college')).map((s) => s.id)).toEqual(['kmnk'])
 	})
 
 	test('are each found by id', () => {

@@ -1,6 +1,7 @@
 import {beforeEach, describe, expect, test} from '@jest/globals'
 import {act, renderHook} from '@testing-library/react-native'
 
+import {useCampusStore} from '../../../campus/store'
 import {radioControl, useRadioStore, useStationPlayback} from '../store'
 
 const ERROR = {code: 4, message: 'The stream could not be played.'}
@@ -188,6 +189,19 @@ describe('viewing', () => {
 		useRadioStore.getState().browse('krlx')
 		useRadioStore.getState().openSheet()
 		expect(useRadioStore.getState()).toMatchObject({sheetOpen: true, viewedStationId: 'krlx'})
+	})
+
+	test("opening the sheet on a dev-only campus shows that campus's station, not another's", () => {
+		useCampusStore.setState({campus: 'example.college'})
+		useRadioStore.getState().openSheet()
+		expect(useRadioStore.getState().viewedStationId).toBe('kmnk')
+		useCampusStore.setState({campus: 'edu.stolaf'})
+	})
+
+	test("opening the sheet on a station this campus doesn't offer shows its first one", () => {
+		useRadioStore.getState().browse('kmnk')
+		useRadioStore.getState().openSheet()
+		expect(useRadioStore.getState().viewedStationId).toBe('ksto')
 	})
 
 	test('opening the sheet on a named station shows that one', () => {
