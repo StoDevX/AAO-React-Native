@@ -11,7 +11,6 @@ import {
 	addCarletonCalendar,
 	addPresenceCalendar,
 	dropUnknownCampusFavorites,
-	followBuildForDevMode,
 	migrations,
 	scopeFavoritesToCampus,
 } from '../migrations'
@@ -202,17 +201,5 @@ describe('favourites through every migration', () => {
 			buildings: {favorites: Array<{campus: string; name: string}>}
 		}
 		expect(migrated.buildings.favorites).toStrictEqual([])
-	})
-})
-
-describe('the dev mode toggle migration', () => {
-	it('sets an untouched toggle to follow the build', () => {
-		let migrated = followBuildForDevMode({settings: {devModeOverride: false}})
-		expect(migrated?.settings?.devModeOverride).toBeNull()
-	})
-
-	it('keeps dev mode on where it was turned on', () => {
-		let state = {settings: {devModeOverride: true}}
-		expect(followBuildForDevMode(state)).toBe(state)
 	})
 })

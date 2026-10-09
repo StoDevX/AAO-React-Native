@@ -2,4 +2,4 @@
 "all-about-anything": patch
 ---
 
-Unchecking "Enable dev mode" in the Home notice's menu turns dev mode off in beta builds too, hiding the Developer tile.
+Dev mode starts off in beta builds too, so the Developer tile and other debugging tools stay hidden until "Enable dev mode" is checked in the Home notice's menu.

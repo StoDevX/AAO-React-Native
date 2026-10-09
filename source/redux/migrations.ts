@@ -130,21 +130,6 @@ function dropUnknownCampusFavorites(
 	return {...state, buildings: {...buildings, favorites}}
 }
 
-/**
- * The dev mode toggle could only turn dev mode on, so a stored `false` meant
- * "follow the build", whether or not it was ever touched. It means "off" now,
- * which would hide dev mode in every debug build that had stored it, so it
- * goes back to following the build. A stored `true` still means on.
- */
-function followBuildForDevMode(
-	state: PersistedRootState | undefined,
-): PersistedRootState | undefined {
-	let settings = state?.settings
-	if (!state || !settings || settings.devModeOverride !== false) return state
-
-	return {...state, settings: {...settings, devModeOverride: null}}
-}
-
 export const migrations: MigrationManifest = {
 	// `MigrationManifest` types every entry as taking and returning
 	// redux-persist's own opaque `PersistedState`, which cannot describe the
@@ -153,13 +138,11 @@ export const migrations: MigrationManifest = {
 	3: scopeFavoritesToCampus as unknown as (state: PersistedState) => PersistedState,
 	4: addCarletonCalendar as unknown as (state: PersistedState) => PersistedState,
 	5: dropUnknownCampusFavorites as unknown as (state: PersistedState) => PersistedState,
-	6: followBuildForDevMode as unknown as (state: PersistedState) => PersistedState,
 }
 
 export {
 	addCarletonCalendar,
 	addPresenceCalendar,
 	dropUnknownCampusFavorites,
-	followBuildForDevMode,
 	scopeFavoritesToCampus,
 }
