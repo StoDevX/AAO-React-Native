@@ -128,9 +128,27 @@ function instantOf(stamp) {
 	return new Date(stamp.includes('T') ? stamp : `${stamp.replace(' ', 'T')}Z`)
 }
 
-/** A recorded time moved by some days, written as its feed writes it. */
+/** How far the colleges' clocks are from UTC at `instant`, in milliseconds. */
+function campusOffset(instant) {
+	let name = new Intl.DateTimeFormat('en-US', {
+		timeZone: 'America/Chicago',
+		timeZoneName: 'shortOffset',
+	})
+		.formatToParts(instant)
+		.find((part) => part.type === 'timeZoneName').value
+	let [, hours = '0'] = /GMT([+-]\d+)?/u.exec(name)
+	return Number(hours) * 60 * 60 * 1000
+}
+
+/**
+ * A recorded time moved by some days, written as its feed writes it. It keeps
+ * its time of day at the colleges, so an event moved across a change of
+ * clocks stays where it was in the evening rather than slipping an hour.
+ */
 function shiftStamp(stamp, days) {
-	let iso = new Date(instantOf(stamp).getTime() + days * DAY_MS).toISOString()
+	let from = instantOf(stamp)
+	let moved = new Date(from.getTime() + days * DAY_MS)
+	let iso = new Date(moved.getTime() + campusOffset(from) - campusOffset(moved)).toISOString()
 	if (!stamp.includes('T')) return iso.slice(0, 19).replace('T', ' ')
 	return stamp.includes('.') ? iso : iso.replace(/\.\d{3}Z$/u, 'Z')
 }

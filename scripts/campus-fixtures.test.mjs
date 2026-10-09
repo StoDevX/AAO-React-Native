@@ -269,7 +269,8 @@ describe('shiftCalendars', () => {
 			{
 				title: 'Exhibition',
 				utc_start_date: '2026-06-27 15:00:00',
-				utc_end_date: '2026-10-27 23:00:00',
+				// It ends at 5 PM CST, which moves to 5 PM CDT: an hour earlier in UTC.
+				utc_end_date: '2026-10-27 22:00:00',
 			},
 			{title: 'Game', utc_start_date: '2026-09-05 18:00:00', utc_end_date: '2026-09-05 20:00:00'},
 		])
@@ -290,6 +291,24 @@ describe('shiftCalendars', () => {
 		)
 		// Monday Oct 12 lands on Monday Aug 31, six weeks back.
 		assert.deepEqual(starts(table, CARLETON), ['2026-08-31T15:00:00.000Z'])
+	})
+
+	it('keeps an event at its time of day at the colleges, across a change of clocks', () => {
+		let table = shiftCalendars(
+			{
+				[CARLETON]: answer([
+					// 11:30 PM CST on Saturday Nov 7, after the clocks went back.
+					{
+						title: 'Late',
+						startTime: '2026-11-08T05:30:00.000Z',
+						endTime: '2026-11-08T06:30:00.000Z',
+					},
+				]),
+			},
+			{frozenDay: FROZEN, recordedDay: '2026-11-05'},
+		)
+		// 11:30 PM CDT on Saturday Sep 5, not 12:30 AM on the Sunday.
+		assert.deepEqual(starts(table, CARLETON), ['2026-09-06T04:30:00.000Z'])
 	})
 
 	it('keeps each feed’s own way of writing a time', () => {
