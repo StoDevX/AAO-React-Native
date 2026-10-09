@@ -11,7 +11,6 @@
   "dependencies": {
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
-    "@frogpond/launch-arguments": "workspace:*",
     "zod": "4.6.5"
   },
   "devDependencies": {
