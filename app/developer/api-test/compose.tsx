@@ -323,35 +323,45 @@ export default function APITestComposePage(): React.ReactNode {
 								</SwipeActions>
 							)
 						})}
-						<Menu label="Add Parameter" systemImage="plus.circle">
-							{accepted.length ? (
-								<Section title="Accepted by this route">
-									{accepted.map((input) => (
-										<Button
-											key={input.name}
-											label={input.name}
-											onPress={() => addRow({name: input.name, value: defaultFor(input)})}
-										/>
-									))}
-								</Section>
-							) : null}
-							{usedBefore.length ? (
-								<Section title="Used before">
-									{usedBefore.map((suggestion) => (
-										<Button
-											key={suggestion.name}
-											label={`${suggestion.name} = ${suggestion.value}`}
-											onPress={() => addRow(suggestion)}
-										/>
-									))}
-								</Section>
-							) : null}
+						{/* A menu holding only Custom… would be a tap for nothing: with no
+						    other choice, the button adds a row to fill in straight away. */}
+						{accepted.length || usedBefore.length ? (
+							<Menu label="Add Parameter" systemImage="plus.circle">
+								{accepted.length ? (
+									<Section title="Accepted by this route">
+										{accepted.map((input) => (
+											<Button
+												key={input.name}
+												label={input.name}
+												onPress={() => addRow({name: input.name, value: defaultFor(input)})}
+											/>
+										))}
+									</Section>
+								) : null}
+								{usedBefore.length ? (
+									<Section title="Used before">
+										{usedBefore.map((suggestion) => (
+											<Button
+												key={suggestion.name}
+												label={`${suggestion.name} = ${suggestion.value}`}
+												onPress={() => addRow(suggestion)}
+											/>
+										))}
+									</Section>
+								) : null}
+								<Button
+									label="Custom…"
+									onPress={() => addRow({name: '', value: ''})}
+									systemImage="square.and.pencil"
+								/>
+							</Menu>
+						) : (
 							<Button
-								label="Custom…"
+								label="Add Parameter"
 								onPress={() => addRow({name: '', value: ''})}
-								systemImage="square.and.pencil"
+								systemImage="plus.circle"
 							/>
-						</Menu>
+						)}
 					</Section>
 
 					{recent.length ? (
