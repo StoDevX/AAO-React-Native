@@ -73,10 +73,17 @@ describe('startsOpen', () => {
 		expect(startsOpen(Array.from({length: SMALL_GROUP}, (_, index) => index))).toBe(true)
 	})
 
-	test('stops counting a huge group at the limit', () => {
-		let huge = Array.from({length: 100_000}, (_, index) => ({index}))
-		let started = performance.now()
+	test('stops counting a huge group once past the limit', () => {
+		// items beyond the limit throw when read, so counting any of them fails
+		let huge: unknown[] = Array.from({length: SMALL_GROUP + 1}, (_, index) => index)
+		for (let index = SMALL_GROUP + 1; index < 100_000; index++) {
+			Object.defineProperty(huge, index, {
+				enumerable: true,
+				get: () => {
+					throw new Error(`read item ${index}, past the limit`)
+				},
+			})
+		}
 		expect(startsOpen(huge)).toBe(false)
-		expect(performance.now() - started).toBeLessThan(50)
 	})
 })

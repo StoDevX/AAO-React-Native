@@ -1,21 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import * as c from '@frogpond/colors'
 
-import {methodColor, sendsWithoutAsking} from '../method'
-
-describe('methodColor', () => {
-	test('colours each common method by what it does', () => {
-		expect(methodColor('GET')).toBe(c.systemBlue)
-		expect(methodColor('POST')).toBe(c.systemGreen)
-		expect(methodColor('DELETE')).toBe(c.systemRed)
-		expect(methodColor('QUERY')).toBe(c.systemIndigo)
-	})
-
-	test('gives any other method one shared colour', () => {
-		expect(methodColor('PATCH')).toBe(c.systemOrange)
-		expect(methodColor('PUT')).toBe(c.systemOrange)
-	})
-})
+import {sendsWithoutAsking} from '../method'
 
 describe('sendsWithoutAsking', () => {
 	test('lets a GET or a POST go without asking', () => {

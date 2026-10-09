@@ -13,8 +13,8 @@ type Props = {
 
 /**
  * A response body that is not JSON, in selectable monospaced text. Drawn in
- * SwiftUI so it takes the label colour, which a React Native text input does
- * not: that drew plain-text bodies black on the dark-mode background.
+ * SwiftUI so it takes the label colour: a React Native text input draws black
+ * whatever the appearance, which is unreadable on the dark-mode background.
  */
 export function ResponseText({heading, body}: Props): React.ReactNode {
 	return (
