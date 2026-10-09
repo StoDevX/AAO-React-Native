@@ -6,6 +6,9 @@ import {DEFAULT_QUICK_ACTIONS, resolveQuickActions} from '../destinations'
 import {useQuickActionsStore} from '../store'
 import {startQuickActionSync, toQuickActions} from '../sync'
 import {useCampusStore} from '../../campus/store'
+import {campusById} from '../../../campuses'
+
+const stolaf = campusById('edu.stolaf')
 
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
@@ -22,7 +25,7 @@ beforeEach(async () => {
 
 describe('toQuickActions', () => {
 	test('maps each destination in order', () => {
-		expect(toQuickActions(resolveQuickActions(['Cage Menu', 'Transit']))).toStrictEqual([
+		expect(toQuickActions(resolveQuickActions(['Cage Menu', 'Transit'], stolaf))).toStrictEqual([
 			{
 				id: 'Cage Menu',
 				title: 'Cage Menu',
@@ -34,7 +37,7 @@ describe('toQuickActions', () => {
 	})
 
 	test("names a custom symbol by its asset name, which iOS finds in the app's catalog", () => {
-		let [action] = toQuickActions(resolveQuickActions(['Olaf Messenger']))
+		let [action] = toQuickActions(resolveQuickActions(['Olaf Messenger'], stolaf))
 		expect(action).toStrictEqual({
 			id: 'Olaf Messenger',
 			title: 'Olaf Messenger',
@@ -52,8 +55,8 @@ describe('toQuickActions', () => {
 	})
 
 	test('keeps a query string intact', () => {
-		let [action] = toQuickActions(resolveQuickActions(['Map']))
-		expect(action.href).toBe('/map?campus=stolaf')
+		let [action] = toQuickActions(resolveQuickActions(['Map'], stolaf))
+		expect(action.href).toBe('/map?campus=edu.stolaf')
 	})
 })
 
@@ -68,7 +71,7 @@ describe('startQuickActionSync', () => {
 	test('pushes again when the picks change', async () => {
 		let stop = startQuickActionSync()
 		await useQuickActionsStore.persist.rehydrate()
-		useQuickActionsStore.getState().toggleQuickAction('Transit')
+		useQuickActionsStore.getState().toggleQuickAction('Transit', stolaf)
 		expect(pushedIds()).toStrictEqual(['Stav Menu', 'Cage Menu', 'Olaf Messenger'])
 		stop()
 	})
@@ -78,7 +81,7 @@ describe('startQuickActionSync', () => {
 		await useQuickActionsStore.persist.rehydrate()
 		stop()
 		mockSet.mockClear()
-		useQuickActionsStore.getState().toggleQuickAction('Transit')
+		useQuickActionsStore.getState().toggleQuickAction('Transit', stolaf)
 		expect(mockSet).not.toHaveBeenCalled()
 	})
 

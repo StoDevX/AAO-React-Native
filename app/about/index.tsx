@@ -28,8 +28,7 @@ import {PagedSection, type Card} from '../../source/features/about/card-carousel
 import {aboutFor} from '../../source/features/about/about-for'
 import {creditRows} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
-import {useLegacyCampus} from '../../source/features/campus/store'
-import {useBranding} from '../../source/features/campus/branding'
+import {useCampus, useLegacyCampus} from '../../source/features/campus/store'
 import {versionDetails} from '../../source/features/about/version'
 
 const styles = StyleSheet.create({
@@ -55,7 +54,7 @@ export default function AboutPage(): React.ReactNode {
 	let router = useRouter()
 	let {fontScale} = useWindowDimensions()
 	let [versionIndex, setVersionIndex] = React.useState(0)
-	let branding = useBranding()
+	let {branding} = useCampus()
 	let about = aboutFor(useLegacyCampus())
 	let storyCards: Array<Card> = about.story.map((era) => ({
 		id: era.period,
@@ -85,7 +84,7 @@ export default function AboutPage(): React.ReactNode {
 								multilineTextAlignment('center'),
 							]}
 						>
-							{about.intro}
+							{branding.intro}
 						</Text>
 					</VStack>
 

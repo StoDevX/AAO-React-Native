@@ -19,8 +19,7 @@ import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../source/components/call-phone'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
-import {useBranding} from '../../source/features/campus/branding'
-import {type LegacyCampus as Campus, useLegacyCampus} from '../../source/features/campus/store'
+import {useCampus, useCampusId} from '../../source/features/campus/store'
 import {contactsOptionsFor} from '../../source/features/directory/contacts-query'
 import {FaqBannerSlot} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
@@ -42,34 +41,23 @@ type EmergencyButton = {title: string; phoneNumber?: string}
 /// 911 is the one number that never changes, so it is the only one written here.
 const EMERGENCY_NUMBER = '911'
 
-/// Each campus's emergency buttons: what each says, and the title of the
-/// contact, in that campus's contacts, whose number it dials.
-const EMERGENCY_CONTACTS: Record<Campus, Array<{label: string; contact: string}>> = {
-	stolaf: [
-		{label: 'PubSafe', contact: 'PubSafe'},
-		{label: 'SARN', contact: 'SARN'},
-	],
-	carleton: [{label: 'Security', contact: 'Security Services'}],
-}
-
-/// Carleton's ITS Helpdesk, which CARLS' Report a Problem screen offered.
-const ITS_SERVICE_CATALOG =
-	'https://stolafcarleton.teamdynamix.com/TDClient/2092/Carleton/Requests/ServiceCatalog'
-const ITS_PHONE_NUMBER = '5072225999'
-
 const EMERGENCY_BUTTON = [buttonStyle('bordered'), frame({maxWidth: FILL_WIDTH})]
 
 /// Where to get help: campus emergency contacts, the FAQs, and the problem report.
 export default function SupportPage(): React.ReactNode {
 	let router = useRouter()
-	let campus = useLegacyCampus()
-	let {appName} = useBranding()
-	let {data: contacts} = useQuery(contactsOptionsFor(campus))
+	let campus = useCampus()
+	let {appName} = campus.branding
+	let helpdesk = campus.support?.helpdesk
+	let {data: contacts} = useQuery({
+		...contactsOptionsFor(useCampusId()),
+		enabled: campus.contacts !== undefined,
+	})
 
 	let numberFor = (title: string) =>
 		contacts?.find((contact) => contact.title === title)?.phoneNumber
 	let buttons: EmergencyButton[] = [
-		...EMERGENCY_CONTACTS[campus].map(({label, contact}) => ({
+		...(campus.support?.emergency ?? []).map(({label, contact}) => ({
 			title: label,
 			phoneNumber: numberFor(contact),
 		})),
@@ -120,22 +108,24 @@ export default function SupportPage(): React.ReactNode {
 							/>
 						</Section>
 
-						{campus === 'carleton' ? (
+						{helpdesk ? (
 							<Section
 								footer={
-									<Text>{`For a problem with ${appName} itself, use Send Feedback instead: ITS doesn’t support the app.`}</Text>
+									<Text>{`For a problem with ${appName} itself, use Send Feedback instead: ${helpdesk.name} doesn’t support the app.`}</Text>
 								}
-								title="ITS Helpdesk"
+								title={`${helpdesk.name} Helpdesk`}
 							>
 								<DisclosureRow
 									destination="external"
-									detail="Accounts, passwords, classroom tech, printing and the network"
-									onPress={() => openUrl(ITS_SERVICE_CATALOG)}
+									detail={helpdesk.covers}
+									onPress={() => openUrl(helpdesk.serviceCatalog)}
 									title="Open a Ticket"
 								/>
 								<DisclosureRow
 									destination="action"
-									onPress={() => callPhone(ITS_PHONE_NUMBER, {title: 'Call the ITS Helpdesk'})}
+									onPress={() =>
+										callPhone(helpdesk.phoneNumber, {title: `Call the ${helpdesk.name} Helpdesk`})
+									}
 									title="Call the Helpdesk"
 								/>
 							</Section>

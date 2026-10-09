@@ -1,3 +1,7 @@
+import type {BrandingSection} from '../features/campus/campus-section'
+import type {ContactsSection} from '../features/directory/campus-section'
+import type {HomeSection} from '../features/home/campus-section'
+import type {SupportSection} from '../features/support/campus-section'
 import type {CampusId} from './ids'
 
 /**
@@ -10,4 +14,11 @@ export type CampusDefinition = {
 	id: CampusId
 	/** The college's name, as the campus switcher lists it. */
 	name: string
+	/** The app's name, support address, About intro and Home's notices. */
+	branding: BrandingSection
+	/** Home's tiles, in order. */
+	home: HomeSection
+	// Optional: a campus without a section doesn't have that feature.
+	support?: SupportSection
+	contacts?: ContactsSection
 }

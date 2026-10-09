@@ -31,4 +31,12 @@ describe('parseCampus', () => {
 	it('falls back to stolaf for an empty string', () => {
 		expect(parseCampus('')).toBe('stolaf')
 	})
+
+	it("recognises Carleton's reverse-DNS id, which its tiles link with", () => {
+		expect(parseCampus('edu.carleton')).toBe('carleton')
+	})
+
+	it("recognises St. Olaf's reverse-DNS id", () => {
+		expect(parseCampus('edu.stolaf')).toBe('stolaf')
+	})
 })

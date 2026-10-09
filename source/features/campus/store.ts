@@ -16,7 +16,7 @@ export type {CampusDefinition, CampusId}
 
 /** The campus a UI test named; its recordings answer this load. */
 const TEST_CAMPUS: CampusId | null =
-	uiTestCampus === null ? null : requireCampusId(uiTestCampus, '--campus')
+	typeof uiTestCampus === 'string' ? requireCampusId(uiTestCampus, '--campus') : null
 
 /** The campus this build opens on when nothing is saved; null asks with the picker. */
 const BUILD_DEFAULT: CampusId | null =

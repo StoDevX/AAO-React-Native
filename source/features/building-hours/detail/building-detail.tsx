@@ -27,7 +27,7 @@ import {LinkListSection} from '../../map/card/link-list-section'
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import {CARD_INSET, SECTION_GAP, SHEET_ROW} from '../../../components/place-card/card-style'
 import {InsetImageRow} from '../../../components/inset-image-row'
-import {BRANDING} from '../../campus/branding'
+import {useCampusSection} from '../../campus/store'
 
 /// The formal name sits straight under the sheet's title, as the map card's
 /// subtitle sits under its name.
@@ -50,6 +50,7 @@ type Props = {
  * the card draws them, then where it is, its photo, and any links for it.
  */
 export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
+	let {appName} = useCampusSection('branding')
 	let photo = buildingPhoto(campus, building.image)
 	// A photo that cannot be fetched leaves its row out, as no photo does.
 	let [photoFailed, onPhotoError] = useImageFailure(photo?.uri)
@@ -139,7 +140,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					]}
 				>
 					Building hours subject to change without notice{'\n\n'}Data collected by the humans of{' '}
-					{BRANDING[campus].appName}
+					{appName}
 				</Text>
 			</List>
 		</Host>

@@ -3,10 +3,14 @@ import {setApiRoot, setCarletonApiRoot} from '@frogpond/api'
 import {QueryClient} from '@tanstack/react-query'
 
 import {dictionaryOptionsFor} from '../../dictionary/query'
-import {contactsOptionsFor} from '../../directory/contacts-query'
+import {contactKeys, contactsOptionsFor} from '../../directory/contacts-query'
 import {busRoutesOptionsFor} from '../../transit/bus/query'
 import {otherModesGroupedOptionsFor} from '../../transit/other-modes/query'
 import type {Campus} from '../store'
+
+/** Contacts take a campus id now; the other three move to theirs in Task 5. */
+const contactsFor = (campus: Campus) =>
+	contactsOptionsFor(campus === 'carleton' ? 'edu.carleton' : 'edu.stolaf')
 
 // Jest's setup runs every test as a UI test, where these queries read the bundled data and fetch
 // nothing; what is under test here is the fetch.
@@ -15,7 +19,7 @@ jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 /** Each campus-aware query, by the route it reads on either campus's server. */
 const QUERIES = [
 	{route: 'dictionary', options: dictionaryOptionsFor},
-	{route: 'contacts', options: contactsOptionsFor},
+	{route: 'contacts', options: contactsFor},
 	{route: 'transit/bus', options: busRoutesOptionsFor},
 	{route: 'transit/modes', options: otherModesGroupedOptionsFor},
 ] as const
@@ -51,5 +55,12 @@ describe.each(QUERIES)('$route', ({route, options}) => {
 
 	test("keeps each campus's data under a key of its own", () => {
 		expect(options('carleton').queryKey).not.toEqual(options('stolaf').queryKey)
+	})
+})
+
+describe('contacts', () => {
+	test('are keyed by the campus id', () => {
+		expect(contactKeys.forCampus('edu.stolaf')).toEqual(['edu.stolaf', 'contacts'])
+		expect(contactsOptionsFor('edu.carleton').queryKey).toEqual(['edu.carleton', 'contacts'])
 	})
 })

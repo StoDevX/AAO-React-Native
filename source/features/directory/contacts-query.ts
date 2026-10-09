@@ -3,18 +3,17 @@ import {queryOptions} from '@tanstack/react-query'
 import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import contactInfoData from '../../../docs/contact-info.json'
 import {ContactType} from './types'
-import type {Campus} from '../campus/store'
+import type {CampusId} from '../../campuses'
+import {legacyCampusOf} from '../campus/store'
 
 /// Named apart from this feature's `keys`, in query.ts, which addresses the
 /// St. Olaf directory search rather than these.
 export const contactKeys = {
-	all: ['contacts'] as const,
-	/** St. Olaf's keeps the key it always had; Carleton's sits under the campus. */
-	forCampus: (campus: Campus): readonly string[] =>
-		campus === 'carleton' ? (['carleton', 'contacts'] as const) : contactKeys.all,
+	/** Each campus's contacts sit under its id. */
+	forCampus: (campusId: CampusId) => [campusId, 'contacts'] as const,
 }
 
-async function fetchContacts(campus: Campus, {signal}: {signal: AbortSignal}) {
+async function fetchContacts(campusId: CampusId, {signal}: {signal: AbortSignal}) {
 	// The UI tests naming no campus read contacts out of the bundle rather than off the server,
 	// because the two move independently: `data/contact-info/*.yaml` reaches
 	// production by a deploy of its own, so a test asserting on a title, an
@@ -27,7 +26,7 @@ async function fetchContacts(campus: Campus, {signal}: {signal: AbortSignal}) {
 		return (contactInfoData as {data: ContactType[]}).data
 	}
 
-	let api = campus === 'carleton' ? carletonClient : stolafClient
+	let api = legacyCampusOf(campusId) === 'carleton' ? carletonClient : stolafClient
 	let response = await api.get('contacts', {signal}).json()
 	// The server sends whatever the data repo deployed, so this is an
 	// assertion, not a check. `icon` in particular claims to be an SFSymbol on
@@ -45,22 +44,23 @@ async function fetchContacts(campus: Campus, {signal}: {signal: AbortSignal}) {
 // edits.
 const staleTime = 1000 * 60 * 5 // 5 minutes
 
-/** `campus`'s important contacts. */
+/** The important contacts of the campus `campusId` names. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const contactsOptionsFor = (campus: Campus) =>
+export const contactsOptionsFor = (campusId: CampusId) =>
 	queryOptions({
-		queryKey: contactKeys.forCampus(campus),
-		queryFn: (context) => fetchContacts(campus, context),
+		queryKey: contactKeys.forCampus(campusId),
+		queryFn: (context) => fetchContacts(campusId, context),
 		staleTime,
 	})
 
-export const contactsOptions = contactsOptionsFor('stolaf')
+/** St. Olaf's, which its Directory heads with. The directory section takes this over in Task 5. */
+export const contactsOptions = contactsOptionsFor('edu.stolaf')
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const contactByTitleOptions = (title: string, campus: Campus = 'stolaf') =>
+export const contactByTitleOptions = (title: string, campusId: CampusId) =>
 	queryOptions({
-		queryKey: contactKeys.forCampus(campus),
-		queryFn: (context) => fetchContacts(campus, context),
+		queryKey: contactKeys.forCampus(campusId),
+		queryFn: (context) => fetchContacts(campusId, context),
 		select: (contacts) => contacts.find((c) => c.title === title),
 		staleTime,
 	})

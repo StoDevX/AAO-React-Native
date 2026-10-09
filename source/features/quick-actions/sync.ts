@@ -2,7 +2,8 @@ import * as Sentry from '@sentry/react-native'
 import {setQuickActions} from '@frogpond/quick-actions'
 import type {QuickAction} from '@frogpond/quick-actions'
 
-import {legacyCampusOf, useCampusStore} from '../campus/store'
+import {campusById} from '../../campuses'
+import {useCampusStore} from '../campus/store'
 import {iconImage} from '../views'
 import {resolveQuickActions} from './destinations'
 import type {QuickActionDestination} from './destinations'
@@ -24,7 +25,7 @@ function pushQuickActions(): void {
 	if (id === null) {
 		return
 	}
-	let campus = legacyCampusOf(id)
+	let campus = campusById(id)
 	let destinations = resolveQuickActions(pickedFor(useQuickActionsStore.getState(), campus), campus)
 	// The menu is a convenience; a failure is worth knowing about, not showing.
 	setQuickActions(toQuickActions(destinations)).catch((error: unknown) => {

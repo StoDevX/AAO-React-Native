@@ -28,7 +28,7 @@ beforeEach(() => {
 
 describe.each([
 	['dictionary', dictionaryOptionsFor],
-	['contacts', contactsOptionsFor],
+	['contacts', () => contactsOptionsFor('edu.carleton')],
 	['transit/bus', busRoutesOptionsFor],
 	['transit/modes', otherModesGroupedOptionsFor],
 ] as const)('%s in a Carleton campus test', (route, options) => {

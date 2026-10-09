@@ -8,6 +8,8 @@ import {BuildingType, Campus} from './types'
 import {FAVORITES_TITLE} from './lib/listed-sections'
 import {useForceBundledData} from './dev/data-source-store'
 import {groupBy} from '@frogpond/collections'
+import {isCampusId} from '../../campuses'
+import {legacyCampusOf} from '../campus/store'
 
 /**
  * Narrows a route's `?campus=` param to a known `Campus`, falling back to
@@ -15,6 +17,11 @@ import {groupBy} from '@frogpond/collections'
  * screen or reach a client picked by casting an arbitrary string.
  */
 export function parseCampus(value: string | undefined): Campus {
+	// A tile's reverse-DNS id and an older link's legacy id both read, until
+	// the route's campus param is read as a campus id throughout.
+	if (isCampusId(value)) {
+		return legacyCampusOf(value)
+	}
 	return value === 'carleton' ? 'carleton' : 'stolaf'
 }
 

@@ -1,6 +1,6 @@
-import {HomeViews} from '../views'
+import type {CampusDefinition} from '../../campuses'
+import {legacyCampusOf} from '../campus/store'
 import type {ViewType} from '../views'
-import type {Campus} from '../campus/store'
 
 /** A screen a Home Screen quick action can open. */
 export type QuickActionDestination = {
@@ -25,9 +25,17 @@ export const DEFAULT_QUICK_ACTIONS: string[] = [
 /** A Carleton install's starting picks: the CARLS tiles reached most. */
 export const DEFAULT_CARLETON_QUICK_ACTIONS: string[] = ['Menus', 'Building Hours', 'SUMO', 'Convo']
 
+/**
+ * Whether `campus` keeps its picks in the store's St. Olaf slot and offers
+ * St. Olaf's café menus.
+ */
+export function isStOlafsQuickActions(campus: CampusDefinition): boolean {
+	return legacyCampusOf(campus.id) === 'stolaf'
+}
+
 /** The starting picks for `campus`. */
-export function defaultQuickActions(campus: Campus): string[] {
-	return campus === 'carleton' ? DEFAULT_CARLETON_QUICK_ACTIONS : DEFAULT_QUICK_ACTIONS
+export function defaultQuickActions(campus: CampusDefinition): string[] {
+	return isStOlafsQuickActions(campus) ? DEFAULT_QUICK_ACTIONS : DEFAULT_CARLETON_QUICK_ACTIONS
 }
 
 /** Cafés get an action each, though the home grid has one Menus tile for all of them. */
@@ -42,8 +50,8 @@ const CAFE_MENUS: QuickActionDestination[] = [
  * St. Olaf's bare Menus tile is left out, since it opens the same screen as
  * Stav Menu.
  */
-export function quickActionDestinations(campus: Campus = 'stolaf'): QuickActionDestination[] {
-	let tiles = HomeViews(campus).flatMap((view): QuickActionDestination[] => {
+export function quickActionDestinations(campus: CampusDefinition): QuickActionDestination[] {
+	let tiles = campus.home.tiles.flatMap((view): QuickActionDestination[] => {
 		if (view.type !== 'view' || view.disabled || view.devOnly) {
 			return []
 		}
@@ -53,7 +61,7 @@ export function quickActionDestinations(campus: Campus = 'stolaf'): QuickActionD
 		return [{id: view.title, title: view.title, icon: view.icon, href: view.view}]
 	})
 
-	return campus === 'carleton' ? tiles : [...CAFE_MENUS, ...tiles]
+	return isStOlafsQuickActions(campus) ? [...CAFE_MENUS, ...tiles] : tiles
 }
 
 /**
@@ -61,8 +69,8 @@ export function quickActionDestinations(campus: Campus = 'stolaf'): QuickActionD
  * one -- a tile renamed or removed since it was picked -- is dropped.
  */
 export function resolveQuickActions(
-	ids: string[],
-	campus: Campus = 'stolaf',
+	ids: ReadonlyArray<string>,
+	campus: CampusDefinition,
 ): QuickActionDestination[] {
 	let byId = new Map(quickActionDestinations(campus).map((d) => [d.id, d]))
 	return ids.flatMap((id) => byId.get(id) ?? [])

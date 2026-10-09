@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 
-import {useBranding} from '../../source/features/campus/branding'
+import {useCampusSection} from '../../source/features/campus/store'
 
 const styles = StyleSheet.create({
 	scroll: {
@@ -34,7 +34,7 @@ Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered
 `
 
 export default function LegalPage(): React.ReactNode {
-	let {college} = useBranding()
+	let {college} = useCampusSection('branding')
 
 	return (
 		<>

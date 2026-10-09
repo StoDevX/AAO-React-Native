@@ -12,7 +12,6 @@ describe("each campus's About", () => {
 	// CARLS' own credits name its writers alone, and tell no history.
 	test("CARLS' shows its own intro and writers, and no story or empty list", () => {
 		let about = aboutFor('carleton')
-		expect(about.intro).toMatch(/^CARLS is an application created by Hawken Rives/u)
 		expect(about.story).toEqual([])
 		expect(about.credits.map((credit) => credit.id)).toEqual(['contributors'])
 		expect(about.credits[0].names).toContain('Grace Pipes')
