@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
-import type {StationId} from './stations'
+import {STATION_LIST, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
 type RadioStore = {
@@ -87,7 +87,8 @@ export const useRadioStore = create<RadioStore>()(
 				playState: 'stopped',
 				error: null,
 				playerKey: 0,
-				viewedStationId: 'ksto',
+				// The first station the player offers: KSTO, as it always was.
+				viewedStationId: STATION_LIST[0].id,
 				sheetOpen: false,
 				fullScheduleOpen: false,
 				showOnHome: true,

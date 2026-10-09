@@ -1,6 +1,7 @@
 import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {z} from 'zod'
+import type {CampusId} from '../../campuses/ids'
 
 /** One episode of the convocations podcast, as Carleton's ccc-server relays it. */
 const WireEpisodeSchema = z.object({
@@ -58,12 +59,14 @@ export function archivedConvosFrom(body: unknown): ArchivedConvo[] {
 /** Recordings change once a week at most, so an hour stale costs nothing. */
 const staleTime = 1000 * 60 * 60
 
-export const archivedConvosOptions = queryOptions({
-	queryKey: ['carleton', 'convos', 'archived'] as const,
-	queryFn: async ({signal}): Promise<ArchivedConvo[]> => {
-		// Carleton's server: /carleton-convos is Carleton's screen, reachable by URL from any campus.
-		let body = await clientFor('edu.carleton').get('convos/archived', {signal}).json()
-		return archivedConvosFrom(body)
-	},
-	staleTime,
-})
+/** The recordings `server` relays: the convos section's server, which the screen passes. */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const archivedConvosOptions = (server: CampusId) =>
+	queryOptions({
+		queryKey: [server, 'convos', 'archived'] as const,
+		queryFn: async ({signal}): Promise<ArchivedConvo[]> => {
+			let body = await clientFor(server).get('convos/archived', {signal}).json()
+			return archivedConvosFrom(body)
+		},
+		staleTime,
+	})

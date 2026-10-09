@@ -1,4 +1,4 @@
-import type {Paper} from '../paper'
+import type {Paper} from '../campus-section'
 import type {MessIssue} from '../types'
 
 /**

@@ -10,6 +10,7 @@ import {ImageView} from '../image-view'
 import {SeriesRow} from '../series-row'
 import {messKeys} from '../lib/keys'
 import type {MessStory} from '../types'
+import {InMessenger} from './in-messenger'
 
 const mockNavigate = jest.fn()
 jest.mock('expo-router', () => ({
@@ -77,7 +78,11 @@ afterEach(() => {
 })
 
 function renderWithClient(ui: React.ReactElement) {
-	return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
+	return render(
+		<QueryClientProvider client={queryClient}>
+			<InMessenger>{ui}</InMessenger>
+		</QueryClientProvider>,
+	)
 }
 
 describe('ImageView', () => {

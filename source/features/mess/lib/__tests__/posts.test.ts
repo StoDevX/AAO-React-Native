@@ -3,9 +3,10 @@ import posts from '../../__tests__/fixtures/posts.json'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
 import crosswordPlaylist from '../../__tests__/fixtures/crossword-playlist-posts.json'
 import {parseMessCategories, parseMessPosts} from '../posts'
+import {MESSENGER} from '../../../../campuses/edu-stolaf/paper'
 
 const categories = parseMessCategories(categoriesJson)
-const stories = parseMessPosts(posts, categories)
+const stories = parseMessPosts(posts, categories, MESSENGER)
 const byId = (id: number) => stories.find((s) => s.id === id)
 
 describe('parseMessCategories', () => {
@@ -35,7 +36,7 @@ describe('parseMessPosts', () => {
 
 	it('flags a story featured only from a category named Featured*, not from its children', () => {
 		let onlineExclusive = {...posts[0], categories: [55]}
-		expect(parseMessPosts([onlineExclusive], categories)[0]).toMatchObject({
+		expect(parseMessPosts([onlineExclusive], categories, MESSENGER)[0]).toMatchObject({
 			featured: false,
 			section: null,
 			column: null,
@@ -44,7 +45,7 @@ describe('parseMessPosts', () => {
 
 	it('prefers a main section over another top-level category, whatever the order', () => {
 		let both = {...posts[0], categories: [1139, 69]}
-		expect(parseMessPosts([both], categories)[0]).toMatchObject({
+		expect(parseMessPosts([both], categories, MESSENGER)[0]).toMatchObject({
 			section: 'Variety',
 			column: 'Poetry',
 		})
@@ -52,7 +53,7 @@ describe('parseMessPosts', () => {
 
 	it('falls back to another top-level category when no main section is present', () => {
 		let specialEdition = {...posts[0], categories: [1139]}
-		expect(parseMessPosts([specialEdition], categories)[0]).toMatchObject({
+		expect(parseMessPosts([specialEdition], categories, MESSENGER)[0]).toMatchObject({
 			section: 'Special Edition',
 			column: 'Spring 2026',
 		})
@@ -60,7 +61,7 @@ describe('parseMessPosts', () => {
 
 	it('never makes Uncategorized a section', () => {
 		let uncategorized = {...posts[0], categories: [1]}
-		expect(parseMessPosts([uncategorized], categories)[0]).toMatchObject({
+		expect(parseMessPosts([uncategorized], categories, MESSENGER)[0]).toMatchObject({
 			section: null,
 			column: null,
 		})
@@ -87,7 +88,7 @@ describe('parseMessPosts', () => {
 
 	it('treats the white Mess logo as no photo', () => {
 		let withWhiteLogo = {...posts[0], featured_media: 28499}
-		expect(parseMessPosts([withWhiteLogo], categories)[0]?.photo).toBeNull()
+		expect(parseMessPosts([withWhiteLogo], categories, MESSENGER)[0]?.photo).toBeNull()
 	})
 
 	it.each([
@@ -96,7 +97,7 @@ describe('parseMessPosts', () => {
 	])('gives a photo with no %s no photo, since it has no aspect ratio', (_side, size) => {
 		let unsized = structuredClone(posts[0])
 		unsized._embedded['wp:featuredmedia'][0].media_details = size
-		expect(parseMessPosts([unsized], categories)[0]?.photo).toBeNull()
+		expect(parseMessPosts([unsized], categories, MESSENGER)[0]?.photo).toBeNull()
 	})
 
 	it('gives a post without featured media no photo', () => {
@@ -113,25 +114,25 @@ describe('parseMessPosts', () => {
 	})
 
 	it('skips a malformed post and keeps the rest', () => {
-		let parsed = parseMessPosts([{id: 'nope'}, ...posts], categories)
+		let parsed = parseMessPosts([{id: 'nope'}, ...posts], categories, MESSENGER)
 		expect(parsed).toHaveLength(5)
 	})
 
 	it('skips a post with an unreadable date and keeps the rest', () => {
 		let badDate = {...posts[0], date_gmt: 'nope'}
-		let parsed = parseMessPosts([badDate, posts[1]], categories)
+		let parsed = parseMessPosts([badDate, posts[1]], categories, MESSENGER)
 		expect(parsed.map((s) => s.id)).toStrictEqual([36911])
 	})
 
 	it('throws when every post is malformed', () => {
-		expect(() => parseMessPosts([{id: 'nope'}], categories)).toThrow(
+		expect(() => parseMessPosts([{id: 'nope'}], categories, MESSENGER)).toThrow(
 			'every Mess post was malformed',
 		)
 	})
 })
 
 describe('a story excerpt', () => {
-	let playlists = parseMessPosts(crosswordPlaylist, categories)
+	let playlists = parseMessPosts(crosswordPlaylist, categories, MESSENGER)
 	let excerptOf = (id: number) => playlists.find((s) => s.id === id)?.excerpt
 
 	it('drops a web address that opens it, which a list row would show raw (36639)', () => {
@@ -149,6 +150,7 @@ describe('a story excerpt', () => {
 				},
 			],
 			categories,
+			MESSENGER,
 		)
 		expect(story?.excerpt).toBe('Songs for a slow Sunday.')
 	})

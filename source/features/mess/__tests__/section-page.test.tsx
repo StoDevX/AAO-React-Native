@@ -11,6 +11,7 @@ import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import {SectionStories} from '../section-page'
 import type {MessStory} from '../types'
+import {InMessenger} from './in-messenger'
 
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
@@ -60,7 +61,9 @@ afterEach(() => {
 function renderSection(name = 'News') {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<SectionStories name={name} />
+			<InMessenger>
+				<SectionStories name={name} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

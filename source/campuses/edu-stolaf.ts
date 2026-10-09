@@ -2,6 +2,8 @@ import type {CampusDefinition} from './definition'
 import {BUNDLED_DIRECTORIES, BUNDLED_HOURS} from './edu-stolaf/bundled'
 import {stolafHomeTiles} from './edu-stolaf/home-tiles'
 import {menus} from './edu-stolaf/menus'
+import {MESSENGER} from './edu-stolaf/paper'
+import {KSTO} from './edu-stolaf/radio'
 
 export const stolaf = {
 	id: 'edu.stolaf',
@@ -60,4 +62,11 @@ export const stolaf = {
 	transit: {},
 	dictionary: {acceptsSuggestions: true},
 	directory: {searchUrl: 'https://www.stolaf.edu/directory/'},
+	calendar: {sources: ['stolaf', 'presence']},
+	news: {
+		// The college's own news site.
+		source: {id: 'stolaf', title: 'St. Olaf News', thumbnail: 'stolaf'},
+	},
+	radio: {stations: [KSTO]},
+	paper: MESSENGER,
 } as const satisfies CampusDefinition

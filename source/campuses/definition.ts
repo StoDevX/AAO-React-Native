@@ -1,8 +1,13 @@
+import type {CalendarSection} from '../features/calendar/campus-section'
 import type {HoursSection} from '../features/building-hours/campus-section'
 import type {MapSection} from '../features/map/campus-section'
 import type {BrandingSection} from '../features/campus/campus-section'
 import type {ContactsSection, DirectorySection} from '../features/directory/campus-section'
 import type {DictionarySection} from '../features/dictionary/campus-section'
+import type {NewsSection} from '../features/news/campus-section'
+import type {RadioSection} from '../features/streaming/radio/campus-section'
+import type {PaperSection} from '../features/mess/campus-section'
+import type {ConvosSection} from '../features/carleton/campus-section'
 import type {MenusSection} from '../features/menus/campus-section'
 import type {TransitSection} from '../features/transit/campus-section'
 import type {ApiSection} from '../features/developer/campus-section'
@@ -43,4 +48,9 @@ export type CampusDefinition = {
 	dictionary?: DictionarySection
 	/** The people directory; St. Olaf's alone. */
 	directory?: DirectorySection
+	calendar?: CalendarSection
+	news?: NewsSection
+	radio?: RadioSection
+	paper?: PaperSection
+	convos?: ConvosSection
 }

@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {archivedConvosFrom, toArchivedConvos} from '../convos'
+import {archivedConvosFrom, archivedConvosOptions, toArchivedConvos} from '../convos'
 
 function episode(overrides: Partial<Parameters<typeof toArchivedConvos>[0][number]> = {}) {
 	return {
@@ -59,5 +59,18 @@ describe('archivedConvosFrom', () => {
 		let convos = archivedConvosFrom([undated, episode({title: 'Dated'})])
 
 		expect(convos.map((convo) => convo.title)).toEqual(['Dated'])
+	})
+})
+
+describe('archivedConvosOptions', () => {
+	test('keys the recordings by the server it is given', () => {
+		expect(archivedConvosOptions('edu.carleton').queryKey).toEqual([
+			'edu.carleton',
+			'convos',
+			'archived',
+		])
+		expect(archivedConvosOptions('edu.stolaf').queryKey).not.toEqual(
+			archivedConvosOptions('edu.carleton').queryKey,
+		)
 	})
 })

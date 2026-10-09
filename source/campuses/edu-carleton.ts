@@ -1,6 +1,8 @@
 import type {CampusDefinition} from './definition'
 import {carletonHomeTiles} from './edu-carleton/home-tiles'
 import {menus} from './edu-carleton/menus'
+import {CARLETONIAN} from './edu-carleton/paper'
+import {KRLX} from './edu-carleton/radio'
 
 export const carleton = {
 	id: 'edu.carleton',
@@ -61,4 +63,12 @@ export const carleton = {
 	transit: {title: 'Transportation'},
 	// Suggestions are filed against St. Olaf's dictionary data.
 	dictionary: {acceptsSuggestions: false},
+	calendar: {sources: ['carleton']},
+	news: {
+		// Carleton Now, read through Carleton's server.
+		source: {id: 'carleton-now', title: 'Carleton News', thumbnail: false},
+	},
+	radio: {stations: [KRLX]},
+	convos: {},
+	paper: CARLETONIAN,
 } as const satisfies CampusDefinition

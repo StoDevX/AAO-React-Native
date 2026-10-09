@@ -14,6 +14,7 @@ import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import type {MessStory} from '../types'
 import {loadBeforeTests} from '../../../testing/load-before-tests'
+import {InMessenger} from './in-messenger'
 
 loadBeforeTests('Image')
 
@@ -81,7 +82,9 @@ afterEach(() => {
 function renderLatest(section: string | null) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<LatestPage section={section} />
+			<InMessenger>
+				<LatestPage section={section} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

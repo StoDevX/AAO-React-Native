@@ -1,4 +1,3 @@
-import {MAIN_SECTIONS} from './posts'
 import type {MessStory} from '../types'
 
 /** The section whose photographed story leads an issue when the editors featured none. */
@@ -33,7 +32,7 @@ export type Shelf = {section: string | null; stories: MessStory[]}
 export function shelvesOf(
 	stories: MessStory[],
 	leadId: number | undefined,
-	mainSections: readonly string[] = MAIN_SECTIONS,
+	mainSections: readonly string[],
 ): Shelf[] {
 	let rest = stories.filter((story) => story.id !== leadId)
 	let sections: Shelf[] = mainSections.map((section) => ({

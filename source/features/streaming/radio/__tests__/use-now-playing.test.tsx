@@ -64,6 +64,8 @@ describe('useNowPlaying', () => {
 			SHIPPED_FEED,
 			expect.any(AbortSignal),
 			'now playing',
+			'json',
+			'edu.stolaf',
 		)
 	})
 
@@ -86,12 +88,15 @@ describe('useNowPlaying', () => {
 			client.setQueryData(manifestOptions.queryKey, moved)
 		})
 
-		// A relative feed is handed on as it is: `fetchSourceBody` asks ccc-server.
+		// A relative feed is handed on as it is, with the campus whose server it
+		// names: St. Olaf's, since the entry names none.
 		await waitFor(() =>
 			expect(mockFetchSourceBody).toHaveBeenLastCalledWith(
 				'radio/krlx/now',
 				expect.any(AbortSignal),
 				'now playing',
+				'json',
+				'edu.stolaf',
 			),
 		)
 	})

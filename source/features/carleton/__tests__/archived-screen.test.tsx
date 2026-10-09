@@ -16,7 +16,7 @@ const convo: ArchivedConvo = {
 test('lists the recordings it has loaded', async () => {
 	// No garbage collection, whose timer would hold Jest open.
 	let client = new QueryClient({defaultOptions: {queries: {gcTime: Infinity, retry: false}}})
-	client.setQueryData(archivedConvosOptions.queryKey, [convo])
+	client.setQueryData(archivedConvosOptions('edu.carleton').queryKey, [convo])
 
 	await render(
 		<QueryClientProvider client={client}>

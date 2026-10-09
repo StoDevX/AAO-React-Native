@@ -7,6 +7,7 @@ import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {BylineAvatar} from '../byline-avatar'
 import {messKeys} from '../lib/keys'
 import type {Byline, StaffProfile} from '../types'
+import {InMessenger} from './in-messenger'
 
 const WRITER: Byline = {id: 392, name: 'Kenzie Nguyen'}
 
@@ -45,7 +46,9 @@ afterEach(() => {
 async function renderAvatar(writer: Byline | undefined) {
 	await render(
 		<QueryClientProvider client={queryClient}>
-			<BylineAvatar writer={writer} />
+			<InMessenger>
+				<BylineAvatar writer={writer} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

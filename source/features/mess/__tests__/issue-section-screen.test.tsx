@@ -9,6 +9,7 @@ import {navigationTitleLines} from '../../../testing/navigation-title'
 import {IssueSectionScreen} from '../issue-section-screen'
 import {messKeys} from '../lib/keys'
 import type {LightPost, MessStory} from '../types'
+import {InMessenger} from './in-messenger'
 
 jest.mock(
 	'react-native-safe-area-context',
@@ -89,7 +90,9 @@ afterEach(() => {
 function renderSection(issueKey: string, section: string) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<IssueSectionScreen issueKey={issueKey} section={section} />
+			<InMessenger>
+				<IssueSectionScreen issueKey={issueKey} section={section} />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }

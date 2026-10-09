@@ -12,14 +12,16 @@ import {NAVIGATION_TITLE_ID} from '../../../components/navigation-title'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
 import {TOP_TILE_ID} from '../issue-grid'
-import {messIssueOptions} from '../query'
+import {paperQueries} from '../query'
 import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
-import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
+import {InMessenger, MESSENGER} from './in-messenger'
+
+const {issueOptions: messIssueOptions} = paperQueries(MESSENGER)
 
 jest.mock('@frogpond/mess-issue-tile', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -119,10 +121,10 @@ const menuItem = (name: string) => screen.getByRole('menuitem', {name})
 const isChecked = (name: string) => Boolean(menuItem(name).props.accessibilityState?.checked)
 
 function saveChoice(key: string): void {
-	useNewsFilterStore.setState({selectedCategories: {[OLAF_MESSENGER.id]: key}})
+	useNewsFilterStore.setState({selectedCategories: {[MESSENGER.id]: key}})
 }
 
-const savedChoice = () => useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]
+const savedChoice = () => useNewsFilterStore.getState().selectedCategories[MESSENGER.id]
 
 /** Answers the categories URL with the fixture tree, and any other URL with `answer(href)`. */
 function serve(answer: (href: string) => unknown): void {
@@ -163,7 +165,9 @@ afterEach(() => {
 function renderScreen() {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<FrontPageScreen />
+			<InMessenger>
+				<FrontPageScreen />
+			</InMessenger>
 		</QueryClientProvider>,
 	)
 }
@@ -466,7 +470,7 @@ describe('FrontPageScreen', () => {
 	// next page would cancel the refresh.
 	test('pull-to-refresh brings in the fresh first page', async () => {
 		let pages = [0, 1, 2].map((n) =>
-			parseLightPosts(springPosts.slice(n * 100, n * 100 + 100), categories),
+			parseLightPosts(springPosts.slice(n * 100, n * 100 + 100), categories, MESSENGER),
 		)
 		queryClient.setQueryData(messKeys.issues, {pages, pageParams: [1, 2, 3]})
 		let fresh = [
