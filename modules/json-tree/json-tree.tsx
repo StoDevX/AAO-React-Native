@@ -35,7 +35,9 @@ const LEAF_COLORS: Record<ReturnType<typeof jsonLeaf>['kind'], ColorValue> = {
 	null: c.systemPurple,
 }
 
-const KEY_FONT = font({textStyle: 'body', design: 'monospaced'})
+/// SF Mono reads larger than SF Pro at the same text style, so keys sit two
+/// steps below body to match the sans text around them.
+const KEY_FONT = font({textStyle: 'subheadline', design: 'monospaced'})
 const VALUE_FONT = font({textStyle: 'footnote', design: 'monospaced'})
 
 /**
