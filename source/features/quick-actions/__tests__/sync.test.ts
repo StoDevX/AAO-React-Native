@@ -15,7 +15,7 @@ let pushedIds = () => mockSet.mock.lastCall?.[0].map((action) => action.id)
 // Each test starts as a fresh install: nothing stored, nothing pushed.
 beforeEach(async () => {
 	useQuickActionsStore.setState({quickActions: DEFAULT_QUICK_ACTIONS})
-	useCampusStore.setState({campus: 'stolaf'})
+	useCampusStore.setState({campus: 'edu.stolaf'})
 	await AsyncStorage.clear()
 	mockSet.mockClear()
 })
@@ -85,9 +85,9 @@ describe('startQuickActionSync', () => {
 	test("pushes the campus's own picks when the campus changes", async () => {
 		let stop = startQuickActionSync()
 		await useQuickActionsStore.persist.rehydrate()
-		useCampusStore.getState().setCampus('carleton')
+		useCampusStore.getState().setCampus('edu.carleton')
 		expect(pushedIds()).toStrictEqual(['Menus', 'Building Hours', 'SUMO', 'Convo'])
-		useCampusStore.getState().setCampus('stolaf')
+		useCampusStore.getState().setCampus('edu.stolaf')
 		expect(pushedIds()).toStrictEqual(DEFAULT_QUICK_ACTIONS)
 		stop()
 	})

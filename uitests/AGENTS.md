@@ -159,11 +159,11 @@ A reachability test is still worth keeping when it is a class's *only* test —
 
 `CampusSmokeTests.swift` holds one template, `CampusSmokeTests`, and a
 subclass per campus that sets `campus` and `expected` and carries a
-`/// Tags: campus:<domain>` marker. XCTest runs the template's tests in each
+`/// Tags: campus:<id>` marker. XCTest runs the template's tests in each
 subclass; the template's own `defaultTestSuite` is empty, and
 `scripts/split-uitests.mjs` never schedules a class other test classes inherit
 from. A new campus is one subclass plus its recording
-(`mise run update-campus-fixtures <domain>`). `--campus` is the one launch
+(`mise run update-campus-fixtures <id>`). `--campus` is the one launch
 argument an in-place reset may change, so campus tests interleave with the
 rest in the same shards without relaunching.
 

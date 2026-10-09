@@ -18,7 +18,7 @@ import {
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
 import {useBranding} from '../../../source/features/campus/branding'
-import {useCampus} from '../../../source/features/campus/store'
+import {useLegacyCampus} from '../../../source/features/campus/store'
 import {remoteImage, type RemoteImage} from '../../../source/lib/remote-images'
 import {useImageFailure} from '../../../source/lib/use-image-failure'
 import {callPhone} from '../../../source/components/call-phone'
@@ -48,7 +48,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		error,
 		isLoading,
 		refetch,
-	} = useQuery(contactByTitleOptions(title, useCampus()))
+	} = useQuery(contactByTitleOptions(title, useLegacyCampus()))
 
 	// Set from the route param immediately, then from the resolved contact
 	// once it loads -- so the header never falls back to the raw route name

@@ -51,17 +51,17 @@ export const isSimulator: boolean = LaunchArguments.isSimulator
 export const isDebugNativeBuild: boolean = LaunchArguments.isDebugNativeBuild
 
 /**
- * The campus, by domain, a UI test named with `--campus`: the launch's, or
- * the last in-place reset's. Null outside UI tests and for a test naming
- * none. Read once per JavaScript load; a reset reloads it.
+ * The campus, by id (`edu.carleton`), a UI test named with `--campus`: the
+ * launch's, or the last in-place reset's. Null outside UI tests and for a test
+ * naming none. Read once per JavaScript load; a reset reloads it.
  */
-export const campusFixturesDomain: string | null = LaunchArguments.uiTestCampus()
+export const uiTestCampus: string | null = LaunchArguments.uiTestCampus()
 
 /**
  * Whether features serve their own bundled UI-test data. A test that names a
  * campus reads that campus's recordings instead, through `fetch`.
  */
-export const servesBundledFixtures: boolean = isUITesting && campusFixturesDomain === null
+export const servesBundledFixtures: boolean = isUITesting && uiTestCampus === null
 
 /**
  * Calls `listener` whenever the UI test runner asks to reset the app in place;

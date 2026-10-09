@@ -8,12 +8,12 @@ import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {BusLine} from '../../../source/features/transit/bus/line'
 import {busLineOptions} from '../../../source/features/transit/bus/query'
-import {useCampus} from '../../../source/features/campus/store'
+import {useLegacyCampus} from '../../../source/features/campus/store'
 import {DAYS_OF_WEEK} from '../../../source/features/transit/bus/components/days'
 import type {DayOfWeek} from '../../../source/features/transit/bus/types'
 
 export default function BusLinePage(): React.ReactNode {
-	let campus = useCampus()
+	let campus = useLegacyCampus()
 	let {line: lineName} = useLocalSearchParams<{line: string}>()
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})

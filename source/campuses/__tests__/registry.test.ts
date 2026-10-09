@@ -1,0 +1,36 @@
+import {describe, expect, test} from '@jest/globals'
+
+import {CAMPUSES, CAMPUS_IDS, UnknownCampusError, campusById, isCampusId, requireCampusId} from '..'
+
+describe('the campus registry', () => {
+	test('lists St. Olaf first, then Carleton, by reverse-DNS id', () => {
+		expect(CAMPUSES.map((campus) => campus.id)).toEqual(['edu.stolaf', 'edu.carleton'])
+	})
+
+	test('defines exactly the ids CAMPUS_IDS lists, in its order', () => {
+		expect(CAMPUSES.map((campus) => campus.id)).toEqual([...CAMPUS_IDS])
+	})
+
+	test('has no duplicate ids', () => {
+		let ids = CAMPUSES.map((campus) => campus.id)
+		expect(new Set(ids).size).toBe(ids.length)
+	})
+
+	test('finds a campus by id', () => {
+		expect(campusById('edu.carleton').name).toBe('Carleton College')
+	})
+
+	test('knows its own ids and nothing else', () => {
+		expect(isCampusId('edu.stolaf')).toBe(true)
+		expect(isCampusId('stolaf')).toBe(false)
+		expect(isCampusId('carleton.edu')).toBe(false)
+		expect(isCampusId(undefined)).toBe(false)
+	})
+
+	test('refuses an unknown id, naming the known ones and where it came from', () => {
+		expect(() => requireCampusId('carleton.edu', '--campus')).toThrow(UnknownCampusError)
+		expect(() => requireCampusId('carleton.edu', '--campus')).toThrow(
+			'--campus names carleton.edu, but the campuses are edu.stolaf, edu.carleton',
+		)
+	})
+})

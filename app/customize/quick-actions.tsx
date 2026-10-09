@@ -23,7 +23,7 @@ import {
 import type {QuickActionDestination} from '../../source/features/quick-actions/destinations'
 import {isPickable} from '../../source/features/quick-actions/picker'
 import {pickedFor, useQuickActionsStore} from '../../source/features/quick-actions/store'
-import {useCampus} from '../../source/features/campus/store'
+import {useLegacyCampus} from '../../source/features/campus/store'
 import {iconImage} from '../../source/features/views'
 
 const styles = StyleSheet.create({
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 const SYMBOL_COLUMN = 28
 
 export default function QuickActionsPage(): React.ReactNode {
-	let campus = useCampus()
+	let campus = useLegacyCampus()
 	let saved = useQuickActionsStore((state) => pickedFor(state, campus))
 	let toggleQuickAction = useQuickActionsStore((state) => state.toggleQuickAction)
 	let resetQuickActions = useQuickActionsStore((state) => state.resetQuickActions)

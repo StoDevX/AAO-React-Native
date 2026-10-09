@@ -68,7 +68,7 @@ describe('uitestsNeeded', () => {
 
 	it('runs when a campus recording changed, which the smoke tests read', () => {
 		assert.equal(
-			uitestsNeeded(['source/features/campus/__fixtures__/carleton.edu/GET-contacts.json']),
+			uitestsNeeded(['source/features/campus/__fixtures__/edu.carleton/GET-contacts.json']),
 			true,
 		)
 	})

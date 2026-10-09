@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import {setQuickActions} from '@frogpond/quick-actions'
 import type {QuickAction} from '@frogpond/quick-actions'
 
-import {useCampusStore} from '../campus/store'
+import {legacyCampusOf, useCampusStore} from '../campus/store'
 import {iconImage} from '../views'
 import {resolveQuickActions} from './destinations'
 import type {QuickActionDestination} from './destinations'
@@ -19,7 +19,12 @@ export function toQuickActions(destinations: QuickActionDestination[]): QuickAct
 }
 
 function pushQuickActions(): void {
-	let campus = useCampusStore.getState().campus
+	let id = useCampusStore.getState().campus
+	// Nothing to offer until someone picks a campus.
+	if (id === null) {
+		return
+	}
+	let campus = legacyCampusOf(id)
 	let destinations = resolveQuickActions(pickedFor(useQuickActionsStore.getState(), campus), campus)
 	// The menu is a convenience; a failure is worth knowing about, not showing.
 	setQuickActions(toQuickActions(destinations)).catch((error: unknown) => {

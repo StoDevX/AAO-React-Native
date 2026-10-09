@@ -28,7 +28,7 @@ import {PagedSection, type Card} from '../../source/features/about/card-carousel
 import {aboutFor} from '../../source/features/about/about-for'
 import {creditRows} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
-import {useCampus} from '../../source/features/campus/store'
+import {useLegacyCampus} from '../../source/features/campus/store'
 import {useBranding} from '../../source/features/campus/branding'
 import {versionDetails} from '../../source/features/about/version'
 
@@ -56,7 +56,7 @@ export default function AboutPage(): React.ReactNode {
 	let {fontScale} = useWindowDimensions()
 	let [versionIndex, setVersionIndex] = React.useState(0)
 	let branding = useBranding()
-	let about = aboutFor(useCampus())
+	let about = aboutFor(useLegacyCampus())
 	let storyCards: Array<Card> = about.story.map((era) => ({
 		id: era.period,
 		heading: era.period,

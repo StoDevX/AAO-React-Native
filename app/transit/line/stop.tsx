@@ -13,7 +13,7 @@ import {useMomentTimer} from '@frogpond/timer'
 import type {Moment} from 'moment-timezone'
 
 import {busLineOptions} from '../../../source/features/transit/bus/query'
-import {useCampus} from '../../../source/features/campus/store'
+import {useLegacyCampus} from '../../../source/features/campus/store'
 import {createMomentForDay} from '../../../source/features/transit/bus/components/days'
 import type {
 	DayOfWeek,
@@ -176,7 +176,7 @@ function BusStopForLine({
 }
 
 export default function BusStopPage(): React.ReactNode {
-	let campus = useCampus()
+	let campus = useLegacyCampus()
 	let {
 		line: lineName,
 		day,

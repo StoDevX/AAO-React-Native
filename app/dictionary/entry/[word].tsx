@@ -10,7 +10,7 @@ import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {EntryDefinition} from '../../../source/features/dictionary/entry-definition'
 import {normalizeEntry} from '../../../source/features/dictionary/lib/entry'
 import {wordByTermOptions} from '../../../source/features/dictionary/query'
-import {useCampus} from '../../../source/features/campus/store'
+import {useLegacyCampus} from '../../../source/features/campus/store'
 import {useDictionaryDraftStore} from '../../../source/features/dictionary/store'
 
 const styles = StyleSheet.create({
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 export default function DictionaryEntryPage(): React.ReactNode {
 	let router = useRouter()
 	let {word} = useLocalSearchParams<{word: string}>()
-	let campus = useCampus()
+	let campus = useLegacyCampus()
 	let {data: raw, isLoading} = useQuery(wordByTermOptions(word, campus))
 
 	// Hoisted rather than normalised again down at `EntryDefinition`'s own

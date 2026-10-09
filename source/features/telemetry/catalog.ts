@@ -1,4 +1,5 @@
 import type {AppIconName} from '../../../images/icons'
+import type {CampusId} from '../../campuses'
 import type {Campus} from '../building-hours/types'
 import type {StationId} from '../streaming/radio/stations'
 
@@ -68,6 +69,7 @@ export type TelemetryEvent =
 	| {name: 'calendar.filter.apply'; attributes: {axis: 'category' | 'organization' | 'none'}}
 	| {name: 'map.search.empty'; attributes: Record<string, never>}
 	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: Campus}}
+	| {name: 'campus.picked'; attributes: {campus: CampusId}}
 	| {
 			name: 'calendar.add_to_device'
 			attributes: {result: 'saved' | 'cancelled' | 'error'; source: CalendarSourceId}
@@ -124,6 +126,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'calendar.filter.apply': 'metric',
 	'map.search.empty': 'metric',
 	'map.group.open': 'metric',
+	'campus.picked': 'metric',
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',

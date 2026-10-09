@@ -5,7 +5,7 @@ import {QueryClient} from '@tanstack/react-query'
 // A Carleton campus test: features must fetch, so the recording answers.
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
-	campusFixturesDomain: 'carleton.edu',
+	uiTestCampus: 'edu.carleton',
 	servesBundledFixtures: false,
 }))
 

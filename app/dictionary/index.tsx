@@ -13,7 +13,7 @@ import {
 	normalizeEntry,
 } from '../../source/features/dictionary/lib/entry'
 import {dictionaryOptionsFor} from '../../source/features/dictionary/query'
-import {useCampus} from '../../source/features/campus/store'
+import {useLegacyCampus} from '../../source/features/campus/store'
 import type {NormalizedEntry} from '../../source/features/dictionary/types'
 
 const styles = StyleSheet.create({
@@ -27,7 +27,7 @@ function DictionaryView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let campus = useCampus()
+	let campus = useLegacyCampus()
 	let {data = [], refetch, isLoading, isError} = useQuery(dictionaryOptionsFor(campus))
 
 	let groups = React.useMemo(

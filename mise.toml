@@ -428,8 +428,8 @@ run = "node scripts/update-mess-fixtures.mjs"
 [tasks."update-campus-fixtures"]
 description = "Re-record a campus's UI-test fixtures from a run of its campus tests"
 usage = '''
-  arg "<campus>" help="The campus, by domain" {
-    choices "stolaf.edu" "carleton.edu"
+  arg "<campus>" help="The campus, by reverse-DNS id" {
+    choices "edu.stolaf" "edu.carleton"
   }
   flag "--allow-large" help="Keep a response over 200 KB"
 '''

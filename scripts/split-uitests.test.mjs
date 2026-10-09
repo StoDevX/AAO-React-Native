@@ -472,11 +472,11 @@ describe('discoverTests with campus subclasses', () => {
 	func testHome() throws {}
 	func testHours() throws {}
 }
-/// Tags: campus:stolaf.edu
+/// Tags: campus:edu.stolaf
 final class StOlafSmokeTests: CampusSmokeTests {
 	override class var campus: Campus? { .stolaf }
 }
-/// Tags: campus:carleton.edu
+/// Tags: campus:edu.carleton
 final class CarletonSmokeTests: CampusSmokeTests {
 	override class var campus: Campus? { .carleton }
 	func testSumo() throws {}

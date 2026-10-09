@@ -20,7 +20,7 @@ import {callPhone} from '../../source/components/call-phone'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
 import {useBranding} from '../../source/features/campus/branding'
-import {type Campus, useCampus} from '../../source/features/campus/store'
+import {type LegacyCampus as Campus, useLegacyCampus} from '../../source/features/campus/store'
 import {contactsOptionsFor} from '../../source/features/directory/contacts-query'
 import {FaqBannerSlot} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
@@ -62,7 +62,7 @@ const EMERGENCY_BUTTON = [buttonStyle('bordered'), frame({maxWidth: FILL_WIDTH})
 /// Where to get help: campus emergency contacts, the FAQs, and the problem report.
 export default function SupportPage(): React.ReactNode {
 	let router = useRouter()
-	let campus = useCampus()
+	let campus = useLegacyCampus()
 	let {appName} = useBranding()
 	let {data: contacts} = useQuery(contactsOptionsFor(campus))
 

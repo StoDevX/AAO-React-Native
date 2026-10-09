@@ -1,5 +1,5 @@
 import {SUPPORT_EMAIL} from '../../lib/constants'
-import {type Campus, useCampus, useCampusStore} from './store'
+import {type LegacyCampus as Campus, currentLegacyCampus, useLegacyCampus} from './store'
 
 /** What the app calls itself, and the college it is for, on one campus. */
 export type Branding = {
@@ -33,10 +33,10 @@ export const BRANDING: Record<Campus, Branding> = {
 
 /** The current campus's branding. */
 export function useBranding(): Branding {
-	return BRANDING[useCampus()]
+	return BRANDING[useLegacyCampus()]
 }
 
 /** The current campus's branding, for code outside a component, read when it is called. */
 export function currentBranding(): Branding {
-	return BRANDING[useCampusStore.getState().campus]
+	return BRANDING[currentLegacyCampus()]
 }

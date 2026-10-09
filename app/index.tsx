@@ -33,7 +33,8 @@ import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
 import {HomeViews, visibleViews, type ViewType} from '../source/features/views'
-import {CAMPUSES, CAMPUS_IS_FIXED, useCampusStore} from '../source/features/campus/store'
+import {CAMPUSES} from '../source/campuses'
+import {legacyCampusOf, useCampusStore, useLegacyCampus} from '../source/features/campus/store'
 import {switchIconForCampus} from '../source/features/customize/use-app-icon'
 import {
 	FILL_WIDTH,
@@ -125,7 +126,8 @@ function UnofficialAppNotice(): React.ReactNode {
 	const dispatch = useDispatch()
 	const devModeOverride = useSelector(selectDevModeOverride)
 	const isDev = useIsDevMode()
-	const campus = useCampusStore((state) => state.campus)
+	const campus = useLegacyCampus()
+	const campusId = useCampusStore((state) => state.campus)
 	const setCampus = useCampusStore((state) => state.setCampus)
 
 	const message = React.useMemo(() => {
@@ -168,17 +170,17 @@ function UnofficialAppNotice(): React.ReactNode {
 					}}
 					systemImage={devModeOverride ? 'checkmark' : undefined}
 				/>
-				{isDev && !CAMPUS_IS_FIXED ? (
+				{isDev ? (
 					<Section title={CAMPUS_SECTION}>
 						{/* A Toggle, which a menu draws with the platform's own checkmark. */}
 						{CAMPUSES.map((option) => (
 							<Toggle
-								key={option.campus}
-								isOn={option.campus === campus}
-								label={option.title}
+								key={option.id}
+								isOn={option.id === campusId}
+								label={option.name}
 								onIsOnChange={() => {
-									setCampus(option.campus)
-									switchIconForCampus(option.campus)
+									setCampus(option.id)
+									switchIconForCampus(legacyCampusOf(option.id))
 								}}
 							/>
 						))}
@@ -239,7 +241,7 @@ export default function HomePage(): React.ReactNode {
 	// tiles before it would jump on a Carleton install.
 	let campusHydrated = useCampusStore((state) => state.hydrated)
 	let hydrated = layoutHydrated && campusHydrated
-	let campus = useCampusStore((state) => state.campus)
+	let campus = useLegacyCampus()
 	let barVisible = useRadioBarVisible()
 	let views = visibleViews(HomeViews(campus), {isDev})
 

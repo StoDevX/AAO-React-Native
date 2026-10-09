@@ -1,7 +1,7 @@
 import type {Schedules} from '@frogpond/schedules'
 
-/** The two campuses that serve building hours through this feature. */
-export type Campus = 'stolaf' | 'carleton'
+/** The pre-registry campus id, until the legacy bridge in source/features/campus/store.ts goes. */
+export type {LegacyCampus as Campus} from '../campus/store'
 
 /**
  * What a building's dot says: whether it is open, about to change, or shut for

@@ -16,7 +16,7 @@ struct TestIdentifiers {
 		/// `mise run update-mess-fixtures`. Added when the runner is started with
 		/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1`.
 		static let recordFixtures = "--record-fixtures"
-		/// The campus a campus test names, by domain; the app then serves that
+		/// The campus a campus test names, by reverse-DNS id; the app then serves that
 		/// campus's recordings. See source/features/campus/fixtures.ts.
 		static let campus = "--campus"
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's

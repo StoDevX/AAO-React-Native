@@ -4,7 +4,7 @@ import bundledFaqs from '../../../docs/faqs.json'
 import {defaultConditionContext, evaluateConditions} from './conditions'
 import {parseFaqMetadata} from './schema'
 import type {Faq, FaqQueryData, FaqTarget} from './types'
-import type {Campus} from '../campus/store'
+import {type Campus, campusIdOfLegacy} from '../campus/store'
 
 export const keys = {
 	all: ['faqs'] as const,
@@ -40,7 +40,7 @@ export function faqsFor(raw: unknown, campus: Campus): FaqQueryData {
 		return emptyFaqDataFor(campus)
 	}
 
-	let context = {...defaultConditionContext(), campus}
+	let context = {...defaultConditionContext(), campus: campusIdOfLegacy(campus)}
 	let faqs = Array.isArray(raw.faqs)
 		? (raw.faqs as unknown[])
 				.map(normalizeFaq)

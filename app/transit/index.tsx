@@ -14,7 +14,7 @@ import {DisclosureRow} from '../../source/components/rows'
 import {useBusFooterMessage} from '../../source/features/transit/bus/constants'
 import {visibleBusLines} from '../../source/features/transit/bus/lib'
 import {busRoutesOptionsFor} from '../../source/features/transit/bus/query'
-import {useCampus} from '../../source/features/campus/store'
+import {useLegacyCampus} from '../../source/features/campus/store'
 import {BusLineWidget} from '../../source/features/transit/bus/widget'
 import {otherModesGroupedOptionsFor} from '../../source/features/transit/other-modes/query'
 
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
  * slightly different moments.
  */
 export default function TransitPage(): React.ReactNode {
-	let campus = useCampus()
+	let campus = useLegacyCampus()
 	let footerMessage = useBusFooterMessage()
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})

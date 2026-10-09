@@ -169,3 +169,22 @@ describe('app.config link schemes', () => {
 		)
 	})
 })
+
+describe('app.config default campus', () => {
+	test.each([
+		['aao', 'edu.stolaf'],
+		['aao-dev', 'edu.stolaf'],
+		['carls', 'edu.carleton'],
+		['carls-dev', 'edu.carleton'],
+	])('%s starts on %s', (variant, campus) => {
+		expect(loadConfig(variant).extra?.defaultCampus).toBe(campus)
+	})
+
+	test("every variant's default campus is registered", () => {
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		let {isCampusId} = require('../source/campuses') as typeof import('../source/campuses')
+		for (let variant of ['aao', 'aao-dev', 'carls', 'carls-dev']) {
+			expect(isCampusId(loadConfig(variant).extra?.defaultCampus)).toBe(true)
+		}
+	})
+})
