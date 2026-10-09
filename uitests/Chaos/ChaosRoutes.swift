@@ -48,6 +48,7 @@ enum ChaosRoutes {
 		"menus/schulze",
 		"menus/the-cage",
 		"menus/the-pause",
+		"menus/treeline-commons",
 		"menus/weitz",
 		"more",
 		"newspaper",

@@ -5,7 +5,7 @@
  */
 export type Paper = {
 	/** The paper's id in the sources manifest's news entries, and its query keys' prefix. */
-	id: 'mess' | 'carletonian'
+	id: 'mess' | 'carletonian' | 'valley-echo'
 	/** The paper's full name, as its front page and Back buttons read it. */
 	title: string
 	/** What the paper's own words call it, as in "The Mess has no issues yet." */

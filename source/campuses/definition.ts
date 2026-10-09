@@ -37,6 +37,8 @@ export type CampusDefinition = {
 	id: CampusId
 	/** The college's name, as the campus switcher lists it. */
 	name: string
+	/** Listed by the first-run picker only in dev mode: a campus for testing, not for students. */
+	devOnly?: true
 	/** The app's name, support address, About intro and Home's notices. */
 	branding: BrandingSection
 	/** Home's tiles, in order. */

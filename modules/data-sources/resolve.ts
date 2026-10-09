@@ -60,6 +60,7 @@ const CAMPUS_IDS = new Map<string, SourceCampus>([
 	['edu.stolaf', 'edu.stolaf'],
 	['carleton', 'edu.carleton'],
 	['edu.carleton', 'edu.carleton'],
+	['example.college', 'example.college'],
 ])
 
 /// A link's campus: the manifest's own server when it names none, and

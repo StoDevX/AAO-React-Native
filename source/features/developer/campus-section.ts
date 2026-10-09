@@ -11,4 +11,9 @@ export type ApiSection = {
 	defaultUrl: string
 	/** The storage key a developer's override is saved under. */
 	storageKey: string
+	/**
+	 * The campus has no server: while it is the active campus, its fixtures
+	 * answer every request (`installFixtureServer`), in every build.
+	 */
+	fixtureServer?: true
 }

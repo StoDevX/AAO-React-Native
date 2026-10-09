@@ -167,6 +167,12 @@ from. A new campus is one subclass plus its recording
 argument an in-place reset may change, so campus tests interleave with the
 rest in the same shards without relaunching.
 
+`ExampleCollegeTests.swift` runs on The College of the Norway Valley Wiki
+Monkeys (`example.college`), a made-up campus with no server: every request
+it makes is answered from the hand-written `.yaml` fixtures in
+`source/features/campus/__fixtures__/example.college/`, in any mode, so it
+has nothing to record.
+
 A check on a value from a recording goes through `verifyRecorded`. On replay a
 missing value fails. While recording it skips instead, naming the value: live
 data moves, and the calendar's dates move onto the frozen day only after the

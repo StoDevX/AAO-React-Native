@@ -7,8 +7,10 @@ const KNOWN_SOURCES: ReadonlySet<string> = new Set([
 	'stolaf',
 	'presence',
 	'carleton',
+	'wiki-monkeys',
 	'ksto-schedule',
 	'krlx-schedule',
+	'kmnk-schedule',
 	'sumo-schedule',
 	'upcoming-convos',
 ])

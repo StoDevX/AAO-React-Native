@@ -3,8 +3,14 @@ import {setManifestServer} from '@frogpond/data-sources'
 import {fixtureMode, uiTestCampus} from '@frogpond/launch-arguments'
 
 import {CAMPUSES, PLATFORM_SERVER} from '../campuses'
-import {installCampusFixtures} from '../features/campus/fixtures'
+import {
+	fixtureCampusChanged,
+	installCampusFixtures,
+	installFixtureServer,
+} from '../features/campus/fixtures'
+import {useCampusStore} from '../features/campus/store'
 import * as storage from '../lib/storage'
+import {queryClient} from './tanstack-query'
 
 /**
  * Points every campus's client at its default server. Synchronous, so a client
@@ -32,7 +38,17 @@ registerDefaultServers()
 setManifestServer(PLATFORM_SERVER)
 void applySavedServers()
 
-// A UI test that names a campus reads that campus's recordings for every request.
+// A UI test that names a campus reads that campus's recordings for every
+// request. Otherwise a campus with no server of its own (Wiki Monkeys) is
+// answered from its fixtures while it is active, and switching to or from it
+// drops whatever the other campus's servers answered.
 if (typeof uiTestCampus === 'string') {
 	installCampusFixtures(uiTestCampus, fixtureMode)
+} else {
+	installFixtureServer(() => useCampusStore.getState().campus)
+	useCampusStore.subscribe((state, prev) => {
+		if (fixtureCampusChanged(prev.campus, state.campus)) {
+			void queryClient.invalidateQueries()
+		}
+	})
 }

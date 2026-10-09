@@ -36,6 +36,7 @@ test('state persisted before the field existed gets the whole default list', () 
 		'stolaf',
 		'presence',
 		'carleton',
+		'wiki-monkeys',
 	])
 })
 

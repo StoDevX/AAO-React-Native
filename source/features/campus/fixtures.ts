@@ -3,9 +3,10 @@ import {campusRoots, setFetchInterceptor} from '@frogpond/api'
 import type {FixtureMode} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../lib/ui-test-fixture'
-import {requireCampusId} from '../../campuses'
+import {campusById, requireCampusId, type CampusId} from '../../campuses'
 import {undatedUrl} from './fixture-dates'
 import carletonFixtures from './__fixtures__/edu.carleton'
+import exampleCollegeFixtures from './__fixtures__/example.college'
 import stolafFixtures from './__fixtures__/edu.stolaf'
 
 /** One response as recorded: enough to answer the same request again. */
@@ -26,6 +27,7 @@ export type CampusRecordingFile = {
 const FILES: Record<string, ReadonlyArray<CampusRecordingFile>> = {
 	'edu.stolaf': stolafFixtures,
 	'edu.carleton': carletonFixtures,
+	'example.college': exampleCollegeFixtures as ReadonlyArray<CampusRecordingFile>,
 }
 
 /**
@@ -106,19 +108,51 @@ function append(entry: {key: string} & CampusRecording): void {
 	file.write(`${JSON.stringify(entry)}\n`, {append: true})
 }
 
+/** Whether `id` names a campus answered from its fixtures. */
+function fixtureServed(id: CampusId | null): boolean {
+	return id !== null && campusById(id).api.fixtureServer === true
+}
+
+/** Whether moving from `prev` to `next` starts or stops answering from fixtures. */
+export function fixtureCampusChanged(prev: CampusId | null, next: CampusId | null): boolean {
+	return prev !== next && (fixtureServed(prev) || fixtureServed(next))
+}
+
+/** A request answered from `campus`'s table, rejecting (not throwing) when it has none. */
+function answer(campus: string, table: Table, request: Request): Promise<Response> {
+	return Promise.resolve().then(() => serveFixture(campus, table, request, campusRoots()))
+}
+
+/**
+ * Answers every request from the active campus's fixtures while that campus
+ * has no server of its own (`api.fixtureServer`); any other campus's requests
+ * go to the network. Outside UI tests that name a campus, in every build.
+ */
+export function installFixtureServer(activeCampus: () => CampusId | null): void {
+	let tables = new Map<CampusId, Table>()
+	setFetchInterceptor((request, next) => {
+		let id = activeCampus()
+		if (id === null || !fixtureServed(id)) {
+			return next(request)
+		}
+		let table = tables.get(id) ?? tableFrom(id, FILES[id] ?? [])
+		tables.set(id, table)
+		return answer(id, table, request)
+	})
+}
+
 /**
  * Answers every request from `campus`'s recordings (`serve`), or from the
  * network while recording each answer (`record`), for a UI test that names a
- * campus. An id no campus here has fails at once, naming the ones there
- * are, rather than at the first request.
+ * campus. A campus with no server (`api.fixtureServer`) is served in any
+ * mode: there is nothing to record. An id no campus here has fails at once,
+ * naming the ones there are, rather than at the first request.
  */
 export function installCampusFixtures(campus: string, mode: FixtureMode): void {
-	requireCampusId(campus, '--campus')
-	if (mode === 'serve') {
+	let id = requireCampusId(campus, '--campus')
+	if (mode === 'serve' || campusById(id).api.fixtureServer) {
 		let table = tableFrom(campus, FILES[campus] ?? [])
-		setFetchInterceptor((request) =>
-			Promise.resolve(serveFixture(campus, table, request, campusRoots())),
-		)
+		setFetchInterceptor((request) => answer(campus, table, request))
 		return
 	}
 	if (mode === 'record') {

@@ -24,7 +24,7 @@ type State = {
  */
 export const DEFAULT_CALENDAR_SOURCES: string[] = servesBundledFixtures
 	? ['uitest']
-	: ['stolaf', 'presence', 'carleton']
+	: ['stolaf', 'presence', 'carleton', 'wiki-monkeys']
 
 // why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
 const initialState = {

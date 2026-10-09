@@ -13,7 +13,7 @@ import {
 } from '@frogpond/data-sources'
 
 import {campusById} from '../../../../campuses'
-import {stationSources, useStationSources} from '../sources'
+import {shippedStreamUrl, stationSources, useStationSources} from '../sources'
 import {STATIONS, type StationId} from '../stations'
 
 const STOLAF_URL = campusById('edu.stolaf').api.defaultUrl
@@ -151,6 +151,13 @@ describe('stationSources', () => {
 			}
 		},
 	)
+
+	test("plays a station the app ships no stream for from its own campus's server", () => {
+		expect(stationSources(EMPTY, 'kmnk').streamSourceUrl).toBe(
+			'https://example.college.invalid/radio/named/kmnk',
+		)
+		expect(shippedStreamUrl('kmnk')).toBe('https://example.college.invalid/radio/named/kmnk')
+	})
 
 	test('gives a station a player page the published manifest adds', () => {
 		let manifest = manifestWith(

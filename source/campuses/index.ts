@@ -1,13 +1,14 @@
 import type {CampusDefinition} from './definition'
 import {carleton} from './edu-carleton'
 import {stolaf} from './edu-stolaf'
+import {exampleCollege} from './example-college'
 import {CAMPUS_IDS, type CampusId} from './ids'
 
 export type {CampusDefinition, CampusId}
 export {CAMPUS_IDS}
 
 /** Every campus this build knows, in CAMPUS_IDS' order. */
-export const CAMPUSES: ReadonlyArray<CampusDefinition> = [stolaf, carleton]
+export const CAMPUSES: ReadonlyArray<CampusDefinition> = [stolaf, carleton, exampleCollege]
 
 /**
  * The server that publishes what every campus shares: the sources manifest

@@ -23,8 +23,10 @@ describe('calendarSourceId', () => {
 		'stolaf',
 		'presence',
 		'carleton',
+		'wiki-monkeys',
 		'ksto-schedule',
 		'krlx-schedule',
+		'kmnk-schedule',
 		'sumo-schedule',
 		'upcoming-convos',
 	])('keeps %s', (source) => {

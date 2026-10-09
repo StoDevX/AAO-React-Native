@@ -11,8 +11,12 @@ import {
 } from '..'
 
 describe('the campus registry', () => {
-	test('lists St. Olaf first, then Carleton, by reverse-DNS id', () => {
-		expect(CAMPUSES.map((campus) => campus.id)).toEqual(['edu.stolaf', 'edu.carleton'])
+	test('lists St. Olaf, Carleton, then Wiki Monkeys, by reverse-DNS id', () => {
+		expect(CAMPUSES.map((campus) => campus.id)).toEqual([
+			'edu.stolaf',
+			'edu.carleton',
+			'example.college',
+		])
 	})
 
 	test('defines exactly the ids CAMPUS_IDS lists, in its order', () => {
@@ -38,7 +42,7 @@ describe('the campus registry', () => {
 	test('refuses an unknown id, naming the known ones and where it came from', () => {
 		expect(() => requireCampusId('carleton.edu', '--campus')).toThrow(UnknownCampusError)
 		expect(() => requireCampusId('carleton.edu', '--campus')).toThrow(
-			'--campus names carleton.edu, but the campuses are edu.stolaf, edu.carleton',
+			'--campus names carleton.edu, but the campuses are edu.stolaf, edu.carleton, example.college',
 		)
 	})
 })
@@ -91,4 +95,21 @@ describe('links between sections', () => {
 			}
 		},
 	)
+})
+
+describe('Wiki Monkeys', () => {
+	test('is dev only, and its server is its fixtures', () => {
+		let campus = campusById('example.college')
+		expect(campus.name).toBe('The College of the Norway Valley Wiki Monkeys')
+		expect(campus.devOnly).toBe(true)
+		expect(campus.api.fixtureServer).toBe(true)
+		expect(campus.api.defaultUrl).toBe('https://example.college.invalid/')
+	})
+
+	test('names no real campus in its definition', () => {
+		let text = JSON.stringify(campusById('example.college'))
+		for (let real of ['Olaf', 'Carleton', 'Northfield', 'Stav', 'KSTO', 'KRLX']) {
+			expect(text).not.toContain(real)
+		}
+	})
 })

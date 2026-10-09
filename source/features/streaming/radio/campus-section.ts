@@ -1,7 +1,7 @@
 import type {RadioLogo} from './theme'
 
 /** A station's id in the sources manifest, which names its streams and schedule. */
-export type StationId = 'ksto' | 'krlx'
+export type StationId = 'ksto' | 'krlx' | 'kmnk'
 
 /**
  * Everything the app knows about a radio station's screen. Where its audio

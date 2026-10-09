@@ -41,5 +41,5 @@ describe.each([
 })
 
 test("a campus test switches on the campus's own calendars, which its recordings answer", () => {
-	expect(DEFAULT_CALENDAR_SOURCES).toEqual(['stolaf', 'presence', 'carleton'])
+	expect(DEFAULT_CALENDAR_SOURCES).toEqual(['stolaf', 'presence', 'carleton', 'wiki-monkeys'])
 })

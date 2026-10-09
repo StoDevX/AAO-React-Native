@@ -28,7 +28,12 @@ describe('remoteSourcesFor', () => {
 	})
 
 	test('ranks each campus by the one list of every calendar', () => {
-		expect(REMOTE_SOURCES.map((source) => source.id)).toEqual(['stolaf', 'presence', 'carleton'])
+		expect(REMOTE_SOURCES.map((source) => source.id)).toEqual([
+			'stolaf',
+			'presence',
+			'carleton',
+			'wiki-monkeys',
+		])
 		expect(sourceRankOf('carleton')).toBe(2)
 	})
 })
