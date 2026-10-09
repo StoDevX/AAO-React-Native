@@ -4,11 +4,11 @@ import {
 	REL_ORG_CATEGORIES,
 	resolveSources,
 } from '@frogpond/data-sources'
-import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
-import orgCategoriesData from '../../../docs/org-categories.json'
 import type {OrgCategoryType} from './types'
+import {campusWithSection} from '../../campuses'
+import {currentCampusId} from '../campus/store'
 
 const ORG_CATEGORIES_TYPE = 'application/vnd.frogpond.org-categories+json'
 
@@ -21,17 +21,12 @@ export const keys = {
 const staleTime = 1000 * 60 * 5
 
 async function fetchCategoryIcons({signal}: {signal: AbortSignal}): Promise<OrgCategoryType[]> {
-	// Mirrors contacts-query.ts: UI tests naming no campus read the bundled copy directly, so a
-	// row's icon and gradient in a screenshot match whatever this checkout
-	// carries rather than whatever data/org-categories.yaml happens to
-	// publish at test time.
-	if (servesBundledFixtures) {
-		return (orgCategoriesData as {data: OrgCategoryType[]}).data
-	}
-
 	let manifest = await fetchManifest(queryClient)
 	let sources = resolveSources(manifest, REL_ORG_CATEGORIES, [ORG_CATEGORIES_TYPE])
-	let source = sources[0]
+	// The styles of the campus whose orgs the screen lists, which a campus without a section
+	// of its own borrows (see section-client.ts), read from that campus's server.
+	let campus = campusWithSection('studentOrgs', currentCampusId())?.id
+	let source = sources.find((each) => each.campus === campus)
 	// No configured source at all means every category row falls back to
 	// the generic icon and gray gradient -- categories.ts already handles
 	// that for any name this returns nothing for, so this is not an error.
@@ -39,7 +34,13 @@ async function fetchCategoryIcons({signal}: {signal: AbortSignal}): Promise<OrgC
 		return []
 	}
 
-	let body = await fetchSourceBody(source.href, signal, 'Student Orgs categories')
+	let body = await fetchSourceBody(
+		source.href,
+		signal,
+		'Student Orgs categories',
+		'json',
+		source.campus,
+	)
 	// The server sends whatever data/org-categories.yaml published, so this
 	// is an assertion, not a check -- same caveat as contacts-query.ts's
 	// `icon`.

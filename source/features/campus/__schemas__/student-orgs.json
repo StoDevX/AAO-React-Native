@@ -1,0 +1,70 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"$groupableName": {
+				"type": "string"
+			},
+			"advisors": {
+				"type": "array",
+				"items": {}
+			},
+			"category": {
+				"type": "string"
+			},
+			"contacts": {
+				"type": "array",
+				"items": {}
+			},
+			"description": {
+				"type": "string"
+			},
+			"lastUpdated": {
+				"type": "string"
+			},
+			"meetingLocation": {
+				"type": "string"
+			},
+			"meetingTime": {
+				"type": "string"
+			},
+			"meetings": {
+				"type": "string"
+			},
+			"memberCount": {
+				"type": "number"
+			},
+			"name": {
+				"type": "string"
+			},
+			"organizationUri": {
+				"type": "string"
+			},
+			"photoUrl": {
+				"type": "string"
+			},
+			"website": {
+				"type": "string"
+			}
+		},
+		"required": [
+			"$groupableName",
+			"advisors",
+			"category",
+			"contacts",
+			"description",
+			"lastUpdated",
+			"meetingLocation",
+			"meetingTime",
+			"meetings",
+			"memberCount",
+			"name",
+			"organizationUri",
+			"photoUrl",
+			"website"
+		]
+	}
+}

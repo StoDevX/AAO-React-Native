@@ -22,13 +22,13 @@ afterEach(() => {
 // campus's fixtures answer; no bundled copy stands in for it.
 describe("a campus's transit", () => {
 	test('lists its own bus lines', async () => {
-		let lines = await client.fetchQuery(busRoutesOptionsFor('example.college'))
+		let lines = await client.query(busRoutesOptionsFor('example.college'))
 		expect(lines.map((line) => line.line)).toEqual(['Switchback Shuttle'])
 	})
 
 	test('lists its own other ways to travel', async () => {
 		let {queryKey, queryFn} = otherModesGroupedOptionsFor('example.college')
-		let modes = await client.fetchQuery({queryKey, queryFn})
+		let modes = await client.query({queryKey, queryFn})
 		expect(modes.map((mode) => mode.name)).toContain('Valley Bikes')
 	})
 })

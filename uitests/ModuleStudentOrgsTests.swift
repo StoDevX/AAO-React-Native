@@ -1,11 +1,14 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleStudentOrgsTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	/// A refined search starts its results at the top, not wherever the list
 	/// was scrolled before: each query is a new list (`id(query)` in
-	/// source/features/student-orgs/org-results-list.tsx). The org list is a
-	/// recorded fixture under UI tests, long enough that the first search's
-	/// results take several screens.
+	/// source/features/student-orgs/org-results-list.tsx). Wiki Monkeys'
+	/// org list is long enough that the first search's results take several
+	/// screens.
 	func testRefiningASearchFromFarDownTheResultsStartsAtTheTop() throws {
 		StudentOrgsScreen(app: app)
 			.navigate()

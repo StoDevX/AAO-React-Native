@@ -16,7 +16,7 @@ describe('dictionaryOptionsFor', () => {
 	// which a campus's fixtures answer; no bundled copy stands in for it.
 	test("reads the campus's own dictionary from its server", async () => {
 		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
-		let words = await client.fetchQuery(dictionaryOptionsFor('example.college'))
+		let words = await client.query(dictionaryOptionsFor('example.college'))
 		client.clear()
 		let names = words.map((word) => word.word)
 		expect(names).toContain('Avalanche Hour')

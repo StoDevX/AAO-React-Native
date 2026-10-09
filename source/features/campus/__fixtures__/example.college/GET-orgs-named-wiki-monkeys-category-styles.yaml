@@ -1,0 +1,38 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/orgs/named/wiki-monkeys/category-styles
+json:
+  data:
+    - name: Academic
+      icon: graduationcap.fill
+      gradient: gold
+    - name: Awareness
+      icon: lightbulb.fill
+      gradient: yellow
+    - name: Club Sports - Competitive
+      icon: trophy.fill
+      gradient: red
+    - name: Club Sports - Recreational
+      icon: mountain.2.fill
+      gradient: mint
+    - name: Multicultural
+      icon: globe.americas.fill
+      gradient: violet
+    - name: Performance
+      icon: theatermasks.fill
+      gradient: pink
+    - name: Pre-Professional
+      icon: briefcase.fill
+      gradient: blue
+    - name: Religious
+      icon: sparkles
+      gradient: purple
+    - name: Service
+      icon: hands.and.sparkles.fill
+      gradient: green
+    - name: Special Interest
+      icon: star.fill
+      gradient: orange
+    - name: Student Leadership
+      icon: person.3.sequence.fill
+      gradient: light-blue

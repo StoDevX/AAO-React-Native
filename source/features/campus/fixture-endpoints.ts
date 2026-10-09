@@ -64,6 +64,22 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	{pattern: 'GET {server}/map/geojson', schema: 'map-geojson'},
 	{pattern: 'GET {server}/spaces/directory', schema: 'spaces-directory'},
 	{pattern: 'GET {server}/spaces/hours', schema: 'spaces-hours'},
+	{
+		pattern: 'GET {server}/orgs',
+		schema: 'student-orgs',
+		live: ['https://stolaf.frogpond.tech/v1/orgs'],
+	},
+	{
+		pattern: 'GET {server}/orgs/categories',
+		schema: 'org-category-memberships',
+		live: ['https://stolaf.frogpond.tech/v1/orgs/categories'],
+	},
+	{
+		pattern: 'GET {server}/orgs/category-styles',
+		schema: 'org-category-styles',
+		live: ['https://stolaf.frogpond.tech/v1/orgs/category-styles'],
+	},
+	{pattern: 'GET {server}/orgs/named/:id/category-styles', schema: 'org-category-styles'},
 	{pattern: 'GET {server}/transit/bus', schema: 'transit-bus'},
 	{pattern: 'GET {server}/transit/modes', schema: 'transit-modes'},
 	{pattern: 'GET {server}/calendar/named/:id', schema: 'calendar-named'},

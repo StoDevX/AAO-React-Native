@@ -736,12 +736,12 @@ struct TestIdentifiers {
 		static let resultsList = "student-orgs-results-list"
 		/// The landing's title, in app/student-orgs/index.tsx.
 		static let title = "Student Orgs"
-		/// A search whose results, from source/features/student-orgs/fixtures/uitest-orgs.json,
-		/// run several screens long, and the letter that refines it.
+		/// A search whose results, from Wiki Monkeys' org list, run several screens long, and
+		/// the letter that refines it.
 		static let firstQuery = "a"
 		static let refinement = "n"
-		/// The first org the refined search lists, from the same fixture.
-		static let firstRefinedResult = "Academic Success Center"
+		/// The first org the refined search lists.
+		static let firstRefinedResult = "Alpine Club"
 	}
 
 	// MARK: - Hours
