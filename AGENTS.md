@@ -410,9 +410,12 @@ post, which tells a schedule left over from an earlier term apart.
 
 A UI test class can name a campus: `override class var campus: Campus? { .carleton }`,
 with a `/// Tags: campus:carleton.edu` marker. The app then answers every
-request, from both campus servers and the papers' own sites, from
-`source/features/campus/__fixtures__/<domain>/`, one file per request, and a
-request with no recording fails naming the fix. Rerecord a campus with a
+request made through `apiFetch` (both campus servers, the papers' own sites
+and the calendars) from `source/features/campus/__fixtures__/<domain>/`, one
+file per request, and a request with no recording fails naming the fix. A few
+features fetch around `apiFetch` (the directory search, login, balances,
+StoPrint, the course catalog), so a smoke test on one of them reads live data
+until it moves onto `apiFetch`. Rerecord a campus with a
 simulator booted and Metro running:
 
 ```bash
@@ -431,8 +434,9 @@ four ways, all in `scripts/campus-fixtures.mjs`:
 - **The St. Olaf calendar's dates are `{date}` in its keys**, since its window
   comes from the day's date, and the recorder fetches any page of it the run
   ended before asking for.
-- **Calendar answers keep only the fields their parsers read** (`TRIMS`). A
-  parser that starts reading a field adds it there.
+- **The St. Olaf calendar and Presence keep only the fields their parsers
+  read** (`TRIMS`). A parser that starts reading a field adds it there.
+  ccc-server's calendars come already shaped by the server and are kept whole.
 - **Every email address is `person@example.com`.** The feeds name people in
   their event text.
 
