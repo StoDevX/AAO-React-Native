@@ -61,7 +61,7 @@ export default function APITestDetailPage(): React.ReactNode {
 	let router = useRouter()
 
 	let campus = useCampusId()
-	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
+	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('tree')
 	let [expand, setExpand] = React.useState<ExpandCommand>({mode: null, count: 0})
 	let expandAll = (mode: 'all' | 'none') =>
 		setExpand((current) => ({mode, count: current.count + 1}))
