@@ -2,7 +2,7 @@ import * as React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {CampusPicker} from '../../../../app/choose-campus'
+import {CampusPicker} from '../campus-picker'
 import {useCampusStore} from '../store'
 
 // Quiet: telemetry is not what this checks.
