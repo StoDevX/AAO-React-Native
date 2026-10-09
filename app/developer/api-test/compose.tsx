@@ -1,46 +1,123 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Button, Form, Host, HStack, Menu, Section, SwipeActions, Text} from '@expo/ui/swift-ui'
-import {font, foregroundStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
+import {
+	Button,
+	Form,
+	Host,
+	HStack,
+	Image,
+	Menu,
+	Section,
+	SwipeActions,
+	Text,
+} from '@expo/ui/swift-ui'
+import {accessibilityLabel, font, foregroundStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {useQuery} from '@tanstack/react-query'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 
+import {MenuPickerRow} from '../../../source/components/menu-picker-row'
 import {Tag} from '../../../source/components/rows'
 import {SyncedTextField} from '../../../source/components/synced-text-field'
+import {sendAfterConfirming} from '../../../source/features/developer/api-test/confirm-send'
+import {
+	serverRoutesOptions,
+	type RouteInput,
+} from '../../../source/features/developer/api-test/query'
 import {routeKey, useApiTestStore} from '../../../source/features/developer/api-test/store'
 import {
 	querySuggestions,
 	recentRequests,
 	type SavedRequest,
 } from '../../../source/features/developer/api-test/util/history'
-import {sendAfterConfirming} from '../../../source/features/developer/api-test/confirm-send'
+import {
+	defaultFor,
+	initialValues,
+	missingInputs,
+	suggestionsFor,
+} from '../../../source/features/developer/api-test/util/inputs'
 import {methodColor} from '../../../source/features/developer/api-test/util/method'
-import {missingInputs} from '../../../source/features/developer/api-test/util/inputs'
 import {
 	buildRequestPath,
 	type QueryRow,
 } from '../../../source/features/developer/api-test/util/request-path'
 
-/** A query row as the form holds it, with an id that outlives edits to its name. */
-type EditableRow = QueryRow & {id: number}
+/** A query row as the form holds it. A row for a declared input carries it, which fixes its name. */
+type EditableRow = QueryRow & {id: number; input?: RouteInput}
 
 /// Row ids only need to be unique while the app runs, so one counter serves every screen.
 let nextRowId = 0
 
-function toRows(query: QueryRow[]): EditableRow[] {
-	return query.map((row) => ({...row, id: nextRowId++}))
+function toRows(query: QueryRow[], inputs: RouteInput[]): EditableRow[] {
+	return query.map((row) => ({
+		...row,
+		id: nextRowId++,
+		input: inputs.find((input) => input.in === 'query' && input.name === row.name),
+	}))
+}
+
+/** An input's value: a picker for a set of accepted values, else a field with its suggestions. */
+function InputValue(props: {
+	input: RouteInput
+	value: string
+	suggestions: string[]
+	onChange: (value: string) => void
+}): React.ReactNode {
+	let {input, value, suggestions, onChange} = props
+	if (input.values) {
+		return (
+			<MenuPickerRow
+				id={`api-test-input-${input.name}`}
+				label={input.name}
+				onSelectionChange={onChange}
+				options={input.values.map(
+					(option) =>
+						[
+							option.value,
+							option.label ? `${option.value} — ${option.label}` : option.value,
+						] as const,
+				)}
+				selection={value}
+			/>
+		)
+	}
+	return (
+		<HStack spacing={8}>
+			<SyncedTextField
+				autocapitalization="never"
+				onChangeText={onChange}
+				placeholder={input.format === 'date' ? 'YYYY-MM-DD' : input.name}
+				value={value}
+			/>
+			{suggestions.length ? (
+				<Menu
+					label={<Image systemName="chevron.down.circle" />}
+					modifiers={[accessibilityLabel(`Suggestions for ${input.name}`)]}
+				>
+					{suggestions.map((suggestion) => (
+						<Button key={suggestion} label={suggestion} onPress={() => onChange(suggestion)} />
+					))}
+				</Menu>
+			) : null}
+		</HStack>
+	)
 }
 
 /** Fills a request in: the route's path and query values, ready to send. */
 export default function APITestComposePage(): React.ReactNode {
 	let router = useRouter()
-	let {
-		path = '',
-		method = 'GET',
-		params: paramList = '',
-	} = useLocalSearchParams<{path?: string; method?: string; params?: string}>()
-	let params = React.useMemo(() => paramList.split(',').filter(Boolean), [paramList])
+	let {path = '', method = 'GET'} = useLocalSearchParams<{path?: string; method?: string}>()
 	let route = routeKey(method, path)
+
+	let {data: sections = []} = useQuery(serverRoutesOptions)
+	let inputs = React.useMemo(
+		() =>
+			sections.flatMap((section) => section.data).find((entry) => entry.key === route)?.inputs ??
+			[],
+		[sections, route],
+	)
+	let pathInputs = inputs.filter((input) => input.in === 'path')
+	let queryInputs = inputs.filter((input) => input.in === 'query')
 
 	let history = useApiTestStore((state) => state.history)
 	let record = useApiTestStore((state) => state.record)
@@ -50,26 +127,58 @@ export default function APITestComposePage(): React.ReactNode {
 	let suggestions = querySuggestions(history, route)
 
 	// Starts from the last request sent to this route, so sending it again is
-	// one tap.
-	let [pathValues, setPathValues] = React.useState<Record<string, string>>(
-		() => recent[0]?.pathValues ?? {},
-	)
-	let [rows, setRows] = React.useState<EditableRow[]>(() => toRows(recent[0]?.query ?? []))
+	// one tap; or, for a route never sent, from values the server accepts.
+	let [initial] = React.useState(() => initialValues(inputs, recent[0]))
+	let [pathValues, setPathValues] = React.useState(initial.pathValues)
+	let [rows, setRows] = React.useState(() => toRows(initial.query, inputs))
+	let touched = React.useRef(false)
 
 	let fill = (request: SavedRequest) => {
-		setPathValues(request.pathValues)
-		setRows(toRows(request.query))
+		let next = initialValues(inputs, request)
+		setPathValues(next.pathValues)
+		setRows(toRows(next.query, inputs))
 	}
-	let updateRow = (id: number, change: Partial<QueryRow>) =>
+
+	// Opened cold, as from a link, the form renders before the sitemap arrives;
+	// it fills itself in once, when the route's inputs are known, unless the
+	// reader has already started typing.
+	let filledFromInputs = React.useRef(inputs.length > 0)
+	React.useEffect(() => {
+		if (inputs.length && !filledFromInputs.current && !touched.current) {
+			filledFromInputs.current = true
+			fill(recent[0] ?? {pathValues: {}, query: []})
+		}
+		// Only the arrival of the inputs should trigger this; `fill` and `recent`
+		// are read as they are at that moment.
+		// oxlint-disable-next-line react/exhaustive-deps
+	}, [inputs])
+
+	let setPathValue = (name: string, value: string) => {
+		touched.current = true
+		setPathValues((current) => ({...current, [name]: value}))
+	}
+	let updateRow = (id: number, change: Partial<QueryRow>) => {
+		touched.current = true
 		setRows((current) => current.map((row) => (row.id === id ? {...row, ...change} : row)))
-	let addRow = (row: QueryRow) => setRows((current) => [...current, ...toRows([row])])
-	let removeRow = (id: number) => setRows((current) => current.filter((row) => row.id !== id))
+	}
+	let addRow = (row: QueryRow) => {
+		touched.current = true
+		setRows((current) => [...current, ...toRows([row], inputs)])
+	}
+	let removeRow = (id: number) => {
+		touched.current = true
+		setRows((current) => current.filter((row) => row.id !== id))
+	}
 
 	let query = rows.map(({name, value}) => ({name, value}))
 	let requestPath = buildRequestPath(path, pathValues, query)
-	let missing = missingInputs(
-		params.map((name) => ({name, in: 'path' as const, required: true})),
-		{pathValues, query},
+	let missing = missingInputs(inputs, {pathValues, query})
+	let today = new Date()
+
+	let addedNames = new Set(rows.map((row) => row.name))
+	let accepted = queryInputs.filter((input) => !input.required && !addedNames.has(input.name))
+	let usedBefore = suggestions.filter(
+		(suggestion) => !queryInputs.some((input) => input.name === suggestion.name),
 	)
 
 	let send = () => {
@@ -120,17 +229,15 @@ export default function APITestComposePage(): React.ReactNode {
 						</HStack>
 					</Section>
 
-					{params.length ? (
+					{pathInputs.length ? (
 						<Section title="Path Parameters">
-							{params.map((name) => (
-								<SyncedTextField
-									autocapitalization="never"
-									key={name}
-									onChangeText={(value) =>
-										setPathValues((current) => ({...current, [name]: value}))
-									}
-									placeholder={name}
-									value={pathValues[name] ?? ''}
+							{pathInputs.map((input) => (
+								<InputValue
+									input={input}
+									key={input.name}
+									onChange={(value) => setPathValue(input.name, value)}
+									suggestions={suggestionsFor(input, history, route, today)}
+									value={pathValues[input.name] ?? ''}
 								/>
 							))}
 						</Section>
@@ -140,8 +247,28 @@ export default function APITestComposePage(): React.ReactNode {
 						footer={rows.length ? <Text>Swipe a parameter to remove it.</Text> : undefined}
 						title="Query"
 					>
-						{rows.map((row) => (
-							<SwipeActions key={row.id}>
+						{rows.map((row) => {
+							let control = row.input ? (
+								row.input.values ? (
+									<InputValue
+										input={row.input}
+										onChange={(value) => updateRow(row.id, {value})}
+										suggestions={[]}
+										value={row.value}
+									/>
+								) : (
+									<HStack spacing={8}>
+										<Text>{row.name}</Text>
+										<Text modifiers={[foregroundStyle(c.secondaryLabel)]}>=</Text>
+										<InputValue
+											input={row.input}
+											onChange={(value) => updateRow(row.id, {value})}
+											suggestions={suggestionsFor(row.input, history, route, today)}
+											value={row.value}
+										/>
+									</HStack>
+								)
+							) : (
 								<HStack spacing={8}>
 									<SyncedTextField
 										autocapitalization="never"
@@ -157,38 +284,54 @@ export default function APITestComposePage(): React.ReactNode {
 										value={row.value}
 									/>
 								</HStack>
-								<SwipeActions.Actions allowsFullSwipe={true} edge="trailing">
-									<Button
-										label="Remove"
-										onPress={() => removeRow(row.id)}
-										role="destructive"
-										systemImage="trash"
-									/>
-								</SwipeActions.Actions>
-							</SwipeActions>
-						))}
-						{suggestions.length ? (
-							<Menu label="Add Parameter" systemImage="plus.circle">
-								{suggestions.map((suggestion) => (
-									<Button
-										key={suggestion.name}
-										label={`${suggestion.name} = ${suggestion.value}`}
-										onPress={() => addRow(suggestion)}
-									/>
-								))}
-								<Button
-									label="Custom…"
-									onPress={() => addRow({name: '', value: ''})}
-									systemImage="square.and.pencil"
-								/>
-							</Menu>
-						) : (
+							)
+							// A required input stays: the request cannot go without it.
+							if (row.input?.required) {
+								return <React.Fragment key={row.id}>{control}</React.Fragment>
+							}
+							return (
+								<SwipeActions key={row.id}>
+									{control}
+									<SwipeActions.Actions allowsFullSwipe={true} edge="trailing">
+										<Button
+											label="Remove"
+											onPress={() => removeRow(row.id)}
+											role="destructive"
+											systemImage="trash"
+										/>
+									</SwipeActions.Actions>
+								</SwipeActions>
+							)
+						})}
+						<Menu label="Add Parameter" systemImage="plus.circle">
+							{accepted.length ? (
+								<Section title="Accepted by this route">
+									{accepted.map((input) => (
+										<Button
+											key={input.name}
+											label={input.name}
+											onPress={() => addRow({name: input.name, value: defaultFor(input)})}
+										/>
+									))}
+								</Section>
+							) : null}
+							{usedBefore.length ? (
+								<Section title="Used before">
+									{usedBefore.map((suggestion) => (
+										<Button
+											key={suggestion.name}
+											label={`${suggestion.name} = ${suggestion.value}`}
+											onPress={() => addRow(suggestion)}
+										/>
+									))}
+								</Section>
+							) : null}
 							<Button
-								label="Add Parameter"
+								label="Custom…"
 								onPress={() => addRow({name: '', value: ''})}
-								systemImage="plus.circle"
+								systemImage="square.and.pencil"
 							/>
-						)}
+						</Menu>
 					</Section>
 
 					{recent.length ? (
@@ -197,7 +340,13 @@ export default function APITestComposePage(): React.ReactNode {
 								let recentPath = buildRequestPath(path, request.pathValues, request.query)
 								return (
 									<SwipeActions key={recentPath}>
-										<Button label={recentPath} onPress={() => fill(request)} />
+										<Button
+											label={recentPath}
+											onPress={() => {
+												touched.current = true
+												fill(request)
+											}}
+										/>
 										<SwipeActions.Actions allowsFullSwipe={true} edge="trailing">
 											<Button
 												label="Forget"
