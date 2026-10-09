@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Button, Form, Host, HStack, Menu, Section, SwipeActions, Text} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -13,7 +13,8 @@ import {
 	recentRequests,
 	type SavedRequest,
 } from '../../../source/features/developer/api-test/util/history'
-import {isSafeMethod, methodColor} from '../../../source/features/developer/api-test/util/method'
+import {sendAfterConfirming} from '../../../source/features/developer/api-test/confirm-send'
+import {methodColor} from '../../../source/features/developer/api-test/util/method'
 import {missingInputs} from '../../../source/features/developer/api-test/util/inputs'
 import {
 	buildRequestPath,
@@ -73,19 +74,13 @@ export default function APITestComposePage(): React.ReactNode {
 
 	let send = () => {
 		record(route, {pathValues, query})
-		router.navigate({pathname: '/developer/api-test/detail', params: {path: requestPath, method}})
+		router.navigate({
+			pathname: '/developer/api-test/detail',
+			params: {path: requestPath, method, route: path},
+		})
 	}
 
-	let confirmAndSend = () => {
-		if (isSafeMethod(method)) {
-			send()
-			return
-		}
-		Alert.alert(`Send ${method}?`, `This sends ${method} ${requestPath} to the live server.`, [
-			{text: 'Cancel', style: 'cancel'},
-			{text: `Send ${method}`, style: 'destructive', onPress: send},
-		])
-	}
+	let confirmAndSend = () => sendAfterConfirming(method, requestPath, send)
 
 	return (
 		<>

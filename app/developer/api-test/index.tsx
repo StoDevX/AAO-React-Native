@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {View, StyleSheet} from 'react-native'
-import {Host, List, Section} from '@expo/ui/swift-ui'
+import {Button, ContextMenu, Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
@@ -10,6 +10,8 @@ import {DisclosureRow} from '../../../source/components/rows'
 
 import {SearchBar} from '../../../source/components/search-bar'
 import {RouteEntry, serverRoutesOptions} from '../../../source/features/developer/api-test/query'
+import {sendAfterConfirming} from '../../../source/features/developer/api-test/confirm-send'
+import {inputSummary, nextStep} from '../../../source/features/developer/api-test/util/inputs'
 import {methodColor} from '../../../source/features/developer/api-test/util/method'
 
 export default function APITestPage(): React.ReactNode {
@@ -28,13 +30,29 @@ export default function APITestPage(): React.ReactNode {
 		refetch: routesRefetch,
 	} = useQuery(serverRoutesOptions)
 
-	const openRoute = React.useCallback(
+	const editRoute = React.useCallback(
 		(route: RouteEntry) =>
 			router.navigate({
 				pathname: '/developer/api-test/compose',
-				params: {path: route.path, method: route.method, params: route.params.join(',')},
+				params: {path: route.path, method: route.method},
 			}),
 		[router],
+	)
+
+	const openRoute = React.useCallback(
+		(route: RouteEntry) => {
+			let send = () =>
+				router.navigate({
+					pathname: '/developer/api-test/detail',
+					params: {path: route.path, method: route.method, route: route.path},
+				})
+			if (nextStep(route) === 'form') {
+				editRoute(route)
+			} else {
+				sendAfterConfirming(route.method, route.path, send)
+			}
+		},
+		[router, editRoute],
 	)
 
 	return (
@@ -78,12 +96,23 @@ export default function APITestPage(): React.ReactNode {
 							{groupedRoutes.map((section) => (
 								<Section key={section.title} title={section.title}>
 									{section.data.map((route) => (
-										<DisclosureRow
-											key={route.key}
-											onPress={() => openRoute(route)}
-											tag={{text: route.method, color: methodColor(route.method)}}
-											title={route.displayName}
-										/>
+										<ContextMenu key={route.key}>
+											<ContextMenu.Trigger>
+												<DisclosureRow
+													detail={inputSummary(route.inputs)}
+													onPress={() => openRoute(route)}
+													tag={{text: route.method, color: methodColor(route.method)}}
+													title={route.displayName}
+												/>
+											</ContextMenu.Trigger>
+											<ContextMenu.Items>
+												<Button
+													label="Edit Request…"
+													onPress={() => editRoute(route)}
+													systemImage="slider.horizontal.3"
+												/>
+											</ContextMenu.Items>
+										</ContextMenu>
 									))}
 								</Section>
 							))}

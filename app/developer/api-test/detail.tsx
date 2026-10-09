@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
 import {HtmlContent} from '@frogpond/html-content'
@@ -25,7 +25,12 @@ type DisplayMode = 'raw' | 'parsed'
 export default function APITestDetailPage(): React.ReactNode {
 	// Sent as given: a route's path carries the server's mount prefix, and
 	// query values such as calendar ids are case-sensitive.
-	let {path = '', method = 'GET'} = useLocalSearchParams<{path?: string; method?: string}>()
+	let {
+		path = '',
+		method = 'GET',
+		route,
+	} = useLocalSearchParams<{path?: string; method?: string; route?: string}>()
+	let router = useRouter()
 
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('raw')
 
@@ -70,6 +75,18 @@ export default function APITestDetailPage(): React.ReactNode {
 		<>
 			<Stack.Title>{path}</Stack.Title>
 			<Stack.Toolbar placement="right">
+				{route ? (
+					<Stack.Toolbar.Button
+						accessibilityLabel="Edit Request"
+						icon="slider.horizontal.3"
+						onPress={() =>
+							router.navigate({
+								pathname: '/developer/api-test/compose',
+								params: {path: route, method},
+							})
+						}
+					/>
+				) : null}
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
 					<Stack.Toolbar.MenuAction
 						isOn={displayMode === 'parsed'}
