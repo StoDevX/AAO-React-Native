@@ -10,13 +10,16 @@ export function methodColor(method: string): ColorValue {
 			return c.systemGreen
 		case 'DELETE':
 			return c.systemRed
+		// a read, like GET, that carries a body
+		case 'QUERY':
+			return c.systemIndigo
 		default:
 			return c.systemOrange
 	}
 }
 
 /// Methods that by convention change what the server holds. A POST is left
-/// out: this server's only one, html-to-md, converts and stores nothing.
+/// out, since this server sends none that change anything.
 const CHANGING_METHODS = new Set(['DELETE', 'PUT', 'PATCH'])
 
 /** Whether a request goes without asking first: anything but a method meant to change the server. */

@@ -36,3 +36,19 @@ export function buildRequestPath(
 export function clientPath(path: string): string {
 	return path.startsWith('/') ? `..${path}` : path
 }
+
+/**
+ * A remembered request as its Recent row reads: its path, and its body when it
+ * has one, since requests to one path can differ only there.
+ */
+export function requestLabel(
+	path: string,
+	request: {
+		pathValues: Record<string, string>
+		query: QueryRow[]
+		bodyValues?: Record<string, string>
+	},
+): string {
+	let built = buildRequestPath(path, request.pathValues, request.query)
+	return request.bodyValues ? `${built} ${JSON.stringify(request.bodyValues)}` : built
+}

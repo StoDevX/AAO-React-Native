@@ -51,6 +51,7 @@ import {methodColor} from '../../../source/features/developer/api-test/util/meth
 import {routeParam} from '../../../source/features/developer/api-test/util/route-param'
 import {
 	buildRequestPath,
+	requestLabel,
 	type QueryRow,
 } from '../../../source/features/developer/api-test/util/request-path'
 
@@ -438,7 +439,7 @@ export default function APITestComposePage(): React.ReactNode {
 					{recent.length ? (
 						<Section footer={<Text>Tap one to fill it back in.</Text>} title="Recent">
 							{recent.map((request) => {
-								let recentPath = buildRequestPath(path, request.pathValues, request.query)
+								let recentPath = requestLabel(path, request)
 								return (
 									<SwipeActions key={recentPath}>
 										<Button

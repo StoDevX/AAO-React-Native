@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {buildRequestPath, clientPath} from '../request-path'
+import {buildRequestPath, clientPath, requestLabel} from '../request-path'
 
 describe('buildRequestPath', () => {
 	test('leaves a path without parameters alone', () => {
@@ -63,5 +63,20 @@ describe('clientPath', () => {
 
 	test('leaves a path typed relative to the base alone', () => {
 		expect(clientPath('food/menu/262')).toBe('food/menu/262')
+	})
+})
+
+describe('requestLabel', () => {
+	test('names a request without a body by its path', () => {
+		expect(requestLabel('/v1/food/menu/:cafeId', {pathValues: {cafeId: '262'}, query: []})).toBe(
+			'/v1/food/menu/262',
+		)
+	})
+
+	test('tells requests to one path apart by their bodies', () => {
+		let label = (text: string) =>
+			requestLabel('/v1/util/html-to-md', {pathValues: {}, query: [], bodyValues: {text}})
+		expect(label('<b>a</b>')).toBe('/v1/util/html-to-md {"text":"<b>a</b>"}')
+		expect(label('<b>a</b>')).not.toBe(label('<i>b</i>'))
 	})
 })

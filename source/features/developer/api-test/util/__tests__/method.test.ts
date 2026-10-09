@@ -8,6 +8,7 @@ describe('methodColor', () => {
 		expect(methodColor('GET')).toBe(c.systemBlue)
 		expect(methodColor('POST')).toBe(c.systemGreen)
 		expect(methodColor('DELETE')).toBe(c.systemRed)
+		expect(methodColor('QUERY')).toBe(c.systemIndigo)
 	})
 
 	test('gives any other method one shared colour', () => {
