@@ -15,7 +15,8 @@ export type Station = {
 	websiteUrl: string
 	stationNumber: string
 	title: string
-	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
+	/** The station's schedule's id in the sources manifest: a named calendar on its campus's server. */
+	scheduleCalendar: string
 	/** The station's listener chat, where it has one. */
 	chatUrl?: string
 	stationName: string

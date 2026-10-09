@@ -22,10 +22,17 @@ function routeFiles(path: string): string[] {
 		.map((name) => relative(APP, join(full, name)))
 }
 
+/** Wrappers that gate a screen on a section through `requiresSection`, by the section. */
+const GATING_WRAPPERS: Readonly<Record<string, string>> = {paper: 'newspaperRoute'}
+
 /** Whether `file`'s default export is gated on `section`. */
 function gates(file: string, section: string): boolean {
 	let source = readFileSync(join(APP, file), 'utf8')
-	return new RegExp(`^export default requiresSection\\(\\s*'${section}',`, 'mu').test(source)
+	let wrapper = GATING_WRAPPERS[section]
+	return (
+		new RegExp(`^export default requiresSection\\(\\s*'${section}',`, 'mu').test(source) ||
+		(wrapper !== undefined && new RegExp(`^export default ${wrapper}\\(`, 'mu').test(source))
+	)
 }
 
 /** Whether `file`, or a layout between it and its feature's root, is gated on `section`. */

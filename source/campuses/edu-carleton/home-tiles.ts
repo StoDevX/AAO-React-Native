@@ -72,7 +72,7 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	// The CARLS app's News tile, as the student paper: Carleton's own news is at the end.
 	{
 		type: 'view',
-		view: '/carletonian',
+		view: '/newspaper',
 		title: 'The Carletonian',
 		icon: 'carletonian',
 		gradient: c.tanGradient,

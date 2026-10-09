@@ -2,7 +2,8 @@ import {useRouter} from 'expo-router'
 import {openUrl} from '@frogpond/open-url'
 import {puzzleUrl} from './lib/puzzle'
 import {useMessStore} from './store'
-import {usePaper} from './paper-context'
+import {usePaperCampus} from './paper-context'
+import {NEWSPAPER_ROUTES} from './routes'
 import type {MessStory} from './types'
 
 /**
@@ -11,7 +12,7 @@ import type {MessStory} from './types'
  */
 export function useOpenStory(): (story: MessStory) => void {
 	let router = useRouter()
-	let {routes} = usePaper()
+	let campus = usePaperCampus()
 	let recordOpened = useMessStore((state) => state.recordOpened)
 	return (story) => {
 		if (story.layout.kind === 'puzzle') {
@@ -20,6 +21,6 @@ export function useOpenStory(): (story: MessStory) => void {
 			openUrl(puzzleUrl(story.layout.puzzle, story.link))
 			return
 		}
-		router.navigate({pathname: routes.story, params: {id: String(story.id)}})
+		router.navigate({pathname: NEWSPAPER_ROUTES.story, params: {campus, id: String(story.id)}})
 	}
 }

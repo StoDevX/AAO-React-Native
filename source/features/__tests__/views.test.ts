@@ -71,7 +71,7 @@ describe("St. Olaf's Home tiles", () => {
 			{
 				title: 'Olaf Messenger',
 				icon: 'olaf-messenger',
-				target: '/messenger',
+				target: '/newspaper',
 				devOnly: false,
 				disabled: false,
 			},
@@ -163,7 +163,7 @@ describe("Carleton's Home tiles", () => {
 			['Directory', '/contacts'],
 			['KRLX', 'radio:krlx'],
 			['SUMO', '/carleton-sumo'],
-			['The Carletonian', '/carletonian'],
+			['The Carletonian', '/newspaper'],
 			['Transportation', '/transit'],
 			['Convo', '/carleton-convos'],
 			['Campus Map', '/map?campus=edu.carleton'],
@@ -188,7 +188,7 @@ describe("Carleton's Home tiles", () => {
 			.map(viewTarget)
 			.filter((target) => stOlafTargets.has(target))
 
-		expect(shared).toEqual(['/calendar', '/transit', '/dictionary', '/developer'])
+		expect(shared).toEqual(['/calendar', '/newspaper', '/transit', '/dictionary', '/developer'])
 	})
 })
 

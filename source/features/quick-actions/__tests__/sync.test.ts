@@ -43,7 +43,7 @@ describe('toQuickActions', () => {
 			id: 'Olaf Messenger',
 			title: 'Olaf Messenger',
 			assetName: 'olaf-messenger',
-			href: '/messenger',
+			href: '/newspaper',
 		})
 	})
 

@@ -155,8 +155,8 @@ describe('IssueScreen', () => {
 		expect(mockNavigate.mock.calls).toStrictEqual([
 			[
 				{
-					pathname: '/messenger/issue-section',
-					params: {key: 'week:2026-03-23', section: 'Opinions'},
+					pathname: '/newspaper/issue-section',
+					params: {campus: 'edu.stolaf', key: 'week:2026-03-23', section: 'Opinions'},
 				},
 			],
 		])

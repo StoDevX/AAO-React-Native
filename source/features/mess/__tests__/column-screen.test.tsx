@@ -103,7 +103,10 @@ describe('ColumnScreen', () => {
 		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
-		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36800'}})
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/newspaper/story',
+			params: {campus: 'edu.stolaf', id: '36800'},
+		})
 	})
 
 	test("opens a crossword's puzzle straight from its row", async () => {

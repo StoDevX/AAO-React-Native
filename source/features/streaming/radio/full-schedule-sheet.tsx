@@ -42,7 +42,7 @@ export function FullScheduleSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.fullScheduleOpen)
 	let closeFullSchedule = useRadioStore((state) => state.closeFullSchedule)
 	let station = STATIONS[useRadioStore((state) => state.viewedStationId)]
-	let calendar = station.scheduleHref === '/ksto-schedule' ? 'ksto-schedule' : 'krlx-schedule'
+	let calendar = station.scheduleCalendar
 	let query = useQuery({...scheduleCalendarOptions(calendar, {eventMapper}), enabled: open})
 	// The event is kept past its sheet's closing, so it does not empty while sliding away.
 	let [event, setEvent] = React.useState<EventType | null>(null)

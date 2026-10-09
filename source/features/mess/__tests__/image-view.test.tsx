@@ -94,8 +94,8 @@ describe('ImageView', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36819', index: '2'},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36819', index: '2'},
 		})
 	})
 
@@ -105,8 +105,8 @@ describe('ImageView', () => {
 		fireEvent.press(screen.getByRole('button', {name: /^Mouse Friends: sunsets of life, by/u}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36819'},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36819'},
 		})
 	})
 })
@@ -151,9 +151,9 @@ describe('SeriesRow', () => {
 			(call) => call[0] as {pathname: string; params: {id: string; from: string}},
 		)
 		expect(opened.map((href) => href.pathname)).toStrictEqual([
-			'/messenger/story',
-			'/messenger/story',
-			'/messenger/story',
+			'/newspaper/story',
+			'/newspaper/story',
+			'/newspaper/story',
 		])
 		expect(opened.map((href) => href.params.id)).toStrictEqual(['1', '1', '1'])
 		let [a, b, c] = opened.map((href) => href.params.from)

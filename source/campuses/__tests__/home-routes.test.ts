@@ -5,6 +5,7 @@ import {describe, expect, test} from '@jest/globals'
 import {CAMPUSES, campusById} from '..'
 import {sectionForRoute} from '../../testing/route-sections'
 import {viewTarget} from '../../features/views'
+import {NEWSPAPER_ROUTES} from '../../features/mess/routes'
 
 const APP = join(__dirname, '../../../app')
 
@@ -72,6 +73,30 @@ describe('the route table', () => {
 
 	test.each(['/no-such-screen', '/menus/burton/extra', '/_layout'])('does not serve %s', (href) => {
 		expect(routeExists(href)).toBe(false)
+	})
+})
+
+describe('paper and radio routes', () => {
+	test.each(CAMPUSES.filter((campus) => campus.paper).map((campus) => [campus.id]))(
+		"%s's paper is read under /newspaper",
+		(id) => {
+			for (let path of Object.values(NEWSPAPER_ROUTES)) {
+				expect(routeExists(path.replace('[id]', 'someone'))).toBe(true)
+			}
+			expect(routeExists(`/newspaper?campus=${id}`)).toBe(true)
+		},
+	)
+
+	test.each(
+		CAMPUSES.flatMap((campus) => campus.radio?.stations ?? []).map((station) => [station.id]),
+	)("%s's schedule is at /radio/schedule", (station) => {
+		expect(routeExists(`/radio/schedule?station=${station}`)).toBe(true)
+	})
+
+	test('no route is named for one paper or station', () => {
+		for (let gone of ['/messenger', '/carletonian', '/ksto-schedule', '/krlx-schedule']) {
+			expect(routeExists(gone)).toBe(false)
+		}
 	})
 })
 

@@ -12,16 +12,5 @@ export const MESSENGER: Paper = {
 	logoMediaIds: new Set([35393, 22795, 28499]),
 	contactPageSlug: 'about',
 	masthead: {assetName: 'olaf-messenger-castle'},
-	routes: {
-		front: '/messenger',
-		story: '/messenger/story',
-		image: '/messenger/image',
-		column: '/messenger/column',
-		issue: '/messenger/issue',
-		issueSection: '/messenger/issue-section',
-		about: '/messenger/about',
-		staff: '/messenger/staff',
-		staffMember: '/messenger/staff/[id]',
-		customize: '/messenger/customize',
-	},
+	crosswords: true,
 }

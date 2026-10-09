@@ -122,8 +122,8 @@ describe('IssueSectionScreen', () => {
 		await fireEvent.press(screen.getByRole('button', {name: /^Cats or dogs\?, /u}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/story',
-			params: {id: '9'},
+			pathname: '/newspaper/story',
+			params: {campus: 'edu.stolaf', id: '9'},
 		})
 	})
 

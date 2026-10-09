@@ -642,11 +642,11 @@ struct TestIdentifiers {
 	// MARK: - Messenger Customize
 
 	enum MessCustomize {
-		/// The sheet's host, set in app/messenger/customize/index.tsx.
+		/// The sheet's host, set in app/newspaper/customize/index.tsx.
 		static let screen = "screen-mess-customize"
 		/// The Paper Stains picker, in source/features/mess/issue-stains-row.tsx.
 		static let issueStains = "issue-stains"
-		/// The Dark page for Photo stories switch, in app/messenger/customize/index.tsx.
+		/// The Dark page for Photo stories switch, in app/newspaper/customize/index.tsx.
 		static let keepPhotoStoriesDark = "keep-photo-stories-dark"
 	}
 

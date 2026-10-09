@@ -60,7 +60,7 @@ export const stolafHomeTiles: ReadonlyArray<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: '/messenger',
+		view: '/newspaper',
 		title: 'Olaf Messenger',
 		icon: 'olaf-messenger',
 		gradient: c.purpleGradient,

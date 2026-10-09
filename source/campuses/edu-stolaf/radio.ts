@@ -53,7 +53,7 @@ export const KSTO: Station = {
 		},
 	],
 	websiteUrl: 'https://www.kstoradio.org/',
-	scheduleHref: '/ksto-schedule',
+	scheduleCalendar: 'ksto-schedule',
 	stationName: 'KSTO 93.1 FM',
 	stationNumber: '+15077863602',
 	title: 'St. Olaf College Radio',

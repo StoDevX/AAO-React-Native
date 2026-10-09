@@ -9,7 +9,8 @@ import {columnGlyph} from './lib/row-glyph'
 import {PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {paperQueries} from './query'
-import {usePaper} from './paper-context'
+import {usePaper, usePaperCampus} from './paper-context'
+import {NEWSPAPER_ROUTES} from './routes'
 import {CategoryStories} from './story-list'
 import type {MessCategory} from './types'
 
@@ -26,7 +27,7 @@ const INSET = [padding({horizontal: PAGE_MARGIN})]
 /** A section's columns, A–Z, as one row of chips that scrolls sideways from edge to edge. */
 function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
 	let router = useRouter()
-	let {routes} = usePaper()
+	let campus = usePaperCampus()
 	return (
 		<ScrollView axes="horizontal" modifiers={BLEED} showsIndicators={false}>
 			<HStack modifiers={INSET} spacing={8}>
@@ -37,7 +38,10 @@ function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
 						label={column.name}
 						systemImage={columnGlyph(column.name)}
 						onPress={() =>
-							router.navigate({pathname: routes.column, params: {id: String(column.id)}})
+							router.navigate({
+								pathname: NEWSPAPER_ROUTES.column,
+								params: {campus, id: String(column.id)},
+							})
 						}
 					/>
 				))}

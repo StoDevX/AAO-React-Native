@@ -25,23 +25,9 @@ export type Paper = {
 	contactPageSlug: string
 	/** The paper's masthead in the navigation bar: a custom symbol, or its name set in type. */
 	masthead: {assetName: 'olaf-messenger-castle' | 'carletonian'} | null
-	/** The reader's screens for this paper. */
-	routes: PaperRoutes
+	/** The paper publishes crosswords, which /newspaper/crosswords shows. */
+	crosswords?: true
 }
 
-/** The routes of one paper's screens, each a route file under its own folder of `app/`. */
-export type PaperRoutes = {
-	front: '/messenger' | '/carletonian'
-	story: '/messenger/story' | '/carletonian/story'
-	image: '/messenger/image' | '/carletonian/image'
-	column: '/messenger/column' | '/carletonian/column'
-	issue: '/messenger/issue' | '/carletonian/issue'
-	issueSection: '/messenger/issue-section' | '/carletonian/issue-section'
-	about: '/messenger/about' | '/carletonian/about'
-	staff: '/messenger/staff' | '/carletonian/staff'
-	staffMember: '/messenger/staff/[id]' | '/carletonian/staff/[id]'
-	customize: '/messenger/customize' | '/carletonian/customize'
-}
-
-/** A campus's student paper, which its route tree under `app/` shows. */
+/** A campus's student paper, which the reader under `app/newspaper/` shows. */
 export type PaperSection = Paper

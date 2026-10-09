@@ -188,7 +188,7 @@ final class CarletonSmokeTests: CampusSmokeTests {
 	}
 
 	func testCarletonianShowsAnIssue() throws {
-		opens("/carletonian", waitingFor: app.navigationBars["The Carletonian"])
+		opens("/newspaper", waitingFor: app.navigationBars["The Carletonian"])
 		let story = "A small adventure"
 		try verifyRecorded(shows(story), story)
 	}

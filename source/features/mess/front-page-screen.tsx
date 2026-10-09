@@ -19,8 +19,8 @@ import {LatestPage} from './latest-page'
 import {linkedView, viewKey, viewOf, type MessView} from './lib/front-view'
 import {paperKeys} from './lib/keys'
 import {MessPage, PAPER_BAR, PaperTitle} from './mess-page'
-import {usePaper} from './paper-context'
-import type {PaperRoutes} from './campus-section'
+import {usePaper, usePaperCampus} from './paper-context'
+import {NEWSPAPER_ROUTES} from './routes'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {CUSTOMIZE_LABEL} from '../customize/labels'
 import {StoryRows} from './story-list'
@@ -43,7 +43,7 @@ function masthead(title: string) {
 }
 
 /** The paper's pages the view menu leads to, beside its views. */
-type MessPagePath = PaperRoutes['about'] | PaperRoutes['staff']
+type MessPagePath = typeof NEWSPAPER_ROUTES.about | typeof NEWSPAPER_ROUTES.staff
 
 /**
  * The glass buttons at the top right: the paintbrush, which opens the paper's Customize
@@ -63,7 +63,7 @@ function ViewMenu({
 	onCustomize: () => void
 	onOpen: (path: MessPagePath) => void
 }): React.ReactNode {
-	let {mainSections, routes} = usePaper()
+	let {mainSections} = usePaper()
 	return (
 		<Stack.Toolbar placement="right">
 			<Stack.Toolbar.Button
@@ -107,10 +107,10 @@ function ViewMenu({
 				) : null}
 				{/* Their own inline group, so the menu draws a divider between the views and them */}
 				<Stack.Toolbar.Menu inline={true}>
-					<Stack.Toolbar.MenuAction onPress={() => onOpen(routes.about)}>
+					<Stack.Toolbar.MenuAction onPress={() => onOpen(NEWSPAPER_ROUTES.about)}>
 						Contact
 					</Stack.Toolbar.MenuAction>
-					<Stack.Toolbar.MenuAction onPress={() => onOpen(routes.staff)}>
+					<Stack.Toolbar.MenuAction onPress={() => onOpen(NEWSPAPER_ROUTES.staff)}>
 						Staff
 					</Stack.Toolbar.MenuAction>
 				</Stack.Toolbar.Menu>
@@ -123,12 +123,14 @@ function ViewMenu({
 function ByIssuePage(): React.ReactNode {
 	let router = useRouter()
 	let paper = usePaper()
+	let campus = usePaperCampus()
 	let {width, height} = useWindowDimensions()
 	let {issues, query} = useMessIssues()
 	// Kept the same across renders, so the grid's memoized tiles are not all drawn again.
 	let open = React.useCallback(
-		(issue: MessIssue) => router.navigate({pathname: paper.routes.issue, params: {key: issue.key}}),
-		[paper, router],
+		(issue: MessIssue) =>
+			router.navigate({pathname: NEWSPAPER_ROUTES.issue, params: {campus, key: issue.key}}),
+		[campus, router],
 	)
 	if (issues && issues.length > 0) {
 		return <IssueGrid issues={issues} landscape={width > height} onOpen={open} query={query} />
@@ -170,6 +172,7 @@ function SavedLatestStories(): React.ReactNode {
 export function FrontPageScreen(): React.ReactNode {
 	let router = useRouter()
 	let paper = usePaper()
+	let campus = usePaperCampus()
 	let queryClient = useQueryClient()
 	let saved = useNewsFilterStore((state) => state.selectedCategories[paper.id] ?? null)
 	let select = useNewsFilterStore((state) => state.select)
@@ -204,8 +207,10 @@ export function FrontPageScreen(): React.ReactNode {
 			)}
 			<ViewMenu
 				onChoose={choose}
-				onCustomize={() => router.navigate(paper.routes.customize)}
-				onOpen={(path) => router.navigate(path)}
+				onCustomize={() =>
+					router.navigate({pathname: NEWSPAPER_ROUTES.customize, params: {campus}})
+				}
+				onOpen={(path) => router.navigate({pathname: path, params: {campus}})}
 				view={view}
 			/>
 			<MessPage
