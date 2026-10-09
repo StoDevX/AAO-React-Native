@@ -99,9 +99,14 @@ describe('transit', () => {
 })
 
 describe('dictionary', () => {
-	test("St. Olaf's takes suggestions and Carleton's does not", () => {
+	test("St. Olaf's and Carleton's take suggestions", () => {
 		expect(campusById('edu.stolaf').dictionary?.acceptsSuggestions).toBe(true)
-		expect(campusById('edu.carleton').dictionary?.acceptsSuggestions).toBe(false)
+		expect(campusById('edu.carleton').dictionary?.acceptsSuggestions).toBe(true)
+	})
+
+	// A suggestion is mailed to the campus's support address.
+	test("Carleton's suggestions go to CARLS's own address", () => {
+		expect(campusById('edu.carleton').branding.supportEmail).toBe('carls@frogpond.tech')
 	})
 
 	// The dictionary's edit UI tests run on Wiki Monkeys; a suggestion goes to its

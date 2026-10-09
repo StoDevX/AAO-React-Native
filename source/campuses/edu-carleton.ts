@@ -62,8 +62,8 @@ export const carleton = {
 	menus,
 	// CARLS named the tile Transportation.
 	transit: {title: 'Transportation'},
-	// Suggestions are filed against St. Olaf's dictionary data.
-	dictionary: {acceptsSuggestions: false},
+	// A suggestion is mailed to CARLS's support address.
+	dictionary: {acceptsSuggestions: true},
 	calendar: {sources: ['carleton']},
 	news: {
 		// Carleton Now, read through Carleton's server.
