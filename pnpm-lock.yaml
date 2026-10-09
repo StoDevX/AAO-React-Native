@@ -61,6 +61,7 @@ overrides:
 patchedDependencies:
   '@expo/ui@57.0.21': 7ccceafb06c870f7ef3c74995e3433df4575031a1459d07460cd7bf1bb9b0e08
   react-native-change-icon@5.0.0: 5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306
+  react-native-webview@13.16.1: 5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079
   react-native@0.86.3: 6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191
 
 importers:
@@ -363,7 +364,7 @@ importers:
         version: 4.0.0(react-native@0.86.3)
       react-native-webview:
         specifier: 13.16.1
-        version: 13.16.1(react-native@0.86.3)(react@19.2.3)
+        version: 13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3)
       react-native-worklets:
         specifier: 0.10.1
         version: 0.10.1(@babel/core@7.29.7)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
@@ -912,7 +913,7 @@ importers:
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       react-native-webview:
         specifier: ^13.16.1
-        version: 13.16.1(react-native@0.86.3)(react@19.2.3)
+        version: 13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3)
 
   modules/html-lib:
     dependencies:
@@ -8755,7 +8756,7 @@ snapshots:
       whatwg-url-minimum: 0.1.2
     optionalDependencies:
       '@expo/metro-runtime': 57.0.16(@expo/log-box@57.0.4)(expo@57.0.26)(react-native@0.86.3)(react@19.2.3)
-      react-native-webview: 13.16.1(react-native@0.86.3)(react@19.2.3)
+      react-native-webview: 13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3)
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
@@ -10018,7 +10019,7 @@ snapshots:
     dependencies:
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-webview@13.16.1(react-native@0.86.3)(react@19.2.3):
+  react-native-webview@13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3):
     dependencies:
       escape-string-regexp: 4.0.0
       invariant: 2.2.4

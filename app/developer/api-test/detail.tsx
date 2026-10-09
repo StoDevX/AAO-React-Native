@@ -8,7 +8,7 @@ import * as c from '@frogpond/colors'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
-import {HtmlContent} from '@frogpond/html-content'
+import {HtmlContent, type HtmlContentHandle} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
 import {DebugView} from '../../../source/features/developer/debug'
@@ -69,6 +69,8 @@ export default function APITestDetailPage(): React.ReactNode {
 
 	const body = React.useMemo(() => parseBody(data?.body ?? ''), [data])
 
+	let page = React.useRef<HtmlContentHandle>(null)
+
 	const jsonViewContent = React.useMemo((): React.ReactNode => {
 		if (body.kind !== 'json') {
 			return null
@@ -82,7 +84,9 @@ export default function APITestDetailPage(): React.ReactNode {
 			<pre>${highlighted}</pre>
 		`
 
-		return <HtmlContent html={HTML_CONTENT} style={{backgroundColor: c.systemBackground}} />
+		return (
+			<HtmlContent html={HTML_CONTENT} ref={page} style={{backgroundColor: c.systemBackground}} />
+		)
 	}, [body])
 
 	return (
@@ -102,7 +106,17 @@ export default function APITestDetailPage(): React.ReactNode {
 					/>
 				) : null}
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
+					{/* Only the raw JSON is a web page with a find bar of its own. */}
+					{data && !isErrorStatus(data.status) && body.kind === 'json' && displayMode === 'raw' ? (
+						<Stack.Toolbar.MenuAction
+							icon="magnifyingglass"
+							onPress={() => page.current?.findInPage()}
+						>
+							Find on Page
+						</Stack.Toolbar.MenuAction>
+					) : null}
 					<Stack.Toolbar.MenuAction
+						icon="curlybraces"
 						isOn={displayMode === 'parsed'}
 						onPress={() => setDisplayMode(displayMode === 'parsed' ? 'raw' : 'parsed')}
 					>

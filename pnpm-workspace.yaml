@@ -201,4 +201,5 @@ savePrefix: ''
 patchedDependencies:
   '@expo/ui@57.0.21': patches/@expo__ui@57.0.21.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
+  react-native-webview@13.16.1: patches/react-native-webview@13.16.1.patch
   react-native@0.86.3: patches/react-native@0.86.3.patch
