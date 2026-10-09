@@ -290,15 +290,6 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Whether the day on show has finished loading: it lists an event, or says
-	/// it has none, which Day view says only once its calendars have answered.
-	func waitUntilDayLoads(timeout: TimeInterval = 30) -> Bool {
-		let loaded = NSPredicate(
-			format: "identifier BEGINSWITH %@ OR label BEGINSWITH %@",
-			TestIdentifiers.Calendar.eventRowPrefix, "Nothing on ")
-		return app.descendants(matching: .any).matching(loaded).firstMatch.waitUntilExists(timeout: timeout)
-	}
-
 	private func row(_ title: String) -> XCUIElement {
 		app.buttons["\(TestIdentifiers.Calendar.eventRowPrefix)\(title)"]
 	}

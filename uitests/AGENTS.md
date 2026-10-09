@@ -167,10 +167,10 @@ from. A new campus is one subclass plus its recording
 argument an in-place reset may change, so campus tests interleave with the
 rest in the same shards without relaunching.
 
-A recording run checks every screen against live data, and the recorder
-writes nothing unless all pass. A check on data the recorder changes after the
-run, such as the calendar's dates, tests `isRecordingFixtures`: it waits for
-the screen to load, then throws `XCTSkip`, and the replay makes the check.
+A check on a value from a recording goes through `verifyRecorded`. On replay a
+missing value fails. While recording it skips instead, naming the value: live
+data moves, and the calendar's dates move onto the frozen day only after the
+run. The recorder writes nothing if a test fails, but a skip does not stop it.
 
 ## Two things that will catch you out
 

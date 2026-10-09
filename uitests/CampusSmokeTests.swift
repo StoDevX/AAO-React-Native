@@ -1,10 +1,13 @@
 import XCTest
 
 /// What one campus's screens show from its recordings, which its smoke tests
-/// check. Each value comes from that campus's
-/// recording, in `source/features/campus/__fixtures__/<domain>/`.
+/// check. Each value comes from that campus's recording, in
+/// `source/features/campus/__fixtures__/<domain>/`, except the screen titles
+/// and tiles, which the app draws itself.
 struct CampusExpectations {
 	let homeTitle: String
+	/// A tile only this campus's Home has.
+	let homeTile: String
 	let hoursRoute: String
 	let hoursTitle: String
 	let building: String
@@ -34,17 +37,40 @@ class CampusSmokeTests: UITestCaseUnbooted {
 		self == CampusSmokeTests.self ? XCTestSuite(name: "CampusSmokeTests (template)") : super.defaultTestSuite
 	}
 
-	private func opens(_ route: String, waitingFor element: XCUIElement) {
+	func opens(_ route: String, waitingFor element: XCUIElement) {
 		HomeScreen(app: app).open(route: route, mountedWhen: element)
+	}
+
+	/// Some element on screen whose label holds `text`: a headline sits inside a
+	/// row's label, alongside its byline.
+	func shows(_ text: String) -> XCUIElement {
+		app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
+	}
+
+	/// Waits for `element`, which shows a value from this campus's recording. A
+	/// recording run reads live data, where that value may have moved on or, for
+	/// a calendar, not yet been moved onto the frozen day: there it skips rather
+	/// than fails, so the recorder still writes, and the skip names the value to
+	/// take from the new recording.
+	func verifyRecorded(_ element: XCUIElement, _ value: String) throws {
+		if element.waitUntilExists(timeout: 30) { return }
+		if isRecordingFixtures {
+			throw XCTSkip("\(value) is not in today's live data; set it from the new recording")
+		}
+		XCTFail("\(value) should be shown, from the recording")
 	}
 
 	func testHomeIsTheCampusOwn() throws {
 		opens("/", waitingFor: app.navigationBars[expected.homeTitle])
+		XCTAssertTrue(
+			shows(expected.homeTile).waitUntilExists(timeout: 30),
+			"Home should offer \(expected.homeTile)")
 	}
 
 	func testHoursListsTheCampusBuildings() throws {
 		opens(expected.hoursRoute, waitingFor: app.navigationBars[expected.hoursTitle])
-		HoursScreen(app: app).verifyRowShown(expected.building)
+		try verifyRecorded(
+			app.element(matching: TestIdentifiers.Hours.rowPrefix + expected.building), expected.building)
 	}
 
 	func testMapFindsACampusBuilding() throws {
@@ -52,30 +78,22 @@ class CampusSmokeTests: UITestCaseUnbooted {
 		let field = app.searchFields.firstMatch
 		field.tap()
 		field.typeText(expected.mapPlace)
-		XCTAssertTrue(
-			app.staticTexts[expected.mapPlace].waitUntilExists(timeout: 30),
-			"\(expected.mapPlace) should be found on the map")
+		try verifyRecorded(app.staticTexts[expected.mapPlace], expected.mapPlace)
 	}
 
 	func testContactsListTheCampusOwn() throws {
 		opens("/contacts", waitingFor: app.navigationBars[expected.contactsTitle])
-		XCTAssertTrue(
-			app.staticTexts[expected.contact].waitUntilExists(timeout: 30),
-			"\(expected.contact) should be listed")
+		try verifyRecorded(app.staticTexts[expected.contact], expected.contact)
 	}
 
 	func testDictionaryListsTheCampusWords() throws {
 		opens("/dictionary", waitingFor: app.navigationBars["Dictionary"])
-		XCTAssertTrue(
-			app.staticTexts[expected.word].waitUntilExists(timeout: 30),
-			"\(expected.word) should be listed")
+		try verifyRecorded(app.staticTexts[expected.word], expected.word)
 	}
 
 	func testTransitListsTheCampusLines() throws {
 		opens("/transit", waitingFor: app.navigationBars[expected.transitTitle])
-		XCTAssertTrue(
-			app.staticTexts[expected.busLine].waitUntilExists(timeout: 30),
-			"\(expected.busLine) should be listed")
+		try verifyRecorded(app.staticTexts[expected.busLine], expected.busLine)
 	}
 
 	func testMenusShowTheFirstCafe() throws {
@@ -85,14 +103,9 @@ class CampusSmokeTests: UITestCaseUnbooted {
 
 	func testCalendarListsARecordedEvent() throws {
 		opens("/calendar", waitingFor: app.navigationBars["Calendar"])
-		let calendar = CalendarScreen(app: app)
-		if isRecordingFixtures {
-			// A live calendar may hold nothing yet on the frozen day: the recorder
-			// moves its events there after the run, so only the fetch is needed now.
-			XCTAssertTrue(calendar.waitUntilDayLoads(), "the calendar should finish loading")
-			throw XCTSkip("the recorder shifts the calendars onto the frozen day after the run")
-		}
-		calendar.verifyRowPresent(expected.calendarEvent)
+		try verifyRecorded(
+			app.buttons[TestIdentifiers.Calendar.eventRowPrefix + expected.calendarEvent],
+			expected.calendarEvent)
 	}
 
 	func testSupportOffersTheCampusEmergencyLine() throws {
@@ -108,6 +121,7 @@ final class StOlafSmokeTests: CampusSmokeTests {
 	override var expected: CampusExpectations {
 		CampusExpectations(
 			homeTitle: "All About Olaf",
+			homeTile: "Olaf Messenger",
 			hoursRoute: "/hours",
 			hoursTitle: TestIdentifiers.Hours.title,
 			building: "The Cage",
@@ -132,6 +146,7 @@ final class CarletonSmokeTests: CampusSmokeTests {
 	override var expected: CampusExpectations {
 		CampusExpectations(
 			homeTitle: "CARLS",
+			homeTile: "The Carletonian",
 			hoursRoute: "/hours?campus=carleton",
 			hoursTitle: TestIdentifiers.Hours.carletonTitle,
 			building: "Burton",
@@ -148,38 +163,34 @@ final class CarletonSmokeTests: CampusSmokeTests {
 			emergencyButton: "Security")
 	}
 
-	/// Some element on screen whose label holds `text`: a headline sits inside a
-	/// row's label, alongside its byline.
-	private func shows(_ text: String) -> XCUIElement {
-		app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
-	}
-
 	func testCarletonianShowsAnIssue() throws {
-		HomeScreen(app: app).open(route: "/carletonian", mountedWhen: app.navigationBars["The Carletonian"])
+		opens("/carletonian", waitingFor: app.navigationBars["The Carletonian"])
 		let story = "A small adventure"
-		XCTAssertTrue(shows(story).waitUntilExists(timeout: 30), "\(story) should be on the front page")
+		try verifyRecorded(shows(story), story)
 	}
 
 	func testCarletonNewsOpensAStory() throws {
-		HomeScreen(app: app).open(route: "/carleton-news", mountedWhen: app.navigationBars["Carleton News"])
-		let story = shows("Carnegie classification for sustainability")
-		XCTAssertTrue(story.waitUntilExists(timeout: 30), "a recorded story should be listed")
+		opens("/carleton-news", waitingFor: app.navigationBars["Carleton News"])
+		let headline = "Carnegie classification for sustainability"
+		let story = shows(headline)
+		try verifyRecorded(story, headline)
 		story.tap()
-		XCTAssertTrue(app.navigationBars.buttons.firstMatch.waitUntilExists(timeout: 30))
+		// A story opens on the web, in a sheet the list does not have.
+		XCTAssertTrue(app.buttons["Done"].waitUntilExists(timeout: 30), "the story should open")
 	}
 
 	func testSumoListsRecordedFilms() throws {
-		HomeScreen(app: app).open(route: "/carleton-sumo", mountedWhen: app.navigationBars["SUMO"])
+		opens("/carleton-sumo", waitingFor: app.navigationBars["SUMO"])
 		let film = "I Love Boosters"
-		XCTAssertTrue(shows(film).waitUntilExists(timeout: 30), "\(film) should be listed")
+		try verifyRecorded(shows(film), film)
 	}
 
 	func testConvoListsUpcomingAndArchived() throws {
-		HomeScreen(app: app).open(route: "/carleton-convos", mountedWhen: app.tabBars.buttons["Archives"])
+		opens("/carleton-convos", waitingFor: app.tabBars.buttons["Archives"])
 		let upcoming = "Family Weekend Convocation with Jack El-Hai"
-		XCTAssertTrue(shows(upcoming).waitUntilExists(timeout: 30), "\(upcoming) should be upcoming")
+		try verifyRecorded(shows(upcoming), upcoming)
 		app.tabBars.buttons["Archives"].tap()
 		let archived = "Carleton Opening Convo with Governor Tim Walz"
-		XCTAssertTrue(shows(archived).waitUntilExists(timeout: 30), "\(archived) should be archived")
+		try verifyRecorded(shows(archived), archived)
 	}
 }

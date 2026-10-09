@@ -426,8 +426,7 @@ four ways, all in `scripts/campus-fixtures.mjs`:
 - **Calendar dates move back.** The feeds answer from the day they are asked,
   so the recorder moves a campus's events back by whole days until the first
   day from the recording on with an event is the UI tests' frozen day
-  (`UITEST_FROZEN_DATE`). While recording, the calendar test only waits for the
-  day to load, and skips its check.
+  (`UITEST_FROZEN_DATE`).
 - **The St. Olaf calendar's dates are `{date}` in its keys**, since its window
   comes from the day's date, and the recorder fetches any page of it the run
   ended before asking for.
@@ -435,6 +434,11 @@ four ways, all in `scripts/campus-fixtures.mjs`:
   parser that starts reading a field adds it there.
 - **Every email address is `person@example.com`.** The feeds name people in
   their event text.
+
+A recording run checks each screen against live data, where a value a test
+expects may have moved on: that check skips, naming the value, and the recorder
+still writes. Take each skipped value from the new files into the subclass's
+`expected`, then run the campus's tests once more without recording.
 
 Tests naming no campus keep the per-feature fixtures below.
 
