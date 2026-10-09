@@ -17,12 +17,12 @@ export const ALTERNATE_ICONS = ['old-main', 'windmill-sky', 'windmill-dawn', 'wi
  * whose tinted look adds nothing: each set costs one render per appearance it
  * lists. Each lives at assets/<name>.xcassets/<name>.appiconset.
  */
-export const STATIC_ALTERNATE_ICONS = ['old-main-retro']
+export const STATIC_ALTERNATE_ICONS = ['old-main-retro', 'carls-penguin']
 
 /** Where the tracked documents live, relative to the repository root. */
 const SOURCE_DIR = 'assets'
 
-const APP_TARGET = 'AllAboutOlaf'
+const APP_TARGET = 'AllAboutAnything'
 
 /**
  * Read one record out of a pbxproj section. Sections interleave records with
@@ -157,7 +157,16 @@ export function copyAlternateIcons(projectRoot: string, destination: string): vo
 	}
 }
 
-const withAlternateIcons: ConfigPlugin = (config) =>
+/** What app.config.ts passes. */
+type Options = {
+	/**
+	 * Whether to bundle the alternates. CARLS ships none: its penguin is its
+	 * primary, and it offers no St. Olaf icon to switch to.
+	 */
+	alternates?: boolean
+}
+
+const withAlternateIcons: ConfigPlugin<Options | void> = (config, options) =>
 	withXcodeProject(config, (mod) => {
 		let {projectRoot, platformProjectRoot} = mod.modRequest
 		let groupName = mod.modRequest.projectName as string
@@ -168,9 +177,11 @@ const withAlternateIcons: ConfigPlugin = (config) =>
 			assertLayersPresent(projectRoot, primary)
 		}
 
-		copyAlternateIcons(projectRoot, join(platformProjectRoot, groupName))
-		mod.modResults = addAlternateIconResources(mod.modResults, groupName)
-		mod.modResults = includeAllAppIcons(mod.modResults, APP_TARGET)
+		if (options?.alternates ?? true) {
+			copyAlternateIcons(projectRoot, join(platformProjectRoot, groupName))
+			mod.modResults = addAlternateIconResources(mod.modResults, groupName)
+			mod.modResults = includeAllAppIcons(mod.modResults, APP_TARGET)
+		}
 		mod.modResults = compressAppIcons(mod.modResults, APP_TARGET)
 		return mod
 	})

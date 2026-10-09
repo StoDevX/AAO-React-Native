@@ -1,0 +1,51 @@
+{
+	"contentType": "application/json; charset=utf-8",
+	"json": {
+		"data": [
+			{
+				"category": "Local",
+				"description": "",
+				"name": "Hiawathaland Transit",
+				"synopsis": "Free route bus that stops at both colleges, Division Street, Target/Cub, and El Tequila/Culvers.",
+				"url": "https://wp.stolaf.edu/transportation/express-bus/"
+			},
+			{
+				"category": "Local",
+				"description": "",
+				"name": "Ole Bikes",
+				"synopsis": "Great green alternative, available for check-out through Rølvaag Library.",
+				"url": "https://wp.stolaf.edu/sga/bikes/"
+			},
+			{
+				"category": "Local",
+				"description": "",
+				"name": "Campus-Go",
+				"synopsis": "On-demand daytime transportation for students to volunteer work, medical appointments, pharmacy trips, or work locally, not intended for shopping or other personal trips. Call 507-301-4818 to schedule a ride.",
+				"url": "https://wp.stolaf.edu/transportation/oles-go/"
+			},
+			{
+				"category": "Airport Shuttle",
+				"description": "",
+				"name": "Break Airport Shuttles",
+				"synopsis": "Northfield Lines shuttle operates only immediately before and after break. You must buy tickets 48 hours in advance.",
+				"url": "https://northfield.betterez.com/cart/5787e3b01f39300a1a000085"
+			},
+			{
+				"category": "Airport Shuttle",
+				"description": "",
+				"name": "First Choice Shuttle",
+				"synopsis": "Shuttle service to and from MSP airports, bus and train depots, local shuttle, medical appointments, casinos, and package delivery.",
+				"url": "http://youarriveontime.com"
+			},
+			{
+				"category": "",
+				"description": "",
+				"name": "Transportation Options",
+				"synopsis": "View all available transportation options on the St. Olaf website.",
+				"url": "https://wp.stolaf.edu/transportation/"
+			}
+		]
+	},
+	"key": "GET {server:stolaf.edu}/transit/modes",
+	"status": 200
+}

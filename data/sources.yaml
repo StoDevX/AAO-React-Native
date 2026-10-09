@@ -19,6 +19,19 @@ links:
     titles: {und: Oleville}
     properties: {'https://frogpond.tech/ns/id': oleville}
 
+  - rel: https://frogpond.tech/rel/news
+    href: 'https://thecarletonian.com/wp-json/wp/v2/posts?per_page=50&_embed=true'
+    type: application/vnd.wordpress.v2.posts+json
+    titles: {und: The Carletonian}
+    properties: {'https://frogpond.tech/ns/id': carletonian}
+
+  - rel: https://frogpond.tech/rel/news
+    href: 'news/named/carleton-now'
+    type: application/vnd.frogpond.feed-items+json
+    titles: {und: Carleton News}
+    properties:
+      {'https://frogpond.tech/ns/id': carleton-now, 'https://frogpond.tech/ns/campus': carleton}
+
   - rel: https://frogpond.tech/rel/a-to-z
     href: 'https://wp.stolaf.edu/wp-json/site-data/sidebar/a-z'
     type: application/vnd.stolaf.a-z+json
@@ -44,6 +57,13 @@ links:
     properties: {'https://frogpond.tech/ns/id': presence}
 
   - rel: https://frogpond.tech/rel/calendar
+    href: 'calendar/named/carleton'
+    type: application/vnd.frogpond.events+json
+    titles: {und: Carleton Calendar}
+    properties:
+      {'https://frogpond.tech/ns/id': carleton, 'https://frogpond.tech/ns/campus': carleton}
+
+  - rel: https://frogpond.tech/rel/calendar
     href: 'calendar/named/krlx-schedule'
     type: application/vnd.frogpond.events+json
     titles: {und: KRLX Schedule}
@@ -54,6 +74,20 @@ links:
     type: application/vnd.frogpond.events+json
     titles: {und: KSTO Schedule}
     properties: {'https://frogpond.tech/ns/id': ksto-schedule}
+
+  - rel: https://frogpond.tech/rel/calendar
+    href: 'calendar/named/sumo-schedule'
+    type: application/vnd.frogpond.events+json
+    titles: {und: SUMO Schedule}
+    properties:
+      {'https://frogpond.tech/ns/id': sumo-schedule, 'https://frogpond.tech/ns/campus': carleton}
+
+  - rel: https://frogpond.tech/rel/calendar
+    href: 'calendar/named/upcoming-convos'
+    type: application/vnd.frogpond.events+json
+    titles: {und: Carleton Convocations}
+    properties:
+      {'https://frogpond.tech/ns/id': upcoming-convos, 'https://frogpond.tech/ns/campus': carleton}
 
   - rel: https://frogpond.tech/rel/jobs
     href: 'https://fa-ewur-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1'

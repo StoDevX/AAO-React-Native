@@ -4,7 +4,7 @@ import {
 	REL_STUDENT_WORK_AREAS,
 	resolveSources,
 } from '@frogpond/data-sources'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {z} from 'zod'
 import {queryClient} from '../../../init/tanstack-query'
@@ -33,11 +33,11 @@ const BUNDLED_AREAS = toAreas((bundled as {data: AreaEntry[]}).data)
 /// What a screen draws with until the areas load. One array, so a memo keyed on it holds.
 export const NO_AREAS: StudentWorkArea[] = []
 
-/// The areas as published. UI tests get this checkout's copy throughout.
+/// The areas as published. UI tests naming no campus get this checkout's copy throughout.
 export const studentWorkAreasOptions = queryOptions({
 	queryKey: ['student-work-areas'] as const,
 	queryFn: async ({signal}): Promise<StudentWorkArea[]> => {
-		if (isUITesting) return BUNDLED_AREAS
+		if (servesBundledFixtures) return BUNDLED_AREAS
 
 		let manifest = await fetchManifest(queryClient)
 		let source = resolveSources(manifest, REL_STUDENT_WORK_AREAS, [AREAS_TYPE])[0]
@@ -47,6 +47,6 @@ export const studentWorkAreasOptions = queryOptions({
 		return toAreas(PublishedAreasSchema.parse(body).data)
 	},
 	staleTime: 1000 * 60 * 5,
-	initialData: isUITesting ? BUNDLED_AREAS : undefined,
+	initialData: servesBundledFixtures ? BUNDLED_AREAS : undefined,
 	initialDataUpdatedAt: 0,
 })

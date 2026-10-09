@@ -1,0 +1,2052 @@
+{
+	"contentType": "application/json; charset=utf-8",
+	"json": {
+		"data": [
+			{
+				"breakSchedule": {},
+				"building": "thecage",
+				"category": "Food",
+				"image": "cage",
+				"kind": "space",
+				"links": [
+					{
+						"title": "The Cage on Bon Appétit",
+						"url": "https://stolaf.cafebonappetit.com/cafe/the-cage/"
+					},
+					{
+						"title": "Eat at Buntrock",
+						"url": "https://wp.stolaf.edu/buntrock/eat/"
+					}
+				],
+				"name": "The Cage",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:30am",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "9:00am",
+								"to": "8:00pm"
+							}
+						],
+						"notes": "The kitchen stops cooking at 8 p.m.",
+						"title": "Hours"
+					},
+					{
+						"hours": [
+							{
+								"days": [
+									"Su"
+								],
+								"from": "9:00am",
+								"to": "10:30am"
+							}
+						],
+						"title": "Continental Breakfast Meal Swipe"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "thelionspause",
+				"category": "Food",
+				"image": "pause-kitchen",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Pause Instagram",
+						"url": "https://www.instagram.com/lionspause/"
+					},
+					{
+						"title": "Eat at Buntrock",
+						"url": "https://wp.stolaf.edu/buntrock/eat/"
+					}
+				],
+				"name": "The Pause Kitchen",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr",
+									"Sa",
+									"Su"
+								],
+								"from": "4:00pm",
+								"to": "12:00am"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "stavhall",
+				"category": "Food",
+				"image": "stav",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Stav Hall on Bon Appétit",
+						"url": "https://stolaf.cafebonappetit.com/cafe/stav-hall/"
+					},
+					{
+						"title": "Eat at Buntrock",
+						"url": "https://wp.stolaf.edu/buntrock/eat/"
+					}
+				],
+				"name": "Stav Hall",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:15am",
+								"to": "9:45am"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "8:00am",
+								"to": "9:30am"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "9:00am",
+								"to": "10:30am"
+							}
+						],
+						"title": "Breakfast"
+					},
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "10:30am",
+								"to": "2:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "11:00am",
+								"to": "1:30pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "10:30am",
+								"to": "1:30pm"
+							}
+						],
+						"title": "Lunch"
+					},
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "4:30pm",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Fr",
+									"Sa",
+									"Su"
+								],
+								"from": "4:30pm",
+								"to": "7:30pm"
+							}
+						],
+						"title": "Dinner"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "thelionspause",
+				"category": "Food",
+				"image": "pause-kitchen",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Eat at Buntrock",
+						"url": "https://wp.stolaf.edu/buntrock/eat/"
+					}
+				],
+				"name": "Lion's Pause Pizza Delivery",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr",
+									"Sa",
+									"Su"
+								],
+								"from": "5:00pm",
+								"to": "12:00am"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "thelionspause",
+				"category": "Food",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Eat at Buntrock",
+						"url": "https://wp.stolaf.edu/buntrock/eat/"
+					}
+				],
+				"name": "C-Store",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "11:00am",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "1:00pm",
+								"to": "9:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "stolafcollegebookstore",
+				"category": "Supplies and Books",
+				"image": "bookstore",
+				"kind": "space",
+				"links": [
+					{
+						"title": "St. Olaf Bookstore",
+						"url": "https://stolaf.bncollege.com/"
+					}
+				],
+				"name": "Bookstore",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "9:00am",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "9:00am",
+								"to": "4:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "10:00am",
+								"to": "3:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Mail and Packages",
+				"image": "post-office",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Post Office",
+						"url": "https://wp.stolaf.edu/postoffice/"
+					}
+				],
+				"name": "Post Office",
+				"schedule": [
+					{
+						"closedForChapelTime": true,
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "10:00am",
+								"to": "1:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Mail and Packages",
+				"image": "print",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Print Center",
+						"url": "https://wp.stolaf.edu/printcenter/"
+					}
+				],
+				"name": "Print Center",
+				"schedule": [
+					{
+						"closedForChapelTime": true,
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "rml",
+				"category": "Libraries",
+				"image": "disco",
+				"kind": "space",
+				"links": [
+					{
+						"title": "DiSCO",
+						"url": "https://wp.stolaf.edu/lits/disco/"
+					}
+				],
+				"name": "DiSCO",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "3:00pm",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "3:00pm",
+								"to": "6:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "12:00pm",
+								"to": "4:00pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "12:00pm",
+								"to": "9:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Digital Scholarship Center at St. Olaf"
+			},
+			{
+				"breakSchedule": {
+					"fall": "library-fall-closed"
+				},
+				"building": "chm",
+				"category": "Libraries",
+				"image": "halvorson",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Library & IT Services hours",
+						"url": "https://wp.stolaf.edu/lits/about/building-hours/"
+					}
+				],
+				"name": "Halvorson Music Library",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "8:00am",
+								"to": "10:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "12:00pm",
+								"to": "6:00pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "12:00pm",
+								"to": "10:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {
+					"fall": "library-fall-closed"
+				},
+				"building": "rml",
+				"category": "Libraries",
+				"image": "rolvaag-library",
+				"kind": "building",
+				"links": [
+					{
+						"title": "Library & IT Services hours",
+						"url": "https://wp.stolaf.edu/lits/about/building-hours/"
+					}
+				],
+				"name": "Rølvaag Library",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "7:45am",
+								"to": "12:00am"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "7:45am",
+								"to": "7:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "9:00am",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "12:00pm",
+								"to": "12:00am"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "rml",
+				"category": "Libraries",
+				"kind": "space",
+				"links": [
+					{
+						"title": "DiSCO Resource Request",
+						"url": "https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Requests/Service/40473/DiSCO-Resource-Request"
+					},
+					{
+						"title": "The Spin-Off Makerspace",
+						"url": "https://wp.stolaf.edu/lits/the-spin-off-makerspace/"
+					}
+				],
+				"name": "The Spin-Off Makerspace",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "3:00pm",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "3:00pm",
+								"to": "6:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "12:00pm",
+								"to": "4:00pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "12:00pm",
+								"to": "9:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "3D printing, textiles and electronics, next to DiSCO"
+			},
+			{
+				"breakSchedule": {},
+				"building": "rml",
+				"category": "Help and Support",
+				"kind": "office",
+				"links": [
+					{
+						"title": "IT Helpdesk",
+						"url": "https://wp.stolaf.edu/lits/helpdesk/"
+					}
+				],
+				"name": "IT Helpdesk",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo"
+								],
+								"from": "7:45am",
+								"to": "10:00pm"
+							},
+							{
+								"days": [
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "7:45am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "7:45am",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "1:30pm",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"abbreviation": "ASC",
+				"breakSchedule": {},
+				"building": "toh",
+				"category": "Help and Support",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Academic Success Center",
+						"url": "https://wp.stolaf.edu/academic-success/writing-desk/"
+					}
+				],
+				"name": "Academic Success Center",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "8:00am",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "toh",
+				"category": "Help and Support",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Writing Desk",
+						"url": "https://wp.stolaf.edu/academic-success/writing-desk/"
+					}
+				],
+				"name": "Writing Desk",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "9:00am",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "9:00am",
+								"to": "4:30pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "12:00pm",
+								"to": "9:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {
+					"fall": {
+						"exceptions": [],
+						"schedule": [
+							{
+								"hours": [
+									{
+										"days": [
+											"Sa",
+											"Su"
+										],
+										"from": "12:00pm",
+										"to": "4:00pm"
+									},
+									{
+										"days": [
+											"Mo",
+											"Tu"
+										],
+										"from": "9:00am",
+										"to": "6:00pm"
+									}
+								],
+								"title": "Hours"
+							}
+						]
+					}
+				},
+				"building": "sac",
+				"category": "Gym",
+				"image": "skoglund",
+				"kind": "building",
+				"links": [
+					{
+						"title": "Recreation hours",
+						"url": "https://wp.stolaf.edu/recreation/"
+					}
+				],
+				"name": "Skoglund",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "6:30am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "6:30am",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "9:00am",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "12:00pm",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "sac",
+				"category": "Gym",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Recreation hours",
+						"url": "https://wp.stolaf.edu/recreation/"
+					}
+				],
+				"name": "Skoglund Pool",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Tu",
+									"We",
+									"Fr"
+								],
+								"from": "1:00pm",
+								"to": "2:00pm"
+							},
+							{
+								"days": [
+									"Mo",
+									"We",
+									"Fr"
+								],
+								"from": "6:00pm",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Tu",
+									"Th"
+								],
+								"from": "6:00pm",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "2:00pm",
+								"to": "4:00pm"
+							}
+						],
+						"title": "Lap Swim"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "tostrudcenter",
+				"category": "Gym",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Recreation hours",
+						"url": "https://wp.stolaf.edu/recreation/"
+					}
+				],
+				"name": "Ice Arena",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Su"
+								],
+								"from": "4:00pm",
+								"to": "6:00pm"
+							}
+						],
+						"notes": "Also open 7–9pm on some Fridays; Recreation lists the dates.",
+						"title": "Open Skate"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "tostrudcenter",
+				"category": "Gym",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Ole Expeditions",
+						"url": "https://wp.stolaf.edu/recreation/oleexpeditions/"
+					}
+				],
+				"name": "Ole Expeditions Rental Center",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Su",
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "5:00pm",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "5:00pm",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "12:00pm",
+								"to": "3:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Free outdoor gear rentals, formerly STORP"
+			},
+			{
+				"breakSchedule": {},
+				"building": "tph",
+				"category": "Gym",
+				"image": "tom-porter",
+				"kind": "space",
+				"name": "Tom Porter Weight Room",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "7:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "tostrudcenter",
+				"category": "Gym",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Recreation hours",
+						"url": "https://wp.stolaf.edu/recreation/"
+					}
+				],
+				"name": "Tostrud Climbing Wall",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Su",
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "5:00pm",
+								"to": "9:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "5:00pm",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "12:00pm",
+								"to": "3:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Health and Wellness",
+				"image": "wellness",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Wellness Center",
+						"url": "https://wp.stolaf.edu/wellness/"
+					}
+				],
+				"name": "Wellness Center",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Fr"
+								],
+								"from": "9:00am",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Tu",
+									"Th"
+								],
+								"from": "9:00am",
+								"to": "11:00am"
+							},
+							{
+								"days": [
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "1:00pm",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Su"
+								],
+								"from": "1:00pm",
+								"to": "6:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "newhall",
+				"category": "Health and Wellness",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Health Services",
+						"url": "https://wp.stolaf.edu/health/"
+					}
+				],
+				"name": "Health Services",
+				"schedule": [
+					{
+						"closedForChapelTime": true,
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "12:00pm"
+							},
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "1:00pm",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"category": "Health and Wellness",
+				"kind": "service",
+				"links": [
+					{
+						"title": "SARN in The Book",
+						"url": "https://wp.stolaf.edu/thebook/organizations/peer/"
+					}
+				],
+				"name": "SARN Hotline",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr",
+									"Sa",
+									"Su"
+								],
+								"from": "8:00pm",
+								"to": "8:00am"
+							}
+						],
+						"notes": "Call or text 507-649-3367 to reach a SARN advocate",
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Sexual Assault Resource Network"
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Health and Wellness",
+				"kind": "office",
+				"links": [
+					{
+						"title": "SARN appointments",
+						"url": "https://pages.stolaf.edu/sarn/services/schedule-an-appointment/"
+					}
+				],
+				"name": "SARN Office",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"We"
+								],
+								"from": "7:00pm",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Tu",
+									"Th"
+								],
+								"from": "4:00pm",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "10:00am",
+								"to": "11:00am"
+							}
+						],
+						"notes": "Buntrock Commons Room 14, next to KSTO",
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Sexual Assault Resource Network"
+			},
+			{
+				"breakSchedule": {},
+				"building": "newhall",
+				"category": "Health and Wellness",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Counseling Center",
+						"url": "https://wp.stolaf.edu/counseling-center/"
+					}
+				],
+				"name": "Counseling Center",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "12:00pm"
+							},
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "1:00pm",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "ahl",
+				"category": "Academia",
+				"image": "alumni-hall",
+				"kind": "building",
+				"listed": false,
+				"name": "Alumni Hall",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Academia",
+				"image": "buntrock",
+				"kind": "building",
+				"links": [
+					{
+						"title": "Buntrock Commons",
+						"url": "https://wp.stolaf.edu/buntrock/"
+					}
+				],
+				"listed": false,
+				"name": "Buntrock Commons",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Su",
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "7:00am",
+								"to": "12:00am"
+							},
+							{
+								"days": [
+									"Fr",
+									"Sa"
+								],
+								"from": "7:00am",
+								"to": "1:00am"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bmc",
+				"category": "Academia",
+				"image": "boe",
+				"kind": "building",
+				"listed": false,
+				"name": "Boe Chapel",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr",
+									"Sa",
+									"Su"
+								],
+								"from": "7:00am",
+								"to": "12:00am"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "cad",
+				"category": "Academia",
+				"image": "center-for-arts-and-dance",
+				"kind": "building",
+				"listed": false,
+				"name": "Center for Arts and Dance",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "chm",
+				"category": "Academia",
+				"image": "christiansen",
+				"kind": "building",
+				"listed": false,
+				"name": "CHM",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Christiansen Hall"
+			},
+			{
+				"breakSchedule": {},
+				"building": "hh",
+				"category": "Academia",
+				"kind": "building",
+				"listed": false,
+				"name": "Holland Hall",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "10:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "10:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "hom",
+				"category": "Academia",
+				"image": "hall-of-music",
+				"kind": "building",
+				"listed": false,
+				"name": "HOM",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Tweet Hall of Music"
+			},
+			{
+				"breakSchedule": {},
+				"building": "om",
+				"category": "Academia",
+				"image": "old-main",
+				"kind": "building",
+				"listed": false,
+				"name": "Old Main",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "10:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "10:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "rms",
+				"category": "Academia",
+				"kind": "building",
+				"listed": false,
+				"name": "RMS",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Regents Hall of Mathematical Sciences"
+			},
+			{
+				"breakSchedule": {},
+				"building": "rns",
+				"category": "Academia",
+				"image": "regents-hall",
+				"kind": "building",
+				"listed": false,
+				"name": "RNS",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Regents Hall of Natural Sciences"
+			},
+			{
+				"breakSchedule": {},
+				"building": "skh",
+				"category": "Academia",
+				"image": "skifter-studioa",
+				"kind": "building",
+				"listed": false,
+				"name": "Skifter Hall",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "tb",
+				"category": "Academia",
+				"image": "theater",
+				"kind": "building",
+				"listed": false,
+				"name": "Theater Building",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "toh",
+				"category": "Academia",
+				"image": "tomson",
+				"kind": "building",
+				"listed": false,
+				"name": "Tomson Hall",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "7:00am",
+								"to": "11:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "8:00am",
+								"to": "11:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "cad",
+				"category": "Museums",
+				"kind": "space",
+				"links": [
+					{
+						"title": "Visit the Flaten",
+						"url": "https://wp.stolaf.edu/flaten/visit/"
+					}
+				],
+				"name": "Flaten Art Museum",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Fr"
+								],
+								"from": "10:00am",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Th"
+								],
+								"from": "10:00am",
+								"to": "8:00pm"
+							},
+							{
+								"days": [
+									"Sa",
+									"Su"
+								],
+								"from": "12:00pm",
+								"to": "4:00pm"
+							}
+						],
+						"notes": "Located in the Center for Art and Dance.",
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "admissionsoffice",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Admissions",
+						"url": "https://wp.stolaf.edu/admissions/"
+					}
+				],
+				"name": "Admissions",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							},
+							{
+								"days": [
+									"Sa"
+								],
+								"from": "8:00am",
+								"to": "12:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Buntrock Commons",
+						"url": "https://wp.stolaf.edu/buntrock/"
+					}
+				],
+				"name": "Buntrock Commons Office",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr",
+									"Sa",
+									"Su"
+								],
+								"from": "9:00am",
+								"to": "9:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "ahl",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Business Office",
+						"url": "https://wp.stolaf.edu/treasurer/business-office/"
+					}
+				],
+				"name": "Business Office",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bmc",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "College Ministry",
+						"url": "https://wp.stolaf.edu/ministry/"
+					}
+				],
+				"name": "College Ministry",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:30am",
+								"to": "4:30pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "toh",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "College Events",
+						"url": "https://wp.stolaf.edu/conferences/contact-us/"
+					}
+				],
+				"name": "Events Management Office",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "toh",
+				"category": "Offices",
+				"kind": "office",
+				"name": "Financial Aid",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Offices",
+				"kind": "office",
+				"name": "OSA",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "8:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				],
+				"subtitle": "Office of Student Activities"
+			},
+			{
+				"breakSchedule": {},
+				"building": "toh",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Piper Center",
+						"url": "https://wp.stolaf.edu/pipercenter/"
+					}
+				],
+				"name": "Piper Center",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "toh",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Registrar",
+						"url": "https://wp.stolaf.edu/registrar/"
+					}
+				],
+				"name": "Registrar",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th",
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			},
+			{
+				"breakSchedule": {},
+				"building": "bc",
+				"category": "Offices",
+				"kind": "office",
+				"links": [
+					{
+						"title": "Taylor Center services",
+						"url": "https://wp.stolaf.edu/taylorcenter/services/"
+					}
+				],
+				"name": "Taylor Center",
+				"schedule": [
+					{
+						"hours": [
+							{
+								"days": [
+									"Mo",
+									"Tu",
+									"We",
+									"Th"
+								],
+								"from": "8:00am",
+								"to": "7:00pm"
+							},
+							{
+								"days": [
+									"Fr"
+								],
+								"from": "8:00am",
+								"to": "5:00pm"
+							}
+						],
+						"title": "Hours"
+					}
+				]
+			}
+		]
+	},
+	"key": "GET {server:stolaf.edu}/spaces/hours",
+	"status": 200
+}

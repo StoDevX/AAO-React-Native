@@ -5,6 +5,7 @@ import {setQuickActions} from '@frogpond/quick-actions'
 import {DEFAULT_QUICK_ACTIONS, resolveQuickActions} from '../destinations'
 import {useQuickActionsStore} from '../store'
 import {startQuickActionSync, toQuickActions} from '../sync'
+import {useCampusStore} from '../../campus/store'
 
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
@@ -14,6 +15,7 @@ let pushedIds = () => mockSet.mock.lastCall?.[0].map((action) => action.id)
 // Each test starts as a fresh install: nothing stored, nothing pushed.
 beforeEach(async () => {
 	useQuickActionsStore.setState({quickActions: DEFAULT_QUICK_ACTIONS})
+	useCampusStore.setState({campus: 'stolaf'})
 	await AsyncStorage.clear()
 	mockSet.mockClear()
 })
@@ -78,6 +80,16 @@ describe('startQuickActionSync', () => {
 		mockSet.mockClear()
 		useQuickActionsStore.getState().toggleQuickAction('Transit')
 		expect(mockSet).not.toHaveBeenCalled()
+	})
+
+	test("pushes the campus's own picks when the campus changes", async () => {
+		let stop = startQuickActionSync()
+		await useQuickActionsStore.persist.rehydrate()
+		useCampusStore.getState().setCampus('carleton')
+		expect(pushedIds()).toStrictEqual(['Menus', 'Building Hours', 'SUMO', 'Convo'])
+		useCampusStore.getState().setCampus('stolaf')
+		expect(pushedIds()).toStrictEqual(DEFAULT_QUICK_ACTIONS)
+		stop()
 	})
 
 	// The menu is a convenience, so a failure is reported, never thrown.

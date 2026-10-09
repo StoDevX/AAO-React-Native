@@ -22,6 +22,7 @@ import {BLOCK_SPACING, SiteLinkCard, StoryBlocks} from './story-blocks'
 import {StoryHeader} from './story-header'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStore} from './store'
+import {usePaper} from './paper-context'
 import type {MessStory} from './types'
 import {useColumnWidth} from './use-column-width'
 import {useMessStory} from './use-mess-story'
@@ -144,6 +145,7 @@ type StoryBodyProps = {
  * side so each lands directly in the page's column.
  */
 function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactNode {
+	let {site} = usePaper()
 	let {layout} = story
 	if (layout.kind === 'horoscopes') {
 		return <HoroscopesView columnWidth={columnWidth} layout={layout} scrollTo={scrollTo} />
@@ -189,7 +191,7 @@ function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactN
 			<StoryBlocks columnWidth={columnWidth} story={story} />
 			{/* Artwork or comics with no image come through the API with no body. */}
 			{story.blocks.length === 0 ? (
-				<SiteLinkCard icon="safari" label="Read on olafmessenger.com" url={story.link} />
+				<SiteLinkCard icon="safari" label={`Read on ${site}`} url={story.link} />
 			) : null}
 		</>
 	)

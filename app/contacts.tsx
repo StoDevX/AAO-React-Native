@@ -6,7 +6,8 @@ import {Host, List} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {contactsOptions} from '../source/features/directory/contacts-query'
+import {contactsOptionsFor} from '../source/features/directory/contacts-query'
+import {useCampus} from '../source/features/campus/store'
 import {ImportantContactsGrid} from '../source/features/directory/important-contacts-grid'
 
 /// The curated campus contacts on their own, for the Help group on home. The
@@ -14,11 +15,13 @@ import {ImportantContactsGrid} from '../source/features/directory/important-cont
 /// department roster.
 export default function ContactsPage(): React.ReactNode {
 	let router = useRouter()
-	let contacts = useQuery(contactsOptions)
+	let campus = useCampus()
+	let contacts = useQuery(contactsOptionsFor(campus))
 
 	return (
 		<>
-			<Stack.Title>Contacts</Stack.Title>
+			{/* Named as each campus's home tile names it. */}
+			<Stack.Title>{campus === 'carleton' ? 'Important Contacts' : 'Contacts'}</Stack.Title>
 			<Host matchContents={false} style={styles.host}>
 				<List
 					modifiers={[

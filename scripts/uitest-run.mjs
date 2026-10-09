@@ -51,9 +51,9 @@ export function appDataPath(udid, relative) {
 export function buildArgs(udid) {
 	return [
 		'-workspace',
-		'ios/AllAboutOlaf.xcworkspace',
+		'ios/AllAboutAnything.xcworkspace',
 		'-scheme',
-		'AllAboutOlaf',
+		'AllAboutAnything',
 		'-configuration',
 		'Debug',
 		'-sdk',
@@ -62,7 +62,7 @@ export function buildArgs(udid) {
 		'ios/build',
 		'-destination',
 		`platform=iOS Simulator,id=${udid}`,
-		'-only-testing:AllAboutOlafUITests',
+		'-only-testing:AllAboutAnythingUITests',
 		'CODE_SIGN_IDENTITY=',
 		'CODE_SIGNING_REQUIRED=NO',
 		'CODE_SIGNING_ALLOWED=NO',
@@ -70,14 +70,14 @@ export function buildArgs(udid) {
 }
 
 /** Where `buildForTesting` leaves the app. */
-export const BUILT_APP = 'ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app'
+export const BUILT_APP = 'ios/build/Build/Products/Debug-iphonesimulator/AllAboutAnything.app'
 
 /**
  * Puts the bundle `mise run bundle:ios` wrote, and its assets, into the built
  * app, which then runs without Metro; the CI shards do the same by hand.
  */
 export function embedJsBundle(app = BUILT_APP) {
-	let bundle = 'ios/AllAboutOlaf/main.jsbundle'
+	let bundle = 'ios/AllAboutAnything/main.jsbundle'
 	if (!existsSync(bundle)) {
 		throw new Error(`no ${bundle}; run mise run bundle:ios first`)
 	}

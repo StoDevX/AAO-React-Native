@@ -66,6 +66,13 @@ describe('uitestsNeeded', () => {
 		assert.equal(uitestsNeeded(['uitests/Chaos/ChaosOracle.swift']), true)
 	})
 
+	it('runs when a campus recording changed, which the smoke tests read', () => {
+		assert.equal(
+			uitestsNeeded(['source/features/campus/__fixtures__/carleton.edu/GET-contacts.json']),
+			true,
+		)
+	})
+
 	it('runs on an empty list, which means we could not work out the diff', () => {
 		assert.equal(uitestsNeeded([]), true)
 	})

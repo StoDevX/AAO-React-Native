@@ -1,17 +1,17 @@
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {QueryClient} from '@tanstack/react-query'
 
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 
 import {bonAppCafeOptions, bonAppMenuOptions} from '../query'
 
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 
 jest.mock('@frogpond/api', () => ({
-	client: {get: jest.fn(() => ({json: () => Promise.resolve({})}))},
+	stolafClient: {get: jest.fn(() => ({json: () => Promise.resolve({})}))},
 }))
 
-const mockGet = client.get as unknown as jest.Mock
+const mockGet = stolafClient.get as unknown as jest.Mock
 
 /** A client that schedules no garbage collection, which would hold Jest open. */
 function newClient() {

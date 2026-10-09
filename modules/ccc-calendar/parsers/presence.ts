@@ -11,6 +11,8 @@ import type {WireEvent} from './events'
  * actually show are modelled here -- RSVP counts, cover photos, and contact
  * details have nowhere to go in `EventType`.
  */
+// Campus UI-test recordings keep only these fields (`TRIMS` in
+// scripts/campus-fixtures.mjs); a field read here is added there too.
 const PresenceEventSchema = z.object({
 	eventName: z.string(),
 	organizationName: z.string(),

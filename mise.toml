@@ -78,6 +78,40 @@ eval "set -- $usage_args"
 expo run:ios ${usage_device:+--device "$usage_device"} "$@"
 '''
 
+# Each app's development build, which installs beside the App Store's: AAO Dev
+# and CARLS Dev. Each prebuilds first, since ios/ holds one app at a time, and
+# runs Metro with the same APP_VARIANT, as the app's config reaches the
+# JavaScript through it. Every other task that reads the app's config (ios,
+# start, prebuild, bundle:ios, …) needs APP_VARIANT set by its caller:
+# app.config.ts has no default, so it cannot build the wrong app unasked.
+[tasks."aao:ios"]
+description = "Build and run All About Olaf (AAO Dev) on a simulator or device"
+usage = '''
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
+'''
+env = { APP_VARIANT = "aao-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "aao-dev" }]
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
+
+[tasks."carls:ios"]
+description = "Build and run CARLS (CARLS Dev) on a simulator or device"
+usage = '''
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
+'''
+env = { APP_VARIANT = "carls-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "carls-dev" }]
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
+
 [tasks.start]
 description = "Start Metro bundler"
 run = "expo start"
@@ -143,7 +177,15 @@ cp -R ios/ci_scripts/. "$shim/"
 # --version` answers, so the gems have to be in place before prebuild.
 bundle install --quiet
 
-expo prebuild --platform ios
+# ios/ holds one app at a time. Prebuilding over another variant's project
+# keeps that one's icons and settings, so a change of variant starts afresh.
+variant="${APP_VARIANT:?set APP_VARIANT to aao, aao-dev, carls or carls-dev}"
+clean=""
+if test "$(cat ios/.app-variant 2>/dev/null)" != "$variant"; then
+  clean="--clean"
+fi
+expo prebuild --platform ios $clean
+echo "$variant" > ios/.app-variant
 
 mkdir -p ios/ci_scripts
 cp -R "$shim/." ios/ci_scripts/
@@ -163,8 +205,8 @@ usage = '''
 '''
 run = '''
 xcodebuild build \
-  -workspace ios/AllAboutOlaf.xcworkspace \
-  -scheme AllAboutOlaf \
+  -workspace ios/AllAboutAnything.xcworkspace \
+  -scheme AllAboutAnything \
   -configuration Debug \
   -destination "platform=iOS,name=${usage_device?}" \
   -derivedDataPath ios/build \
@@ -178,9 +220,9 @@ xcodebuild build \
 hide = true
 description = "Embed the .jsbundle into the ios app package"
 wait_for = ["bundle:ios", "build:ios"]
-env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutAnything.app"
 run = [
-	'''cp ios/AllAboutOlaf/main.jsbundle "$APP/"''',
+	'''cp ios/AllAboutAnything/main.jsbundle "$APP/"''',
 	'''rm -rf "$APP/assets" && cp -R ios/assets "$APP/"''',
 ]
 
@@ -200,7 +242,7 @@ description = "Deploy the app to a physical device"
 usage = '''
   arg "<device>" help="The device to target" default="simulator" env="DEVICE"
 '''
-env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutAnything.app"
 run = '''
   xcrun devicectl device install app --device "$(mise run device:find-udid "${usage_device?}")" "$APP"
 '''
@@ -213,11 +255,11 @@ usage = '''
 '''
 depends = [
 	{ task = "pnpm:install:frozen" },
-	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = "prebuild", env.APP_VARIANT = "aao-dev" },
 	{ task = 'build:ios', args = [
 		"{{usage.device}}",
 	] },
-	{ task = "bundle:ios" },
+	{ task = "bundle:ios", env.APP_VARIANT = "aao-dev" },
 	{ task = "embed-jsbundle:ios" },
 ]
 run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
@@ -228,10 +270,10 @@ usage = '''
   arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
   complete "device" run=#"{{ vars.device_names }}"#
 '''
-env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutAnything.app"
 depends = [
 	{ task = "pnpm:install:frozen" },
-	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = "prebuild", env.APP_VARIANT = "aao-dev" },
 	{ task = 'build:ios', args = [
 		"{{usage.device}}",
 	] },
@@ -282,7 +324,7 @@ run = "oxfmt --check ."
 
 [tasks.tsc]
 description = "Run TypeScript compiler"
-# source/features/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
+# source/features/faqs/query.ts imports docs/faqs.json, which bundle-data
 # generates, so tsc cannot run against a clean checkout without it.
 depends = ["bundle-data"]
 run = "tsc --noEmit"
@@ -382,6 +424,20 @@ run = "node scripts/update-map-fixtures.mjs"
 [tasks."update-mess-fixtures"]
 description = "Re-record Olaf Messenger's UI-test fixtures from a run of its UI tests"
 run = "node scripts/update-mess-fixtures.mjs"
+
+[tasks."update-campus-fixtures"]
+description = "Re-record a campus's UI-test fixtures from a run of its campus tests"
+usage = '''
+  arg "<campus>" help="The campus, by domain" {
+    choices "stolaf.edu" "carleton.edu"
+  }
+  flag "--allow-large" help="Keep a response over 200 KB"
+'''
+# The UI tests build All About Olaf, and Carleton mode in it runs CARLS's code.
+env = { APP_VARIANT = "aao" }
+run = '''
+node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/update-campus-fixtures.mjs "$usage_campus" ${usage_allow_large:+--allow-large}
+'''
 
 [tasks."chaos-routes"]
 description = "Regenerate the list of routes the chaos monkey opens"
@@ -525,8 +581,8 @@ expo export:embed \
   --entry-file index.js \
   --dev false \
   --platform ios \
-  --bundle-output ./ios/AllAboutOlaf/main.jsbundle \
-  --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map \
+  --bundle-output ./ios/AllAboutAnything/main.jsbundle \
+  --sourcemap-output ./ios/AllAboutAnything/main.jsbundle.map \
   --assets-dest ./ios
 """
 
@@ -588,17 +644,17 @@ out=app-size
 rm -rf "$out" && mkdir -p "$out"
 mise run prebuild
 NSUnbufferedIO=YES xcodebuild archive \
-  -workspace ios/AllAboutOlaf.xcworkspace \
-  -scheme AllAboutOlaf \
+  -workspace ios/AllAboutAnything.xcworkspace \
+  -scheme AllAboutAnything \
   -configuration Release \
   -destination 'generic/platform=iOS' \
-  -archivePath "$out/AllAboutOlaf.xcarchive" \
+  -archivePath "$out/AllAboutAnything.xcarchive" \
   CODE_SIGN_IDENTITY="" \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGNING_ALLOWED=NO \
   2>&1 | xcbeautify
 APP_SIZE_SHA="${APP_SIZE_SHA:-$(git rev-parse HEAD)}" \
-  node scripts/pr-report/app-size.mjs "$out/AllAboutOlaf.xcarchive" "$out/app-size.json"
+  node scripts/pr-report/app-size.mjs "$out/AllAboutAnything.xcarchive" "$out/app-size.json"
 """
 
 # --- Agent tasks ---

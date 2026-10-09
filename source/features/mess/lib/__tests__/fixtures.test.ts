@@ -1,9 +1,13 @@
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 
 let mockMode = 'live'
+let mockServesBundled = true
 jest.mock('@frogpond/launch-arguments', () => ({
 	get fixtureMode() {
 		return mockMode
+	},
+	get servesBundledFixtures() {
+		return mockServesBundled
 	},
 }))
 const mockFetch =
@@ -35,6 +39,7 @@ const signal = new AbortController().signal
 
 beforeEach(() => {
 	mockFetch.mockReset()
+	mockServesBundled = true
 	mockWrites.length = 0
 })
 
@@ -105,4 +110,18 @@ describe('messFetch', () => {
 
 test('fixtureKey puts the format first', () => {
 	expect(fixtureKey('text', 'https://x/page')).toBe('text https://x/page')
+})
+
+describe('in a campus test', () => {
+	test.each(['serve', 'record'])(
+		'under %s, leaves the paper to the network, which the campus recordings answer',
+		async (mode) => {
+			mockMode = mode
+			mockServesBundled = false
+			mockFetch.mockResolvedValue([{id: 2}])
+
+			await expect(messFetch('https://x/posts', signal, 'Paper')).resolves.toEqual([{id: 2}])
+			expect(mockWrites).toEqual([])
+		},
+	)
 })

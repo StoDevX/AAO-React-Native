@@ -3,7 +3,7 @@ import {DEFAULT_URL} from './constants'
 
 /**
  * The address a source's href names, for a fetch that does not go through
- * `client`. A relative href resolves against the configured server, an
+ * `stolafClient`. A relative href resolves against the configured server, an
  * absolute one is returned as it is.
  *
  * Read when the address is needed, not when a module loads: the server address

@@ -224,7 +224,7 @@ describe('diffApp', () => {
 	let app = (assets, binary, windmill, downloadBytes) => ({
 		installBytes: assets + binary,
 		downloadBytes,
-		byGroup: {'Assets.car': assets, AllAboutOlaf: binary},
+		byGroup: {'Assets.car': assets, AllAboutAnything: binary},
 		byAsset: {windmill},
 	})
 
@@ -235,7 +235,7 @@ describe('diffApp', () => {
 		assert.deepEqual(diff.rows, [
 			{name: 'Assets.car', before: 100, after: 130, delta: 30},
 			{name: 'Assets.car › windmill', before: 80, after: 110, delta: 30},
-			{name: 'AllAboutOlaf', before: 50, after: 50, delta: 0},
+			{name: 'AllAboutAnything', before: 50, after: 50, delta: 0},
 		])
 	})
 })

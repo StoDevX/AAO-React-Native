@@ -39,7 +39,15 @@ export type MapGroupLabel = string & {readonly __brand: 'MapGroupLabel'}
 export type QuickActionId = string & {readonly __brand: 'QuickActionId'}
 
 /** The calendar feeds an event can come from; `other` for anything unrecognized. */
-export type CalendarSourceId = 'stolaf' | 'presence' | 'ksto-schedule' | 'krlx-schedule' | 'other'
+export type CalendarSourceId =
+	| 'stolaf'
+	| 'presence'
+	| 'carleton'
+	| 'ksto-schedule'
+	| 'krlx-schedule'
+	| 'sumo-schedule'
+	| 'upcoming-convos'
+	| 'other'
 
 /**
  * Marks an anonymous log on its way to Sentry, so `beforeSendLog` knows to

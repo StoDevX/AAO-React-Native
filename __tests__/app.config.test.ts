@@ -10,7 +10,7 @@ import type {ExpoConfig} from 'expo/config'
  * import throws `Cannot find module`. So the variant logic lives inline in the
  * config, and this is how it gets tested.
  */
-function loadConfig(variant?: string): ExpoConfig {
+function loadConfig(variant: string | undefined): ExpoConfig {
 	jest.resetModules()
 	if (variant === undefined) {
 		delete process.env.APP_VARIANT
@@ -28,6 +28,7 @@ afterEach(() => {
 describe('app.config version', () => {
 	function loadWithVersion(version: string): ExpoConfig {
 		jest.resetModules()
+		process.env.APP_VARIANT = 'aao'
 		jest.doMock('../package.json', () => ({version}))
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		return require('../app.config').default as ExpoConfig
@@ -55,8 +56,15 @@ describe('app.config version', () => {
 })
 
 describe('app.config variants', () => {
-	it('ships the real identity when no variant is set', () => {
-		let config = loadConfig()
+	// Unset builds nothing, so a forgotten variant cannot launch the other app.
+	it.each([undefined, ''])('refuses to build with APP_VARIANT %p', (variant) => {
+		expect(() => loadConfig(variant)).toThrow(
+			/APP_VARIANT is not set.*aao, aao-dev, carls, carls-dev/u,
+		)
+	})
+
+	it('ships the real identity as aao', () => {
+		let config = loadConfig('aao')
 		expect(config.ios?.infoPlist?.CFBundleDisplayName).toBe('All About Olaf')
 		expect(config.ios?.bundleIdentifier).toBe('NFMTHAZVS9.com.drewvolz.stolaf')
 		expect(config.scheme).toBe('AllAboutOlaf')
@@ -64,16 +72,15 @@ describe('app.config variants', () => {
 
 	// `name` also names the generated Xcode project, its target, its scheme and
 	// its directory. It must not vary per variant: every plugin looks the
-	// AllAboutOlaf target up by name.
-	it.each(['production', 'development'])('keeps the Xcode project name fixed for %s', (variant) => {
-		expect(loadConfig(variant).name).toBe('All About Olaf')
-	})
+	// AllAboutAnything target up by name.
+	it.each(['aao', 'aao-dev', 'carls', 'carls-dev'])(
+		'keeps the Xcode project name fixed for %s',
+		(variant) => {
+			expect(loadConfig(variant).name).toBe('All About Anything')
+		},
+	)
 
-	it('is identical when the production variant is named explicitly', () => {
-		expect(loadConfig('production')).toEqual(loadConfig())
-	})
-
-	it.each([['development', '.dev', 'AAO Dev', 'AllAboutOlafDev']])(
+	it.each([['aao-dev', '.dev', 'AAO Dev', 'AllAboutOlafDev']])(
 		'gives %s its own identity',
 		(variant, suffix, displayName, scheme) => {
 			let config = loadConfig(variant)
@@ -84,17 +91,45 @@ describe('app.config variants', () => {
 	)
 
 	// The home-screen name, not the icon, tells the variants apart.
-	it.each(['production', 'development'])('gives %s the Icon Composer windmill', (variant) => {
+	it.each(['aao', 'aao-dev'])('gives %s the Icon Composer windmill', (variant) => {
 		expect(loadConfig(variant).ios?.icon).toBe('./assets/windmill.icon')
 	})
 
 	it('keeps every variant installable alongside the others', () => {
-		let ids = ['production', 'development'].map((v) => loadConfig(v).ios?.bundleIdentifier)
-		expect(new Set(ids).size).toBe(2)
+		let variants = ['aao', 'aao-dev', 'carls', 'carls-dev']
+		let ids = variants.map((v) => loadConfig(v).ios?.bundleIdentifier)
+		expect(new Set(ids).size).toBe(variants.length)
+	})
+})
+
+describe('app.config CARLS', () => {
+	// The CARLS app's own identifier and scheme, so the build updates CARLS on
+	// the App Store and links made for it still open it.
+	it.each([
+		['carls', 'com.rives.carls', 'CARLS', 'carls'],
+		['carls-dev', 'com.rives.carls.dev', 'CARLS Dev', 'carlsDev'],
+	])('builds %s as CARLS', (variant, bundleIdentifier, displayName, scheme) => {
+		let config = loadConfig(variant)
+		expect(config.ios?.bundleIdentifier).toBe(bundleIdentifier)
+		expect(config.ios?.infoPlist?.CFBundleDisplayName).toBe(displayName)
+		expect(config.scheme).toBe(scheme)
+		expect(config.extra?.app).toBe('carls')
 	})
 
-	it('throws on an unrecognised variant rather than shipping production', () => {
-		expect(() => loadConfig('prodcution')).toThrow(/prodcution/u)
+	it('wears the penguin, and bundles none of All About Olaf’s icons', () => {
+		let config = loadConfig('carls')
+		expect(config.ios?.icon).toMatch(/carls-penguin/u)
+		expect(config.plugins).toContainEqual(['./plugins/with-alternate-icons', {alternates: false}])
+	})
+
+	it.each(['aao', 'aao-dev'])('builds %s as All About Olaf', (variant) => {
+		let config = loadConfig(variant)
+		expect(config.extra?.app).toBe('aao')
+		expect(config.plugins).toContainEqual(['./plugins/with-alternate-icons', {alternates: true}])
+	})
+
+	it('throws on an unrecognised variant rather than building another app', () => {
+		expect(() => loadConfig('production')).toThrow(/"production"/u)
 	})
 })
 
@@ -107,8 +142,7 @@ describe('app.config calendar access', () => {
 	// keys app.config.ts writes itself.
 	it('ships the calendar usage string, and no reminders one', () => {
 		let root = path.join(__dirname, '..')
-		let env = {...process.env}
-		delete env.APP_VARIANT
+		let env = {...process.env, APP_VARIANT: 'aao'}
 
 		let output = execFileSync(
 			process.execPath,
@@ -130,7 +164,7 @@ describe('app.config link schemes', () => {
 	// React Native turns that answer into a rejection. The call and email
 	// helpers ask it whether the device can call or send mail at all.
 	it('declares tel and mailto, so the app can ask whether it can call or email', () => {
-		expect(loadConfig().ios?.infoPlist?.LSApplicationQueriesSchemes).toEqual(
+		expect(loadConfig('aao').ios?.infoPlist?.LSApplicationQueriesSchemes).toEqual(
 			expect.arrayContaining(['tel', 'mailto']),
 		)
 	})

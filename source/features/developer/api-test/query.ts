@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import {groupBy} from '@frogpond/collections'
 
@@ -15,7 +15,7 @@ export interface ServerRoute {
 export const serverRoutesOptions = queryOptions({
 	queryKey: keys.all,
 	queryFn: async ({signal}) => {
-		let response = await client.get('routes', {signal}).json()
+		let response = await stolafClient.get('routes', {signal}).json()
 		return response as ServerRoute[]
 	},
 	select: (routes) => {

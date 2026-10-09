@@ -62,11 +62,11 @@ describe('buildDurationsRequest', () => {
 		const uploaded = buildReport(
 			[
 				{
-					name: 'AllAboutOlaf',
+					name: 'AllAboutAnything',
 					nodeType: 'Test Plan',
 					children: [
 						{
-							name: 'AllAboutOlafUITests',
+							name: 'AllAboutAnythingUITests',
 							nodeType: 'UI test bundle',
 							children: [
 								{

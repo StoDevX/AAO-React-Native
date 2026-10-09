@@ -87,7 +87,7 @@ Never assume port 8081. Take a free port, and prove the server on it is yours:
 
 ```bash
 PORT=8097   # anything free; 8081 is just the default, not your reservation
-npx expo start --port "$PORT" > /tmp/metro-$PORT.log 2>&1 &
+APP_VARIANT=aao npx expo start --port "$PORT" > /tmp/metro-$PORT.log 2>&1 &
 
 pid=$(lsof -nP -iTCP:$PORT -sTCP:LISTEN -t | head -1)
 lsof -a -p "$pid" -d cwd -Fn | grep '^n'      # must print YOUR worktree path
@@ -193,7 +193,7 @@ xcrun simctl boot "$UDID"; xcrun simctl bootstatus "$UDID" -b
 
 # 3. Serve the JavaScript, and wait until it answers. Check the port is yours
 #    first — see "Whose Metro are you talking to?" above.
-npx expo start --port "$PORT" > /tmp/metro-$PORT.log 2>&1 &
+APP_VARIANT=aao npx expo start --port "$PORT" > /tmp/metro-$PORT.log 2>&1 &
 until curl -sf http://localhost:$PORT/status | grep -q running; do sleep 1; done
 
 # 4. Launch it pointed at Metro. No confirmation sheet, no deep link needed.
@@ -259,10 +259,15 @@ log, so `grep` `/tmp/metro-$PORT.log`.
 
 ## Bundle identifiers
 
+Every command here that reads the app's config — `expo start`, `expo run:ios`,
+prebuild — needs `APP_VARIANT`; app.config.ts has no default.
+
 | `APP_VARIANT` | Bundle id |
 | --- | --- |
-| unset / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` |
-| `development` | `NFMTHAZVS9.com.drewvolz.stolaf.dev` |
+| `aao` | `NFMTHAZVS9.com.drewvolz.stolaf` |
+| `aao-dev` | `NFMTHAZVS9.com.drewvolz.stolaf.dev` |
+| `carls` | `com.rives.carls` |
+| `carls-dev` | `com.rives.carls.dev` |
 
 The URL scheme matches the bundle id, so a dev-variant build wants
 `…stolaf.dev://…`. Two builds claiming one scheme is undefined behaviour,
@@ -271,7 +276,7 @@ which is why they differ.
 ## Notes
 
 - **`expo run:ios` does not use `ios/build`.** It writes to
-  `~/Library/Developer/Xcode/DerivedData/AllAboutOlaf-<hash>/`, so it neither
+  `~/Library/Developer/Xcode/DerivedData/AllAboutAnything-<hash>/`, so it neither
   reuses nor contends with a UITest build — it pays its own full build the
   first time. Deleting `ios/build` will not reclaim it.
 - Metro serves whatever is on disk on the next launch, so **JavaScript changes

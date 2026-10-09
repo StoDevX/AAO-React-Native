@@ -1,4 +1,9 @@
-const BUS_FOOTER_HEADLINE = 'Bus routes and times subject to change without notice'
-const BUS_FOOTER_SUBHEADLINE = 'Data collected by the humans of All About Olaf'
+import {useBranding} from '../../campus/branding'
 
-export const BUS_FOOTER_MESSAGE = [BUS_FOOTER_HEADLINE, BUS_FOOTER_SUBHEADLINE].join('\n\n')
+const BUS_FOOTER_HEADLINE = 'Bus routes and times subject to change without notice'
+
+/** The footer under the bus schedules, crediting the app by the campus's name for it. */
+export function useBusFooterMessage(): string {
+	let {appName} = useBranding()
+	return [BUS_FOOTER_HEADLINE, `Data collected by the humans of ${appName}`].join('\n\n')
+}

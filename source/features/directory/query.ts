@@ -1,5 +1,5 @@
 import ky from 'ky'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {UITEST_DIRECTORY_RESULTS} from './__fixtures__/entries'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
@@ -51,7 +51,7 @@ async function fetchDirectoryEntries(
 	// searching it cannot say what it will find -- see
 	// `source/features/dictionary/query.ts` for the same reasoning about
 	// entries.
-	if (isUITesting) {
+	if (servesBundledFixtures) {
 		return UITEST_DIRECTORY_RESULTS
 	}
 

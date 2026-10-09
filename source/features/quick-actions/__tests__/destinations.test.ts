@@ -1,4 +1,5 @@
 import {
+	DEFAULT_CARLETON_QUICK_ACTIONS,
 	DEFAULT_QUICK_ACTIONS,
 	MAX_QUICK_ACTIONS,
 	quickActionDestinations,
@@ -33,7 +34,7 @@ describe('quickActionDestinations', () => {
 		// Balances opens SIS on the web; its native screen is disabled.
 		expect(ids()).not.toContain('Balances')
 		expect(ids()).not.toContain('Athletics')
-		expect(ids()).not.toContain('Carleton Campus')
+		expect(ids()).not.toContain('Developer')
 	})
 
 	test('has unique ids', () => {
@@ -64,6 +65,39 @@ describe('resolveQuickActions', () => {
 	test('drops unknown ids', () => {
 		expect(resolveQuickActions(['Renamed Tile', 'Transit']).map((d) => d.id)).toStrictEqual([
 			'Transit',
+		])
+	})
+})
+
+describe('on Carleton', () => {
+	let carletonIds = () => quickActionDestinations('carleton').map((d) => d.id)
+
+	test("offers Carleton's in-app tiles, and none of St. Olaf's cafés", () => {
+		expect(carletonIds()).toStrictEqual([
+			'Menus',
+			'Building Hours',
+			'Calendar',
+			'Important Contacts',
+			'SUMO',
+			'The Carletonian',
+			'Transportation',
+			'Convo',
+			'Campus Map',
+			'Dictionary',
+			'Carleton News',
+		])
+	})
+
+	test('defaults to four picks it offers', () => {
+		expect(DEFAULT_CARLETON_QUICK_ACTIONS).toHaveLength(MAX_QUICK_ACTIONS)
+		expect(
+			resolveQuickActions(DEFAULT_CARLETON_QUICK_ACTIONS, 'carleton').map((d) => d.id),
+		).toStrictEqual(DEFAULT_CARLETON_QUICK_ACTIONS)
+	})
+
+	test("drops St. Olaf's picks", () => {
+		expect(resolveQuickActions(['Stav Menu', 'SUMO'], 'carleton').map((d) => d.id)).toStrictEqual([
+			'SUMO',
 		])
 	})
 })

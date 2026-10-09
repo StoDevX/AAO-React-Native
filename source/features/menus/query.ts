@@ -1,5 +1,5 @@
-import {client} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {stolafClient} from '@frogpond/api'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
@@ -85,7 +85,7 @@ export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContain
 }
 
 /**
- * The cafes a UI test run serves from a fixture, keyed by the path that would
+ * The cafes a UI test run naming no campus serves from a fixture, keyed by the path that would
  * otherwise be fetched.
  *
  * Only Stav Hall is captured, because it is the cafe the tests land on. A cafe
@@ -106,12 +106,12 @@ async function fetchBonAppMenu(
 ): Promise<EditedBonAppMenuInfoType> {
 	let path = buildMenuPath(cafeParam)
 
-	let fixture = isUITesting ? UITEST_BONAPP_MENUS[path] : undefined
+	let fixture = servesBundledFixtures ? UITEST_BONAPP_MENUS[path] : undefined
 	if (fixture) {
 		return fixture as EditedBonAppMenuInfoType
 	}
 
-	let response = await client.get(path, {signal}).json()
+	let response = await stolafClient.get(path, {signal}).json()
 	return response as EditedBonAppMenuInfoType
 }
 
@@ -122,12 +122,12 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}, day: string)
 		queryFn: async ({signal}) => {
 			let path = buildCafePath(cafeParam)
 
-			let fixture = isUITesting ? UITEST_BONAPP_CAFES[path] : undefined
+			let fixture = servesBundledFixtures ? UITEST_BONAPP_CAFES[path] : undefined
 			if (fixture) {
 				return fixture as EditedBonAppCafeInfoType
 			}
 
-			let response = await client.get(path, {signal}).json()
+			let response = await stolafClient.get(path, {signal}).json()
 			return response as EditedBonAppCafeInfoType
 		},
 		staleTime: 1000 * 60 * 60, // 1 hour
@@ -165,11 +165,11 @@ async function fetchPauseMenu({signal}: {signal: AbortSignal}): Promise<GithubMe
 	// The same menu the server would answer with: `bundle-data` builds
 	// `docs/pause-menu.json` from `data/pause-menu.yaml`, and deploying that
 	// directory is what publishes it.
-	if (isUITesting) {
+	if (servesBundledFixtures) {
 		return (bundledPauseMenu as {data: GithubMenuResponse}).data
 	}
 
-	let response = await client.get('food/named/menu/the-pause', {signal}).json()
+	let response = await stolafClient.get('food/named/menu/the-pause', {signal}).json()
 	return (response as {data: GithubMenuResponse}).data
 }
 

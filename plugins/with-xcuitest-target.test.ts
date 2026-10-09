@@ -15,7 +15,7 @@ import {
 	testPlanFor,
 } from './with-xcuitest-target.ts'
 
-const TARGET = 'AllAboutOlafUITests'
+const TARGET = 'AllAboutAnythingUITests'
 
 // The suite lives outside ios/, which prebuild regenerates, so the project
 // references it in place rather than owning a copy.
@@ -64,7 +64,7 @@ describe('patchPodfileForUITests', () => {
 
 	it('nests the UITests target inside the app target', () => {
 		let result = patchPodfileForUITests(STOCK_PODFILE)
-		let appTarget = result.indexOf("target 'AllAboutOlaf' do")
+		let appTarget = result.indexOf("target 'AllAboutAnything' do")
 		let uiTarget = result.indexOf(`target '${TARGET}' do`)
 		let postInstall = result.indexOf('post_install do |installer|')
 		assert.ok(appTarget < uiTarget)
@@ -89,7 +89,7 @@ describe('patchPodfileForUITests', () => {
 	})
 
 	it('throws when the app target is missing', () => {
-		assert.throws(() => patchPodfileForUITests('# empty\n'), /target 'AllAboutOlaf'/u)
+		assert.throws(() => patchPodfileForUITests('# empty\n'), /target 'AllAboutAnything'/u)
 	})
 })
 
@@ -151,7 +151,7 @@ describe('ensureUITestTarget', () => {
 			.filter((entry) => entry.TEST_TARGET_NAME)
 		assert.equal(settings.length, 2)
 		for (let entry of settings) {
-			assert.equal(entry.TEST_TARGET_NAME, 'AllAboutOlaf')
+			assert.equal(entry.TEST_TARGET_NAME, 'AllAboutAnything')
 			// An empty SWIFT_VERSION fails the build outright.
 			assert.equal(entry.SWIFT_VERSION, '5.0')
 			assert.equal(entry.INFOPLIST_FILE, `${PROJECT_PATH}/Info.plist`)
@@ -215,7 +215,7 @@ describe('addTestableToScheme', () => {
 	const options = {
 		name: TARGET,
 		identifier: 'ABC123',
-		container: 'AllAboutOlaf.xcodeproj',
+		container: 'AllAboutAnything.xcodeproj',
 	}
 
 	it('adds the UITests bundle as a testable', () => {
@@ -239,7 +239,7 @@ describe('testPlanFor', () => {
 	const options = {
 		name: TARGET,
 		identifier: 'ABC123',
-		container: 'AllAboutOlaf.xcodeproj',
+		container: 'AllAboutAnything.xcodeproj',
 	}
 
 	it('runs the UITests bundle', () => {
@@ -247,7 +247,7 @@ describe('testPlanFor', () => {
 		assert.deepEqual(plan.testTargets, [
 			{
 				target: {
-					containerPath: 'container:AllAboutOlaf.xcodeproj',
+					containerPath: 'container:AllAboutAnything.xcodeproj',
 					identifier: 'ABC123',
 					name: TARGET,
 				},
@@ -272,19 +272,22 @@ describe('addTestPlanToScheme', () => {
 `
 
 	it('makes the plan the scheme default', () => {
-		let result = addTestPlanToScheme(SCHEME, 'AllAboutOlaf.xctestplan')
+		let result = addTestPlanToScheme(SCHEME, 'AllAboutAnything.xctestplan')
 		assert.match(
 			result,
-			/<TestPlans>\s*<TestPlanReference\s+reference = "container:AllAboutOlaf.xctestplan"\s+default = "YES">/u,
+			/<TestPlans>\s*<TestPlanReference\s+reference = "container:AllAboutAnything.xctestplan"\s+default = "YES">/u,
 		)
 	})
 
 	it('is idempotent', () => {
-		let once = addTestPlanToScheme(SCHEME, 'AllAboutOlaf.xctestplan')
-		assert.equal(addTestPlanToScheme(once, 'AllAboutOlaf.xctestplan'), once)
+		let once = addTestPlanToScheme(SCHEME, 'AllAboutAnything.xctestplan')
+		assert.equal(addTestPlanToScheme(once, 'AllAboutAnything.xctestplan'), once)
 	})
 
 	it('throws when there is no Testables element', () => {
-		assert.throws(() => addTestPlanToScheme('<Scheme/>', 'AllAboutOlaf.xctestplan'), /Testables/u)
+		assert.throws(
+			() => addTestPlanToScheme('<Scheme/>', 'AllAboutAnything.xctestplan'),
+			/Testables/u,
+		)
 	})
 })

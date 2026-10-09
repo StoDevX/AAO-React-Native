@@ -28,7 +28,7 @@ jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 // Every fetch fails, so a test that refetches sees what a 5xx or a captive
 // portal would hand the screen.
 jest.mock('@frogpond/api', () => ({
-	client: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
+	stolafClient: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
 }))
 
 // One router for the whole run, as expo-router's own hook hands back.

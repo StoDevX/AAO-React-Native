@@ -7,7 +7,12 @@ jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 import {createMigrate} from 'redux-persist'
 import type {PersistedState} from 'redux-persist'
 
-import {addPresenceCalendar, migrations, scopeFavoritesToCampus} from '../migrations'
+import {
+	addCarletonCalendar,
+	addPresenceCalendar,
+	migrations,
+	scopeFavoritesToCampus,
+} from '../migrations'
 
 test('adds Presence to a calendar list that predates it', () => {
 	let migrated = addPresenceCalendar({settings: {enabledCalendarSources: ['stolaf']}})
@@ -26,7 +31,11 @@ test('adds Presence even when every source had been switched off', () => {
 
 test('state persisted before the field existed gets the whole default list', () => {
 	let migrated = addPresenceCalendar({settings: {devModeOverride: false}})
-	expect(migrated?.settings?.enabledCalendarSources).toStrictEqual(['stolaf', 'presence'])
+	expect(migrated?.settings?.enabledCalendarSources).toStrictEqual([
+		'stolaf',
+		'presence',
+		'carleton',
+	])
 })
 
 test('leaves the rest of the settings slice alone', () => {
@@ -110,5 +119,35 @@ describe('the migration manifest', () => {
 		// Untouched: version 2 already ran for this install.
 		expect(migrated.settings.enabledCalendarSources).toStrictEqual(['stolaf'])
 		expect(migrated.buildings.favorites).toStrictEqual([{campus: 'stolaf', name: 'Bookstore'}])
+	})
+})
+
+describe('the Carleton calendar migration', () => {
+	it('adds Carleton to a stored list', () => {
+		let migrated = addCarletonCalendar({settings: {enabledCalendarSources: ['stolaf']}})
+		expect(migrated?.settings?.enabledCalendarSources).toStrictEqual(['stolaf', 'carleton'])
+	})
+
+	it('leaves a list that already names Carleton alone', () => {
+		let state = {settings: {enabledCalendarSources: ['carleton']}}
+		expect(addCarletonCalendar(state)).toBe(state)
+	})
+
+	it('leaves no stored list alone, since the defaults name Carleton', () => {
+		let state = {settings: {devModeOverride: false}}
+		expect(addCarletonCalendar(state)).toBe(state)
+	})
+
+	it('runs alone for an install already at version 3', async () => {
+		let stored = {
+			_persist: {version: 3, rehydrated: false},
+			settings: {enabledCalendarSources: ['stolaf']},
+		} as unknown as PersistedState
+
+		let migrated = (await createMigrate(migrations)(stored, 4)) as unknown as {
+			settings: {enabledCalendarSources: string[]}
+		}
+
+		expect(migrated.settings.enabledCalendarSources).toStrictEqual(['stolaf', 'carleton'])
 	})
 })

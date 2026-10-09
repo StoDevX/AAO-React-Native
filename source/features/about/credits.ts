@@ -47,3 +47,16 @@ export const acknowledgements = [
 	'Sarah Bresnahan',
 	'William Seabrook',
 ]
+
+/** The people the CARLS app credits, as carls-app/carls' data/credits.yaml lists them. It thanks no one besides. */
+export const carlsContributors = [
+	'Drew Volz',
+	'Elijah Verdoorn',
+	'Erich Kauffman',
+	'Grace Pipes',
+	'Hannes Carlsen',
+	'Hawken Rives',
+	'Kristofer Rye',
+	'Margaret Zimmermann',
+	'Matt Kilens',
+]

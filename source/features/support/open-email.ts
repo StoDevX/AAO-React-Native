@@ -1,6 +1,7 @@
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 import {sendEmail} from '../../components/send-email'
+import {currentBranding} from '../campus/branding'
 
 const getDeviceInfo = () => `
 
@@ -13,9 +14,10 @@ ${Application.nativeApplicationVersion}.${Application.nativeBuildVersion}
 
 /** Opens a message to the app's maintainers, with the device's details below the body. */
 export const openEmail = (): void => {
+	let {appName, supportEmail} = currentBranding()
 	sendEmail({
-		to: ['allaboutolaf@frogpond.tech'],
-		subject: 'Support: All About Olaf',
+		to: [supportEmail],
+		subject: `Support: ${appName}`,
 		body: getDeviceInfo(),
 	})
 }

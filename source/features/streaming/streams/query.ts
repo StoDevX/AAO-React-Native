@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import moment, {type Moment} from 'moment-timezone'
 import {StreamType} from './types'
@@ -26,7 +26,7 @@ export const streamsOptionsFor = (date: Moment = moment.tz(timezone())) => {
 			queryKey: [_group, {sort, dateFrom: queryDateFrom, dateTo: queryDateTo}],
 			signal,
 		}) => {
-			const response = await client
+			const response = await stolafClient
 				.get('streams/upcoming', {
 					signal,
 					searchParams: {sort, dateFrom: queryDateFrom, dateTo: queryDateTo},

@@ -1,0 +1,41 @@
+{
+	"contentType": "application/json; charset=utf-8",
+	"json": {
+		"faqs": [
+			{
+				"answer": "Email us at [person@example.com](mailto:person@example.com).",
+				"bannerText": "Email us at [person@example.com](mailto:person@example.com).",
+				"bannerTitle": "Say hello to us",
+				"dismissable": false,
+				"icon": "envelope.circle",
+				"id": "support",
+				"question": "Say hello to us",
+				"severity": "alert",
+				"targets": [
+					"Faq"
+				],
+				"updatedAt": "2025-12-14T00:00:00Z"
+			},
+			{
+				"answer": "Unavailable until further notice.\n\nBalances login now appears to require Google sign-in on St. Olaf's end, which the All About Olaf app can't currently access or support.\n\nWe'll update this if this changes.",
+				"backgroundColor": "#fef3f2",
+				"bannerText": "Balances login now appears to require Google sign-in on St. Olaf's end, which the All About Olaf app can't currently access or support.",
+				"bannerTitle": "Login and Balances Unavailable",
+				"dismissable": false,
+				"foregroundColor": "#b42318",
+				"icon": "exclamationmark.circle",
+				"id": "sis-login-disabled",
+				"question": "Why can't I log in and see my balances?",
+				"severity": "alert",
+				"targets": [
+					"Balances",
+					"SIS"
+				],
+				"updatedAt": "2025-12-14T00:00:00Z"
+			}
+		],
+		"text": "# Support\nSay hello to us at [person@example.com](mailto:person@example.com).\n\n# Known Issues\n- Login Unavailable: SIS now requires Google sign-in, which the All About Olaf app can't currently support. This means login and balances are unavailable until further notice.\n- Building Hours: It reports the 2am buildings as open too often; for instance, the Pause is open on Saturday at 2am, continuing from Friday, but the app reports it as being open on Friday at 2am, as well. This is incorrect."
+	},
+	"key": "GET {server:stolaf.edu}/faqs",
+	"status": 200
+}

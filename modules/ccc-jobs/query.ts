@@ -5,7 +5,7 @@ import {
 	REL_STUDENT_WORK_UNITS,
 	resolveSource,
 } from '@frogpond/data-sources'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {z} from 'zod'
 import {queryClient} from '../../source/init/tanstack-query'
@@ -43,7 +43,7 @@ export const jobPostingsOptions = queryOptions({
 	queryFn: async ({signal}): Promise<JobCategory[]> => {
 		// The live board is whatever St. Olaf is hiring for this week, which a
 		// test cannot name -- see `fixtures/uitest-postings.ts`.
-		if (isUITesting) {
+		if (servesBundledFixtures) {
 			return UITEST_JOB_CATEGORIES
 		}
 
@@ -71,7 +71,7 @@ export const jobDetailOptions = (id: string) =>
 	queryOptions({
 		queryKey: keys.detail(id),
 		queryFn: async ({signal}): Promise<JobDetail> => {
-			if (isUITesting) {
+			if (servesBundledFixtures) {
 				let fixture = UITEST_JOB_DETAILS.find((job) => job.id === id)
 				if (!fixture) {
 					throw new Error(`no UI-test fixture for job "${id}"`)
@@ -106,7 +106,7 @@ export const postingUnitsOptions = queryOptions({
 	queryKey: keys.postingUnits,
 	staleTime: POSTING_UNITS_STALE_TIME,
 	queryFn: async ({signal}): Promise<PostingUnits> => {
-		if (isUITesting) {
+		if (servesBundledFixtures) {
 			return UITEST_POSTING_UNITS
 		}
 

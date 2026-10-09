@@ -6,7 +6,7 @@ import {useDismissOnce} from '../../lib/use-dismiss-once'
 import {shownCaption} from './lib/alt'
 import {galleryPhotoLabel, imageLabel, photoLabel, picturePlace} from './lib/byline'
 import {shownPhotos} from './lib/gallery'
-import {messGalleryOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
 import type {Block, CaptionedPhoto, MessStory} from './types'
@@ -83,6 +83,7 @@ type Props = {
 
 /** A comic, a piece of artwork, a feature page's picture or a story's photo on its own, on black, to pinch or double-tap to zoom. */
 export function ImageViewer({id, index = 0, url}: Props): React.ReactNode {
+	let {galleryOptions} = usePaperQueries()
 	let close = useDismissOnce()
 	let query = useMessStory(id)
 	let galleries = (query.data?.blocks ?? []).filter(
@@ -90,7 +91,7 @@ export function ImageViewer({id, index = 0, url}: Props): React.ReactNode {
 	)
 	// The page fetched these to draw them, so the viewer finds them already in the cache.
 	let fetched = useQueries({
-		queries: galleries.map((gallery) => messGalleryOptions(gallery.photoIds)),
+		queries: galleries.map((gallery) => galleryOptions(gallery.photoIds)),
 	})
 	let shown = galleries.map((gallery, n) => ({
 		gallery,

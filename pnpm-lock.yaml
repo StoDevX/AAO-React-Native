@@ -534,6 +534,10 @@ importers:
       ky:
         specifier: 2.1.0
         version: 2.1.0
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
   modules/app-theme:
     dependencies:

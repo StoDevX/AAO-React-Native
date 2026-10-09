@@ -8,7 +8,8 @@ import {filterTree} from './lib/filter'
 import {columnGlyph} from './lib/row-glyph'
 import {PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
-import {messCategoriesOptions} from './query'
+import {paperQueries} from './query'
+import {usePaper} from './paper-context'
 import {CategoryStories} from './story-list'
 import type {MessCategory} from './types'
 
@@ -25,6 +26,7 @@ const INSET = [padding({horizontal: PAGE_MARGIN})]
 /** A section's columns, A–Z, as one row of chips that scrolls sideways from edge to edge. */
 function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
 	let router = useRouter()
+	let {routes} = usePaper()
 	return (
 		<ScrollView axes="horizontal" modifiers={BLEED} showsIndicators={false}>
 			<HStack modifiers={INSET} spacing={8}>
@@ -35,7 +37,7 @@ function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
 						label={column.name}
 						systemImage={columnGlyph(column.name)}
 						onPress={() =>
-							router.navigate({pathname: '/messenger/column', params: {id: String(column.id)}})
+							router.navigate({pathname: routes.column, params: {id: String(column.id)}})
 						}
 					/>
 				))}
@@ -49,13 +51,16 @@ function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
  * then the section's newest stories.
  */
 export function SectionStories({name}: {name: string}): React.ReactNode {
-	let categories = useQuery(messCategoriesOptions)
+	let paper = usePaper()
+	let categories = useQuery(paperQueries(paper).categoriesOptions)
 	let branch = React.useMemo(
 		() =>
 			categories.data === undefined
 				? undefined
-				: filterTree(categories.data).find((candidate) => candidate.section.name === name),
-		[categories.data, name],
+				: filterTree(categories.data, paper.mainSections).find(
+						(candidate) => candidate.section.name === name,
+					),
+		[categories.data, name, paper.mainSections],
 	)
 
 	let body: React.ReactNode

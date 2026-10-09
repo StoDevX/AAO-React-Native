@@ -4,6 +4,7 @@ const context = {
 	platform: 'ios' as const,
 	version: '2.8.0',
 	now: Date.parse('2024-12-15T12:00:00Z'),
+	campus: 'stolaf' as const,
 }
 
 describe('condition parser', () => {
@@ -50,5 +51,37 @@ describe('condition parser', () => {
 		])
 
 		expect(evaluateConditions(nodes, context)).toBe(true)
+	})
+})
+
+describe('campus conditions', () => {
+	it("shows a notice to the campus it names, by domain, and not to the other's", () => {
+		let nodes = parseConditionInput([{campus: 'carleton.edu'}])
+		expect(evaluateConditions(nodes, {...context, campus: 'carleton'})).toBe(true)
+		expect(evaluateConditions(nodes, context)).toBe(false)
+	})
+
+	it('accepts a list of campuses', () => {
+		let nodes = parseConditionInput([{campuses: ['stolaf.edu', 'carleton.edu']}])
+		expect(evaluateConditions(nodes, {...context, campus: 'carleton'})).toBe(true)
+		expect(evaluateConditions(nodes, context)).toBe(true)
+	})
+
+	it('shows a notice naming only an unknown campus to no one', () => {
+		let nodes = parseConditionInput([{campus: 'macalester.edu'}])
+		expect(evaluateConditions(nodes, context)).toBe(false)
+		expect(evaluateConditions(nodes, {...context, campus: 'carleton'})).toBe(false)
+	})
+
+	it('combines with the version range', () => {
+		let nodes = parseConditionInput([
+			{and: [{campus: 'carleton.edu'}, {versionRange: '>=2.9.0-rc.4'}]},
+		])
+		expect(evaluateConditions(nodes, {...context, campus: 'carleton', version: '2.9.0-rc.4'})).toBe(
+			true,
+		)
+		expect(evaluateConditions(nodes, {...context, campus: 'carleton', version: '2.8.0'})).toBe(
+			false,
+		)
 	})
 })

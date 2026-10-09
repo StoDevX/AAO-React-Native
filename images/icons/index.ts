@@ -1,4 +1,7 @@
 import type {ImageSourcePropType} from 'react-native'
+import {APP} from '../../source/lib/app-identity'
+import carlsPenguinDark from './carls-penguin-dark.png'
+import carlsPenguin from './carls-penguin.png'
 import oldMainRetroDark from './old-main-retro-dark.png'
 import oldMainRetro from './old-main-retro.png'
 import oldMainDark from './old-main-dark.png'
@@ -14,8 +17,13 @@ import windmill from './windmill.png'
 
 /**
  * Previews of each Icon Composer document in assets/, in its light and dark
- * renditions, rendered by `mise run icons`. The keys are the documents'
- * names, which are also what iOS reports as the alternate icon's name.
+ * renditions, rendered by `mise run icons`, and of each static app icon set.
+ * The keys are the documents' and sets' names, which are also what iOS
+ * reports as the alternate icon's name.
+ *
+ * The CARLS penguin is the CARLS app's own icon, a static set with no
+ * document: its previews are its artwork scaled down under the other
+ * previews' mask, and it had no dark rendition, so both show the same.
  */
 export const appIcons = {
 	windmill: {
@@ -42,12 +50,16 @@ export const appIcons = {
 		light: windmillGoldenHour,
 		dark: windmillGoldenHourDark,
 	},
+	'carls-penguin': {
+		light: carlsPenguin,
+		dark: carlsPenguinDark,
+	},
 } satisfies Record<string, {light: ImageSourcePropType; dark: ImageSourcePropType}>
 
 export type AppIconName = keyof typeof appIcons
 
-/** The primary icon, which `ios.icon` names in app.config.ts. */
-export const DEFAULT_ICON: AppIconName = 'windmill'
+/** The primary icon, which `ios.icon` names in app.config.ts: CARLS' penguin, or the windmill. */
+export const DEFAULT_ICON: AppIconName = APP === 'carls' ? 'carls-penguin' : 'windmill'
 
 /**
  * Which icon to show for the name `getIcon()` reports: "Default" for the

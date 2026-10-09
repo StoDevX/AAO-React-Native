@@ -26,6 +26,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
+  # app.config.ts requires it; the report measures All About Olaf.
+  APP_VARIANT: 'aao'
   MISE_RUBY_COMPILE: 'false'
   # The same Xcode as ios.yml's builds; keep the two in step.
   xcode_version: 'Xcode_27.0'

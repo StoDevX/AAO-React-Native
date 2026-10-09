@@ -1,4 +1,4 @@
-import {isHTTPError, setApiRoot} from '@frogpond/api'
+import {isHTTPError, setApiRoot, setCarletonApiRoot} from '@frogpond/api'
 import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
 
 describe('isAbsoluteHref', () => {
@@ -23,7 +23,7 @@ describe('fetchSourceBody', () => {
 		jest.useRealTimers()
 	})
 
-	test('a relative href resolves through client, honouring the configured api root', async () => {
+	test('a relative href resolves through stolafClient, honoring the configured api root', async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/mess')
 			return Promise.resolve(new Response(JSON.stringify({ok: true}), {status: 200}))
@@ -34,6 +34,27 @@ describe('fetchSourceBody', () => {
 		let body = await fetchSourceBody('news/named/mess', controller.signal, 'News')
 
 		expect(body).toEqual({ok: true})
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	test("a Carleton source's relative href resolves against Carleton's server", async () => {
+		setCarletonApiRoot(new URL('https://carleton.example.test/v1/'))
+		let fetchMock = jest.fn((request: Request) => {
+			expect(request.url).toBe('https://carleton.example.test/v1/calendar/named/sumo-schedule')
+			return Promise.resolve(new Response(JSON.stringify([]), {status: 200}))
+		})
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		let controller = new AbortController()
+		let body = await fetchSourceBody(
+			'calendar/named/sumo-schedule',
+			controller.signal,
+			'Calendar',
+			'json',
+			'carleton',
+		)
+
+		expect(body).toEqual([])
 		expect(fetchMock).toHaveBeenCalledTimes(1)
 	})
 
@@ -166,7 +187,7 @@ describe('fetchSourceBody', () => {
 		await assertion
 	})
 
-	test('a relative href in text format resolves through client as text, not json', async () => {
+	test('a relative href in text format resolves through stolafClient as text, not json', async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/rss-feed')
 			return Promise.resolve(new Response('<rss>not json</rss>', {status: 200}))

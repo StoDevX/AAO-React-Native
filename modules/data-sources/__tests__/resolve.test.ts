@@ -2,8 +2,10 @@ import {onlineManager, QueryClient} from '@tanstack/react-query'
 import bundled from '../bundled.json'
 import {fetchManifest, hasBundledSource, resolveSource, resolveSources} from '../resolve'
 import {
+	CAMPUS_PROPERTY,
 	ID_PROPERTY,
 	JrdSchema,
+	REL_CALENDAR,
 	REL_A_TO_Z,
 	REL_JOBS,
 	REL_NEWS,
@@ -31,7 +33,7 @@ test('resolves a source by rel and id', () => {
 
 test('lists every source under a rel', () => {
 	const ids = resolveSources(manifest, REL_NEWS, ALL_NEWS_TYPES).map((s) => s.id)
-	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville'])
+	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville', 'carletonian', 'carleton-now'])
 })
 
 test('the bundled manifest carries the St. Olaf jobs site', () => {
@@ -103,11 +105,11 @@ test('resolveSources drops an entry whose fetched and bundled types are both uns
 	// 'stolaf' is unsupported here (both its fetched type and its bundled
 	// type -- the real wordpress type -- are excluded), so it must be
 	// dropped rather than thrown for the whole list or returned unusable.
-	// 'mess' is a WordPress source too, so it goes the same way.
+	// 'mess' and 'carletonian' are WordPress sources too, so they go the same way.
 	const ids = resolveSources(edited, REL_NEWS, ['application/vnd.frogpond.feed-items+json']).map(
 		(s) => s.id,
 	)
-	expect(ids).toStrictEqual(['oleville'])
+	expect(ids).toStrictEqual(['oleville', 'carleton-now'])
 })
 
 test('resolveSources: an id missing from the fetched document still appears, from the bundled entry', () => {
@@ -156,7 +158,7 @@ test('resolveSources: a fetched-only id with an unsupported type is dropped', ()
 	// 'brand-new' has no bundled entry to fall back to, so it must be
 	// dropped rather than thrown for the whole list.
 	const ids = resolveSources(edited, REL_NEWS, ALL_NEWS_TYPES).map((s) => s.id)
-	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville'])
+	expect(ids).toStrictEqual(['stolaf', 'mess', 'oleville', 'carletonian', 'carleton-now'])
 })
 
 test('fetchManifest resolves to the bundled document rather than hanging while offline', async () => {
@@ -193,4 +195,33 @@ test('the bundled manifest offers Presence as a calendar', () => {
 	)
 	expect(link?.href).toBe('https://api.presence.io/stolaf/v1/events')
 	expect(link?.type).toBe('application/vnd.presence.events+json')
+})
+
+const EVENTS = ['application/vnd.frogpond.events+json']
+
+test("a source marked Carleton's resolves against Carleton's server", () => {
+	const source = resolveSource(manifest, REL_CALENDAR, 'sumo-schedule', EVENTS)
+	expect(source.campus).toBe('carleton')
+	expect(source.href).toBe('calendar/named/sumo-schedule')
+})
+
+test("a source with no campus resolves against St. Olaf's", () => {
+	expect(resolveSource(manifest, REL_CALENDAR, 'krlx-schedule', EVENTS).campus).toBe('stolaf')
+})
+
+test('a campus this build does not know reads as St. Olaf, without failing the manifest', () => {
+	const document = JrdSchema.parse({
+		subject: 'https://stolaf.edu',
+		links: [
+			{
+				rel: REL_CALENDAR,
+				href: 'calendar/named/elsewhere',
+				type: EVENTS[0],
+				properties: {[ID_PROPERTY]: 'elsewhere', [CAMPUS_PROPERTY]: 'macalester'},
+			},
+		],
+	})
+	expect(
+		resolveSources(document, REL_CALENDAR, EVENTS).find((s) => s.id === 'elsewhere')?.campus,
+	).toBe('stolaf')
 })

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {useInfiniteQuery, useQuery, type InfiniteData} from '@tanstack/react-query'
-import {MissingMessStoryError, messFeedOptions, messStoryOptions} from './query'
+import {MissingMessStoryError} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import type {MessStory} from './types'
 
 /** What a screen needs to draw a story, or its loading, failure or unavailable state. */
@@ -24,11 +25,12 @@ export function useMessStory(id: number): MessStoryLookup {
 		(feed: InfiniteData<MessStory[]>) => feed.pages.flat().find((s) => s.id === id),
 		[id],
 	)
-	let feed = useInfiniteQuery({...messFeedOptions, select: selectStory})
+	let {feedOptions, storyOptions} = usePaperQueries()
+	let feed = useInfiniteQuery({...feedOptions, select: selectStory})
 	// Whether the feed holds stories at all: a failed refetch keeps them, and their time, but turns
 	// `isSuccess` false. An id that is not a number names no post, so there is nothing to fetch.
 	let outsideFeed = feed.dataUpdatedAt > 0 && feed.data === undefined && Number.isInteger(id)
-	let single = useQuery({...messStoryOptions(id), enabled: outsideFeed})
+	let single = useQuery({...storyOptions(id), enabled: outsideFeed})
 
 	if (!outsideFeed) return feed
 	// A post that parses to no story is unavailable, which trying again will not change.

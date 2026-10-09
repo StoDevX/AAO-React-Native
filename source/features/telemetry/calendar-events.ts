@@ -6,8 +6,11 @@ import type {CalendarSourceId, PublicEventTitle, TelemetryEvent} from './catalog
 const KNOWN_SOURCES: ReadonlySet<string> = new Set([
 	'stolaf',
 	'presence',
+	'carleton',
 	'ksto-schedule',
 	'krlx-schedule',
+	'sumo-schedule',
+	'upcoming-convos',
 ])
 
 /** The event screen's `source` route param, narrowed to the calendar feeds; `other` for anything else. */

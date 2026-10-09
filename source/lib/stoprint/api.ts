@@ -24,7 +24,7 @@ import type {
 } from './types'
 import {type Options} from 'ky'
 import {LoginFailedError} from '../login'
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 
 export class PapercutJobReleaseError extends Error {}
 
@@ -100,7 +100,9 @@ export async function fetchColorPrinters(options: Options): Promise<string[]> {
 		return mockFetchColorPrinters()
 	}
 
-	let response = await client.get<ColorPrintersResponse>('printing/color-printers', options).json()
+	let response = await stolafClient
+		.get<ColorPrintersResponse>('printing/color-printers', options)
+		.json()
 	return response.data.colorPrinters
 }
 

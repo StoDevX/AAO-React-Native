@@ -1,11 +1,12 @@
 import {setApiRoot, setCarletonApiRoot} from '@frogpond/api'
+import {campusFixturesDomain, fixtureMode} from '@frogpond/launch-arguments'
+import {installCampusFixtures} from '../features/campus/fixtures'
 import * as storage from '../lib/storage'
 import {CARLETON_DEFAULT_URL, DEFAULT_URL} from '../lib/constants'
 
-// Not user-configurable, so it is set before the await rather than after it:
-// the server URL setting points at a St. Olaf server and nothing there answers
-// Carleton's map endpoints, and anything reading `carletonClient` during the
-// storage round-trip would otherwise find it undefined.
+// Set to the default before the await rather than only after it: anything
+// reading `carletonClient` during the storage round-trip would otherwise find
+// it undefined. Carleton's own server setting replaces it once read.
 setCarletonApiRoot(new URL(CARLETON_DEFAULT_URL))
 
 const configureApiRoot = async () => {
@@ -18,4 +19,18 @@ const configureApiRoot = async () => {
 	setApiRoot(new URL(address))
 }
 
+const configureCarletonApiRoot = async () => {
+	let address = await storage.getCarletonServerAddress()
+
+	if (address) {
+		setCarletonApiRoot(new URL(address))
+	}
+}
+
 configureApiRoot()
+configureCarletonApiRoot()
+
+// A UI test that names a campus reads that campus's recordings for every request.
+if (campusFixturesDomain !== null) {
+	installCampusFixtures(campusFixturesDomain, fixtureMode)
+}

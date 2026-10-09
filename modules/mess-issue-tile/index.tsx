@@ -50,6 +50,8 @@ export type PhotoTone = 'auto' | 'color' | 'sepia'
 export type TileLayout = 'grid' | 'topPortrait' | 'topLandscape'
 
 export type MessIssueTileProps = {
+	/** The paper's name across the top of the sheet, "The Olaf Messenger" */
+	nameplate: string
 	title: string
 	/** The issue's date as words, "April 29, 2026"; the tile sets it in capitals */
 	date: string

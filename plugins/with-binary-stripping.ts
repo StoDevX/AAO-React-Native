@@ -42,7 +42,7 @@ function buildSettingsFor(project: XcodeProject, targetName: string): Record<str
 	)
 }
 
-const APP_TARGET = 'AllAboutOlaf'
+const APP_TARGET = 'AllAboutAnything'
 
 /**
  * Strip symbols from the linked binary. prebuild sets neither, and their

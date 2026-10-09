@@ -126,6 +126,7 @@ function RootLayout(): React.ReactNode {
 								<Stack.Screen name="menus" options={{title: 'Menus'}} />
 								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
 								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
+								<Stack.Screen name="carleton-convos" options={{title: 'Convocations'}} />
 								{/* No large title: the front page draws the paper's name in the bar, in its serif,
 								    and a large title would show the plain name until the page scrolled. */}
 								<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
@@ -147,9 +148,24 @@ function RootLayout(): React.ReactNode {
 									name="messenger/image"
 									options={{presentation: 'transparentModal', headerShown: false}}
 								/>
+								{/* The Carletonian is read by the Messenger's screens, presented the same way. */}
+								<Stack.Screen name="carletonian/index" options={{title: 'The Carletonian'}} />
+								<Stack.Screen
+									dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
+									name="carletonian/story"
+									options={{title: ''}}
+								/>
+								<Stack.Screen
+									name="carletonian/image"
+									options={{presentation: 'transparentModal', headerShown: false}}
+								/>
 								<Stack.Screen
 									name="st-olaf-news"
 									options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
+								/>
+								<Stack.Screen
+									name="carleton-news"
+									options={{title: 'Carleton News', headerLargeTitleEnabled: true}}
 								/>
 								<Stack.Screen name="transit" options={{title: 'Transit'}} />
 								<Stack.Screen name="transit/line" options={DETAIL_SHEET} />
@@ -185,6 +201,7 @@ function RootLayout(): React.ReactNode {
 								/>
 								<Stack.Screen name="customize" options={DETAIL_SHEET} />
 								<Stack.Screen name="messenger/customize" options={DETAIL_SHEET} />
+								<Stack.Screen name="carletonian/customize" options={DETAIL_SHEET} />
 								<Stack.Screen name="report-problem" options={{presentation: 'modal'}} />
 							</Stack>
 						</ChaosGuard>

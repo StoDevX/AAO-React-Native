@@ -19,7 +19,15 @@ const event: EventType = {
 }
 
 describe('calendarSourceId', () => {
-	it.each(['stolaf', 'presence', 'ksto-schedule', 'krlx-schedule'])('keeps %s', (source) => {
+	it.each([
+		'stolaf',
+		'presence',
+		'carleton',
+		'ksto-schedule',
+		'krlx-schedule',
+		'sumo-schedule',
+		'upcoming-convos',
+	])('keeps %s', (source) => {
 		expect(calendarSourceId(source)).toBe(source)
 	})
 

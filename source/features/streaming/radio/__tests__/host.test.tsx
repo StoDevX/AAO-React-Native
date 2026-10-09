@@ -63,7 +63,7 @@ jest.mock('../use-now-playing', () => ({
 // stations play from the shipped entries unless a test caches one.
 jest.mock('@frogpond/api', () => ({
 	...(jest.requireActual('@frogpond/api') as object),
-	client: {get: () => ({json: () => Promise.reject(new Error('offline'))})},
+	stolafClient: {get: () => ({json: () => Promise.reject(new Error('offline'))})},
 }))
 
 let queryClient: QueryClient

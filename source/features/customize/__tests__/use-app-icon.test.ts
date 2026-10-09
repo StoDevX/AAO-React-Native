@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, jest} from '@jest/globals'
 import {act, renderHook, waitFor} from '@testing-library/react-native'
-import {useAppIcon} from '../use-app-icon'
+import {switchIconForCampus, useAppIcon} from '../use-app-icon'
 
 /**
  * A stand-in for the native module, following ChangeIcon.mm: it remembers the
@@ -62,5 +62,38 @@ describe('useAppIcon', () => {
 		await waitFor(() => expect(result.current.current.type).toBe('windmill-dawn'))
 		await act(() => result.current.apply('windmill-dawn'))
 		expect(result.current.current.type).toBe('windmill-dawn')
+	})
+})
+
+describe('switchIconForCampus', () => {
+	it('wears the penguin on choosing Carleton', async () => {
+		mockAlternateIconName = 'windmill-sky'
+		await switchIconForCampus('carleton')
+		expect(mockAlternateIconName).toBe('carls-penguin')
+	})
+
+	it('goes back to the primary on choosing St. Olaf', async () => {
+		mockAlternateIconName = 'carls-penguin'
+		await switchIconForCampus('stolaf')
+		expect(mockAlternateIconName).toBeNull()
+	})
+
+	it("leaves an icon of the campus's own alone", async () => {
+		mockAlternateIconName = 'old-main'
+		await switchIconForCampus('stolaf')
+		expect(mockAlternateIconName).toBe('old-main')
+	})
+
+	it('ends on the campus chosen last, however quickly the choices come', async () => {
+		let toCarleton = switchIconForCampus('carleton')
+		let backToStOlaf = switchIconForCampus('stolaf')
+		await Promise.all([toCarleton, backToStOlaf])
+		expect(mockAlternateIconName).toBeNull()
+	})
+
+	it('keeps the icon iOS refuses to change, without throwing', async () => {
+		mockRefusesChanges = true
+		await expect(switchIconForCampus('carleton')).resolves.toBeUndefined()
+		expect(mockAlternateIconName).toBeNull()
 	})
 })

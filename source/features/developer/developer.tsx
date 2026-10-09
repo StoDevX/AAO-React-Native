@@ -66,7 +66,9 @@ export const DeveloperSection = (): React.ReactElement => {
 
 			<DebugSwiftSection />
 
-			<ServerUrlSection />
+			<ServerUrlSection campus="stolaf" />
+
+			<ServerUrlSection campus="carleton" />
 		</>
 	)
 }

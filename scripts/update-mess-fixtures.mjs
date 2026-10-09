@@ -37,7 +37,7 @@ buildForTesting(device.udid)
 testWithoutBuilding({
 	udid: device.udid,
 	xctestrun: findXctestrun(),
-	only: ['AllAboutOlafUITests/ModuleNewsTests'],
+	only: ['AllAboutAnythingUITests/ModuleNewsTests'],
 	env: {TEST_RUNNER_AAO_RECORD_FIXTURES: '1'},
 })
 

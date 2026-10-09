@@ -86,12 +86,31 @@ function scopeFavoritesToCampus(
 	}
 }
 
+/**
+ * Carleton's calendar is on by default, and as with Presence that has to mean
+ * everyone, not only fresh installs. A St. Olaf install never shows it, so
+ * adding it there changes nothing until the campus is switched.
+ */
+function addCarletonCalendar(
+	state: PersistedRootState | undefined,
+): PersistedRootState | undefined {
+	let settings = state?.settings
+	if (!state || !settings) return state
+
+	let enabled = settings.enabledCalendarSources
+	// No stored list still reads the defaults, which name Carleton.
+	if (!enabled || enabled.includes('carleton')) return state
+
+	return {...state, settings: {...settings, enabledCalendarSources: [...enabled, 'carleton']}}
+}
+
 export const migrations: MigrationManifest = {
 	// `MigrationManifest` types every entry as taking and returning
 	// redux-persist's own opaque `PersistedState`, which cannot describe the
 	// app's slices -- these casts are the one place that fiction lives.
 	2: addPresenceCalendar as unknown as (state: PersistedState) => PersistedState,
 	3: scopeFavoritesToCampus as unknown as (state: PersistedState) => PersistedState,
+	4: addCarletonCalendar as unknown as (state: PersistedState) => PersistedState,
 }
 
-export {addPresenceCalendar, scopeFavoritesToCampus}
+export {addCarletonCalendar, addPresenceCalendar, scopeFavoritesToCampus}

@@ -7,7 +7,7 @@ import * as c from '@frogpond/colors'
 
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {HtmlContent} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
@@ -28,7 +28,7 @@ export default function APITestDetailPage(): React.ReactNode {
 			if (!cleanedName) {
 				return ''
 			}
-			return client.get(cleanedName, {signal}).text()
+			return stolafClient.get(cleanedName, {signal}).text()
 		},
 		staleTime: 0,
 		gcTime: 0,

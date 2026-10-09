@@ -1,4 +1,4 @@
-import {client} from '@frogpond/api'
+import {stolafClient} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
 import type {OrgCategoryMembership} from './types'
 
@@ -15,7 +15,7 @@ async function fetchCategoryMemberships({
 }: {
 	signal: AbortSignal
 }): Promise<OrgCategoryMembership[]> {
-	let response = await client.get('orgs/categories', {signal}).json()
+	let response = await stolafClient.get('orgs/categories', {signal}).json()
 	return response as OrgCategoryMembership[]
 }
 

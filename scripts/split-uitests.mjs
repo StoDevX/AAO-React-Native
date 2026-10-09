@@ -11,31 +11,45 @@ import path from 'node:path'
 
 import {formatSeconds} from './pr-report/uitest-report.mjs'
 
-const CLASS_PATTERN = /class\s+(\w+)\s*:\s*(?:XCTestCase|UITestCase)/gu
+const CLASS_PATTERN = /class\s+(\w+)\s*:\s*(\w+)/gu
 const METHOD_PATTERN = /func\s+(test\w+)\s*\(/gu
+/** The XCTest base classes a test class can descend from directly. */
+const TEST_BASES = /^(?:XCTestCase|UITestCase\w*)$/u
 
 /**
  * Find the test classes in a set of Swift sources.
  *
  * A file may hold several test classes. Each `func test…` belongs to the
  * nearest class declared above it, which holds as long as test classes are
- * not nested inside one another.
+ * not nested inside one another. A subclass runs the tests it inherits as
+ * well as its own, as XCTest runs them; a class other test classes inherit
+ * from is a template, which runs nothing itself and is never scheduled.
  * @param {Array<{name: string, text: string}>} files
  * @returns {Array<{className: string, methods: string[]}>}
  */
 export function discoverTests(files) {
-	const classes = []
+	const declared = []
 	for (const file of files) {
 		const declarations = [...file.text.matchAll(CLASS_PATTERN)]
 		for (const [index, declaration] of declarations.entries()) {
 			const body = file.text.slice(declaration.index, declarations[index + 1]?.index)
 			const methods = [...body.matchAll(METHOD_PATTERN)].map((m) => m[1])
-			if (methods.length > 0) {
-				classes.push({className: declaration[1], methods})
-			}
+			declared.push({className: declaration[1], parent: declaration[2], methods})
 		}
 	}
-	return classes
+	const byName = new Map(declared.map((entry) => [entry.className, entry]))
+	const isTest = (entry) =>
+		TEST_BASES.test(entry.parent) || (byName.has(entry.parent) && isTest(byName.get(entry.parent)))
+	const inherited = (entry) =>
+		byName.has(entry.parent)
+			? [...inherited(byName.get(entry.parent)), ...entry.methods]
+			: entry.methods
+	const templates = new Set(declared.map((entry) => entry.parent))
+
+	return declared
+		.filter((entry) => isTest(entry) && !templates.has(entry.className))
+		.map((entry) => ({className: entry.className, methods: inherited(entry)}))
+		.filter((entry) => entry.methods.length > 0)
 }
 
 /**
@@ -230,7 +244,7 @@ function main() {
 
 	const testDir = valueOf('--test-dir', null)
 	const shardCount = Number(valueOf('--shards', '2'))
-	const target = valueOf('--target', 'AllAboutOlafUITests')
+	const target = valueOf('--target', 'AllAboutAnythingUITests')
 	const granularity = valueOf('--granularity', 'class')
 	const skipDirs = args.flatMap((arg, index) => (args[index - 1] === '--skip-dir' ? [arg] : []))
 

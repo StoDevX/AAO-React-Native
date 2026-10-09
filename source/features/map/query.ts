@@ -1,5 +1,5 @@
-import {carletonClient, client} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {carletonClient, stolafClient} from '@frogpond/api'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import type {Campus} from '../building-hours/types'
 import {UITEST_MAPS} from './__fixtures__/maps'
@@ -19,8 +19,8 @@ const staleTime = 1000 * 60 * 60
 // Both campuses serve identical `map/geojson` schemas on their own
 // ccc-server deployments, so only the client and the cache key vary by
 // campus.
-function clientFor(campus: Campus): typeof client {
-	return campus === 'carleton' ? carletonClient : client
+function clientFor(campus: Campus): typeof stolafClient {
+	return campus === 'carleton' ? carletonClient : stolafClient
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
@@ -28,7 +28,7 @@ export const mapDataOptions = (campus: Campus) =>
 	queryOptions({
 		queryKey: keys.all(campus),
 		queryFn: async ({signal}): Promise<Array<Feature<Building>>> => {
-			if (isUITesting) {
+			if (servesBundledFixtures) {
 				return uiTestFixture(`${campus}-map.json`, UITEST_MAPS[campus]).features
 			}
 			let response = await clientFor(campus)

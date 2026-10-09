@@ -1,5 +1,5 @@
-import {client} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {stolafClient} from '@frogpond/api'
+import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {isHTTPError} from 'ky'
 import {queryOptions} from '@tanstack/react-query'
 import type {StudentOrgDetailType, StudentOrgType} from './types'
@@ -16,12 +16,12 @@ export const keys = {
 const staleTime = 1000 * 60 * 5
 
 async function fetchStudentOrgs({signal}: {signal: AbortSignal}) {
-	// UI tests read a recorded list, so a search's results are as long, and
+	// UI tests naming no campus read a recorded list, so a search's results are as long, and
 	// in the order, the tests expect, whatever Presence.io holds today.
-	if (isUITesting) {
+	if (servesBundledFixtures) {
 		return uitestOrgs as StudentOrgType[]
 	}
-	let response = await client.get('orgs', {signal}).json()
+	let response = await stolafClient.get('orgs', {signal}).json()
 	return response as StudentOrgType[]
 }
 
@@ -47,7 +47,7 @@ async function fetchOrgDetail(
 	{signal}: {signal: AbortSignal},
 ): Promise<StudentOrgDetailType | null> {
 	try {
-		let response = await client.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal}).json()
+		let response = await stolafClient.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal}).json()
 		return response as StudentOrgDetailType
 	} catch (error) {
 		if (isHTTPError(error) && error.response.status === 404) {

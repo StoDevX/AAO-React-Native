@@ -13,7 +13,7 @@ import {galleryPhotoLabel} from './lib/byline'
 import {galleryPageHeight, photoFit, shownPhotos} from './lib/gallery'
 import {faded} from './palette'
 import {PHOTO_ID, PhotoCaption} from './photo-caption'
-import {messGalleryOptions} from './query'
+import {usePaperQueries} from './use-paper-queries'
 import {RemotePhoto} from './remote-photo'
 import type {Block, MessStory} from './types'
 
@@ -33,7 +33,7 @@ type Props = {
  */
 export function GalleryView({story, gallery, columnWidth}: Props): React.ReactNode {
 	let {credit} = gallery
-	let query = useQuery(messGalleryOptions(gallery.photoIds))
+	let query = useQuery(usePaperQueries().galleryOptions(gallery.photoIds))
 	let [shown, setShown] = React.useState(0)
 
 	let photos = shownPhotos(gallery, query.data)
