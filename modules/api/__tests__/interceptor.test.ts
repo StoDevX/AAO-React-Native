@@ -1,5 +1,4 @@
 import {afterEach, expect, test} from '@jest/globals'
-import {fetchSourceBody} from '@frogpond/data-sources'
 
 import {
 	carletonClient,
@@ -10,7 +9,8 @@ import {
 } from '../index'
 
 // A campus UI test answers every request from its recordings by setting an
-// interceptor; each way the app fetches has to pass through it.
+// interceptor; both clients have to pass through it. The data sources' own
+// fetches are checked in modules/data-sources.
 let seen: string[] = []
 
 setApiRoot(new URL('https://stolaf.example.test/v1/'))
@@ -34,10 +34,4 @@ test('the St. Olaf client asks through it', async () => {
 test('the Carleton client asks through it', async () => {
 	await carletonClient.get('dictionary').json()
 	expect(seen).toEqual(['https://carleton.example.test/v1/dictionary'])
-})
-
-test("a data source on another site asks through it, as a paper's does", async () => {
-	let href = 'https://thecarletonian.com/wp-json/wp/v2/posts?per_page=50'
-	await fetchSourceBody(href, new AbortController().signal, 'Paper', 'json')
-	expect(seen).toEqual([href])
 })
