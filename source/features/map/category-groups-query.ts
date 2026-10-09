@@ -72,7 +72,7 @@ async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapC
 		throw new Error('map-categories: the manifest lists no source')
 	}
 
-	let body = await fetchSourceBody(source.href, signal, 'Map categories')
+	let body = await fetchSourceBody(source.href, signal, 'Map categories', 'json', source.campus)
 	// The schema in data/_schemas gates what this repo publishes today, not
 	// what an older install can read, so the file is checked again here: a
 	// shape this build cannot read fails the fetch, leaving the table the
