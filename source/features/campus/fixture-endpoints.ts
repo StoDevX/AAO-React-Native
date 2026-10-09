@@ -65,6 +65,11 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	{pattern: 'GET {server}/spaces/directory', schema: 'spaces-directory'},
 	{pattern: 'GET {server}/spaces/hours', schema: 'spaces-hours'},
 	{
+		pattern: 'GET {server}/athletics/scores',
+		schema: 'athletics-scores',
+		live: ['https://stolaf.frogpond.tech/v1/athletics/scores'],
+	},
+	{
 		pattern: 'GET {server}/orgs',
 		schema: 'student-orgs',
 		live: ['https://stolaf.frogpond.tech/v1/orgs'],
