@@ -8,12 +8,13 @@
 
 import {mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
+import {fileURLToPath} from 'node:url'
 
 import {endpointFor, FIXTURE_ENDPOINTS} from '../source/features/campus/fixture-endpoints.ts'
 import {inferSchema} from './infer-schema.mjs'
 
-const FIXTURES = new URL('../source/features/campus/__fixtures__/', import.meta.url).pathname
-const SCHEMAS = new URL('../source/features/campus/__schemas__/', import.meta.url).pathname
+const FIXTURES = fileURLToPath(new URL('../source/features/campus/__fixtures__/', import.meta.url))
+const SCHEMAS = fileURLToPath(new URL('../source/features/campus/__schemas__/', import.meta.url))
 const RECORDED = ['edu.stolaf', 'edu.carleton']
 
 let samples = new Map(FIXTURE_ENDPOINTS.map((endpoint) => [endpoint.schema, []]))

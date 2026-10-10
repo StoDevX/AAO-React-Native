@@ -7,15 +7,15 @@
 
 import {existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {basename, join} from 'node:path'
+import {fileURLToPath} from 'node:url'
 
 import {dumpFixture, yamlToJson} from './yaml-module.mjs'
 
 import {fixtureFileName, fixtureIndex} from './campus-fixtures.mjs'
 
-export const EXAMPLE_COLLEGE_FIXTURES = new URL(
-	'../source/features/campus/__fixtures__/example.college/',
-	import.meta.url,
-).pathname
+export const EXAMPLE_COLLEGE_FIXTURES = fileURLToPath(
+	new URL('../source/features/campus/__fixtures__/example.college/', import.meta.url),
+)
 
 const INDEX_HEADER = '// Written by `mise run fixture-to-yaml`; lists every fixture in this folder.'
 
