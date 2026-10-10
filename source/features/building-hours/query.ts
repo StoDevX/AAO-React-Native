@@ -1,4 +1,5 @@
 import {clientFor} from '@frogpond/api'
+import type {BreakCalendarResponse} from '@frogpond/schedules'
 import {groupBy} from '@frogpond/collections'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 
@@ -8,6 +9,7 @@ import {favoriteNamesForCampus, selectFavoriteBuildings} from '../../redux/parts
 import {sectionServer} from '../campus/section-server'
 import {BuildingType} from './types'
 import {FAVORITES_TITLE} from './lib/listed-sections'
+import {hasBreakSchedules, withBreakInEffect} from './lib/break-in-effect'
 import {useForceBundledData} from './dev/data-source-store'
 
 export const keys = {
@@ -28,10 +30,17 @@ function fetchBuildings(campus: CampusId) {
 			return [...hours.bundled]
 		}
 
-		let response = await clientFor(sectionServer(campus, hours))
-			.get('spaces/hours', {signal})
-			.json()
-		return (response as {data: BuildingType[]}).data
+		let client = clientFor(sectionServer(campus, hours))
+		let response = await client.get('spaces/hours', {signal}).json()
+		let buildings = (response as {data: BuildingType<unknown>[]}).data
+		if (!hasBreakSchedules(buildings)) return buildings as BuildingType[]
+
+		// Without the calendar the usual hours still show; a break just isn't applied.
+		let calendar = await client
+			.get('breaks', {signal})
+			.json<BreakCalendarResponse>()
+			.catch(() => undefined)
+		return withBreakInEffect(buildings, calendar, Date.now()) as BuildingType[]
 	}
 }
 
