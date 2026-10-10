@@ -384,6 +384,10 @@ description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
 
+[tasks.docs]
+description = "Build the DocC site from documentation/ into docs/documentation/"
+run = "scripts/build-docs.sh"
+
 [tasks.images]
 description = "Convert images/<group>/source/ originals to the WebP files the app fetches"
 run = "node scripts/make-images.mjs"

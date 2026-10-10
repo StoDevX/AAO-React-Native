@@ -23,8 +23,13 @@ env:
   MISE_RUBY_COMPILE: 'false'
 
 jobs:
+  docs:
+    name: Build the documentation
+    uses: $/.github/workflows/docs.yml
+
   build:
     name: Validate and bundle the data
+    needs: docs
     runs-on: ubuntu-latest
     steps:
       - name: Check out the code
@@ -47,6 +52,16 @@ jobs:
 
       - name: Bundle the data
         run: mise run bundle-data
+
+      # Pages replaces the whole site on each deploy, so the documentation
+      # rides along every time. docs.yml cached it, on a Mac if it had changed.
+      - name: Restore the documentation
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: docs/documentation
+          key: ${{ needs.docs.outputs.cache-key }}
+          fail-on-cache-miss: true
+          enableCrossOsArchive: true
 
       # Uploads docs/ as the Pages artifact. The bundle is the whole site --
       # sixteen JSON files, a stylesheet and the images, no index -- so it needs no base
