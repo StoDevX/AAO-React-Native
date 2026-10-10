@@ -1,0 +1,92 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET https://jobs.college.example/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails?onlyData=true&expand=all&finder=ById%3BId%3D30117%2CsiteNumber%3DWM_1
+json:
+  count: 1
+  hasMore: false
+  limit: 499
+  offset: 0
+  items:
+    - Id: '30117'
+      Title: AY Snow Removal Crew (WS-ST2)
+      Category: Student Work
+      RequisitionType: Student
+      JobGrade: null
+      RequisitionId: 300000174634117
+      ExternalPostedStartDate: '2026-09-01T15:00:00+00:00'
+      JobLevel: null
+      JobSchedule: Part time
+      JobShift: null
+      StudyLevel: null
+      InternationalTravelRequired: null
+      ExternalContactName: null
+      ExternalContactEmail: null
+      ContractType: null
+      ExternalPostedEndDate: null
+      JobFamilyId: 300000010123339
+      GeographyId: 300000005056572
+      GeographyNodeId: 300000009231704
+      ExternalDescriptionStr: <p><b>Classification:</b> Student Employee (non-exempt)</p><p><b>Department Name:</b> Facilities</p><p><b>Wage Range:</b> $14.50/hour</p><p><b>Description of the Position:</b> Clear campus walks and stairs after snowfall.</p><p><b>Duties and Responsibilities:</b> Shovel and salt paths before classes, often early in the morning.</p><p><b>Qualifications:</b> Enrolled as an on-campus student.</p>
+      CorporateDescriptionStr: ''
+      OrganizationDescriptionStr: ''
+      ShortDescriptionStr: ''
+      ContentLocale: en
+      PrimaryLocation: Norway Valley
+      PrimaryLocationCountry: US
+      ObjectVerNumberProfile: '2'
+      ApplyWhenNotPostedFlag: null
+      ExternalQualificationsStr: ''
+      InternalQualificationsStr: ''
+      InternalResponsibilitiesStr: ''
+      ExternalResponsibilitiesStr: ''
+      JobFunctionCode: null
+      HotJobFlag: false
+      TrendingFlag: false
+      BeFirstToApplyFlag: false
+      WorkplaceTypeCode: null
+      WorkplaceType: ''
+      OtherRequisitionTitle: null
+      NumberOfOpenings: null
+      HiringManager: null
+      Organization: null
+      BusinessUnitId: 300000009232922
+      LegalEmployerId: 300000009217864
+      OrganizationId: 1
+      WorkerType: null
+      JobType: null
+      WorkMonths: null
+      WorkYears: null
+      WorkHours: null
+      WorkDays: null
+      LegalEmployer: null
+      BusinessUnit: null
+      Department: null
+      DomesticTravelRequired: null
+      JobFunction: null
+      secondaryLocations: []
+      media: []
+      workLocation:
+        - LocationId: 300000009765468
+          LocationName: Wiki Monkeys
+          AddressLine1: 1 Treeline Road
+          AddressLine2: null
+          AddressLine3: null
+          AddressLine4: null
+          Building: null
+          TownOrCity: Norway Valley
+          PostalCode: '00000'
+          Country: US
+          Region1: Valley
+          Region2: NV
+          Region3: null
+          Longitude: '0'
+          Latitude: '0'
+      otherWorkLocations: []
+      requisitionFlexFields: []
+      primaryLocationCoordinates: []
+      skills: []
+  links:
+    - rel: self
+      href: https://jobs.college.example/hcmRestApi/resources/11.13.18.05/recruitingCEJobRequisitionDetails
+      name: recruitingCEJobRequisitionDetails
+      kind: collection
