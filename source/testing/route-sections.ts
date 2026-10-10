@@ -2,9 +2,10 @@ import type {OptionalSection} from '../features/campus/section-gate'
 
 /**
  * Each feature's routes, by their path under app/, and the section a campus
- * needs for them. Routes bound to one campus by name (`/carleton-sumo`,
- * `/st-olaf-news`) are not here: they always show their own campus's. A
- * path under another's (`directory/named` under `directory`) is its own.
+ * needs for them. A route under a campus folder (`edu.carleton/…`) is not
+ * here: it hard-codes its campus, and nothing in the app links to it from
+ * another. A path under another's (`directory/named` under `directory`) is
+ * its own.
  */
 export const ROUTE_SECTIONS: ReadonlyArray<readonly [path: string, section: OptionalSection]> = [
 	['athletics', 'athletics'],
@@ -24,9 +25,10 @@ export const ROUTE_SECTIONS: ReadonlyArray<readonly [path: string, section: Opti
 	['menu-item-detail', 'menus'],
 	['menus', 'menus'],
 	['more', 'more'],
+	['news', 'news'],
 	['newspaper', 'paper'],
 	['print-jobs', 'printing'],
-	['radio', 'radio'],
+	['schedule', 'schedules'],
 	['streaming-media', 'streaming'],
 	['student-orgs', 'studentOrgs'],
 	['student-work', 'studentWork'],

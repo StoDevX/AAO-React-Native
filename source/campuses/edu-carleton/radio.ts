@@ -18,7 +18,7 @@ export const KRLX: Station = {
 		},
 	],
 	websiteUrl: 'https://www.krlx.org/',
-	scheduleCalendar: 'krlx-schedule',
+	schedule: 'krlx',
 	chatUrl: 'https://minnit.chat/KRLX',
 	stationName: '88.1 KRLX-FM',
 	stationNumber: '+15072224127',

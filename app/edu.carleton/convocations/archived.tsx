@@ -8,10 +8,10 @@ import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import {useQuery} from '@tanstack/react-query'
 
-import {carleton} from '../../source/campuses/edu-carleton'
-import {DisclosureRow} from '../../source/components/rows'
-import {sectionServer} from '../../source/features/campus/section-server'
-import {archivedConvosOptions} from '../../source/features/carleton/convos'
+import {carleton} from '../../../source/campuses/edu-carleton'
+import {DisclosureRow} from '../../../source/components/rows'
+import {sectionServer} from '../../../source/features/campus/section-server'
+import {archivedConvosOptions} from '../../../source/features/carleton/convos'
 
 /** Carleton's screen, reachable by URL from any campus, so it asks Carleton's convos server. */
 const SERVER = sectionServer(carleton.id, carleton.convos)

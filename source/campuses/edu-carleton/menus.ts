@@ -43,5 +43,4 @@ export const menus: MenusSection = {
 			},
 		},
 	],
-	entryHref: '/menus/burton',
 }

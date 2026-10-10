@@ -5,17 +5,10 @@ echo "Running ci_post_clone.sh"
 export MISE_RUBY_COMPILE='false'
 export MISE_AUTO_INSTALL='false'
 
-export SENTRY_ORG='frog-pond-labs'
 # Each Xcode Cloud workflow names its app in APP_VARIANT, which app.config.ts
-# requires: aao or carls.
-case "${APP_VARIANT:-}" in
-  aao) export SENTRY_PROJECT='all-about-olaf' ;;
-  carls) export SENTRY_PROJECT='carls' ;;
-  *)
-    echo "error: set APP_VARIANT to aao or carls in this Xcode Cloud workflow's environment" >&2
-    exit 1
-    ;;
-esac
+# requires: aao, carls or aaa. Prebuild writes that variant's Sentry org and
+# project to ios/sentry.properties, which the Sentry build phases read.
+: "${APP_VARIANT:?set APP_VARIANT to aao, carls or aaa in the Xcode Cloud workflow environment}"
 
 # Xcode Cloud runs this with ci_scripts as the working directory, and it must
 # live beside the .xcworkspace, so the repository root is two levels up.

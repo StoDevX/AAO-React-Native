@@ -153,7 +153,7 @@ final class StOlafSmokeTests: CampusSmokeTests {
 			menusRoute: "/menus",
 			cafe: "Stav Hall",
 			calendarEvent: "Norwegian-American Historical Association Biennial Meeting",
-			newsRoute: "/st-olaf-news",
+			newsRoute: "/news",
 			newsTitle: "St. Olaf News",
 			newsHeadline: "A summer spent sampling careers",
 			emergencyButton: "PubSafe")
@@ -178,10 +178,10 @@ final class CarletonSmokeTests: CampusSmokeTests {
 			word: "A & I",
 			transitTitle: "Transportation",
 			busLine: "Carls-Go! Route 1",
-			menusRoute: "/menus/burton",
+			menusRoute: "/menus",
 			cafe: "Burton",
 			calendarEvent: "Foods of Faith",
-			newsRoute: "/carleton-news",
+			newsRoute: "/news",
 			newsTitle: "Carleton News",
 			newsHeadline: "Carnegie classification for sustainability",
 			emergencyButton: "Security")
@@ -194,13 +194,13 @@ final class CarletonSmokeTests: CampusSmokeTests {
 	}
 
 	func testSumoListsRecordedFilms() throws {
-		opens("/carleton-sumo", waitingFor: app.navigationBars["SUMO"])
+		opens("/schedule/sumo", waitingFor: app.navigationBars["SUMO"])
 		let film = "I Love Boosters"
 		try verifyRecorded(shows(film), film)
 	}
 
 	func testConvoListsUpcomingAndArchived() throws {
-		opens("/carleton-convos", waitingFor: app.tabBars.buttons["Archives"])
+		opens("/edu.carleton/convocations", waitingFor: app.tabBars.buttons["Archives"])
 		let upcoming = "Family Weekend Convocation with Jack El-Hai"
 		try verifyRecorded(shows(upcoming), upcoming)
 		app.tabBars.buttons["Archives"].tap()

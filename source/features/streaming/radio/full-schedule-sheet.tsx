@@ -21,14 +21,14 @@ import {
 	presentationDetents,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
-import {scheduleCalendarOptions, ScheduleView} from '@frogpond/ccc-calendar'
+import {ScheduleView} from '@frogpond/ccc-calendar'
 import type {EventType} from '@frogpond/event-type'
 import {useQuery} from '@tanstack/react-query'
 
-import {eventMapper} from './constants'
 import {ScheduleEventSheet} from './schedule-event-sheet'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
+import {stationScheduleOptions} from './use-station-schedule'
 
 /** The sheet's side margins, which line its title up with the schedule's rows. */
 const TITLE_INSET = 20
@@ -42,8 +42,8 @@ export function FullScheduleSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.fullScheduleOpen)
 	let closeFullSchedule = useRadioStore((state) => state.closeFullSchedule)
 	let station = STATIONS[useRadioStore((state) => state.viewedStationId)]
-	let calendar = station.scheduleCalendar
-	let query = useQuery({...scheduleCalendarOptions(calendar, {eventMapper}), enabled: open})
+	let options = stationScheduleOptions(station.schedule)
+	let query = useQuery({...options, enabled: open && options.enabled})
 	// The event is kept past its sheet's closing, so it does not empty while sliding away.
 	let [event, setEvent] = React.useState<EventType | null>(null)
 	let [eventOpen, setEventOpen] = React.useState(false)

@@ -12,7 +12,7 @@ let ids = (campus: CampusDefinition = stolaf) => quickActionDestinations(campus)
 describe('quickActionDestinations', () => {
 	test("offers St. Olaf's café menus first, from its menus section", () => {
 		expect(quickActionDestinations(stolaf).slice(0, 2)).toStrictEqual([
-			{id: 'Stav Menu', title: 'Stav Menu', icon: 'fork.knife', href: '/menus'},
+			{id: 'Stav Menu', title: 'Stav Menu', icon: 'fork.knife', href: '/menus/stav-hall'},
 			{id: 'Cage Menu', title: 'Cage Menu', icon: 'cup.and.saucer.fill', href: '/menus/the-cage'},
 		])
 	})
@@ -21,9 +21,12 @@ describe('quickActionDestinations', () => {
 		expect(quickActionDestinations(stolaf).some((d) => d.href.includes('the-pause'))).toBe(false)
 	})
 
-	test('leaves out the bare Menus tile, which Stav Menu already opens', () => {
+	test('leaves out the bare Menus tile, which lands on Stav Hall as Stav Menu does', () => {
 		expect(ids()).not.toContain('Menus')
-		expect(quickActionDestinations(stolaf).filter((d) => d.href === '/menus')).toHaveLength(1)
+	})
+
+	test('offers the bare Menus tile on a campus with no café actions', () => {
+		expect(ids(carleton)).toContain('Menus')
 	})
 
 	test('offers in-app home tiles', () => {

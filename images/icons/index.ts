@@ -1,5 +1,5 @@
 import type {ImageSourcePropType} from 'react-native'
-import {APP} from '../../source/lib/app-identity'
+import {PRIMARY_ICON} from '../../source/lib/app-identity'
 import carlsPenguinDark from './carls-penguin-dark.png'
 import carlsPenguin from './carls-penguin.png'
 import oldMainRetroDark from './old-main-retro-dark.png'
@@ -58,8 +58,11 @@ export const appIcons = {
 
 export type AppIconName = keyof typeof appIcons
 
-/** The primary icon, which `ios.icon` names in app.config.ts: CARLS' penguin, or the windmill. */
-export const DEFAULT_ICON: AppIconName = APP === 'carls' ? 'carls-penguin' : 'windmill'
+/** The primary icon, which `ios.icon` names in app.config.ts. The windmill in a build that names none. */
+export const DEFAULT_ICON: AppIconName =
+	PRIMARY_ICON !== null && Object.hasOwn(appIcons, PRIMARY_ICON)
+		? (PRIMARY_ICON as AppIconName)
+		: 'windmill'
 
 /**
  * Which icon to show for the name `getIcon()` reports: "Default" for the

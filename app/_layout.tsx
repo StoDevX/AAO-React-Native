@@ -138,7 +138,10 @@ function RootLayout(): React.ReactNode {
 									<Stack.Screen name="menus" options={{title: 'Menus'}} />
 									<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
 									<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
-									<Stack.Screen name="carleton-convos" options={{title: 'Convocations'}} />
+									<Stack.Screen
+										name="edu.carleton/convocations"
+										options={{title: 'Convocations'}}
+									/>
 									{/* No large title: the front page draws the paper's name in the bar, in its serif,
 								    and a large title would show the plain name until the page scrolled. Each
 								    paper's front page titles itself. */}
@@ -164,12 +167,8 @@ function RootLayout(): React.ReactNode {
 										options={{presentation: 'transparentModal', headerShown: false}}
 									/>
 									<Stack.Screen
-										name="st-olaf-news"
-										options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
-									/>
-									<Stack.Screen
-										name="carleton-news"
-										options={{title: 'Carleton News', headerLargeTitleEnabled: true}}
+										name="news"
+										options={{title: 'News', headerLargeTitleEnabled: true}}
 									/>
 									<Stack.Screen name="transit" options={{title: 'Transit'}} />
 									<Stack.Screen name="transit/line" options={DETAIL_SHEET} />

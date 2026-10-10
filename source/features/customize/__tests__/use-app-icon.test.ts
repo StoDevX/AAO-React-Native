@@ -68,7 +68,7 @@ describe('useAppIcon', () => {
 
 describe('switchIconForCampus', () => {
 	it('wears the penguin on choosing Carleton', async () => {
-		mockAlternateIconName = 'windmill-sky'
+		mockAlternateIconName = 'old-main'
 		await switchIconForCampus(campusById('edu.carleton'))
 		expect(mockAlternateIconName).toBe('carls-penguin')
 	})
