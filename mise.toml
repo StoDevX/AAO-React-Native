@@ -476,6 +476,18 @@ description = "Run chaos on a build with its JavaScript embedded, so no Metro is
 depends = ["bundle:ios"]
 run = "node scripts/chaos.mjs --bundled"
 
+# The UI tests build All About Olaf, and Carleton mode in it runs CARLS's code,
+# so one build shoots both apps. Arguments go to the script, as chaos's do.
+[tasks.screenshots]
+description = "Take the App Store screenshots on a 6.3-inch simulator"
+env = { APP_VARIANT = "aao" }
+run = "node scripts/store-screenshots.mjs"
+
+[tasks."screenshots:8081"]
+description = "Take the App Store screenshots against the Metro on localhost:8081"
+env = { APP_VARIANT = "aao", TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081" }
+run = "node scripts/store-screenshots.mjs"
+
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
 run = "node scripts/scrape-student-wages.mjs"

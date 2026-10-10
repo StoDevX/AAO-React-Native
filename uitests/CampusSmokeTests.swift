@@ -29,6 +29,65 @@ struct CampusExpectations {
 	let emergencyButton: String
 }
 
+extension CampusExpectations {
+	/// St. Olaf's, from `__fixtures__/edu.stolaf/`.
+	static let stolaf = CampusExpectations(
+		homeTitle: "All About Olaf",
+		homeTile: "Olaf Messenger",
+		hoursRoute: "/hours",
+		hoursTitle: "Hours",
+		building: "The Cage",
+		mapRoute: "/map?campus=edu.stolaf",
+		mapPlace: "Holland Hall",
+		contactsTitle: "Contacts",
+		contact: "PubSafe",
+		word: "AAC",
+		transitTitle: "Transit",
+		busLine: "Express Bus",
+		menusRoute: "/menus",
+		cafe: "Stav Hall",
+		calendarEvent: "Norwegian-American Historical Association Biennial Meeting",
+		newsRoute: "/st-olaf-news",
+		newsTitle: "St. Olaf News",
+		newsHeadline: "A summer spent sampling careers",
+		emergencyButton: "PubSafe")
+
+	/// Carleton's, from `__fixtures__/edu.carleton/`.
+	static let carleton = CampusExpectations(
+		homeTitle: "CARLS",
+		homeTile: "The Carletonian",
+		hoursRoute: "/hours?campus=edu.carleton",
+		hoursTitle: "Building Hours",
+		building: "Burton",
+		mapRoute: "/map?campus=edu.carleton",
+		mapPlace: "Boliou Hall",
+		contactsTitle: "Directory",
+		contact: "Security Services",
+		word: "A & I",
+		transitTitle: "Transportation",
+		busLine: "Carls-Go! Route 1",
+		menusRoute: "/menus/burton",
+		cafe: "Burton",
+		calendarEvent: "Foods of Faith",
+		newsRoute: "/carleton-news",
+		newsTitle: "Carleton News",
+		newsHeadline: "Carnegie classification for sustainability",
+		emergencyButton: "Security")
+}
+
+/// How a test on a campus's recordings opens a screen and finds what it shows.
+extension UITestCaseUnbooted {
+	func opens(_ route: String, waitingFor element: XCUIElement) {
+		HomeScreen(app: app).open(route: route, mountedWhen: element)
+	}
+
+	/// Some element on screen whose label holds `text`: a headline sits inside a
+	/// row's label, alongside its byline.
+	func shows(_ text: String) -> XCUIElement {
+		app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
+	}
+}
+
 /// One campus's smoke tests: each screen opens on that campus and shows that
 /// campus's recorded data. A template: each subclass names its campus, and
 /// the shard planner schedules only the subclasses.
@@ -39,16 +98,6 @@ class CampusSmokeTests: UITestCaseUnbooted {
 	/// XCTest would run the template's tests too; only its subclasses run them.
 	override class var defaultTestSuite: XCTestSuite {
 		self == CampusSmokeTests.self ? XCTestSuite(name: "CampusSmokeTests (template)") : super.defaultTestSuite
-	}
-
-	func opens(_ route: String, waitingFor element: XCUIElement) {
-		HomeScreen(app: app).open(route: route, mountedWhen: element)
-	}
-
-	/// Some element on screen whose label holds `text`: a headline sits inside a
-	/// row's label, alongside its byline.
-	func shows(_ text: String) -> XCUIElement {
-		app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
 	}
 
 	/// Waits for `element`, which shows a value from this campus's recording. A
@@ -136,56 +185,14 @@ class CampusSmokeTests: UITestCaseUnbooted {
 final class StOlafSmokeTests: CampusSmokeTests {
 	override class var campus: Campus? { .stolaf }
 
-	override var expected: CampusExpectations {
-		CampusExpectations(
-			homeTitle: "All About Olaf",
-			homeTile: "Olaf Messenger",
-			hoursRoute: "/hours",
-			hoursTitle: "Hours",
-			building: "The Cage",
-			mapRoute: "/map?campus=edu.stolaf",
-			mapPlace: "Holland Hall",
-			contactsTitle: "Contacts",
-			contact: "PubSafe",
-			word: "AAC",
-			transitTitle: "Transit",
-			busLine: "Express Bus",
-			menusRoute: "/menus",
-			cafe: "Stav Hall",
-			calendarEvent: "Norwegian-American Historical Association Biennial Meeting",
-			newsRoute: "/st-olaf-news",
-			newsTitle: "St. Olaf News",
-			newsHeadline: "A summer spent sampling careers",
-			emergencyButton: "PubSafe")
-	}
+	override var expected: CampusExpectations { .stolaf }
 }
 
 /// Tags: campus:edu.carleton
 final class CarletonSmokeTests: CampusSmokeTests {
 	override class var campus: Campus? { .carleton }
 
-	override var expected: CampusExpectations {
-		CampusExpectations(
-			homeTitle: "CARLS",
-			homeTile: "The Carletonian",
-			hoursRoute: "/hours?campus=edu.carleton",
-			hoursTitle: "Building Hours",
-			building: "Burton",
-			mapRoute: "/map?campus=edu.carleton",
-			mapPlace: "Boliou Hall",
-			contactsTitle: "Directory",
-			contact: "Security Services",
-			word: "A & I",
-			transitTitle: "Transportation",
-			busLine: "Carls-Go! Route 1",
-			menusRoute: "/menus/burton",
-			cafe: "Burton",
-			calendarEvent: "Foods of Faith",
-			newsRoute: "/carleton-news",
-			newsTitle: "Carleton News",
-			newsHeadline: "Carnegie classification for sustainability",
-			emergencyButton: "Security")
-	}
+	override var expected: CampusExpectations { .carleton }
 
 	func testCarletonianShowsAnIssue() throws {
 		opens("/newspaper", waitingFor: app.navigationBars["The Carletonian"])

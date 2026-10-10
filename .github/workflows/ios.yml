@@ -448,11 +448,12 @@ jobs:
       # The chaos canaries test the chaos tool rather than the app, so a pull
       # request leaves them to the merge queue and master. The log lists each
       # shard's estimate and its tests'; uitest-report sets the plan beside
-      # what the shards took.
+      # what the shards took. The store screenshots assert nothing, so no
+      # shard runs them.
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 2 --granularity method --durations uitest-durations.json --plan uitest-plan.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 2 --granularity method --durations uitest-durations.json --plan uitest-plan.json --skip-dir Screenshots ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
 
       - name: Upload the shard plan
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
