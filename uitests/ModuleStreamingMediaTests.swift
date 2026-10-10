@@ -38,7 +38,7 @@ class ModuleStreamingMediaTests: UITestCase {
 		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
 			.openSheetFromBar(expecting: ids.playKmnk)
-			.checkScrubKeepsLogo(ids.kmnkLogo)
+			.checkScrubKeepsLogo(ids.kmnkFirstLogo)
 			.closeSheet(expectingBar: ids.idleBar)
 	}
 }

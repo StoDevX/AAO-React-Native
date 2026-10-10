@@ -567,8 +567,9 @@ struct TestIdentifiers {
 		static let idleBar = "Not Playing"
 		/// Customize's Radio Player switch.
 		static let showRadioPlayer = "show-radio-player"
-		/// KMNK's one logo: the station's name, then the logo's.
-		static let kmnkLogo = "KMNK 91.7, The Peak logo, KMNK 91.7, The Peak"
+		/// The logo KMNK shows first, before any tap moves it on: the station's
+		/// name, then the logo's.
+		static let kmnkFirstLogo = "KMNK 91.7, The Peak logo, KMNK 91.7, The Peak"
 	}
 
 	// MARK: - Quick Actions
