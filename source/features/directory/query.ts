@@ -1,7 +1,6 @@
 import ky from 'ky'
-import {servesBundledFixtures} from '@frogpond/launch-arguments'
+import {apiFetch} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import {UITEST_DIRECTORY_RESULTS} from './__fixtures__/entries'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
 import {formatResults} from './helpers'
 import type {DirectorySection} from './campus-section'
@@ -48,16 +47,9 @@ async function fetchDirectoryEntries(
 	searchQuery: ReturnType<typeof getDirectoryQuery>,
 	signal?: AbortSignal,
 ): Promise<SearchResults> {
-	// The live directory is whoever works at St. Olaf this week, so a test
-	// searching it cannot say what it will find -- see
-	// `source/features/dictionary/query.ts` for the same reasoning about
-	// entries.
-	if (servesBundledFixtures) {
-		return UITEST_DIRECTORY_RESULTS
-	}
-
+	// Through `apiFetch`, so a campus answered from fixtures answers its search too.
 	let response = await ky
-		.get('search', {baseUrl: searchUrl, searchParams: searchQuery, signal})
+		.get('search', {baseUrl: searchUrl, searchParams: searchQuery, signal, fetch: apiFetch})
 		.json()
 	return response as SearchResults
 }
@@ -73,6 +65,9 @@ export const directoryEntriesOptions = (
 		queryFn: ({signal}) =>
 			fetchDirectoryEntries(directory.searchUrl, getDirectoryQuery({query, type}), signal),
 		staleTime,
+		// The landing and the Keep Typing notice show no results, so there is nothing to ask for
+		// until there are two letters.
+		enabled: query.trim().length >= 2,
 	})
 
 export const directoryContactOptions = (

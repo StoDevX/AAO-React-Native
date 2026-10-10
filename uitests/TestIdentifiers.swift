@@ -218,11 +218,11 @@ struct TestIdentifiers {
 		static func directoryFloor(_ index: Int) -> String { "directory-floor-\(index)" }
 		/// Mirrors DIRECTORY_ENTRY_ID in source/features/map/floor-card.tsx.
 		static let directoryEntry = "directory-entry"
-		/// A building with a directory file (data/building-directory/toh.yaml),
+		/// A building with a directory (Wiki Monkeys' `GET-spaces-directory.yaml`),
 		/// whose first floor (index 1) lists Financial Aid, an Hours venue.
-		static let aBuildingWithADirectory = "Tomson Hall"
+		static let aBuildingWithADirectory = "Glacier Hall"
 		/// `aBuildingWithADirectory`'s feature id, which a link to the map opens it by.
-		static let aBuildingWithADirectoryId = "toh"
+		static let aBuildingWithADirectoryId = "glh"
 		static let aDirectoryFloor = "1st floor"
 		static let aDirectoryFloorIndex = 1
 		static let aDirectoryVenue = "Financial Aid"
@@ -246,16 +246,17 @@ struct TestIdentifiers {
 		/// The building card's title block. Matches `CARD_TITLE_ID` in
 		/// `source/features/map/building-info.tsx`.
 		static let cardTitle = "card-title"
-		/// A St. Olaf building whose card carries a subtitle
-		/// ("Administrative & Academic") under a long name, so title and subtitle
-		/// together are the tightest fit the collapsed header has to hold. Its row
-		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
-		/// matches on the prefix. St. Olaf can rename it.
-		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
-		/// A building with points inside it: The Cage, Stav Hall and more.
-		static let aBuildingWithPoints = "Buntrock Commons"
-		/// A point inside `aBuildingWithPoints`.
-		static let aPointInside = "The Cage"
+		/// A building whose card carries a subtitle ("Administrative &
+		/// Academic") under a long name, so title and subtitle together are the
+		/// tightest fit the collapsed header has to hold. Its row reads "Norway
+		/// Valley Hall of Natural Sciences, NVN"; `selectBuilding(named:)`
+		/// matches on the prefix.
+		static let aSubtitledBuilding = "Norway Valley Hall of Natural Sciences"
+		/// A building with points inside it: Basecamp Café, the Treeline Dining
+		/// Room and more.
+		static let aBuildingWithPoints = "Treeline Commons"
+		/// A point inside `aBuildingWithPoints`, and an Hours venue.
+		static let aPointInside = "Basecamp Café"
 		/// A group in the map sheet's category grid with a list long enough to
 		/// scroll. Mirrors a label in data/map-categories.yaml.
 		static let parkingCategory = "Parking"
@@ -270,24 +271,22 @@ struct TestIdentifiers {
 		/// GROUP_BACK_ID in source/features/map/building-picker.tsx.
 		static let groupBack = "map-group-back"
 		/// A place that is a point inside another building's footprint, and the
-		/// only place its name finds: its pin sits over Buntrock Commons, so a
+		/// only place its name finds: its pin sits over Treeline Commons, so a
 		/// tap that reaches the footprint instead opens the wrong card.
-		/// St. Olaf can rename it.
-		static let aPointOnlyPlace = "Stav Hall"
+		static let aPointOnlyPlace = "Treeline Dining Room"
 		/// A row a little over a screen down `parkingCategory`, about halfway
 		/// through its Accessible Parking spaces: far enough that its place in
-		/// the list can be lost, near enough to reach in a few slow drags. St.
-		/// Olaf can rename it.
-		static let aRowDownParking = "Accessible Parking, Mohn + Kildahl"
+		/// the list can be lost, near enough to reach in a few slow drags.
+		static let aRowDownParking = "Accessible Parking, Old Lodge"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/map/index.tsx.
 		static let attribution = "About this map"
-		/// A St. Olaf-only building near the top of the list, so the expanded
-		/// sheet shows it without scrolling -- and absent from Carleton's map
-		/// data, so selecting it is what would fail if the map's campus parameter
-		/// were ignored.
-		static let aBuilding = "Buntrock Commons"
+		/// A Wiki Monkeys building near the top of the list, so the expanded
+		/// sheet shows it without scrolling -- the list is lazy, so a row below
+		/// the fold is never built -- and absent from the other campuses'
+		/// maps, so selecting it fails if the map drew another campus's.
+		static let aBuilding = "Gentian Hall"
 	}
 
 	// MARK: - Student Work
@@ -316,19 +315,21 @@ struct TestIdentifiers {
 	// MARK: - Menus
 
 	enum Menus {
-		static let stOlafCafes = ["Stav Hall", "The Cage", "The Pause"]
+		/// Wiki Monkeys' one café, and so the tab Menus opens on.
+		static let cafe = "Treeline Commons"
+
+		/// Its tab, as Wiki Monkeys' Menus tile opens it (`menus.entryHref` in
+		/// source/campuses/example-college/menus.ts). Bare `/menus` is Stav
+		/// Hall's tab, which no campus but St. Olaf can draw.
+		static let route = "/menus/treeline-commons"
 
 		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
 		static let foodRowPrefix = "food-row-"
 
-		/// The cafe whose menu comes from this repository's own
-		/// `data/pause-menu.yaml`, so its stations and items are fixed rather
-		/// than whatever Bon Appétit is serving today.
-		static let pause = "The Pause"
-
-		/// Two stations from that file, and one item from each. The Stations
-		/// filter asks for a menu outright, so its shape does not depend on how
-		/// many stations a cafe happens to serve.
+		/// Two of Treeline Commons' Lunch stations, and one item from the first.
+		/// The Stations filter asks for a menu outright, so its shape does not
+		/// depend on how many stations a cafe happens to serve. Its fixture is
+		/// `GET-food-named-menu-treeline-commons.yaml`, whose Jest test pins these.
 		static let pizzaStation = "Pizza"
 		static let specialtyPizzaStation = "Specialty Pizza"
 		static let pizzaItem = "food-row-Single Slice"
@@ -343,7 +344,7 @@ struct TestIdentifiers {
 		/// opens on.
 		static let openingMeal = "Lunch"
 
-		/// Another of Stav Hall's meals, for proving the picker switches.
+		/// Another of Treeline Commons' meals, for proving the picker switches.
 		static let otherMeal = "Dinner"
 
 		/// Reveals the filter row, which a menu opens with collapsed.
@@ -352,11 +353,11 @@ struct TestIdentifiers {
 		/// The start of the navigation title's label, which is also the meal
 		/// picker's button. The title writes its own label rather than letting
 		/// SwiftUI compose one, so the bullets the eye reads as separators are
-		/// the commas the ear needs -- `Stav Hall, Sat, Lunch, 8:30AM to 12PM`.
+		/// the commas the ear needs -- `Treeline Commons, Sat, Lunch, 8:30AM to 12PM`.
 		///
 		/// A prefix, because the window that finishes it is not the same string
 		/// on every machine. A meal's hours are campus clock readings printed
-		/// in the device's zone, so Stav's 10:30 lunch is `10:30AM` on a
+		/// in the device's zone, so a 10:30 lunch is `10:30AM` on a
 		/// Chicago simulator, `8:30AM` on a Pacific one and `3:30PM` on a UTC
 		/// runner. Matching it exactly would pin the suite to whoever wrote it.
 		/// What the window says is `meal-times.test.ts`' business.
@@ -707,18 +708,16 @@ struct TestIdentifiers {
 		static let importantContacts = "Departments"
 		/// Matches CONTACT_GRID_ID in app/directory/index.tsx.
 		static let contactGrid = "directory-contact-grid"
-		/// A contact from data/contact-info/, so its tile is in the grid
-		/// whatever the server is serving.
-		static let aContact = "PubSafe"
+		/// A contact from Wiki Monkeys' `GET-contacts.yaml`.
+		static let aContact = "Ski Patrol"
 		/// That contact's own action, shown on its detail screen.
-		static let aContactAction = "Call Public Safety"
+		static let aContactAction = "Call Ski Patrol"
 
-		/// A second contact from data/contact-info/, so its tile is in the grid
-		/// whatever the server is serving. It has to sit in the grid's first
+		/// A second contact from that file. It has to sit in the grid's first
 		/// row, the only one the contact sheet leaves uncovered.
-		static let aSecondContact = "HOPE Center"
+		static let aSecondContact = "Summit Center"
 		/// That contact's own action. Nothing else in the app shows this
-		/// string, so finding it can only mean HOPE Center's detail is on
+		/// string, so finding it can only mean Summit Center's detail is on
 		/// screen.
 		static let aSecondContactAction = "Call 24-Hour Hotline"
 
@@ -754,10 +753,8 @@ struct TestIdentifiers {
 	// MARK: - Hours
 
 	enum Hours {
-		/// The screen's title, in app/hours/index.tsx.
-		static let title = "Hours"
-		/// Its title for Carleton, which Carleton's Building Hours tile opens.
-		static let carletonTitle = "Building Hours"
+		/// The screen's title on Wiki Monkeys, from its hours section.
+		static let title = "Building Hours"
 		/// What the list says when a search matches nothing, in
 		/// source/features/building-hours/list/building-list.tsx.
 		static func noResults(for query: String) -> String { "No results found for \"\(query)\"." }
@@ -770,17 +767,16 @@ struct TestIdentifiers {
 		/// The schedule editor's title.
 		static let scheduleEditorTitle = "Edit Schedule"
 		/// A building that must fall out of the list when a search is typed, so
-		/// the test proves narrowing rather than an empty list. Under test the
-		/// app reads St. Olaf's hours from this repository's bundled copy, so
-		/// this is whatever `data/building-hours/` says today. Also the name
-		/// shown as the detail sheet's own title once tapped. Its schedule is a
-		/// single short section that already fits the sheet's smaller detent --
-		/// see `aBuildingWithLongSchedule` for the one that overflows it.
-		static let anExcludedBuilding = "The Cage"
+		/// the test proves narrowing rather than an empty list. From Wiki
+		/// Monkeys' `GET-spaces-hours.yaml`. Also the name shown as the detail
+		/// sheet's own title once tapped. Its schedule is a single short section
+		/// that already fits the sheet's smaller detent -- see
+		/// `aBuildingWithLongSchedule` for the one that overflows it.
+		static let anExcludedBuilding = "Basecamp Café"
 		/// A building with three schedule sections -- enough combined content to
 		/// overflow the sheet's smaller detent, unlike `anExcludedBuilding`'s
 		/// single short section.
-		static let aBuildingWithLongSchedule = "Stav Hall"
+		static let aBuildingWithLongSchedule = "Treeline Dining Room"
 		/// A query no building matches, so the screen must say no results were
 		/// found rather than claim the data is missing -- the two states read
 		/// differently, or a broken search looks like a server outage.

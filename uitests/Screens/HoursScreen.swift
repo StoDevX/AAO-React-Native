@@ -8,13 +8,6 @@ struct HoursScreen: Screen {
 		app.navigationBars[TestIdentifiers.Hours.title]
 	}
 
-	/// Carleton's Hours, which Carleton's Building Hours tile opens with
-	/// `?campus=edu.carleton`. Its search field is St. Olaf's too, so the title is
-	/// what tells the two apart.
-	var carletonMounted: XCUIElement {
-		app.navigationBars[TestIdentifiers.Hours.carletonTitle]
-	}
-
 	/// Opens Hours on the active campus, which it reads with no `?campus=` param.
 	@discardableResult
 	func navigate() -> Self {

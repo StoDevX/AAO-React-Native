@@ -81,6 +81,8 @@ describe('mapCategoriesOptions', () => {
 			'map/categories',
 			expect.anything(),
 			'Map categories',
+			'json',
+			'edu.stolaf',
 		)
 	})
 

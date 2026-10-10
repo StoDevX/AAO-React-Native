@@ -10,7 +10,7 @@ struct MenusScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/menus", mountedWhen: mounted)
+		open(route: TestIdentifiers.Menus.route, mountedWhen: mounted)
 	}
 
 	/// Reveal the filter row, which a menu opens with collapsed behind a
@@ -91,14 +91,5 @@ struct MenusScreen: Screen {
 			row.waitUntilExists(timeout: 30),
 			"at least one food row should be visible")
 		return self
-	}
-
-	/// Switch to another St. Olaf cafe's tab and wait for its menu to draw.
-	@discardableResult
-	func openCafe(_ cafe: String) -> Self {
-		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitUntilExists(timeout: 30), "\(cafe) tab should be visible")
-		tab.tap()
-		return verifyFoodRowsAppear()
 	}
 }

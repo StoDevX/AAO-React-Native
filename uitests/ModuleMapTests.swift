@@ -1,6 +1,9 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleMapTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	/// The collapsed sheet, and the two things that raise it.
 	///
 	/// The sheet opens on its smallest stop, at the foot of the screen, holding
@@ -73,8 +76,8 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// the sheet's list, and the list clips each row to its card's rounded
 	/// corners, which once cut the foot off that tile's first letter.
 	///
-	/// `aBuilding` is absent from Carleton's map, so this also fails if `/map`
-	/// drew Carleton's map for `?campus=edu.stolaf`.
+	/// `aBuilding` is on Wiki Monkeys' map alone, so this also fails if `/map`
+	/// drew another campus's map.
 	func testTheFullSheetDropsToMediumForARow() throws {
 		let screen = MapScreen(app: app)
 			.navigate()

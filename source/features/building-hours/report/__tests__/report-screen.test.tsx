@@ -78,7 +78,8 @@ afterEach(() => {
 })
 
 async function renderReport() {
-	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+	// Fresh for good, so the seeded venues are what the screen reads rather than a refetch.
+	let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
 	trackedQueryClients.push(client)
 	client.setQueryData(keys.all('edu.stolaf'), [cage, library])
 

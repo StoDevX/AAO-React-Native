@@ -1,6 +1,5 @@
 import {clientFor} from '@frogpond/api'
 import {groupBy} from '@frogpond/collections'
-import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 
 import {campusById, type CampusId} from '../../campuses'
@@ -21,15 +20,11 @@ export const keys = {
 function fetchBuildings(campus: CampusId) {
 	return async ({signal}: {signal: AbortSignal}): Promise<BuildingType[]> => {
 		let hours = campusById(campus).hours
-		// UI tests naming no campus assert against what a screen does with a
-		// venue, so they need the same venues every run, and this repository's
-		// copy rather than the deployed one -- a `building` key added here only
-		// reaches the server once it merges. A campus with no bundled copy
-		// still comes over the wire.
-		//
-		// The dev override takes the same route, for the same reason.
+		// The dev override reads this repository's copy rather than the deployed
+		// one, so a `building` key added here can be tried before it merges. A
+		// campus with no bundled copy still comes over the wire.
 		let forced = useForceBundledData.getState().forced
-		if ((servesBundledFixtures || forced) && hours?.bundled) {
+		if (forced && hours?.bundled) {
 			return [...hours.bundled]
 		}
 

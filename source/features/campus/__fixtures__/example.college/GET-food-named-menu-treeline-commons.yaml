@@ -1,0 +1,632 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/food/named/menu/treeline-commons
+json:
+  cor_icons:
+    '1':
+      allergen: 0
+      description: 'Vegetarian: Contains no meat, fish, poultry, shellfish or products derived from these sources but may contain dairy or eggs.'
+      id: '1'
+      image: https://assets.media.cafebonappetit.com/production/assets/cor_icons/menu-item-type-c9d18b.png?v=1791512671
+      is_filter: 'Y'
+      label: Vegetarian
+      position: '1'
+      show_name_ds: 'N'
+      slug: vegetarian
+      sort: '1'
+      type: diet
+    '4':
+      allergen: 0
+      description: 'Vegan: Contains absolutely no animal or dairy products.'
+      id: '4'
+      image: https://assets.media.cafebonappetit.com/production/assets/cor_icons/menu-item-type-668e3c.png?v=1791512671
+      is_filter: 'Y'
+      label: Vegan
+      position: '2'
+      show_name_ds: 'N'
+      slug: vegan
+      sort: '2'
+      type: diet
+  days:
+    - date: '2026-09-05'
+      cafe:
+        menu_id: '1'
+        name: Treeline Commons
+        dayparts:
+          - - abbreviation: B
+              endtime: '09:45'
+              endtime_formatted: 9:45 am
+              id: '1'
+              label: Breakfast
+              message: ''
+              starttime: '07:15'
+              starttime_formatted: 7:15 am
+              time_formatted: 7:15 am - 9:45 am
+              stations:
+                - id: '7000'
+                  label: switchback griddle
+                  note: ''
+                  order_id: '0007001'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9100'
+                    - '9101'
+                - id: '7001'
+                  label: porridge pot
+                  note: ''
+                  order_id: '0007002'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9102'
+                    - '9103'
+            - abbreviation: L
+              endtime: '14:00'
+              endtime_formatted: 2:00 pm
+              id: '3'
+              label: Lunch
+              message: ''
+              starttime: '10:30'
+              starttime_formatted: 10:30 am
+              time_formatted: 10:30 am - 2:00 pm
+              stations:
+                - id: '7002'
+                  label: pizza
+                  note: ''
+                  order_id: '0007003'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9104'
+                    - '9105'
+                - id: '7003'
+                  label: specialty pizza
+                  note: ''
+                  order_id: '0007004'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9106'
+                    - '9107'
+                - id: '7004'
+                  label: summit grill
+                  note: ''
+                  order_id: '0007005'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9108'
+                    - '9109'
+                - id: '7005'
+                  label: glacier greens
+                  note: ''
+                  order_id: '0007006'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9110'
+                    - '9111'
+            - abbreviation: D
+              endtime: '20:00'
+              endtime_formatted: 8:00 pm
+              id: '4'
+              label: Dinner
+              message: ''
+              starttime: '16:30'
+              starttime_formatted: 4:30 pm
+              time_formatted: 4:30 pm - 8:00 pm
+              stations:
+                - id: '7006'
+                  label: pizza
+                  note: ''
+                  order_id: '0007007'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9112'
+                    - '9113'
+                - id: '7007'
+                  label: specialty pizza
+                  note: ''
+                  order_id: '0007008'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9114'
+                    - '9115'
+                - id: '7008'
+                  label: summit grill
+                  note: ''
+                  order_id: '0007009'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9116'
+                    - '9117'
+                - id: '7009'
+                  label: glacier greens
+                  note: ''
+                  order_id: '0007010'
+                  price: ''
+                  soup: 0
+                  items:
+                    - '9118'
+                    - '9119'
+  items:
+    '9100':
+      connector: ''
+      description: ''
+      id: '9100'
+      label: Blueberry Pancakes
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@switchback griddle</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon:
+        '1': Vegetarian
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9101':
+      connector: ''
+      description: ''
+      id: '9101'
+      label: Maple Syrup
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@switchback griddle</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9102':
+      connector: ''
+      description: ''
+      id: '9102'
+      label: Steel-Cut Oats
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@porridge pot</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9103':
+      connector: ''
+      description: ''
+      id: '9103'
+      label: Brown Sugar
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@porridge pot</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9104':
+      connector: ''
+      description: ''
+      id: '9104'
+      label: Single Slice
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon:
+        '1': Vegetarian
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9105':
+      connector: ''
+      description: ''
+      id: '9105'
+      label: Cheese Pie
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '1': Vegetarian
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9106':
+      connector: ''
+      description: ''
+      id: '9106'
+      label: Alpine Mushroom Pizza
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@specialty pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon:
+        '1': Vegetarian
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9107':
+      connector: ''
+      description: ''
+      id: '9107'
+      label: Lingonberry Flatbread
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@specialty pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '1': Vegetarian
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9108':
+      connector: ''
+      description: ''
+      id: '9108'
+      label: Trail Burger
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@summit grill</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon: {}
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9109':
+      connector: ''
+      description: ''
+      id: '9109'
+      label: Sweet Potato Fries
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@summit grill</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9110':
+      connector: ''
+      description: ''
+      id: '9110'
+      label: Spinach Salad
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@glacier greens</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9111':
+      connector: ''
+      description: ''
+      id: '9111'
+      label: Fjord Vinaigrette
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@glacier greens</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9112':
+      connector: ''
+      description: ''
+      id: '9112'
+      label: Single Slice
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon:
+        '1': Vegetarian
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9113':
+      connector: ''
+      description: ''
+      id: '9113'
+      label: Pepperoni Pie
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon: {}
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9114':
+      connector: ''
+      description: ''
+      id: '9114'
+      label: Smoked Trout Pizza
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@specialty pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon: {}
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9115':
+      connector: ''
+      description: ''
+      id: '9115'
+      label: Roasted Root Flatbread
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@specialty pizza</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9116':
+      connector: ''
+      description: ''
+      id: '9116'
+      label: Reindeer Meatballs
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@summit grill</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon: {}
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9117':
+      connector: ''
+      description: ''
+      id: '9117'
+      label: Lemon Potatoes
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@summit grill</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9118':
+      connector: ''
+      description: ''
+      id: '9118'
+      label: Kale Caesar
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 1
+      station: <strong>@glacier greens</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 1
+      zero_entree: '0'
+      cor_icon:
+        '1': Vegetarian
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []
+    '9119':
+      connector: ''
+      description: ''
+      id: '9119'
+      label: Pickled Beets
+      nutrition_link: nutrition information
+      price: ''
+      rating: ''
+      special: 0
+      station: <strong>@glacier greens</strong>
+      sub_station: ''
+      sub_station_id: ''
+      sub_station_order: ''
+      tier: 3
+      zero_entree: '0'
+      cor_icon:
+        '4': Vegan
+      monotony: {}
+      nutrition:
+        kcal: ''
+        well_being: ''
+        well_being_image: ''
+      nutrition_details: {}
+      options: []

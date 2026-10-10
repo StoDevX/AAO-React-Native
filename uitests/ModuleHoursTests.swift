@@ -1,6 +1,9 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleHoursTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	/// A query typed into the search bar narrows the list, and one that
 	/// matches nothing says so.
 	func testSearchNarrowsTheListToNothing() throws {
