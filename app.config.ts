@@ -23,15 +23,46 @@ const AAO_ICON = './assets/windmill.icon'
 /** The CARLS penguin, the CARLS app's own 1024px artwork. */
 const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/light.png'
 
+/** All About Anything's identifier. */
+const AAA_BUNDLE_ID = 'tech.frogpond.allaboutanything'
+
+/** Windmill (Sky), an Icon Composer document, as All About Anything's primary. */
+const AAA_ICON = './assets/windmill-sky.icon'
+
 /**
- * Which app this build is, which `APP_VARIANT` must name: `aao`, `carls`, or
- * their `-dev` builds, which install alongside the App Store's instead of
+ * Each app's Sentry project. A variant names its own organization too, so a
+ * future app can report somewhere else without code changes. A DSN only
+ * routes reports, so it isn't secret.
+ */
+const AAO_SENTRY = {
+	organization: 'frog-pond-labs',
+	project: 'all-about-olaf',
+	dsn: 'https://7f68e814c5c24c32a582f2ddc3d42b4c@o524787.ingest.sentry.io/5637838',
+}
+const CARLS_SENTRY = {
+	organization: 'frog-pond-labs',
+	project: 'carls',
+	dsn: 'https://a539fb427f9f4380971602c1e21e6959@o524787.ingest.us.sentry.io/5637839',
+}
+const AAA_SENTRY = {
+	organization: 'frog-pond-labs',
+	project: 'all-about-anything',
+	dsn: 'https://daa452d0505f2c883df86e0a0b6196fa@o524787.ingest.us.sentry.io/4512230081363968',
+}
+
+/**
+ * Which app this build is, which `APP_VARIANT` must name: `aao`, `carls`,
+ * `aaa`, or their `-dev` builds, which install alongside the App Store's instead of
  * replacing it on your device. There is no default, so a forgotten variant
  * fails here rather than building and launching the other app.
  *
  * `carls` and `carls-dev` build the same code as CARLS: Carleton's
  * app (`extra.app`, read by source/lib/app-identity.ts), opening on Carleton,
  * with the penguin as its icon and the windmills to switch to.
+ *
+ * `aaa` and `aaa-dev` build All About Anything: no default campus, so a fresh
+ * install asks, with Windmill (Sky) as its icon and its own scheme, which AAO
+ * and CARLS don't register.
  *
  * The identity has to differ in three places, not one: iOS keys installs on the
  * bundle identifier, the home screen shows the name, and two apps claiming the
@@ -53,6 +84,7 @@ const VARIANTS = {
 		scheme: 'AllAboutOlaf',
 		icon: AAO_ICON,
 		primaryIcon: 'windmill',
+		sentry: AAO_SENTRY,
 	},
 	'aao-dev': {
 		app: 'aao',
@@ -62,6 +94,7 @@ const VARIANTS = {
 		scheme: 'AllAboutOlafDev',
 		icon: AAO_ICON,
 		primaryIcon: 'windmill',
+		sentry: AAO_SENTRY,
 	},
 	carls: {
 		app: 'carls',
@@ -72,6 +105,7 @@ const VARIANTS = {
 		scheme: 'carls',
 		icon: CARLS_ICON,
 		primaryIcon: 'carls-penguin',
+		sentry: CARLS_SENTRY,
 	},
 	'carls-dev': {
 		app: 'carls',
@@ -81,6 +115,27 @@ const VARIANTS = {
 		scheme: 'carlsDev',
 		icon: CARLS_ICON,
 		primaryIcon: 'carls-penguin',
+		sentry: CARLS_SENTRY,
+	},
+	aaa: {
+		app: 'aaa',
+		defaultCampus: null,
+		displayName: 'All About Anything',
+		bundleIdentifier: AAA_BUNDLE_ID,
+		scheme: 'allaboutanything',
+		icon: AAA_ICON,
+		primaryIcon: 'windmill-sky',
+		sentry: AAA_SENTRY,
+	},
+	'aaa-dev': {
+		app: 'aaa',
+		defaultCampus: null,
+		displayName: 'AAA Dev',
+		bundleIdentifier: `${AAA_BUNDLE_ID}.dev`,
+		scheme: 'allaboutanythingDev',
+		icon: AAA_ICON,
+		primaryIcon: 'windmill-sky',
+		sentry: AAA_SENTRY,
 	},
 } as const
 
@@ -320,6 +375,7 @@ const config: ExpoConfig = {
 		app: variant.app,
 		defaultCampus: variant.defaultCampus,
 		primaryIcon: variant.primaryIcon,
+		sentry: {dsn: variant.sentry.dsn},
 	},
 
 	plugins: [
@@ -386,10 +442,7 @@ const config: ExpoConfig = {
 		['./plugins/with-app-variant', {variant: requested}],
 		[
 			'@sentry/react-native/expo',
-			{
-				organization: 'frog-pond-labs',
-				project: variant.app === 'carls' ? 'carls' : 'all-about-olaf',
-			},
+			{organization: variant.sentry.organization, project: variant.sentry.project},
 		],
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
 		// its options now live in the `enriched-markdown` block of package.json.

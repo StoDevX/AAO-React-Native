@@ -174,16 +174,21 @@ workflow sets its own in its environment.
 | `aao-dev` | `…stolaf.dev` | AAO Dev | `all-about-olaf` |
 | `carls` | `com.rives.carls` | CARLS | `carls` |
 | `carls-dev` | `com.rives.carls.dev` | CARLS Dev | `carls` |
+| `aaa` | `tech.frogpond.allaboutanything` | All About Anything | `all-about-anything` |
+| `aaa-dev` | `…allaboutanything.dev` | AAA Dev | `all-about-anything` |
 
 The two All About Olaf variants share the windmill icon, so tell them apart by
 name. The CARLS variants build the same code as Carleton's app: `extra.defaultCampus`
 opens them on Carleton (`source/lib/app-identity.ts`), the penguin is the
 primary icon, and the windmills are its alternates. `com.rives.carls` is the CARLS
 app's own identifier, so a release build updates CARLS on the App Store.
+All About Anything opens on the campus picker, wears Windmill (Sky), and alone
+answers `allaboutanything://`.
 
 ```bash
 mise run aao:ios [device]     # AAO Dev, prebuilt and run
 mise run carls:ios [device]   # CARLS Dev, prebuilt and run
+mise run aaa:ios [device]     # AAA Dev, prebuilt and run
 ```
 
 `ios/` holds one variant at a time; `mise run prebuild` starts it afresh when

@@ -25,8 +25,8 @@ cd ../../
 brew_prefix="$(brew --prefix)"
 export PATH="${brew_prefix}/bin:$PATH"
 
-export SENTRY_ORG='frog-pond-labs'
-export SENTRY_PROJECT='all-about-olaf'
+# The variant's Sentry org and project, as prebuild wrote them from app.config.ts.
+export SENTRY_PROPERTIES="${PWD}/ios/sentry.properties"
 
 # Run one sentry-cli step, and turn a failure into a warning, so a Sentry outage
 # cannot hold up a TestFlight build.
