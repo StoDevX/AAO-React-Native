@@ -46,23 +46,17 @@ type EventSource =
 	| 'presence'
 	| 'carleton'
 	| 'wiki-monkeys'
-	| 'uitest'
 	| 'ksto-schedule'
 	| 'krlx-schedule'
 	| 'kmnk-schedule'
 	| 'sumo-schedule'
 	| 'upcoming-convos'
 
-// A stand-in for a real remote source, so its detail screen attributes exactly
-// like `stolaf`'s or `presence`'s does.
-const UITEST_POWERED_BY = {title: 'Powered by UI Test Fixtures', href: ''} as const
-
 const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	stolaf: STOLAF_POWERED_BY,
 	presence: PRESENCE_POWERED_BY,
 	carleton: CARLETON_POWERED_BY,
 	'wiki-monkeys': WIKI_MONKEYS_POWERED_BY,
-	uitest: UITEST_POWERED_BY,
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
 	'kmnk-schedule': KMNK_POWERED_BY,
@@ -74,7 +68,7 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
  * The sources that contribute to the merged calendar, and so have neighbours
  * to show. The radio schedules and Carleton's SUMO and convocation lists do not.
  */
-const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'carleton', 'wiki-monkeys', 'uitest'])
+const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'carleton', 'wiki-monkeys'])
 
 /**
  * KSTO's and KRLX's broadcast schedules, and Carleton's SUMO and convocation

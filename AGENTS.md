@@ -454,18 +454,13 @@ St. Olaf's layout, moved to the valley and renamed, so a data publish cannot
 move what they measure. A moved footprint or label point can change what a
 tap hits, so rerun the map UI tests after editing it.
 
-Olaf Messenger's fetches are answered from
-`source/features/mess/__fixtures__/mess.json` under UI tests, and a fetch with
-no fixture fails naming its URL. Its URLs depend on what the paper published,
-so they are recorded, not listed: with a simulator booted and Metro running,
-
-```bash
-TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run update-mess-fixtures
-```
-
-runs the Messenger UI tests against the live paper with `--record-fixtures`
-and writes every fetch they made. It writes nothing if the tests fail. With
-more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
+The News UI tests read The Valley Echo, Wiki Monkeys' paper, a small
+WordPress site written as fixtures (`GET-echo.college.example-*.yaml` beside
+the map). It holds what the tests open: two pages of issues (2026 on the
+first, 2025 on the second), the newest issue and the special edition before
+it, Variety and its Comic, Horoscopes and Photo columns, and each Variety
+story on its own. `source/features/mess/__tests__/valley-echo-fixture.test.ts`
+says what has to stay true of it for those tests to mean anything.
 
 ### Chaos Runs
 

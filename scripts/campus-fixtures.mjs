@@ -1,6 +1,7 @@
 // A campus's UI-test recordings: what a recording run of its campus tests
 // fetched, keyed as source/features/campus/fixtures.ts looks them up.
 
+import {createHash} from 'node:crypto'
 import {readFileSync} from 'node:fs'
 
 import {TEC_MAX_PAGES} from '../modules/ccc-calendar/parsers/tec-pages.ts'
@@ -261,11 +262,18 @@ export function mergeCampusRecordings(lines, {allowLarge = false} = {}) {
 	)
 }
 
+/** The longest a fixture's name runs before its extension, well inside a file system's 255 bytes. */
+const MAX_NAME = 180
+
 /** A request's file name: its method and where it went, as a path-safe slug, ending in `ext`. */
 export function fixtureFileName(key, ext = '.json') {
 	let [method, target] = key.split(' ')
 	let where = target.replace(/^\{server:[^}]+\}\//u, '').replace(/^https?:\/\//u, '')
-	return `${method}-${where.replaceAll(/[^\w.]+/gu, '-').replaceAll(/^-|-$/gu, '')}${ext}`
+	let name = `${method}-${where.replaceAll(/[^\w.]+/gu, '-').replaceAll(/^-|-$/gu, '')}`
+	if (name.length <= MAX_NAME) return `${name}${ext}`
+	// Past a file system's limit, as a long include list runs: the start, then a hash of the whole key.
+	let hash = createHash('sha256').update(key).digest('hex').slice(0, 12)
+	return `${name.slice(0, MAX_NAME - hash.length - 1)}-${hash}${ext}`
 }
 
 /** Whether a content type is JSON's. */
@@ -333,4 +341,20 @@ export function frozenDay() {
 	let day = /UITEST_FROZEN_DATE = '(\d{4}-\d{2}-\d{2})/u.exec(source)?.[1]
 	if (!day) throw new Error('no UITEST_FROZEN_DATE in modules/timer/index.ts')
 	return day
+}
+
+function byText(a, b) {
+	return a.localeCompare(b)
+}
+
+/** The fixtures `after` adds and removes against `before`. */
+export function summarizeKeys(before, after) {
+	return {
+		added: Object.keys(after)
+			.filter((key) => !(key in before))
+			.sort(byText),
+		removed: Object.keys(before)
+			.filter((key) => !(key in after))
+			.sort(byText),
+	}
 }

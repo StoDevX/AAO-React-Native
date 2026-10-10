@@ -1,4 +1,4 @@
-import {fetchManifest, REL_NEWS, resolveSource} from '@frogpond/data-sources'
+import {fetchManifest, fetchSourceBody, REL_NEWS, resolveSource} from '@frogpond/data-sources'
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
@@ -10,7 +10,6 @@ import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {newestStaffYear} from './lib/staff'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
-import {messFetch} from './lib/fixtures'
 import {wpRoot} from './lib/wp-root'
 import {paperKeys} from './lib/keys'
 import type {Paper} from './campus-section'
@@ -67,7 +66,7 @@ function queriesFor(paper: Paper) {
 		staleTime: ONE_DAY_IN_MS,
 		queryFn: async ({signal}): Promise<MessCategory[]> => {
 			let root = wpRoot(await feedHref(paper))
-			let body = await messFetch(
+			let body = await fetchSourceBody(
 				`${root}/categories?per_page=100&_fields=id,name,parent`,
 				signal,
 				`${paper.label} categories`,
@@ -89,7 +88,9 @@ function queriesFor(paper: Paper) {
 		let root = wpRoot(await feedHref(paper))
 		// A failed categories fetch fails the stories on purpose: sections come from it.
 		let [body, categories] = await Promise.all([
-			messFetch(pageHref(`${root}/${path}`, page), signal, label).catch(emptyPastLastPage(page)),
+			fetchSourceBody(pageHref(`${root}/${path}`, page), signal, label).catch(
+				emptyPastLastPage(page),
+			),
 			queryClient.query(categoriesOptions),
 		])
 		// A single post comes back as an object rather than a list.
@@ -101,7 +102,7 @@ function queriesFor(paper: Paper) {
 		let href = pageHref(await feedHref(paper), page)
 		// A failed categories fetch fails the feed on purpose: sections come from it.
 		let [postsBody, categories] = await Promise.all([
-			messFetch(href, signal, `${paper.label}`).catch(emptyPastLastPage(page)),
+			fetchSourceBody(href, signal, `${paper.label}`).catch(emptyPastLastPage(page)),
 			queryClient.query(categoriesOptions),
 		])
 		return parseMessPosts(postsBody, categories, paper)
@@ -165,7 +166,7 @@ function queriesFor(paper: Paper) {
 			meta: {persist: false},
 			queryFn: async ({signal}): Promise<string[]> => {
 				let root = wpRoot(await feedHref(paper))
-				let body = await messFetch(
+				let body = await fetchSourceBody(
 					`${root}/posts/${id}?_fields=content`,
 					signal,
 					`${paper.label} story text`,
@@ -202,7 +203,7 @@ function queriesFor(paper: Paper) {
 			let root = wpRoot(await feedHref(paper))
 			// A failed categories fetch fails the page on purpose: sections come from it.
 			let [body, categories] = await Promise.all([
-				messFetch(
+				fetchSourceBody(
 					`${root}/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
 					signal,
 					`${paper.label} issues`,
@@ -215,7 +216,7 @@ function queriesFor(paper: Paper) {
 			]
 			if (photoIds.length === 0) return posts
 			// A row without its photo draws a tinted square, so a failed lookup leaves the page whole.
-			let urls = await messFetch(
+			let urls = await fetchSourceBody(
 				`${root}/media?include=${photoIds.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_fields=id,source_url`,
 				signal,
 				`${paper.label} photos`,
@@ -336,7 +337,7 @@ function queriesFor(paper: Paper) {
 			networkMode: 'always',
 			retry: 1,
 			queryFn: async ({signal}): Promise<SpotifyRef | null> => {
-				let page = await messFetch(story.link, signal, `${paper.label} page`, 'text')
+				let page = await fetchSourceBody(story.link, signal, `${paper.label} page`, 'text')
 				return typeof page === 'string' ? findSpotifyRef(page) : null
 			},
 		})
@@ -352,7 +353,7 @@ function queriesFor(paper: Paper) {
 			staleTime: ONE_DAY_IN_MS,
 			queryFn: async ({signal}): Promise<CaptionedPhoto[]> => {
 				let root = wpRoot(await feedHref(paper))
-				let body = await messFetch(
+				let body = await fetchSourceBody(
 					`${root}/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption,alt_text`,
 					signal,
 					`${paper.label} gallery`,
@@ -368,7 +369,7 @@ function queriesFor(paper: Paper) {
 			staleTime: ONE_DAY_IN_MS,
 			queryFn: async ({signal}): Promise<StaffProfile | null> => {
 				let root = wpRoot(await feedHref(paper))
-				let body = await messFetch(
+				let body = await fetchSourceBody(
 					`${root}/staff_profile?staff_name=${staffId}&_embed=true`,
 					signal,
 					`${paper.label} staff profile`,
@@ -384,7 +385,7 @@ function queriesFor(paper: Paper) {
 		staleTime: ONE_DAY_IN_MS,
 		queryFn: async ({signal}): Promise<AboutSection[]> => {
 			let root = wpRoot(await feedHref(paper))
-			let body = await messFetch(
+			let body = await fetchSourceBody(
 				`${root}/pages?slug=${paper.contactPageSlug}&_fields=content`,
 				signal,
 				`${paper.label} About page`,
@@ -403,7 +404,7 @@ function queriesFor(paper: Paper) {
 			// The newest year with anyone on it: a year the paper has made but not yet filled would
 			// otherwise hide last year's staff behind an empty page. Every year is asked for, not just
 			// the first by name, so a term not named as a year cannot stand in for the newest.
-			let years = await messFetch(
+			let years = await fetchSourceBody(
 				`${root}/staff_year?hide_empty=true&per_page=100&_fields=id,name`,
 				signal,
 				`${paper.label} staff years`,
@@ -417,9 +418,11 @@ function queriesFor(paper: Paper) {
 			for (let page: number | undefined = 1; page !== undefined;) {
 				// Each page says whether there is another, so the pages are fetched one after another.
 				// oxlint-disable-next-line eslint/no-await-in-loop
-				let body = await messFetch(pageHref(href, page), signal, `${paper.label} staff`).catch(
-					emptyPastLastPage(page),
-				)
+				let body = await fetchSourceBody(
+					pageHref(href, page),
+					signal,
+					`${paper.label} staff`,
+				).catch(emptyPastLastPage(page))
 				let list = Array.isArray(body) ? body : []
 				people.push(...parseStaffProfiles(list))
 				page = nextPage(list, page, STAFF_PAGE_SIZE)

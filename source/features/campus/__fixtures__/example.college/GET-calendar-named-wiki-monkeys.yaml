@@ -1,0 +1,348 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/calendar/named/wiki-monkeys
+json:
+  - dataSource: ical
+    description: Welcome week activities for new students.
+    endTime: '2026-09-12T17:00:00-05:00'
+    isOngoing: true
+    location: Campus-wide
+    startTime: '2026-09-01T09:00:00-05:00'
+    title: Fall Semester Orientation
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-01
+    categories:
+      - Academic Year
+  - dataSource: ical
+    description: Opening ceremony for the academic year.
+    endTime: '2026-09-05T11:00:00-05:00'
+    isOngoing: false
+    location: Glacier Hall Auditorium
+    startTime: '2026-09-05T10:00:00-05:00'
+    title: Welcome Convocation
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-02
+    categories:
+      - Academic Year
+  - dataSource: ical
+    description: Home football game.
+    endTime: '2026-09-05T16:00:00-05:00'
+    isOngoing: false
+    location: Avalanche Field
+    startTime: '2026-09-05T13:00:00-05:00'
+    title: Football vs. Upper Valley
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-03
+    categories:
+      - Athletics
+  - dataSource: ical
+    description: A music recital featuring student performers.
+    endTime: '2026-09-05T16:00:00-05:00'
+    isOngoing: false
+    location: Summit Chapel
+    startTime: '2026-09-05T14:00:00-05:00'
+    title: Student Recital
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-04
+    categories:
+      - Music
+  - dataSource: ical
+    description: Opening concert of the fall season.
+    endTime: '2026-09-05T21:00:00-05:00'
+    isOngoing: false
+    location: Glacier Hall Auditorium
+    startTime: '2026-09-05T19:00:00-05:00'
+    title: Welcome Back Concert
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-05
+    categories:
+      - Music
+  - dataSource: ical
+    description: Weekly chapel service.
+    endTime: '2026-09-06T10:00:00-05:00'
+    isOngoing: false
+    location: Summit Chapel
+    startTime: '2026-09-06T09:00:00-05:00'
+    title: Sunday Gathering
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-06
+    categories:
+      - Gatherings
+  - dataSource: ical
+    description: Meet campus organizations and sign up for activities.
+    endTime: '2026-09-06T16:00:00-05:00'
+    isOngoing: false
+    location: Treeline Commons
+    startTime: '2026-09-06T14:00:00-05:00'
+    title: Student Organization Fair
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-07
+    categories:
+      - SGA and Student Life
+    organization:
+      - Student Government
+  - dataSource: ical
+    description: Fall semester classes begin.
+    endTime: '2026-09-07T17:00:00-05:00'
+    isOngoing: false
+    location: Campus-wide
+    startTime: '2026-09-07T08:00:00-05:00'
+    title: First Day of Classes
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-08
+    categories:
+      - Academic Year
+  - dataSource: ical
+    description: Jazz combo performance.
+    endTime: '2026-09-07T21:00:00-05:00'
+    isOngoing: false
+    location: Snowmelt Recital Hall
+    startTime: '2026-09-07T19:00:00-05:00'
+    title: Jazz Ensemble
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-09
+    categories:
+      - Music
+    organization:
+      - Music Organizations
+  - dataSource: ical
+    description: Weekly organ recital series.
+    endTime: '2026-09-08T13:00:00-05:00'
+    isOngoing: false
+    location: Summit Chapel
+    startTime: '2026-09-08T12:00:00-05:00'
+    title: Noontime Organ Recital
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-10
+    categories:
+      - Music
+    organization:
+      - Music Organizations
+  - dataSource: ical
+    description: Opening lecture of the academic year.
+    endTime: '2026-09-09T17:00:00-05:00'
+    isOngoing: false
+    location: Norway Valley Hall of Natural Sciences
+    startTime: '2026-09-09T15:00:00-05:00'
+    title: Faculty Lecture Series
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-11
+    categories:
+      - Academic Year
+  - dataSource: ical
+    description: St. Olaf Orchestra performs works by Mozart and Beethoven.
+    endTime: '2026-09-10T21:30:00-05:00'
+    isOngoing: false
+    location: Glacier Hall Auditorium
+    startTime: '2026-09-10T19:30:00-05:00'
+    title: Orchestra Concert
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-12
+    categories:
+      - Music
+  - dataSource: ical
+    description: Student chamber ensembles perform.
+    endTime: '2026-09-11T16:00:00-05:00'
+    isOngoing: false
+    location: Snowmelt Recital Hall
+    startTime: '2026-09-11T14:00:00-05:00'
+    title: Chamber Music Recital
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-13
+    categories:
+      - Music
+  - dataSource: ical
+    description: Meet with advisors to plan your semester.
+    endTime: '2026-09-12T12:00:00-05:00'
+    isOngoing: false
+    location: Various locations
+    startTime: '2026-09-12T10:00:00-05:00'
+    title: Academic Advising Day
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-14
+    categories:
+      - Academic Year
+  - dataSource: ical
+    description: Weekly chapel service.
+    endTime: '2026-09-13T10:00:00-05:00'
+    isOngoing: false
+    location: Summit Chapel
+    startTime: '2026-09-13T09:00:00-05:00'
+    title: Sunday Gathering
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-15
+    categories:
+      - Gatherings
+  - dataSource: ical
+    description: Students from the voice studio perform.
+    endTime: '2026-09-14T17:00:00-05:00'
+    isOngoing: false
+    location: Snowmelt Recital Hall
+    startTime: '2026-09-14T15:00:00-05:00'
+    title: Voice Studio Recital
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-16
+    categories:
+      - Music
+  - dataSource: ical
+    description: St. Olaf Band fall concert.
+    endTime: '2026-09-15T21:00:00-05:00'
+    isOngoing: false
+    location: Glacier Hall Auditorium
+    startTime: '2026-09-15T19:00:00-05:00'
+    title: Band Concert
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-17
+    categories:
+      - Music
+    organization:
+      - Music Organizations
+  - dataSource: ical
+    description: Piano students perform solo works.
+    endTime: '2026-09-16T16:00:00-05:00'
+    isOngoing: false
+    location: Snowmelt Recital Hall
+    startTime: '2026-09-16T14:00:00-05:00'
+    title: Piano Studio Recital
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-18
+    categories:
+      - Music
+  - dataSource: ical
+    description: Learn about study abroad opportunities.
+    endTime: '2026-09-17T12:00:00-05:00'
+    isOngoing: false
+    location: Treeline Commons
+    startTime: '2026-09-17T10:00:00-05:00'
+    title: Study Abroad Fair
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-19
+    categories:
+      - Academic Year
+  - dataSource: ical
+    description: St. Olaf Choir fall concert.
+    endTime: '2026-09-18T15:30:00-05:00'
+    isOngoing: false
+    location: Summit Chapel
+    startTime: '2026-09-18T13:30:00-05:00'
+    title: Choir Concert
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-20
+    categories:
+      - Music
+  - dataSource: ical
+    description: Families welcome for campus activities.
+    endTime: '2026-09-18T17:00:00-05:00'
+    isOngoing: false
+    location: Campus-wide
+    startTime: '2026-09-18T15:00:00-05:00'
+    title: Fall Family Weekend
+    config:
+      startTime: true
+      endTime: true
+      subtitle: location
+    links: []
+    metadata:
+      uid: wiki-monkeys-21
+    categories:
+      - Academic Year

@@ -1,0 +1,63 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"category": {
+				"type": "string"
+			},
+			"eid": {
+				"type": "string"
+			},
+			"iframesrc": {
+				"type": "string"
+			},
+			"lastmod": {
+				"type": "string"
+			},
+			"location": {
+				"type": "string"
+			},
+			"performer": {
+				"type": "string"
+			},
+			"player": {
+				"type": "string"
+			},
+			"poster": {
+				"type": "string"
+			},
+			"starttime": {
+				"type": "string"
+			},
+			"status": {
+				"type": "string"
+			},
+			"subtitle": {
+				"type": "string"
+			},
+			"thumb": {
+				"type": "string"
+			},
+			"title": {
+				"type": "string"
+			}
+		},
+		"required": [
+			"category",
+			"eid",
+			"iframesrc",
+			"lastmod",
+			"location",
+			"player",
+			"poster",
+			"starttime",
+			"status",
+			"subtitle",
+			"thumb",
+			"title"
+		]
+	}
+}

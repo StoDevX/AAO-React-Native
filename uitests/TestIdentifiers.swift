@@ -12,8 +12,8 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
-		/// Records each fetch a feature with fixtures makes, for
-		/// `mise run update-mess-fixtures`. Added when the runner is started with
+		/// Records each fetch a campus test makes, for
+		/// `mise run update-campus-fixtures`. Added when the runner is started with
 		/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1`.
 		static let recordFixtures = "--record-fixtures"
 		/// The campus a campus test names, by reverse-DNS id; the app then serves that
@@ -406,14 +406,14 @@ struct TestIdentifiers {
 	}
 
 	enum Calendar {
-		/// Days in the fixture calendar: one with events in the week after
+		/// Days in Wiki Monkeys' calendar: one with events in the week after
 		/// `frozenNow`'s, and one with none in the week after that.
 		static let aDayWithEvents = "2026-09-07"
 		static let anEmptyDay = "2026-09-19"
 		static let picker = "Calendar filter"
 		/// Categories the picker offers, written as the menu draws them: the
-		/// name, then how many events carry it. The counts come from
-		/// `modules/ccc-calendar/fixtures/uitest-events.json` read at the app's
+		/// name, then how many events carry it. The counts come from Wiki
+		/// Monkeys' `GET-calendar-named-wiki-monkeys.yaml` read at the app's
 		/// frozen clock, so they hold for as long as that fixture does. A count
 		/// covers the list's whole window, finished events included: Welcome
 		/// Convocation ended that morning and still counts toward Academic Year.
@@ -514,9 +514,10 @@ struct TestIdentifiers {
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
-		/// The Mess section whose columns the Variety templates draw, and the columns
-		/// the tests open, as the section chips and column chips in source/features/mess/
-		/// name them. They are the paper's own category names, from olafmessenger.com.
+		/// The section whose columns the Variety templates draw, and the columns the
+		/// tests open, as the section chips and column chips in source/features/mess/
+		/// name them. They are The Valley Echo's category names, in Wiki Monkeys'
+		/// fixtures.
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
@@ -553,22 +554,15 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		/// The station picker's KRLX segment, at the top of the sheet.
-		static let krlxSegment = "KRLX"
 		/// Play and Stop, in source/features/streaming/radio/player-view and the
-		/// mini-player; each names its station.
-		static let playKsto = "Play KSTO 93.1 FM"
-		static let pauseKsto = "Pause KSTO 93.1 FM"
-		static let playKrlx = "Play 88.1 KRLX-FM"
-		/// The player's bottom row, as VoiceOver names it.
-		static let krlxActions = [
-			"Call 88.1 KRLX-FM",
+		/// mini-player; each names Wiki Monkeys' station.
+		static let playKmnk = "Play KMNK 91.7, The Peak"
+		static let pauseKmnk = "Pause KMNK 91.7, The Peak"
+		/// The player's bottom row, as VoiceOver names it. KMNK has no chat, so
+		/// its Chat button is a dimmed "Chat unavailable" rather than a link.
+		static let kmnkActions = [
+			"Call KMNK 91.7, The Peak",
 			"Today's schedule",
-		]
-		/// The bottom row's buttons that leave the app, which VoiceOver reads as
-		/// links.
-		static let krlxLinks = [
-			"Chat with 88.1 KRLX-FM",
 		]
 		/// The full player's stand-in for a scrubber, which shows only at full size.
 		static let airStatus = "radio-air-status"
@@ -577,8 +571,8 @@ struct TestIdentifiers {
 		static let idleBar = "Not Playing"
 		/// Customize's Radio Player switch.
 		static let showRadioPlayer = "show-radio-player"
-		/// The logo KSTO shows first, before any tap moves it on.
-		static let kstoFirstLogo = "KSTO 93.1 FM logo, cow badge"
+		/// KMNK's one logo: the station's name, then the logo's.
+		static let kmnkLogo = "KMNK 91.7, The Peak logo, KMNK 91.7, The Peak"
 	}
 
 	// MARK: - Quick Actions

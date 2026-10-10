@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
 
-import {buildArgs, installBuiltApp, isNotInstalled, testArgs} from './uitest-run.mjs'
+import {buildArgs, installBuiltApp, isNotInstalled, pickSimulator, testArgs} from './uitest-run.mjs'
 
 test('detects when the app is not installed from simctl stderr', () => {
 	let stderr = `An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=2):
@@ -46,4 +46,22 @@ test('refuses to install an app that was never built, saying how to build it', (
 		() => installBuiltApp('ABC', '/nonexistent/AllAboutAnything.app'),
 		/no built app at \/nonexistent\/AllAboutAnything\.app; run without --prebuilt/u,
 	)
+})
+
+let sim = (udid, name = udid) => ({udid, name})
+
+test('pickSimulator takes the only booted simulator', () => {
+	assert.equal(pickSimulator([sim('A')], undefined).udid, 'A')
+})
+
+test('pickSimulator takes the one named, booted or not among several', () => {
+	assert.equal(pickSimulator([sim('A'), sim('B')], 'B').udid, 'B')
+	assert.throws(() => pickSimulator([sim('A')], 'C'), /C is not booted/u)
+})
+
+// Several worktrees each boot their own; a run on the wrong one reinstalls
+// another session's app.
+test('pickSimulator refuses to guess among several', () => {
+	assert.throws(() => pickSimulator([sim('A'), sim('B')], undefined), /SIMULATOR_UDID/u)
+	assert.throws(() => pickSimulator([], undefined), /boot a simulator/u)
 })

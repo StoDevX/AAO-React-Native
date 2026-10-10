@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
-import {STATION_LIST, type StationId} from './stations'
+import {currentCampus} from '../../campus/store'
+import {STATION_LIST, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
 type RadioStore = {
@@ -75,6 +76,13 @@ function isRunning(playState: RadioPlayState): boolean {
  * station's logo and the station last viewed are persisted: a relaunch should
  * never start audio by itself.
  */
+/** `stationId` if the active campus offers it, or else that campus's first station. */
+function offeredOrFirst(stationId: StationId): StationId {
+	let offered = stationsOffered(currentCampus())
+	if (offered.some((station) => station.id === stationId)) return stationId
+	return offered[0]?.id ?? stationId
+}
+
 export const useRadioStore = create<RadioStore>()(
 	persist(
 		(set, get) => {
@@ -130,7 +138,7 @@ export const useRadioStore = create<RadioStore>()(
 				openSheet: (stationId) =>
 					set((state) => ({
 						sheetOpen: true,
-						viewedStationId: stationId ?? state.stationId ?? state.viewedStationId,
+						viewedStationId: stationId ?? state.stationId ?? offeredOrFirst(state.viewedStationId),
 					})),
 				closeSheet: () => set({sheetOpen: false, fullScheduleOpen: false}),
 				openFullSchedule: () => set({fullScheduleOpen: true}),

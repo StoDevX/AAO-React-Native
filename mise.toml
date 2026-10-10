@@ -420,10 +420,6 @@ run = "node scripts/make-crt-pixels.mjs"
 description = "Trace a logo into a custom SF Symbol in assets/symbols/"
 run = "node scripts/trace-symbol.mjs"
 
-[tasks."update-mess-fixtures"]
-description = "Re-record Olaf Messenger's UI-test fixtures from a run of its UI tests"
-run = "node scripts/update-mess-fixtures.mjs"
-
 [tasks."update-campus-fixtures"]
 description = "Re-record a campus's UI-test fixtures from a run of its campus tests"
 usage = '''

@@ -13,15 +13,6 @@ struct StreamingMediaScreen: Screen {
 		open(route: "/streaming-media", mountedWhen: mounted)
 	}
 
-
-
-	/// Pick a station in the player's segmented control, and wait for its Play.
-	@discardableResult
-	func pick(_ segment: String, expecting play: String) -> Self {
-		tap(app.buttons[segment], until: app.buttonLabelled(play), named: "the \(segment) segment")
-		return self
-	}
-
 	/// Tap a button labelled `label`, and wait for one labelled `marker`.
 	@discardableResult
 	func press(_ label: String, expecting marker: String) -> Self {
@@ -40,19 +31,6 @@ struct StreamingMediaScreen: Screen {
 		}
 		return self
 	}
-
-	/// Check each control that leaves the app is a link VoiceOver can name,
-	/// with a target of at least 44pt on each side.
-	@discardableResult
-	func checkLinks(_ labels: [String]) -> Self {
-		for label in labels {
-			XCTContext.runActivity(named: label) { _ in
-				checkTouchTarget(app.linkLabelled(label), named: "A link labelled \"\(label)\"")
-			}
-		}
-		return self
-	}
-
 
 	/// Open the Now Playing sheet from the bar, and wait for `play` in it.
 	@discardableResult
@@ -115,9 +93,12 @@ struct StreamingMediaScreen: Screen {
 
 	/// Drag across the logo, well past a tap's slop, and check it is still
 	/// the same logo: a scrub turns the record and must not count as a tap.
+	///
+	/// Found by label whatever its type: a station with one logo has none to
+	/// change to, so its record is an image rather than a button.
 	@discardableResult
 	func checkScrubKeepsLogo(_ label: String) -> Self {
-		let logo = app.buttonLabelled(label)
+		let logo = logoLabelled(label)
 		XCTAssertTrue(logo.waitUntilExists(timeout: 10), "\"\(label)\" should be showing before the scrub")
 
 		let start = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.25))
@@ -125,8 +106,12 @@ struct StreamingMediaScreen: Screen {
 		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
 
 		XCTAssertTrue(
-			app.buttonLabelled(label).waitUntilExists(timeout: 5),
+			logoLabelled(label).waitUntilExists(timeout: 5),
 			"A scrub should leave the logo as \"\(label)\"")
 		return self
+	}
+
+	private func logoLabelled(_ label: String) -> XCUIElement {
+		app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
 	}
 }

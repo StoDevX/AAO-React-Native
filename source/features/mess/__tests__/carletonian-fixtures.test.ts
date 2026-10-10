@@ -10,7 +10,7 @@ import {CARLETONIAN} from '../../../campuses/edu-carleton/paper'
 import {paperQueries} from '../query'
 
 // A campus run, as the Carleton UI tests are: its recordings answer the paper's requests.
-jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false, servesBundledFixtures: false}))
+jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 
 let client: QueryClient
 

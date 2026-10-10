@@ -1,0 +1,111 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"now": {
+			"anyOf": [
+				{
+					"type": "object",
+					"properties": {
+						"album": {
+							"type": "string"
+						},
+						"artist": {
+							"type": "string"
+						},
+						"duration": {
+							"type": "number"
+						},
+						"links": {
+							"type": "object",
+							"properties": {
+								"artwork": {
+									"type": "string"
+								},
+								"artwork_600": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"artwork",
+								"artwork_600"
+							]
+						},
+						"time": {
+							"type": "string"
+						},
+						"title": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"album",
+						"artist",
+						"duration",
+						"links",
+						"time",
+						"title"
+					]
+				},
+				{
+					"type": "null"
+				}
+			]
+		},
+		"recent": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"album": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"links": {
+						"type": "object",
+						"properties": {
+							"artwork": {
+								"type": "string"
+							},
+							"artwork_600": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"artwork",
+							"artwork_600"
+						]
+					},
+					"time": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"album",
+					"artist",
+					"duration",
+					"links",
+					"time",
+					"title"
+				]
+			}
+		},
+		"refreshSecs": {
+			"type": "number"
+		}
+	},
+	"required": [
+		"now",
+		"recent",
+		"refreshSecs"
+	]
+}

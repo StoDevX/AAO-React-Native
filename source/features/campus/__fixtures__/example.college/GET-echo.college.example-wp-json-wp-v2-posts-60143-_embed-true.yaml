@@ -1,0 +1,281 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/posts/60143?_embed=true
+json:
+  author: 2
+  comment_status: closed
+  date: '2026-03-20T13:00:00'
+  date_gmt: '2026-03-20T18:00:00'
+  featured_media: 70142
+  format: standard
+  id: 60143
+  link: https://echo.college.example/60143/variety/photo/photo-essay-treeline-in-fog/
+  modified: '2026-03-20T13:00:00'
+  modified_gmt: '2026-03-20T18:00:00'
+  ping_status: closed
+  slug: photo-essay-treeline-in-fog
+  status: publish
+  sticky: false
+  template: ''
+  type: post
+  _embedded:
+    author:
+      - code: rest_no_route
+        message: No route was found matching the URL and request method.
+        data:
+          status: 404
+    wp:featuredmedia:
+      - alt_text: ''
+        author: 2
+        date: '2026-03-20T13:00:00'
+        featured_media: 0
+        id: 70142
+        link: https://echo.college.example/60143/attachment/echo-70142/
+        media_type: image
+        mime_type: image/jpeg
+        slug: echo-70142
+        source_url: https://echo.college.example/wp-content/uploads/2026/03/echo-60143.jpg
+        type: attachment
+        _links:
+          about:
+            - href: https://echo.college.example/wp-json/wp/v2/types/attachment
+          author:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/users/2
+          collection:
+            - href: https://echo.college.example/wp-json/wp/v2/media
+          curies:
+            - href: https://api.w.org/{rel}
+              name: wp
+              templated: true
+          replies:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/comments?post=70142
+          self:
+            - href: https://echo.college.example/wp-json/wp/v2/media/70142
+              targetHints:
+                allow:
+                  - GET
+          wp:attached-to:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/posts/60143
+              id: 60143
+              post_type: post
+          wp:term:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/staff_name?post=70142
+              taxonomy: staff_name
+        caption:
+          rendered: ''
+        media_details:
+          file: echo-60143.jpg
+          filesize: 180000
+          height: 800
+          width: 1200
+          image_meta:
+            aperture: '0'
+            camera: ''
+            caption: ''
+            copyright: ''
+            created_timestamp: '0'
+            credit: ''
+            focal_length: '0'
+            iso: '0'
+            orientation: '0'
+            shutter_speed: '0'
+            title: ''
+            keywords: []
+          sizes:
+            1536x1536:
+              file: echo-60143-1536x1024.jpg
+              filesize: 314573
+              height: 1024
+              mime_type: image/jpeg
+              source_url: https://echo.college.example/wp-content/uploads/echo-60143-1536x1024.jpg
+              width: 1536
+            full:
+              file: echo-60143.jpg
+              height: 800
+              mime_type: image/jpeg
+              source_url: https://echo.college.example/wp-content/uploads/echo-60143.jpg
+              width: 1200
+            large:
+              file: echo-60143-1200x800.jpg
+              filesize: 192000
+              height: 800
+              mime_type: image/jpeg
+              source_url: https://echo.college.example/wp-content/uploads/echo-60143-1200x800.jpg
+              width: 1200
+            medium:
+              file: echo-60143-600x400.jpg
+              filesize: 48000
+              height: 400
+              mime_type: image/jpeg
+              source_url: https://echo.college.example/wp-content/uploads/echo-60143-600x400.jpg
+              width: 600
+            medium_large:
+              file: echo-60143-768x512.jpg
+              filesize: 78643
+              height: 512
+              mime_type: image/jpeg
+              source_url: https://echo.college.example/wp-content/uploads/echo-60143-768x512.jpg
+              width: 768
+            small:
+              file: echo-60143-300x200.jpg
+              filesize: 12000
+              height: 200
+              mime_type: image/jpeg
+              source_url: https://echo.college.example/wp-content/uploads/echo-60143-300x200.jpg
+              width: 300
+            thumbnail:
+              file: echo-60143-70x47.jpg
+              filesize: 658
+              height: 70
+              mime_type: image/jpeg
+              source_url: https://echo.college.example/wp-content/uploads/echo-60143-70x47.jpg
+              width: 70
+        title:
+          rendered: echo-70142
+    wp:term:
+      - - id: 63
+          link: https://echo.college.example/category/variety/photo/
+          name: Photo
+          slug: photo
+          taxonomy: category
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/categories
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/categories/63
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/posts?categories=63
+            up:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/categories/6
+        - id: 6
+          link: https://echo.college.example/category/variety/
+          name: Variety
+          slug: variety
+          taxonomy: category
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/categories
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/categories/6
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/posts?categories=6
+      - []
+      - - id: 504
+          link: https://echo.college.example/staff_name/tove-lindqvist/
+          name: Tove Lindqvist
+          slug: tove-lindqvist
+          taxonomy: staff_name
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_name
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_name/504
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=504
+              - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=504
+              - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=504
+  _links:
+    about:
+      - href: https://echo.college.example/wp-json/wp/v2/types/post
+    author:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/users/2
+    collection:
+      - href: https://echo.college.example/wp-json/wp/v2/posts
+    curies:
+      - href: https://api.w.org/{rel}
+        name: wp
+        templated: true
+    predecessor-version:
+      - href: https://echo.college.example/wp-json/wp/v2/posts/60143/revisions/60144
+        id: 60144
+    replies:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/comments?post=60143
+    self:
+      - href: https://echo.college.example/wp-json/wp/v2/posts/60143
+        targetHints:
+          allow:
+            - GET
+    version-history:
+      - count: 1
+        href: https://echo.college.example/wp-json/wp/v2/posts/60143/revisions
+    wp:attachment:
+      - href: https://echo.college.example/wp-json/wp/v2/media?parent=60143
+    wp:featuredmedia:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/media/70142
+    wp:term:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/categories?post=60143
+        taxonomy: category
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/tags?post=60143
+        taxonomy: post_tag
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60143
+        taxonomy: staff_name
+  categories:
+    - 63
+    - 6
+  class_list:
+    - post-60143
+    - post
+    - type-post
+    - status-publish
+    - format-standard
+    - hentry
+    - category-photo
+    - category-variety
+  content:
+    protected: false
+    rendered: |-
+      <p>A walk with a camera, and what it found.</p>
+      <figure class="wp-block-image size-large"><img src="https://echo.college.example/wp-content/uploads/photo-2-1.jpg" alt="" width="1200" height="800" /><figcaption>Treeline in Fog, frame 1.</figcaption></figure>
+      <figure class="wp-block-image size-large"><img src="https://echo.college.example/wp-content/uploads/photo-2-2.jpg" alt="" width="1200" height="800" /><figcaption>Treeline in Fog, frame 2.</figcaption></figure>
+      <figure class="wp-block-image size-large"><img src="https://echo.college.example/wp-content/uploads/photo-2-3.jpg" alt="" width="1200" height="800" /><figcaption>Treeline in Fog, frame 3.</figcaption></figure>
+  excerpt:
+    protected: false
+    rendered: |
+      <p>A walk with a camera, and what it found.</p>
+  guid:
+    rendered: https://echo.college.example/?p=60143
+  meta:
+    footnotes: ''
+  staff_name:
+    - 504
+  tags: []
+  title:
+    rendered: 'Photo Essay: Treeline in Fog'

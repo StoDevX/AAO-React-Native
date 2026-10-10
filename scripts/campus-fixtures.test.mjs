@@ -6,15 +6,35 @@ import {
 	campusFixtureFiles,
 	completeTecPages,
 	failedKeys,
+	fixtureFileName,
 	frozenDay,
 	LARGE_BODY_BYTES,
 	mergeCampusRecordings,
 	shiftCalendars,
+	summarizeKeys,
 	trimmedBody,
 } from './campus-fixtures.mjs'
 
 const line = (key, body, status = 200) =>
 	JSON.stringify({key, status, contentType: 'application/json', body})
+
+describe('fixtureFileName', () => {
+	it('names a request by its path', () => {
+		assert.equal(fixtureFileName('GET {server:edu.stolaf}/spaces/hours'), 'GET-spaces-hours.json')
+	})
+
+	// A file system refuses a name past 255 bytes, and a WordPress include list
+	// of a hundred ids runs well past that.
+	it('cuts a long name short, keeping two requests that differ apart', () => {
+		let ids = (from) => Array.from({length: 100}, (_, i) => from + i).join(',')
+		let a = fixtureFileName(`GET https://echo.college.example/media?include=${ids(70000)}`, '.yaml')
+		let b = fixtureFileName(`GET https://echo.college.example/media?include=${ids(70001)}`, '.yaml')
+		assert.ok(a.length <= 200, `${a.length} characters`)
+		assert.ok(a.endsWith('.yaml'))
+		assert.ok(a.startsWith('GET-echo.college.example-media-include-70000-70001'))
+		assert.notEqual(a, b)
+	})
+})
 
 describe('mergeCampusRecordings', () => {
 	it('keeps the last answer to each request, with keys in order', () => {
@@ -519,5 +539,11 @@ describe('frozenDay', () => {
 		} finally {
 			process.chdir(here)
 		}
+	})
+})
+
+describe('summarizeKeys', () => {
+	it('names the fixtures added and removed', () => {
+		assert.deepEqual(summarizeKeys({a: 1, b: 1}, {b: 2, c: 1}), {added: ['c'], removed: ['a']})
 	})
 })

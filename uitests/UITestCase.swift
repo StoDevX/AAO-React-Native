@@ -93,7 +93,7 @@ class UITestCaseUnbooted: XCTestCase {
 	}
 
 	/// Has the app record what it fetches, when the test runner was started with
-	/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1` -- as `mise run update-mess-fixtures` does.
+	/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1` -- as `mise run update-campus-fixtures` does.
 	func appendRecordFixturesIfAsked() {
 		if isRecordingFixtures {
 			app.launchArguments.append(TestIdentifiers.LaunchArguments.recordFixtures)

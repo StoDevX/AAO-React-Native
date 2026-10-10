@@ -1,18 +1,21 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleNewsTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	/// The paper opens By Issue on its grid of issues, and a real scroll down the grid pages
 	/// back through older issues.
-	func testOlafMessengerOpensOnTheIssueGridAndLoadsOlderPages() throws {
+	func testThePaperOpensOnTheIssueGridAndLoadsOlderPages() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.scrollIssues(untilAnIssueFrom: "2025")
 	}
 
 	/// A shelf's "All ›" opens the section's stories from its issue, and Back keeps the issue's
-	/// place. Under UI tests the second issue is the May 12 special edition, whose stories all
+	/// place. The Valley Echo's second issue is its May 5 special edition, whose stories all
 	/// sit in no print section, so its More grid sets them two to a row.
-	func testOlafMessengerIssuesListTheirSectionsAndGridTheRest() throws {
+	func testIssuesListTheirSectionsAndGridTheRest() throws {
 		let front = MessFrontPage(app: app).navigate()
 		front
 			.openNewestIssue()
