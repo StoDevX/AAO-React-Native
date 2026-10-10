@@ -44,7 +44,7 @@ import {
 	SCREEN_MARGIN,
 	TILE_SPACING,
 } from '../source/components/tile-layout'
-import {TileGrid} from '../source/components/tile-grid'
+import {TileGrid, useTileWidth} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
 import {visibleGroups} from '../source/features/home/groups'
 import {HomeListRows} from '../source/features/home/list-rows'
@@ -190,21 +190,22 @@ const NOTICE_FOOTER_MODIFIERS = [
 const GROUP_HEADING_INSET = 16
 
 /**
- * A tile group's heading on the tiled Home, styled like an inset-grouped
- * list's section header: footnote, secondary, uppercase, inset from the grid's edge.
+ * A tile group's heading on the tiled Home, styled like the section headers of
+ * an inset-grouped list, as Menus has them: headline, semibold, secondary,
+ * inset from the grid's edge.
  */
 function GroupHeading({title}: {title: string}): React.ReactNode {
 	return (
 		<Text
 			modifiers={[
-				font({textStyle: 'footnote'}),
+				font({textStyle: 'headline', weight: 'semibold'}),
 				foregroundStyle(c.secondaryLabel),
 				padding({horizontal: GROUP_HEADING_INSET, top: TILE_SPACING}),
 				accessibilityLabel(title),
 				accessibilityAddTraits(['isHeader']),
 			]}
 		>
-			{title.toLocaleUpperCase()}
+			{title}
 		</Text>
 	)
 }
@@ -238,6 +239,7 @@ export default function HomePage(): React.ReactNode {
 	let isDev = useIsDevMode()
 	let openView = useOpenView()
 	let {fontScale} = useWindowDimensions()
+	let tileWidth = useTileWidth(homeColumnsForFontScale(fontScale))
 	let layout = useHomeLayoutStore((state) => state.layout)
 	// The saved layout loads after the first render. Drawing before then would
 	// draw the default and jump.
@@ -365,7 +367,11 @@ export default function HomePage(): React.ReactNode {
 									items={views}
 									keyForItem={(view) => view.title}
 									renderItem={(view) => (
-										<HomeScreenButton onPress={() => openView(view)} view={view} />
+										<HomeScreenButton
+											width={tileWidth}
+											onPress={() => openView(view)}
+											view={view}
+										/>
 									)}
 								/>
 
@@ -382,6 +388,7 @@ export default function HomePage(): React.ReactNode {
 													label={`${view.title}, ${group.title}`}
 													onPress={() => openGroupView(view)}
 													view={view}
+													width={tileWidth}
 												/>
 											)}
 										/>
