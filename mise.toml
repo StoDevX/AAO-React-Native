@@ -388,22 +388,10 @@ run = "node scripts/bundle-data.mjs data/ docs/"
 description = "Build the DocC site from documentation/ into docs/documentation/"
 run = "scripts/build-docs.sh"
 
-[tasks."docs:preview"]
+[tasks."docs:serve"]
 description = "Build the DocC site and serve it at the path Pages serves it from"
 depends = ["docs"]
-# DocC bakes /AAO-React-Native/documentation into every link, so a server
-# rooted at docs/documentation finds none of the site's scripts or data and
-# shows a blank page. This roots one a level above a link of that name.
-run = """
-set -euo pipefail
-port="${PORT:-8000}"
-root="$(mktemp -d)"
-trap 'rm -rf "$root"' EXIT
-mkdir "$root/AAO-React-Native"
-ln -s "$PWD/docs/documentation" "$root/AAO-React-Native/documentation"
-echo "http://localhost:$port/AAO-React-Native/documentation/"
-python3 -m http.server "$port" --directory "$root"
-"""
+run = "scripts/serve-docs.sh"
 
 [tasks.images]
 description = "Convert images/<group>/source/ originals to the WebP files the app fetches"
