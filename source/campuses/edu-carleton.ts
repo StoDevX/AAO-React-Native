@@ -82,7 +82,7 @@ export const carleton = {
 	paper: CARLETONIAN,
 	// A Carleton install's starting picks: the CARLS tiles reached most.
 	quickActions: {defaults: ['Menus', 'Building Hours', 'SUMO', 'Convo']},
-	appIcons: {groups: ['CARLS'], default: 'carls-penguin'},
+	appIcons: {groups: ['CARLS', 'Windmill'], default: 'carls-penguin'},
 	about: carletonAbout,
 	// St. Olaf's server serves both campuses' notices; moving Carleton's onto its own is for later.
 	faqs: {server: 'edu.stolaf'},

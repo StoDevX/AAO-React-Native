@@ -6,18 +6,32 @@ import type {ConfigPlugin} from '@expo/config-plugins'
 import type {XcodeProject} from 'xcode'
 
 /**
- * The Icon Composer documents offered besides the primary, which `ios.icon`
- * names. Each document's name is the key `react-native-change-icon` passes to
- * `setAlternateIconName`.
+ * Every Icon Composer document in assets/. A variant bundles all but its
+ * primary as alternates; each document's name is the key
+ * `react-native-change-icon` passes to `setAlternateIconName`.
  */
-export const ALTERNATE_ICONS = ['old-main', 'windmill-sky', 'windmill-dawn', 'windmill-golden-hour']
+export const ICON_DOCUMENTS = [
+	'windmill',
+	'old-main',
+	'windmill-sky',
+	'windmill-dawn',
+	'windmill-golden-hour',
+]
 
 /**
  * App icon sets bundled as they are, with no `.icon` document, for an icon
  * whose tinted look adds nothing: each set costs one render per appearance it
  * lists. Each lives at assets/<name>.xcassets/<name>.appiconset.
  */
-export const STATIC_ALTERNATE_ICONS = ['old-main-retro', 'carls-penguin']
+export const STATIC_ICON_SETS = ['old-main-retro', 'carls-penguin']
+
+/** The documents and sets bundled as alternates beside `primary`: every one but it. */
+export function alternatesFor(primary: string): {documents: string[]; sets: string[]} {
+	return {
+		documents: ICON_DOCUMENTS.filter((name) => name !== primary),
+		sets: STATIC_ICON_SETS.filter((name) => name !== primary),
+	}
+}
 
 /** Where the tracked documents live, relative to the repository root. */
 const SOURCE_DIR = 'assets'
@@ -88,8 +102,12 @@ export function compressAppIcons(project: XcodeProject, targetName: string): Xco
 }
 
 /** Add each alternate's document to the app group and its Resources phase. */
-export function addAlternateIconResources(project: XcodeProject, groupName: string): XcodeProject {
-	for (let name of ALTERNATE_ICONS) {
+export function addAlternateIconResources(
+	project: XcodeProject,
+	groupName: string,
+	primary: string,
+): XcodeProject {
+	for (let name of alternatesFor(primary).documents) {
 		project = IOSConfig.XcodeUtils.addResourceFileToGroup({
 			filepath: join(groupName, `${name}.icon`),
 			groupName,
@@ -131,9 +149,14 @@ export function assertLayersPresent(projectRoot: string, documentPath: string): 
 	}
 }
 
-/** Copy each alternate's document, and each static icon set, from the repository into the native project. */
-export function copyAlternateIcons(projectRoot: string, destination: string): void {
-	for (let name of ALTERNATE_ICONS) {
+/** Copy each alternate's document, and each static alternate set, from the repository into the native project. */
+export function copyAlternateIcons(
+	projectRoot: string,
+	destination: string,
+	primary: string,
+): void {
+	let {documents, sets} = alternatesFor(primary)
+	for (let name of documents) {
 		let document = join(SOURCE_DIR, `${name}.icon`)
 		let source = join(projectRoot, document)
 		if (!existsSync(source)) {
@@ -145,7 +168,7 @@ export function copyAlternateIcons(projectRoot: string, destination: string): vo
 		cpSync(source, join(destination, `${name}.icon`), {recursive: true})
 	}
 
-	for (let name of STATIC_ALTERNATE_ICONS) {
+	for (let name of sets) {
 		let set = join(SOURCE_DIR, `${name}.xcassets`, `${name}.appiconset`)
 		let source = join(projectRoot, set)
 		if (!existsSync(source)) {
@@ -159,29 +182,45 @@ export function copyAlternateIcons(projectRoot: string, destination: string): vo
 
 /** What app.config.ts passes. */
 type Options = {
-	/**
-	 * Whether to bundle the alternates. CARLS ships none: its penguin is its
-	 * primary, and it offers no St. Olaf icon to switch to.
-	 */
-	alternates?: boolean
+	/** The variant's primary icon, `ios.icon`'s name, which is left out of the alternates. */
+	primary: string
+}
+
+/**
+ * The primary icon's name, checked against `icon`, the variant's `ios.icon`. A
+ * primary that `icon` does not name would leave the real app icon out of the
+ * alternates and bundle the named one twice.
+ */
+export function primaryFrom(icon: string | undefined, options: Options | void): string {
+	let primary = options?.primary
+	if (!primary) {
+		throw new Error(
+			"with-alternate-icons: pass the variant's primary icon, as `['./plugins/with-alternate-icons', {primary}]`.",
+		)
+	}
+	if (!icon?.endsWith(`/${primary}.icon`) && !icon?.includes(`/${primary}.appiconset/`)) {
+		throw new Error(
+			`with-alternate-icons: the primary icon is ${primary}, but ios.icon is ${icon ?? 'unset'}.`,
+		)
+	}
+	return primary
 }
 
 const withAlternateIcons: ConfigPlugin<Options | void> = (config, options) =>
 	withXcodeProject(config, (mod) => {
 		let {projectRoot, platformProjectRoot} = mod.modRequest
 		let groupName = mod.modRequest.projectName as string
+		let icon = config.ios?.icon
+		let primary = primaryFrom(typeof icon === 'string' ? icon : undefined, options)
 
 		// The primary is Expo's to copy, but it breaks the build the same way.
-		let primary = config.ios?.icon
-		if (typeof primary === 'string' && primary.endsWith('.icon')) {
-			assertLayersPresent(projectRoot, primary)
+		if (typeof icon === 'string' && icon.endsWith('.icon')) {
+			assertLayersPresent(projectRoot, icon)
 		}
 
-		if (options?.alternates ?? true) {
-			copyAlternateIcons(projectRoot, join(platformProjectRoot, groupName))
-			mod.modResults = addAlternateIconResources(mod.modResults, groupName)
-			mod.modResults = includeAllAppIcons(mod.modResults, APP_TARGET)
-		}
+		copyAlternateIcons(projectRoot, join(platformProjectRoot, groupName), primary)
+		mod.modResults = addAlternateIconResources(mod.modResults, groupName, primary)
+		mod.modResults = includeAllAppIcons(mod.modResults, APP_TARGET)
 		mod.modResults = compressAppIcons(mod.modResults, APP_TARGET)
 		return mod
 	})

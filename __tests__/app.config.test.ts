@@ -116,16 +116,20 @@ describe('app.config CARLS', () => {
 		expect(config.extra?.app).toBe('carls')
 	})
 
-	it('wears the penguin, and bundles none of All About Olaf’s icons', () => {
+	it('wears the penguin, and bundles every other icon as an alternate', () => {
 		let config = loadConfig('carls')
 		expect(config.ios?.icon).toMatch(/carls-penguin/u)
-		expect(config.plugins).toContainEqual(['./plugins/with-alternate-icons', {alternates: false}])
+		expect(config.plugins).toContainEqual([
+			'./plugins/with-alternate-icons',
+			{primary: 'carls-penguin'},
+		])
+		expect(config.extra?.primaryIcon).toBe('carls-penguin')
 	})
 
 	it.each(['aao', 'aao-dev'])('builds %s as All About Olaf', (variant) => {
 		let config = loadConfig(variant)
 		expect(config.extra?.app).toBe('aao')
-		expect(config.plugins).toContainEqual(['./plugins/with-alternate-icons', {alternates: true}])
+		expect(config.plugins).toContainEqual(['./plugins/with-alternate-icons', {primary: 'windmill'}])
 	})
 
 	it('throws on an unrecognised variant rather than building another app', () => {
