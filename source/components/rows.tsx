@@ -197,6 +197,8 @@ const ICON_SYMBOL_SIZE = 17
 
 type DisclosureRowProps = {
 	title: string
+	/** What VoiceOver reads in place of the title, for a row whose title alone is ambiguous. */
+	spokenTitle?: string
 	/**
 	 * One or more quieter lines under the title. Entries that are absent or
 	 * blank are dropped rather than drawn, so a caller can build the array
@@ -310,6 +312,7 @@ export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactN
 export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 	let {
 		title,
+		spokenTitle = title,
 		detail,
 		titleLines = 1,
 		detailLines,
@@ -338,8 +341,8 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 	let spokenDetail = status ? [...detailLinesOf(detail), status.text] : detail
 	let spokenLabel =
 		image && 'label' in image && image.label
-			? `${image.label}, ${rowLabel(title, spokenDetail)}`
-			: rowLabel(title, spokenDetail)
+			? `${image.label}, ${rowLabel(spokenTitle, spokenDetail)}`
+			: rowLabel(spokenTitle, spokenDetail)
 	let spokenTrailing = [hasBadge ? String(badge) : null, tag?.text].filter(Boolean)
 
 	let details = detailLinesOf(detail)

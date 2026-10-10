@@ -71,6 +71,7 @@ export type TelemetryEvent =
 	| {name: 'map.search.empty'; attributes: Record<string, never>}
 	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: CampusId}}
 	| {name: 'campus.picked'; attributes: {campus: CampusId}}
+	| {name: 'home.group.open'; attributes: {campus: CampusId}}
 	| {
 			name: 'calendar.add_to_device'
 			attributes: {result: 'saved' | 'cancelled' | 'error'; source: CalendarSourceId}
@@ -128,6 +129,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'map.search.empty': 'metric',
 	'map.group.open': 'metric',
 	'campus.picked': 'metric',
+	'home.group.open': 'metric',
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',

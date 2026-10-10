@@ -1,4 +1,7 @@
+import * as c from '@frogpond/colors'
+
 import {eventMapper} from '../features/streaming/radio/constants'
+
 import type {CampusDefinition} from './definition'
 import {stolafAbout} from './edu-stolaf/about'
 import {BUNDLED_DIRECTORIES, BUNDLED_HOURS} from './edu-stolaf/bundled'
@@ -27,7 +30,23 @@ export const stolaf = {
 			'Made with ❤️ in Northfield, MN',
 		],
 	},
-	home: {tiles: stolafHomeTiles},
+	home: {
+		tiles: stolafHomeTiles,
+		groups: [
+			{
+				title: 'Carleton College',
+				tiles: [
+					{
+						type: 'view',
+						view: '/edu.stolaf/menus-carleton',
+						title: 'Menus',
+						icon: 'fork.knife',
+						gradient: c.greenGradient,
+					},
+				],
+			},
+		],
+	},
 	support: {
 		emergency: [
 			{label: 'PubSafe', contact: 'PubSafe'},
