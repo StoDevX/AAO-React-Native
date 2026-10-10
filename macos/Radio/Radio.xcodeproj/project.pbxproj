@@ -1,0 +1,566 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1ECB9CE297886DDE8B518173 /* RadioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495DEFF622ABFCFCAE011C8D /* RadioTests.swift */; };
+		318C382FAC1A2061D5FFBF96 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2BE55D739AC7EF577206E0 /* SettingsView.swift */; };
+		3B2BE91A0C57FBEA33068499 /* RadioCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB26A7E75255E0FFF06D400 /* RadioCommands.swift */; };
+		3D2F9AC59EF0CFCDA31B67A1 /* RadioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675AA9930D875F76271FB142 /* RadioManager.swift */; };
+		487DF8637912008085937B57 /* RadioUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DB722F1C04748820FD3E6B /* RadioUITests.swift */; };
+		50C6365A65DC6A85C5AB5A24 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCC85540025DE258BF7D71B /* Station.swift */; };
+		6CA2265F6D8B169F30108FB4 /* MenuBarLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C7032C5EC9F1BBC3F10EC5 /* MenuBarLabel.swift */; };
+		845A180EB07BFF3C384E644A /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A169B554F1DED118864FE19 /* Styles.swift */; };
+		8B28B6EAADD13DC50B17C0BD /* NSApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF8FC011D0DAC6CE4592138 /* NSApplication+Extension.swift */; };
+		AFEFEF134325B804CDBD4DDC /* RadioMenuBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE3616894F19CB7497CACBF /* RadioMenuBarApp.swift */; };
+		B1FA0D274BB99EEE5A1E5D84 /* NowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F0D00042749667FA6407BCC /* NowPlaying.swift */; };
+		B2BF874BCCB14937F713AEF9 /* RadioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EBCEA2D151071DEB6F2A1FB /* RadioView.swift */; };
+		C947E2A55DFF7AB29F099A51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB61823EE980FFDA81AE5D7D /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		41C4BA074B41E46F6A43E0EB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB2075DAB119E92CC077C64B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79879A702BFC1272555CBA2D;
+			remoteInfo = Radio;
+		};
+		E31890441E7EEF7607D864D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB2075DAB119E92CC077C64B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79879A702BFC1272555CBA2D;
+			remoteInfo = Radio;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0C2BE55D739AC7EF577206E0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		0F0D00042749667FA6407BCC /* NowPlaying.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlaying.swift; sourceTree = "<group>"; };
+		107B7BFE2F9F012B5BF3EE97 /* Radio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Radio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		20DB722F1C04748820FD3E6B /* RadioUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioUITests.swift; sourceTree = "<group>"; };
+		2A169B554F1DED118864FE19 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
+		3EBCEA2D151071DEB6F2A1FB /* RadioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioView.swift; sourceTree = "<group>"; };
+		495DEFF622ABFCFCAE011C8D /* RadioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioTests.swift; sourceTree = "<group>"; };
+		4BF8FC011D0DAC6CE4592138 /* NSApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSApplication+Extension.swift"; sourceTree = "<group>"; };
+		675AA9930D875F76271FB142 /* RadioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioManager.swift; sourceTree = "<group>"; };
+		88C7032C5EC9F1BBC3F10EC5 /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
+		8CB26A7E75255E0FFF06D400 /* RadioCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioCommands.swift; sourceTree = "<group>"; };
+		901C24BADDC23DCE2E11D16C /* RadioUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RadioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAD561C99FFD3E29BC31393F /* RadioTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RadioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCE3616894F19CB7497CACBF /* RadioMenuBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioMenuBarApp.swift; sourceTree = "<group>"; };
+		CB61823EE980FFDA81AE5D7D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FFCC85540025DE258BF7D71B /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2E6B7245B88FB25073950B4B = {
+			isa = PBXGroup;
+			children = (
+				B190F9DD9BD8E6C9681CB524 /* Radio */,
+				4E73B44FB6B6011D06A9DDEA /* RadioTests */,
+				AD277A98312B0F0E39BE6094 /* RadioUITests */,
+				4EF3F828190695C047D3B043 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4E73B44FB6B6011D06A9DDEA /* RadioTests */ = {
+			isa = PBXGroup;
+			children = (
+				495DEFF622ABFCFCAE011C8D /* RadioTests.swift */,
+			);
+			path = RadioTests;
+			sourceTree = "<group>";
+		};
+		4EF3F828190695C047D3B043 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				107B7BFE2F9F012B5BF3EE97 /* Radio.app */,
+				AAD561C99FFD3E29BC31393F /* RadioTests.xctest */,
+				901C24BADDC23DCE2E11D16C /* RadioUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AD277A98312B0F0E39BE6094 /* RadioUITests */ = {
+			isa = PBXGroup;
+			children = (
+				20DB722F1C04748820FD3E6B /* RadioUITests.swift */,
+			);
+			path = RadioUITests;
+			sourceTree = "<group>";
+		};
+		B190F9DD9BD8E6C9681CB524 /* Radio */ = {
+			isa = PBXGroup;
+			children = (
+				CB61823EE980FFDA81AE5D7D /* Assets.xcassets */,
+				88C7032C5EC9F1BBC3F10EC5 /* MenuBarLabel.swift */,
+				0F0D00042749667FA6407BCC /* NowPlaying.swift */,
+				4BF8FC011D0DAC6CE4592138 /* NSApplication+Extension.swift */,
+				8CB26A7E75255E0FFF06D400 /* RadioCommands.swift */,
+				675AA9930D875F76271FB142 /* RadioManager.swift */,
+				BCE3616894F19CB7497CACBF /* RadioMenuBarApp.swift */,
+				3EBCEA2D151071DEB6F2A1FB /* RadioView.swift */,
+				0C2BE55D739AC7EF577206E0 /* SettingsView.swift */,
+				FFCC85540025DE258BF7D71B /* Station.swift */,
+				2A169B554F1DED118864FE19 /* Styles.swift */,
+			);
+			path = Radio;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5D5420CFB26B86B301A6478B /* RadioUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E90C3E76D73EB592EA91F48 /* Build configuration list for PBXNativeTarget "RadioUITests" */;
+			buildPhases = (
+				20EBFBA5009F3AC372316397 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E1147198EA15A0E8381FCBF /* PBXTargetDependency */,
+			);
+			name = RadioUITests;
+			packageProductDependencies = (
+			);
+			productName = RadioUITests;
+			productReference = 901C24BADDC23DCE2E11D16C /* RadioUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		64BFB24FBDC5AB2A9F717512 /* RadioTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B095B79AC581EBFADDC5793 /* Build configuration list for PBXNativeTarget "RadioTests" */;
+			buildPhases = (
+				A70E3F444B1326860136B917 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2B4A1ED2B5B2874CA0D6D9F9 /* PBXTargetDependency */,
+			);
+			name = RadioTests;
+			packageProductDependencies = (
+			);
+			productName = RadioTests;
+			productReference = AAD561C99FFD3E29BC31393F /* RadioTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		79879A702BFC1272555CBA2D /* Radio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53CA566D940569C8B87B1192 /* Build configuration list for PBXNativeTarget "Radio" */;
+			buildPhases = (
+				69B6D622D3D1AB1F2C434E09 /* Sources */,
+				2FF4319769F3AEA8B328CEDD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Radio;
+			packageProductDependencies = (
+			);
+			productName = Radio;
+			productReference = 107B7BFE2F9F012B5BF3EE97 /* Radio.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DB2075DAB119E92CC077C64B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					5D5420CFB26B86B301A6478B = {
+						DevelopmentTeam = NFMTHAZVS9;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 79879A702BFC1272555CBA2D;
+					};
+					64BFB24FBDC5AB2A9F717512 = {
+						DevelopmentTeam = NFMTHAZVS9;
+						ProvisioningStyle = Automatic;
+					};
+					79879A702BFC1272555CBA2D = {
+						DevelopmentTeam = NFMTHAZVS9;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1D049CF99C5B3132251541FE /* Build configuration list for PBXProject "Radio" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2E6B7245B88FB25073950B4B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4EF3F828190695C047D3B043 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				79879A702BFC1272555CBA2D /* Radio */,
+				64BFB24FBDC5AB2A9F717512 /* RadioTests */,
+				5D5420CFB26B86B301A6478B /* RadioUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2FF4319769F3AEA8B328CEDD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C947E2A55DFF7AB29F099A51 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		20EBFBA5009F3AC372316397 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				487DF8637912008085937B57 /* RadioUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69B6D622D3D1AB1F2C434E09 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6CA2265F6D8B169F30108FB4 /* MenuBarLabel.swift in Sources */,
+				8B28B6EAADD13DC50B17C0BD /* NSApplication+Extension.swift in Sources */,
+				B1FA0D274BB99EEE5A1E5D84 /* NowPlaying.swift in Sources */,
+				3B2BE91A0C57FBEA33068499 /* RadioCommands.swift in Sources */,
+				3D2F9AC59EF0CFCDA31B67A1 /* RadioManager.swift in Sources */,
+				AFEFEF134325B804CDBD4DDC /* RadioMenuBarApp.swift in Sources */,
+				B2BF874BCCB14937F713AEF9 /* RadioView.swift in Sources */,
+				318C382FAC1A2061D5FFBF96 /* SettingsView.swift in Sources */,
+				50C6365A65DC6A85C5AB5A24 /* Station.swift in Sources */,
+				845A180EB07BFF3C384E644A /* Styles.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A70E3F444B1326860136B917 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ECB9CE297886DDE8B518173 /* RadioTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2B4A1ED2B5B2874CA0D6D9F9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79879A702BFC1272555CBA2D /* Radio */;
+			targetProxy = 41C4BA074B41E46F6A43E0EB /* PBXContainerItemProxy */;
+		};
+		5E1147198EA15A0E8381FCBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79879A702BFC1272555CBA2D /* Radio */;
+			targetProxy = E31890441E7EEF7607D864D8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2EFBDEEB0E146068C2CA0756 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drewvolz.allaboutanything-radio";
+				SDKROOT = macosx;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+			};
+			name = Release;
+		};
+		3CADF7B348A70E0D08E5831B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drewvolz.allaboutanything-radioTests";
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Radio.app/Contents/MacOS/Radio";
+			};
+			name = Release;
+		};
+		4651E0120060FD1589D992DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = NFMTHAZVS9;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6FE3DD843675A1CA6D4536F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = NFMTHAZVS9;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7D27A172464F31E5EF968B3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drewvolz.allaboutanything-radioTests";
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Radio.app/Contents/MacOS/Radio";
+			};
+			name = Debug;
+		};
+		93FE7981FA6847277220BA69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drewvolz.allaboutanything-radioUITests";
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = Radio;
+			};
+			name = Debug;
+		};
+		AF016622DE9913C1FEF6D148 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drewvolz.allaboutanything-radioUITests";
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = Radio;
+			};
+			name = Release;
+		};
+		FEC5C2BC64D06A95B5B891BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drewvolz.allaboutanything-radio";
+				SDKROOT = macosx;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D049CF99C5B3132251541FE /* Build configuration list for PBXProject "Radio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6FE3DD843675A1CA6D4536F2 /* Debug */,
+				4651E0120060FD1589D992DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		53CA566D940569C8B87B1192 /* Build configuration list for PBXNativeTarget "Radio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FEC5C2BC64D06A95B5B891BB /* Debug */,
+				2EFBDEEB0E146068C2CA0756 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5B095B79AC581EBFADDC5793 /* Build configuration list for PBXNativeTarget "RadioTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D27A172464F31E5EF968B3D /* Debug */,
+				3CADF7B348A70E0D08E5831B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5E90C3E76D73EB592EA91F48 /* Build configuration list for PBXNativeTarget "RadioUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93FE7981FA6847277220BA69 /* Debug */,
+				AF016622DE9913C1FEF6D148 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DB2075DAB119E92CC077C64B /* Project object */;
+}
