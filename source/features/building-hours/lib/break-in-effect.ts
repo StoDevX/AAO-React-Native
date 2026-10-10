@@ -1,8 +1,5 @@
-import {
-	normalizeCalendarInterval,
-	type BreakCalendarResponse,
-	type ScheduleException,
-} from '@frogpond/schedules'
+import moment from 'moment-timezone'
+import type {BreakCalendarResponse, ScheduleException} from '@frogpond/schedules'
 import type {BuildingType, NamedBuildingScheduleType} from '../types'
 
 type BreakEntry = {
@@ -24,20 +21,21 @@ export function hasBreakSchedules(buildings: BuildingType<unknown>[]): boolean {
 
 /**
  * The breaks under way at `now`, shortest first: on Easter itself, a venue
- * with schedules for both Easter and Spring Break keeps Easter's. A break the
- * calendar cannot place is skipped rather than failing the whole list.
+ * with schedules for both Easter and Spring Break keeps Easter's. Dates are
+ * the calendar's own, in its timezone, and include both ends.
  */
 export function activeBreaks(calendar: BreakCalendarResponse, now: number): string[] {
-	let active: {key: string; days: number}[] = []
+	let today = moment.tz(now, calendar.data.timezone).format('YYYY-MM-DD')
+	let active: {key: string; length: number}[] = []
 	for (let [key, entry] of Object.entries(calendar.data.breaks)) {
-		try {
-			let {startMs, endMs, calendarDays} = normalizeCalendarInterval(entry, calendar.data.timezone)
-			if (startMs <= now && now < endMs) active.push({key, days: calendarDays})
-		} catch {
-			continue
+		let start = entry.date ?? entry.start
+		let end = entry.date ?? entry.end
+		if (start === undefined || end === undefined) continue
+		if (start <= today && today <= end) {
+			active.push({key, length: Date.parse(end) - Date.parse(start)})
 		}
 	}
-	return active.sort((a, b) => a.days - b.days).map(({key}) => key)
+	return active.sort((a, b) => a.length - b.length).map(({key}) => key)
 }
 
 /**
