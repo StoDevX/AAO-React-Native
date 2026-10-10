@@ -12,7 +12,7 @@ import {clientFor} from '@frogpond/api'
 import {HtmlContent, type HtmlContentHandle} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/developer/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/developer/api-test/util/highlight'
-import {JsonTree, type ExpandCommand} from '@frogpond/json-tree'
+import {JsonTree, useExpandCommand} from '@frogpond/json-tree'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
 import {useCampusId} from '../../../source/features/campus/store'
 import {carriesBody} from '../../../source/features/developer/api-test/util/method'
@@ -63,9 +63,7 @@ export default function APITestDetailPage(): React.ReactNode {
 
 	let campus = useCampusId()
 	let [displayMode, setDisplayMode] = React.useState<DisplayMode>('tree')
-	let [expand, setExpand] = React.useState<ExpandCommand>({mode: null, count: 0})
-	let expandAll = (mode: 'all' | 'none') =>
-		setExpand((current) => ({mode, count: current.count + 1}))
+	let [expand, expandAll] = useExpandCommand()
 
 	let {data, isLoading, error} = useQuery<ApiResponse | null, Error>({
 		queryKey: ['api-test', campus, method, path, request, sentAt],

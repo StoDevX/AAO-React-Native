@@ -55,6 +55,11 @@ describe('jsonLeaf', () => {
 		expect(jsonLeaf(false)).toEqual({text: 'false', kind: 'boolean'})
 		expect(jsonLeaf(null)).toEqual({text: 'null', kind: 'null'})
 	})
+
+	test('writes undefined as itself, not as null', () => {
+		// plain state can hold it, though JSON cannot
+		expect(jsonLeaf(undefined)).toEqual({text: 'undefined', kind: 'null'})
+	})
 })
 
 describe('startsOpen', () => {

@@ -22,7 +22,7 @@ export function jsonSummary(value: Record<string, unknown> | unknown[]): string 
 	return Array.isArray(value) ? `[${value.length}]` : `{${Object.keys(value).length}}`
 }
 
-/** A value that holds no others, as JSON writes it, with its kind for colour. */
+/** A value that holds no others, as JSON writes it (or `undefined`), with its kind for colour. */
 export function jsonLeaf(value: unknown): {
 	text: string
 	kind: 'string' | 'number' | 'boolean' | 'null'
@@ -33,7 +33,7 @@ export function jsonLeaf(value: unknown): {
 	if (typeof value === 'number' || typeof value === 'boolean') {
 		return {text: String(value), kind: typeof value === 'number' ? 'number' : 'boolean'}
 	}
-	return {text: 'null', kind: 'null'}
+	return {text: value === undefined ? 'undefined' : 'null', kind: 'null'}
 }
 
 /// The most values a group can hold, all the way down, and still start open:

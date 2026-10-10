@@ -1,1 +1,1 @@
-export {JsonTree, type ExpandCommand} from './json-tree'
+export {JsonTree, useExpandCommand, type ExpandCommand} from './json-tree'

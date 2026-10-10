@@ -27,6 +27,14 @@ export type ExpandCommand = {mode: 'all' | 'none' | null; count: number}
 
 const ExpandContext = React.createContext<ExpandCommand>({mode: null, count: 0})
 
+/** A screen's Expand All and Collapse All: the command to hand its tree, and how to give one. */
+export function useExpandCommand(): [ExpandCommand, (mode: 'all' | 'none') => void] {
+	let [expand, setExpand] = React.useState<ExpandCommand>({mode: null, count: 0})
+	let expandAll = (mode: 'all' | 'none') =>
+		setExpand((current) => ({mode, count: current.count + 1}))
+	return [expand, expandAll]
+}
+
 /// A colour for each kind of value, as JSON syntax highlighting usually colours them.
 const LEAF_COLORS: Record<ReturnType<typeof jsonLeaf>['kind'], ColorValue> = {
 	string: c.systemGreen,
