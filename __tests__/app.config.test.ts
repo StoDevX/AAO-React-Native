@@ -59,7 +59,7 @@ describe('app.config variants', () => {
 	// Unset builds nothing, so a forgotten variant cannot launch the other app.
 	it.each([undefined, ''])('refuses to build with APP_VARIANT %p', (variant) => {
 		expect(() => loadConfig(variant)).toThrow(
-			/APP_VARIANT is not set.*aao, aao-dev, carls, carls-dev/u,
+			/APP_VARIANT is not set.*aao, aao-dev, carls, carls-dev, aaa, aaa-dev/u,
 		)
 	})
 
@@ -73,7 +73,7 @@ describe('app.config variants', () => {
 	// `name` also names the generated Xcode project, its target, its scheme and
 	// its directory. It must not vary per variant: every plugin looks the
 	// AllAboutAnything target up by name.
-	it.each(['aao', 'aao-dev', 'carls', 'carls-dev'])(
+	it.each(['aao', 'aao-dev', 'carls', 'carls-dev', 'aaa', 'aaa-dev'])(
 		'keeps the Xcode project name fixed for %s',
 		(variant) => {
 			expect(loadConfig(variant).name).toBe('All About Anything')
@@ -96,7 +96,7 @@ describe('app.config variants', () => {
 	})
 
 	it('keeps every variant installable alongside the others', () => {
-		let variants = ['aao', 'aao-dev', 'carls', 'carls-dev']
+		let variants = ['aao', 'aao-dev', 'carls', 'carls-dev', 'aaa', 'aaa-dev']
 		let ids = variants.map((v) => loadConfig(v).ios?.bundleIdentifier)
 		expect(new Set(ids).size).toBe(variants.length)
 	})
@@ -175,11 +175,50 @@ describe('app.config link schemes', () => {
 })
 
 describe('app.config default campus', () => {
-	test("every variant's default campus is registered", () => {
+	test("every variant's default campus is registered, or none, to ask", () => {
 		// oxlint-disable-next-line typescript/no-require-imports
 		let {isCampusId} = require('../source/campuses') as typeof import('../source/campuses')
-		for (let variant of ['aao', 'aao-dev', 'carls', 'carls-dev']) {
-			expect(isCampusId(loadConfig(variant).extra?.defaultCampus)).toBe(true)
+		for (let variant of ['aao', 'aao-dev', 'carls', 'carls-dev', 'aaa', 'aaa-dev']) {
+			let campus = loadConfig(variant).extra?.defaultCampus
+			expect(campus === null || isCampusId(campus)).toBe(true)
 		}
+	})
+})
+
+describe('app.config All About Anything', () => {
+	it.each([
+		['aaa', 'tech.frogpond.allaboutanything', 'All About Anything', 'allaboutanything'],
+		['aaa-dev', 'tech.frogpond.allaboutanything.dev', 'AAA Dev', 'allaboutanythingDev'],
+	])('builds %s as All About Anything', (variant, bundleIdentifier, displayName, scheme) => {
+		let config = loadConfig(variant)
+		expect(config.ios?.bundleIdentifier).toBe(bundleIdentifier)
+		expect(config.ios?.infoPlist?.CFBundleDisplayName).toBe(displayName)
+		expect(config.scheme).toBe(scheme)
+		expect(config.extra?.app).toBe('aaa')
+		expect(config.extra?.defaultCampus).toBeNull()
+	})
+
+	it('wears Windmill (Sky), and bundles the other icons as alternates', () => {
+		let config = loadConfig('aaa')
+		expect(config.ios?.icon).toBe('./assets/windmill-sky.icon')
+		expect(config.plugins).toContainEqual([
+			'./plugins/with-alternate-icons',
+			{primary: 'windmill-sky'},
+		])
+	})
+})
+
+describe('app.config Sentry', () => {
+	it.each([
+		['aao', 'all-about-olaf'],
+		['carls', 'carls'],
+		['aaa', 'all-about-anything'],
+	])('sends %s to its own project, and hands the app its DSN', (variant, project) => {
+		let config = loadConfig(variant)
+		expect(config.plugins).toContainEqual([
+			'@sentry/react-native/expo',
+			{organization: 'frog-pond-labs', project},
+		])
+		expect(config.extra?.sentry?.dsn).toMatch(/^https:\/\/[0-9a-f]+@o524787\.ingest\./u)
 	})
 })

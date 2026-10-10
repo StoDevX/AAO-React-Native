@@ -1,13 +1,20 @@
 import Constants from 'expo-constants'
 
-/** Which app a build is: All About Olaf, or CARLS. */
-export type AppIdentity = 'aao' | 'carls'
+/** Which app a build is: All About Olaf, CARLS, or All About Anything. */
+export type AppIdentity = 'aao' | 'carls' | 'aaa'
+
+/** Whether `value` names an app. */
+function isAppIdentity(value: unknown): value is AppIdentity {
+	return value === 'aao' || value === 'carls' || value === 'aaa'
+}
 
 /**
  * The app this build is, as app.config.ts's `APP_VARIANT` chose it. Which
- * campus it opens on is DEFAULT_CAMPUS; dev mode switches campus in either.
+ * campus it opens on is DEFAULT_CAMPUS; dev mode switches campus in any.
  */
-export const APP: AppIdentity = Constants.expoConfig?.extra?.app === 'carls' ? 'carls' : 'aao'
+export const APP: AppIdentity = isAppIdentity(Constants.expoConfig?.extra?.app)
+	? Constants.expoConfig.extra.app
+	: 'aao'
 
 /**
  * The campus a fresh install opens on, as app.config.ts's variant names it, or

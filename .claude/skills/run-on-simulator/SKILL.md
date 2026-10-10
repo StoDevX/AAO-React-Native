@@ -268,6 +268,8 @@ prebuild — needs `APP_VARIANT`; app.config.ts has no default.
 | `aao-dev` | `NFMTHAZVS9.com.drewvolz.stolaf.dev` |
 | `carls` | `com.rives.carls` |
 | `carls-dev` | `com.rives.carls.dev` |
+| `aaa` | `tech.frogpond.allaboutanything` |
+| `aaa-dev` | `tech.frogpond.allaboutanything.dev` |
 
 The URL scheme matches the bundle id, so a dev-variant build wants
 `…stolaf.dev://…`. Two builds claiming one scheme is undefined behaviour,
