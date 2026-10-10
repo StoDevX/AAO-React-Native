@@ -18,19 +18,26 @@ export function HomeListRows({
 	views,
 	onOpen,
 	footer,
+	title,
 }: {
 	views: ViewType[]
 	onOpen: (view: ViewType) => void
 	footer?: React.ReactNode
+	/**
+	 * The section's heading, for a tile group. Each row's spoken label ends
+	 * with it, as a tile's does on the tiled Home.
+	 */
+	title?: string
 }): React.ReactNode {
 	return (
-		<Section footer={footer}>
+		<Section footer={footer} title={title}>
 			{views.map((view) => (
 				<DisclosureRow
 					key={view.title}
 					destination={opensInBrowser(view) ? 'external' : 'push'}
 					image={{...iconImage(view.icon), gradient: view.gradient}}
 					onPress={() => onOpen(view)}
+					spokenTitle={title ? `${view.title}, ${title}` : undefined}
 					title={view.title}
 				/>
 			))}

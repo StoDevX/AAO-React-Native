@@ -1,5 +1,8 @@
+import * as c from '@frogpond/colors'
+
 import {SUMO_SOURCE_ID, sumoEventMapper} from '../features/carleton/constants'
 import {eventMapper} from '../features/streaming/radio/constants'
+
 import type {CampusDefinition} from './definition'
 import {carletonAbout} from './edu-carleton/about'
 import {carletonHomeTiles} from './edu-carleton/home-tiles'
@@ -26,7 +29,23 @@ export const carleton = {
 			'Made with ❤️ in Northfield, MN',
 		],
 	},
-	home: {tiles: carletonHomeTiles},
+	home: {
+		tiles: carletonHomeTiles,
+		groups: [
+			{
+				title: 'St. Olaf College',
+				tiles: [
+					{
+						type: 'view',
+						view: '/edu.carleton/menus-stolaf',
+						title: 'Menus',
+						icon: 'fork.knife',
+						gradient: c.greenGradient,
+					},
+				],
+			},
+		],
+	},
 	support: {
 		emergency: [{label: 'Security', contact: 'Security Services'}],
 		// Carleton's ITS Helpdesk, which CARLS' Report a Problem screen offered.
