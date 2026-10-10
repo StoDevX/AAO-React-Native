@@ -481,37 +481,37 @@ struct TestIdentifiers {
 		/// A print section's shelf's "All ›", by the label VoiceOver reads.
 		static func allStories(in section: String) -> String { "All \(section)" }
 		/// The views the front page's menu offers, and the start of the menu button's label, which
-		/// names the view shown; in source/features/mess/front-page-screen.tsx.
+		/// names the view shown; in source/features/newspaper/front-page-screen.tsx.
 		static let latest = "Latest"
 		static let viewMenuPrefix = "More, "
 
-		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
+		/// The newest issue's tile and every other issue's, in source/features/newspaper/issue-grid.tsx.
 		static let topTile = "mess-top-tile"
 		static let issueTile = "mess-issue-tile"
 
-		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
+		/// A section the view menu offers, as source/features/newspaper/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
+		/// The lead story, and every card on a shelf, in source/features/newspaper/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
 		static let storyCard = "mess-story-card"
 
 		/// Each row of the More grid, the stories from no print section, in
-		/// source/features/mess/issue-page.tsx.
+		/// source/features/newspaper/issue-page.tsx.
 		static let moreGridRow = "mess-more-grid-row"
 
-		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
+		/// A section's column chips, each labelled with its column, in source/features/newspaper/section-page.tsx.
 		static let columnChip = "mess-column-chip"
 
 		/// Every row of a section's or column's stories starts with this, in
-		/// source/features/mess/story-list.tsx.
+		/// source/features/newspaper/story-list.tsx.
 		static let storyRowPrefix = "mess-row-"
 
-		/// The reader's headline, in source/features/mess/story-header.tsx.
+		/// The reader's headline, in source/features/newspaper/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
 		/// The section whose columns the Variety templates draw, and the columns the
-		/// tests open, as the section chips and column chips in source/features/mess/
+		/// tests open, as the section chips and column chips in source/features/newspaper/
 		/// name them. They are The Valley Echo's category names, in Wiki Monkeys'
 		/// fixtures.
 		static let varietySection = "Variety"
@@ -520,7 +520,7 @@ struct TestIdentifiers {
 		static let photoColumn = "Photo"
 
 		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
-		/// label begins, in source/features/mess/lib/horoscopes.ts.
+		/// label begins, in source/features/newspaper/lib/horoscopes.ts.
 		static let gemini = "Gemini"
 		static let leo = "Leo"
 		/// The last sign row, before a sign is picked and after Pisces is.
@@ -533,17 +533,17 @@ struct TestIdentifiers {
 		]
 
 		/// The framed comic or artwork that opens the zoom viewer, in
-		/// source/features/mess/image-view.tsx.
+		/// source/features/newspaper/image-view.tsx.
 		static let storyImage = "mess-story-image"
 
-		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
+		/// The zoom viewer's close button, in source/features/newspaper/image-viewer.tsx.
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
 
-		/// The picture inside the zoom viewer, in source/features/mess/image-viewer.tsx.
+		/// The picture inside the zoom viewer, in source/features/newspaper/image-viewer.tsx.
 		static let imageViewerImage = "mess-image-viewer-image"
 
-		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
+		/// Every thumbnail in a comic's series row, in source/features/newspaper/series-row.tsx.
 		static let seriesStory = "mess-series-story"
 	}
 
@@ -635,7 +635,7 @@ struct TestIdentifiers {
 	enum MessCustomize {
 		/// The sheet's host, set in app/newspaper/customize/index.tsx.
 		static let screen = "screen-mess-customize"
-		/// The Paper Stains picker, in source/features/mess/issue-stains-row.tsx.
+		/// The Paper Stains picker, in source/features/newspaper/issue-stains-row.tsx.
 		static let issueStains = "issue-stains"
 		/// The Dark page for Photo stories switch, in app/newspaper/customize/index.tsx.
 		static let keepPhotoStoriesDark = "keep-photo-stories-dark"

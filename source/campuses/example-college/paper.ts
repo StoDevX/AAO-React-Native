@@ -1,4 +1,4 @@
-import type {Paper} from '../../features/mess/campus-section'
+import type {Paper} from '../../features/newspaper/campus-section'
 
 /** Wiki Monkeys' student paper, read by the same reader as every paper. */
 export const VALLEY_ECHO: Paper = {

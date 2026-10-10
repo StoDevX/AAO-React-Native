@@ -5,7 +5,7 @@ import {describe, expect, test} from '@jest/globals'
 import {CAMPUSES, campusById} from '..'
 import {sectionForRoute} from '../../testing/route-sections'
 import {viewTarget} from '../../features/views'
-import {NEWSPAPER_ROUTES} from '../../features/mess/routes'
+import {NEWSPAPER_ROUTES} from '../../features/newspaper/routes'
 
 const APP = join(__dirname, '../../../app')
 

@@ -6,7 +6,7 @@ import type {ContactsSection, DirectorySection} from '../features/directory/camp
 import type {DictionarySection} from '../features/dictionary/campus-section'
 import type {NewsSection} from '../features/news/campus-section'
 import type {RadioSection} from '../features/streaming/radio/campus-section'
-import type {PaperSection} from '../features/mess/campus-section'
+import type {PaperSection} from '../features/newspaper/campus-section'
 import type {ConvosSection} from '../features/carleton/campus-section'
 import type {QuickActionsSection} from '../features/quick-actions/campus-section'
 import type {AppIconsSection} from '../features/customize/campus-section'

@@ -5,7 +5,7 @@
     ".mise/",
     "assets/*.icon/",
     "assets/0-source-icons/*.icon/",
-    "source/features/mess/__fixtures__/mess.json",
+    "source/features/newspaper/__fixtures__/mess.json",
     "source/features/campus/__fixtures__/*/*.json",
     "source/features/campus/__fixtures__/*/index.ts",
     "source/features/campus/__schemas__/*.json"
