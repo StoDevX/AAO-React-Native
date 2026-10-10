@@ -26,3 +26,11 @@ const CHANGING_METHODS = new Set(['DELETE', 'PUT', 'PATCH'])
 export function sendsWithoutAsking(method: string): boolean {
 	return !CHANGING_METHODS.has(method)
 }
+
+/// Methods whose request carries a body: a JSON one, in the API Tester.
+const BODY_METHODS = new Set(['POST', 'PUT', 'PATCH', 'QUERY'])
+
+/** Whether a request with this method sends a body. */
+export function carriesBody(method: string): boolean {
+	return BODY_METHODS.has(method)
+}

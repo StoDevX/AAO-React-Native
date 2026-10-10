@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {buildRequestPath, clientPath, requestLabel} from '../request-path'
+import {buildRequestPath, clientPath, pathParams, requestLabel} from '../request-path'
 
 describe('buildRequestPath', () => {
 	test('leaves a path without parameters alone', () => {
@@ -74,9 +74,19 @@ describe('requestLabel', () => {
 	})
 
 	test('tells requests to one path apart by their bodies', () => {
-		let label = (text: string) =>
-			requestLabel('/v1/util/html-to-md', {pathValues: {}, query: [], bodyValues: {text}})
-		expect(label('<b>a</b>')).toBe('/v1/util/html-to-md {"text":"<b>a</b>"}')
+		let label = (body: string) =>
+			requestLabel('/v1/util/html-to-md', {pathValues: {}, query: [], body})
+		expect(label('{"text": "<b>a</b>"}')).toBe('/v1/util/html-to-md {"text": "<b>a</b>"}')
 		expect(label('<b>a</b>')).not.toBe(label('<i>b</i>'))
+	})
+})
+
+describe('pathParams', () => {
+	test("names a path's params in order", () => {
+		expect(pathParams('/v1/news/mess/wp/v2/:resource/:id')).toEqual(['resource', 'id'])
+	})
+
+	test('finds none in a path without any', () => {
+		expect(pathParams('/v1/routes')).toEqual([])
 	})
 })

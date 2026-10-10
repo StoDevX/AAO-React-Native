@@ -4,6 +4,14 @@ export interface QueryRow {
 	value: string
 }
 
+/// A path param in a route's path, as the router writes it: `:cafeId`.
+const PATH_PARAM = /:([A-Za-z0-9_]+)/gu
+
+/** The params a route's path takes, in order: `['resource', 'id']`. */
+export function pathParams(path: string): string[] {
+	return [...path.matchAll(PATH_PARAM)].map((match) => match[1] ?? '')
+}
+
 /**
  * The path a request is sent to: each `:param` in the route's path filled
  * with its value, then the query rows appended in order. A parameter with no
@@ -15,7 +23,7 @@ export function buildRequestPath(
 	pathValues: Record<string, string>,
 	query: QueryRow[],
 ): string {
-	let filled = path.replaceAll(/:([A-Za-z0-9_]+)/gu, (placeholder, name: string) => {
+	let filled = path.replaceAll(PATH_PARAM, (placeholder, name: string) => {
 		let value = pathValues[name]?.trim()
 		return value ? encodeURIComponent(value) : placeholder
 	})
@@ -46,9 +54,9 @@ export function requestLabel(
 	request: {
 		pathValues: Record<string, string>
 		query: QueryRow[]
-		bodyValues?: Record<string, string>
+		body?: string
 	},
 ): string {
 	let built = buildRequestPath(path, request.pathValues, request.query)
-	return request.bodyValues ? `${built} ${JSON.stringify(request.bodyValues)}` : built
+	return request.body ? `${built} ${request.body}` : built
 }

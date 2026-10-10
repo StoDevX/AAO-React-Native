@@ -1,15 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {groupRoutes, type RouteInput, type ServerRoute} from '../query'
+import {groupRoutes, type ServerRoute} from '../query'
 
-function route(path: string, methods: string[], inputs: RouteInput[] = []): ServerRoute {
-	return {
-		path,
-		displayName: path.replace(/^\/v1\//u, ''),
-		methods,
-		params: inputs.filter((input) => input.in === 'path').map((input) => input.name),
-		inputs,
-	}
+function route(path: string, methods: string[], params: string[] = []): ServerRoute {
+	return {path, displayName: path.replace(/^\/v1\//u, ''), methods, params}
 }
 
 describe('groupRoutes', () => {
@@ -27,20 +21,12 @@ describe('groupRoutes', () => {
 	})
 
 	test("keeps the route's path, display name and path parameters on each entry", () => {
-		let [section] = groupRoutes([
-			route('/v1/food/menu/:cafeId', ['GET'], [{name: 'cafeId', in: 'path', required: true}]),
-		])
+		let [section] = groupRoutes([route('/v1/food/menu/:cafeId', ['GET'], ['cafeId'])])
 		expect(section?.data[0]).toMatchObject({
 			path: '/v1/food/menu/:cafeId',
 			displayName: 'food/menu/:cafeId',
 			params: ['cafeId'],
 		})
-	})
-
-	test("keeps the route's inputs on each of its entries", () => {
-		let cafeId: RouteInput = {name: 'cafeId', in: 'path', required: true}
-		let [section] = groupRoutes([route('/v1/food/menu/:cafeId', ['GET'], [cafeId])])
-		expect(section?.data[0]?.inputs).toEqual([cafeId])
 	})
 
 	test("groups entries under their path's first segment", () => {

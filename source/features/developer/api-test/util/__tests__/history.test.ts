@@ -49,20 +49,20 @@ describe('recordRequest', () => {
 		expect(recentRequests(history, google)).toEqual([withId('a')])
 	})
 
-	test('remembers a request whose only values are in its body', () => {
-		let html = {pathValues: {}, query: [], bodyValues: {text: '<b>hi</b>'}}
+	test('remembers a request whose only value is its body', () => {
+		let html = {pathValues: {}, query: [], body: '{"text": "<b>hi</b>"}'}
 		expect(
 			recentRequests(
-				recordRequest([], 'POST /v1/util/html-to-md', html),
-				'POST /v1/util/html-to-md',
+				recordRequest([], 'QUERY /v1/util/html-to-md', html),
+				'QUERY /v1/util/html-to-md',
 			),
 		).toEqual([html])
 	})
 
 	test('treats requests whose bodies differ as different requests', () => {
-		let route = 'POST /v1/util/html-to-md'
-		let history = recordRequest([], route, {pathValues: {}, query: [], bodyValues: {text: 'a'}})
-		history = recordRequest(history, route, {pathValues: {}, query: [], bodyValues: {text: 'b'}})
+		let route = 'QUERY /v1/util/html-to-md'
+		let history = recordRequest([], route, {pathValues: {}, query: [], body: '{"text": "a"}'})
+		history = recordRequest(history, route, {pathValues: {}, query: [], body: '{"text": "b"}'})
 		expect(recentRequests(history, route)).toHaveLength(2)
 	})
 

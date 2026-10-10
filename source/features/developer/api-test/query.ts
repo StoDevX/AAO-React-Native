@@ -7,26 +7,11 @@ export const keys = {
 	all: (campus: CampusId) => ['routes', campus] as const,
 }
 
-/** One thing a route reads from its request, as the server's sitemap describes it. */
-export interface RouteInput {
-	name: string
-	/** Where it goes: the path, the query string, or a field of a JSON body. */
-	in: 'path' | 'query' | 'body'
-	required: boolean
-	/** The complete set of accepted values. */
-	values?: {value: string; label?: string}[]
-	/** Known-good values for a free-form input. */
-	examples?: string[]
-	/** A hint for entry: a date placeholder for `date`, a number pad for `integer`. */
-	format?: 'date' | 'integer'
-}
-
 export interface ServerRoute {
 	displayName: string
 	path: string
 	methods: string[]
 	params: string[]
-	inputs: RouteInput[]
 }
 
 /** One method on one route: what a row in the API Tester sends. */
@@ -37,8 +22,6 @@ export interface RouteEntry {
 	path: string
 	displayName: string
 	params: string[]
-	/** What the route reads from a request. */
-	inputs: RouteInput[]
 }
 
 const SITEMAP_PATH = '/v1/routes'
@@ -69,7 +52,6 @@ export function groupRoutes(routes: ServerRoute[]): {title: string; data: RouteE
 				path,
 				displayName: route.displayName,
 				params: route.params,
-				inputs: route.inputs,
 			}
 		}),
 	)

@@ -15,6 +15,7 @@ import {syntaxHighlight} from '../../../source/features/developer/api-test/util/
 import {JsonTree, type ExpandCommand} from '@frogpond/json-tree'
 import {parseBody} from '../../../source/features/developer/api-test/util/parse-body'
 import {useCampusId} from '../../../source/features/campus/store'
+import {carriesBody} from '../../../source/features/developer/api-test/util/method'
 import {clientPath} from '../../../source/features/developer/api-test/util/request-path'
 import {routeParam} from '../../../source/features/developer/api-test/util/route-param'
 import {startingRequest} from '../../../source/features/developer/api-test/util/inputs'
@@ -76,14 +77,14 @@ export default function APITestDetailPage(): React.ReactNode {
 			// confirmed DELETE or POST goes out once: ky would retry a DELETE on a
 			// 5xx, as the query would on a failure, focus or reconnect.
 			// a body only goes with a method that can carry one
-			let body = method === 'GET' ? undefined : startingRequest(request, [])?.bodyValues
+			let body = carriesBody(method) ? startingRequest(request, [])?.body : undefined
 			// The API Tester asks the server of the campus dev mode is on.
 			let response = await clientFor(campus)(clientPath(path), {
 				method,
 				signal,
 				throwHttpErrors: false,
 				retry: 0,
-				...(body ? {json: body} : {}),
+				...(body ? {body, headers: {'content-type': 'application/json'}} : {}),
 			})
 			let {status, statusText} = response
 			let contentType = response.headers.get('content-type') ?? ''

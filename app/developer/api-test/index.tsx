@@ -110,7 +110,7 @@ export default function APITestPage(): React.ReactNode {
 										<ContextMenu key={route.key}>
 											<ContextMenu.Trigger>
 												<DisclosureRow
-													detail={inputSummary(route.inputs)}
+													detail={inputSummary(route.params)}
 													onPress={() => openRoute(route)}
 													tag={{text: route.method, color: methodColor(route.method)}}
 													title={route.displayName}
