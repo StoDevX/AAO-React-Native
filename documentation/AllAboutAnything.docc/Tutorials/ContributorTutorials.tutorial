@@ -1,0 +1,13 @@
+@Tutorials(name: "Contributor tutorials") {
+    @Intro(title: "Contribute to All About Olaf") {
+        Step-by-step lessons with a code pane beside the text.
+    }
+
+    @Chapter(name: "Your first change") {
+        This is a **tutorial table of contents** with chapters.
+
+        @Image(source: chapter.svg, alt: "Placeholder")
+
+        @TutorialReference(tutorial: "doc:AddAScreen")
+    }
+}
