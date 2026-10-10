@@ -13,7 +13,8 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {imageLabel, picturePlace} from './lib/byline'
 import {faded, printShadow} from './palette'
-import {usePaper} from './paper-context'
+import {usePaperCampus} from './paper-context'
+import {NEWSPAPER_ROUTES} from './routes'
 import {RemotePhoto} from './remote-photo'
 import type {MessStory, Photo} from './types'
 
@@ -49,7 +50,7 @@ export function ViewerButton({
 	children,
 }: ViewerButtonProps): React.ReactNode {
 	let router = useRouter()
-	let {routes} = usePaper()
+	let campus = usePaperCampus()
 	return (
 		<Button
 			modifiers={[
@@ -59,7 +60,9 @@ export function ViewerButton({
 				accessibilityIdentifier(identifier),
 				contentShape(shapes.rectangle()),
 			]}
-			onPress={() => router.navigate({pathname: routes.image, params})}
+			onPress={() =>
+				router.navigate({pathname: NEWSPAPER_ROUTES.image, params: {...params, campus}})
+			}
 		>
 			{children}
 		</Button>

@@ -261,11 +261,11 @@ export function mergeCampusRecordings(lines, {allowLarge = false} = {}) {
 	)
 }
 
-/** A request's file name: its method and where it went, as a path-safe slug. */
-function fileName(key) {
+/** A request's file name: its method and where it went, as a path-safe slug, ending in `ext`. */
+export function fixtureFileName(key, ext = '.json') {
 	let [method, target] = key.split(' ')
 	let where = target.replace(/^\{server:[^}]+\}\//u, '').replace(/^https?:\/\//u, '')
-	return `${method}-${where.replaceAll(/[^\w.]+/gu, '-').replaceAll(/^-|-$/gu, '')}.json`
+	return `${method}-${where.replaceAll(/[^\w.]+/gu, '-').replaceAll(/^-|-$/gu, '')}${ext}`
 }
 
 /** Whether a content type is JSON's. */
@@ -294,8 +294,10 @@ function sortKeys(value) {
 export function campusFixtureFiles(table) {
 	let files = {}
 	for (let [key, {status, contentType, body}] of Object.entries(table)) {
-		let name = fileName(key)
-		for (let n = 2; name in files; n++) name = fileName(key).replace(/\.json$/u, `-${n}.json`)
+		let name = fixtureFileName(key)
+		for (let n = 2; name in files; n++) {
+			name = fixtureFileName(key).replace(/\.json$/u, `-${n}.json`)
+		}
 		let answer = {text: body}
 		if (isJson(contentType)) {
 			try {
@@ -306,15 +308,23 @@ export function campusFixtureFiles(table) {
 		}
 		files[name] = `${JSON.stringify(sortKeys({key, status, contentType, ...answer}), null, '\t')}\n`
 	}
-	let names = Object.keys(files).sort()
-	let index = [
+	let index = fixtureIndex(
+		Object.keys(files),
 		'// Written by `mise run update-campus-fixtures`; rerecord rather than edit.',
-		...names.map((name, i) => `import f${i} from './${name}'`),
+	)
+	return {files, index}
+}
+
+/** An index importing `names` (sorted), with `header` as its first line. Metro cannot read a folder, only imports. */
+export function fixtureIndex(names, header) {
+	let sorted = [...names].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
+	return [
+		header,
+		...sorted.map((name, i) => `import f${i} from './${name}'`),
 		'',
-		`export default [${names.map((_, i) => `f${i}`).join(', ')}]`,
+		`export default [${sorted.map((_, i) => `f${i}`).join(', ')}]`,
 		'',
 	].join('\n')
-	return {files, index}
 }
 
 /** The UI tests' frozen day, read from `UITEST_FROZEN_DATE` so the two cannot drift. */

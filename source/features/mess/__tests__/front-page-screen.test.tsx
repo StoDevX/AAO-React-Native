@@ -213,10 +213,10 @@ describe('FrontPageScreen', () => {
 	})
 
 	test.each([
-		['Contact', '/messenger/about', 'By Issue'],
-		['Contact', '/messenger/about', 'Latest'],
-		['Staff', '/messenger/staff', 'By Issue'],
-		['Staff', '/messenger/staff', 'Latest'],
+		['Contact', '/newspaper/about', 'By Issue'],
+		['Contact', '/newspaper/about', 'Latest'],
+		['Staff', '/newspaper/staff', 'By Issue'],
+		['Staff', '/newspaper/staff', 'Latest'],
 	])("opens the paper's %s page, %s, from the menu in %s", async (item, route, view) => {
 		seedTop()
 		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
@@ -225,7 +225,7 @@ describe('FrontPageScreen', () => {
 
 		await fireEvent.press(menuItem(item))
 
-		expect(mockNavigate).toHaveBeenCalledWith(route)
+		expect(mockNavigate).toHaveBeenCalledWith({pathname: route, params: {campus: 'edu.stolaf'}})
 		// The page is not a view, so choosing it leaves the view as it was.
 		expect(savedChoice()).toBe(view)
 	})
@@ -241,7 +241,10 @@ describe('FrontPageScreen', () => {
 			expect(screen.queryByRole('menuitem', {name: 'Customize'})).toBeNull()
 			await fireEvent.press(screen.getByLabelText('Customize'))
 
-			expect(mockNavigate).toHaveBeenCalledWith('/messenger/customize')
+			expect(mockNavigate).toHaveBeenCalledWith({
+				pathname: '/newspaper/customize',
+				params: {campus: 'edu.stolaf'},
+			})
 			expect(savedChoice()).toBe(view)
 		},
 	)
@@ -330,8 +333,8 @@ describe('FrontPageScreen', () => {
 		await fireEvent.press(screen.getByTestId(TOP_TILE_ID))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/issue',
-			params: {key: 'week:2026-04-27'},
+			pathname: '/newspaper/issue',
+			params: {campus: 'edu.stolaf', key: 'week:2026-04-27'},
 		})
 	})
 

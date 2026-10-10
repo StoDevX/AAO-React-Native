@@ -1,0 +1,53 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"authors": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			},
+			"categories": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			},
+			"content": {
+				"type": "string"
+			},
+			"datePublished": {
+				"type": "string"
+			},
+			"excerpt": {
+				"type": "string"
+			},
+			"featuredImage": {
+				"type": [
+					"string",
+					"null"
+				]
+			},
+			"link": {
+				"type": "string"
+			},
+			"title": {
+				"type": "string"
+			}
+		},
+		"required": [
+			"authors",
+			"categories",
+			"content",
+			"datePublished",
+			"excerpt",
+			"featuredImage",
+			"link",
+			"title"
+		]
+	}
+}

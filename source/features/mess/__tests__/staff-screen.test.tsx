@@ -95,8 +95,8 @@ describe('StaffScreen', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Soren Gjesfjeld'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/staff/[id]',
-			params: {id: String(SOREN?.id)},
+			pathname: '/newspaper/staff/[id]',
+			params: {campus: 'edu.stolaf', id: String(SOREN?.id)},
 		})
 	})
 

@@ -712,8 +712,8 @@ describe('StoryScreen', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36819'},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36819'},
 		})
 	})
 
@@ -746,8 +746,8 @@ describe('StoryScreen', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Students deliver the petition.'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36948', url: LEAD_PHOTO.url},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36948', url: LEAD_PHOTO.url},
 		})
 	})
 
@@ -757,8 +757,8 @@ describe('StoryScreen', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'The petition, signed.'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36948', url: FIGURE_URL},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36948', url: FIGURE_URL},
 		})
 	})
 
@@ -777,8 +777,8 @@ describe('StoryScreen', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36238', url: GALLERY_COVER.url},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36238', url: GALLERY_COVER.url},
 		})
 	})
 
@@ -794,8 +794,8 @@ describe('StoryScreen', () => {
 			}),
 		)
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36238', url: GALLERY_PHOTOS[0]?.url},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36238', url: GALLERY_PHOTOS[0]?.url},
 		})
 	})
 
@@ -809,8 +809,8 @@ describe('StoryScreen', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '36948', url: BARE_FIGURE_URL},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '36948', url: BARE_FIGURE_URL},
 		})
 	})
 
@@ -899,8 +899,8 @@ describe('StoryScreen', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Anna Weimholt ’22'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '30713', url: PLAYLIST_PHOTO.url},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '30713', url: PLAYLIST_PHOTO.url},
 		})
 	})
 
@@ -1073,8 +1073,8 @@ describe('StoryScreen', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/messenger/image',
-			params: {id: '33129', index: '1'},
+			pathname: '/newspaper/image',
+			params: {campus: 'edu.stolaf', id: '33129', index: '1'},
 		})
 	})
 

@@ -1,0 +1,60 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"data": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"building": {
+						"type": "string"
+					},
+					"floors": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"entries": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"name": {
+												"type": "string"
+											},
+											"room": {
+												"type": "string"
+											},
+											"venue": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"name"
+										]
+									}
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"entries",
+								"name"
+							]
+						}
+					}
+				},
+				"required": [
+					"building",
+					"floors"
+				]
+			}
+		}
+	},
+	"required": [
+		"data"
+	]
+}

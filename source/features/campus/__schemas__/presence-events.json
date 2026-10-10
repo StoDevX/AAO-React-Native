@@ -1,0 +1,47 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"description": {
+				"type": "string"
+			},
+			"endDateTimeUtc": {
+				"type": "string"
+			},
+			"eventName": {
+				"type": "string"
+			},
+			"hasCoverImage": {
+				"type": "boolean"
+			},
+			"location": {
+				"type": "string"
+			},
+			"organizationName": {
+				"type": "string"
+			},
+			"photoUriWithVersion": {
+				"type": "string"
+			},
+			"startDateTimeUtc": {
+				"type": "string"
+			},
+			"uri": {
+				"type": "string"
+			}
+		},
+		"required": [
+			"endDateTimeUtc",
+			"eventName",
+			"hasCoverImage",
+			"location",
+			"organizationName",
+			"photoUriWithVersion",
+			"startDateTimeUtc",
+			"uri"
+		]
+	}
+}

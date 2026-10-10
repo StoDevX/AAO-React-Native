@@ -1,0 +1,117 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:edu.stolaf}/sources
+json:
+  subject: https://college.example
+  links:
+    - rel: https://frogpond.tech/rel/news
+      href: https://echo.college.example/wp-json/wp/v2/posts?per_page=50&_embed=true
+      type: application/vnd.wordpress.v2.posts+json
+      titles:
+        und: The Valley Echo
+      properties:
+        https://frogpond.tech/ns/id: valley-echo
+    - rel: https://frogpond.tech/rel/a-to-z
+      href: a-to-z/named/wiki-monkeys
+      type: application/vnd.stolaf.a-z+json
+      titles:
+        und: A–Z Index
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/calendar
+      href: calendar/named/wiki-monkeys
+      type: application/vnd.frogpond.events+json
+      titles:
+        und: Wiki Monkeys
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/calendar
+      href: calendar/named/kmnk-schedule
+      type: application/vnd.frogpond.events+json
+      titles:
+        und: KMNK Schedule
+      properties:
+        https://frogpond.tech/ns/id: kmnk-schedule
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/org-categories
+      href: orgs/named/wiki-monkeys/category-styles
+      type: application/vnd.frogpond.org-categories+json
+      titles:
+        und: Student Org Categories
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/map-categories
+      href: map/named/wiki-monkeys/categories
+      type: application/vnd.frogpond.map-categories+json
+      titles:
+        und: Map Categories
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/student-work-areas
+      href: student-work/named/wiki-monkeys/areas
+      type: application/vnd.frogpond.student-work-areas+json
+      titles:
+        und: Student Work Areas
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/student-wages
+      href: student-work/named/wiki-monkeys/wages
+      type: application/vnd.frogpond.student-wages+json
+      titles:
+        und: Student Wages
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/student-work-units
+      href: student-work/named/wiki-monkeys/units
+      type: application/vnd.frogpond.student-work-units+json
+      titles:
+        und: Student Work Units
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/map-style
+      href: map/named/wiki-monkeys/style
+      type: application/vnd.maplibre.style+json
+      titles:
+        und: Valley Basemap
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys-light
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/map-style
+      href: map/named/wiki-monkeys/style-dark
+      type: application/vnd.maplibre.style+json
+      titles:
+        und: Valley Basemap (Dark)
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys-dark
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/course-catalog
+      href: courses/named/wiki-monkeys/catalog.db
+      type: application/vnd.sqlite3
+      titles:
+        und: Course Catalog
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/radio-stream
+      href: radio/named/kmnk
+      type: application/vnd.apple.mpegurl
+      titles:
+        und: KMNK 91.7, The Peak
+      properties:
+        https://frogpond.tech/ns/id: kmnk
+        https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/radio-now-playing
+      href: radio/named/kmnk/now-playing
+      type: application/vnd.metaradio.stationnow+json
+      titles:
+        und: KMNK Now Playing
+      properties:
+        https://frogpond.tech/ns/id: kmnk
+        https://frogpond.tech/ns/campus: example.college

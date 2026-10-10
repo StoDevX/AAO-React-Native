@@ -1,28 +1,43 @@
 import * as React from 'react'
 
+import type {CampusId} from '../../campuses'
 import type {Paper} from './campus-section'
 
-/** The paper the reader's screens show, which each paper's route files provide. */
-const PaperContext = React.createContext<Paper | null>(null)
+type PaperOnCampus = {paper: Paper; campus: CampusId}
 
-/** Shows `children` as screens of `paper`. */
+/** The paper the reader's screens show, and its campus, which `newspaperRoute` provides. */
+const PaperContext = React.createContext<PaperOnCampus | null>(null)
+
+/** Shows `children` as screens of `campus`'s `paper`. */
 export function PaperProvider({
 	paper,
+	campus,
 	children,
 }: {
 	paper: Paper
+	campus: CampusId
 	children: React.ReactNode
 }): React.ReactNode {
-	return <PaperContext value={paper}>{children}</PaperContext>
+	let value = React.useMemo(() => ({paper, campus}), [paper, campus])
+	return <PaperContext value={value}>{children}</PaperContext>
 }
 
-/** The paper the screen shows. Throws for a screen no route wrapped in a `PaperProvider`. */
-export function usePaper(): Paper {
-	let paper = React.useContext(PaperContext)
-	if (!paper) {
+function usePaperContext(): PaperOnCampus {
+	let value = React.useContext(PaperContext)
+	if (!value) {
 		throw new Error(
 			"A paper's screen rendered outside a PaperProvider; its route file provides one",
 		)
 	}
-	return paper
+	return value
+}
+
+/** The paper the screen shows. Throws for a screen no route wrapped in a `PaperProvider`. */
+export function usePaper(): Paper {
+	return usePaperContext().paper
+}
+
+/** The campus whose paper the screen shows; every link inside the reader carries it. */
+export function usePaperCampus(): CampusId {
+	return usePaperContext().campus
 }

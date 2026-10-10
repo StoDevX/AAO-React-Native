@@ -140,8 +140,9 @@ function RootLayout(): React.ReactNode {
 									<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
 									<Stack.Screen name="carleton-convos" options={{title: 'Convocations'}} />
 									{/* No large title: the front page draws the paper's name in the bar, in its serif,
-								    and a large title would show the plain name until the page scrolled. */}
-									<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
+								    and a large title would show the plain name until the page scrolled. Each
+								    paper's front page titles itself. */}
+									<Stack.Screen name="newspaper/index" options={{title: ''}} />
 									{/* A series thumbnail opens another story over the one being read.
 								    Keyed by the story and the row that opened it, a tap always opens
 								    a fresh screen: an unkeyed route would swap the params of the
@@ -153,26 +154,13 @@ function RootLayout(): React.ReactNode {
 										dangerouslySingular={(_name, params) =>
 											`${params.id ?? ''}:${params.from ?? ''}`
 										}
-										name="messenger/story"
+										name="newspaper/story"
 										options={{title: ''}}
 									/>
 									{/* Over the story, not in place of it, so a drag that closes the viewer
 								    shows the story through its fading black. */}
 									<Stack.Screen
-										name="messenger/image"
-										options={{presentation: 'transparentModal', headerShown: false}}
-									/>
-									{/* The Carletonian is read by the Messenger's screens, presented the same way. */}
-									<Stack.Screen name="carletonian/index" options={{title: 'The Carletonian'}} />
-									<Stack.Screen
-										dangerouslySingular={(_name, params) =>
-											`${params.id ?? ''}:${params.from ?? ''}`
-										}
-										name="carletonian/story"
-										options={{title: ''}}
-									/>
-									<Stack.Screen
-										name="carletonian/image"
+										name="newspaper/image"
 										options={{presentation: 'transparentModal', headerShown: false}}
 									/>
 									<Stack.Screen
@@ -216,8 +204,7 @@ function RootLayout(): React.ReactNode {
 										options={{title: 'Calendar', headerLargeTitleEnabled: true}}
 									/>
 									<Stack.Screen name="customize" options={DETAIL_SHEET} />
-									<Stack.Screen name="messenger/customize" options={DETAIL_SHEET} />
-									<Stack.Screen name="carletonian/customize" options={DETAIL_SHEET} />
+									<Stack.Screen name="newspaper/customize" options={DETAIL_SHEET} />
 									<Stack.Screen name="report-problem" options={{presentation: 'modal'}} />
 								</Stack>
 							)}

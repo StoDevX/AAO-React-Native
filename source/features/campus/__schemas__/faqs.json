@@ -1,0 +1,73 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"faqs": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"answer": {
+						"type": "string"
+					},
+					"backgroundColor": {
+						"type": "string"
+					},
+					"bannerText": {
+						"type": "string"
+					},
+					"bannerTitle": {
+						"type": "string"
+					},
+					"dismissable": {
+						"type": "boolean"
+					},
+					"foregroundColor": {
+						"type": "string"
+					},
+					"icon": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"question": {
+						"type": "string"
+					},
+					"severity": {
+						"type": "string"
+					},
+					"targets": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"answer",
+					"bannerText",
+					"bannerTitle",
+					"dismissable",
+					"icon",
+					"id",
+					"question",
+					"severity",
+					"targets",
+					"updatedAt"
+				]
+			}
+		},
+		"text": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"faqs",
+		"text"
+	]
+}

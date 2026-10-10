@@ -15,16 +15,4 @@ export const CARLETONIAN: Paper = {
 	logoMediaIds: new Set(),
 	contactPageSlug: 'contact',
 	masthead: {assetName: 'carletonian'},
-	routes: {
-		front: '/carletonian',
-		story: '/carletonian/story',
-		image: '/carletonian/image',
-		column: '/carletonian/column',
-		issue: '/carletonian/issue',
-		issueSection: '/carletonian/issue-section',
-		about: '/carletonian/about',
-		staff: '/carletonian/staff',
-		staffMember: '/carletonian/staff/[id]',
-		customize: '/carletonian/customize',
-	},
 }

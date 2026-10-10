@@ -28,7 +28,7 @@ export const CAMPUS_PROPERTY = 'https://frogpond.tech/ns/campus'
 
 /// The campuses a relative href can resolve against, by campus id. Spelt out
 /// here because a module cannot import the app's campus registry.
-export type SourceCampus = 'edu.stolaf' | 'edu.carleton'
+export type SourceCampus = 'edu.stolaf' | 'edu.carleton' | 'example.college'
 
 /// A proxied source's href is relative (e.g. `news/named/mess`), so it
 /// resolves against the configured api root and honours the Settings

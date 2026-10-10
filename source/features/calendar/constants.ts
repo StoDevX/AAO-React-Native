@@ -5,6 +5,11 @@ export const STOLAF_POWERED_BY = {
 	href: 'https://wp.stolaf.edu/calendar/',
 }
 
+export const WIKI_MONKEYS_POWERED_BY = {
+	title: 'Powered by the Wiki Monkeys calendar',
+	href: 'https://college.example/calendar',
+}
+
 export const PRESENCE_POWERED_BY = {
 	title: 'Powered by Presence',
 	href: 'https://stolaf.presence.io/events',

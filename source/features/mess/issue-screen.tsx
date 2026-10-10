@@ -6,7 +6,8 @@ import {IssueUnavailable} from './issue-unavailable'
 import {issueDate, issueName} from './lib/issues'
 import {paperKeys} from './lib/keys'
 import type {Paper} from './campus-section'
-import {usePaper} from './paper-context'
+import {usePaper, usePaperCampus} from './paper-context'
+import {NEWSPAPER_ROUTES} from './routes'
 import {MessPage, PAGE_MARGIN, PAPER_BAR, PaperTitle} from './mess-page'
 import {useColumnWidth} from './use-column-width'
 import {useMessIssue} from './use-mess-issues'
@@ -27,6 +28,7 @@ export async function refreshIssues(queryClient: QueryClient, paper: Paper): Pro
 export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 	let router = useRouter()
 	let paper = usePaper()
+	let campus = usePaperCampus()
 	let queryClient = useQueryClient()
 	let columnWidth = useColumnWidth(PAGE_MARGIN)
 	let {issue, persist, query} = useMessIssue(issueKey)
@@ -37,7 +39,10 @@ export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 
 	// "All ›" and a shelf's More tile list the section's stories from this issue, over this page.
 	let showSection = (section: string) => {
-		router.navigate({pathname: paper.routes.issueSection, params: {key: issueKey, section}})
+		router.navigate({
+			pathname: NEWSPAPER_ROUTES.issueSection,
+			params: {campus, key: issueKey, section},
+		})
 	}
 
 	return (

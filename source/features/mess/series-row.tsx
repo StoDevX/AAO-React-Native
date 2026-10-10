@@ -29,7 +29,8 @@ import {FramedPhoto} from './image-view'
 import {TAP_TARGET} from '../../lib/tap-target'
 import {faded, ink} from './palette'
 import {usePaperQueries} from './use-paper-queries'
-import {usePaper} from './paper-context'
+import {usePaperCampus} from './paper-context'
+import {NEWSPAPER_ROUTES} from './routes'
 import {SECTION_HEADING} from './story-blocks'
 import type {MessStory, Photo} from './types'
 
@@ -80,7 +81,7 @@ type Props = {
  */
 export function SeriesRow({story, asTitles = false}: Props): React.ReactNode {
 	let router = useRouter()
-	let {routes} = usePaper()
+	let campus = usePaperCampus()
 	let {seriesOptions} = usePaperQueries()
 	// Names this row as the opener of the stories it opens; no other screen's row shares it.
 	let opener = React.useId()
@@ -89,8 +90,8 @@ export function SeriesRow({story, asTitles = false}: Props): React.ReactNode {
 
 	let open = (other: MessStory) =>
 		router.navigate({
-			pathname: routes.story,
-			params: {id: String(other.id), from: opener},
+			pathname: NEWSPAPER_ROUTES.story,
+			params: {campus, id: String(other.id), from: opener},
 		})
 
 	return (

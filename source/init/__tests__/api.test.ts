@@ -1,9 +1,11 @@
-import {afterEach, describe, expect, test} from '@jest/globals'
+import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import {campusRoot, clientFor} from '@frogpond/api'
+import {apiFetch, campusRoot, clientFor} from '@frogpond/api'
 
 import {CAMPUSES} from '../../campuses'
+import {useCampusStore} from '../../features/campus/store'
 import * as storage from '../../lib/storage'
+import {queryClient} from '../tanstack-query'
 import {applySavedServers, registerDefaultServers} from '../api'
 
 afterEach(async () => {
@@ -48,5 +50,28 @@ describe('the servers a launch points at', () => {
 		await launch()
 		expect(campusRoot('edu.carleton')?.href).toBe('https://dev.example.test/v1/')
 		expect(campusRoot('edu.stolaf')?.href).toBe('https://stolaf.frogpond.tech/v1/')
+	})
+})
+
+describe('Wiki Monkeys, which has no server', () => {
+	afterEach(() => {
+		useCampusStore.setState({campus: 'edu.stolaf'})
+	})
+
+	test('is answered from its fixtures while it is the campus', async () => {
+		registerDefaultServers()
+		useCampusStore.setState({campus: 'example.college'})
+		let response = await apiFetch('https://example.college.invalid/faqs')
+		expect(response.status).toBe(200)
+	})
+
+	test("drops what the other campus's servers answered when it is switched to or from", () => {
+		useCampusStore.setState({campus: 'edu.stolaf'})
+		let invalidate = jest.spyOn(queryClient, 'invalidateQueries').mockResolvedValue()
+		useCampusStore.setState({campus: 'example.college'})
+		useCampusStore.setState({campus: 'edu.carleton'})
+		useCampusStore.setState({campus: 'edu.stolaf'})
+		expect(invalidate).toHaveBeenCalledTimes(2)
+		invalidate.mockRestore()
 	})
 })

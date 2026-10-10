@@ -24,8 +24,13 @@ import {
 	HIDDEN_FROM_CALENDAR,
 	PRESENCE_POWERED_BY,
 	STOLAF_POWERED_BY,
+	WIKI_MONKEYS_POWERED_BY,
 } from '../../../source/features/calendar/constants'
-import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../../source/features/streaming/radio/constants'
+import {
+	KMNK_POWERED_BY,
+	KSTO_POWERED_BY,
+	KRLX_POWERED_BY,
+} from '../../../source/features/streaming/radio/constants'
 import {
 	CARLETON_POWERED_BY,
 	CONVOS_POWERED_BY,
@@ -40,9 +45,11 @@ type EventSource =
 	| 'stolaf'
 	| 'presence'
 	| 'carleton'
+	| 'wiki-monkeys'
 	| 'uitest'
 	| 'ksto-schedule'
 	| 'krlx-schedule'
+	| 'kmnk-schedule'
 	| 'sumo-schedule'
 	| 'upcoming-convos'
 
@@ -54,9 +61,11 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	stolaf: STOLAF_POWERED_BY,
 	presence: PRESENCE_POWERED_BY,
 	carleton: CARLETON_POWERED_BY,
+	'wiki-monkeys': WIKI_MONKEYS_POWERED_BY,
 	uitest: UITEST_POWERED_BY,
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
+	'kmnk-schedule': KMNK_POWERED_BY,
 	'sumo-schedule': SUMO_POWERED_BY,
 	'upcoming-convos': CONVOS_POWERED_BY,
 }
@@ -65,7 +74,7 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
  * The sources that contribute to the merged calendar, and so have neighbours
  * to show. The radio schedules and Carleton's SUMO and convocation lists do not.
  */
-const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'carleton', 'uitest'])
+const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'carleton', 'wiki-monkeys', 'uitest'])
 
 /**
  * KSTO's and KRLX's broadcast schedules, and Carleton's SUMO and convocation
@@ -74,6 +83,7 @@ const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'carleton', 'uitest'])
 const SCHEDULE_SOURCE_IDS = new Set([
 	'ksto-schedule',
 	'krlx-schedule',
+	'kmnk-schedule',
 	'sumo-schedule',
 	'upcoming-convos',
 ])

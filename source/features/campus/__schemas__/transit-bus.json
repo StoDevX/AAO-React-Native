@@ -1,0 +1,339 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"data": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"colors": {
+						"type": "object",
+						"properties": {
+							"bar": {
+								"type": "string"
+							},
+							"dot": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"bar",
+							"dot"
+						]
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"line": {
+						"type": "string"
+					},
+					"notice": {
+						"type": "string"
+					},
+					"schedules": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"closures": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"date": {
+												"type": "string"
+											},
+											"name": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"date",
+											"name"
+										]
+									}
+								},
+								"coordinates": {
+									"type": "object",
+									"properties": {
+										"Aldi": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Allina Clinic": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Bridgewater Elementary School": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Carleton College": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Carleton College (Davis)": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Carleton College - Willis Hall": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Cinema 10": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"City Hall (801 Washington St)": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Cub Foods / Target": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Cub/Target": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Dollar Tree": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Ensley Apartments": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Family Fare": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Food Co-op": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Greenvale Park Elementary": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Greenvale/Wellstone Apartments": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Just Foods Co-op": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Koester Court": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Kraewood Flats - Lincoln Street": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Library": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"NCRC": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Northfield Depot": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Northfield Estates": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Northfield High School": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Northfield Hospital and Clinics": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Northfield Manor": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Northfield Middle School": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Oak Apartments": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Sibley Elementary School": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"South Oak Apartments": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"St. Olaf College": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"St. Olaf College (Buntrock Commons)": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"St. Olaf College - Buntrock Commons": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Target/Cub Foods": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Three Links": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Viking Terrace": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"Wells Fargo": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										},
+										"YMCA": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"days": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"stops": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"times": {
+									"type": "array",
+									"items": {
+										"type": "array",
+										"items": {
+											"type": [
+												"string",
+												"boolean"
+											]
+										}
+									}
+								}
+							},
+							"required": [
+								"coordinates",
+								"days",
+								"stops",
+								"times"
+							]
+						}
+					},
+					"timezone": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"colors",
+					"line",
+					"schedules"
+				]
+			}
+		}
+	},
+	"required": [
+		"data"
+	]
+}

@@ -110,3 +110,6 @@ let failed = failedKeys(table)
 if (failed.length) {
 	console.log(`  answered with an error, recorded as it came:\n    ${failed.join('\n    ')}`)
 }
+console.log(
+	"then run mise run update-fixture-schemas, so Wiki Monkeys' fixtures are checked against the new shapes",
+)

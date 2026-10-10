@@ -1,0 +1,97 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 4 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"events": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"all_day": {
+						"type": "boolean"
+					},
+					"categories": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"name"
+							]
+						}
+					},
+					"description": {
+						"type": "string"
+					},
+					"organizer": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"organizer": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"organizer"
+							]
+						}
+					},
+					"title": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"utc_end_date": {
+						"type": "string"
+					},
+					"utc_start_date": {
+						"type": "string"
+					},
+					"venue": {
+						"anyOf": [
+							{
+								"type": "object",
+								"properties": {
+									"venue": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"venue"
+								]
+							},
+							{
+								"type": "array",
+								"items": {}
+							}
+						]
+					}
+				},
+				"required": [
+					"all_day",
+					"categories",
+					"description",
+					"organizer",
+					"title",
+					"url",
+					"utc_end_date",
+					"utc_start_date",
+					"venue"
+				]
+			}
+		},
+		"next_rest_url": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"events"
+	]
+}

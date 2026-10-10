@@ -25,7 +25,8 @@ import {MessPage, UnloadedPage, PAPER_BAR, PaperTitle} from './mess-page'
 import {PageMessage} from './page-notice'
 import {ink, paper, paperTypeface, wash} from './palette'
 import {usePaperQueries} from './use-paper-queries'
-import {usePaper} from './paper-context'
+import {usePaper, usePaperCampus} from './paper-context'
+import {NEWSPAPER_ROUTES} from './routes'
 import {SECTION_HEADING} from './story-blocks'
 import type {StaffProfile} from './types'
 
@@ -47,6 +48,7 @@ const COLUMN = [
 export function StaffScreen(): React.ReactNode {
 	let router = useRouter()
 	let paper = usePaper()
+	let campus = usePaperCampus()
 	let staff = useQuery(usePaperQueries().staffOptions)
 	let columns = useTileColumns()
 	let tileWidth = useTileWidth(columns)
@@ -81,8 +83,8 @@ export function StaffScreen(): React.ReactNode {
 											<PersonTile
 												onPress={() =>
 													router.navigate({
-														pathname: paper.routes.staffMember,
-														params: {id: String(person.id)},
+														pathname: NEWSPAPER_ROUTES.staffMember,
+														params: {campus, id: String(person.id)},
 													})
 												}
 												person={photoSubjectOf(person)}

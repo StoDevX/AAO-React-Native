@@ -23,7 +23,8 @@ import f20 from './GET-thecarletonian.com-wp-json-wp-v2-posts-21026-_fields-cont
 import f21 from './GET-thecarletonian.com-wp-json-wp-v2-posts-21040-_fields-content.json'
 import f22 from './GET-thecarletonian.com-wp-json-wp-v2-posts-include-21095-21093-21091-21088-21086-21084-21082-21077-21060-21074-21072-21070-21068-21066-per_page-100-_embed-true.json'
 import f23 from './GET-thecarletonian.com-wp-json-wp-v2-posts-per_page-100-page-1-_fields-id-date-title-categories-featured_media.json'
-import f24 from './GET-transit-bus.json'
-import f25 from './GET-transit-modes.json'
+import f24 from './GET-thecarletonian.com-wp-json-wp-v2-posts-per_page-100-page-2-_fields-id-date-title-categories-featured_media.json'
+import f25 from './GET-transit-bus.json'
+import f26 from './GET-transit-modes.json'
 
-export default [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25]
+export default [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26]

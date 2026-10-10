@@ -9,7 +9,7 @@ import {
 	type ResolvedSource,
 } from '@frogpond/data-sources'
 import {apiUrl} from '../../../lib/api-url'
-import type {StationId} from './stations'
+import {stationCampus, type StationId} from './stations'
 
 /** The streams iOS plays itself: HLS, and the MP3 and AAC an Icecast or Shoutcast server sends. */
 export const STREAM_TYPES = ['application/vnd.apple.mpegurl', 'audio/mpeg', 'audio/aac']
@@ -87,8 +87,18 @@ function absoluteUrl(source: SourceAddress): string | undefined {
 	}
 }
 
-/** `stationId`'s stream as `manifest` names it, or its shipped one if that is not a URL. */
+/**
+ * `stationId`'s stream as `manifest` names it, or its shipped one if that is not a URL.
+ * A station the app ships no stream for (a dev-only campus's) plays from its
+ * own campus's server when the manifest names none, rather than throwing in
+ * the layout the radio is mounted in.
+ */
 function streamUrl(manifest: Jrd, stationId: StationId): string {
+	if (!hasBundledSource(REL_RADIO_STREAM, stationId)) {
+		let source = optionalSource(manifest, REL_RADIO_STREAM, stationId, STREAM_TYPES)
+		let url = source === undefined ? undefined : absoluteUrl(source)
+		return url ?? apiUrl(stationCampus(stationId), `radio/named/${stationId}`)
+	}
 	let source = resolveSource(manifest, REL_RADIO_STREAM, stationId, STREAM_TYPES)
 	let shipped = resolveSource(SHIPPED, REL_RADIO_STREAM, stationId, STREAM_TYPES)
 	return absoluteUrl(source) ?? apiUrl(shipped.campus, shipped.href)

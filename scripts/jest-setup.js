@@ -116,6 +116,7 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	addResetListener: jest.fn(() => () => {}),
 	finishReset: jest.fn(() => Promise.resolve()),
 	takePendingResetURL: jest.fn(() => null),
+	reportMissingFixture: jest.fn(),
 }))
 // DebugSwift is reached through a native module Jest does not have. Absent,
 // as in a Release build; a test of the Debug-only paths replaces this.

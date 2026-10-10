@@ -1,0 +1,25 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 6 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"content": {
+			"type": "object",
+			"properties": {
+				"protected": {
+					"type": "boolean"
+				},
+				"rendered": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"protected",
+				"rendered"
+			]
+		}
+	},
+	"required": [
+		"content"
+	]
+}

@@ -21,6 +21,7 @@ const LIVE_SOURCES: CalendarSource[] = [
 	{id: 'stolaf', title: 'St. Olaf', color: c.systemBlue},
 	{id: 'presence', title: 'Presence', color: c.systemIndigo},
 	{id: 'carleton', title: 'Carleton', color: c.systemBlue},
+	{id: 'wiki-monkeys', title: 'Wiki Monkeys', color: c.systemTeal},
 ]
 
 /**

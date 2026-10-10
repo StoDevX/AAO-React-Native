@@ -4,7 +4,6 @@ import {describe, expect, it} from '@jest/globals'
 
 import groups from '../../../images/groups.json'
 import {CAMPUSES, type CampusDefinition} from '../../campuses'
-import {STATIONS} from '../../features/streaming/radio/stations'
 import {IMAGE_GROUPS} from '../remote-images'
 
 const IMAGES = join(__dirname, '..', '..', '..', 'images')
@@ -16,10 +15,13 @@ const published = (group: string, name: string): boolean =>
 // are the names written in code, which nothing else would catch a rename of.
 describe('the images the code names', () => {
 	it('are all published', () => {
-		let streaming = Object.values(STATIONS).flatMap((station) =>
-			station.logos.map((logo) => logo.imageName),
-		)
 		let campuses: ReadonlyArray<CampusDefinition> = CAMPUSES
+		// A dev-only campus's logos may name no image yet (KMNK's doesn't); the
+		// player draws a blank label for those.
+		let streaming = campuses
+			.filter((campus) => !campus.devOnly)
+			.flatMap((campus) => campus.radio?.stations ?? [])
+			.flatMap((station) => station.logos.map((logo) => logo.imageName))
 		let news = campuses.flatMap((campus) =>
 			campus.news && campus.news.source.thumbnail !== false ? [campus.news.source.thumbnail] : [],
 		)
