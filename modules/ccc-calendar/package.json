@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@expo/ui": "57.0.21",
+    "@expo/ui": "57.0.22",
     "@frogpond/colors": "workspace:*",
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/event-list": "workspace:*",
@@ -34,7 +34,7 @@
     "@sentry/react-native": "^8.29.0",
     "@tanstack/react-query": "^5.104.0",
     "delay": "^7.0.0",
-    "expo-router": "~57.0.24",
+    "expo-router": "~57.0.25",
     "moment": "^2.31.0",
     "moment-timezone": "^0.6.4",
     "react": "catalog:",
