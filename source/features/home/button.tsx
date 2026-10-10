@@ -20,6 +20,14 @@ import {FILL_WIDTH} from '../../components/tile-layout'
 type Props = {
 	view: ViewType
 	onPress: () => void
+	/** What VoiceOver reads, where the title alone is ambiguous; the title otherwise. */
+	label?: string
+	/**
+	 * The card's width. A `Grid` sizes a column to its widest card, so a long
+	 * title would push the row past the screen's edge, and a lone card in a
+	 * group would fill the row.
+	 */
+	width: number
 }
 
 function HomeScreenButtonLabel({
@@ -72,7 +80,7 @@ function HomeScreenButtonLabel({
 	)
 }
 
-export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
+export function HomeScreenButton({view, onPress, label, width}: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
 
 	return (
@@ -80,8 +88,8 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 			modifiers={[
 				buttonStyle('plain'),
 				// make a card grow to match a taller one beside it
-				frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH}),
-				accessibilityLabel(view.title),
+				frame({width, maxHeight: FILL_WIDTH}),
+				accessibilityLabel(label ?? view.title),
 				...(opensInBrowser(view) ? [accessibilityHint('Opens in a browser')] : []),
 			]}
 			onPress={onPress}

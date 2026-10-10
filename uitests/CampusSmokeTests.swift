@@ -20,6 +20,10 @@ struct CampusExpectations {
 	let busLine: String
 	let menusRoute: String
 	let cafe: String
+	/// The other campus's Menus tile, as VoiceOver reads it in this campus's Home group.
+	let otherCampusMenusTile: String
+	/// The first café of the other campus, which that tile opens on.
+	let otherCampusCafe: String
 	/// An event on the frozen date, which Day view opens on.
 	let calendarEvent: String
 	let newsRoute: String
@@ -105,6 +109,17 @@ class CampusSmokeTests: UITestCaseUnbooted {
 		MenusScreen(app: app).verifyFoodRowsAppear()
 	}
 
+	/// The Home group's Menus tile opens the other campus's cafés in their own tab bar.
+	func testHomeGroupOpensTheOtherCampusCafes() throws {
+		let tile = app.buttons[expected.otherCampusMenusTile]
+		HomeScreen(app: app)
+			.open(route: "/", mountedWhen: app.navigationBars[expected.homeTitle])
+			.scrollUntilExists(tile)
+			.tap(
+				tile, until: app.tabBars.buttons[expected.otherCampusCafe],
+				named: expected.otherCampusMenusTile)
+	}
+
 	func testCalendarListsARecordedEvent() throws {
 		opens("/calendar", waitingFor: app.navigationBars["Calendar"])
 		try verifyRecorded(
@@ -152,6 +167,8 @@ final class StOlafSmokeTests: CampusSmokeTests {
 			busLine: "Express Bus",
 			menusRoute: "/menus",
 			cafe: "Stav Hall",
+			otherCampusMenusTile: "Menus, Carleton College",
+			otherCampusCafe: "Burton",
 			calendarEvent: "Norwegian-American Historical Association Biennial Meeting",
 			newsRoute: "/news",
 			newsTitle: "St. Olaf News",
@@ -180,6 +197,8 @@ final class CarletonSmokeTests: CampusSmokeTests {
 			busLine: "Carls-Go! Route 1",
 			menusRoute: "/menus",
 			cafe: "Burton",
+			otherCampusMenusTile: "Menus, St. Olaf College",
+			otherCampusCafe: "Stav Hall",
 			calendarEvent: "Foods of Faith",
 			newsRoute: "/news",
 			newsTitle: "Carleton News",

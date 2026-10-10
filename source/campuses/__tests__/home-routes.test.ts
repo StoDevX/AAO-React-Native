@@ -110,7 +110,9 @@ describe('paper and schedule routes', () => {
 // Balances tiles, the web page and the disabled native screen, and two tests
 // of the same name read as one test to the flakiness tracker.
 const TILES = CAMPUSES.flatMap((campus) =>
-	campus.home.tiles.map((tile) => [campus.id, tile.title, viewTarget(tile), tile] as const),
+	[...campus.home.tiles, ...(campus.home.groups ?? []).flatMap((group) => group.tiles)].map(
+		(tile) => [campus.id, tile.title, viewTarget(tile), tile] as const,
+	),
 )
 
 describe.each(TILES)('%s’s %s tile, to %s', (campusId, _title, _target, tile) => {

@@ -17,7 +17,7 @@ const common = {
 describe('HomeScreenButton', () => {
 	test('tells VoiceOver a web link opens in a browser', async () => {
 		let view: ViewType = {...common, type: 'url', url: 'https://example.com'}
-		await render(<HomeScreenButton onPress={jest.fn()} view={view} />)
+		await render(<HomeScreenButton onPress={jest.fn()} view={view} width={174} />)
 		expect(screen.getByRole('button', {name: 'Tile'}).props.accessibilityHint).toBe(
 			'Opens in a browser',
 		)
@@ -25,7 +25,7 @@ describe('HomeScreenButton', () => {
 
 	test('gives a native screen no hint', async () => {
 		let view: ViewType = {...common, type: 'view', view: '/menus'}
-		await render(<HomeScreenButton onPress={jest.fn()} view={view} />)
+		await render(<HomeScreenButton onPress={jest.fn()} view={view} width={174} />)
 		expect(screen.getByRole('button', {name: 'Tile'}).props.accessibilityHint).toBeUndefined()
 	})
 })

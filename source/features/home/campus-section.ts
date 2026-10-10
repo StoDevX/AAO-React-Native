@@ -1,4 +1,5 @@
 import type {ViewType} from '../views'
+import type {HomeGroup} from './groups'
 
 /** A campus's Home screen. */
 export type HomeSection = {
@@ -7,4 +8,6 @@ export type HomeSection = {
 	 * screen is also a quick action's destination.
 	 */
 	tiles: ReadonlyArray<ViewType>
+	/** Titled groups drawn after `tiles`, each under its own heading. Not quick actions. */
+	groups?: ReadonlyArray<HomeGroup>
 }

@@ -66,6 +66,12 @@ jest.mock('expo-router', () => {
 	}
 })
 jest.mock('react-native-restart-newarch', () => ({Restart: jest.fn()}))
+jest.mock(
+	'react-native-safe-area-context',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import
+		require('react-native-safe-area-context/jest/mock').default,
+)
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
 // The app's own native views each come from `requireNativeView`; here each is
 // a plain host component.

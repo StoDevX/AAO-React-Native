@@ -14,7 +14,9 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
 	accessibilityIdentifier,
+	accessibilityLabel,
 	background,
 	contentShape,
 	font,
@@ -42,13 +44,15 @@ import {
 	SCREEN_MARGIN,
 	TILE_SPACING,
 } from '../source/components/tile-layout'
-import {TileGrid} from '../source/components/tile-grid'
+import {TileGrid, useTileWidth} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
+import {visibleGroups} from '../source/features/home/groups'
 import {HomeListRows} from '../source/features/home/list-rows'
 import {useHomeLayoutStore} from '../source/features/home/store'
 import {openUrl} from '@frogpond/open-url'
 import {setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
+import {track} from '../source/features/telemetry/track'
 import {FaqBannerSlot} from '../source/features/faqs/banner'
 import {CUSTOMIZE_LABEL} from '../source/features/customize/labels'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
@@ -182,6 +186,30 @@ const NOTICE_FOOTER_MODIFIERS = [
 	listRowInsets({top: TILE_SPACING * 2, leading: 0, bottom: 0, trailing: 0}),
 ]
 
+/** The inset of a tile group's heading on the tiled Home, as a list's section header has. */
+const GROUP_HEADING_INSET = 16
+
+/**
+ * A tile group's heading on the tiled Home, styled like the section headers of
+ * an inset-grouped list, as Menus has them: headline, semibold, secondary,
+ * inset from the grid's edge.
+ */
+function GroupHeading({title}: {title: string}): React.ReactNode {
+	return (
+		<Text
+			modifiers={[
+				font({textStyle: 'headline', weight: 'semibold'}),
+				foregroundStyle(c.secondaryLabel),
+				padding({horizontal: GROUP_HEADING_INSET, top: TILE_SPACING}),
+				accessibilityLabel(title),
+				accessibilityAddTraits(['isHeader']),
+			]}
+		>
+			{title}
+		</Text>
+	)
+}
+
 /// Names the home's tile grid.
 const HOME_GRID_ID = 'home-tile-grid'
 /// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
@@ -211,6 +239,7 @@ export default function HomePage(): React.ReactNode {
 	let isDev = useIsDevMode()
 	let openView = useOpenView()
 	let {fontScale} = useWindowDimensions()
+	let tileWidth = useTileWidth(homeColumnsForFontScale(fontScale))
 	let layout = useHomeLayoutStore((state) => state.layout)
 	// The saved layout loads after the first render. Drawing before then would
 	// draw the default and jump.
@@ -219,9 +248,20 @@ export default function HomePage(): React.ReactNode {
 	// tiles before it would jump on a Carleton install.
 	let campusHydrated = useCampusStore((state) => state.hydrated)
 	let hydrated = layoutHydrated && campusHydrated
-	let {branding, home} = useCampus()
+	let {branding, home, id: campusId} = useCampus()
 	let barVisible = useRadioBarVisible()
 	let views = visibleViews(home.tiles, {isDev})
+	let groups = visibleGroups(home.groups, {isDev})
+	let openGroupView = (view: ViewType) => {
+		track({name: 'home.group.open', attributes: {campus: campusId}})
+		openView(view)
+	}
+	// Under the last section of the list, whichever that is.
+	let notice = (
+		<VStack modifiers={NOTICE_FOOTER_MODIFIERS}>
+			<UnofficialAppNotice />
+		</VStack>
+	)
 
 	return (
 		<>
@@ -279,14 +319,19 @@ export default function HomePage(): React.ReactNode {
 						/>
 						<List modifiers={[listStyle('insetGrouped')]}>
 							<HomeListRows
-								footer={
-									<VStack modifiers={NOTICE_FOOTER_MODIFIERS}>
-										<UnofficialAppNotice />
-									</VStack>
-								}
+								footer={groups.length === 0 ? notice : undefined}
 								onOpen={openView}
 								views={views}
 							/>
+							{groups.map((group, index) => (
+								<HomeListRows
+									key={group.title}
+									footer={index === groups.length - 1 ? notice : undefined}
+									onOpen={openGroupView}
+									title={group.title}
+									views={group.tiles}
+								/>
+							))}
 							{/* Room to scroll the last of the list clear of the Now Playing bar. */}
 							{barVisible ? (
 								<Spacer
@@ -322,9 +367,33 @@ export default function HomePage(): React.ReactNode {
 									items={views}
 									keyForItem={(view) => view.title}
 									renderItem={(view) => (
-										<HomeScreenButton onPress={() => openView(view)} view={view} />
+										<HomeScreenButton
+											width={tileWidth}
+											onPress={() => openView(view)}
+											view={view}
+										/>
 									)}
 								/>
+
+								{groups.map((group) => (
+									<VStack key={group.title} alignment="leading" spacing={TILE_SPACING / 2}>
+										<GroupHeading title={group.title} />
+										<TileGrid
+											accessibilityId={`home-group-${group.title}`}
+											columns={homeColumnsForFontScale(fontScale)}
+											items={group.tiles}
+											keyForItem={(view) => view.title}
+											renderItem={(view) => (
+												<HomeScreenButton
+													label={`${view.title}, ${group.title}`}
+													onPress={() => openGroupView(view)}
+													view={view}
+													width={tileWidth}
+												/>
+											)}
+										/>
+									</VStack>
+								))}
 
 								<UnofficialAppNotice />
 							</VStack>
