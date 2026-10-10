@@ -684,9 +684,6 @@ importers:
       '@frogpond/html-lib':
         specifier: workspace:*
         version: link:../html-lib
-      '@frogpond/launch-arguments':
-        specifier: workspace:*
-        version: link:../launch-arguments
       '@tanstack/react-query':
         specifier: ^5.104.0
         version: 5.104.0(react@19.2.3)

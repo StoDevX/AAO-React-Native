@@ -1,0 +1,423 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 4 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"count": {
+			"type": "number"
+		},
+		"hasMore": {
+			"type": "boolean"
+		},
+		"items": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"ApplyWhenNotPostedFlag": {
+						"type": [
+							"null",
+							"boolean"
+						]
+					},
+					"BeFirstToApplyFlag": {
+						"type": "boolean"
+					},
+					"BusinessUnit": {
+						"type": "null"
+					},
+					"BusinessUnitId": {
+						"type": "number"
+					},
+					"Category": {
+						"type": "string"
+					},
+					"ContentLocale": {
+						"type": "string"
+					},
+					"ContractType": {
+						"type": "null"
+					},
+					"CorporateDescriptionStr": {
+						"type": "string"
+					},
+					"Department": {
+						"type": "null"
+					},
+					"DomesticTravelRequired": {
+						"type": "null"
+					},
+					"ExternalContactEmail": {
+						"type": "null"
+					},
+					"ExternalContactName": {
+						"type": "null"
+					},
+					"ExternalDescriptionStr": {
+						"type": "string"
+					},
+					"ExternalPostedEndDate": {
+						"type": [
+							"null",
+							"string"
+						]
+					},
+					"ExternalPostedStartDate": {
+						"type": "string"
+					},
+					"ExternalQualificationsStr": {
+						"type": "string"
+					},
+					"ExternalResponsibilitiesStr": {
+						"type": "string"
+					},
+					"GeographyId": {
+						"type": "number"
+					},
+					"GeographyNodeId": {
+						"type": "number"
+					},
+					"HiringManager": {
+						"type": "null"
+					},
+					"HotJobFlag": {
+						"type": "boolean"
+					},
+					"Id": {
+						"type": "string"
+					},
+					"InternalQualificationsStr": {
+						"type": "string"
+					},
+					"InternalResponsibilitiesStr": {
+						"type": "string"
+					},
+					"InternationalTravelRequired": {
+						"type": "null"
+					},
+					"JobFamilyId": {
+						"type": "number"
+					},
+					"JobFunction": {
+						"type": "null"
+					},
+					"JobFunctionCode": {
+						"type": "null"
+					},
+					"JobGrade": {
+						"type": "null"
+					},
+					"JobLevel": {
+						"type": "null"
+					},
+					"JobSchedule": {
+						"type": "string"
+					},
+					"JobShift": {
+						"type": "null"
+					},
+					"JobType": {
+						"type": "null"
+					},
+					"LegalEmployer": {
+						"type": "null"
+					},
+					"LegalEmployerId": {
+						"type": "number"
+					},
+					"NumberOfOpenings": {
+						"type": "null"
+					},
+					"ObjectVerNumberProfile": {
+						"type": [
+							"string",
+							"null"
+						]
+					},
+					"Organization": {
+						"type": "null"
+					},
+					"OrganizationDescriptionStr": {
+						"type": "string"
+					},
+					"OrganizationId": {
+						"type": "number"
+					},
+					"OtherRequisitionTitle": {
+						"type": "null"
+					},
+					"PrimaryLocation": {
+						"type": "string"
+					},
+					"PrimaryLocationCountry": {
+						"type": "string"
+					},
+					"RequisitionId": {
+						"type": "number"
+					},
+					"RequisitionType": {
+						"type": "string"
+					},
+					"ShortDescriptionStr": {
+						"type": "string"
+					},
+					"StudyLevel": {
+						"type": "null"
+					},
+					"Title": {
+						"type": "string"
+					},
+					"TrendingFlag": {
+						"type": "boolean"
+					},
+					"WorkDays": {
+						"type": "null"
+					},
+					"WorkHours": {
+						"type": "null"
+					},
+					"WorkMonths": {
+						"type": "null"
+					},
+					"WorkYears": {
+						"type": "null"
+					},
+					"WorkerType": {
+						"type": "null"
+					},
+					"WorkplaceType": {
+						"type": "string"
+					},
+					"WorkplaceTypeCode": {
+						"type": "null"
+					},
+					"media": {
+						"type": "array",
+						"items": {}
+					},
+					"otherWorkLocations": {
+						"type": "array",
+						"items": {}
+					},
+					"primaryLocationCoordinates": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"CountryCode": {
+									"type": "string"
+								},
+								"GeographyId": {
+									"type": "number"
+								},
+								"GeographyNodeId": {
+									"type": "number"
+								},
+								"Latitude": {
+									"type": "string"
+								},
+								"Longitude": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"CountryCode",
+								"GeographyId",
+								"GeographyNodeId",
+								"Latitude",
+								"Longitude"
+							]
+						}
+					},
+					"requisitionFlexFields": {
+						"type": "array",
+						"items": {}
+					},
+					"secondaryLocations": {
+						"type": "array",
+						"items": {}
+					},
+					"skills": {
+						"type": "array",
+						"items": {}
+					},
+					"workLocation": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"AddressLine1": {
+									"type": "string"
+								},
+								"AddressLine2": {
+									"type": "null"
+								},
+								"AddressLine3": {
+									"type": "null"
+								},
+								"AddressLine4": {
+									"type": "null"
+								},
+								"Building": {
+									"type": "null"
+								},
+								"Country": {
+									"type": "string"
+								},
+								"Latitude": {
+									"type": "string"
+								},
+								"LocationId": {
+									"type": "number"
+								},
+								"LocationName": {
+									"type": "string"
+								},
+								"Longitude": {
+									"type": "string"
+								},
+								"PostalCode": {
+									"type": "string"
+								},
+								"Region1": {
+									"type": "string"
+								},
+								"Region2": {
+									"type": "string"
+								},
+								"Region3": {
+									"type": "null"
+								},
+								"TownOrCity": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"AddressLine1",
+								"AddressLine2",
+								"AddressLine3",
+								"AddressLine4",
+								"Building",
+								"Country",
+								"Latitude",
+								"LocationId",
+								"LocationName",
+								"Longitude",
+								"PostalCode",
+								"Region1",
+								"Region2",
+								"Region3",
+								"TownOrCity"
+							]
+						}
+					}
+				},
+				"required": [
+					"ApplyWhenNotPostedFlag",
+					"BeFirstToApplyFlag",
+					"BusinessUnit",
+					"BusinessUnitId",
+					"Category",
+					"ContentLocale",
+					"ContractType",
+					"CorporateDescriptionStr",
+					"Department",
+					"DomesticTravelRequired",
+					"ExternalContactEmail",
+					"ExternalContactName",
+					"ExternalDescriptionStr",
+					"ExternalPostedEndDate",
+					"ExternalPostedStartDate",
+					"ExternalQualificationsStr",
+					"ExternalResponsibilitiesStr",
+					"GeographyId",
+					"GeographyNodeId",
+					"HiringManager",
+					"HotJobFlag",
+					"Id",
+					"InternalQualificationsStr",
+					"InternalResponsibilitiesStr",
+					"InternationalTravelRequired",
+					"JobFamilyId",
+					"JobFunction",
+					"JobFunctionCode",
+					"JobGrade",
+					"JobLevel",
+					"JobSchedule",
+					"JobShift",
+					"JobType",
+					"LegalEmployer",
+					"LegalEmployerId",
+					"NumberOfOpenings",
+					"ObjectVerNumberProfile",
+					"Organization",
+					"OrganizationDescriptionStr",
+					"OrganizationId",
+					"OtherRequisitionTitle",
+					"PrimaryLocation",
+					"PrimaryLocationCountry",
+					"RequisitionId",
+					"RequisitionType",
+					"ShortDescriptionStr",
+					"StudyLevel",
+					"Title",
+					"TrendingFlag",
+					"WorkDays",
+					"WorkHours",
+					"WorkMonths",
+					"WorkYears",
+					"WorkerType",
+					"WorkplaceType",
+					"WorkplaceTypeCode",
+					"media",
+					"otherWorkLocations",
+					"primaryLocationCoordinates",
+					"requisitionFlexFields",
+					"secondaryLocations",
+					"skills",
+					"workLocation"
+				]
+			}
+		},
+		"limit": {
+			"type": "number"
+		},
+		"links": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"href": {
+						"type": "string"
+					},
+					"kind": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"rel": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"href",
+					"kind",
+					"name",
+					"rel"
+				]
+			}
+		},
+		"offset": {
+			"type": "number"
+		}
+	},
+	"required": [
+		"count",
+		"hasMore",
+		"items",
+		"limit",
+		"links",
+		"offset"
+	]
+}

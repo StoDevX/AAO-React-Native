@@ -1,0 +1,545 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"count": {
+			"type": "number"
+		},
+		"hasMore": {
+			"type": "boolean"
+		},
+		"items": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"BotQRShortCode": {
+						"type": "null"
+					},
+					"CandidateNumber": {
+						"type": "null"
+					},
+					"CorrectedKeyword": {
+						"type": "null"
+					},
+					"ExecuteSpellCheckFlag": {
+						"type": "boolean"
+					},
+					"Facets": {
+						"type": "string"
+					},
+					"HotJobFlag": {
+						"type": "null"
+					},
+					"JobFamilyId": {
+						"type": "null"
+					},
+					"Keyword": {
+						"type": "null"
+					},
+					"LastSelectedFacet": {
+						"type": "null"
+					},
+					"Latitude": {
+						"type": "null"
+					},
+					"Limit": {
+						"type": "number"
+					},
+					"Location": {
+						"type": "null"
+					},
+					"LocationId": {
+						"type": "null"
+					},
+					"Longitude": {
+						"type": "null"
+					},
+					"Offset": {
+						"type": "number"
+					},
+					"OrganizationId": {
+						"type": "null"
+					},
+					"PostingEndDate": {
+						"type": "null"
+					},
+					"PostingStartDate": {
+						"type": "null"
+					},
+					"Radius": {
+						"type": "number"
+					},
+					"RadiusUnit": {
+						"type": "string"
+					},
+					"RequisitionId": {
+						"type": "null"
+					},
+					"SearchId": {
+						"type": "number"
+					},
+					"SelectedCategoriesFacet": {
+						"type": "null"
+					},
+					"SelectedFlexFieldsFacets": {
+						"type": "null"
+					},
+					"SelectedLocationsFacet": {
+						"type": "null"
+					},
+					"SelectedOrganizationsFacet": {
+						"type": "null"
+					},
+					"SelectedPostingDatesFacet": {
+						"type": "null"
+					},
+					"SelectedTitlesFacet": {
+						"type": "null"
+					},
+					"SelectedWorkLocationsFacet": {
+						"type": "null"
+					},
+					"SelectedWorkplaceTypesFacet": {
+						"type": "null"
+					},
+					"SiteNumber": {
+						"type": "string"
+					},
+					"SortBy": {
+						"type": "string"
+					},
+					"SuggestedKeyword": {
+						"type": "null"
+					},
+					"TotalJobsCount": {
+						"type": "number"
+					},
+					"UseExactKeywordFlag": {
+						"type": "boolean"
+					},
+					"UserTargetFacetInputTerm": {
+						"type": "null"
+					},
+					"UserTargetFacetName": {
+						"type": "null"
+					},
+					"WorkLocationCountryCode": {
+						"type": "null"
+					},
+					"WorkLocationZipCode": {
+						"type": "null"
+					},
+					"WorkplaceType": {
+						"type": "null"
+					},
+					"categoriesFacet": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Id": {
+									"type": "number"
+								},
+								"Name": {
+									"type": "string"
+								},
+								"TotalCount": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"Id",
+								"Name",
+								"TotalCount"
+							]
+						}
+					},
+					"flexFieldsFacet": {
+						"type": "array",
+						"items": {}
+					},
+					"locationsFacet": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Id": {
+									"type": "number"
+								},
+								"Name": {
+									"type": "string"
+								},
+								"TotalCount": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"Id",
+								"Name",
+								"TotalCount"
+							]
+						}
+					},
+					"organizationsFacet": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Id": {
+									"type": "number"
+								},
+								"Name": {
+									"type": "string"
+								},
+								"TotalCount": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"Id",
+								"Name",
+								"TotalCount"
+							]
+						}
+					},
+					"postingDatesFacet": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Id": {
+									"type": "number"
+								},
+								"Name": {
+									"type": "string"
+								},
+								"TotalCount": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"Id",
+								"Name",
+								"TotalCount"
+							]
+						}
+					},
+					"requisitionList": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"BeFirstToApplyFlag": {
+									"type": "boolean"
+								},
+								"BusinessUnit": {
+									"type": "null"
+								},
+								"BusinessUnitId": {
+									"type": "number"
+								},
+								"ContractType": {
+									"type": "null"
+								},
+								"Department": {
+									"type": "null"
+								},
+								"Distance": {
+									"type": "number"
+								},
+								"DomesticTravelRequired": {
+									"type": "null"
+								},
+								"ExternalQualificationsStr": {
+									"type": "null"
+								},
+								"ExternalResponsibilitiesStr": {
+									"type": "null"
+								},
+								"GeographyId": {
+									"type": "number"
+								},
+								"HotJobFlag": {
+									"type": "boolean"
+								},
+								"Id": {
+									"type": "string"
+								},
+								"InternationalTravelRequired": {
+									"type": "null"
+								},
+								"JobFamily": {
+									"type": "null"
+								},
+								"JobFunction": {
+									"type": "null"
+								},
+								"JobSchedule": {
+									"type": "null"
+								},
+								"JobShift": {
+									"type": "null"
+								},
+								"JobType": {
+									"type": "null"
+								},
+								"Language": {
+									"type": "string"
+								},
+								"LegalEmployer": {
+									"type": "null"
+								},
+								"LegalEmployerId": {
+									"type": "number"
+								},
+								"ManagerLevel": {
+									"type": "null"
+								},
+								"MediaThumbURL": {
+									"type": "null"
+								},
+								"Organization": {
+									"type": "null"
+								},
+								"OrganizationId": {
+									"type": "number"
+								},
+								"PostedDate": {
+									"type": "string"
+								},
+								"PostingEndDate": {
+									"type": "null"
+								},
+								"PrimaryLocation": {
+									"type": "string"
+								},
+								"PrimaryLocationCountry": {
+									"type": "string"
+								},
+								"Relevancy": {
+									"type": "number"
+								},
+								"ShortDescriptionStr": {
+									"type": "string"
+								},
+								"StudyLevel": {
+									"type": "null"
+								},
+								"Title": {
+									"type": "string"
+								},
+								"TrendingFlag": {
+									"type": "boolean"
+								},
+								"WorkDays": {
+									"type": "null"
+								},
+								"WorkDurationMonths": {
+									"type": "null"
+								},
+								"WorkDurationYears": {
+									"type": "null"
+								},
+								"WorkHours": {
+									"type": "null"
+								},
+								"WorkerType": {
+									"type": "null"
+								},
+								"WorkplaceType": {
+									"type": "string"
+								},
+								"WorkplaceTypeCode": {
+									"type": "null"
+								}
+							},
+							"required": [
+								"BeFirstToApplyFlag",
+								"BusinessUnit",
+								"BusinessUnitId",
+								"ContractType",
+								"Department",
+								"Distance",
+								"DomesticTravelRequired",
+								"ExternalQualificationsStr",
+								"ExternalResponsibilitiesStr",
+								"GeographyId",
+								"HotJobFlag",
+								"Id",
+								"InternationalTravelRequired",
+								"JobFamily",
+								"JobFunction",
+								"JobSchedule",
+								"JobShift",
+								"JobType",
+								"Language",
+								"LegalEmployer",
+								"LegalEmployerId",
+								"ManagerLevel",
+								"MediaThumbURL",
+								"Organization",
+								"OrganizationId",
+								"PostedDate",
+								"PostingEndDate",
+								"PrimaryLocation",
+								"PrimaryLocationCountry",
+								"Relevancy",
+								"ShortDescriptionStr",
+								"StudyLevel",
+								"Title",
+								"TrendingFlag",
+								"WorkDays",
+								"WorkDurationMonths",
+								"WorkDurationYears",
+								"WorkHours",
+								"WorkerType",
+								"WorkplaceType",
+								"WorkplaceTypeCode"
+							]
+						}
+					},
+					"titlesFacet": {
+						"type": "array",
+						"items": {}
+					},
+					"workLocationsFacet": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Id": {
+									"type": "number"
+								},
+								"Name": {
+									"type": "string"
+								},
+								"TotalCount": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"Id",
+								"Name",
+								"TotalCount"
+							]
+						}
+					},
+					"workplaceTypesFacet": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Id": {
+									"type": "string"
+								},
+								"Name": {
+									"type": "string"
+								},
+								"TotalCount": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"Id",
+								"Name",
+								"TotalCount"
+							]
+						}
+					}
+				},
+				"required": [
+					"BotQRShortCode",
+					"CandidateNumber",
+					"CorrectedKeyword",
+					"ExecuteSpellCheckFlag",
+					"Facets",
+					"HotJobFlag",
+					"JobFamilyId",
+					"Keyword",
+					"LastSelectedFacet",
+					"Latitude",
+					"Limit",
+					"Location",
+					"LocationId",
+					"Longitude",
+					"Offset",
+					"OrganizationId",
+					"PostingEndDate",
+					"PostingStartDate",
+					"Radius",
+					"RadiusUnit",
+					"RequisitionId",
+					"SearchId",
+					"SelectedCategoriesFacet",
+					"SelectedFlexFieldsFacets",
+					"SelectedLocationsFacet",
+					"SelectedOrganizationsFacet",
+					"SelectedPostingDatesFacet",
+					"SelectedTitlesFacet",
+					"SelectedWorkLocationsFacet",
+					"SelectedWorkplaceTypesFacet",
+					"SiteNumber",
+					"SortBy",
+					"SuggestedKeyword",
+					"TotalJobsCount",
+					"UseExactKeywordFlag",
+					"UserTargetFacetInputTerm",
+					"UserTargetFacetName",
+					"WorkLocationCountryCode",
+					"WorkLocationZipCode",
+					"WorkplaceType",
+					"categoriesFacet",
+					"flexFieldsFacet",
+					"locationsFacet",
+					"organizationsFacet",
+					"postingDatesFacet",
+					"titlesFacet",
+					"workLocationsFacet",
+					"workplaceTypesFacet"
+				]
+			}
+		},
+		"limit": {
+			"type": "number"
+		},
+		"links": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"href": {
+						"type": "string"
+					},
+					"kind": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"rel": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"href",
+					"kind",
+					"name",
+					"rel"
+				]
+			}
+		},
+		"offset": {
+			"type": "number"
+		}
+	},
+	"required": [
+		"count",
+		"hasMore",
+		"items",
+		"limit",
+		"links",
+		"offset"
+	]
+}

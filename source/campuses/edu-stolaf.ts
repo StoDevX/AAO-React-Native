@@ -81,5 +81,5 @@ export const stolaf = {
 	balances: {},
 	more: {},
 	courseCatalog: {},
-	studentWork: {},
+	studentWork: {source: 'stolaf'},
 } as const satisfies CampusDefinition

@@ -1,0 +1,172 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/athletics/scores
+json:
+  - sport_abbrev: ''
+    date: ''
+    dateFormatted: ''
+    date_end_utc: ''
+    time: 1:00 PM
+    timestamp: 0
+    hometeam: Wiki Monkeys
+    hometeam_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    opponent: Glacier State
+    opponent_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    team_score: '1'
+    opponent_score: '2'
+    result: L
+    ip_time: ''
+    prescore_info: ''
+    postscore_info: ''
+    id: wm-yesterday
+    sport: Women's Soccer
+    date_utc: '2026-09-04T13:00:00-05:00'
+    location:
+      location: Norway Valley
+      facility: Summit Field
+      homeAway: H
+    status:
+      indicator: final
+      value: ''
+    links: {}
+    coverage: {}
+  - sport_abbrev: ''
+    date: ''
+    dateFormatted: ''
+    date_end_utc: ''
+    time: 2:00 PM
+    timestamp: 0
+    hometeam: Wiki Monkeys
+    hometeam_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    opponent: Glacier State
+    opponent_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    team_score: '2'
+    opponent_score: '0'
+    result: ''
+    ip_time: ''
+    prescore_info: ''
+    postscore_info: ''
+    id: wm-today-ongoing
+    sport: Men's Soccer
+    date_utc: '2026-09-05T14:00:00-05:00'
+    location:
+      location: Norway Valley
+      facility: Summit Field
+      homeAway: H
+    status:
+      indicator: live
+      value: In Progress
+    links: {}
+    coverage: {}
+  - sport_abbrev: ''
+    date: ''
+    dateFormatted: ''
+    date_end_utc: ''
+    time: 11:00 AM
+    timestamp: 0
+    hometeam: Wiki Monkeys
+    hometeam_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    opponent: Timberline
+    opponent_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    team_score: '3'
+    opponent_score: '1'
+    result: W
+    ip_time: ''
+    prescore_info: ''
+    postscore_info: ''
+    id: wm-today-finalized
+    sport: Volleyball
+    date_utc: '2026-09-05T11:00:00-05:00'
+    location:
+      location: Norway Valley
+      facility: Summit Field
+      homeAway: H
+    status:
+      indicator: final
+      value: ''
+    links: {}
+    coverage: {}
+  - sport_abbrev: ''
+    date: ''
+    dateFormatted: ''
+    date_end_utc: ''
+    time: 4:00 PM
+    timestamp: 0
+    hometeam: Wiki Monkeys
+    hometeam_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    opponent: Ridgeway
+    opponent_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    team_score: ''
+    opponent_score: ''
+    result: ''
+    ip_time: ''
+    prescore_info: ''
+    postscore_info: ''
+    id: wm-today-upcoming
+    sport: Football
+    date_utc: '2026-09-05T16:00:00-05:00'
+    location:
+      location: Norway Valley
+      facility: Summit Field
+      homeAway: H
+    status:
+      indicator: scheduled
+      value: ''
+    links: {}
+    coverage: {}
+  - sport_abbrev: ''
+    date: ''
+    dateFormatted: ''
+    date_end_utc: ''
+    time: ''
+    timestamp: 0
+    hometeam: Wiki Monkeys
+    hometeam_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    opponent: Valley Invitational
+    opponent_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    team_score: ''
+    opponent_score: ''
+    result: ''
+    ip_time: ''
+    prescore_info: ''
+    postscore_info: ''
+    id: wm-upcoming-allday
+    sport: Women's Golf
+    date_utc: '2026-09-07T00:00:00-05:00'
+    location:
+      location: Norway Valley
+      facility: Summit Field
+      homeAway: H
+    status:
+      indicator: scheduled
+      value: ''
+    links: {}
+    coverage: {}
+  - sport_abbrev: ''
+    date: ''
+    dateFormatted: ''
+    date_end_utc: ''
+    time: 10:00 AM
+    timestamp: 0
+    hometeam: Wiki Monkeys
+    hometeam_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    opponent: Avalanche Tech
+    opponent_logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC
+    team_score: ''
+    opponent_score: ''
+    result: ''
+    ip_time: ''
+    prescore_info: ''
+    postscore_info: ''
+    id: wm-upcoming
+    sport: Cross Country
+    date_utc: '2026-09-12T10:00:00-05:00'
+    location:
+      location: Norway Valley
+      facility: Summit Field
+      homeAway: H
+    status:
+      indicator: scheduled
+      value: ''
+    links: {}
+    coverage: {}

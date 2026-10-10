@@ -1,0 +1,17 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/student-work/named/wiki-monkeys/wages
+json:
+  data:
+    ST:
+      '1': 14
+      '2': 14.5
+      '3': 15
+    NST:
+      '1': 15
+      '2': 15.75
+      '3': 16.5
+    OSA:
+      '1': 14.25
+      '2': 15
+      '3': 15.75

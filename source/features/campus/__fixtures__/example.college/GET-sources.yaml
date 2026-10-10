@@ -67,6 +67,13 @@ json:
       properties:
         https://frogpond.tech/ns/id: wiki-monkeys
         https://frogpond.tech/ns/campus: example.college
+    - rel: https://frogpond.tech/rel/jobs
+      href: https://jobs.college.example/hcmUI/CandidateExperience/en/sites/WM_1
+      type: application/vnd.oracle.recruiting-ce+json
+      titles:
+        und: Student Work
+      properties:
+        https://frogpond.tech/ns/id: wiki-monkeys
     - rel: https://frogpond.tech/rel/student-work-units
       href: student-work/named/wiki-monkeys/units
       type: application/vnd.frogpond.student-work-units+json

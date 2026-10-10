@@ -1,0 +1,155 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/orgs/categories
+json:
+  - catIdh: wmAc
+    name: Academic
+    organizationUris:
+      - birding-society
+      - chamber-orchestra
+      - debate-society
+      - engineering-society
+      - glaciology-reading-group
+      - literary-magazine
+      - math-club
+      - mock-trial
+      - model-united-nations
+      - mountain-medicine-society
+      - neuroscience-club
+      - philosophy-society
+      - physics-society
+      - quiz-bowl
+      - society-of-women-engineers
+      - spanish-conversation-table
+      - valley-tutors
+      - writing-center-fellows
+  - catIdh: wmAw
+    name: Awareness
+    organizationUris:
+      - environmental-coalition
+      - first-generation-students-network
+      - queer-student-alliance
+      - sustainability-office-volunteers
+      - zero-waste-society
+  - catIdh: wmCc
+    name: Club Sports - Competitive
+    organizationUris:
+      - avalanche-rescue-team
+      - biathlon-club
+      - cross-country-ski-team
+      - rock-climbing-team
+      - rugby-club
+      - ski-racing-team
+      - ultimate-frisbee
+  - catIdh: wmCr
+    name: Club Sports - Recreational
+    organizationUris:
+      - alpine-club
+      - bouldering-collective
+      - climbing-wall-crew
+      - disc-golf-club
+      - dog-sledding-club
+      - fly-fishing-club
+      - hiking-club
+      - ice-climbing-club
+      - mountain-bike-club
+      - mountaineering-club
+      - nordic-skiing-club
+      - outdoor-leadership-program
+      - paragliding-club
+      - running-club
+      - slackline-society
+      - snowboard-club
+      - snowshoe-hikers
+      - telemark-club
+      - yoga-club
+  - catIdh: wmMu
+    name: Multicultural
+    organizationUris:
+      - black-student-union
+      - folk-dance-troupe
+      - international-students-association
+      - latin-american-student-alliance
+      - queer-student-alliance
+      - spanish-conversation-table
+  - catIdh: wmPe
+    name: Performance
+    organizationUris:
+      - bell-choir
+      - chamber-orchestra
+      - film-production-club
+      - folk-dance-troupe
+      - improv-troupe
+      - jazz-ensemble
+      - juggling-society
+      - literary-magazine
+      - monkey-business-comedy
+      - music-collective
+      - photography-club
+      - radio-kmnk
+      - snow-sculpture-society
+      - swing-dance-club
+      - theater-guild
+      - wiki-monkeys-singers
+  - catIdh: wmPp
+    name: Pre-Professional
+    organizationUris:
+      - debate-society
+      - engineering-society
+      - mock-trial
+      - model-united-nations
+      - mountain-medicine-society
+      - pre-law-society
+      - society-of-women-engineers
+      - wilderness-first-responders
+  - catIdh: wmRe
+    name: Religious
+    organizationUris:
+      - campus-ministry
+  - catIdh: wmSe
+    name: Service
+    organizationUris:
+      - avalanche-rescue-team
+      - banana-bread-collective
+      - environmental-coalition
+      - gardening-club
+      - habitat-builders
+      - knitting-circle
+      - search-and-rescue-volunteers
+      - ski-patrol
+      - sustainability-office-volunteers
+      - trail-crew
+      - valley-food-bank-volunteers
+      - valley-tutors
+      - wilderness-first-responders
+      - zero-waste-society
+  - catIdh: wmSi
+    name: Special Interest
+    organizationUris:
+      - backcountry-film-society
+      - banana-bread-collective
+      - birding-society
+      - board-game-guild
+      - chess-club
+      - coffee-roasters-guild
+      - dog-sledding-club
+      - film-production-club
+      - gaming-collective
+      - gardening-club
+      - juggling-society
+      - knitting-circle
+      - photography-club
+      - pottery-studio
+      - snow-sculpture-society
+      - swing-dance-club
+  - catIdh: wmSl
+    name: Student Leadership
+    organizationUris:
+      - black-student-union
+      - climbing-wall-crew
+      - first-generation-students-network
+      - outdoor-leadership-program
+      - radio-kmnk
+      - ski-patrol
+      - student-government
+      - writing-center-fellows

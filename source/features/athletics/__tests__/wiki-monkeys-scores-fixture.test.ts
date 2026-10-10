@@ -1,23 +1,30 @@
 import {UITEST_FROZEN_DATE} from '@frogpond/timer'
-import {UITEST_SCORES} from '../__fixtures__/scores'
+import type {CampusRecordingFile} from '../../campus/fixtures'
+import exampleCollege from '../../campus/__fixtures__/example.college'
 import {Constants} from '../constants'
+import type {Score} from '../types'
 import {daySections, toProcessedScores} from '../utils'
 
-/// The fixtures exist so the list has a day either side of Today to scroll
-/// to. That is only true if they land on the days they were written for, which
-/// depends on the frozen clock -- so this asserts the pairing rather than
-/// trusting it.
-const sections = daySections(toProcessedScores(UITEST_SCORES), new Date(UITEST_FROZEN_DATE))
+const recording = (exampleCollege as ReadonlyArray<CampusRecordingFile>).find(
+	(file) => file.key === 'GET {server:example.college}/athletics/scores',
+)
+const SCORES = recording?.json as Score[]
 
-describe('the UI test scores', () => {
+/// Wiki Monkeys' week of games gives the list a day either side of Today to scroll to, in
+/// every state. That is only true if they land on the days they were written for, which
+/// depends on the UI tests' frozen clock -- so this asserts the pairing rather than
+/// trusting it.
+const sections = daySections(toProcessedScores(SCORES), new Date(UITEST_FROZEN_DATE))
+
+describe("Wiki Monkeys' scores fixture", () => {
 	it('survive parsing, every one of them', () => {
-		expect(toProcessedScores(UITEST_SCORES)).toHaveLength(UITEST_SCORES.length)
+		expect(toProcessedScores(SCORES)).toHaveLength(SCORES.length)
 	})
 
 	/// Jest runs on Central time; the UI test simulators run on UTC. A kickoff
 	/// whose date differs between the two lands in a different section there.
 	it('fall on the day they are written for in UTC as well as Central', () => {
-		for (let score of UITEST_SCORES) {
+		for (let score of SCORES) {
 			let writtenDay = score.date_utc.slice(0, 10)
 			expect([score.id, new Date(score.date_utc).toISOString().slice(0, 10)]).toEqual([
 				score.id,

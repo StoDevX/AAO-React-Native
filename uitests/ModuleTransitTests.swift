@@ -1,6 +1,9 @@
 import XCTest
 
+/// Tags: campus:example.college
 class ModuleTransitTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
+
 	/// The strip is a horizontal scroll view inside a list row, which is the
 	/// arrangement most likely to have the list steal the gesture.
 	///
@@ -18,7 +21,7 @@ class ModuleTransitTests: UITestCaseUnbooted {
 
 	/// Picking a day from the sheet's navigation bar has to redraw the
 	/// timetable beneath it, not just relabel the menu. The frozen clock is a
-	/// Saturday, which Express Bus runs, and it does not run on Sunday, so the
+	/// Saturday, which the Switchback Shuttle runs, and it does not run on Sunday, so the
 	/// rows giving way to the empty state is the proof.
 	func testPickingADayRedrawsTheTimetable() throws {
 		TransitScreen(app: app)

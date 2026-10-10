@@ -1,0 +1,151 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/dictionary
+json:
+  data:
+    - definition: |
+        The student club that runs Saturday trips to the high bowls and lends out avalanche beacons for free.
+      word: Alpine Club
+    - definition: |
+        Whatever happens at Treeline Commons between the end of afternoon classes and dinner, usually involving cocoa.
+      word: Après
+    - definition: |
+        The hour after the last lift closes, when the whole campus walks down the valley road at once.
+      word: Avalanche Hour
+    - definition: |
+        The café under Treeline Commons. Opens before the first lift and stays open until the last chair comes down.
+      word: Basecamp Café
+    - definition: |
+        The line outside the Ski Patrol hut on a powder morning, where everyone tests a beacon before the lift.
+      word: Beacon Check
+    - definition: |
+        A day the upper lift opens to the back bowls, which empties every lecture hall by ten.
+      word: Bowl Day
+    - word: change
+      pronunciation: CHānj
+      partOfSpeech: verb
+      senses:
+        - grammar: with object
+          definition: make (someone or something) different; alter or modify
+          examples:
+            - both parties voted against proposals to change the law
+            - technology and the internet have dramatically changed the way we communicate
+            - fame hasn't changed her one bit.
+          subsenses:
+            - grammar: no object
+              definition: become different; be altered or modified
+              examples:
+                - I've had time to think and my opinion hasn't changed
+                - the Virginia creeper was just beginning to change from green to gold.
+            - grammar: with object
+              definition: turn or convert (something) from one state, form or condition into another
+              examples:
+                - the fairy changed the frog into a prince
+    - definition: |
+        Any talk given by a professor who teaches while riding the lift, a campus tradition since the first winter term.
+      word: Chairlift Lecture
+    - definition: |
+        The meal plan’s add-on for drinks at Basecamp Café; also accepted at the lift-top hut.
+      word: Cocoa Card
+    - definition: |
+        Treeline Commons, the student union, by the bottom station of the Summit Lift.
+      word: Commons
+    - definition: |
+        Freshly groomed snow, and the reason the first lift has a queue at seven.
+      word: Corduroy
+    - definition: |
+        The Valley Echo, the student paper, published Fridays; its office looks out over the lift line.
+      word: Echo, The
+    - definition: |
+        The spring afternoon classes end early and the whole college races from the lift to the pond.
+      word: Field Day
+    - definition: |
+        The first ride up the Summit Lift each morning; the student who takes it rings the bell at the top.
+      word: First Chair
+    - definition: |
+        The administration building, with the Registrar and Financial Aid; its windows face the lift.
+      word: Glacier Hall
+    - definition: |
+        The college’s best-known department, whose students measure the ice above the upper lift every week.
+      word: Glaciology
+    - definition: |
+        The board outside the lift hut that says which runs were groomed overnight.
+      word: Grooming Schedule
+    - definition: |
+        The warming hut at the top of the lift, where Ski Patrol keeps the first-aid kit and the kettle.
+      word: Hut
+    - definition: |
+        The February weekend when the pond turns into a market, with sculptures carried down by lift.
+      word: Ice Fair
+    - definition: |
+        The walk third-years take along the ridge in May, from the top of the lift to the old lodge.
+      word: Junior Ridge Walk
+    - definition: |
+        KMNK 91.7, The Peak, the student radio station, broadcasting from Glacier Hall.
+      word: KMNK
+    - definition: |
+        The Summit Lift, which runs from the Commons to Summit Library and is how most students get to class.
+      word: the Lift
+    - definition: |
+        The student ID, which also opens the lift gates, the library and the gym.
+      word: Lift Pass
+    - definition: |
+        The queue at the bottom station, and the unofficial place to meet anyone on campus.
+      word: Lift Line
+    - definition: |
+        The Echo’s comic strip, about the troop of monkeys that supposedly live under the lift.
+      word: Monkey Business
+    - definition: |
+        Being ten minutes late because the lift stopped; accepted by every professor except one.
+      word: Mountain Time
+    - definition: |
+        Tuesday and Thursday evenings, when the lights go on and the lift runs until ten.
+      word: Night Ski
+    - definition: |
+        The cross-country trail around the valley floor, groomed nightly, no lift needed.
+      word: Nordic Loop
+    - definition: |
+        The first building on campus, now the alumni office, beside the original rope lift.
+      word: Old Lodge
+    - definition: |
+        Ski Patrol, the student volunteers who sweep the runs after the last lift each evening.
+      word: Patrol
+    - definition: |
+        The rule that lets a professor cancel class when more than a foot of snow falls; rarely used, always hoped for.
+      word: Powder Clause
+    - definition: |
+        The fourth floor of Summit Library, at the top of the lift, where talking earns a stare.
+      word: Quiet Floor
+    - definition: |
+        The fall race from the top of the lift to Treeline Commons, open to everyone.
+      word: Ridge Run
+    - definition: |
+        The concert hall, used for recitals, and in spring for drying out boots after the lift closes.
+      word: Snowmelt Recital Hall
+    - definition: |
+        The library at the top of the lift, open until two during finals.
+      word: Summit Library
+    - definition: |
+        The bus that climbs the valley road when the lift is closed for wind.
+      word: Switchback Shuttle
+    - definition: |
+        The week in April when the lift stops for the season and everyone learns to walk uphill again.
+      word: Thaw
+    - definition: |
+        The student union and dining hall, at the bottom of the lift.
+      word: Treeline Commons
+    - definition: |
+        What the students call themselves, after the monkeys in the library mural.
+      word: Troop
+    - definition: |
+        The terrain above the top of the lift, reached on foot when the patrol says it is safe.
+      word: Upper Bowl
+    - definition: |
+        The road along the valley floor, from the village to the bottom of the lift.
+      word: Valley Road
+    - definition: |
+        When the lift stops for wind and the Switchback Shuttle takes over.
+      word: Wind Hold
+    - definition: |
+        The costume the mascot wears at home races, kept in a locker by the lift.
+      word: Yeti

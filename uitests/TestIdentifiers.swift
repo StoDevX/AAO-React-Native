@@ -167,18 +167,18 @@ struct TestIdentifiers {
 		static let list = "dictionary-list"
 		static let definitionSheet = "dictionary-definition-sheet"
 		static let suggestAnEdit = "Suggest an Edit"
-		/// A copy of the iOS dictionary's own "change" entry, present only under
-		/// `--uitesting`, for comparing this sheet against a screenshot of
-		/// Apple's.
+		/// Wiki Monkeys' copy of the iOS dictionary's own "change" entry, for
+		/// comparing this sheet against a screenshot of Apple's: the one entry
+		/// with a pronunciation, a part of speech and nested senses.
 		static let referenceEntry = "change"
-		/// The entry `openFirstWord()` lands on under `--uitesting`, from
-		/// `docs/dictionary.json`. It has a single sense.
-		static let firstEntry = "AAC"
-		static let firstEntryDefinition = "The Academic Advising Center"
+		/// The entry `openFirstWord()` lands on, from Wiki Monkeys' dictionary.
+		/// It has a single sense.
+		static let firstEntry = "Avalanche Hour"
+		static let firstEntryDefinition = "The hour after the last lift closes"
 		/// A query whose results begin with `firstEntry` and run to several
-		/// screens -- 20 entries in `docs/dictionary.json`, AAC through Tomson --
-		/// so they can only be seen from the top if the list scrolls there.
-		static let firstEntrySearchTerm = "academic"
+		/// screens -- most of Wiki Monkeys' words mention the lift -- so they
+		/// can only be seen from the top if the list scrolls there.
+		static let firstEntrySearchTerm = "lift"
 
 		/// The edit form's navigation bar, which carries `suggestAnEdit`'s
 		/// wording because that action is what opens it. Queries for the form's
@@ -295,13 +295,13 @@ struct TestIdentifiers {
 		/// Matches AREA_ROW_ID_PREFIX in source/features/sis/student-work/area-section.tsx.
 		/// Each area row's identifier is this followed by the area's slug.
 		static let areaRowPrefix = "student-work-area:"
-		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
-		/// a field long enough to wrap, one with only short fields.
+		/// A posting on Wiki Monkeys' board with a field long enough to wrap, from the
+		/// `GET-jobs.college.example-…` fixtures.
 		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
 		/// Matches JOB_DESCRIPTION_TITLE in source/features/sis/student-work/lib.ts,
 		/// the title of both the row and the screen it opens.
 		static let jobDescriptionRow = "Description"
-		/// The start of a paragraph in the fixture postings' description.
+		/// The start of a paragraph in Wiki Monkeys' postings' descriptions.
 		static let fixtureJobDescriptionParagraph = "Transferable Skills:"
 		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-section.tsx.
 		static let areaGrid = "student-work-area-grid"
@@ -581,11 +581,11 @@ struct TestIdentifiers {
 		/// The picker's accessibility identifier, set in app/customize/quick-actions.tsx.
 		static let screen = "screen-quick-actions"
 		static let reset = "Reset to Defaults"
-		/// DEFAULT_QUICK_ACTIONS in source/features/quick-actions/destinations.ts.
-		static let defaults = ["Stav Menu", "Cage Menu", "Olaf Messenger", "Transit"]
+		/// Wiki Monkeys' `quickActions.defaults`, in source/campuses/example-college.ts.
+		static let defaults = ["Menus", "Building Hours", "Calendar", "Valley Map"]
 		/// One of `defaults`, and an action outside them.
-		static let aDefault = "Transit"
-		static let anExtra = "Calendar"
+		static let aDefault = "Valley Map"
+		static let anExtra = "Transit"
 	}
 
 	// MARK: - Unsaved changes
@@ -610,7 +610,7 @@ struct TestIdentifiers {
 		static let aPendingJob = "IMG_2259-COLLAGE.jpg"
 		/// A heading only the release screen draws.
 		static let jobInfo = "Job Info"
-		/// How every printer's name starts.
+		/// How every one of Wiki Monkeys' mocked printers' names starts.
 		static let printerPrefix = "mfc-"
 		static let print = "Print"
 	}
@@ -664,12 +664,12 @@ struct TestIdentifiers {
 		static let version = "App Version"
 		/// A section header in app/about/index.tsx.
 		static let storyHeading = "Our story"
-		/// The headings of the first two timeline cards, from source/features/about/timeline.ts.
-		static let firstEra = "🏡 October 2017 — Today"
-		static let secondEra = "🧱 July 2016 — September 2017"
-		/// The credits cards' headings, from app/about/index.tsx.
-		static let contributors = "Contributors"
-		static let acknowledgements = "Acknowledgements"
+		/// The headings of Wiki Monkeys' first two eras, from source/campuses/example-college/about.ts.
+		static let firstEra = "🏔 2026 — Today"
+		static let secondEra = "🚡 1952 — 2025"
+		/// Wiki Monkeys' two credits cards' headings, from the same file.
+		static let contributors = "The Troop"
+		static let acknowledgements = "With Thanks To"
 		static let privacy = "Privacy"
 		static let legal = "Legal"
 	}
@@ -736,12 +736,12 @@ struct TestIdentifiers {
 		static let resultsList = "student-orgs-results-list"
 		/// The landing's title, in app/student-orgs/index.tsx.
 		static let title = "Student Orgs"
-		/// A search whose results, from source/features/student-orgs/fixtures/uitest-orgs.json,
-		/// run several screens long, and the letter that refines it.
+		/// A search whose results, from Wiki Monkeys' org list, run several screens long, and
+		/// the letter that refines it.
 		static let firstQuery = "a"
 		static let refinement = "n"
-		/// The first org the refined search lists, from the same fixture.
-		static let firstRefinedResult = "Academic Success Center"
+		/// The first org the refined search lists.
+		static let firstRefinedResult = "Alpine Club"
 	}
 
 	// MARK: - Hours
@@ -816,7 +816,7 @@ struct TestIdentifiers {
 		/// The one course a UI-test run's catalogue holds. Mirrors
 		/// `UITEST_COURSE_NAME` in
 		/// `source/lib/course-search/__fixtures__/courses.ts`.
-		static let aCourse = "Hybrid Test Course"
+		static let aCourse = "Introduction to Glaciology"
 	}
 
 	// MARK: - Transit
@@ -824,22 +824,21 @@ struct TestIdentifiers {
 	enum Transit {
 		/// The screen's title, in app/_layout.tsx.
 		static let title = "Transit"
-		/// The line every UI test drives, and a stop it always calls at. The
-		/// stop is the college itself, so it is not going to be renamed out
-		/// from under this test.
-		static let aLine = "Express Bus"
-		static let aStop = "St. Olaf College"
-		/// A stop several places past `aStop` on Express Bus's route (see
-		/// `docs/bus-times.json`), used to prove a strip swipe actually moved the
+		/// The line every UI test drives, Wiki Monkeys' only one, and a stop it
+		/// always calls at.
+		static let aLine = "Switchback Shuttle"
+		static let aStop = "Treeline Commons"
+		/// A stop several places past `aStop` on the Switchback Shuttle's route
+		/// (Wiki Monkeys' `GET-transit-bus.yaml`), used to prove a strip swipe actually moved the
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
 		/// visits twice (the loop starts and ends there), this one appears only
 		/// once, so its presence unambiguously means the strip scrolled forward
 		/// rather than showing a second, later occurrence of the start. It is the
 		/// sixth of eight stops: past the four and a half cells the strip shows
 		/// when it opens on the first stop, and still in view once two swipes
-		/// have carried the strip to its end -- which the fifth, Cub/Target, is
-		/// not. No other line calls here.
-		static let aStopFartherAlongTheRoute = "Wells Fargo"
+		/// have carried the strip to its end -- which the fifth, Village Market,
+		/// is not.
+		static let aStopFartherAlongTheRoute = "Old Lodge"
 		/// The horizontal strip of stops inside a line's widget, which a swipe
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the
@@ -850,15 +849,15 @@ struct TestIdentifiers {
 		/// The navigation bar's day menu, labelled by the day it is showing.
 		/// `Today` when the screens are following the clock.
 		static let dayMenuDefaultLabel = "Today"
-		/// The day the day-picker test picks. Sunday, because Express Bus keeps
-		/// one timetable Monday to Saturday (`docs/bus-times.json`), so Sunday
+		/// The day the day-picker test picks. Sunday, because the shuttle keeps
+		/// one timetable Monday to Saturday, so Sunday
 		/// is the one pick that draws nothing where the frozen Saturday clock
 		/// draws rows.
 		static let aDay = "Sunday"
-		/// A stop Express Bus calls at once per round, so its row lists times
+		/// A stop the shuttle calls at once per round, so its row lists times
 		/// wherever the line runs. Unlike `aStop`, which the route visits twice
 		/// and ends the round on, with no departure to list.
-		static let aStopOnEveryRunningDay = "Food Co-op"
+		static let aStopOnEveryRunningDay = "Valley Co-op"
 		/// The empty state that replaces the timetable on a day the line does not
 		/// run. A prefix: a holiday appends its name. Matches `BusLine` in
 		/// `source/features/transit/bus/line.tsx`.

@@ -16,12 +16,42 @@ export type FixtureEndpoint = {
 	schema: string
 	/** Live URLs of the same endpoint, sampled when no recording covers it. */
 	live?: readonly string[]
+	/**
+	 * Answers written out by hand, for a form the server sends that no
+	 * recording or live sample happens to use.
+	 */
+	samples?: ReadonlyArray<unknown>
 }
 
 export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	{pattern: 'GET {server}/sources', schema: 'sources'},
 	{pattern: 'GET {server}/contacts', schema: 'contacts'},
-	{pattern: 'GET {server}/dictionary', schema: 'dictionary'},
+	{
+		pattern: 'GET {server}/dictionary',
+		schema: 'dictionary',
+		// An entry in the structured form, which the server sends for any word
+		// its YAML writes with senses; neither campus's dictionary has one yet.
+		samples: [
+			{
+				data: [
+					{
+						word: 'change',
+						pronunciation: 'CHānj',
+						partOfSpeech: 'verb',
+						senses: [
+							{
+								grammar: 'with object',
+								definition: 'make (someone or something) different',
+								examples: ['fame has not changed her one bit'],
+								subsenses: [{grammar: 'no object', definition: 'become different', examples: []}],
+							},
+							{definition: 'replace with another'},
+						],
+					},
+				],
+			},
+		],
+	},
 	{
 		pattern: 'GET {server}/directory/departments',
 		schema: 'directory-departments',
@@ -34,6 +64,41 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	{pattern: 'GET {server}/map/geojson', schema: 'map-geojson'},
 	{pattern: 'GET {server}/spaces/directory', schema: 'spaces-directory'},
 	{pattern: 'GET {server}/spaces/hours', schema: 'spaces-hours'},
+	{
+		pattern: 'GET {server}/athletics/scores',
+		schema: 'athletics-scores',
+		live: ['https://stolaf.frogpond.tech/v1/athletics/scores'],
+	},
+	{
+		pattern: 'GET {server}/orgs',
+		schema: 'student-orgs',
+		live: ['https://stolaf.frogpond.tech/v1/orgs'],
+	},
+	{
+		pattern: 'GET {server}/orgs/categories',
+		schema: 'org-category-memberships',
+		live: ['https://stolaf.frogpond.tech/v1/orgs/categories'],
+	},
+	{
+		pattern: 'GET {server}/orgs/named/:id/category-styles',
+		schema: 'org-category-styles',
+		live: ['https://stolaf.frogpond.tech/v1/orgs/category-styles'],
+	},
+	{
+		pattern: 'GET {server}/student-work/named/:id/areas',
+		schema: 'student-work-areas',
+		live: ['https://stolaf.frogpond.tech/v1/student-work/areas'],
+	},
+	{
+		pattern: 'GET {server}/student-work/named/:id/wages',
+		schema: 'student-wages',
+		live: ['https://stolaf.frogpond.tech/v1/student-work/wages'],
+	},
+	{
+		pattern: 'GET {server}/student-work/named/:id/units',
+		schema: 'student-work-units',
+		live: ['https://stolaf.frogpond.tech/v1/student-work/units'],
+	},
 	{pattern: 'GET {server}/transit/bus', schema: 'transit-bus'},
 	{pattern: 'GET {server}/transit/modes', schema: 'transit-modes'},
 	{pattern: 'GET {server}/calendar/named/:id', schema: 'calendar-named'},
@@ -84,6 +149,17 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 		live: [
 			'https://olafmessenger.com/wp-json/wp/v2/staff_year?hide_empty=true&per_page=100&_fields=id,name',
 		],
+	},
+	{
+		pattern: 'GET https://:host/hcmRestApi/resources/latest/recruitingCEJobRequisitions?*',
+		schema: 'oracle-job-requisitions',
+		live: [
+			'https://fa-ewur-saasfaprod1.fa.ocs.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList&finder=findReqs%3BsiteNumber%3DCX_1%2Climit%3D200%2CsortBy%3DPOSTING_DATES_DESC',
+		],
+	},
+	{
+		pattern: 'GET https://:host/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails?*',
+		schema: 'oracle-job-details',
 	},
 ]
 

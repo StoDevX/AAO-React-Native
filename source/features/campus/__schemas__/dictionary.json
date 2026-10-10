@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"$comment": "Written by mise run update-fixture-schemas from 3 samples; regenerate rather than edit.",
 	"type": "object",
 	"properties": {
 		"data": {
@@ -17,12 +17,57 @@
 					"pronunciation": {
 						"type": "string"
 					},
+					"senses": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"definition": {
+									"type": "string"
+								},
+								"examples": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"grammar": {
+									"type": "string"
+								},
+								"subsenses": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"definition": {
+												"type": "string"
+											},
+											"examples": {
+												"type": "array",
+												"items": {}
+											},
+											"grammar": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"definition",
+											"examples",
+											"grammar"
+										]
+									}
+								}
+							},
+							"required": [
+								"definition"
+							]
+						}
+					},
 					"word": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"definition",
 					"word"
 				]
 			}

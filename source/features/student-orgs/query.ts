@@ -1,8 +1,6 @@
-import {servesBundledFixtures} from '@frogpond/launch-arguments'
 import {isHTTPError} from 'ky'
 import {queryOptions} from '@tanstack/react-query'
 import type {StudentOrgDetailType, StudentOrgType} from './types'
-import uitestOrgs from './fixtures/uitest-orgs.json'
 import {clientForSection} from '../campus/section-client'
 
 export const keys = {
@@ -16,11 +14,6 @@ export const keys = {
 const staleTime = 1000 * 60 * 5
 
 async function fetchStudentOrgs({signal}: {signal: AbortSignal}) {
-	// UI tests naming no campus read a recorded list, so a search's results are as long, and
-	// in the order, the tests expect, whatever Presence.io holds today.
-	if (servesBundledFixtures) {
-		return uitestOrgs as StudentOrgType[]
-	}
 	let response = await clientForSection('studentOrgs').get('orgs', {signal}).json()
 	return response as StudentOrgType[]
 }

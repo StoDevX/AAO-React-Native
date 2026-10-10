@@ -1,0 +1,1180 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/orgs
+json:
+  - $groupableName: A
+    category: Club Sports - Recreational
+    description: Weekend climbs and hut trips in the high valley, with gear to borrow and rides to every trailhead.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 89
+    name: Alpine Club
+    organizationUri: alpine-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: A
+    category: Service, Club Sports - Competitive
+    description: Trains with the ski patrol in beacon searches, probing and first aid, and stands by at every race.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 79
+    name: Avalanche Rescue Team
+    organizationUri: avalanche-rescue-team
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Special Interest
+    description: Screens a mountain film every other Friday in Summit Library, with popcorn and an argument after.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 20
+    name: Backcountry Film Society
+    organizationUri: backcountry-film-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Special Interest, Service
+    description: Bakes for the Valley Co-op shelf and the finals-week table outside Glacier Hall.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 13
+    name: Banana Bread Collective
+    organizationUri: banana-bread-collective
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Performance
+    description: Rings the bells in the chapel tower each Sunday evening and at commencement.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 82
+    name: Bell Choir
+    organizationUri: bell-choir
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Club Sports - Competitive
+    description: Skate skiing and air-rifle marksmanship, training on the valley loop and racing in the conference.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 23
+    name: Biathlon Club
+    organizationUri: biathlon-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Special Interest, Academic
+    description: Dawn walks along the valley road to count ptarmigan, jays and the odd golden eagle.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 37
+    name: Birding Society
+    organizationUri: birding-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Multicultural, Student Leadership
+    description: A home for Black students at Wiki Monkeys, hosting dinners, speakers and a spring formal.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 65
+    name: Black Student Union
+    organizationUri: black-student-union
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Special Interest
+    description: Long games and short ones in the Treeline Commons lounge every Thursday night.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Board Game Guild
+    organizationUri: board-game-guild
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: B
+    category: Club Sports - Recreational
+    description: Sets routes on the Glacier Hall wall and keeps the crash pads for anyone to take outside.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 79
+    name: Bouldering Collective
+    organizationUri: bouldering-collective
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: C
+    category: Religious
+    description: Worship, retreats and a quiet room open to every student, of any faith or none.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 37
+    name: Campus Ministry
+    organizationUri: campus-ministry
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: C
+    category: Performance, Academic
+    description: Plays three concerts a year in the chapel, with an audition each fall for every section.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Chamber Orchestra
+    organizationUri: chamber-orchestra
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: C
+    category: Special Interest
+    description: Blitz on Tuesdays, a ladder all term, and a team at the regional championship.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 82
+    name: Chess Club
+    organizationUri: chess-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: C
+    category: Student Leadership, Club Sports - Recreational
+    description: Belays, coaches and keeps the climbing wall open in the evenings.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 58
+    name: Climbing Wall Crew
+    organizationUri: climbing-wall-crew
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: C
+    category: Special Interest
+    description: Roasts beans for the library cafe and teaches a pour-over class each term.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 79
+    name: Coffee Roasters Guild
+    organizationUri: coffee-roasters-guild
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: C
+    category: Club Sports - Competitive
+    description: Classic and skate racing across the conference, training on the valley loop at dawn.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 86
+    name: Cross-Country Ski Team
+    organizationUri: cross-country-ski-team
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: D
+    category: Academic, Pre-Professional
+    description: Parliamentary debate at home and on the road, with novice nights for anyone curious.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 30
+    name: Debate Society
+    organizationUri: debate-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: D
+    category: Club Sports - Recreational
+    description: Plays the nine-hole course behind Old Lodge, snow or no snow.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 30
+    name: Disc Golf Club
+    organizationUri: disc-golf-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: D
+    category: Club Sports - Recreational, Special Interest
+    description: Runs teams on the valley trail with a kennel down in the village every winter weekend.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Dog Sledding Club
+    organizationUri: dog-sledding-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: E
+    category: Academic, Pre-Professional
+    description: Builds a snow-going robot each year and tours firms in the valley.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 65
+    name: Engineering Society
+    organizationUri: engineering-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: E
+    category: Awareness, Service
+    description: Runs the compost program, the bike swap and an Earth Week on the commons.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 13
+    name: Environmental Coalition
+    organizationUri: environmental-coalition
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: F
+    category: Performance, Special Interest
+    description: Shoots a short film each term and screens them all at the spring festival.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 72
+    name: Film Production Club
+    organizationUri: film-production-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: F
+    category: Awareness, Student Leadership
+    description: Mentoring, dinners and a quiet study space for the first in their families to go to college.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 83
+    name: First-Generation Students Network
+    organizationUri: first-generation-students-network
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: F
+    category: Club Sports - Recreational
+    description: Ties flies in winter and wades the valley creek once the ice is gone.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Fly Fishing Club
+    organizationUri: fly-fishing-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: F
+    category: Performance, Multicultural
+    description: Dances from a dozen traditions, with a lesson open to all every Wednesday.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Folk Dance Troupe
+    organizationUri: folk-dance-troupe
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: G
+    category: Special Interest
+    description: Video game nights, tournaments and a lending shelf of consoles.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Gaming Collective
+    organizationUri: gaming-collective
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: G
+    category: Service, Special Interest
+    description: Keeps the greenhouse behind Summit Library and gives away seedlings in May.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 30
+    name: Gardening Club
+    organizationUri: gardening-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: G
+    category: Academic
+    description: Reads a paper on ice each week and visits the glacier above campus in the fall.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 20
+    name: Glaciology Reading Group
+    organizationUri: glaciology-reading-group
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: H
+    category: Service
+    description: Builds homes in the valley with local crews over breaks and some weekends.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Habitat Builders
+    organizationUri: habitat-builders
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: H
+    category: Club Sports - Recreational
+    description: A hike every Saturday, from a short loop to a long day above the tree line.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 89
+    name: Hiking Club
+    organizationUri: hiking-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: I
+    category: Club Sports - Recreational
+    description: Climbs the frozen falls up the valley, with lessons for anyone new to the tools.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Ice Climbing Club
+    organizationUri: ice-climbing-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: I
+    category: Performance
+    description: Makes it all up every Friday night in the Glacier Hall theater.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 23
+    name: Improv Troupe
+    organizationUri: improv-troupe
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: I
+    category: Multicultural
+    description: A home for students from abroad, with a dinner of every country each spring.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 90
+    name: International Students Association
+    organizationUri: international-students-association
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: J
+    category: Performance
+    description: Swing, bop and ballads in the lodge on the first Friday of each month.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 23
+    name: Jazz Ensemble
+    organizationUri: jazz-ensemble
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: J
+    category: Special Interest, Performance
+    description: Juggles anything that lands softly in the snow, and some things that do not.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Juggling Society
+    organizationUri: juggling-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: K
+    category: Special Interest, Service
+    description: Knits hats and mittens for the valley shelter while trading patterns and tea.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 37
+    name: Knitting Circle
+    organizationUri: knitting-circle
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: L
+    category: Multicultural
+    description: Celebrates Latin American cultures with food, film, dance and a fall festival.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 69
+    name: Latin American Student Alliance
+    organizationUri: latin-american-student-alliance
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: L
+    category: Academic, Performance
+    description: Publishes poems, stories and art from students twice a year, with open readings.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Literary Magazine
+    organizationUri: literary-magazine
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Academic
+    description: Puzzles, problem sessions and pie on the fourteenth of March.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 75
+    name: Math Club
+    organizationUri: math-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Academic, Pre-Professional
+    description: Argues cases at regional tournaments and trains new witnesses and attorneys each fall.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 82
+    name: Mock Trial
+    organizationUri: mock-trial
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Academic, Pre-Professional
+    description: Represents nations at conferences across the region and hosts one of its own.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 72
+    name: Model United Nations
+    organizationUri: model-united-nations
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Performance
+    description: Sketch comedy shows at the end of every term, written and staged by students.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 86
+    name: Monkey Business Comedy
+    organizationUri: monkey-business-comedy
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Club Sports - Recreational
+    description: Rides the valley trails from thaw to first snow, with a tune-up night each week.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 58
+    name: Mountain Bike Club
+    organizationUri: mountain-bike-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Pre-Professional, Academic
+    description: Wilderness first aid courses and talks from doctors who work in the mountains.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 27
+    name: Mountain Medicine Society
+    organizationUri: mountain-medicine-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Club Sports - Recreational
+    description: Glacier travel, crevasse rescue and summit trips for students with any experience.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 65
+    name: Mountaineering Club
+    organizationUri: mountaineering-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: M
+    category: Performance
+    description: Books student bands for the lodge and lends practice rooms and amps.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Music Collective
+    organizationUri: music-collective
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: 'N'
+    category: Academic
+    description: Journal club, lab tours and a brain awareness week on the commons.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Neuroscience Club
+    organizationUri: neuroscience-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: 'N'
+    category: Club Sports - Recreational
+    description: Lessons and long tours on the valley loop for anyone who wants to learn.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 58
+    name: Nordic Skiing Club
+    organizationUri: nordic-skiing-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: O
+    category: Student Leadership, Club Sports - Recreational
+    description: Trains trip leaders in navigation, first aid and judgment, then sends them out with new students.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 34
+    name: Outdoor Leadership Program
+    organizationUri: outdoor-leadership-program
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: P
+    category: Club Sports - Recreational
+    description: Ground school in winter and tandem flights off the ridge once the weather allows.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Paragliding Club
+    organizationUri: paragliding-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: P
+    category: Academic
+    description: Weekly talks and arguments over tea about anything worth arguing about.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 58
+    name: Philosophy Society
+    organizationUri: philosophy-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: P
+    category: Special Interest, Performance
+    description: Photo walks at dawn and dusk, a darkroom, and a gallery show each spring.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Photography Club
+    organizationUri: photography-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: P
+    category: Academic
+    description: Builds things that go fast or glow, and hosts a star party on the ridge.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 37
+    name: Physics Society
+    organizationUri: physics-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: P
+    category: Special Interest
+    description: Wheel throwing and glazing nights, with a sale of mugs every December.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 30
+    name: Pottery Studio
+    organizationUri: pottery-studio
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: P
+    category: Pre-Professional
+    description: Advising, LSAT practice and talks from alumni working in law.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 37
+    name: Pre-Law Society
+    organizationUri: pre-law-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: Q
+    category: Awareness, Multicultural
+    description: Community, advocacy and a spring drag show for LGBTQ+ students and allies.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 86
+    name: Queer Student Alliance
+    organizationUri: queer-student-alliance
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: Q
+    category: Academic
+    description: Buzzer practice every week and a team at the regional tournaments.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 75
+    name: Quiz Bowl
+    organizationUri: quiz-bowl
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: R
+    category: Performance, Student Leadership
+    description: Runs KMNK 91.7, The Peak, with shows by students on every kind of music.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 82
+    name: Radio KMNK
+    organizationUri: radio-kmnk
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: R
+    category: Club Sports - Competitive
+    description: Competes in bouldering and lead climbing at collegiate events across the region.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 58
+    name: Rock Climbing Team
+    organizationUri: rock-climbing-team
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: R
+    category: Club Sports - Competitive
+    description: Plays fifteens in the fall and sevens in the spring, with no experience needed.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 82
+    name: Rugby Club
+    organizationUri: rugby-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: R
+    category: Club Sports - Recreational
+    description: Runs the valley road every morning at seven, at any pace.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 16
+    name: Running Club
+    organizationUri: running-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Service
+    description: Trains with the county team and joins searches in the valley when called.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 48
+    name: Search and Rescue Volunteers
+    organizationUri: search-and-rescue-volunteers
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Service, Student Leadership
+    description: Patrols the campus hill, runs the toboggan and teaches avalanche safety.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 82
+    name: Ski Patrol
+    organizationUri: ski-patrol
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Club Sports - Competitive
+    description: Slalom and giant slalom in the collegiate league, training on the campus hill.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 37
+    name: Ski Racing Team
+    organizationUri: ski-racing-team
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Club Sports - Recreational
+    description: Strings lines between the pines by the commons whenever it is not snowing.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 51
+    name: Slackline Society
+    organizationUri: slackline-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Performance, Special Interest
+    description: Carves the giant sculpture on the commons for the winter festival.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 86
+    name: Snow Sculpture Society
+    organizationUri: snow-sculpture-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Club Sports - Recreational
+    description: Rides the terrain park and the backcountry, with lessons on Saturdays.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 30
+    name: Snowboard Club
+    organizationUri: snowboard-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Club Sports - Recreational
+    description: Tours by moonlight and day, with snowshoes to borrow from the gear room.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 37
+    name: Snowshoe Hikers
+    organizationUri: snowshoe-hikers
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Pre-Professional, Academic
+    description: Mentoring, networking and outreach for women in engineering and science.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 34
+    name: Society of Women Engineers
+    organizationUri: society-of-women-engineers
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Academic, Multicultural
+    description: Practices Spanish over lunch in the Treeline Commons every Tuesday.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 34
+    name: Spanish Conversation Table
+    organizationUri: spanish-conversation-table
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Student Leadership
+    description: Represents students to the college and funds every other organization on this list.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 58
+    name: Student Government
+    organizationUri: student-government
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Service, Awareness
+    description: Audits energy use in the halls and runs the move-out donation drive.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 76
+    name: Sustainability Office Volunteers
+    organizationUri: sustainability-office-volunteers
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: S
+    category: Performance, Special Interest
+    description: Lessons for beginners and a dance on the second Saturday of every month.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Swing Dance Club
+    organizationUri: swing-dance-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: T
+    category: Club Sports - Recreational
+    description: Free-heel skiing on the campus hill and beyond, with lessons and rental gear.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 23
+    name: Telemark Club
+    organizationUri: telemark-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: T
+    category: Performance
+    description: Stages a play each fall and a musical each spring in the Glacier Hall theater.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 23
+    name: Theater Guild
+    organizationUri: theater-guild
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: T
+    category: Service
+    description: Builds and repairs the trails above campus on weekends from thaw to snow.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 82
+    name: Trail Crew
+    organizationUri: trail-crew
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: U
+    category: Club Sports - Competitive
+    description: Plays in the conference and on the snow field every Sunday.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 44
+    name: Ultimate Frisbee
+    organizationUri: ultimate-frisbee
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: V
+    category: Service
+    description: Sorts and delivers groceries for families in the village every week.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 41
+    name: Valley Food Bank Volunteers
+    organizationUri: valley-food-bank-volunteers
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: V
+    category: Service, Academic
+    description: Tutors children at the village school in reading and math after classes.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 23
+    name: Valley Tutors
+    organizationUri: valley-tutors
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: W
+    category: Performance
+    description: An a cappella group that sings at games, concerts and on the chairlift.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 72
+    name: Wiki Monkeys Singers
+    organizationUri: wiki-monkeys-singers
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: W
+    category: Pre-Professional, Service
+    description: Certifies students as first responders and staffs the first aid tent at races.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 41
+    name: Wilderness First Responders
+    organizationUri: wilderness-first-responders
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: W
+    category: Academic, Student Leadership
+    description: Peer tutors who help with any paper, in any discipline, at any stage.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 86
+    name: Writing Center Fellows
+    organizationUri: writing-center-fellows
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: 'Y'
+    category: Club Sports - Recreational
+    description: Morning yoga in the Treeline Commons studio, with mats to borrow.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 75
+    name: Yoga Club
+    organizationUri: yoga-club
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []
+  - $groupableName: Z
+    category: Awareness, Service
+    description: Runs the repair cafe and keeps the reusable dish program going.
+    lastUpdated: '2026-08-20'
+    meetingLocation: ''
+    meetingTime: ''
+    meetings: ''
+    memberCount: 58
+    name: Zero Waste Society
+    organizationUri: zero-waste-society
+    photoUrl: ''
+    website: ''
+    advisors: []
+    contacts: []

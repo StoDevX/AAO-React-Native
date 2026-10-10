@@ -5,8 +5,12 @@ import XCTest
 /// list at all, and it is also why the signed-out notice is unreachable here:
 /// the mocked launch never asks for an account. That branch is covered by
 /// `printJobsGate` in source/features/stoprint/__tests__/print-jobs-gate.test.ts,
-/// which can state the mocked and unmocked cases alike.
+/// which can state the mocked and unmocked cases alike. The mocked printers are
+/// Wiki Monkeys'.
+///
+/// Tags: campus:example.college
 class ModuleStoPrintTests: UITestCaseUnbooted {
+	override class var campus: Campus? { .example }
 
 	/// A job already sent opens the release screen directly. A Pending Release
 	/// job's row instead pushes the printer list, and a printer chosen there

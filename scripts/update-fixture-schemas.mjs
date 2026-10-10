@@ -2,9 +2,9 @@
 
 // Writes source/features/campus/__schemas__/<schema>.json for each endpoint in
 // fixture-endpoints.ts, inferred from every St. Olaf and Carleton recording
-// that matches it and from the endpoint's `live` samples (fetched here). Rerun
-// it after `mise run update-campus-fixtures`; the schema test then names any
-// Wiki Monkeys fixture whose shape has drifted.
+// that matches it, from the endpoint's `live` samples (fetched here), and from
+// its hand-written `samples`. Rerun it after `mise run update-campus-fixtures`;
+// the schema test then names any Wiki Monkeys fixture whose shape has drifted.
 
 import {mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
@@ -36,6 +36,9 @@ let live = FIXTURE_ENDPOINTS.flatMap((endpoint) =>
 )
 for (let [schema, json] of await Promise.all(live)) {
 	samples.get(schema).push(json)
+}
+for (let endpoint of FIXTURE_ENDPOINTS) {
+	samples.get(endpoint.schema).push(...(endpoint.samples ?? []))
 }
 
 mkdirSync(SCHEMAS, {recursive: true})

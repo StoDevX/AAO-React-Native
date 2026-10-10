@@ -20,6 +20,11 @@ struct StudentWorkScreen: Screen {
 		XCTAssertTrue(areaGrid.waitUntilExists(timeout: 30), "The landing should load")
 		// Below the tiles, and the list builds rows only as they near the screen.
 		scrollUntilExists(preset)
+		// Wiki Monkeys has few enough areas that the last preset is built
+		// without a scroll, under the bottom search bar, which then takes the
+		// tap. The list's end clears the bar.
+		app.swipeUp()
+		app.swipeUp()
 		XCTAssertTrue(preset.waitUntilExists(timeout: 10), "The landing should offer \(title)")
 		return tap(preset, until: postingsTitle, named: "the \(title) preset")
 	}
