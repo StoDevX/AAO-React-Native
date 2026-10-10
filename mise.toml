@@ -112,6 +112,20 @@ eval "set -- $usage_args"
 expo run:ios ${usage_device:+--device "$usage_device"} "$@"
 '''
 
+[tasks."aaa:ios"]
+description = "Build and run All About Anything (AAA Dev) on a simulator or device"
+usage = '''
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
+'''
+env = { APP_VARIANT = "aaa-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "aaa-dev" }]
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
+
 [tasks.start]
 description = "Start Metro bundler"
 run = "expo start"
@@ -179,7 +193,7 @@ bundle install --quiet
 
 # ios/ holds one app at a time. Prebuilding over another variant's project
 # keeps that one's icons and settings, so a change of variant starts afresh.
-variant="${APP_VARIANT:?set APP_VARIANT to aao, aao-dev, carls or carls-dev}"
+variant="${APP_VARIANT:?set APP_VARIANT to aao, aao-dev, carls, carls-dev, aaa or aaa-dev}"
 clean=""
 if test "$(cat ios/.app-variant 2>/dev/null)" != "$variant"; then
   clean="--clean"
