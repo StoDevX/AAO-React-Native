@@ -27,7 +27,7 @@ export const ROUTE_SECTIONS: ReadonlyArray<readonly [path: string, section: Opti
 	['news', 'news'],
 	['newspaper', 'paper'],
 	['print-jobs', 'printing'],
-	['radio', 'radio'],
+	['schedule', 'schedules'],
 	['streaming-media', 'streaming'],
 	['student-orgs', 'studentOrgs'],
 	['student-work', 'studentWork'],

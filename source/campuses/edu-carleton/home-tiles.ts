@@ -64,7 +64,7 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: '/carleton-sumo',
+		view: '/schedule/sumo',
 		title: 'SUMO',
 		icon: 'film.fill',
 		gradient: c.lightBlueGradient,

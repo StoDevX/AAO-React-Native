@@ -162,7 +162,7 @@ describe("Carleton's Home tiles", () => {
 			['Calendar', '/calendar'],
 			['Directory', '/contacts'],
 			['KRLX', 'radio:krlx'],
-			['SUMO', '/carleton-sumo'],
+			['SUMO', '/schedule/sumo'],
 			['The Carletonian', '/newspaper'],
 			['Transportation', '/transit'],
 			['Convo', '/carleton-convos'],

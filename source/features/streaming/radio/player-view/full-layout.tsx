@@ -56,7 +56,7 @@ export function FullLayout({
 	let {artwork, onLayout} = useFittedArtwork({width: fullWidth, viewportHeight})
 	// One schedule for the title, the status line and the list, so they
 	// share a clock and never disagree on a minute boundary.
-	let schedule = useStationSchedule(station.id)
+	let schedule = useStationSchedule(station.schedule)
 	// The song's own cover fills the record's label, where it has one; a song
 	// without a cover, or none on air, leaves the station's logo.
 	let nowPlaying = useNowPlaying(station)

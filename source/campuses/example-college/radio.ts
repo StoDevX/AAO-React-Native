@@ -15,7 +15,7 @@ export const KMNK: Station = {
 		{name: 'mirrored', imageName: 'kmnk-mirrored', tint: '#8f532f', labelColor: '#f7f1ee'},
 	],
 	websiteUrl: 'https://kmnk.college.example/',
-	scheduleCalendar: 'kmnk-schedule',
+	schedule: 'kmnk',
 	stationName: 'KMNK 91.7, The Peak',
 	stationNumber: '+15555550191',
 	title: 'Norway Valley College Radio',

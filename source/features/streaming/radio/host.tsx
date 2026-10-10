@@ -30,7 +30,7 @@ function NativeStation({
 	'nowPlaying'
 >): React.ReactNode {
 	// With no song on air, Control Center names the show the schedule has on.
-	let {current} = useStationSchedule(station.id)
+	let {current} = useStationSchedule(station.schedule)
 	let nowPlaying = useNowPlaying(station, current)
 	return <NativeStreamPlayer {...player} nowPlaying={nowPlaying} />
 }

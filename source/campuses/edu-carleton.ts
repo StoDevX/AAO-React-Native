@@ -1,3 +1,5 @@
+import {SUMO_SOURCE_ID, sumoEventMapper} from '../features/carleton/constants'
+import {eventMapper} from '../features/streaming/radio/constants'
 import type {CampusDefinition} from './definition'
 import {carletonAbout} from './edu-carleton/about'
 import {carletonHomeTiles} from './edu-carleton/home-tiles'
@@ -70,6 +72,12 @@ export const carleton = {
 		source: {id: 'carleton-now', title: 'Carleton News', thumbnail: false},
 	},
 	radio: {stations: [KRLX]},
+	schedules: {
+		entries: [
+			{id: 'krlx', title: `${KRLX.stationName} Schedule`, calendar: 'krlx-schedule', eventMapper},
+			{id: 'sumo', title: 'SUMO', calendar: SUMO_SOURCE_ID, eventMapper: sumoEventMapper},
+		],
+	},
 	convos: {},
 	paper: CARLETONIAN,
 	// A Carleton install's starting picks: the CARLS tiles reached most.

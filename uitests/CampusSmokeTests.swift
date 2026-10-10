@@ -194,7 +194,7 @@ final class CarletonSmokeTests: CampusSmokeTests {
 	}
 
 	func testSumoListsRecordedFilms() throws {
-		opens("/carleton-sumo", waitingFor: app.navigationBars["SUMO"])
+		opens("/schedule/sumo", waitingFor: app.navigationBars["SUMO"])
 		let film = "I Love Boosters"
 		try verifyRecorded(shows(film), film)
 	}
