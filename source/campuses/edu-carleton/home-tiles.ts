@@ -123,7 +123,7 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: '/carleton-news',
+		view: '/news',
 		title: 'Carleton News',
 		icon: 'megaphone.fill',
 		gradient: c.indigoGradient,

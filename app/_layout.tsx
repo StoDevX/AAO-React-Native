@@ -164,12 +164,8 @@ function RootLayout(): React.ReactNode {
 										options={{presentation: 'transparentModal', headerShown: false}}
 									/>
 									<Stack.Screen
-										name="st-olaf-news"
-										options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
-									/>
-									<Stack.Screen
-										name="carleton-news"
-										options={{title: 'Carleton News', headerLargeTitleEnabled: true}}
+										name="news"
+										options={{title: 'News', headerLargeTitleEnabled: true}}
 									/>
 									<Stack.Screen name="transit" options={{title: 'Transit'}} />
 									<Stack.Screen name="transit/line" options={DETAIL_SHEET} />

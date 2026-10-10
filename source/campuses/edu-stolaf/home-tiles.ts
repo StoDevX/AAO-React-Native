@@ -124,7 +124,7 @@ export const stolafHomeTiles: ReadonlyArray<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: '/st-olaf-news',
+		view: '/news',
 		title: 'St. Olaf News',
 		icon: 'megaphone.fill',
 		gradient: c.indigoGradient,

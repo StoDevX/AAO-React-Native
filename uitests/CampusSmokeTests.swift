@@ -153,7 +153,7 @@ final class StOlafSmokeTests: CampusSmokeTests {
 			menusRoute: "/menus",
 			cafe: "Stav Hall",
 			calendarEvent: "Norwegian-American Historical Association Biennial Meeting",
-			newsRoute: "/st-olaf-news",
+			newsRoute: "/news",
 			newsTitle: "St. Olaf News",
 			newsHeadline: "A summer spent sampling careers",
 			emergencyButton: "PubSafe")
@@ -181,7 +181,7 @@ final class CarletonSmokeTests: CampusSmokeTests {
 			menusRoute: "/menus/burton",
 			cafe: "Burton",
 			calendarEvent: "Foods of Faith",
-			newsRoute: "/carleton-news",
+			newsRoute: "/news",
 			newsTitle: "Carleton News",
 			newsHeadline: "Carnegie classification for sustainability",
 			emergencyButton: "Security")

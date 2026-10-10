@@ -128,7 +128,7 @@ describe("St. Olaf's Home tiles", () => {
 			{
 				title: 'St. Olaf News',
 				icon: 'megaphone.fill',
-				target: '/st-olaf-news',
+				target: '/news',
 				devOnly: false,
 				disabled: false,
 			},
@@ -170,7 +170,7 @@ describe("Carleton's Home tiles", () => {
 			['Dictionary', '/dictionary'],
 			['Student Orgs', 'https://www.carleton.edu/student-organizations/'],
 			['Moodle', 'https://moodle.carleton.edu/'],
-			['Carleton News', '/carleton-news'],
+			['Carleton News', '/news'],
 			['Developer', '/developer'],
 		])
 	})
@@ -188,7 +188,14 @@ describe("Carleton's Home tiles", () => {
 			.map(viewTarget)
 			.filter((target) => stOlafTargets.has(target))
 
-		expect(shared).toEqual(['/calendar', '/newspaper', '/transit', '/dictionary', '/developer'])
+		expect(shared).toEqual([
+			'/calendar',
+			'/newspaper',
+			'/transit',
+			'/dictionary',
+			'/news',
+			'/developer',
+		])
 	})
 })
 
