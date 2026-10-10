@@ -388,6 +388,11 @@ run = "node scripts/bundle-data.mjs data/ docs/"
 description = "Build the DocC site from documentation/ into docs/documentation/"
 run = "scripts/build-docs.sh"
 
+[tasks."docs:serve"]
+description = "Build the DocC site and serve it at the path Pages serves it from"
+depends = ["docs"]
+run = "scripts/serve-docs.sh"
+
 [tasks.images]
 description = "Convert images/<group>/source/ originals to the WebP files the app fetches"
 run = "node scripts/make-images.mjs"
