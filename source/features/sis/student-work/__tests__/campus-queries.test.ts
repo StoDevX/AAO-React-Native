@@ -64,6 +64,14 @@ describe("a campus's Student Work", () => {
 		expect(detail.body).toContain('**Transferable Skills:**')
 	})
 
+	test('opens every posting on its board, each to its own title', async () => {
+		let categories = await client.query(jobPostingsOptions)
+		for (let job of categories.flatMap((category) => category.jobs)) {
+			let detail = await client.query(jobDetailOptions(job.id))
+			expect(detail.title).toBe(job.title)
+		}
+	})
+
 	test('files every posting under one of its areas', async () => {
 		let categories = await client.query(jobPostingsOptions)
 		let units = await client.query(postingUnitsOptions)
