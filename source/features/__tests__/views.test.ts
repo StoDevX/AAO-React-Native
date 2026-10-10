@@ -165,7 +165,7 @@ describe("Carleton's Home tiles", () => {
 			['SUMO', '/schedule/sumo'],
 			['The Carletonian', '/newspaper'],
 			['Transportation', '/transit'],
-			['Convo', '/carleton-convos'],
+			['Convo', '/edu.carleton/convocations'],
 			['Campus Map', '/map?campus=edu.carleton'],
 			['Dictionary', '/dictionary'],
 			['Student Orgs', 'https://www.carleton.edu/student-organizations/'],

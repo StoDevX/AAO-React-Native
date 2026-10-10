@@ -87,7 +87,7 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	},
 	{
 		type: 'view',
-		view: '/carleton-convos',
+		view: '/edu.carleton/convocations',
 		title: 'Convo',
 		icon: 'building.columns.fill',
 		gradient: c.indigoGradient,

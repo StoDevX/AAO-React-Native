@@ -200,7 +200,7 @@ final class CarletonSmokeTests: CampusSmokeTests {
 	}
 
 	func testConvoListsUpcomingAndArchived() throws {
-		opens("/carleton-convos", waitingFor: app.tabBars.buttons["Archives"])
+		opens("/edu.carleton/convocations", waitingFor: app.tabBars.buttons["Archives"])
 		let upcoming = "Family Weekend Convocation with Jack El-Hai"
 		try verifyRecorded(shows(upcoming), upcoming)
 		app.tabBars.buttons["Archives"].tap()
