@@ -5,17 +5,17 @@
 // content is then rewritten by hand; see
 // source/features/campus/__fixtures__/example.college/.
 
-import {mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs'
-import {join} from 'node:path'
+import {existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs'
+import {basename, join} from 'node:path'
+import {fileURLToPath} from 'node:url'
 
-import {dumpFixture} from './yaml-module.mjs'
+import {dumpFixture, yamlToJson} from './yaml-module.mjs'
 
 import {fixtureFileName, fixtureIndex} from './campus-fixtures.mjs'
 
-export const EXAMPLE_COLLEGE_FIXTURES = new URL(
-	'../source/features/campus/__fixtures__/example.college/',
-	import.meta.url,
-).pathname
+export const EXAMPLE_COLLEGE_FIXTURES = fileURLToPath(
+	new URL('../source/features/campus/__fixtures__/example.college/', import.meta.url),
+)
 
 const INDEX_HEADER = '// Written by `mise run fixture-to-yaml`; lists every fixture in this folder.'
 
@@ -30,6 +30,14 @@ export function convertRecording(recording, key, dir = EXAMPLE_COLLEGE_FIXTURES)
 	let record = {...JSON.parse(readFileSync(recording, 'utf8')), key}
 	mkdirSync(dir, {recursive: true})
 	let path = join(dir, fixtureFileName(key, '.yaml'))
+	// Two keys can slug to one file name (/a/b and /a-b); the second would
+	// silently replace the first's hand-written fixture.
+	if (existsSync(path)) {
+		let held = yamlToJson(readFileSync(path, 'utf8'), path).key
+		if (held !== key) {
+			throw new Error(`${basename(path)} already holds ${held}; ${key} needs another name`)
+		}
+	}
 	writeFileSync(path, dumpFixture(record))
 	writeIndex(dir)
 	return path

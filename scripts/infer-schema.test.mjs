@@ -11,6 +11,12 @@ test('a property is required only when every sample has it', () => {
 	assert.deepEqual(Object.keys(schema.properties).sort(), ['a', 'b'])
 })
 
+test("a key that only some samples have isn't required, even one Object.prototype has", () => {
+	let schema = inferSchema([{constructor: 'x', a: 1}, {a: 2}])
+	assert.deepEqual(schema.required, ['a'])
+	assert.deepEqual(schema.properties.constructor, {type: 'string'})
+})
+
 test("an array's items merge across the array and across samples", () => {
 	let schema = inferSchema([{list: [{x: 1}, {x: 2, y: true}]}, {list: [{x: 3}]}])
 	let items = schema.properties.list.items

@@ -25,10 +25,12 @@ function objectSchema(objects) {
 	let properties = Object.fromEntries(
 		names.map((name) => [
 			name,
-			inferSchema(objects.filter((object) => name in object).map((object) => object[name])),
+			inferSchema(
+				objects.filter((object) => Object.hasOwn(object, name)).map((object) => object[name]),
+			),
 		]),
 	)
-	let required = names.filter((name) => objects.every((object) => name in object))
+	let required = names.filter((name) => objects.every((object) => Object.hasOwn(object, name)))
 	return {type: 'object', properties, ...(required.length > 0 ? {required} : {})}
 }
 
