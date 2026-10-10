@@ -66,10 +66,9 @@ describe("a campus's Student Work", () => {
 
 	test('opens every posting on its board, each to its own title', async () => {
 		let categories = await client.query(jobPostingsOptions)
-		for (let job of categories.flatMap((category) => category.jobs)) {
-			let detail = await client.query(jobDetailOptions(job.id))
-			expect(detail.title).toBe(job.title)
-		}
+		let jobs = categories.flatMap((category) => category.jobs)
+		let details = await Promise.all(jobs.map((job) => client.query(jobDetailOptions(job.id))))
+		expect(details.map((detail) => detail.title)).toEqual(jobs.map((job) => job.title))
 	})
 
 	test('files every posting under one of its areas', async () => {
