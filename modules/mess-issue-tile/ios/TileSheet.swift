@@ -80,11 +80,6 @@ struct FlatSheet: View {
 
 	private var palette: PaperPalette { PaperPalette(scheme) }
 
-	/// A tile whose lead has a photo keeps the photo's layout while the photo's address is unknown or
-	/// the photo fails to load, drawing the placeholder in its place: the words that fill a photo-less
-	/// tile below its fold are fetched only for a lead with no photo at all.
-	private var hasPhoto: Bool { content.hasPhoto }
-
 	private var isTop: Bool { content.layout != .grid }
 
 	/// How far along each edge a turned corner reaches: small enough to nick a headline's last
@@ -102,10 +97,14 @@ struct FlatSheet: View {
 		Color.clear
 			.aspectRatio(content.layout.aspect, contentMode: .fit)
 			.frame(maxWidth: .infinity)
-			.overlay(alignment: .topLeading) {
-				page.padding(7)
+			.overlay {
+				GeometryReader { proxy in
+					SheetPage(
+						content: content, photo: photo, scheme: scheme,
+						scale: content.layout.typeScale(width: proxy.size.width),
+						size: proxy.size)
+				}
 			}
-			.overlay { wordsBelowFold }
 			.background(PaperBackground(palette: palette, scheme: scheme))
 			.overlay(StainLayer(marks: content.stains, kind: content.stainKind, scheme: scheme))
 			.overlay(CreaseLayer(creases: content.sheet.creases, scheme: scheme))
@@ -114,20 +113,54 @@ struct FlatSheet: View {
 			.overlay(DogEarFlap(dogEar: content.sheet.dogEar, earSize: earSize, palette: palette))
 			.background(SheetEdges(palette: palette, outline: outline))
 	}
+}
+
+/// What is printed on a sheet: its nameplate and date, then its lead story laid out for the
+/// sheet's shape. Every size here is the phone's, times `scale`, so a sheet set across a wider
+/// window is the same page with larger type, not a small page lost on a large sheet.
+private struct SheetPage: View {
+	let content: TileContent
+	/// The lead photo, or nil to draw the placeholder in its place
+	let photo: UIImage?
+	let scheme: ColorScheme
+	/// How many times the phone's sizes the page's type and spacing are
+	let scale: CGFloat
+	/// The whole sheet's size
+	let size: CGSize
+
+	private var palette: PaperPalette { PaperPalette(scheme) }
+
+	/// A tile whose lead has a photo keeps the photo's layout while the photo's address is unknown or
+	/// the photo fails to load, drawing the placeholder in its place: the words that fill a photo-less
+	/// tile below its fold are fetched only for a lead with no photo at all.
+	private var hasPhoto: Bool { content.hasPhoto }
+
+	private var isTop: Bool { content.layout != .grid }
+
+	/// The page's margin inside the sheet's edges
+	private var margin: CGFloat { 7 * scale }
+
+	/// The story's type on the top tile
+	private var bodySize: CGFloat { 4.6 * scale }
+
+	var body: some View {
+		page
+			.padding(margin)
+			.frame(width: size.width, height: size.height, alignment: .topLeading)
+			.overlay { wordsBelowFold }
+	}
 
 	/// A grid tile with no photo keeps its headline above the fold and sets its lead story in two
 	/// columns below it.
 	@ViewBuilder private var wordsBelowFold: some View {
 		if content.layout == .grid, !hasPhoto, !content.paragraphs.isEmpty {
-			GeometryReader { proxy in
-				let top = proxy.size.height * foldLine + 5
-				ColumnText(
-					paragraphs: content.paragraphs, columns: 2, clearedColumns: 0, clearHeight: 0,
-					ink: palette.ink, rule: palette.columnRule, size: 3.4)
-					.frame(width: proxy.size.width - 14, height: max(proxy.size.height - top - 7, 0))
-					.offset(x: 7, y: top)
-			}
-			.allowsHitTesting(false)
+			let top = size.height * foldLine + 5 * scale
+			ColumnText(
+				paragraphs: content.paragraphs, columns: 2,
+				ink: palette.ink, rule: palette.columnRule, size: 3.4 * scale)
+				.frame(width: size.width - margin * 2, height: max(size.height - top - margin, 0))
+				.position(x: size.width / 2, y: top + max(size.height - top - margin, 0) / 2)
+				.allowsHitTesting(false)
 		}
 	}
 
@@ -135,26 +168,26 @@ struct FlatSheet: View {
 		switch content.layout {
 		case .grid: gridContent
 		case .topPortrait: topPortraitContent
-		case .topLandscape: topLandscapeContent
+		case .topLandscape, .topBroadsheet: topWideContent
 		}
 	}
 
 	private var header: some View {
-		VStack(spacing: 3) {
+		VStack(spacing: 3 * scale) {
 			Text(content.nameplate)
-				.font(.system(size: isTop ? 20 : 12, weight: .bold, design: .serif))
+				.font(.system(size: (isTop ? 20 : 12) * scale, weight: .bold, design: .serif))
 				.lineLimit(1)
 				.minimumScaleFactor(0.7)
 			rule(1)
 			Text(content.date)
-				.font(.system(size: isTop ? 10 : 8))
+				.font(.system(size: (isTop ? 10 : 8) * scale))
 				.textCase(.uppercase)
-				.kerning(0.8)
+				.kerning(0.8 * scale)
 			if content.special {
 				Text("Special Edition")
-					.font(.system(size: isTop ? 10 : 8, weight: .heavy))
+					.font(.system(size: (isTop ? 10 : 8) * scale, weight: .heavy))
 					.textCase(.uppercase)
-					.kerning(1)
+					.kerning(scale)
 					.foregroundStyle(palette.special)
 			}
 			rule(0.5)
@@ -164,41 +197,46 @@ struct FlatSheet: View {
 	}
 
 	private func rule(_ thickness: CGFloat) -> some View {
-		Rectangle().fill(palette.rule).frame(height: thickness)
+		Rectangle().fill(palette.rule).frame(height: thickness * scale)
+	}
+
+	private func headline(size: CGFloat, lines: Int) -> Headline {
+		Headline(text: content.title, size: size * scale, lines: lines, color: palette.ink)
 	}
 
 	/// A grid tile: photo and a headline that always has room for three lines, or, with no photo,
 	/// a larger headline of up to six.
 	private var gridContent: some View {
-		VStack(alignment: .leading, spacing: 5) {
+		VStack(alignment: .leading, spacing: 5 * scale) {
 			header
 			if hasPhoto {
 				photoView
-				Headline(text: content.title, size: 11, lines: 3, color: palette.ink)
-					.frame(height: 11 * 1.2 * 3, alignment: .top)
+				headline(size: 11, lines: 3)
+					.frame(height: 11 * 1.2 * 3 * scale, alignment: .top)
 			} else {
-				Headline(text: content.title, size: 16, lines: 6, color: palette.ink)
-					.padding(.top, 5)
+				headline(size: 16, lines: 6)
+					.padding(.top, 5 * scale)
 				Spacer(minLength: 0)
 			}
 		}
 	}
 
-	/// Portrait: the headline across the sheet, the photo over two columns, the story flowing
+	/// The tall sheet: the headline across it, the photo over two columns, the story flowing
 	/// under it and down the third. With no photo the story takes all three from the top.
 	private var topPortraitContent: some View {
-		VStack(alignment: .leading, spacing: 6) {
+		VStack(alignment: .leading, spacing: 6 * scale) {
 			header
-			Headline(text: content.title, size: hasPhoto ? 18 : 22, lines: 3, color: palette.ink)
+			headline(size: hasPhoto ? 18 : 22, lines: 3)
 			GeometryReader { proxy in
-				let gutter: CGFloat = 9
+				let gutter = bodySize * 2
 				let column = (proxy.size.width - gutter * 2) / 3
 				let photoHeight = hasPhoto ? min(proxy.size.height * 0.62, (column * 2 + gutter) * 0.75) : 0
+				let underPhoto = photoHeight + 5 * scale
 				ZStack(alignment: .topLeading) {
 					ColumnText(
 						paragraphs: content.paragraphs, columns: 3,
-						clearedColumns: hasPhoto ? 2 : 0, clearHeight: photoHeight,
-						ink: palette.ink, rule: palette.columnRule)
+						tops: hasPhoto ? [underPhoto, underPhoto] : [],
+						ink: palette.ink, rule: palette.columnRule, size: bodySize)
 					if hasPhoto {
 						photoView.frame(width: column * 2 + gutter, height: photoHeight)
 					}
@@ -207,20 +245,32 @@ struct FlatSheet: View {
 		}
 	}
 
-	/// Landscape: the photo takes the left two-thirds; the headline and the story run down the right.
-	private var topLandscapeContent: some View {
-		VStack(alignment: .leading, spacing: 6) {
+	/// A wide sheet, strip or broadsheet, a front page: the photo over the left two of four columns and
+	/// the headline over the right two, the story flowing under both from the left. With no photo
+	/// the headline runs across the sheet and the story takes all four from under it.
+	private var topWideContent: some View {
+		VStack(alignment: .leading, spacing: 6 * scale) {
 			header
-			HStack(alignment: .top, spacing: 8) {
-				if hasPhoto {
-					photoView.containerRelativeFrame(.horizontal) { width, _ in width * 0.6 }
-				}
-				VStack(alignment: .leading, spacing: 5) {
-					Headline(text: content.title, size: hasPhoto ? 15 : 22, lines: hasPhoto ? 5 : 3, color: palette.ink)
+			if !hasPhoto {
+				headline(size: 22, lines: 2)
+			}
+			GeometryReader { proxy in
+				let gutter = bodySize * 2
+				let column = (proxy.size.width - gutter * 3) / 4
+				let half = column * 2 + gutter
+				let photoHeight = min(proxy.size.height * 0.72, half * 0.62)
+				let lead = headline(size: 17, lines: 4)
+				let underPhoto = photoHeight + 5 * scale
+				let underHeadline = lead.height(width: half) + 5 * scale
+				ZStack(alignment: .topLeading) {
 					ColumnText(
-						paragraphs: content.paragraphs, columns: hasPhoto ? 1 : 3,
-						clearedColumns: 0, clearHeight: 0,
-						ink: palette.ink, rule: palette.columnRule)
+						paragraphs: content.paragraphs, columns: 4,
+						tops: hasPhoto ? [underPhoto, underPhoto, underHeadline, underHeadline] : [],
+						ink: palette.ink, rule: palette.columnRule, size: bodySize)
+					if hasPhoto {
+						photoView.frame(width: half, height: photoHeight)
+						lead.frame(width: half).offset(x: half + gutter)
+					}
 				}
 			}
 		}
@@ -248,7 +298,7 @@ struct FlatSheet: View {
 		.mask(
 			RadialGradient(
 				colors: [.black, .black, .black.opacity(0.5)],
-				center: .center, startRadius: 0, endRadius: 140))
+				center: .center, startRadius: 0, endRadius: 140 * scale))
 		.accessibilityHidden(true)
 	}
 }

@@ -294,12 +294,17 @@ describe('tilesPerRow', () => {
 
 describe('topLayout', () => {
 	test('is the tall sheet in a narrow window, a phone upright or a tablet sharing its screen', () => {
-		expect(topLayout(353)).toBe('topPortrait')
-		expect(topLayout(552)).toBe('topPortrait')
+		expect(topLayout(353, 852)).toBe('topPortrait')
+		expect(topLayout(552, 834)).toBe('topPortrait')
 	})
 
-	test('is the wide sheet across a phone on its side or a tablet', () => {
-		expect(topLayout(627)).toBe('topLandscape')
-		expect(topLayout(1154)).toBe('topLandscape')
+	test('is the wide strip across a phone on its side, which has little height to give', () => {
+		expect(topLayout(627, 375)).toBe('topLandscape')
+		expect(topLayout(768, 440)).toBe('topLandscape')
+	})
+
+	test('is the broadsheet across a tablet, upright or on its side', () => {
+		expect(topLayout(704, 1133)).toBe('topBroadsheet')
+		expect(topLayout(1154, 834)).toBe('topBroadsheet')
 	})
 })

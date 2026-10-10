@@ -56,15 +56,19 @@ export function tilesPerRow(width: number): number {
 	return Math.min(MOST_PER_ROW, Math.max(FEWEST_PER_ROW, fits))
 }
 
-/** The narrowest row the top tile's wide sheet is set across. */
+/** The narrowest row a wide top tile is set across. */
 const NARROWEST_WIDE_SHEET = 600
+/** The shortest window with room for a broadsheet and some of the grid under it. */
+const SHORTEST_BROADSHEET_WINDOW = 600
 
 /**
- * The top tile's sheet for a row `width` points across: the wide one where it fits, the tall one
- * in a narrow window, whichever way the device is held.
+ * The top tile's sheet for a row `width` points across in a window `height` points tall: the
+ * tall sheet in a narrow window, and in a wide one the broadsheet, or the strip where there is
+ * little height to give, as on a phone on its side. Whichever way the device is held.
  */
-export function topLayout(width: number): Exclude<TileLayout, 'grid'> {
-	return width >= NARROWEST_WIDE_SHEET ? 'topLandscape' : 'topPortrait'
+export function topLayout(width: number, height: number): Exclude<TileLayout, 'grid'> {
+	if (width < NARROWEST_WIDE_SHEET) return 'topPortrait'
+	return height >= SHORTEST_BROADSHEET_WINDOW ? 'topBroadsheet' : 'topLandscape'
 }
 
 /** How many of an issue's stories the reader has opened. */

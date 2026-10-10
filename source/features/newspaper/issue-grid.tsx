@@ -140,8 +140,8 @@ const GridTile = React.memo(function GridTile({issue, read, onOpen}: TileProps):
 type Props = {
 	issues: MessIssue[]
 	query: MessIssuesQuery
-	/** The width of the grid's rows, which sets the tiles to a row and the top tile's sheet */
-	width: number
+	/** The width of the grid's rows and the window's height, which set the tiles to a row and the top tile's sheet */
+	size: {width: number; height: number}
 	onOpen: (issue: MessIssue) => void
 }
 
@@ -150,11 +150,11 @@ type Props = {
  * their year, returned side by side to land in the page's lazy column so rows are built as they
  * scroll in. The row at the end fetches the next page as it comes into view.
  */
-export function IssueGrid({issues, query, width, onOpen}: Props): React.ReactNode {
+export function IssueGrid({issues, query, size, onOpen}: Props): React.ReactNode {
 	let top = issues[0]
 	let opened = useMessStore((state) => state.openedStories)
 	let openedIds = React.useMemo(() => new Set(opened), [opened])
-	let perRow = tilesPerRow(width)
+	let perRow = tilesPerRow(size.width)
 
 	return (
 		<>
@@ -162,7 +162,7 @@ export function IssueGrid({issues, query, width, onOpen}: Props): React.ReactNod
 				<TopTile
 					issue={top}
 					key={top.key}
-					layout={topLayout(width)}
+					layout={topLayout(size.width, size.height)}
 					onOpen={onOpen}
 					read={readCount(top.storyIds, openedIds)}
 				/>
