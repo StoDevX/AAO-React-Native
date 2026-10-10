@@ -44,6 +44,7 @@ enum ChaosRoutes {
 		"menus/ldc",
 		"menus/sayles",
 		"menus/schulze",
+		"menus/stav-hall",
 		"menus/the-cage",
 		"menus/the-pause",
 		"menus/treeline-commons",

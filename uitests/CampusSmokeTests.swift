@@ -178,7 +178,7 @@ final class CarletonSmokeTests: CampusSmokeTests {
 			word: "A & I",
 			transitTitle: "Transportation",
 			busLine: "Carls-Go! Route 1",
-			menusRoute: "/menus/burton",
+			menusRoute: "/menus",
 			cafe: "Burton",
 			calendarEvent: "Foods of Faith",
 			newsRoute: "/news",

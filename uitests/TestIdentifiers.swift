@@ -316,10 +316,8 @@ struct TestIdentifiers {
 		/// Wiki Monkeys' one café, and so the tab Menus opens on.
 		static let cafe = "Treeline Commons"
 
-		/// Its tab, as Wiki Monkeys' Menus tile opens it (`menus.entryHref` in
-		/// source/campuses/example-college/menus.ts). Bare `/menus` is Stav
-		/// Hall's tab, which no campus but St. Olaf can draw.
-		static let route = "/menus/treeline-commons"
+		/// Its tab, which bare `/menus` opens on Wiki Monkeys: its first café.
+		static let route = "/menus"
 
 		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
 		static let foodRowPrefix = "food-row-"

@@ -155,7 +155,7 @@ describe("Carleton's Home tiles", () => {
 
 	test("are the CARLS app's tiles, in its order and under its names", () => {
 		expect(carleton().map((view) => [view.title, viewTarget(view)])).toEqual([
-			['Menus', '/menus/burton'],
+			['Menus', '/menus'],
 			['Workday', 'https://www.carleton.edu/workday/'],
 			['OneCard', 'https://get.cbord.com/carletonstolaf/full/prelogin.php'],
 			['Building Hours', '/hours?campus=edu.carleton'],
@@ -189,6 +189,7 @@ describe("Carleton's Home tiles", () => {
 			.filter((target) => stOlafTargets.has(target))
 
 		expect(shared).toEqual([
+			'/menus',
 			'/calendar',
 			'/newspaper',
 			'/transit',

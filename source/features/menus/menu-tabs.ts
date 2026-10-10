@@ -7,23 +7,14 @@ export const MENU_TABS: ReadonlyArray<{campus: CampusId; tab: MenuTab}> = CAMPUS
 	(campus) => (campus.menus?.tabs ?? []).map((tab) => ({campus: campus.id, tab})),
 )
 
-/** The tab a path under Menus opens: `/menus` is the index tab, `/menus/burton` Burton's. */
-export function menuTabName(pathname: string): string {
-	let last = pathname.replace(/\/+$/u, '').split('/').at(-1) ?? ''
-	return last === 'menus' ? 'index' : last
+/** `campus`'s cafés, in its tab bar's order. The first is where its Menus opens. */
+export function cafeTabsOf(campus: CampusId): ReadonlyArray<MenuTab> {
+	return MENU_TABS.filter((entry) => entry.campus === campus).map((entry) => entry.tab)
 }
 
+/** The campus that lists the tab named `name`. */
 function ownerOf(name: string): CampusDefinition | undefined {
 	return CAMPUSES.find((campus) => campus.menus?.tabs.some((tab) => tab.name === name))
-}
-
-/**
- * The campus whose cafés the tab bar shows on `pathname`: the one listing the
- * open tab, so a café reached by URL shows its own campus's tabs. A path that
- * is no café's, such as a sheet over Menus, shows `current`'s.
- */
-export function menuCampusOf(pathname: string, current: CampusId): CampusId {
-	return ownerOf(menuTabName(pathname))?.id ?? current
 }
 
 /** The campus whose server answers for `campus`'s cafés. */

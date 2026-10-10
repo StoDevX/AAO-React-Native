@@ -1,14 +1,13 @@
 import * as c from '@frogpond/colors'
 
 import type {ViewType} from '../../features/views'
-import {menus} from './menus'
 import {developerTile} from '../shared-tiles'
 
 /** All About Olaf's Home tiles, in order. */
 export const stolafHomeTiles: ReadonlyArray<ViewType> = [
 	{
 		type: 'view',
-		view: menus.entryHref,
+		view: '/menus',
 		title: 'Menus',
 		icon: 'fork.knife',
 		gradient: c.greenGradient,
