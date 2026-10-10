@@ -1,6 +1,7 @@
 import {fetchManifest, REL_COURSE_CATALOG, resolveSource} from '@frogpond/data-sources'
 import * as Sentry from '@sentry/react-native'
 
+import {currentCampus} from '../../features/campus/store'
 import {queryClient} from '../../init/tanstack-query'
 import {apiUrl} from '../../lib/api-url'
 import {getRunner} from '../client.ts'
@@ -73,6 +74,10 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 	let runner = getRunner()
 	let current = catalogFile()
 	let stored = current.exists && isAttached(runner, CATALOG_SCHEMA) ? storedEtag(runner) : null
+
+	// A campus its fixtures answer has no server, and no catalog to ask one for:
+	// whatever is stored stays, and nothing leaves the device.
+	if (currentCampus().api.fixtureServer) return {etag: stored ?? '', changed: false}
 
 	// One request: the file and the ETag it was published with arrive together,
 	// so a republish between two requests cannot pair a new ETag with the old

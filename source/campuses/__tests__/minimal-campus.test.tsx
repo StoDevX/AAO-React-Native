@@ -74,7 +74,6 @@ jest.mock('expo', () => ({requireNativeView: (name: string) => name}))
 // a server for what it needs.
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: false,
-	servesBundledFixtures: false,
 	uiTestCampus: null,
 }))
 jest.mock('react-native-change-icon', () => ({

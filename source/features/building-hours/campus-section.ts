@@ -23,7 +23,7 @@ export type HoursSection = {
 	photos?: true
 	/**
 	 * This repository's copy of the venues, read in place of the server's by
-	 * UI tests naming no campus and by the dev override: a field added here
+	 * the dev override: a field added here
 	 * reaches the server only once it merges.
 	 */
 	bundled?: ReadonlyArray<BuildingType>

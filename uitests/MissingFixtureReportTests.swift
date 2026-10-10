@@ -3,8 +3,6 @@ import XCTest
 /// A request with no fixture fails the test by name.
 /// Tags: campus:example.college
 final class MissingFixtureReportTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	func testAnUnansweredRequestFailsNamingIt() throws {
 		XCTExpectFailure("Wiki Monkeys has no fixture for this story") { issue in
 			issue.compactDescription.contains("Missing fixtures for example.college:")

@@ -1,4 +1,10 @@
-import {fetchManifest, fetchSourceBody, REL_A_TO_Z, resolveSources} from '@frogpond/data-sources'
+import {
+	fetchManifest,
+	fetchSourceBody,
+	REL_A_TO_Z,
+	type ResolvedSource,
+	resolveSources,
+} from '@frogpond/data-sources'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseAToZExtras, parseStolafAToZ} from './parsers/a-z-extras'
@@ -25,9 +31,10 @@ function parse(type: string, body: unknown): LinkGroup[] {
 	}
 }
 
-async function fetchGroups(href: string, type: string, signal: AbortSignal): Promise<LinkGroup[]> {
-	let body = await fetchSourceBody(href, signal, 'A–Z')
-	return parse(type, body)
+/** A source's groups, read from the server of the campus that lists it. */
+async function fetchGroups(source: ResolvedSource, signal: AbortSignal): Promise<LinkGroup[]> {
+	let body = await fetchSourceBody(source.href, signal, 'A–Z', 'json', source.campus)
+	return parse(source.type, body)
 }
 
 export const searchLinksOptions = queryOptions({
@@ -41,15 +48,13 @@ export const searchLinksOptions = queryOptions({
 			throw new Error('no A–Z index source')
 		}
 
-		let upstreamGroups = await fetchGroups(upstream.href, upstream.type, signal)
+		let upstreamGroups = await fetchGroups(upstream, signal)
 
 		// The extras are a supplement; losing them should not blank the index.
 		let extraGroups = await Promise.all(
 			sources
 				.filter((source) => source.type === A_Z_EXTRAS)
-				.map((source) =>
-					fetchGroups(source.href, source.type, signal).catch(() => [] as LinkGroup[]),
-				),
+				.map((source) => fetchGroups(source, signal).catch(() => [] as LinkGroup[])),
 		)
 
 		return mergeAToZ(upstreamGroups, extraGroups.flat())

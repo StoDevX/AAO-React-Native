@@ -6,7 +6,6 @@ import {QueryClient} from '@tanstack/react-query'
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
 	uiTestCampus: 'edu.carleton',
-	servesBundledFixtures: false,
 }))
 
 import {dictionaryOptionsFor} from '../../dictionary/query'

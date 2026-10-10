@@ -1,5 +1,5 @@
 import {File, Paths} from 'expo-file-system'
-import {campusRoots, setFetchInterceptor} from '@frogpond/api'
+import {campusRoots, setFetchInterceptor, type FetchInterceptor} from '@frogpond/api'
 import {reportMissingFixture, type FixtureMode} from '@frogpond/launch-arguments'
 
 import {uiTestFixture} from '../../lib/ui-test-fixture'
@@ -88,8 +88,11 @@ export function serveFixture(
 	request: Request,
 	roots: Readonly<Record<string, URL | undefined>>,
 ): Response {
-	let key = fixtureKey(request.method, request.url, roots)
-	let recording = table[key]
+	// The campus's own server first: one moved to another campus's address
+	// still names its own paths. A recording keyed by another campus's server,
+	// such as the platform manifest, is found by the usual order.
+	let key = fixtureKey(request.method, request.url, {[campus]: roots[campus], ...roots})
+	let recording = table[key] ?? table[fixtureKey(request.method, request.url, roots)]
 	if (!recording) {
 		reportMissingFixture(campus, key)
 		throw new MissingCampusFixture(campus, key)
@@ -124,22 +127,52 @@ function answer(campus: string, table: Table, request: Request): Promise<Respons
 	return Promise.resolve().then(() => serveFixture(campus, table, request, campusRoots()))
 }
 
+/** The campus store, as the fixture server reads it. */
+type CampusSource = {
+	getState: () => {campus: CampusId | null; hydrated: boolean}
+	subscribe: (listener: () => void) => () => void
+}
+
+/** Settles once `store`'s saved campus has loaded. */
+function whenHydrated(store: CampusSource): Promise<void> {
+	if (store.getState().hydrated) return Promise.resolve()
+	return new Promise((resolve) => {
+		let unsubscribe = store.subscribe(() => {
+			if (store.getState().hydrated) {
+				unsubscribe()
+				resolve()
+			}
+		})
+	})
+}
+
 /**
  * Answers every request from the active campus's fixtures while that campus
- * has no server of its own (`api.fixtureServer`); any other campus's requests
- * go to the network. Outside UI tests that name a campus, in every build.
+ * has no server of its own (`api.fixtureServer`), and stands aside otherwise,
+ * so another campus's requests go to the network untouched. Until the saved
+ * campus loads, a request waits to learn which it is. Outside UI tests that
+ * name a campus, in every build. Returns a function that stops it.
  */
-export function installFixtureServer(activeCampus: () => CampusId | null): void {
+export function installFixtureServer(store: CampusSource): () => void {
 	let tables = new Map<CampusId, Table>()
-	setFetchInterceptor((request, next) => {
-		let id = activeCampus()
-		if (id === null || !fixtureServed(id)) {
-			return next(request)
-		}
+	let tableOf = (id: CampusId): Table => {
 		let table = tables.get(id) ?? tableFrom(id, FILES[id] ?? [])
 		tables.set(id, table)
-		return answer(id, table, request)
-	})
+		return table
+	}
+	let serving: FetchInterceptor = (request, next) => {
+		let id = store.getState().campus
+		return id !== null && fixtureServed(id) ? answer(id, tableOf(id), request) : next(request)
+	}
+	let waiting: FetchInterceptor = (request, next) =>
+		whenHydrated(store).then(() => serving(request, next))
+
+	let sync = () => {
+		let {campus, hydrated} = store.getState()
+		setFetchInterceptor(!hydrated ? waiting : fixtureServed(campus) ? serving : null)
+	}
+	sync()
+	return store.subscribe(sync)
 }
 
 /**

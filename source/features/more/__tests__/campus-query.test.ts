@@ -6,7 +6,7 @@ import {QueryClient} from '@tanstack/react-query'
 import {installCampusFixtures} from '../../campus/fixtures'
 import {useCampusStore} from '../../campus/store'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
-import {mapCategoriesOptions} from '../category-groups-query'
+import {searchLinksOptions} from '../query'
 
 let client: QueryClient
 
@@ -20,16 +20,17 @@ beforeEach(() => {
 	client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 })
 afterEach(() => {
-	useCampusStore.setState(useCampusStore.getInitialState())
 	client.clear()
 	// The manifest is cached on the app's own client, whose collection timer would hold Jest open.
 	appQueryClient.clear()
 	setFetchInterceptor(null)
+	useCampusStore.setState(useCampusStore.getInitialState())
 })
 
-// The manifest names Wiki Monkeys' categories by a path on Wiki Monkeys' server, not the
-// manifest's, so the building picker's grid has groups to show.
-test("a campus's map categories come from its own server", async () => {
-	let table = await client.query({...mapCategoriesOptions, retry: false})
-	expect(Object.keys(table ?? {}).length).toBeGreaterThan(0)
+// The manifest names Wiki Monkeys' A–Z by a path on Wiki Monkeys' server, not the manifest's.
+// Wiki Monkeys has no A–Z recorded yet, so the request it makes is read from the miss.
+test("a campus's A–Z is asked of its own server", async () => {
+	await expect(client.query(searchLinksOptions)).rejects.toThrow(
+		'"GET {server:example.college}/a-to-z/named/wiki-monkeys"',
+	)
 })

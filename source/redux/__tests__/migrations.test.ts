@@ -10,6 +10,7 @@ import type {PersistedState} from 'redux-persist'
 import {
 	addCarletonCalendar,
 	addPresenceCalendar,
+	addWikiMonkeysCalendar,
 	dropUnknownCampusFavorites,
 	migrations,
 	scopeFavoritesToCampus,
@@ -202,5 +203,35 @@ describe('favourites through every migration', () => {
 			buildings: {favorites: Array<{campus: string; name: string}>}
 		}
 		expect(migrated.buildings.favorites).toStrictEqual([])
+	})
+})
+
+describe('the Wiki Monkeys calendar migration', () => {
+	it('adds Wiki Monkeys to a stored list, so switching campus shows its events', () => {
+		let migrated = addWikiMonkeysCalendar({settings: {enabledCalendarSources: ['stolaf']}})
+		expect(migrated?.settings?.enabledCalendarSources).toStrictEqual(['stolaf', 'wiki-monkeys'])
+	})
+
+	it('leaves a list that already names Wiki Monkeys alone', () => {
+		let state = {settings: {enabledCalendarSources: ['wiki-monkeys']}}
+		expect(addWikiMonkeysCalendar(state)).toBe(state)
+	})
+
+	it('runs for an install already at version 5', async () => {
+		let stored = {
+			_persist: {version: 5, rehydrated: false},
+			settings: {enabledCalendarSources: ['stolaf', 'presence', 'carleton']},
+		} as unknown as PersistedState
+
+		let migrated = (await createMigrate(migrations)(stored, 6)) as unknown as {
+			settings: {enabledCalendarSources: string[]}
+		}
+
+		expect(migrated.settings.enabledCalendarSources).toStrictEqual([
+			'stolaf',
+			'presence',
+			'carleton',
+			'wiki-monkeys',
+		])
 	})
 })

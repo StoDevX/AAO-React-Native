@@ -2,8 +2,6 @@ import XCTest
 
 /// Tags: campus:example.college
 class ModuleMapTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	/// The collapsed sheet, and the two things that raise it.
 	///
 	/// The sheet opens on its smallest stop, at the foot of the screen, holding

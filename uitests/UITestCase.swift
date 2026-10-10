@@ -8,10 +8,10 @@ import XCTest
 class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
-	/// The campus this test runs on, serving its recordings; nil runs St. Olaf
-	/// on today's bundled data. Campus tests override it and carry a
-	/// `/// Tags: campus:<id>` marker.
-	class var campus: Campus? { nil }
+	/// The campus this test runs on, serving its fixtures: Wiki Monkeys unless
+	/// the class names another. Every test names a campus; St. Olaf and
+	/// Carleton run only their smoke tests (`CampusSmokeTests.swift`).
+	class var campus: Campus? { .example }
 
 	/// Synchronous on purpose, as every test method here must be. With
 	/// `continueAfterFailure` false, a failure in an async `setUp` or an async

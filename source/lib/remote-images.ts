@@ -1,4 +1,3 @@
-import {Image} from 'react-native'
 import {apiUrl} from './api-url'
 import {PLATFORM_SERVER} from '../campuses'
 
@@ -41,14 +40,4 @@ export function imageUrl(group: ImageGroup, name: string): string {
  */
 export function remoteImage(group: ImageGroup, name: string): RemoteImage {
 	return {uri: imageUrl(group, name), cache: 'force-cache'}
-}
-
-/**
- * Starts fetching images into the cache so they are there when drawn. A
- * failure is ignored: the image is fetched again when it is drawn, and fails
- * visibly there if the network is still out. The promise settles once every
- * fetch has, and never rejects, for a caller that wants to wait.
- */
-export async function prefetchImages(urls: readonly string[]): Promise<void> {
-	await Promise.all([...new Set(urls)].map((url) => Image.prefetch(url).catch(() => false)))
 }

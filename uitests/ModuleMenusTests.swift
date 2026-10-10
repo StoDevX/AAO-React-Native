@@ -2,8 +2,6 @@ import XCTest
 
 /// Tags: campus:example.college
 class ModuleMenusTests: UITestCaseUnbooted {
-	override class var campus: Campus? { .example }
-
 	// MARK: - Navigation and the header
 
 	/// The meal picker is the title itself, drawn as a custom view because a
