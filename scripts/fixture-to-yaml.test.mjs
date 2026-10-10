@@ -34,3 +34,33 @@ test('writes a recording as YAML under its new key, and indexes the folder', () 
 		/import f0 from '\.\/GET-dictionary\.yaml'/u,
 	)
 })
+
+test("refuses to overwrite another key's fixture that shares its file name", () => {
+	let dir = mkdtempSync(join(tmpdir(), 'yaml-'))
+	let recording = join(dir, 'recording.json')
+	writeFileSync(
+		recording,
+		JSON.stringify({key: 'GET {server:edu.stolaf}/a/b', status: 200, json: {}}),
+	)
+	let out = join(dir, 'example.college')
+	let first = convertRecording(recording, 'GET {server:example.college}/a/b', out)
+	let before = readFileSync(first, 'utf8')
+
+	assert.throws(
+		() => convertRecording(recording, 'GET {server:example.college}/a-b', out),
+		/GET-a-b\.yaml already holds GET \{server:example\.college\}\/a\/b/u,
+	)
+	assert.equal(readFileSync(first, 'utf8'), before)
+})
+
+test('rewrites the same key over its own fixture', () => {
+	let dir = mkdtempSync(join(tmpdir(), 'yaml-'))
+	let recording = join(dir, 'recording.json')
+	writeFileSync(
+		recording,
+		JSON.stringify({key: 'GET {server:edu.stolaf}/a', status: 200, json: {}}),
+	)
+	let out = join(dir, 'example.college')
+	convertRecording(recording, 'GET {server:example.college}/a', out)
+	assert.doesNotThrow(() => convertRecording(recording, 'GET {server:example.college}/a', out))
+})
