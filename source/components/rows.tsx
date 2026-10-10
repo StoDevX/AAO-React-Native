@@ -19,6 +19,7 @@ import {
 	accessibilityIdentifier,
 	accessibilityLabel,
 	aspectRatio,
+	background,
 	buttonStyle,
 	contentShape,
 	disabled as disabledModifier,
@@ -27,6 +28,7 @@ import {
 	frame,
 	lineLimit,
 	monospacedDigit,
+	padding,
 	resizable,
 	shapes,
 	truncationMode,
@@ -216,6 +218,8 @@ type DisclosureRowProps = {
 	onPress: () => void
 	/** A count before the chevron, as Settings shows one. None at zero. */
 	badge?: number
+	/** A short word in a capsule before the chevron, such as an HTTP method. */
+	tag?: {text: string; color: ColorValue}
 	/** Where tapping the row goes. Defaults to a push. */
 	destination?: RowDestination
 	/** A live status under the details, in its own colour, as a place's open
@@ -223,6 +227,22 @@ type DisclosureRowProps = {
 	status?: {text: string; color: ColorValue}
 	/** The type the title and details are set in, for a screen on a background of its own. */
 	typeface?: Typeface
+}
+
+/** A short word in a tinted capsule, such as an HTTP method. */
+export function Tag({text, color}: {text: string; color: ColorValue}): React.ReactNode {
+	return (
+		<Text
+			modifiers={[
+				font({textStyle: 'caption', weight: 'semibold', design: 'monospaced'}),
+				foregroundStyle(color),
+				padding({horizontal: 6, vertical: 2}),
+				background(c.tertiarySystemFill, shapes.capsule()),
+			]}
+		>
+			{text}
+		</Text>
+	)
 }
 
 /** A row's leading image: a tinted symbol, a gradient icon, or a thumbnail. */
@@ -297,6 +317,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		identifier,
 		onPress,
 		badge,
+		tag,
 		destination = 'push',
 		status,
 		typeface = SYSTEM_TYPEFACE,
@@ -311,11 +332,15 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 	let badgeText = (
 		<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>{String(badge)}</Text>
 	)
+	// A tag drops under the title at an accessibility size for the same reason.
+	let stacksTag = tag !== undefined && isAccessibilityTextSize(fontScale)
+	let tagText = tag ? <Tag color={tag.color} text={tag.text} /> : null
 	let spokenDetail = status ? [...detailLinesOf(detail), status.text] : detail
 	let spokenLabel =
 		image && 'label' in image && image.label
 			? `${image.label}, ${rowLabel(title, spokenDetail)}`
 			: rowLabel(title, spokenDetail)
+	let spokenTrailing = [hasBadge ? String(badge) : null, tag?.text].filter(Boolean)
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -332,7 +357,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
-				accessibilityLabel(hasBadge ? `${spokenLabel}, ${badge}` : spokenLabel),
+				accessibilityLabel([spokenLabel, ...spokenTrailing].join(', ')),
 				...destinationTraits(destination),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}
@@ -363,12 +388,14 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 						</Text>
 					) : null}
 					{stacksBadge ? badgeText : null}
+					{stacksTag ? tagText : null}
 				</VStack>
 				<Spacer />
 				{/* Drawn here rather than with SwiftUI's .badge, which puts the
 				    count at the row's trailing edge -- past this row's own
 				    chevron, where Settings never has it. */}
 				{hasBadge && !stacksBadge ? badgeText : null}
+				{stacksTag ? null : tagText}
 				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>

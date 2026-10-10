@@ -1,0 +1,22 @@
+{
+  "name": "@frogpond/json-tree",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@expo/ui": "57.0.21",
+    "@frogpond/colors": "workspace:*"
+  },
+  "devDependencies": {
+    "@jest/globals": "30.5.2"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-native": "catalog:"
+  }
+}

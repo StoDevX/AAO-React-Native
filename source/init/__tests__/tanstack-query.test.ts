@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-query-persist-client'
 
 import {manifestOptions} from '@frogpond/data-sources'
+import {serverRoutesOptions} from '../../features/developer/api-test/query'
 
 import {CALENDAR_READ_KEY} from '../../database/calendar/read'
 import {persistOptions, serializeCache} from '../tanstack-query'
@@ -169,6 +170,24 @@ describe('the sources manifest', () => {
 			let saved = {timestamp: 1, buster: '', clientState: dehydrated} as PersistedClient
 			let [manifest] = (JSON.parse(serializeCache(saved)) as PersistedClient).clientState.queries
 			expect(manifest?.state).toMatchObject({status: 'success', data: {subject: 'cached'}})
+		} finally {
+			client.clear()
+		}
+	})
+})
+
+describe("the API Tester's route list", () => {
+	// It describes the server the app points at now: restored from storage it
+	// would show another server's routes, or an older shape of this one's.
+	test('stays out of storage, even when it loaded', async () => {
+		let client = new QueryClient()
+		try {
+			let options = serverRoutesOptions('edu.stolaf')
+			await client.query({...options, queryFn: () => Promise.resolve([])})
+			expect(client.getQueryState(options.queryKey)?.status).toBe('success')
+
+			let dehydrated = dehydrate(client, persistOptions.dehydrateOptions)
+			expect(dehydrated.queries.map((query) => query.queryKey)).not.toContainEqual(options.queryKey)
 		} finally {
 			client.clear()
 		}

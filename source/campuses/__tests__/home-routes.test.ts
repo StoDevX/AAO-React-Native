@@ -66,7 +66,6 @@ describe('the route table', () => {
 		'/menus/burton',
 		'/map?campus=edu.carleton',
 		'/directory/named/PubSafe',
-		'/developer/debug/a/b',
 	])('serves %s', (href) => {
 		expect(routeExists(href)).toBe(true)
 	})

@@ -3,6 +3,7 @@ import {TextField, useNativeState} from '@expo/ui/swift-ui'
 import {
 	keyboardType as keyboardTypeModifier,
 	lineLimit,
+	multilineTextAlignment,
 	submitLabel,
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
@@ -29,6 +30,8 @@ type Props = {
 		| 'twitter'
 		| 'web-search'
 		| 'ascii-capable-number-pad'
+	/** Where the text sits in the field: trailing, for a value beside its label. */
+	alignment?: 'leading' | 'trailing'
 	onChangeText: (text: string) => void
 }
 
@@ -57,6 +60,7 @@ export function SyncedTextField(props: Props): React.ReactNode {
 		multiline = false,
 		autocapitalization,
 		keyboardType,
+		alignment,
 		onChangeText,
 	} = props
 
@@ -84,6 +88,9 @@ export function SyncedTextField(props: Props): React.ReactNode {
 	}
 	if (keyboardType) {
 		modifiers.push(keyboardTypeModifier(keyboardType))
+	}
+	if (alignment) {
+		modifiers.push(multilineTextAlignment(alignment))
 	}
 
 	return (

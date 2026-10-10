@@ -61,6 +61,7 @@ overrides:
 patchedDependencies:
   '@expo/ui@57.0.21': 7ccceafb06c870f7ef3c74995e3433df4575031a1459d07460cd7bf1bb9b0e08
   react-native-change-icon@5.0.0: 5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306
+  react-native-webview@13.16.1: 5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079
   react-native@0.86.3: 6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191
 
 importers:
@@ -145,6 +146,9 @@ importers:
       '@frogpond/hyphenated-text':
         specifier: workspace:*
         version: link:modules/hyphenated-text
+      '@frogpond/json-tree':
+        specifier: workspace:*
+        version: link:modules/json-tree
       '@frogpond/launch-arguments':
         specifier: workspace:*
         version: link:modules/launch-arguments
@@ -331,6 +335,9 @@ importers:
       moment-timezone:
         specifier: 0.6.4
         version: 0.6.4
+      pretty-bytes:
+        specifier: 7.2.0
+        version: 7.2.0
       react:
         specifier: 'catalog:'
         version: 19.2.3
@@ -363,7 +370,7 @@ importers:
         version: 4.0.0(react-native@0.86.3)
       react-native-webview:
         specifier: 13.16.1
-        version: 13.16.1(react-native@0.86.3)(react@19.2.3)
+        version: 13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3)
       react-native-worklets:
         specifier: 0.10.1
         version: 0.10.1(@babel/core@7.29.7)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
@@ -376,6 +383,9 @@ importers:
       redux-persist:
         specifier: 6.0.0
         version: 6.0.0(react@19.2.3)(redux@5.0.1)
+      safe-stable-stringify:
+        specifier: 2.5.0
+        version: 2.5.0
       semver:
         specifier: 7.8.5
         version: 7.8.5
@@ -916,7 +926,7 @@ importers:
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       react-native-webview:
         specifier: ^13.16.1
-        version: 13.16.1(react-native@0.86.3)(react@19.2.3)
+        version: 13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3)
 
   modules/html-lib:
     dependencies:
@@ -944,6 +954,25 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.2.3
+
+  modules/json-tree:
+    dependencies:
+      '@expo/ui':
+        specifier: 57.0.21
+        version: 57.0.21(patch_hash=7ccceafb06c870f7ef3c74995e3433df4575031a1459d07460cd7bf1bb9b0e08)(@babel/core@7.29.7)(expo@57.0.26)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
   modules/launch-arguments:
     dependencies:
@@ -4923,6 +4952,10 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  pretty-bytes@7.2.0:
+    resolution: {integrity: sha512-T2kroepGB5DRVbkN/nOpW03+VRWqdtJhZNuCW3wYk3chdPjgi4GcTBOaxWfHq1MIM0ypidxsSWbQaAiRpxnXmg==}
+    engines: {node: '>=20'}
+
   pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -5229,6 +5262,10 @@ packages:
 
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
+
+  safe-stable-stringify@2.5.0:
+    resolution: {integrity: sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==}
+    engines: {node: '>=10'}
 
   sandbox-cli-detector@0.2.0:
     resolution: {integrity: sha512-4lyHX0ZU0AZKwjgZ1InxZAa3PNpyEb8rOQ+Zss1ReYmhNzW0Q+h1zE5nvniXN0HaAWZaZE1zgVNEirb0R7LmNg==}
@@ -8759,7 +8796,7 @@ snapshots:
       whatwg-url-minimum: 0.1.2
     optionalDependencies:
       '@expo/metro-runtime': 57.0.16(@expo/log-box@57.0.4)(expo@57.0.26)(react-native@0.86.3)(react@19.2.3)
-      react-native-webview: 13.16.1(react-native@0.86.3)(react@19.2.3)
+      react-native-webview: 13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3)
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
@@ -9898,6 +9935,8 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
+  pretty-bytes@7.2.0: {}
+
   pretty-format@29.7.0:
     dependencies:
       '@jest/schemas': 29.6.3
@@ -10022,7 +10061,7 @@ snapshots:
     dependencies:
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
-  react-native-webview@13.16.1(react-native@0.86.3)(react@19.2.3):
+  react-native-webview@13.16.1(patch_hash=5775f67030d11f305448830549596b2c2247902fc38f530ca8253123ff78f079)(react-native@0.86.3)(react@19.2.3):
     dependencies:
       escape-string-regexp: 4.0.0
       invariant: 2.2.4
@@ -10214,6 +10253,8 @@ snapshots:
   run-applescript@7.1.0: {}
 
   safe-buffer@5.2.1: {}
+
+  safe-stable-stringify@2.5.0: {}
 
   sandbox-cli-detector@0.2.0: {}
 

@@ -1,17 +1,28 @@
 import * as React from 'react'
-import {useCallback, useRef} from 'react'
+import {useCallback, useImperativeHandle, useRef} from 'react'
 import {WebView, WebViewNavigation} from 'react-native-webview'
 import type {StyleProp, ViewStyle} from 'react-native'
 import {canOpenUrl, openUrl} from '@frogpond/open-url'
+
+/** What a screen can ask of the page it shows. */
+export type HtmlContentHandle = {
+	/** Opens the system find bar over the page, as Safari's Find on Page does. iOS only. */
+	findInPage: () => void
+}
 
 type Props = {
 	html: string
 	baseUrl?: string
 	style?: StyleProp<ViewStyle>
+	ref?: React.Ref<HtmlContentHandle>
 }
 
-export function HtmlContent(props: Props): React.ReactNode {
+export function HtmlContent({html, baseUrl, style, ref}: Props): React.ReactNode {
 	let webview = useRef<WebView | null>(null)
+
+	useImperativeHandle(ref, () => ({
+		findInPage: () => webview.current?.presentFindNavigator(),
+	}))
 
 	const onNavigationStateChange = useCallback(
 		(event: WebViewNavigation) => {
@@ -25,7 +36,7 @@ export function HtmlContent(props: Props): React.ReactNode {
 
 			// We don't want to open the web browser unless the user actually clicked
 			// on a link.
-			if (url === props.baseUrl) {
+			if (url === baseUrl) {
 				return
 			}
 
@@ -34,15 +45,15 @@ export function HtmlContent(props: Props): React.ReactNode {
 
 			return openUrl(url)
 		},
-		[props.baseUrl],
+		[baseUrl],
 	)
 
 	return (
 		<WebView
 			ref={webview}
 			onNavigationStateChange={onNavigationStateChange}
-			source={{html: props.html, baseUrl: props.baseUrl}}
-			style={props.style}
+			source={{html, baseUrl}}
+			style={style}
 		/>
 	)
 }
