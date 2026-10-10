@@ -31,7 +31,7 @@ const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/lig
  *
  * `carls` and `carls-dev` build the same code as CARLS: Carleton's
  * app (`extra.app`, read by source/lib/app-identity.ts), opening on Carleton,
- * with the penguin as its icon and no St. Olaf icons to switch to.
+ * with the penguin as its icon and the windmills to switch to.
  *
  * The identity has to differ in three places, not one: iOS keys installs on the
  * bundle identifier, the home screen shows the name, and two apps claiming the
@@ -52,6 +52,7 @@ const VARIANTS = {
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
 		icon: AAO_ICON,
+		primaryIcon: 'windmill',
 	},
 	'aao-dev': {
 		app: 'aao',
@@ -60,6 +61,7 @@ const VARIANTS = {
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
 		scheme: 'AllAboutOlafDev',
 		icon: AAO_ICON,
+		primaryIcon: 'windmill',
 	},
 	carls: {
 		app: 'carls',
@@ -69,6 +71,7 @@ const VARIANTS = {
 		// The CARLS app's own scheme, so links made for it still open it.
 		scheme: 'carls',
 		icon: CARLS_ICON,
+		primaryIcon: 'carls-penguin',
 	},
 	'carls-dev': {
 		app: 'carls',
@@ -77,6 +80,7 @@ const VARIANTS = {
 		bundleIdentifier: `${CARLS_BUNDLE_ID}.dev`,
 		scheme: 'carlsDev',
 		icon: CARLS_ICON,
+		primaryIcon: 'carls-penguin',
 	},
 } as const
 
@@ -163,7 +167,7 @@ const config: ExpoConfig = {
 		// Written into every target as DEVELOPMENT_TEAM. Without it, `expo run:ios
 		// --device` reads the Mac's signing certificates to pick a team itself.
 		appleTeamId: 'TMK6S7TPX2',
-		// plugins/with-alternate-icons adds the others, All About Olaf's alone.
+		// plugins/with-alternate-icons adds the others.
 		icon: variant.icon,
 		// Xcode Cloud's build number becomes an input to generation rather than
 		// something agvtool edits afterwards.
@@ -310,7 +314,13 @@ const config: ExpoConfig = {
 		},
 	},
 
-	extra: {fullVersion, commit, app: variant.app, defaultCampus: variant.defaultCampus},
+	extra: {
+		fullVersion,
+		commit,
+		app: variant.app,
+		defaultCampus: variant.defaultCampus,
+		primaryIcon: variant.primaryIcon,
+	},
 
 	plugins: [
 		[
@@ -386,8 +396,8 @@ const config: ExpoConfig = {
 		'./plugins/with-app-delegate-customizations',
 		// DebugSwift, in Debug builds only; Release never links it.
 		'./plugins/with-debug-swift',
-		// CARLS offers no icon but its penguin, which is its primary.
-		['./plugins/with-alternate-icons', {alternates: variant.app === 'aao'}],
+		// Every variant bundles every icon but its primary; the campus decides which Customize offers.
+		['./plugins/with-alternate-icons', {primary: variant.primaryIcon}],
 		'./plugins/with-custom-symbols',
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',

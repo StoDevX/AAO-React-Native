@@ -17,3 +17,9 @@ export const DEFAULT_CAMPUS: string | null =
 	typeof Constants.expoConfig?.extra?.defaultCampus === 'string'
 		? Constants.expoConfig.extra.defaultCampus
 		: null
+
+/** The primary icon's name, as app.config.ts's variant names it, or null in a build without one. */
+export const PRIMARY_ICON: string | null =
+	typeof Constants.expoConfig?.extra?.primaryIcon === 'string'
+		? Constants.expoConfig.extra.primaryIcon
+		: null

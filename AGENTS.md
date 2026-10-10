@@ -178,7 +178,7 @@ workflow sets its own in its environment.
 The two All About Olaf variants share the windmill icon, so tell them apart by
 name. The CARLS variants build the same code as Carleton's app: `extra.defaultCampus`
 opens them on Carleton (`source/lib/app-identity.ts`), the penguin is the
-primary icon, and no St. Olaf icon is bundled. `com.rives.carls` is the CARLS
+primary icon, and the windmills are its alternates. `com.rives.carls` is the CARLS
 app's own identifier, so a release build updates CARLS on the App Store.
 
 ```bash
@@ -204,14 +204,15 @@ record, which this config does not create.
 ### App Icons
 
 The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in
-`app.config.ts` names the primary, `windmill.icon`, and
-`plugins/with-alternate-icons.ts` bundles the rest as alternates. Each
+`app.config.ts` names the variant's primary (`windmill.icon`, or CARLS' penguin),
+and `plugins/with-alternate-icons.ts` bundles every other icon as an alternate;
+the campus's `appIcons` decides which Customize offers. Each
 alternate's file name is the name `react-native-change-icon` switches to.
 
 Old Main (Retro) is the exception: a static app icon set,
 `assets/old-main-retro.xcassets/old-main-retro.appiconset`, with a light and a
 dark image and no tinted one, since iOS tints it on its own and a rendered
-tinted look would cost another 1024px render. `STATIC_ALTERNATE_ICONS` in the
+tinted look would cost another 1024px render. `STATIC_ICON_SETS` in the
 plugin lists such sets, which it copies into the app's `Images.xcassets`.
 
 Customize's App Icon gallery and the About screen show PNG previews of each icon,
@@ -228,7 +229,7 @@ files are gitignored. Add `--table` to write `images/icons/logos.html`, a
 gitignored gallery of every logo, to compare them side by side.
 
 The task needs Xcode, whose Icon Composer renders the previews, and runs them
-through oxipng; the Retro set also needs ImageMagick (`brew install imagemagick`). A new `.icon` alternate also needs an entry in `ALTERNATE_ICONS` in
+through oxipng; the Retro set also needs ImageMagick (`brew install imagemagick`). A new `.icon` also needs an entry in `ICON_DOCUMENTS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
 `ICONS` in `source/features/customize/icons.ts`.
 

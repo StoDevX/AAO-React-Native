@@ -9,7 +9,7 @@ Which variant to build, and what it installs.
 | `carls` | `com.rives.carls` | CARLS |
 | `carls-dev` | `com.rives.carls.dev` | CARLS Dev |
 
-The penguin is the primary icon and no St. Olaf icon is bundled. Both use the
+The penguin is the primary icon and the windmills are its alternates. Both use the
 `carls` Sentry project. `com.rives.carls` is the CARLS app's own identifier, so
 a release build updates CARLS on the App Store.
 
