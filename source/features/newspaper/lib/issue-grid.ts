@@ -1,4 +1,4 @@
-import type {DogEar, SheetShape, StainMark} from '@frogpond/mess-issue-tile'
+import type {DogEar, SheetShape, StainMark, TileLayout} from '@frogpond/mess-issue-tile'
 import {z} from 'zod'
 import {parseBlocks} from './blocks'
 import {issueDate} from './issues'
@@ -37,6 +37,34 @@ export function rowsOf<T>(tiles: T[], perRow: number): T[][] {
 		rows.push(tiles.slice(index, index + perRow))
 	}
 	return rows
+}
+
+/** The space between two tiles in a row. */
+export const TILE_GAP = 12
+/** The narrowest a grid tile is set, which keeps its nameplate and headline legible. */
+const NARROWEST_TILE = 145
+const FEWEST_PER_ROW = 2
+/** The most tiles to a row: past it a wider window gives each tile more room instead. */
+const MOST_PER_ROW = 6
+
+/**
+ * Tiles to a row `width` points across: as many as stay a legible width, so two on a phone held
+ * upright, four across one on its side, and five or six across a tablet.
+ */
+export function tilesPerRow(width: number): number {
+	let fits = Math.floor((width + TILE_GAP) / (NARROWEST_TILE + TILE_GAP))
+	return Math.min(MOST_PER_ROW, Math.max(FEWEST_PER_ROW, fits))
+}
+
+/** The narrowest row the top tile's wide sheet is set across. */
+const NARROWEST_WIDE_SHEET = 600
+
+/**
+ * The top tile's sheet for a row `width` points across: the wide one where it fits, the tall one
+ * in a narrow window, whichever way the device is held.
+ */
+export function topLayout(width: number): Exclude<TileLayout, 'grid'> {
+	return width >= NARROWEST_WIDE_SHEET ? 'topLandscape' : 'topPortrait'
 }
 
 /** How many of an issue's stories the reader has opened. */

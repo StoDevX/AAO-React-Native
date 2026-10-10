@@ -8,6 +8,8 @@ import {
 	stainCount,
 	stainMarks,
 	tileLabel,
+	tilesPerRow,
+	topLayout,
 	yearGroups,
 } from '../issue-grid'
 import type {MessIssue, MessStory} from '../../types'
@@ -265,5 +267,39 @@ describe('rowsOf', () => {
 			['a', 'b', 'c', 'd'],
 			['e'],
 		])
+	})
+})
+
+describe('tilesPerRow', () => {
+	test('sets two to a row on a phone held upright, however narrow', () => {
+		expect(tilesPerRow(280)).toBe(2)
+		expect(tilesPerRow(353)).toBe(2)
+		expect(tilesPerRow(390)).toBe(2)
+	})
+
+	test('sets four across a phone on its side', () => {
+		expect(tilesPerRow(627)).toBe(4)
+		expect(tilesPerRow(694)).toBe(4)
+	})
+
+	test('sets more across a tablet, as many as stay a readable width', () => {
+		expect(tilesPerRow(780)).toBe(5)
+		expect(tilesPerRow(984)).toBe(6)
+	})
+
+	test('stops at six, so the widest window does not shrink them', () => {
+		expect(tilesPerRow(1326)).toBe(6)
+	})
+})
+
+describe('topLayout', () => {
+	test('is the tall sheet in a narrow window, a phone upright or a tablet sharing its screen', () => {
+		expect(topLayout(353)).toBe('topPortrait')
+		expect(topLayout(552)).toBe('topPortrait')
+	})
+
+	test('is the wide sheet across a phone on its side or a tablet', () => {
+		expect(topLayout(627)).toBe('topLandscape')
+		expect(topLayout(1154)).toBe('topLandscape')
 	})
 })

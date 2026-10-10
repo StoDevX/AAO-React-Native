@@ -122,12 +122,13 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
+/** The width of the grid's rows on a phone held upright. */
+const PHONE_WIDTH = 353
+
 /** The grid as By Issue draws it, once the list's first page has loaded. */
-function Grid({landscape}: {landscape: boolean}): React.ReactNode {
+function Grid({width}: {width: number}): React.ReactNode {
 	let {issues, query} = useMessIssues()
-	return issues ? (
-		<IssueGrid issues={issues} landscape={landscape} onOpen={onOpen} query={query} />
-	) : null
+	return issues ? <IssueGrid issues={issues} onOpen={onOpen} query={query} width={width} /> : null
 }
 
 /**
@@ -135,16 +136,16 @@ function Grid({landscape}: {landscape: boolean}): React.ReactNode {
  * the photo-less tiles have their words. With no stories cached the fetches are left in flight.
  */
 async function renderGrid({
-	landscape = false,
+	width = PHONE_WIDTH,
 	stories = [LEAD],
-}: {landscape?: boolean; stories?: MessStory[] | null} = {}): Promise<void> {
+}: {width?: number; stories?: MessStory[] | null} = {}): Promise<void> {
 	queryClient.setQueryData(messKeys.issues, {pages: [POSTS], pageParams: [1]})
 	let top = ISSUES[0] as MessIssue
 	if (stories) queryClient.setQueryData(messKeys.issue(top), stories)
 	await render(
 		<QueryClientProvider client={queryClient}>
 			<InMessenger>
-				<Grid landscape={landscape} />
+				<Grid width={width} />
 			</InMessenger>
 		</QueryClientProvider>,
 	)
@@ -193,8 +194,8 @@ describe('IssueGrid', () => {
 		expect(screen.getAllByTestId(ISSUE_TILE_ID)).toHaveLength(3)
 	})
 
-	test('lays the top tile out wide in landscape', async () => {
-		await renderGrid({landscape: true})
+	test('lays the top tile out wide in a wide window', async () => {
+		await renderGrid({width: 780})
 
 		expect(screen.getByTestId(TOP_TILE_ID).props.accessibilityValue.text).toBe(
 			'topLandscape, 0 coffee, 2 paragraphs',
@@ -267,7 +268,7 @@ describe('IssueGrid', () => {
 		await render(
 			<QueryClientProvider client={queryClient}>
 				<InMessenger>
-					<Grid landscape={false} />
+					<Grid width={PHONE_WIDTH} />
 				</InMessenger>
 			</QueryClientProvider>,
 		)
@@ -292,7 +293,7 @@ describe('IssueGrid', () => {
 		await render(
 			<QueryClientProvider client={queryClient}>
 				<InMessenger>
-					<Grid landscape={false} />
+					<Grid width={PHONE_WIDTH} />
 				</InMessenger>
 			</QueryClientProvider>,
 		)
@@ -311,7 +312,7 @@ describe('IssueGrid', () => {
 		await render(
 			<QueryClientProvider client={queryClient}>
 				<InMessenger>
-					<Grid landscape={false} />
+					<Grid width={PHONE_WIDTH} />
 				</InMessenger>
 			</QueryClientProvider>,
 		)

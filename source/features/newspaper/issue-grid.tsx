@@ -11,7 +11,7 @@ import {
 	textCase,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
-import {MessIssueTile} from '@frogpond/mess-issue-tile'
+import {MessIssueTile, type TileLayout} from '@frogpond/mess-issue-tile'
 import {
 	leadParagraphs,
 	readCount,
@@ -20,6 +20,9 @@ import {
 	stainCount,
 	stainMarks,
 	tileLabel,
+	tilesPerRow,
+	topLayout,
+	TILE_GAP,
 	yearGroups,
 } from './lib/issue-grid'
 import {issueDate} from './lib/issues'
@@ -72,7 +75,7 @@ const Tile = React.memo(function Tile({
 	layout = 'grid',
 	paragraphs = NO_PARAGRAPHS,
 }: TileProps & {
-	layout?: 'grid' | 'topPortrait' | 'topLandscape'
+	layout?: TileLayout
 	paragraphs?: string[]
 }): React.ReactNode {
 	let {title: nameplate} = usePaper()
@@ -108,20 +111,12 @@ const TopTile = React.memo(function TopTile({
 	issue,
 	read,
 	onOpen,
-	landscape,
-}: TileProps & {landscape: boolean}): React.ReactNode {
+	layout,
+}: TileProps & {layout: Exclude<TileLayout, 'grid'>}): React.ReactNode {
 	let stories = useQuery(usePaperQueries().issueOptions(issue, {persist: true}))
 	let lead = stories.data?.find((story) => story.id === issue.leadId)
 	let paragraphs = React.useMemo(() => leadParagraphs(lead), [lead])
-	return (
-		<Tile
-			issue={issue}
-			layout={landscape ? 'topLandscape' : 'topPortrait'}
-			onOpen={onOpen}
-			paragraphs={paragraphs}
-			read={read}
-		/>
-	)
+	return <Tile issue={issue} layout={layout} onOpen={onOpen} paragraphs={paragraphs} read={read} />
 })
 
 /** A grid tile with no photo, set with its lead story's words below its fold. */
@@ -142,13 +137,11 @@ const GridTile = React.memo(function GridTile({issue, read, onOpen}: TileProps):
 	)
 })
 
-/** Tiles to a row: two on a phone held upright, four across a landscape screen. */
-const PER_ROW = {portrait: 2, landscape: 4}
-
 type Props = {
 	issues: MessIssue[]
 	query: MessIssuesQuery
-	landscape: boolean
+	/** The width of the grid's rows, which sets the tiles to a row and the top tile's sheet */
+	width: number
 	onOpen: (issue: MessIssue) => void
 }
 
@@ -157,11 +150,11 @@ type Props = {
  * their year, returned side by side to land in the page's lazy column so rows are built as they
  * scroll in. The row at the end fetches the next page as it comes into view.
  */
-export function IssueGrid({issues, query, landscape, onOpen}: Props): React.ReactNode {
+export function IssueGrid({issues, query, width, onOpen}: Props): React.ReactNode {
 	let top = issues[0]
 	let opened = useMessStore((state) => state.openedStories)
 	let openedIds = React.useMemo(() => new Set(opened), [opened])
-	let perRow = landscape ? PER_ROW.landscape : PER_ROW.portrait
+	let perRow = tilesPerRow(width)
 
 	return (
 		<>
@@ -169,7 +162,7 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 				<TopTile
 					issue={top}
 					key={top.key}
-					landscape={landscape}
+					layout={topLayout(width)}
 					onOpen={onOpen}
 					read={readCount(top.storyIds, openedIds)}
 				/>
@@ -186,7 +179,7 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 				// keeps the rows, and a tile that stays in its row keeps its native view and photo.
 				...rowsOf(group.issues, perRow).map((row, index) => (
 					// oxlint-disable-next-line react/no-array-index-key -- the row's place is its identity, as above
-					<HStack alignment="top" key={`${group.year}-${index}`} spacing={12}>
+					<HStack alignment="top" key={`${group.year}-${index}`} spacing={TILE_GAP}>
 						{row.map((each) => (
 							<VStack key={each.key} modifiers={SHARE}>
 								<GridTile issue={each} onOpen={onOpen} read={readCount(each.storyIds, openedIds)} />
