@@ -101,8 +101,21 @@ struct RadioView: View {
         .accessibilityLabel(manager.isPlaying ? "Pause" : "Play")
     }
 
+    /// Today's shows, with the one on air checked. The rows are there to read, so choosing one does nothing.
+    private var scheduleMenu: some View {
+        Menu("Today's Schedule") {
+            ForEach(manager.todaysShows, id: \.start) { show in
+                Toggle("\(show.startText())  \(show.title)", isOn: .constant(show == manager.showOnAir))
+            }
+        }
+    }
+
     private var optionsMenu: some View {
         Menu {
+            if !manager.todaysShows.isEmpty {
+                scheduleMenu
+                Divider()
+            }
             Button("Settings…") {
                 NSApplication.showInDock()
                 openSettings()

@@ -39,6 +39,10 @@ class RadioManager {
     }
 
     private(set) var nowPlaying: NowPlaying
+    /// The selected station's shows today, from the earliest, if it publishes a schedule.
+    private(set) var todaysShows: [Show] = []
+    /// The one of today's shows on air now, if any.
+    private(set) var showOnAir: Show?
 
     /// `fetch` answers a feed's URL with its response, or nil if it cannot be had.
     init(
@@ -113,6 +117,8 @@ class RadioManager {
         nowPlayingTask?.cancel()
         nowPlayingTask = nil
         nowPlaying = NowPlaying(song: nil, show: nil, station: selectedStation)
+        todaysShows = []
+        showOnAir = nil
     }
 
     /// Follows what is on air at the selected station until told to stop.
@@ -138,15 +144,28 @@ class RadioManager {
                let schedule = await fetch(url).flatMap(ShowSchedule.parse) {
                 schedules[station] = (schedule, .now)
             }
-            let show = schedules[station]?.schedule.show(at: .now)
+            let schedule = schedules[station]?.schedule
+            let show = schedule?.show(at: .now)
             self.show(NowPlaying(song: nil, show: show, station: station), for: station)
+            self.show(todaysShows: schedule?.shows(on: .now) ?? [], onAir: show, for: station)
             return Self.showCheckInterval
         }
     }
 
-    /// Shows `nowPlaying` unless the station was switched, or the asking stopped, while it was fetched.
+    /// Whether what was fetched for `station` is still wanted: the station was
+    /// not switched, nor the asking stopped, in the meantime.
+    private func isStillFollowing(_ station: Station) -> Bool {
+        !Task.isCancelled && station == selectedStation
+    }
+
     private func show(_ nowPlaying: NowPlaying, for station: Station) {
-        guard !Task.isCancelled, station == selectedStation, nowPlaying != self.nowPlaying else { return }
+        guard isStillFollowing(station), nowPlaying != self.nowPlaying else { return }
         self.nowPlaying = nowPlaying
+    }
+
+    private func show(todaysShows: [Show], onAir: Show?, for station: Station) {
+        guard isStillFollowing(station) else { return }
+        if todaysShows != self.todaysShows { self.todaysShows = todaysShows }
+        if onAir != showOnAir { showOnAir = onAir }
     }
 }

@@ -70,6 +70,22 @@ nonisolated struct Show: Decodable, Equatable, Sendable {
     let end: String
     let title: String
     let poster: URL?
+
+    /// Minutes since midnight for "HH:MM", so "24:00" is the day's last moment.
+    static func minutes(_ clock: String) -> Int? {
+        let parts = clock.split(separator: ":").compactMap { Int($0) }
+        guard parts.count == 2 else { return nil }
+        return parts[0] * 60 + parts[1]
+    }
+
+    /// When the show starts, as `locale` writes a time: "4 PM", or "4:30 PM" off the hour.
+    func startText(locale: Locale = .current) -> String {
+        guard let minutes = Self.minutes(start) else { return start }
+        // Any day will do, read in the time zone the time is written in.
+        let time = Date(timeIntervalSinceReferenceDate: TimeInterval(minutes * 60))
+        let style = Date.FormatStyle(locale: locale, timeZone: .gmt)
+        return time.formatted(minutes % 60 == 0 ? style.hour() : style.hour().minute())
+    }
 }
 
 /// A station's weekly show schedule, as data/_schemas/ksto-schedule.yaml describes it.
@@ -88,28 +104,33 @@ nonisolated struct ShowSchedule: Decodable, Sendable {
 
     private static let weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
 
-    /// Minutes since midnight for "HH:MM", so "24:00" is the day's last moment.
-    private static func minutes(_ clock: String) -> Int? {
-        let parts = clock.split(separator: ":").compactMap { Int($0) }
-        guard parts.count == 2 else { return nil }
-        return parts[0] * 60 + parts[1]
-    }
-
-    /// The show on air at `date` in the schedule's own time zone, if any.
-    func show(at date: Date) -> Show? {
+    /// The weekday of `date`, and its minutes since midnight, in the schedule's own time zone.
+    private func stationTime(at date: Date) -> (day: String, minutes: Int)? {
         guard let timeZone = TimeZone(identifier: timezone) else { return nil }
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone
         let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
         guard let weekday = parts.weekday, let hour = parts.hour, let minute = parts.minute else { return nil }
-        let day = Self.weekdays[weekday - 1]
-        let now = hour * 60 + minute
+        return (Self.weekdays[weekday - 1], hour * 60 + minute)
+    }
+
+    /// The show on air at `date` in the schedule's own time zone, if any.
+    func show(at date: Date) -> Show? {
+        guard let now = stationTime(at: date) else { return nil }
         return shows.first { show in
-            guard show.day == day, let start = Self.minutes(show.start), let end = Self.minutes(show.end) else {
+            guard show.day == now.day, let start = Show.minutes(show.start), let end = Show.minutes(show.end) else {
                 return false
             }
-            return start <= now && now < end
+            return start <= now.minutes && now.minutes < end
         }
+    }
+
+    /// The shows on the day `date` falls on in the schedule's own time zone, from the earliest.
+    func shows(on date: Date) -> [Show] {
+        guard let now = stationTime(at: date) else { return [] }
+        return shows
+            .filter { $0.day == now.day }
+            .sorted { (Show.minutes($0.start) ?? 0) < (Show.minutes($1.start) ?? 0) }
     }
 }
 

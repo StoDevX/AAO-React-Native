@@ -94,6 +94,44 @@ struct ShowScheduleTests {
     @Test func aResponseThatIsNotTheScheduleIsNil() {
         #expect(ShowSchedule.parse(Data("{}".utf8)) == nil)
     }
+
+    @Test func listsADaysShowsFromTheEarliest() {
+        let shuffled = ShowSchedule.parse(Data(#"""
+        {"data": {"timezone": "America/Chicago", "shows": [
+            {"day": "monday", "start": "17:00", "end": "18:00", "title": "Second"},
+            {"day": "tuesday", "start": "09:00", "end": "10:00", "title": "Another Day"},
+            {"day": "monday", "start": "09:00", "end": "10:00", "title": "First"}
+        ]}}
+        """#.utf8))
+        #expect(shuffled?.shows(on: utc("2026-10-05T21:30:00Z")).map(\.title) == ["First", "Second"])
+    }
+
+    @Test func aDayRunsToMidnightInStationTime() {
+        #expect(schedule?.shows(on: utc("2026-10-06T04:59:00Z")).count == 3)
+        #expect(schedule?.shows(on: utc("2026-10-06T05:00:00Z")).isEmpty == true)
+    }
+}
+
+struct ShowStartTextTests {
+    private func show(start: String) -> Show {
+        Show(day: "monday", start: start, end: "24:00", title: "Late Show", poster: nil)
+    }
+
+    @Test func aShowOnTheHourNamesTheHourAlone() {
+        #expect(show(start: "16:00").startText(locale: Locale(identifier: "en_US")) == "4\u{202F}PM")
+    }
+
+    @Test func aShowOffTheHourNamesItsMinutes() {
+        #expect(show(start: "16:30").startText(locale: Locale(identifier: "en_US")) == "4:30\u{202F}PM")
+    }
+
+    @Test func followsTheLocalesClock() {
+        #expect(show(start: "16:00").startText(locale: Locale(identifier: "en_GB")) == "16")
+    }
+
+    @Test func aStartThatIsNotATimeIsShownAsWritten() {
+        #expect(show(start: "late").startText(locale: Locale(identifier: "en_US")) == "late")
+    }
 }
 
 struct NowPlayingTests {
@@ -257,6 +295,19 @@ struct RadioManagerTests {
         manager.isPanelOpen = true
         try await settle()
         #expect(await requests.urls.count == 1)
+    }
+
+    @Test func listsTodaysShowsAndTheOneOnAirOnceTheScheduleArrives() async throws {
+        // One show filling every day, so the test does not depend on the day it runs.
+        let days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        let shows = days.map { #"{"day": "\#($0)", "start": "00:00", "end": "24:00", "title": "All Day"}"# }
+        let schedule = Data(#"{"data": {"timezone": "America/Chicago", "shows": [\#(shows.joined(separator: ","))]}}"#.utf8)
+        let manager = RadioManager(defaults: emptyDefaults()) { _ in schedule }
+        #expect(manager.todaysShows.isEmpty)
+        manager.isPanelOpen = true
+        try await settle()
+        #expect(manager.todaysShows.map(\.title) == ["All Day"])
+        #expect(manager.showOnAir?.title == "All Day")
     }
 
     @Test func opensOnTheStationThePreferencesName() {
