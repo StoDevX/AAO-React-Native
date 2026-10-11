@@ -413,6 +413,11 @@ Times are Central: the post's own script reads the visitor's clock, so it
 shows the wrong hour outside Minnesota. `updated` is when KSTO last edited the
 post, which tells a schedule left over from an earlier term apart.
 
+When KSTO publishes a term's schedule somewhere else first (fall 2026's was an
+image on Instagram), write it into the file by hand, with `updated` the day it
+came out. The scrape leaves a file dated after the post alone, listing how the
+two differ, and takes over again once KSTO edits the post.
+
 ### UI Test Fixtures
 
 A UI test class can name a campus: `override class var campus: Campus? { .carleton }`,

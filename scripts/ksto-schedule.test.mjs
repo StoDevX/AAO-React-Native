@@ -2,7 +2,13 @@ import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {describe, test} from 'node:test'
 import {load} from 'js-yaml'
-import {diffSchedule, parseSchedule, postContent, renderSchedule} from './ksto-schedule.mjs'
+import {
+	diffSchedule,
+	fileOutdatesPost,
+	parseSchedule,
+	postContent,
+	renderSchedule,
+} from './ksto-schedule.mjs'
 
 let response = JSON.parse(
 	readFileSync(new URL('fixtures/ksto-schedule/now-playing.json', import.meta.url), 'utf8'),
@@ -173,6 +179,27 @@ describe('diffSchedule', () => {
 			added: ['monday 10:00–11:00 B'],
 			removed: ['monday 09:00–10:00 A'],
 		})
+	})
+})
+
+describe('fileOutdatesPost', () => {
+	let post = '2026-03-22T16:24:01Z'
+
+	test('a file dated after the post holds a schedule the post has not caught up with', () => {
+		assert.equal(fileOutdatesPost('2026-10-08T00:00:00Z', post), true)
+	})
+
+	test('a file dated the same as the post came from it', () => {
+		assert.equal(fileOutdatesPost(post, post), false)
+	})
+
+	test('a file dated before the post is behind it', () => {
+		assert.equal(fileOutdatesPost('2025-10-01T00:00:00Z', post), false)
+	})
+
+	test('a file with no date, or one that is not a date, never holds the scrape back', () => {
+		assert.equal(fileOutdatesPost(undefined, post), false)
+		assert.equal(fileOutdatesPost('last fall', post), false)
 	})
 })
 

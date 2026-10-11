@@ -215,7 +215,10 @@ const HEADER = `# KSTO's weekly show schedule, from the Now Playing post on ksto
 # ${SOURCE_PAGE}
 # scripts/scrape-ksto-schedule.mjs rewrites this file from that post; see AGENTS.md.
 # Times are the station's (timezone below). \`updated\` is when KSTO last edited
-# the post, so a reader can tell a schedule left over from an earlier term.
+# the post, so a reader can tell a schedule left over from an earlier term. A
+# schedule KSTO publishes anywhere else is written here by hand, with \`updated\`
+# the day it came out; the scrape then leaves the file alone until the post is
+# edited after that.
 `
 
 /**
@@ -241,6 +244,15 @@ function renderSlot({day, start, end, title, genre, poster}) {
 export function renderSchedule({updated, slots}) {
 	let lines = [`updated: '${updated}'`, `timezone: ${TIMEZONE}`, 'shows:', ...slots.map(renderSlot)]
 	return `${HEADER}${lines.join('\n')}\n`
+}
+
+/**
+ * Whether the file holds a schedule newer than the post's: one written by hand
+ * from somewhere else KSTO published it, which the post has yet to catch up
+ * with. Writing the post's schedule over it would bring back an earlier term.
+ */
+export function fileOutdatesPost(fileUpdated, postUpdated) {
+	return Date.parse(fileUpdated) > Date.parse(postUpdated)
 }
 
 const describe = ({day, start, end, title}) => `${day} ${start}–${end} ${title}`
