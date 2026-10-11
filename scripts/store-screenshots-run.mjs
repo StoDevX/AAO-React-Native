@@ -140,6 +140,15 @@ export function storeScreenshots(manifest, device) {
 	return [...byPath].map(([to, from]) => ({from, to}))
 }
 
+/**
+ * The apps among `variants` that `shots` hold nothing of. A screenshot class
+ * the Xcode project does not list runs no tests and fails none, so a run can
+ * end clean with nothing taken.
+ */
+export function unshotVariants(shots, variants) {
+	return variants.filter((variant) => !shots.some(({to}) => to.startsWith(`${variant}/`)))
+}
+
 /** A PNG's pixel size, from its header. */
 export function pngSize(buffer) {
 	if (buffer.length < 24 || buffer.toString('latin1', 12, 16) !== 'IHDR') {

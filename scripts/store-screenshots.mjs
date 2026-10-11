@@ -5,7 +5,7 @@
 // every one, and collects them into logs/screenshots/<app>/<device>/. Needs
 // Metro, as any local UI test run.
 
-import {copyFileSync, mkdirSync, readFileSync, rmSync} from 'node:fs'
+import {copyFileSync, existsSync, mkdirSync, readFileSync, rmSync} from 'node:fs'
 import {dirname, join} from 'node:path'
 
 import {
@@ -19,6 +19,7 @@ import {
 	sizeProblem,
 	statusBarArgs,
 	storeScreenshots,
+	unshotVariants,
 } from './store-screenshots-run.mjs'
 import {buildForTesting, findXctestrun, run, testWithoutBuilding} from './uitest-run.mjs'
 
@@ -98,6 +99,12 @@ function shoot({device, udid, variants}) {
 		run('xcrun', ['simctl', 'status_bar', udid, 'clear'])
 	}
 
+	// A run that never started leaves no result bundle to export from.
+	if (!existsSync(resultBundle)) {
+		problems.push(`the run on the ${device} left no result bundle, so it took no screenshots`)
+		return problems
+	}
+
 	run('xcrun', [
 		'xcresulttool',
 		'export',
@@ -117,6 +124,11 @@ function shoot({device, udid, variants}) {
 	}
 	rmSync(work, {recursive: true, force: true})
 	console.log(shots.map(({to}) => join(OUT, to)).join('\n'))
+	for (let variant of unshotVariants(shots, variants)) {
+		problems.push(
+			`no ${variant} screenshots were taken on the ${device}; if uitests/Screenshots/ is new to this checkout, run APP_VARIANT=aao mise run prebuild`,
+		)
+	}
 	return problems
 }
 

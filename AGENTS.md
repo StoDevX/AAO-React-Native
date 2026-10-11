@@ -514,7 +514,9 @@ TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise run screenshots --prebuilt
 Each app's screens read its campus's recordings on the frozen day, so two runs
 give the same pictures until someone rerecords. One build serves both: Carleton
 mode in All About Olaf runs CARLS's code. The map's tiles and the pictures the
-app fetches still come from the network.
+app fetches still come from the network. An iPad's status bar names the app in
+front, so CARLS's iPad screenshots say "All About Olaf" until they are taken
+from a `carls` build.
 
 Every screenshot shares a status bar, set with `simctl status_bar` and cleared
 after the run: full Wi-Fi, signal and battery, and the campus's wall clock at

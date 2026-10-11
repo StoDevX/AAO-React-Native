@@ -77,8 +77,9 @@ class StoreScreenshotTests: UITestCaseUnbooted {
 			.press(station.tab, expecting: "Play \(station.name)")
 		shoot("05-radio")
 		// The sheet asks for the station's schedule, which no campus has
-		// recorded: this screenshot is of the player alone.
-		MissingFixtures.clear()
+		// recorded: this screenshot is of the player alone. Any other
+		// unanswered request still fails the test.
+		MissingFixtures.forgive(keysContaining: "-schedule")
 	}
 
 	func testTransit() throws {

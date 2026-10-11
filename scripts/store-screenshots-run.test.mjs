@@ -10,6 +10,7 @@ import {
 	sizeProblem,
 	statusBarArgs,
 	storeScreenshots,
+	unshotVariants,
 } from './store-screenshots-run.mjs'
 
 test('shoots both apps on both devices unless some are named', () => {
@@ -130,6 +131,14 @@ test('keeps the last take of a screenshot a retry took twice', () => {
 		'iphone',
 	)
 	assert.deepEqual(shots, [{from: 'EXPORT-1.png', to: 'aao/iphone/01-home.png'}])
+})
+
+test('names an app a run took no screenshots of', () => {
+	let shots = [{from: 'EXPORT-0.png', to: 'aao/iphone/01-home.png'}]
+	assert.deepEqual(unshotVariants(shots, ['aao', 'carls']), ['carls'])
+	assert.deepEqual(unshotVariants(shots, ['aao']), [])
+	// A test file the Xcode project does not list runs no tests, and fails none.
+	assert.deepEqual(unshotVariants([], ['aao', 'carls']), ['aao', 'carls'])
 })
 
 /** The first 24 bytes of a PNG of this size. */
