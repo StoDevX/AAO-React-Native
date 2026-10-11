@@ -21,8 +21,8 @@ function describeDates(start: Moment, end: Moment): string {
 
 /**
  * Each break in `calendar`, soonest first. Jumping to one moves the clock
- * into it, and the server then answers with that break's hours, the same as
- * it will on the day.
+ * into it, and the hours then show that break's schedules, as they will on
+ * the day.
  */
 export function breakJumps(calendar: BreakCalendarResponse): BreakJump[] {
 	let {timezone, breaks} = calendar.data

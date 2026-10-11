@@ -23,17 +23,13 @@ import {
 	presentationDragIndicator,
 	scrollContentBackground,
 } from '@expo/ui/swift-ui/modifiers'
-import {clientFor} from '@frogpond/api'
 import * as c from '@frogpond/colors'
-import type {BreakCalendarResponse} from '@frogpond/schedules'
 import {useNowOverride} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 import moment from 'moment-timezone'
 
-import {campusById} from '../../../campuses'
 import type {CampusId} from '../../../campuses/ids'
-import {sectionServer} from '../../campus/section-server'
-import {keys} from '../query'
+import {keys, uneditedHoursOptions} from '../query'
 import {TIME_JUMPS, type TimeJump} from './time-jumps'
 import {breakJumps} from './break-jumps'
 import {useForceBundledData} from './data-source-store'
@@ -51,8 +47,8 @@ function isJumpSelected(jump: TimeJump, frozen: moment.Moment | null): boolean {
 
 /**
  * Dev-only controls for the two things that make building hours hard to look
- * at: the clock, and where the data comes from. Moving the clock asks the
- * server for that day's hours, so jumping into a break shows its schedules.
+ * at: the clock, and where the data comes from. A moved clock applies the
+ * break its moment falls in, so jumping into a break shows its schedules.
  */
 export function HoursDevSheet({campus, isPresented, onIsPresentedChange}: Props): React.ReactNode {
 	let frozen = useNowOverride((state) => state.frozen)
@@ -83,18 +79,11 @@ export function HoursDevSheet({campus, isPresented, onIsPresentedChange}: Props)
 		refetch()
 	}
 
-	// Only a campus whose server keeps a break calendar has one; anything else
-	// leaves the section out.
-	let breaks = useQuery({
-		queryKey: [campus, 'breaks'],
-		queryFn: ({signal}) =>
-			clientFor(sectionServer(campus, campusById(campus).hours))
-				.get('breaks', {signal})
-				.json<BreakCalendarResponse>(),
-		enabled: isPresented,
-		retry: false,
-	})
-	let jumpsToBreaks = breaks.data ? breakJumps(breaks.data) : []
+	// The same answer the moved clock reads its hours from, so opening the sheet
+	// warms it. A campus without a break calendar leaves the section out.
+	let unedited = useQuery({...uneditedHoursOptions(campus), enabled: isPresented, retry: false})
+	let calendar = unedited.data?.calendar
+	let jumpsToBreaks = calendar ? breakJumps(calendar) : []
 
 	return (
 		// `Host` wraps the sheet rather than sitting inside it: the sheet is itself
