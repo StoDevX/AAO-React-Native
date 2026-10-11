@@ -36,7 +36,7 @@ export function iconsByGroup(
  * The icon to switch to on choosing a campus with `appIcons`, or null to keep
  * `current`. An icon of the campus's own stays; another campus's gives way to
  * the campus's starting icon, so a Carleton install never wears St. Olaf's. A
- * campus without app icons leaves the icon alone.
+ * campus without app icons, or one already wearing that icon, leaves it alone.
  */
 export function iconForCampus(
 	current: AppIconName,
@@ -45,7 +45,8 @@ export function iconForCampus(
 	if (!appIcons || appIcons.groups.includes(iconEntry(current).group)) {
 		return null
 	}
-	return appIcons.default ?? DEFAULT_ICON
+	let next = appIcons.default ?? DEFAULT_ICON
+	return next === current ? null : next
 }
 
 /** The gallery's entry for `type`. Every `AppIconName` has one; the test holds it to that. */

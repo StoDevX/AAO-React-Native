@@ -6,6 +6,7 @@ enum TileLayout: String, Enumerable {
 	case grid
 	case topPortrait
 	case topLandscape
+	case topBroadsheet
 
 	/// Width over height: a grid tile is a tall sheet, the top tile nearly square, or wide.
 	var aspect: CGFloat {
@@ -14,7 +15,26 @@ enum TileLayout: String, Enumerable {
 		case .topPortrait: 0.96
 		// Wide enough to sit on a landscape screen under the bar and the switch.
 		case .topLandscape: 2.4
+		// The same page with room for its photo and story, short enough to leave a tablet's grid in view.
+		case .topBroadsheet: 1.75
 		}
+	}
+
+	/// The width the sheet's type sizes are written for: the widest it is on a phone, or for the
+	/// broadsheet, which no phone has room for, the width its type suits.
+	private var phoneWidth: CGFloat {
+		switch self {
+		case .grid: 195
+		case .topPortrait: 400
+		case .topLandscape: 600
+		case .topBroadsheet: 500
+		}
+	}
+
+	/// How many times the phone's sizes a sheet `width` points across sets its type: more on a wider
+	/// sheet, never less on a narrower one.
+	func typeScale(width: CGFloat) -> CGFloat {
+		max(1, width / phoneWidth)
 	}
 }
 
@@ -57,7 +77,8 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 	@State private var drawn: TileImageKey?
 
 	/// The most pixels a photo needs along its longer side: a grid tile's is about 180 points wide
-	/// and the top tile's up to about 460, at three pixels a point.
+	/// and the top tile's up to about 460 on a phone, at three pixels a point, or 660 across a
+	/// tablet, at two.
 	private var photoPixels: CGFloat { props.layout == .grid ? 600 : 1400 }
 
 	var body: some View {
@@ -102,10 +123,9 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		}
 	}
 
-	/// The image's key, or nil before the sheet is laid out. A landscape top tile is always drawn
-	/// live: its photo's width is set by its container, which an image drawn on its own lacks.
+	/// The image's key, or nil before the sheet is laid out.
 	private func imageKey(_ content: TileContent) -> TileImageKey? {
-		guard size.width > 0, size.height > 0, content.layout != .topLandscape else { return nil }
+		guard size.width > 0, size.height > 0 else { return nil }
 		return TileImageKey(
 			content, photoUrl: props.photoUrl, size: size, scheme: scheme, typeSize: typeSize, scale: scale)
 	}

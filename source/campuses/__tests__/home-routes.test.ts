@@ -75,7 +75,7 @@ describe('the route table', () => {
 	})
 })
 
-describe('paper and radio routes', () => {
+describe('paper and schedule routes', () => {
 	test.each(CAMPUSES.filter((campus) => campus.paper).map((campus) => [campus.id]))(
 		"%s's paper is read under /newspaper",
 		(id) => {
@@ -87,13 +87,20 @@ describe('paper and radio routes', () => {
 	)
 
 	test.each(
-		CAMPUSES.flatMap((campus) => campus.radio?.stations ?? []).map((station) => [station.id]),
-	)("%s's schedule is at /radio/schedule", (station) => {
-		expect(routeExists(`/radio/schedule?station=${station}`)).toBe(true)
+		CAMPUSES.flatMap((campus) => campus.schedules?.entries ?? []).map((entry) => [entry.id]),
+	)('the %s schedule is at /schedule/<id>', (id) => {
+		expect(routeExists(`/schedule/${id}`)).toBe(true)
 	})
 
-	test('no route is named for one paper or station', () => {
-		for (let gone of ['/messenger', '/carletonian', '/ksto-schedule', '/krlx-schedule']) {
+	test('no route is named for one paper, station or schedule', () => {
+		for (let gone of [
+			'/messenger',
+			'/carletonian',
+			'/ksto-schedule',
+			'/krlx-schedule',
+			'/radio/schedule',
+			'/carleton-sumo',
+		]) {
 			expect(routeExists(gone)).toBe(false)
 		}
 	})

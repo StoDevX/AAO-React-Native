@@ -78,11 +78,6 @@ describe('menus', () => {
 		])
 	})
 
-	test("each campus's tile opens its own first café", () => {
-		expect(campusById('edu.stolaf').menus?.entryHref).toBe('/menus')
-		expect(campusById('edu.carleton').menus?.entryHref).toBe('/menus/burton')
-	})
-
 	test('St. Olaf gives Stav and the Cage a quick action each', () => {
 		expect(campusById('edu.stolaf').menus?.quickActions?.map((view) => view.title)).toEqual([
 			'Stav Menu',

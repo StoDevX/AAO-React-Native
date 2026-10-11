@@ -2,13 +2,12 @@ import * as c from '@frogpond/colors'
 
 import type {ViewType} from '../../features/views'
 import {developerTile} from '../shared-tiles'
-import {menus} from './menus'
 
 /** Wiki Monkeys' tiles: one for each feature it has, so every screen can be reached from Home. */
 export const exampleCollegeHomeTiles: ReadonlyArray<ViewType> = [
 	{
 		type: 'view',
-		view: menus.entryHref,
+		view: '/menus',
 		title: 'Menus',
 		icon: 'fork.knife',
 		gradient: c.greenGradient,

@@ -10,5 +10,4 @@ export const menus: MenusSection = {
 			bonApp: {cafe: 'treeline-commons', loadingMessage: ['Waxing the trays…']},
 		},
 	],
-	entryHref: '/menus/treeline-commons',
 }

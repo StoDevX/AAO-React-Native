@@ -2,12 +2,12 @@ import {readdirSync} from 'node:fs'
 import path from 'node:path'
 import {describe, expect, test} from '@jest/globals'
 
-import {campusById} from '../../../campuses'
-import {MENU_TABS, menuCampusOf, menuServerOf, menuTab, menuTabName} from '../menu-tabs'
+import {CAMPUS_IDS, campusById} from '../../../campuses'
+import {MENU_TABS, cafeTabsOf, menuServerOf, menuTab} from '../menu-tabs'
 
-/** The tabs `app/menus/` has route files for. */
+/** The tabs `app/menus/` has route files for. `index` only gives `/menus` a typed route. */
 const ROUTES = readdirSync(path.join(__dirname, '../../../../app/menus'))
-	.filter((file) => file.endsWith('.tsx') && file !== '_layout.tsx')
+	.filter((file) => file.endsWith('.tsx') && file !== '_layout.tsx' && file !== 'index.tsx')
 	.map((file) => file.replace(/\.tsx$/u, ''))
 
 describe("Menus' tabs", () => {
@@ -15,18 +15,16 @@ describe("Menus' tabs", () => {
 		expect(MENU_TABS.map(({tab}) => tab.name).toSorted()).toEqual(ROUTES.toSorted())
 	})
 
-	test('name /menus the index tab', () => {
-		expect(menuTabName('/menus')).toBe('index')
-		expect(menuTabName('/menus/burton/')).toBe('burton')
+	test.each(CAMPUS_IDS)("on %s are the campus's own cafés, first café first", (campus) => {
+		expect(cafeTabsOf(campus).map((tab) => tab.name)).toEqual(
+			campusById(campus).menus?.tabs.map((tab) => tab.name) ?? [],
+		)
 	})
 
-	test('show the cafés of the campus whose tab is open, whatever the active campus', () => {
-		expect(menuCampusOf('/menus', 'edu.carleton')).toBe('edu.stolaf')
-		expect(menuCampusOf('/menus/burton', 'edu.stolaf')).toBe('edu.carleton')
-	})
-
-	test("show the active campus's under a sheet, which is no café's path", () => {
-		expect(menuCampusOf('/menu-item-detail', 'edu.carleton')).toBe('edu.carleton')
+	test('open on the first café, which /menus lands on', () => {
+		expect(cafeTabsOf('edu.stolaf')[0].name).toBe('stav-hall')
+		expect(cafeTabsOf('edu.carleton')[0].name).toBe('burton')
+		expect(cafeTabsOf('example.college')[0].name).toBe('treeline-commons')
 	})
 })
 
@@ -37,7 +35,7 @@ describe("a café's server", () => {
 	})
 
 	test("is St. Olaf's for St. Olaf's cafés", () => {
-		expect(menuTab('index')).toMatchObject({campus: 'edu.stolaf', server: 'edu.stolaf'})
+		expect(menuTab('stav-hall')).toMatchObject({campus: 'edu.stolaf', server: 'edu.stolaf'})
 		expect(menuTab('the-pause').server).toBe('edu.stolaf')
 	})
 

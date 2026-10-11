@@ -2,7 +2,7 @@ import * as React from 'react'
 import {render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
-import ArchivedConvosPage from '../../../../app/carleton-convos/archived'
+import ArchivedConvosPage from '../../../../app/edu.carleton/convocations/archived'
 import {archivedConvosOptions, type ArchivedConvo} from '../convos'
 
 const convo: ArchivedConvo = {

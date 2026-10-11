@@ -88,9 +88,14 @@ describe('galleryColumns', () => {
 })
 
 describe('iconsByGroup on Carleton', () => {
-	it('offers the CARLS icons alone', () => {
-		expect(iconsByGroup(carletonIcons)).toEqual([
-			{group: 'CARLS', icons: [{title: 'Penguin', type: 'carls-penguin', group: 'CARLS'}]},
+	it('offers the CARLS icons, then the windmills', () => {
+		let groups = iconsByGroup(carletonIcons)
+		expect(groups.map((g) => g.group)).toEqual(['CARLS', 'Windmill'])
+		expect(groups[0].icons).toEqual([{title: 'Penguin', type: 'carls-penguin', group: 'CARLS'}])
+		expect(groups[1].icons.map((i) => i.type)).toEqual([
+			'windmill-sky',
+			'windmill-dawn',
+			'windmill-golden-hour',
 		])
 	})
 
@@ -102,11 +107,21 @@ describe('iconsByGroup on Carleton', () => {
 
 describe('iconForCampus', () => {
 	it('moves a St. Olaf icon to the penguin on Carleton', () => {
-		expect(iconForCampus('windmill-dawn', carletonIcons)).toBe('carls-penguin')
+		expect(iconForCampus('old-main', carletonIcons)).toBe('carls-penguin')
+	})
+
+	it('keeps a windmill on Carleton, which offers them', () => {
+		expect(iconForCampus('windmill-dawn', carletonIcons)).toBeNull()
 	})
 
 	it('moves the penguin back to the primary on St. Olaf', () => {
 		expect(iconForCampus('carls-penguin', stolafIcons)).toBe(DEFAULT_ICON)
+	})
+
+	it('keeps an icon the campus would only switch back to', () => {
+		expect(
+			iconForCampus('carls-penguin', {groups: ['Classic'], default: 'carls-penguin'}),
+		).toBeNull()
 	})
 
 	it("keeps an icon of the campus's own", () => {

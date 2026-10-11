@@ -18,13 +18,14 @@ import {IssueGrid} from './issue-grid'
 import {LatestPage} from './latest-page'
 import {linkedView, viewKey, viewOf, type MessView} from './lib/front-view'
 import {paperKeys} from './lib/keys'
-import {MessPage, PAPER_BAR, PaperTitle} from './mess-page'
+import {MessPage, PAGE_MARGIN, PAPER_BAR, PaperTitle} from './mess-page'
 import {usePaper, usePaperCampus} from './paper-context'
 import {NEWSPAPER_ROUTES} from './routes'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {CUSTOMIZE_LABEL} from '../customize/labels'
 import {StoryRows} from './story-list'
 import type {MessIssue} from './types'
+import {usePageWidth} from './use-column-width'
 import {useMessIssues} from './use-mess-issues'
 import {usePaperQueries} from './use-paper-queries'
 
@@ -124,7 +125,8 @@ function ByIssuePage(): React.ReactNode {
 	let router = useRouter()
 	let paper = usePaper()
 	let campus = usePaperCampus()
-	let {width, height} = useWindowDimensions()
+	let width = usePageWidth(PAGE_MARGIN)
+	let {height} = useWindowDimensions()
 	let {issues, query} = useMessIssues()
 	// Kept the same across renders, so the grid's memoized tiles are not all drawn again.
 	let open = React.useCallback(
@@ -133,7 +135,7 @@ function ByIssuePage(): React.ReactNode {
 		[campus, router],
 	)
 	if (issues && issues.length > 0) {
-		return <IssueGrid issues={issues} landscape={width > height} onOpen={open} query={query} />
+		return <IssueGrid issues={issues} onOpen={open} query={query} size={{width, height}} />
 	}
 	if (issues) return <PageMessage text={`${paper.shortTitle} has no issues yet.`} />
 	if (query.isError) {
@@ -217,6 +219,7 @@ export function FrontPageScreen(): React.ReactNode {
 				// Only the view showing has queries mounted, so refetching the active Mess queries
 				// refreshes that view alone.
 				onRefresh={() => refetchFromFirstPage(queryClient, paperKeys(paper.id).all)}
+				wide={view.mode === 'issues'}
 			>
 				{view.mode === 'issues' ? <ByIssuePage /> : <LatestPage section={view.section} />}
 			</MessPage>

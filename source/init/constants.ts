@@ -1,13 +1,11 @@
 import Constants from 'expo-constants'
 import {setVersionInfo, setTimezone} from '@frogpond/constants'
 
-import {APP} from '../lib/app-identity'
-
-/** Each app reports to its own Sentry project: all-about-olaf, or carls. */
-export const SENTRY_DSN =
-	APP === 'carls'
-		? 'https://a539fb427f9f4380971602c1e21e6959@o524787.ingest.us.sentry.io/5637839'
-		: 'https://7f68e814c5c24c32a582f2ddc3d42b4c@o524787.ingest.sentry.io/5637838'
+/** The build's Sentry DSN, which app.config.ts names per variant; undefined reports nothing. */
+export const SENTRY_DSN: string | undefined =
+	typeof Constants.expoConfig?.extra?.sentry?.dsn === 'string'
+		? Constants.expoConfig.extra.sentry.dsn
+		: undefined
 
 /**
  * The full semver, prerelease tag and all, taken from the app config rather

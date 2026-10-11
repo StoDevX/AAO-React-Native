@@ -5,7 +5,7 @@ import {eventKey} from '@frogpond/event-list'
 import {useQuery} from '@tanstack/react-query'
 import {EventType} from '@frogpond/event-type'
 
-import {CONVOS_SOURCE_ID} from '../../source/features/carleton/constants'
+import {CONVOS_SOURCE_ID} from '../../../source/features/carleton/constants'
 
 export default function UpcomingConvosPage(): React.ReactNode {
 	let router = useRouter()

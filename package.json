@@ -1,6 +1,6 @@
 {
   "name": "all-about-anything",
-  "version": "2.9.0-rc.5",
+  "version": "2.9.0-rc.6",
   "private": true,
   "dependencies": {
     "@babel/runtime": "7.29.7",

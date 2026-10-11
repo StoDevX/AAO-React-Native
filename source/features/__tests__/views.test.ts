@@ -128,7 +128,7 @@ describe("St. Olaf's Home tiles", () => {
 			{
 				title: 'St. Olaf News',
 				icon: 'megaphone.fill',
-				target: '/st-olaf-news',
+				target: '/news',
 				devOnly: false,
 				disabled: false,
 			},
@@ -155,22 +155,22 @@ describe("Carleton's Home tiles", () => {
 
 	test("are the CARLS app's tiles, in its order and under its names", () => {
 		expect(carleton().map((view) => [view.title, viewTarget(view)])).toEqual([
-			['Menus', '/menus/burton'],
+			['Menus', '/menus'],
 			['Workday', 'https://www.carleton.edu/workday/'],
 			['OneCard', 'https://get.cbord.com/carletonstolaf/full/prelogin.php'],
 			['Building Hours', '/hours?campus=edu.carleton'],
 			['Calendar', '/calendar'],
 			['Directory', '/contacts'],
 			['KRLX', 'radio:krlx'],
-			['SUMO', '/carleton-sumo'],
+			['SUMO', '/schedule/sumo'],
 			['The Carletonian', '/newspaper'],
 			['Transportation', '/transit'],
-			['Convo', '/carleton-convos'],
+			['Convo', '/edu.carleton/convocations'],
 			['Campus Map', '/map?campus=edu.carleton'],
 			['Dictionary', '/dictionary'],
 			['Student Orgs', 'https://www.carleton.edu/student-organizations/'],
 			['Moodle', 'https://moodle.carleton.edu/'],
-			['Carleton News', '/carleton-news'],
+			['Carleton News', '/news'],
 			['Developer', '/developer'],
 		])
 	})
@@ -188,7 +188,15 @@ describe("Carleton's Home tiles", () => {
 			.map(viewTarget)
 			.filter((target) => stOlafTargets.has(target))
 
-		expect(shared).toEqual(['/calendar', '/newspaper', '/transit', '/dictionary', '/developer'])
+		expect(shared).toEqual([
+			'/menus',
+			'/calendar',
+			'/newspaper',
+			'/transit',
+			'/dictionary',
+			'/news',
+			'/developer',
+		])
 	})
 })
 

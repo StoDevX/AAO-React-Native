@@ -1,3 +1,4 @@
+import {eventMapper} from '../features/streaming/radio/constants'
 import type {CampusDefinition} from './definition'
 import {exampleCollegeAbout} from './example-college/about'
 import {exampleCollegeHomeTiles} from './example-college/home-tiles'
@@ -65,6 +66,11 @@ export const exampleCollege = {
 	directory: {searchUrl: 'https://directory.college.example/search'},
 	calendar: {sources: ['wiki-monkeys']},
 	radio: {stations: [KMNK]},
+	schedules: {
+		entries: [
+			{id: 'kmnk', title: `${KMNK.stationName} Schedule`, calendar: 'kmnk-schedule', eventMapper},
+		],
+	},
 	paper: VALLEY_ECHO,
 	quickActions: {defaults: ['Menus', 'Building Hours', 'Calendar', 'Valley Map']},
 	about: exampleCollegeAbout,

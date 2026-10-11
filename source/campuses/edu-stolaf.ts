@@ -1,3 +1,4 @@
+import {eventMapper} from '../features/streaming/radio/constants'
 import type {CampusDefinition} from './definition'
 import {stolafAbout} from './edu-stolaf/about'
 import {BUNDLED_DIRECTORIES, BUNDLED_HOURS} from './edu-stolaf/bundled'
@@ -69,6 +70,11 @@ export const stolaf = {
 		source: {id: 'stolaf', title: 'St. Olaf News', thumbnail: 'stolaf'},
 	},
 	radio: {stations: [KSTO]},
+	schedules: {
+		entries: [
+			{id: 'ksto', title: `${KSTO.stationName} Schedule`, calendar: 'ksto-schedule', eventMapper},
+		],
+	},
 	paper: MESSENGER,
 	quickActions: {defaults: ['Stav Menu', 'Cage Menu', 'Olaf Messenger', 'Transit']},
 	appIcons: {groups: ['Classic', 'Windmill']},

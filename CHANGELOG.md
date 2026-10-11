@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.9.0-rc.6
+
+### Minor Changes
+
+- 0a49f68: CARLS offers the three windmill app icons beside the penguin, under Customize's App Icon.
+
+### Patch Changes
+
+- 524a715: Dev mode starts off in beta builds too, so the Developer tile and other debugging tools stay hidden until "Enable dev mode" is checked in the Home notice's menu.
+- 3935f32: Tapping a search result on the map shows only that place's pin while its card is open; the other results' pins come back when it closes.
+
 ## 2.9.0-rc.5
 
 ### Patch Changes

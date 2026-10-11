@@ -1,4 +1,5 @@
 import type {CampusDefinition} from '../../campuses'
+import {cafeTabsOf} from '../menus/menu-tabs'
 import type {ViewType} from '../views'
 
 /** A screen a Home Screen quick action can open. */
@@ -22,11 +23,17 @@ function destinationOf(view: ViewType): QuickActionDestination[] {
 	return [{id: view.title, title: view.title, icon: view.icon, href: view.view}]
 }
 
+/** Where `href` lands on `campus`: bare `/menus` opens the campus's first café. */
+function landingOf(href: string, campus: CampusDefinition): string {
+	let first = cafeTabsOf(campus.id)[0]
+	return href === '/menus' && first ? `/menus/${first.name}` : href
+}
+
 /**
  * Every screen the quick-action picker offers on `campus`: its café menus, an
  * action each though Home has one Menus tile for all of them, then each Home
- * tile that opens a screen in the app. A tile that opens a café's screen is
- * left out, since that café's action already does.
+ * tile that opens a screen in the app. A tile that lands on a café's screen is
+ * left out, since that café's action already opens it.
  */
 export function quickActionDestinations(campus: CampusDefinition): QuickActionDestination[] {
 	let cafes = (campus.menus?.quickActions ?? []).flatMap(destinationOf)
@@ -34,7 +41,7 @@ export function quickActionDestinations(campus: CampusDefinition): QuickActionDe
 	let tiles = campus.home.tiles
 		.filter((view) => !view.disabled && !view.devOnly)
 		.flatMap(destinationOf)
-		.filter((tile) => !cafeHrefs.has(tile.href))
+		.filter((tile) => !cafeHrefs.has(landingOf(tile.href, campus)))
 	return [...cafes, ...tiles]
 }
 

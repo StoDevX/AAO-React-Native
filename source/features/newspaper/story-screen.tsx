@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Linking, Share, StyleSheet} from 'react-native'
 import {Stack} from 'expo-router'
 import {Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
-import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
+import {background, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 import {openURLAction} from '../../lib/open-url-action'
 import {AuthorCards} from './author-card'
@@ -10,7 +10,7 @@ import {HoroscopesView} from './horoscopes-view'
 import {FeatureView} from './feature-view'
 import {ImageView} from './image-view'
 import {keepsDarkMode} from './lib/photo-story'
-import {PAGE_MARGIN} from './mess-page'
+import {PAGE_MARGIN, pageColumn} from './mess-page'
 import {paper} from './palette'
 import {PlaylistView} from './playlist-view'
 import {puzzleIcon, puzzleLabel, puzzleUrl} from './lib/puzzle'
@@ -31,10 +31,10 @@ import {useMessStory} from './use-mess-story'
 const QUIET_MARGIN = 28
 /** The paper, and a link in the story's text opening where the reader's link setting says. */
 const PAGE = [background(paper), openURLAction(openUrl)]
-const COLUMN = [padding({horizontal: PAGE_MARGIN, vertical: 16})]
-const QUIET_COLUMN = [padding({horizontal: QUIET_MARGIN, vertical: 16})]
+const COLUMN = pageColumn(PAGE_MARGIN)
+const QUIET_COLUMN = pageColumn(QUIET_MARGIN)
 /** A column whose children can be scrolled to by their `id`. */
-const TARGET_COLUMN = [...COLUMN, scrollTargetLayout()]
+const TARGET_COLUMN = [scrollTargetLayout(), ...COLUMN]
 
 /**
  * A Photo story's navigation bar, dark over its dark page. The page's own Host carries the dark

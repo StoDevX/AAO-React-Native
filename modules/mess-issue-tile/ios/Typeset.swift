@@ -40,15 +40,22 @@ struct Headline: View {
 
 	var body: some View {
 		let label = makeLabel()
-		FittedHeight(height: { width in
-			label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height
-		}) {
+		FittedHeight(height: { Self.height(of: label, width: $0) }) {
 			Canvas { context, size in
 				drawWithUIKit(&context) {
 					label.drawText(in: CGRect(origin: .zero, size: size))
 				}
 			}
 		}
+	}
+
+	/// The height the headline takes set `width` points across, for a layout that sets type under it.
+	func height(width: CGFloat) -> CGFloat {
+		Self.height(of: makeLabel(), width: width)
+	}
+
+	private static func height(of label: UILabel, width: CGFloat) -> CGFloat {
+		label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height
 	}
 
 	private func makeLabel() -> UILabel {
@@ -81,16 +88,15 @@ private struct FittedHeight: Layout {
 	}
 }
 
-/// A story set in columns, hyphenated and justified, flowing from one column to the next, with an
-/// optional block at the top of the first columns kept clear for a photo. Decoration: too small to
-/// read, and hidden from VoiceOver. It uses TextKit 1, whose layout manager flows one text through
+/// A story set in columns, hyphenated and justified, flowing from one column to the next, each
+/// column starting as far down as the photo or headline above it reaches. Decoration: hidden from
+/// VoiceOver, and on a phone too small to read. It uses TextKit 1, whose layout manager flows one text through
 /// several containers, which is what columns are.
 struct ColumnText: View, Equatable {
 	let paragraphs: [String]
 	let columns: Int
-	/// How many columns, from the left, start below `clearHeight`
-	let clearedColumns: Int
-	let clearHeight: CGFloat
+	/// How far down each column starts, from the left; a column past the end starts at the top
+	var tops: [CGFloat] = []
 	let ink: Color
 	let rule: Color
 	/// Points: the top tile's type, or the smaller type under a grid tile's fold
@@ -121,8 +127,10 @@ struct ColumnText: View, Equatable {
 		storage.addLayoutManager(layout)
 
 		for column in 0..<columns {
-			let top = column < clearedColumns ? clearHeight + 5 : 0
-			let container = NSTextContainer(size: CGSize(width: width, height: max(bounds.height - top, 0)))
+			let top = column < tops.count ? tops[column] : 0
+			// A column with no room is left out: a container of no height would end the story there.
+			guard bounds.height > top else { continue }
+			let container = NSTextContainer(size: CGSize(width: width, height: bounds.height - top))
 			container.lineFragmentPadding = 0
 			layout.addTextContainer(container)
 			let origin = CGPoint(x: CGFloat(column) * (width + gutter), y: top)

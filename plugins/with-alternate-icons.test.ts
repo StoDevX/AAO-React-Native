@@ -8,13 +8,15 @@ import xcode from 'xcode'
 import type {XcodeProject} from 'xcode'
 
 import {
-	ALTERNATE_ICONS,
-	STATIC_ALTERNATE_ICONS,
+	ICON_DOCUMENTS,
+	STATIC_ICON_SETS,
 	addAlternateIconResources,
+	alternatesFor,
 	assertLayersPresent,
 	compressAppIcons,
 	copyAlternateIcons,
 	includeAllAppIcons,
+	primaryFrom,
 } from './with-alternate-icons.ts'
 
 function loadProject(): XcodeProject {
@@ -53,7 +55,7 @@ function makeProjectRoot(icons: readonly string[]): string {
 		writeFileSync(join(root, 'assets', `${name}.icon`, 'icon.json'), iconJSON('Layer.png'))
 		writeFileSync(join(dir, 'Layer.png'), name)
 	}
-	for (let name of STATIC_ALTERNATE_ICONS) {
+	for (let name of STATIC_ICON_SETS) {
 		let set = join(root, 'assets', `${name}.xcassets`, `${name}.appiconset`)
 		mkdirSync(set, {recursive: true})
 		writeFileSync(join(set, 'icon.png'), name)
@@ -84,22 +86,35 @@ describe('includeAllAppIcons', () => {
 
 describe('addAlternateIconResources', () => {
 	it('bundles each alternate icon as a resource of the app group', () => {
-		let pbxproj = addAlternateIconResources(loadProject(), 'AllAboutAnything').writeSync()
-		for (let name of ALTERNATE_ICONS) {
+		let pbxproj = addAlternateIconResources(
+			loadProject(),
+			'AllAboutAnything',
+			'windmill',
+		).writeSync()
+		for (let name of alternatesFor('windmill').documents) {
 			assert.match(pbxproj, new RegExp(`${name}\\.icon in Resources`, 'u'))
 		}
+	})
+
+	it('leaves out the primary, which Expo bundles as the app icon', () => {
+		let pbxproj = addAlternateIconResources(
+			loadProject(),
+			'AllAboutAnything',
+			'windmill',
+		).writeSync()
+		assert.doesNotMatch(pbxproj, /[^-]windmill\.icon in Resources/u)
 	})
 })
 
 describe('copyAlternateIcons', () => {
 	it('copies each Icon Composer document, with its layers, into the native project', () => {
-		let root = makeProjectRoot(ALTERNATE_ICONS)
+		let root = makeProjectRoot(ICON_DOCUMENTS)
 		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(destination, {recursive: true})
 
-		copyAlternateIcons(root, destination)
+		copyAlternateIcons(root, destination, 'windmill')
 
-		for (let name of ALTERNATE_ICONS) {
+		for (let name of alternatesFor('windmill').documents) {
 			let copied = join(destination, `${name}.icon`)
 			assert.equal(readFileSync(join(copied, 'icon.json'), 'utf8'), iconJSON('Layer.png'))
 			assert.equal(readFileSync(join(copied, 'Assets', 'Layer.png'), 'utf8'), name)
@@ -107,26 +122,26 @@ describe('copyAlternateIcons', () => {
 	})
 
 	it('copies each static app icon set into the native project catalog', () => {
-		let root = makeProjectRoot(ALTERNATE_ICONS)
+		let root = makeProjectRoot(ICON_DOCUMENTS)
 		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(join(destination, 'Images.xcassets'), {recursive: true})
 
-		copyAlternateIcons(root, destination)
+		copyAlternateIcons(root, destination, 'windmill')
 
-		for (let name of STATIC_ALTERNATE_ICONS) {
+		for (let name of alternatesFor('windmill').sets) {
 			let copied = join(destination, 'Images.xcassets', `${name}.appiconset`)
 			assert.equal(readFileSync(join(copied, 'icon.png'), 'utf8'), name)
 		}
 	})
 
 	it('fails loudly when a static set is missing', () => {
-		let root = makeProjectRoot(ALTERNATE_ICONS)
+		let root = makeProjectRoot(ICON_DOCUMENTS)
 		rmSync(join(root, 'assets', 'old-main-retro.xcassets'), {recursive: true})
 		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(join(destination, 'Images.xcassets'), {recursive: true})
 
 		assert.throws(
-			() => copyAlternateIcons(root, destination),
+			() => copyAlternateIcons(root, destination, 'windmill'),
 			/assets\/old-main-retro\.xcassets\/old-main-retro\.appiconset is missing/u,
 		)
 	})
@@ -137,7 +152,7 @@ describe('copyAlternateIcons', () => {
 		mkdirSync(destination, {recursive: true})
 
 		assert.throws(
-			() => copyAlternateIcons(root, destination),
+			() => copyAlternateIcons(root, destination, 'windmill'),
 			/assets\/windmill-sky\.icon is missing/u,
 		)
 	})
@@ -145,13 +160,13 @@ describe('copyAlternateIcons', () => {
 	// actool reports a missing layer only as "Icon export exited with status
 	// 255", naming neither the layer nor the fact that one is missing.
 	it('fails loudly when a layer image is missing', () => {
-		let root = makeProjectRoot(ALTERNATE_ICONS)
+		let root = makeProjectRoot(ICON_DOCUMENTS)
 		rmSync(join(root, 'assets', 'windmill-sky.icon', 'Assets', 'Layer.png'))
 		let destination = join(root, 'ios', 'AllAboutAnything')
 		mkdirSync(destination, {recursive: true})
 
 		assert.throws(
-			() => copyAlternateIcons(root, destination),
+			() => copyAlternateIcons(root, destination, 'windmill'),
 			/assets\/windmill-sky\.icon\/Assets\/Layer\.png is missing/u,
 		)
 	})
@@ -176,22 +191,36 @@ describe('assertLayersPresent', () => {
 	})
 })
 
-describe('STATIC_ALTERNATE_ICONS', () => {
+describe('STATIC_ICON_SETS', () => {
 	it('lists every app icon set in assets/', () => {
 		let sets = readdirSync(join(import.meta.dirname, '../assets'))
 			.filter((entry) => entry.endsWith('.xcassets'))
 			.map((entry) => entry.slice(0, -'.xcassets'.length))
-		assert.deepEqual(STATIC_ALTERNATE_ICONS.toSorted(), sets.toSorted())
+		assert.deepEqual(STATIC_ICON_SETS.toSorted(), sets.toSorted())
 	})
 })
 
-describe('ALTERNATE_ICONS', () => {
-	it('lists every Icon Composer document but the primary', () => {
-		// The primary is `ios.icon` in app.config.ts.
+describe('ICON_DOCUMENTS', () => {
+	it('lists every Icon Composer document in assets/', () => {
 		let documents = readdirSync(join(import.meta.dirname, '../assets'))
-			.filter((entry) => entry.endsWith('.icon') && entry !== 'windmill.icon')
+			.filter((entry) => entry.endsWith('.icon'))
 			.map((entry) => entry.slice(0, -'.icon'.length))
-		assert.deepEqual(ALTERNATE_ICONS.toSorted(), documents.toSorted())
+		assert.deepEqual(ICON_DOCUMENTS.toSorted(), documents.toSorted())
+	})
+})
+
+describe('alternatesFor', () => {
+	it('bundles every document and set but the primary', () => {
+		assert.deepEqual(alternatesFor('windmill'), {
+			documents: ICON_DOCUMENTS.filter((name) => name !== 'windmill'),
+			sets: STATIC_ICON_SETS,
+		})
+	})
+
+	it('leaves out a static primary, such as the penguin', () => {
+		let {documents, sets} = alternatesFor('carls-penguin')
+		assert.deepEqual(documents, ICON_DOCUMENTS)
+		assert.ok(!sets.includes('carls-penguin'))
 	})
 })
 
@@ -207,5 +236,27 @@ describe('compressAppIcons', () => {
 
 	it('throws when the target is missing', () => {
 		assert.throws(() => compressAppIcons(loadProject(), 'NoSuchTarget'), /NoSuchTarget/u)
+	})
+})
+
+describe('primaryFrom', () => {
+	for (let [icon, primary] of [
+		['./assets/windmill.icon', 'windmill'],
+		['./assets/carls-penguin.xcassets/carls-penguin.appiconset/light.png', 'carls-penguin'],
+	]) {
+		it(`accepts ${primary} as the primary of ${icon}`, () => {
+			assert.equal(primaryFrom(icon, {primary}), primary)
+		})
+	}
+
+	it('refuses a primary that is not the app icon, which would leave the icon out entirely', () => {
+		assert.throws(
+			() => primaryFrom('./assets/windmill.icon', {primary: 'windmill-sky'}),
+			/windmill-sky/u,
+		)
+	})
+
+	it('refuses to run without a primary', () => {
+		assert.throws(() => primaryFrom('./assets/windmill.icon', undefined), /primary/u)
 	})
 })

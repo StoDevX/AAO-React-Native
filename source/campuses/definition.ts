@@ -6,6 +6,7 @@ import type {ContactsSection, DirectorySection} from '../features/directory/camp
 import type {DictionarySection} from '../features/dictionary/campus-section'
 import type {NewsSection} from '../features/news/campus-section'
 import type {RadioSection} from '../features/streaming/radio/campus-section'
+import type {SchedulesSection} from '../features/schedules/campus-section'
 import type {PaperSection} from '../features/newspaper/campus-section'
 import type {ConvosSection} from '../features/carleton/campus-section'
 import type {QuickActionsSection} from '../features/quick-actions/campus-section'
@@ -65,6 +66,8 @@ export type CampusDefinition = {
 	calendar?: CalendarSection
 	news?: NewsSection
 	radio?: RadioSection
+	/** Schedules listed at /schedule/<id>. */
+	schedules?: SchedulesSection
 	paper?: PaperSection
 	convos?: ConvosSection
 	quickActions?: QuickActionsSection
