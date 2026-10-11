@@ -66,6 +66,29 @@ shellEmulator: true
 trustPolicy: no-downgrade
 # ignore the trust check for versions that were published more than 6 months ago (arbitrary)
 trustPolicyIgnoreAfter: 259200 # 6 months, in minutes
+# Expo is enabling trusted publishing for the 58 series; these 57 releases
+# predate it and read as a trust downgrade.
+trustPolicyExclude:
+  - 'babel-preset-expo@57.0.14'
+  - 'expo@57.0.27'
+  - '@expo/router-server@57.0.12'
+  - 'expo-sqlite@57.0.4'
+  - 'expo-router@57.0.25'
+  - 'expo-linking@57.0.12'
+  - 'expo-image-manipulator@57.0.21'
+  - '@expo/ui@57.0.22'
+  - '@expo/require-utils@57.0.6'
+  - '@expo/prebuild-config@57.0.17'
+  - '@expo/metro-file-map@57.0.4'
+  - '@expo/image-utils@0.11.6'
+  - 'expo-modules-core@57.0.21'
+  - 'expo-modules-autolinking@57.0.14'
+  - 'expo-constants@57.0.21'
+  - 'expo-asset@57.0.19'
+  - '@expo/metro-config@57.0.13'
+  - '@expo/config-plugins@57.0.10'
+  - '@expo/config@57.0.10'
+  - '@expo/cli@57.0.28'
 
 # prevent pnpm from considering new package versions for 3 days, to allow the
 # ecosystem time to find and fix issues. Matches renovate.json's
@@ -133,11 +156,11 @@ overrides:
   # @expo/cli ranges ^57.0.9, and a fresh resolve floats to the newest, whose
   # expo-constants, expo-font and @expo/metro-runtime peers can outrun the Expo
   # SDK we hold. 57.0.11 matches it. Move it when the Expo set moves.
-  '@expo/router-server': '57.0.11'
+  '@expo/router-server': '57.0.12'
   # expo-router carries its own @expo/ui range, which a fresh resolve floats to
   # the newest. expo-router gets the app's copy, and with it the patch, rather
   # than a second one nothing has checked.
-  '@expo/ui': '57.0.21'
+  '@expo/ui': '57.0.22'
   # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
   # (never part of the shipped JS bundle). Each override is scoped to the
   # currently-resolved major/minor so it can't clobber some other, unrelated
@@ -199,7 +222,7 @@ overrides:
 saveExact: true
 savePrefix: ''
 patchedDependencies:
-  '@expo/ui@57.0.21': patches/@expo__ui@57.0.21.patch
+  '@expo/ui@57.0.22': patches/@expo__ui@57.0.22.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
   react-native-webview@13.16.1: patches/react-native-webview@13.16.1.patch
   react-native@0.86.3: patches/react-native@0.86.3.patch
