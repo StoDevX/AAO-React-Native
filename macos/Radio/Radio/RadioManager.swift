@@ -10,28 +10,48 @@ class RadioManager {
     @ObservationIgnored private var nowPlayingTask: Task<Void, Never>?
     /// Each station's schedule and when it was fetched, as schedules change only between terms.
     @ObservationIgnored private var schedules: [Station: (schedule: ShowSchedule, fetchedAt: Date)] = [:]
+    @ObservationIgnored private let preferences: StationPreferences
+    @ObservationIgnored private let fetch: @Sendable (URL) async -> Data?
 
-    private static let selectedStationKey = "selectedStation"
     private static let scheduleLifetime: TimeInterval = 60 * 60
     private static let showCheckInterval = Duration.seconds(60)
 
-    var isPlaying = false
+    var isPlaying = false {
+        didSet { followNowPlayingWhileWanted() }
+    }
+    /// Whether the player's panel is showing, which the panel itself says.
+    var isPanelOpen = false {
+        didSet { followNowPlayingWhileWanted() }
+    }
     /// Whether the stream is still loading after Play.
     private(set) var isBuffering = false
-    var volume: Float = 0.5 {
-        didSet { player?.volume = volume }
+    /// The selected station's volume, kept for it across launches.
+    var volume: Float {
+        didSet {
+            player?.volume = volume
+            preferences.setVolume(volume, for: selectedStation)
+        }
     }
 
     /// The station last chosen, kept across launches.
-    var selectedStation: Station = Station(rawValue: UserDefaults.standard.string(forKey: RadioManager.selectedStationKey) ?? "") ?? .ksto {
-        didSet { UserDefaults.standard.set(selectedStation.rawValue, forKey: Self.selectedStationKey) }
+    var selectedStation: Station {
+        didSet { preferences.lastPlayedStation = selectedStation }
     }
 
     private(set) var nowPlaying: NowPlaying
 
-    init() {
-        nowPlaying = NowPlaying(song: nil, show: nil, station: .ksto)
-        trackNowPlaying()
+    /// `fetch` answers a feed's URL with its response, or nil if it cannot be had.
+    init(
+        defaults: UserDefaults = .standard,
+        fetch: @escaping @Sendable (URL) async -> Data? = { try? await URLSession.shared.data(from: $0).0 }
+    ) {
+        let preferences = StationPreferences(defaults: defaults)
+        let station = preferences.openingStation
+        self.preferences = preferences
+        self.fetch = fetch
+        selectedStation = station
+        volume = preferences.volume(for: station)
+        nowPlaying = NowPlaying(song: nil, show: nil, station: station)
     }
 
     func togglePlayPause() {
@@ -49,7 +69,9 @@ class RadioManager {
     func switchStation(to station: Station) {
         guard station != selectedStation else { return }
         selectedStation = station
-        trackNowPlaying()
+        volume = preferences.volume(for: station)
+        stopTrackingNowPlaying()
+        followNowPlayingWhileWanted()
         if isPlaying {
             setupAndPlay()
         }
@@ -76,11 +98,26 @@ class RadioManager {
 
     // MARK: Now playing
 
-    /// Follows what is on air at the selected station until it changes.
-    private func trackNowPlaying() {
+    /// Asks the feeds what is on air only while there is somewhere to show it:
+    /// the panel while it is open, and the menu bar's title while playing.
+    private func followNowPlayingWhileWanted() {
+        if isPlaying || isPanelOpen {
+            if nowPlayingTask == nil { trackNowPlaying() }
+        } else {
+            stopTrackingNowPlaying()
+        }
+    }
+
+    /// Shows the selected station alone, as what was on air goes stale unwatched.
+    private func stopTrackingNowPlaying() {
         nowPlayingTask?.cancel()
+        nowPlayingTask = nil
+        nowPlaying = NowPlaying(song: nil, show: nil, station: selectedStation)
+    }
+
+    /// Follows what is on air at the selected station until told to stop.
+    private func trackNowPlaying() {
         let station = selectedStation
-        nowPlaying = NowPlaying(song: nil, show: nil, station: station)
         nowPlayingTask = Task { [weak self] in
             while !Task.isCancelled {
                 guard let wait = await self?.refreshNowPlaying(for: station) else { return }
@@ -107,13 +144,9 @@ class RadioManager {
         }
     }
 
-    /// Shows `nowPlaying` unless the station was switched while it was fetched.
+    /// Shows `nowPlaying` unless the station was switched, or the asking stopped, while it was fetched.
     private func show(_ nowPlaying: NowPlaying, for station: Station) {
-        guard station == selectedStation, nowPlaying != self.nowPlaying else { return }
+        guard !Task.isCancelled, station == selectedStation, nowPlaying != self.nowPlaying else { return }
         self.nowPlaying = nowPlaying
-    }
-
-    private func fetch(_ url: URL) async -> Data? {
-        try? await URLSession.shared.data(from: url).0
     }
 }

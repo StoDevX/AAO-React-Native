@@ -33,6 +33,8 @@ struct RadioView: View {
         }
         .padding(12)
         .frame(width: 340)
+        .onAppear { manager.isPanelOpen = true }
+        .onDisappear { manager.isPanelOpen = false }
     }
 
     private var nowPlayingText: some View {

@@ -170,3 +170,114 @@ struct MenuBarLabelTests {
         #expect(MenuBarLabel.image(title: "").isTemplate)
     }
 }
+
+/// Defaults that start empty and are not the app's own, named for the test using them.
+private func emptyDefaults(_ name: String = #function) -> UserDefaults {
+    let suite = "RadioTests.\(name)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defaults.removePersistentDomain(forName: suite)
+    return defaults
+}
+
+struct StationPreferencesTests {
+    @Test func aStationWithoutASavedVolumeStartsAtHalf() {
+        #expect(StationPreferences(defaults: emptyDefaults()).volume(for: .ksto) == 0.5)
+    }
+
+    @Test func keepsEachStationsVolumeApart() {
+        let preferences = StationPreferences(defaults: emptyDefaults())
+        preferences.setVolume(0.2, for: .ksto)
+        preferences.setVolume(0.9, for: .krlx)
+        #expect(preferences.volume(for: .ksto) == 0.2)
+        #expect(preferences.volume(for: .krlx) == 0.9)
+    }
+
+    @Test func opensOnKSTOBeforeAnyStationWasPlayed() {
+        #expect(StationPreferences(defaults: emptyDefaults()).openingStation == .ksto)
+    }
+
+    @Test func opensOnTheLastPlayedStationUnlessToldOtherwise() {
+        let preferences = StationPreferences(defaults: emptyDefaults())
+        preferences.lastPlayedStation = .krlx
+        #expect(preferences.openingStation == .krlx)
+    }
+
+    @Test func opensOnTheChosenStationWhateverWasLastPlayed() {
+        let defaults = emptyDefaults()
+        let preferences = StationPreferences(defaults: defaults)
+        preferences.lastPlayedStation = .krlx
+        defaults.set(LaunchStation.station(.ksto).rawValue, forKey: StationPreferences.launchStationKey)
+        #expect(preferences.openingStation == .ksto)
+    }
+
+    @Test func aLaunchStationThatNoLongerExistsOpensOnTheLastPlayed() {
+        let defaults = emptyDefaults()
+        let preferences = StationPreferences(defaults: defaults)
+        preferences.lastPlayedStation = .krlx
+        defaults.set("wxyz", forKey: StationPreferences.launchStationKey)
+        #expect(preferences.openingStation == .krlx)
+    }
+}
+
+/// The feeds a manager asked for, in place of the network.
+private actor Requests {
+    private(set) var urls: [URL] = []
+
+    func record(_ url: URL) {
+        urls.append(url)
+    }
+}
+
+@MainActor
+struct RadioManagerTests {
+    private let requests = Requests()
+
+    private func manager(defaults: UserDefaults) -> RadioManager {
+        RadioManager(defaults: defaults) { [requests] url in
+            await requests.record(url)
+            return nil
+        }
+    }
+
+    /// Waits for the manager's lookups to have had their turn.
+    private func settle() async throws {
+        try await Task.sleep(for: .milliseconds(200))
+    }
+
+    @Test func asksNothingOfTheFeedsWhileStoppedWithThePanelClosed() async throws {
+        let manager = manager(defaults: emptyDefaults())
+        try await settle()
+        #expect(await requests.urls.isEmpty)
+        // A manager let go would ask nothing either.
+        withExtendedLifetime(manager) {}
+    }
+
+    @Test func asksWhatIsOnAirWhenThePanelOpens() async throws {
+        let manager = manager(defaults: emptyDefaults())
+        manager.isPanelOpen = true
+        try await settle()
+        #expect(await requests.urls.count == 1)
+    }
+
+    @Test func opensOnTheStationThePreferencesName() {
+        let defaults = emptyDefaults()
+        StationPreferences(defaults: defaults).lastPlayedStation = .krlx
+        #expect(manager(defaults: defaults).selectedStation == .krlx)
+    }
+
+    @Test func switchingStationBringsBackItsOwnVolume() {
+        let manager = manager(defaults: emptyDefaults())
+        manager.volume = 0.2
+        manager.switchStation(to: .krlx)
+        #expect(manager.volume == 0.5)
+        manager.volume = 0.9
+        manager.switchStation(to: .ksto)
+        #expect(manager.volume == 0.2)
+    }
+
+    @Test func keepsAStationsVolumeAcrossLaunches() {
+        let defaults = emptyDefaults()
+        manager(defaults: defaults).volume = 0.3
+        #expect(manager(defaults: defaults).volume == 0.3)
+    }
+}
