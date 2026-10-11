@@ -9,7 +9,7 @@ import type {Paper} from './campus-section'
 import {usePaper, usePaperCampus} from './paper-context'
 import {NEWSPAPER_ROUTES} from './routes'
 import {MessPage, PAGE_MARGIN, PAPER_BAR, PaperTitle} from './mess-page'
-import {usePageWidth} from './use-column-width'
+import {useColumnWidth} from './use-column-width'
 import {useMessIssue} from './use-mess-issues'
 
 /**
@@ -30,7 +30,7 @@ export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 	let paper = usePaper()
 	let campus = usePaperCampus()
 	let queryClient = useQueryClient()
-	let columnWidth = usePageWidth(PAGE_MARGIN)
+	let columnWidth = useColumnWidth(PAGE_MARGIN)
 	let {issue, persist, query} = useMessIssue(issueKey)
 
 	if (!issue) {
@@ -54,7 +54,7 @@ export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 				subtitle={issueName(issue)}
 				title={paper.title}
 			/>
-			<MessPage onRefresh={() => refreshIssues(queryClient, paper)} wide={true}>
+			<MessPage onRefresh={() => refreshIssues(queryClient, paper)}>
 				<IssuePage
 					columnWidth={columnWidth}
 					issue={issue}

@@ -246,7 +246,8 @@ private struct SheetPage: View {
 	}
 
 	/// A wide sheet, strip or broadsheet, a front page: the photo over the left two of four columns and
-	/// the headline over the right two, the story flowing under both from the left. With no photo
+	/// the headline over the right two, the story flowing under both from the left, or on the strip
+	/// under the headline alone. With no photo
 	/// the headline runs across the sheet and the story takes all four from under it.
 	private var topWideContent: some View {
 		VStack(alignment: .leading, spacing: 6 * scale) {
@@ -258,7 +259,9 @@ private struct SheetPage: View {
 				let gutter = bodySize * 2
 				let column = (proxy.size.width - gutter * 3) / 4
 				let half = column * 2 + gutter
-				let photoHeight = min(proxy.size.height * 0.72, half * 0.62)
+				// The strip is too short to set the story under its photo, which takes its whole height.
+				let photoHeight = content.layout == .topLandscape
+					? proxy.size.height : min(proxy.size.height * 0.72, half * 0.62)
 				let lead = headline(size: 17, lines: 4)
 				let underPhoto = photoHeight + 5 * scale
 				let underHeadline = lead.height(width: half) + 5 * scale

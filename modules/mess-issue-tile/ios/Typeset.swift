@@ -128,7 +128,9 @@ struct ColumnText: View, Equatable {
 
 		for column in 0..<columns {
 			let top = column < tops.count ? tops[column] : 0
-			let container = NSTextContainer(size: CGSize(width: width, height: max(bounds.height - top, 0)))
+			// A column with no room is left out: a container of no height would end the story there.
+			guard bounds.height > top else { continue }
+			let container = NSTextContainer(size: CGSize(width: width, height: bounds.height - top))
 			container.lineFragmentPadding = 0
 			layout.addTextContainer(container)
 			let origin = CGPoint(x: CGFloat(column) * (width + gutter), y: top)
