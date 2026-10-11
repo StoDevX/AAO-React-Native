@@ -103,39 +103,50 @@ struct ShowScheduleTests {
             {"day": "monday", "start": "09:00", "end": "10:00", "title": "First"}
         ]}}
         """#.utf8))
-        #expect(shuffled?.shows(on: utc("2026-10-05T21:30:00Z")).map(\.title) == ["First", "Second"])
+        #expect(shuffled?.airings(on: utc("2026-10-05T21:30:00Z")).map(\.show.title) == ["First", "Second"])
     }
 
     @Test func aDayRunsToMidnightInStationTime() {
-        #expect(schedule?.shows(on: utc("2026-10-06T04:59:00Z")).count == 3)
-        #expect(schedule?.shows(on: utc("2026-10-06T05:00:00Z")).isEmpty == true)
+        #expect(schedule?.airings(on: utc("2026-10-06T04:59:00Z")).count == 3)
+        #expect(schedule?.airings(on: utc("2026-10-06T05:00:00Z")).isEmpty == true)
+    }
+
+    @Test func anAiringStartsAtItsHourInStationTimeThatDay() {
+        // 16:00 in Northfield on Monday 2026-10-05, in daylight time, is 21:00 UTC.
+        #expect(schedule?.airings(on: utc("2026-10-05T12:00:00Z")).first?.start == utc("2026-10-05T21:00:00Z"))
+    }
+
+    @Test func aShowWhoseStartIsNotATimeIsLeftOut() {
+        let schedule = ShowSchedule.parse(Data(#"""
+        {"data": {"timezone": "America/Chicago", "shows": [{"day": "monday", "start": "late", "end": "24:00", "title": "Whenever"}]}}
+        """#.utf8))
+        #expect(schedule?.airings(on: utc("2026-10-05T21:30:00Z")).isEmpty == true)
     }
 }
 
-struct ShowStartTextTests {
-    private func show(start: String) -> Show {
-        Show(day: "monday", start: start, end: "24:00", title: "Late Show", poster: nil)
+struct AiringStartTextTests {
+    private let show = Show(day: "monday", start: "16:00", end: "17:00", title: "LIGHTS OUT with Ella", poster: nil)
+    private let american = Locale(identifier: "en_US")
+
+    /// The show's airing on Monday 2026-10-05, at 16:00 in Northfield.
+    private var airing: Airing {
+        Airing(show: show, start: utc("2026-10-05T21:00:00Z"))
     }
 
-    @Test func aShowOnTheHourNamesTheHourAlone() {
-        #expect(show(start: "16:00").startText(locale: Locale(identifier: "en_US")) == "4\u{202F}PM")
+    @Test func tellsTheTimeWhereTheListenerIs() {
+        #expect(airing.startText(locale: american, timeZone: TimeZone(identifier: "America/Los_Angeles")!) == "2\u{202F}PM")
     }
 
-    @Test func aShowOffTheHourNamesItsMinutes() {
-        #expect(show(start: "16:30").startText(locale: Locale(identifier: "en_US")) == "4:30\u{202F}PM")
+    @Test func onTheHourNamesTheHourAlone() {
+        #expect(airing.startText(locale: american, timeZone: TimeZone(identifier: "America/Chicago")!) == "4\u{202F}PM")
+    }
+
+    @Test func offTheHourWhereTheListenerIsNamesTheMinutes() {
+        #expect(airing.startText(locale: american, timeZone: TimeZone(identifier: "Asia/Kolkata")!) == "2:30\u{202F}AM")
     }
 
     @Test func followsTheLocalesClock() {
-        #expect(show(start: "16:00").startText(locale: Locale(identifier: "en_GB")) == "16")
-    }
-
-    @Test func aColumnOfStartsIsPaddedToTheWidestWithFigureSpaces() {
-        let column = Show.startColumn(for: [show(start: "09:00"), show(start: "10:00")], locale: Locale(identifier: "en_US"))
-        #expect(column == ["\u{2007}9\u{202F}AM", "10\u{202F}AM"])
-    }
-
-    @Test func aStartThatIsNotATimeIsShownAsWritten() {
-        #expect(show(start: "late").startText(locale: Locale(identifier: "en_US")) == "late")
+        #expect(airing.startText(locale: Locale(identifier: "en_GB"), timeZone: TimeZone(identifier: "Europe/London")!) == "22")
     }
 }
 
@@ -311,7 +322,7 @@ struct RadioManagerTests {
         #expect(manager.todaysShows.isEmpty)
         manager.isPanelOpen = true
         try await settle()
-        #expect(manager.todaysShows.map(\.title) == ["All Day"])
+        #expect(manager.todaysShows.map(\.show.title) == ["All Day"])
         #expect(manager.showOnAir?.title == "All Day")
     }
 

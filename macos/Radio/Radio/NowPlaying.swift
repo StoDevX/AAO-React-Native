@@ -77,23 +77,20 @@ nonisolated struct Show: Decodable, Equatable, Sendable {
         guard parts.count == 2 else { return nil }
         return parts[0] * 60 + parts[1]
     }
+}
 
-    /// When the show starts, as `locale` writes a time: "4 PM", or "4:30 PM" off the hour.
-    func startText(locale: Locale = .current) -> String {
-        guard let minutes = Self.minutes(start) else { return start }
-        // Any day will do, read in the time zone the time is written in.
-        let time = Date(timeIntervalSinceReferenceDate: TimeInterval(minutes * 60))
-        let style = Date.FormatStyle(locale: locale, timeZone: .gmt)
-        return time.formatted(minutes % 60 == 0 ? style.hour() : style.hour().minute())
-    }
+/// A show on one day of the calendar.
+nonisolated struct Airing: Equatable, Sendable {
+    let show: Show
+    let start: Date
 
-    /// Each show's start, padded in front to the length of the longest with
-    /// figure spaces, which are as wide as a digit. Set in digits of one width,
-    /// the starts then line up on the right.
-    static func startColumn(for shows: [Show], locale: Locale = .current) -> [String] {
-        let starts = shows.map { $0.startText(locale: locale) }
-        let width = starts.map(\.count).max() ?? 0
-        return starts.map { String(repeating: "\u{2007}", count: width - $0.count) + $0 }
+    /// When the airing starts where the listener is, as `locale` writes a time:
+    /// "4 PM", or "4:30 PM" where that is off the hour.
+    func startText(locale: Locale = .current, timeZone: TimeZone = .current) -> String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let style = Date.FormatStyle(locale: locale, timeZone: timeZone)
+        return start.formatted(calendar.component(.minute, from: start) == 0 ? style.hour() : style.hour().minute())
     }
 }
 
@@ -113,11 +110,17 @@ nonisolated struct ShowSchedule: Decodable, Sendable {
 
     private static let weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
 
-    /// The weekday of `date`, and its minutes since midnight, in the schedule's own time zone.
-    private func stationTime(at date: Date) -> (day: String, minutes: Int)? {
+    /// A calendar in the schedule's own time zone.
+    private var calendar: Calendar? {
         guard let timeZone = TimeZone(identifier: timezone) else { return nil }
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone
+        return calendar
+    }
+
+    /// The weekday of `date`, and its minutes since midnight, in the schedule's own time zone.
+    private func stationTime(at date: Date) -> (day: String, minutes: Int)? {
+        guard let calendar else { return nil }
         let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
         guard let weekday = parts.weekday, let hour = parts.hour, let minute = parts.minute else { return nil }
         return (Self.weekdays[weekday - 1], hour * 60 + minute)
@@ -135,11 +138,17 @@ nonisolated struct ShowSchedule: Decodable, Sendable {
     }
 
     /// The shows on the day `date` falls on in the schedule's own time zone, from the earliest.
-    func shows(on date: Date) -> [Show] {
-        guard let now = stationTime(at: date) else { return [] }
+    func airings(on date: Date) -> [Airing] {
+        guard let calendar, let now = stationTime(at: date) else { return [] }
         return shows
             .filter { $0.day == now.day }
-            .sorted { (Show.minutes($0.start) ?? 0) < (Show.minutes($1.start) ?? 0) }
+            .compactMap { show -> Airing? in
+                guard let minutes = Show.minutes(show.start),
+                      let start = calendar.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: date)
+                else { return nil }
+                return Airing(show: show, start: start)
+            }
+            .sorted { $0.start < $1.start }
     }
 }
 

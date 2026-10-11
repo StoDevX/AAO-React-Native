@@ -101,15 +101,12 @@ struct RadioView: View {
         .accessibilityLabel(manager.isPlaying ? "Pause" : "Play")
     }
 
-    /// Today's shows, with the one on air checked. The rows are there to read, so choosing one does nothing.
+    /// Today's shows at the listener's own time, with the one on air checked. The rows are there to read, so choosing one does nothing.
     private var scheduleMenu: some View {
         Menu("Today's Schedule") {
-            let starts = Show.startColumn(for: manager.todaysShows)
-            ForEach(Array(zip(manager.todaysShows, starts)), id: \.0.start) { show, start in
-                Toggle(isOn: .constant(show == manager.showOnAir)) {
-                    Text("\(start)  \(show.title)")
-                        .monospacedDigit()
-                }
+            ForEach(manager.todaysShows, id: \.start) { airing in
+                // A tab, as the menu sets every title at its next tab stop, in one column.
+                Toggle("\(airing.startText())\t\(airing.show.title)", isOn: .constant(airing.show == manager.showOnAir))
             }
         }
     }

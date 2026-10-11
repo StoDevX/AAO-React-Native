@@ -40,7 +40,7 @@ class RadioManager {
 
     private(set) var nowPlaying: NowPlaying
     /// The selected station's shows today, from the earliest, if it publishes a schedule.
-    private(set) var todaysShows: [Show] = []
+    private(set) var todaysShows: [Airing] = []
     /// The one of today's shows on air now, if any.
     private(set) var showOnAir: Show?
 
@@ -147,7 +147,7 @@ class RadioManager {
             let schedule = schedules[station]?.schedule
             let show = schedule?.show(at: .now)
             self.show(NowPlaying(song: nil, show: show, station: station), for: station)
-            self.show(todaysShows: schedule?.shows(on: .now) ?? [], onAir: show, for: station)
+            self.show(todaysShows: schedule?.airings(on: .now) ?? [], onAir: show, for: station)
             return Self.showCheckInterval
         }
     }
@@ -163,7 +163,7 @@ class RadioManager {
         self.nowPlaying = nowPlaying
     }
 
-    private func show(todaysShows: [Show], onAir: Show?, for station: Station) {
+    private func show(todaysShows: [Airing], onAir: Show?, for station: Station) {
         guard isStillFollowing(station) else { return }
         if todaysShows != self.todaysShows { self.todaysShows = todaysShows }
         if onAir != showOnAir { showOnAir = onAir }
