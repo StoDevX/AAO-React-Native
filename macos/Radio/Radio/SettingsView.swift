@@ -36,9 +36,10 @@ struct GeneralSettingsView: View {
                         Text(station.name).tag(LaunchStation.station(station))
                     }
                 }
+                .labelsHidden()
                 .fixedSize()
             }
-            .modifier(PreferencesTabViewModifier(sectionTitle: "Station"))
+            .modifier(PreferencesTabViewModifier(sectionTitle: "Open On"))
 
             Section {
                 Toggle("Show what's playing next to the icon", isOn: $showsTitleInMenuBar)
