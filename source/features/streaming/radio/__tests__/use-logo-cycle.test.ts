@@ -2,6 +2,7 @@ import {beforeEach, describe, expect, test} from '@jest/globals'
 import {act, renderHook} from '@testing-library/react-native'
 
 import {logoAt, useLogoCycle, useSelectedLogo} from '../player-view/use-logo-cycle'
+import type {Station} from '../campus-section'
 import {STATIONS, type StationId} from '../stations'
 import {useRadioStore} from '../store'
 
@@ -18,7 +19,8 @@ describe('useLogoCycle', () => {
 	})
 
 	test('a station with one logo has nothing to cycle', async () => {
-		let {result} = await renderHook(() => useLogoCycle(STATIONS.krlx))
+		let station: Station = {...STATIONS.krlx, logos: [STATIONS.krlx.logos[0]]}
+		let {result} = await renderHook(() => useLogoCycle(station))
 		expect(result.current.showNextLogo).toBeUndefined()
 	})
 

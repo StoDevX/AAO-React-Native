@@ -3,12 +3,14 @@
 // Brings data/ksto-schedule.yaml into line with KSTO's Now Playing post. It
 // writes the whole file or nothing: a post whose schedule changed shape throws
 // in parseSchedule before anything is written, so a changed post can never
-// empty the schedule.
+// empty the schedule. A file dated after the post is left alone: it was written
+// by hand from a schedule the post has not caught up with.
 
 import {readFileSync, writeFileSync} from 'node:fs'
 import {load} from 'js-yaml'
 import {
 	diffSchedule,
+	fileOutdatesPost,
 	parseSchedule,
 	postContent,
 	renderSchedule,
@@ -33,15 +35,24 @@ try {
 } catch (error) {
 	if (error.code !== 'ENOENT') throw error
 }
-let next = renderSchedule({updated, slots})
-let {added, removed} = diffSchedule(current ? load(current)?.shows : [], slots)
+let ours = current ? load(current) : undefined
+let held = fileOutdatesPost(ours?.updated, updated)
+let next = held ? current : renderSchedule({updated, slots})
+let {added, removed} = diffSchedule(ours?.shows ?? [], slots)
 
 if (next !== current && !check) {
 	writeFileSync(DATA_FILE, next)
 }
 
 let report = ['## KSTO schedule', '', `Source: ${SOURCE_PAGE} (updated ${updated})`, '']
-if (next === current) {
+if (held) {
+	report.push(
+		`Left alone — the file is dated ${ours.updated}, after the post, which differs by:`,
+		'',
+		...added.map((slot) => `- the post has ${slot}`),
+		...removed.map((slot) => `- the file has ${slot}`),
+	)
+} else if (next === current) {
 	report.push('No change — what we publish already matches the post.')
 } else if (added.length === 0 && removed.length === 0) {
 	report.push('The shows match; the post was edited, or the file is laid out differently.')
