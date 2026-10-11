@@ -1,5 +1,6 @@
 import {clientFor} from '@frogpond/api'
-import type {BreakCalendarResponse} from '@frogpond/schedules'
+import {timezone} from '@frogpond/constants'
+import {useNowOverride} from '@frogpond/timer'
 import {groupBy} from '@frogpond/collections'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 
@@ -9,7 +10,6 @@ import {favoriteNamesForCampus, selectFavoriteBuildings} from '../../redux/parts
 import {sectionServer} from '../campus/section-server'
 import {BuildingType} from './types'
 import {FAVORITES_TITLE} from './lib/listed-sections'
-import {hasBreakSchedules, withBreakInEffect} from './lib/break-in-effect'
 import {useForceBundledData} from './dev/data-source-store'
 
 export const keys = {
@@ -30,17 +30,17 @@ function fetchBuildings(campus: CampusId) {
 			return [...hours.bundled]
 		}
 
-		let client = clientFor(sectionServer(campus, hours))
-		let response = await client.get('spaces/hours', {signal}).json()
-		let buildings = (response as {data: BuildingType<unknown>[]}).data
-		if (!hasBreakSchedules(buildings)) return buildings as BuildingType[]
-
-		// Without the calendar the usual hours still show; a break just isn't applied.
-		let calendar = await client
-			.get('breaks', {signal})
-			.json<BreakCalendarResponse>()
-			.catch(() => undefined)
-		return withBreakInEffect(buildings, calendar, Date.now()) as BuildingType[]
+		// The server answers for today, with any break's hours already in place
+		// of the usual ones. A clock moved in the dev sheet asks for its own date
+		// instead, or it would show today's break on some other day.
+		let frozen = useNowOverride.getState().frozen
+		let searchParams = frozen
+			? {date: frozen.clone().tz(timezone()).format('YYYY-MM-DD')}
+			: undefined
+		let response = await clientFor(sectionServer(campus, hours))
+			.get('spaces/hours', {signal, searchParams})
+			.json()
+		return (response as {data: BuildingType[]}).data
 	}
 }
 
