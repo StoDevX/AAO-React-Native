@@ -129,6 +129,11 @@ struct ShowStartTextTests {
         #expect(show(start: "16:00").startText(locale: Locale(identifier: "en_GB")) == "16")
     }
 
+    @Test func aColumnOfStartsIsPaddedToTheWidestWithFigureSpaces() {
+        let column = Show.startColumn(for: [show(start: "09:00"), show(start: "10:00")], locale: Locale(identifier: "en_US"))
+        #expect(column == ["\u{2007}9\u{202F}AM", "10\u{202F}AM"])
+    }
+
     @Test func aStartThatIsNotATimeIsShownAsWritten() {
         #expect(show(start: "late").startText(locale: Locale(identifier: "en_US")) == "late")
     }

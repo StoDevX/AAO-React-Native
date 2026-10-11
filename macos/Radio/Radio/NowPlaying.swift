@@ -86,6 +86,15 @@ nonisolated struct Show: Decodable, Equatable, Sendable {
         let style = Date.FormatStyle(locale: locale, timeZone: .gmt)
         return time.formatted(minutes % 60 == 0 ? style.hour() : style.hour().minute())
     }
+
+    /// Each show's start, padded in front to the length of the longest with
+    /// figure spaces, which are as wide as a digit. Set in digits of one width,
+    /// the starts then line up on the right.
+    static func startColumn(for shows: [Show], locale: Locale = .current) -> [String] {
+        let starts = shows.map { $0.startText(locale: locale) }
+        let width = starts.map(\.count).max() ?? 0
+        return starts.map { String(repeating: "\u{2007}", count: width - $0.count) + $0 }
+    }
 }
 
 /// A station's weekly show schedule, as data/_schemas/ksto-schedule.yaml describes it.

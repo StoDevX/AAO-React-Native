@@ -104,8 +104,12 @@ struct RadioView: View {
     /// Today's shows, with the one on air checked. The rows are there to read, so choosing one does nothing.
     private var scheduleMenu: some View {
         Menu("Today's Schedule") {
-            ForEach(manager.todaysShows, id: \.start) { show in
-                Toggle("\(show.startText())  \(show.title)", isOn: .constant(show == manager.showOnAir))
+            let starts = Show.startColumn(for: manager.todaysShows)
+            ForEach(Array(zip(manager.todaysShows, starts)), id: \.0.start) { show, start in
+                Toggle(isOn: .constant(show == manager.showOnAir)) {
+                    Text("\(start)  \(show.title)")
+                        .monospacedDigit()
+                }
             }
         }
     }
