@@ -18,7 +18,7 @@ struct PreferencesTabViewModifier: ViewModifier {
 
 struct PreferencesGroupBoxStyle: GroupBoxStyle {
     func makeBody(configuration: Configuration) -> some View {
-        HStack(alignment: .top, spacing: 20) {
+        HStack(alignment: .firstTextBaseline, spacing: 20) {
             HStack {
                 Spacer()
                 configuration.label

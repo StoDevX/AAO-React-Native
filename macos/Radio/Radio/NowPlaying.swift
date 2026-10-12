@@ -70,6 +70,28 @@ nonisolated struct Show: Decodable, Equatable, Sendable {
     let end: String
     let title: String
     let poster: URL?
+
+    /// Minutes since midnight for "HH:MM", so "24:00" is the day's last moment.
+    static func minutes(_ clock: String) -> Int? {
+        let parts = clock.split(separator: ":").compactMap { Int($0) }
+        guard parts.count == 2 else { return nil }
+        return parts[0] * 60 + parts[1]
+    }
+}
+
+/// A show on one day of the calendar.
+nonisolated struct Airing: Equatable, Sendable {
+    let show: Show
+    let start: Date
+
+    /// When the airing starts where the listener is, as `locale` writes a time:
+    /// "4 PM", or "4:30 PM" where that is off the hour.
+    func startText(locale: Locale = .current, timeZone: TimeZone = .current) -> String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let style = Date.FormatStyle(locale: locale, timeZone: timeZone)
+        return start.formatted(calendar.component(.minute, from: start) == 0 ? style.hour() : style.hour().minute())
+    }
 }
 
 /// A station's weekly show schedule, as data/_schemas/ksto-schedule.yaml describes it.
@@ -88,28 +110,45 @@ nonisolated struct ShowSchedule: Decodable, Sendable {
 
     private static let weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
 
-    /// Minutes since midnight for "HH:MM", so "24:00" is the day's last moment.
-    private static func minutes(_ clock: String) -> Int? {
-        let parts = clock.split(separator: ":").compactMap { Int($0) }
-        guard parts.count == 2 else { return nil }
-        return parts[0] * 60 + parts[1]
+    /// A calendar in the schedule's own time zone.
+    private var calendar: Calendar? {
+        guard let timeZone = TimeZone(identifier: timezone) else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return calendar
+    }
+
+    /// The weekday of `date`, and its minutes since midnight, in the schedule's own time zone.
+    private func stationTime(at date: Date) -> (day: String, minutes: Int)? {
+        guard let calendar else { return nil }
+        let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
+        guard let weekday = parts.weekday, let hour = parts.hour, let minute = parts.minute else { return nil }
+        return (Self.weekdays[weekday - 1], hour * 60 + minute)
     }
 
     /// The show on air at `date` in the schedule's own time zone, if any.
     func show(at date: Date) -> Show? {
-        guard let timeZone = TimeZone(identifier: timezone) else { return nil }
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = timeZone
-        let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
-        guard let weekday = parts.weekday, let hour = parts.hour, let minute = parts.minute else { return nil }
-        let day = Self.weekdays[weekday - 1]
-        let now = hour * 60 + minute
+        guard let now = stationTime(at: date) else { return nil }
         return shows.first { show in
-            guard show.day == day, let start = Self.minutes(show.start), let end = Self.minutes(show.end) else {
+            guard show.day == now.day, let start = Show.minutes(show.start), let end = Show.minutes(show.end) else {
                 return false
             }
-            return start <= now && now < end
+            return start <= now.minutes && now.minutes < end
         }
+    }
+
+    /// The shows on the day `date` falls on in the schedule's own time zone, from the earliest.
+    func airings(on date: Date) -> [Airing] {
+        guard let calendar, let now = stationTime(at: date) else { return [] }
+        return shows
+            .filter { $0.day == now.day }
+            .compactMap { show -> Airing? in
+                guard let minutes = Show.minutes(show.start),
+                      let start = calendar.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: date)
+                else { return nil }
+                return Airing(show: show, start: start)
+            }
+            .sorted { $0.start < $1.start }
     }
 }
 
