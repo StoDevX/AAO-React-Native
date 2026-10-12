@@ -23,7 +23,7 @@
     "moment": "2.31.0"
   },
   "peerDependencies": {
-    "moment-timezone": "^0.6.4",
+    "moment-timezone": "^0.6.5",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-native-safe-area-context": "^5.7.0"

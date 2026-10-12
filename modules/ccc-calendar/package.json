@@ -32,11 +32,11 @@
   },
   "peerDependencies": {
     "@sentry/react-native": "^8.29.0",
-    "@tanstack/react-query": "^5.104.0",
+    "@tanstack/react-query": "^5.104.1",
     "delay": "^7.0.0",
     "expo-router": "~57.0.24",
     "moment": "^2.31.0",
-    "moment-timezone": "^0.6.4",
+    "moment-timezone": "^0.6.5",
     "react": "catalog:",
     "react-redux": "^9.3.0"
   }

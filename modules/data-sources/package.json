@@ -16,6 +16,6 @@
     "@jest/globals": "30.5.2"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "^5.104.0"
+    "@tanstack/react-query": "^5.104.1"
   }
 }
