@@ -207,7 +207,11 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onStartShouldSetResponder={() => true}
 		>
 			<Animated.View style={[{width: size, height: size}, turned]}>
-				<Image source={vinyl} style={styles.disc} />
+				<View style={styles.disc}>
+					<View style={styles.discSurface}>
+						<Image source={vinyl} style={styles.discTexture} />
+					</View>
+				</View>
 				<View style={[styles.label, {backgroundColor: labelColor}]}>
 					{logoFailed ? null : (
 						<Image
@@ -245,5 +249,17 @@ const styles = StyleSheet.create({
 		borderRadius: 9999,
 		borderColor: c.systemGray4,
 		borderWidth: 1,
+	},
+	// Bring out the grooves at phone sizes without brightening the label or rim.
+	discSurface: {
+		width: '100%',
+		height: '100%',
+		borderRadius: 9999,
+		filter: [{brightness: 1.8}],
+	},
+	discTexture: {
+		width: '100%',
+		height: '100%',
+		borderRadius: 9999,
 	},
 })
