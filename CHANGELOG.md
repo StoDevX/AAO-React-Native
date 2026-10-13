@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.9.0
+
+### Minor Changes
+
+- e47df54: The student paper is laid out for iPad: the newest issue is a broadsheet front page with type sized to the sheet, the issues beneath it run five or six to a row, and a story's column stops at a readable width.
+- 963774f: Athletics shows every day's games in one list that opens at Today: scroll up for yesterday's results, down for upcoming games. The sport filter moves to a Sports button above the list, like the filters on other screens.
+- 0a49f68: CARLS offers the three windmill app icons beside the penguin, under Customize's App Icon.
+- 8153069: Versions and release notes now come from Changesets: a pull request gathers the changes, and its label picks an alpha, beta, release candidate or final build.
+- 35b94ba: Student orgs show their cover photo, contacts and advisors, Instagram, office hours, more information and constitution, list where and when they meet on separate lines, and link to their upcoming events on the calendar.
+
+### Patch Changes
+
+- 64aed63: KRLX has a second record label, its tattoo heart, and calling the station dials its studio line, 507-222-4455.
+- 117b12f: Student Work opens on its shortcuts, with the areas below them as an alphabetical list. The layout menu still switches the areas to tiles.
+- d0f6da0: Athletics shows kickoff times for upcoming games again, lists games in progress under Ongoing, and refreshes every 30 seconds while a game is being played.
+- da75428: Athletics shows a finished meet's placing, such as "18th of 35", or "Final" when there is none, instead of a blank score.
+- ebd7d6c: Athletics narrows its list from a sports menu in the bottom toolbar, as Calendar does, and its day headings match the section headings elsewhere in the app.
+- 524a715: Dev mode starts off in beta builds too, so the Developer tile and other debugging tools stay hidden until "Enable dev mode" is checked in the Home notice's menu.
+- 3fd7973: The Home list layout is one list in the same order as the tiles, and the Grouped layout is gone.
+- 3935f32: Tapping a search result on the map shows only that place's pin while its card is open; the other results' pins come back when it closes.
+- 5e3dec2: Tapping a search result on the map goes to that place, rather than zooming out to show every result.
+- 709091e: The campus map tints the open place's building gold, and for a room or office inside a building, tints the building around it.
+- ef3947e: The Olaf Messenger's column chips now carry an icon each, and their row scrolls all the way to the edges of the screen.
+- f015f08: The Olaf Messenger's image viewer now shows a picture's caption, or its alt text when the paper wrote words in it, and a long caption opens to its full length and scrolls.
+- 7178b59: The Olaf Messenger's pages now sit on the paper throughout, with its serif type and a titled bar on each screen, and the castle at the top of the front page. The FAQs share the grouped background of the rest of Support.
+- 149dcec: Make the download smaller by shipping the Old Main (Retro) icon as a plain light and dark icon.
+- 35a6ec0: Olaf Messenger headlines in story lists sit closer together when they wrap.
+
 ## 2.9.0-rc.6
 
 ### Minor Changes
