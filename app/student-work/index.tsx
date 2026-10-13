@@ -23,7 +23,7 @@ import {requiresSection} from '../../source/features/campus/section-gate'
 /// Offline, with no board saved to show.
 const OFFLINE_NOTICE = 'Student Work needs a connection to load the job board the first time.'
 
-/// Student Work's landing: area tiles, then presets, each opening the
+/// Student Work's landing: presets, then the areas, each opening the
 /// postings list with its filters prefilled. Typing a search swaps the
 /// landing for the whole board's matching postings.
 function StudentWorkPage(): React.ReactNode {
@@ -126,15 +126,6 @@ function StudentWorkPage(): React.ReactNode {
 						}),
 					]}
 				>
-					<AreaSection
-						areas={areas}
-						layout={layout}
-						membership={context.membership}
-						onSelectArea={(area) =>
-							router.navigate({pathname: '/student-work/postings', params: {area: area.slug}})
-						}
-					/>
-
 					<Section>
 						{PRESETS.map((preset) => (
 							<DisclosureRow
@@ -148,6 +139,15 @@ function StudentWorkPage(): React.ReactNode {
 							/>
 						))}
 					</Section>
+
+					<AreaSection
+						areas={areas}
+						layout={layout}
+						membership={context.membership}
+						onSelectArea={(area) =>
+							router.navigate({pathname: '/student-work/postings', params: {area: area.slug}})
+						}
+					/>
 				</List>
 			</Host>
 		</>

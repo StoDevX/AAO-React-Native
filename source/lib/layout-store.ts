@@ -24,10 +24,15 @@ type PersistedLayoutStore<L extends string> = UseBoundStore<
  * A screen's choice from its layout menu, kept across launches under `name`.
  * Each screen gets its own, so picking a list on one leaves another's grid
  * alone. The layouts are `grid` and `list` unless the screen names its own.
+ *
+ * The default is saved on first launch like any choice, so a screen that
+ * changes its default raises `version`: a layout saved under an earlier one
+ * is dropped for the default.
  */
 export function createLayoutStore<L extends string = Layout>(
 	name: string,
 	initial: NoInfer<L>,
+	{version = 1}: {version?: number} = {},
 ): PersistedLayoutStore<L> {
 	let useStore: PersistedLayoutStore<L> = create<LayoutStore<L>>()(
 		persist(
@@ -39,7 +44,8 @@ export function createLayoutStore<L extends string = Layout>(
 			{
 				name,
 				storage: createJSONStorage(() => AsyncStorage),
-				version: 1,
+				version,
+				migrate: () => ({layout: initial}),
 				// `hydrated` describes this launch, not the person's choice.
 				partialize: (state) => ({layout: state.layout}),
 				onRehydrateStorage: () => () => useStore.setState({hydrated: true}),
