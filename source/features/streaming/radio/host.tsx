@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native'
 import {track} from '../../telemetry/track'
 import {MutedStationPage} from './muted-station-page'
 import {NativeStreamPlayer} from './native-player'
+import {createPlaybackAttempt} from './playback-diagnostics'
 import {useNowPlaying} from './use-now-playing'
 import {shippedStreamUrl, useStationSources, type StationSources} from './sources'
 import {useStationSchedule} from './use-station-schedule'
@@ -37,6 +38,7 @@ function NativeStation({
 
 type PlayersProps = Omit<React.ComponentProps<typeof NativeStation>, 'streamSourceUrl'> & {
 	sources: StationSources
+	playerKey: number
 }
 
 /**
@@ -50,21 +52,26 @@ type PlayersProps = Omit<React.ComponentProps<typeof NativeStation>, 'streamSour
  * silence the station until a fixed one reaches the device. A failure after
  * audio has played, or of the shipped stream, is reported as it is.
  */
-function StationPlayers({sources, ...player}: PlayersProps): React.ReactNode {
+function StationPlayers({sources, playerKey, ...player}: PlayersProps): React.ReactNode {
 	let [{streamSourceUrl: startingUrl, embeddedPlayerUrl}] = React.useState(sources)
 	let [streamSourceUrl, setStreamSourceUrl] = React.useState(startingUrl)
 	let stationId = player.station.id
-	let played = React.useRef(false)
+	let shippedUrl = shippedStreamUrl(stationId)
+	let attempt = React.useMemo(
+		() => createPlaybackAttempt({stationId, playerKey}, streamSourceUrl, shippedUrl),
+		[stationId, playerKey, streamSourceUrl, shippedUrl],
+	)
 
 	let {onPlay, onError} = player
 	let handlePlay = React.useCallback(() => {
-		played.current = true
-		onPlay?.()
-	}, [onPlay])
+		if (attempt.reportPlaying(useRadioStore.getState())) onPlay?.()
+	}, [attempt, onPlay])
 	let handleError = React.useCallback(
 		(error: HtmlAudioError) => {
-			let shippedUrl = shippedStreamUrl(stationId)
-			if (!played.current && streamSourceUrl !== shippedUrl) {
+			let failure = attempt.reportFailure(useRadioStore.getState(), error.message)
+			if (!failure) return
+			track(failure)
+			if (failure.attributes.outcome === 'trying_fallback') {
 				// Counted, so that a broken manifest entry shows before the shipped stream fails too.
 				track({name: 'radio.stream.fallback', attributes: {station: stationId}})
 				setStreamSourceUrl(shippedUrl)
@@ -72,7 +79,7 @@ function StationPlayers({sources, ...player}: PlayersProps): React.ReactNode {
 			}
 			onError?.(error)
 		},
-		[onError, streamSourceUrl, stationId],
+		[attempt, onError, shippedUrl, stationId],
 	)
 
 	// Every station plays natively, which iOS can put in Control Center. A station
@@ -166,6 +173,7 @@ export function RadioHost(): React.ReactNode {
 	return (
 		<LoadedStation
 			key={playerKey}
+			playerKey={playerKey}
 			onEnded={onStopped}
 			onError={onError}
 			onPause={onStopped}
