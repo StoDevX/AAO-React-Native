@@ -14,11 +14,11 @@
   },
   "devDependencies": {
     "@jest/globals": "30.5.2",
-    "@testing-library/react-native": "14.0.1",
+    "@testing-library/react-native": "14.1.0",
     "moment": "2.31.0"
   },
   "peerDependencies": {
-    "@sentry/react-native": "^8.29.0",
+    "@sentry/react-native": "^8.30.0",
     "delay": "^7.0.0",
     "expo-calendar": "~57.0.5",
     "react": "catalog:",

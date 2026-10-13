@@ -79,7 +79,7 @@ index df528df59b730714a2fc10ab1c7c1a0137b22546..1132e408cd8eb305f412a1d3ab22a7ea
       * `<TabView.Tab>` elements defining the pages.
       */
 diff --git a/build/swift-ui/index.d.ts b/build/swift-ui/index.d.ts
-index cafd018c2b1b27346151fa1b831fb8c5ec898760..271720cfa92cb9b2fd9cae851d725b57398f1c91 100644
+index 07ed2f75612627319f278afc8da9abf29529af3a..e28a06f002b4e7d548302bc312c68b8190876b39 100644
 --- a/build/swift-ui/index.d.ts
 +++ b/build/swift-ui/index.d.ts
 @@ -10,6 +10,7 @@ export * from './ControlGroup';
@@ -91,10 +91,10 @@ index cafd018c2b1b27346151fa1b831fb8c5ec898760..271720cfa92cb9b2fd9cae851d725b57
  export * from './Form';
  export * from './Gauge';
 diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
-index d1e4d37272d5596f58e1f318641ff9b913f507ec..734d58360f48e7506d47f2b9c517f2643686b600 100644
+index 0ff3c50ca18ec7105aaa7cb3aa83ebb7480515fb..2c1817692832d82d12c51e962926f81ddc4b9e8a 100644
 --- a/build/swift-ui/modifiers/index.d.ts
 +++ b/build/swift-ui/modifiers/index.d.ts
-@@ -1091,6 +1091,17 @@ export declare const font: (params: {
+@@ -1099,6 +1099,17 @@ export declare const font: (params: {
       * Dynamic Type setting.
       */
      textStyle?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
@@ -140,10 +140,10 @@ index 3e07eceecb782b3c924ee9e3d5ec20424ef7f491..190d26a536036f9be84322536ce92d80
    }
  }
 diff --git a/ios/ExpoUIModule.swift b/ios/ExpoUIModule.swift
-index aa1d136cf95ea4ee084963bd78d66d44d0cf36f7..c44911dc6505149076865964e2c354fd2e5e8ca1 100644
+index 1f16b30aeb7776f1b25d4724b1bbac325399298d..d63667cc5ab1343e574766d1a804b4d5603a983b 100644
 --- a/ios/ExpoUIModule.swift
 +++ b/ios/ExpoUIModule.swift
-@@ -196,6 +196,7 @@ public final class ExpoUIModule: Module {
+@@ -197,6 +197,7 @@ public final class ExpoUIModule: Module {
      ExpoUIView(CircleView.self)
      ExpoUIView(ConcentricRectangleView.self)
      ExpoUIView(DividerView.self)
@@ -446,7 +446,7 @@ index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a2
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index f26602224fade516297aad1d7aa18fbb18110adc..a066902f688c76b3abd7da60cac7df1c6a70f33e 100644
+index 66b5317584bf4c4ed6acf48df5fe5c48c05ac7c3..df89e01c876a0f380cfecb332818904e3e2992b7 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -529,7 +529,7 @@ index f26602224fade516297aad1d7aa18fbb18110adc..a066902f688c76b3abd7da60cac7df1c
  internal struct TextUnderLine: ViewModifier, Record {
    @Field var isActive: Bool = false
    @Field var pattern: TextLinePattern = .solid
-@@ -1629,6 +1688,18 @@ public class ViewModifierRegistry {
+@@ -1631,6 +1690,18 @@ public class ViewModifierRegistry {
          return text.foregroundColor(color)
        }
        return text
@@ -548,7 +548,7 @@ index f26602224fade516297aad1d7aa18fbb18110adc..a066902f688c76b3abd7da60cac7df1c
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2373,6 +2444,14 @@ extension ViewModifierRegistry {
+@@ -2484,6 +2555,14 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  
@@ -866,7 +866,7 @@ index 4bcf654e5230d318362658dd3023d0d6b690225e..78d2c1abdd395a302cddc8bf814e8424
    );
  }
 diff --git a/src/swift-ui/index.tsx b/src/swift-ui/index.tsx
-index d748811ada800c9edd3a8e04aeadcdefed6e1e4d..f6f453ed3489191eb3b71df8ac658360a59faea2 100644
+index e140acc24c4cef2a59c280619525cdad0cbf8df2..efd04eb6d1a66af78331ec6516cb368cc2316e5d 100644
 --- a/src/swift-ui/index.tsx
 +++ b/src/swift-ui/index.tsx
 @@ -10,6 +10,7 @@ export * from './ControlGroup';

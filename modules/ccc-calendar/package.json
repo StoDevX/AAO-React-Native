@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@expo/ui": "57.0.21",
+    "@expo/ui": "57.0.22",
     "@frogpond/colors": "workspace:*",
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/event-list": "workspace:*",
@@ -26,17 +26,17 @@
     "@jest/globals": "30.5.2",
     "@react-native-community/netinfo": "12.0.1",
     "@reduxjs/toolkit": "2.13.0",
-    "@testing-library/react-native": "14.0.1",
+    "@testing-library/react-native": "14.1.0",
     "expo-calendar": "57.0.5",
     "react-native": "catalog:"
   },
   "peerDependencies": {
-    "@sentry/react-native": "^8.29.0",
-    "@tanstack/react-query": "^5.104.0",
+    "@sentry/react-native": "^8.30.0",
+    "@tanstack/react-query": "^5.104.1",
     "delay": "^7.0.0",
-    "expo-router": "~57.0.24",
+    "expo-router": "~57.0.25",
     "moment": "^2.31.0",
-    "moment-timezone": "^0.6.4",
+    "moment-timezone": "^0.6.5",
     "react": "catalog:",
     "react-redux": "^9.3.0"
   }

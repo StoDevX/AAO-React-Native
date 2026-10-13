@@ -55,7 +55,7 @@ jobs:
           restore-keys: |
             jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json') }}
 
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -97,7 +97,7 @@ jobs:
       # under it. The cache stays, because it is what lets this job skip the
       # bundling entirely on a later run.
       - name: Upload the jsbundle for the shards
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ios-jsbundle
           path: |
@@ -163,7 +163,7 @@ jobs:
 
       - name: Republish the cached app as this run's artifact
         if: steps.app-cache.outputs.cache-matched-key != ''
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ios-app
           path: ios-app.tar
@@ -182,7 +182,7 @@ jobs:
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
 
@@ -339,7 +339,7 @@ jobs:
         run: tar -C ios/build/Build/Products -cf ios-app.tar .
 
       - name: Save iOS app as workflow artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ios-app
           path: ios-app.tar
@@ -423,7 +423,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
         with:
           # -node: this job only runs scripts.
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
@@ -455,7 +455,7 @@ jobs:
           echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 2 --granularity method --durations uitest-durations.json --plan uitest-plan.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
 
       - name: Upload the shard plan
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: uitest-plan
           path: uitest-plan.json
@@ -498,7 +498,7 @@ jobs:
 
       # Only node: the scripts below need nothing else, and installing every
       # tool would cost each shard more than it saves.
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
           install_args: node
@@ -513,7 +513,7 @@ jobs:
       # ios-cache-check republishes what the cache held when the build was
       # skipped. Neither can be evicted while this job waits for a runner.
       - name: Download the iOS app and UITest bundle
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ios-app
 
@@ -523,7 +523,7 @@ jobs:
           tar -C ios/build/Build/Products -xf ios-app.tar
 
       - name: Download the iOS jsbundle
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ios-jsbundle
           # The upload's three paths share ios/ as their closest common
@@ -780,7 +780,7 @@ jobs:
       - name: Upload the stall evidence
         id: upload-evidence
         continue-on-error: true
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: uitest-evidence-${{ matrix.shard }}
@@ -791,7 +791,7 @@ jobs:
       - name: Upload the shard's report
         id: upload-report
         continue-on-error: true
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: uitest-shard-${{ matrix.shard }}
@@ -812,7 +812,7 @@ jobs:
       - name: Upload failure attachments
         id: upload-attachments
         continue-on-error: true
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         with:
           name: uitest-attachments-${{ matrix.shard }}
@@ -822,7 +822,7 @@ jobs:
       - name: Upload XCResult bundle
         id: upload-xcresult
         continue-on-error: true
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
@@ -862,14 +862,14 @@ jobs:
           # A pull request's merge commit and its first parent, the master
           # commit it was based on.
           fetch-depth: 2
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
         with:
           # -node: this job only runs a script, as pr-report.yml's report job.
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
           install_args: node
 
       - name: Download every shard's report
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: uitest-shard-*
           path: shards/
@@ -878,7 +878,7 @@ jobs:
       # it out when the file is missing.
       - name: Download the shard plan
         continue-on-error: true
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: uitest-plan
 
@@ -896,7 +896,7 @@ jobs:
             --sha "$HEAD_SHA" --base-sha "$base" --result "$RESULT" --plan uitest-plan.json
 
       - name: Upload the report
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: uitest-report
           path: uitest-report/uitest-report.json

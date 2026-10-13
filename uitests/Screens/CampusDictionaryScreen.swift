@@ -42,7 +42,7 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	/// SwiftUI's native A-Z jumplist rail, iOS 26+ (`sectionIndexLabel()`, added
-	/// via `patches/@expo__ui@57.0.14.patch`). It carries no per-letter
+	/// via `patches/@expo__ui@*.patch`). It carries no per-letter
 	/// accessibility elements -- it is one `Other` spanning every section -- so
 	/// nothing here can query a specific letter, only the rail as a whole.
 	private var sectionIndexRail: XCUIElement {
@@ -379,7 +379,7 @@ struct CampusDictionaryScreen: Screen {
 
 	/// Asserts the DEBUG-only marker `@expo/ui` splices into a sentence when a
 	/// modifier falls outside its nested-`Text` whitelist never appears. Our
-	/// patch (`patches/@expo__ui@57.0.14.patch`) adds `strikethrough` and
+	/// patch (`patches/@expo__ui@*.patch`) adds `strikethrough` and
 	/// `underline` to that whitelist; this is what would prove the patch had
 	/// come loose. Matched by `CONTAINS`, not a prefix match -- SwiftUI
 	/// collapses a run of nested `Text` into one accessibility element, so the
