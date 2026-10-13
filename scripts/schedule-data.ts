@@ -152,6 +152,47 @@ function validateInput<T>(input: ScheduleDataInput, validate: ValidateFunction<T
 	return input.data
 }
 
+/** Only named break closure messages omit a final period; other notes retain their punctuation. */
+function validateBreakMessages({calendar, spaces}: ScheduleData, calendarLabel: string): void {
+	let messages = new Set(Object.values(calendar.breaks).map(({name}) => `Closed for ${name}`))
+	let check = (policy: string | Schedule<NamedBuildingScheduleType>, path: string) => {
+		if (typeof policy === 'string') return
+		let schedules = [
+			{schedule: policy.schedule, path: `${path}.schedule`},
+			...policy.exceptions.map(({schedule}, index) => ({
+				schedule,
+				path: `${path}.exceptions[${index}].schedule`,
+			})),
+		]
+		for (let {schedule, path} of schedules) {
+			for (let [index, {notes}] of schedule.entries()) {
+				if (notes && /\.\s*$/u.test(notes) && messages.has(notes.trim().replace(/\.+$/u, ''))) {
+					throw new Error(
+						`${path}[${index}].notes: break closure messages must not end with a period`,
+					)
+				}
+			}
+		}
+	}
+	for (let [name, policy] of Object.entries(calendar.templates ?? {})) {
+		check(policy, `${calendarLabel}.templates.${name}`)
+	}
+	for (let [key, entry] of Object.entries(calendar.breaks)) {
+		let path = `${calendarLabel}.breaks.${key}`
+		if (entry.defaultSpaceSchedule !== undefined) {
+			check(entry.defaultSpaceSchedule, `${path}.defaultSpaceSchedule`)
+		}
+		for (let [name, policy] of Object.entries(entry.templates ?? {})) {
+			check(policy, `${path}.templates.${name}`)
+		}
+	}
+	for (let {label, data} of spaces) {
+		for (let [key, policy] of Object.entries(data.breakSchedule ?? {})) {
+			if (policy !== undefined) check(policy, `${label}.breakSchedule.${key}`)
+		}
+	}
+}
+
 /** Checks structure, normalizes policies, then validates the complete reference graph. */
 export function parseScheduleData(
 	calendarInput: ScheduleDataInput,
@@ -166,6 +207,7 @@ export function parseScheduleData(
 	}))
 	let calendar = normalizeCalendar(authoredCalendar)
 	let spaces = authoredSpaces.map(({label, data}) => ({label, data: normalizeSpace(data)}))
+	validateBreakMessages({calendar, spaces}, calendarInput.label)
 	validateSchedules(
 		calendar,
 		spaces.map(({label, data}) => ({label, schedules: data})),

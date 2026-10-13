@@ -12,7 +12,7 @@ templates:
     - title: Fall Break
       isPhysicallyOpen: false
       hours: []
-      notes: Closed for Fall Break.
+      notes: Closed for Fall Break
 breaks:
   weekOne:
     name: New Student Orientation
