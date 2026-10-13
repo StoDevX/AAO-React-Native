@@ -13,13 +13,6 @@ struct StreamingMediaScreen: Screen {
 		open(route: "/streaming-media", mountedWhen: mounted)
 	}
 
-	/// Tap a button labelled `label`, and wait for one labelled `marker`.
-	@discardableResult
-	func press(_ label: String, expecting marker: String) -> Self {
-		tap(app.buttonLabelled(label), until: app.buttonLabelled(marker), named: "\"\(label)\"")
-		return self
-	}
-
 	/// Check each button is one VoiceOver can name, with a target of at least
 	/// 44pt on each side.
 	@discardableResult

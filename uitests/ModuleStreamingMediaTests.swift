@@ -3,17 +3,14 @@ import XCTest
 /// Tags: campus:example.college
 class ModuleStreamingMediaTests: UITestCase {
 	/// The bar on Home opens the sheet on KMNK, Wiki Monkeys' one station. The
-	/// player's controls are buttons VoiceOver can name. Pausing leaves the
-	/// station loaded, with Play to start it again.
+	/// player's controls are buttons VoiceOver can name. Leave playback idle:
+	/// KMNK's fixture uses a live stream, whose failure can replace Pause with Stop.
 	func testTheBarOpensTheSheetOnTheStation() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
 			.openSheetFromBar(expecting: ids.playKmnk)
-			.press(ids.playKmnk, expecting: ids.pauseKmnk)
-			// Playing now, so the button reads Pause.
-			.checkButtons([ids.pauseKmnk] + ids.kmnkActions)
-			.closeSheet(expectingBar: ids.pauseKmnk)
-			.press(ids.pauseKmnk, expecting: ids.playKmnk)
+			.checkButtons([ids.playKmnk] + ids.kmnkActions)
+			.closeSheet(expectingBar: ids.idleBar)
 	}
 
 	/// Turning Customize's Radio Player off takes the idle bar off Home, but
