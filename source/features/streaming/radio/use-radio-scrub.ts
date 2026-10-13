@@ -86,6 +86,12 @@ export function useRadioScrub(
 	return delayed
 }
 
+/** The PCM renderer owns sound even while paused or waiting for its startup cushion. */
+export function customRendererOwnsOutput(stationId: string): boolean {
+	let state = useScrubPlayback.getState()
+	return state.stationId === stationId && state.token !== null && state.controlsAvailable
+}
+
 /** Whether this station has enough captured audio for a scratch. */
 export function canScratchAudio(stationId: string): boolean {
 	let state = useScrubPlayback.getState()

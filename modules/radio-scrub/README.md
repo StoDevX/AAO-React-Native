@@ -8,7 +8,9 @@ The native engine has two transports:
   so detaching a player cannot free samples still in use by an audio callback.
 - `RadioScrubPCM` decodes KRLX's MP3 stream on a serial URLSession delegate queue
   and feeds an AVAudioEngine source node. Expo's player stays muted while this
-  engine is attached; detach restores its previous mute state.
+  engine is attached; detach restores its previous mute state. Pausing cancels the independent request
+  and decoder. Resume reconnects at live, retaining the allocated buffers and
+  effect settings while resetting scratch history on the audio consumer.
 
 Both use `RecordBuffer` for thirty seconds of history, scratch interpolation,
 backspin, pitch and transitions back to live. `PCMBuffer` is the bounded
@@ -23,7 +25,10 @@ The Expo module serializes control and lifecycle calls with its recursive lock.
 Only atomic controls/status cross into `RecordBuffer`'s audio thread. Prepare
 allocates its sample memory before processing starts; render uses preallocated
 pointers, with no collections to copy, locks, dispatch, or audio-unit setters.
-Do not call prepare concurrently with rendering.
+Do not call prepare concurrently with rendering. A resume reset publishes the
+last pre-pause queue position after stopping the producer; only the audio
+consumer advances past that position and resets the history bookkeeping. New
+arrivals remain available for the startup cushion.
 
 The network delegate alone produces PCM; the audio thread alone consumes it.
 Release/acquire indices publish completed samples and protect slots until the
@@ -45,9 +50,13 @@ The MP3 engine captures its mixer after effects; the MediaToolbox transport
 captures after scratching. `VisualizationSamples` is a separate bounded stereo
 queue, with one audio producer and one analysis consumer. Capture copies into
 preallocated memory and drops overflow, without locks, dispatches or allocation.
-A serial worker reduces the samples at up to 30 Hz. A native `CADisplayLink`
+A serial worker reduces the samples at up to 30 Hz. Subscriber modes determine
+which outputs it produces: waveform-only listeners skip FFTs, while the FFT
+sample window stays warm for mode switches. A native `CADisplayLink`
 interpolates spectrum heights and waveform scroll position at screen refresh
-rate. Audio-tap buffer delivery determines measurement latency.
+rate, up to 120 Hz on ProMotion. Scalar timeline and indexed spectrum
+interpolation avoid per-refresh arrays, and settled frames need no redraw.
+Audio-tap buffer delivery determines measurement latency.
 
 Views subscribe by attachment token, sharing one worker for a transport. Hidden,
 paused and backgrounded views unsubscribe; the last subscriber stops analysis

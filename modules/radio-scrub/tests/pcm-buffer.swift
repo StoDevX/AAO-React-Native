@@ -51,6 +51,32 @@ struct PCMBufferTests {
 			queue.render(400, output.mutableAudioBufferList)
 			precondition(left[399] == 0, "Draining a wrapped queue must underflow cleanly")
 		}
+		// Old decoded audio must be discarded, while new arrivals survive the reset.
+		for i in 0..<(40000 * 2) { samples[i] = 0.75 }
+		queue.enqueue(samples, 40000)
+		queue.render(512, output.mutableAudioBufferList)
+		queue.record.setPitch(-8)
+		queue.requestLiveReset()
+		for i in 0..<(40000 * 2) { samples[i] = 0.125 }
+		queue.enqueue(samples, 100)
+		queue.render(100, output.mutableAudioBufferList)
+		precondition(
+			left[99] == 0 && !queue.rendering.load(ordering: .relaxed),
+			"Resume must require a fresh cushion instead of treating the old queue as primed")
+		queue.enqueue(samples, 39900)
+		queue.render(512, output.mutableAudioBufferList)
+		precondition(
+			left[511] == 0.125 && right[511] == 0.125,
+			"Resume must preserve new samples while discarding audio queued before pause")
+		precondition(
+			queue.record.availableSeconds.load(ordering: .sequentiallyConsistent) == 512.0
+				/ 48000,
+			"Resume must start a fresh bounded history")
+		precondition(
+			queue.record.pitch.load(ordering: .sequentiallyConsistent) == 0
+				&& queue.record.quartzLocked.load(ordering: .sequentiallyConsistent),
+			"Resume must center pitch and lock quartz")
+
 		print("PCM startup, sample order, gain ramp, underflow and ring wrapping passed")
 	}
 }

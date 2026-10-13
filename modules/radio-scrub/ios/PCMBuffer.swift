@@ -8,6 +8,7 @@ final class PCMBuffer {
 	private let queue = UnsafeMutablePointer<Float>.allocate(capacity: capacity * 2)
 	private let written = Atomic<Int>(0)
 	private let read = Atomic<Int>(0)
+	private let resetThrough = Atomic<Int>(-1)
 	let rendering = Atomic<Bool>(false)
 	let record = RecordBuffer()
 	private var gate = PlaybackGate(48000 * 3 / 4)
@@ -28,6 +29,13 @@ final class PCMBuffer {
 		result.deallocate()
 	}
 
+	/// The producer must be stopped before requesting a new live epoch.
+	/// The audio consumer discards only the old samples, preserving new arrivals.
+	func requestLiveReset() {
+		resetThrough.store(written.load(ordering: .acquiring), ordering: .releasing)
+		rendering.store(false, ordering: .relaxed)
+	}
+
 	/// Called only by the serial network delegate queue; excess audio is dropped.
 	func enqueue(_ samples: UnsafePointer<Float>, _ frames: Int) {
 		var head = written.load(ordering: .relaxed)
@@ -43,6 +51,13 @@ final class PCMBuffer {
 
 	/// Called only by the audio thread; no locks or allocations occur here.
 	func render(_ frames: Int, _ output: UnsafeMutablePointer<AudioBufferList>) {
+		let cutoff = resetThrough.exchange(-1, ordering: .acquiringAndReleasing)
+		if cutoff >= 0 {
+			read.store(cutoff, ordering: .releasing)
+			gate = PlaybackGate(48000 * 3 / 4)
+			renderGain = 0
+			record.resetForLive()
+		}
 		record.beginBlock()
 		var tail = read.load(ordering: .relaxed)
 		let head = written.load(ordering: .acquiring)

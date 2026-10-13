@@ -15,6 +15,7 @@ final class RadioVisualizerView: ExpoView {
 	var mode = "waveform" {
 		didSet {
 			guard oldValue != mode else { return }
+			visualization?.subscribe(subscription, mode: requestedMode)
 			accessibilityLabel = mode == "spectrum" ? "Audio spectrum" : "Audio waveform"
 			if !UIAccessibility.isReduceMotionEnabled {
 				let transition = CATransition()
@@ -26,13 +27,14 @@ final class RadioVisualizerView: ExpoView {
 		}
 	}
 	var signalColor = UIColor.white { didSet { setNeedsDisplay() } }
+	private var requestedMode: VisualizationMode { mode == "spectrum" ? .spectrum : .waveform }
 	private let subscription = UUID()
 	private var visualization: AudioVisualization?
 	private var displayLink: CADisplayLink?
 	private var observers: [NSObjectProtocol] = []
 	private var displayFrame = VisualizationFrame()
 	private var spectrum = VisualizationTransition()
-	private var position = VisualizationTransition()
+	private var position = VisualizationPosition()
 	private var time = 0.0
 	private var foreground = true
 
@@ -46,14 +48,24 @@ final class RadioVisualizerView: ExpoView {
 		accessibilityTraits = .image
 		contentMode = .redraw
 		foreground = UIApplication.shared.applicationState != .background
-		for name in [UIApplication.didEnterBackgroundNotification, UIApplication.didBecomeActiveNotification,
-			UIAccessibility.reduceMotionStatusDidChangeNotification] {
-			observers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] notification in
-				guard let self else { return }
-				if notification.name == UIApplication.didEnterBackgroundNotification { self.foreground = false }
-				if notification.name == UIApplication.didBecomeActiveNotification { self.foreground = true }
-				self.updateActivity()
-			})
+		for name in [
+			UIApplication.didEnterBackgroundNotification,
+			UIApplication.didBecomeActiveNotification,
+			UIAccessibility.reduceMotionStatusDidChangeNotification,
+		] {
+			observers.append(
+				NotificationCenter.default.addObserver(
+					forName: name, object: nil, queue: .main
+				) { [weak self] notification in
+					guard let self else { return }
+					if notification.name == UIApplication.didEnterBackgroundNotification {
+						self.foreground = false
+					}
+					if notification.name == UIApplication.didBecomeActiveNotification {
+						self.foreground = true
+					}
+					self.updateActivity()
+				})
 		}
 	}
 
@@ -71,11 +83,14 @@ final class RadioVisualizerView: ExpoView {
 			return
 		}
 		if displayLink == nil {
-			let link = CADisplayLink(target: VisualizerDisplayLink(self), selector: #selector(VisualizerDisplayLink.tick(_:)))
+			let link = CADisplayLink(
+				target: VisualizerDisplayLink(self),
+				selector: #selector(VisualizerDisplayLink.tick(_:)))
 			link.add(to: .main, forMode: .common)
 			displayLink = link
 		}
-		displayLink?.preferredFrameRateRange = UIAccessibility.isReduceMotionEnabled
+		displayLink?.preferredFrameRateRange =
+			UIAccessibility.isReduceMotionEnabled
 			? CAFrameRateRange(minimum: 10, maximum: 10, preferred: 10)
 			: CAFrameRateRange(minimum: 30, maximum: 120, preferred: 120)
 		bind(provider?())
@@ -85,28 +100,37 @@ final class RadioVisualizerView: ExpoView {
 		guard visualization !== next else { return }
 		visualization?.unsubscribe(subscription)
 		visualization = next
-		next?.subscribe(subscription)
+		next?.subscribe(subscription, mode: requestedMode)
 		displayFrame = VisualizationFrame()
 		spectrum = VisualizationTransition()
-		position = VisualizationTransition()
+		position = VisualizationPosition()
 		setNeedsDisplay()
 	}
 
 	fileprivate func tick(_ timestamp: Double) {
+		let previousTime = time
 		time = timestamp
+		var changed = false
 		bind(provider?())
 		if let next = visualization?.frame(), next.sequence != displayFrame.sequence {
+			changed = true
 			if next.revision != displayFrame.revision || next.columns < displayFrame.columns {
 				spectrum = VisualizationTransition()
-				position = VisualizationTransition()
-				position.retarget([Float(next.columns)], at: timestamp - 1, duration: 1.0 / 30)
+				position = VisualizationPosition()
+				position.retarget(Double(next.columns), at: timestamp - 1, duration: 1.0 / 30)
 			}
-			let duration = displayFrame.time > 0 ? min(0.15, max(1.0 / 30, next.time - displayFrame.time)) : 1.0 / 30
+			let duration =
+				displayFrame.time > 0
+				? min(0.15, max(1.0 / 30, next.time - displayFrame.time)) : 1.0 / 30
 			spectrum.retarget(next.bands, at: timestamp, duration: duration)
-			position.retarget([Float(next.columns)], at: timestamp, duration: duration)
+			position.retarget(Double(next.columns), at: timestamp, duration: duration)
 			displayFrame = next
 		}
-		setNeedsDisplay()
+		let reduced = UIAccessibility.isReduceMotionEnabled
+		let animating =
+			mode == "spectrum"
+			? spectrum.isAnimating(at: previousTime) : position.isAnimating(at: previousTime)
+		if changed || (!reduced && animating) { setNeedsDisplay() }
 	}
 
 	override func draw(_ rect: CGRect) {
@@ -116,31 +140,43 @@ final class RadioVisualizerView: ExpoView {
 		context.setLineWidth(1)
 		let reduced = UIAccessibility.isReduceMotionEnabled
 		if mode == "spectrum" {
-			let values = reduced ? displayFrame.bands : spectrum.value(at: time)
+			let path = CGMutablePath()
 			let step = bounds.width / CGFloat(VisualizationAnalysis.bandCount)
-			for (i, value) in values.enumerated() {
+			for i in 0..<VisualizationAnalysis.bandCount {
+				let value =
+					reduced
+					? (i < displayFrame.bands.count ? displayFrame.bands[i] : 0)
+					: spectrum.value(at: time, index: i)
 				let height = max(1, CGFloat(value) * (bounds.height - 2))
-				let bar = CGRect(x: CGFloat(i) * step, y: bounds.height - height,
+				let bar = CGRect(
+					x: CGFloat(i) * step, y: bounds.height - height,
 					width: max(1, step - 3), height: height)
-				context.addPath(UIBezierPath(roundedRect: bar, cornerRadius: 1).cgPath)
+				path.addRoundedRect(in: bar, cornerWidth: 1, cornerHeight: 1)
 			}
+			context.addPath(path)
 			context.fillPath()
 		} else {
 			context.move(to: CGPoint(x: 0, y: bounds.midY))
 			context.addLine(to: CGPoint(x: bounds.width, y: bounds.midY))
 			context.strokePath()
-			let end = reduced ? Float(displayFrame.columns) : (position.value(at: time).first ?? 0)
+			let end = reduced ? Double(displayFrame.columns) : position.value(at: time)
 			let points = max(2, Int(bounds.width / 3))
 			for i in 0..<points {
 				let column = Double(end) - 240 + Double(i) * 240 / Double(points - 1)
-				let index = column - Double(displayFrame.columns - VisualizationAnalysis.historyCount)
+				let index =
+					column
+					- Double(displayFrame.columns - VisualizationAnalysis.historyCount)
 				let lower = Int(floor(index))
 				guard lower >= 0, lower + 1 < displayFrame.waveform.count else { continue }
 				let fraction = Float(index - Double(lower))
-				let amplitude = displayFrame.waveform[lower] * (1 - fraction) + displayFrame.waveform[lower + 1] * fraction
+				let amplitude =
+					displayFrame.waveform[lower] * (1 - fraction) + displayFrame.waveform[
+						lower + 1] * fraction
 				let height = max(1, CGFloat(amplitude) * (bounds.height - 2))
-				context.fill(CGRect(x: CGFloat(i) * bounds.width / CGFloat(points),
-					y: bounds.midY - height / 2, width: 1.5, height: height))
+				context.fill(
+					CGRect(
+						x: CGFloat(i) * bounds.width / CGFloat(points),
+						y: bounds.midY - height / 2, width: 1.5, height: height))
 			}
 		}
 	}

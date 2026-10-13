@@ -6,6 +6,8 @@ import Foundation
 final class MP3Decoder {
 	typealias Sink = (UnsafePointer<Float>, Int) -> Void
 	private let sink: Sink
+	private let packet = UnsafeMutablePointer<AudioStreamPacketDescription>.allocate(capacity: 1)
+	private let decoded = UnsafeMutablePointer<Float>.allocate(capacity: 4096 * 2)
 	private var stream: AudioFileStreamID?
 	private var converter: AudioConverterRef?
 	private var channels: UInt32 = 0
@@ -14,6 +16,7 @@ final class MP3Decoder {
 
 	init(_ sink: @escaping Sink) {
 		self.sink = sink
+		packet.initialize(to: AudioStreamPacketDescription())
 		error = AudioFileStreamOpen(
 			Unmanaged.passUnretained(self).toOpaque(),
 			{ context, stream, property, _ in
@@ -28,6 +31,8 @@ final class MP3Decoder {
 	}
 
 	deinit {
+		packet.deallocate()
+		decoded.deallocate()
 		if let stream { AudioFileStreamClose(stream) }
 		if let converter { AudioConverterDispose(converter) }
 	}
@@ -71,12 +76,6 @@ final class MP3Decoder {
 		_ descriptions: UnsafeMutablePointer<AudioStreamPacketDescription>
 	) {
 		guard let converter, error == noErr else { return }
-		let packet = UnsafeMutablePointer<AudioStreamPacketDescription>.allocate(capacity: 1)
-		let decoded = UnsafeMutablePointer<Float>.allocate(capacity: 4096 * 2)
-		defer {
-			packet.deallocate()
-			decoded.deallocate()
-		}
 		var input = Input(
 			bytes: bytes, descriptions: descriptions, count: count, channels: channels,
 			packet: packet)

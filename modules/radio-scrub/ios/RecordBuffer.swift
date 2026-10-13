@@ -35,6 +35,11 @@ final class RecordBuffer {
 	private var held = false
 	private var coasting = false
 
+	init() {
+		last.initialize(repeating: 0, count: Self.maxChannels)
+		fadeFrom.initialize(repeating: 0, count: Self.maxChannels)
+	}
+
 	deinit {
 		samples?.deallocate()
 		last.deallocate()
@@ -49,6 +54,14 @@ final class RecordBuffer {
 		samples?.deallocate()
 		samples = .allocate(capacity: capacity * channels)
 		samples!.initialize(repeating: 0, count: capacity * channels)
+		resetForLive()
+
+		ready.store(true, ordering: .sequentiallyConsistent)
+	}
+
+	/// Called only by the audio consumer, without clearing or reallocating history.
+	/// Resetting head bounds reads to samples captured after this reset.
+	func resetForLive() {
 		head = 0
 		cursor = 0
 		live = true
@@ -57,18 +70,19 @@ final class RecordBuffer {
 		boundaryStep = 0
 		appliedRevision = controlsRevision.load(ordering: .sequentiallyConsistent)
 		rate = 1
+		targetRate = 0
 		pitch.store(0, ordering: .sequentiallyConsistent)
 		quartzLocked.store(true, ordering: .sequentiallyConsistent)
 		bufferLimit.store(0, ordering: .sequentiallyConsistent)
 		gain = 1
 		fade = 0
-		last.initialize(repeating: 0, count: Self.maxChannels)
+		last.update(repeating: 0, count: Self.maxChannels)
 		coastDecay = exp(-1 / (sampleRate * 0.3))
 		smoothing = 1 - exp(-1 / (sampleRate * 0.005))
 		command.store(0, ordering: .sequentiallyConsistent)
+		desiredRate.store(0, ordering: .sequentiallyConsistent)
 		availableSeconds.store(0, ordering: .sequentiallyConsistent)
 		delaySeconds.store(0, ordering: .sequentiallyConsistent)
-		ready.store(true, ordering: .sequentiallyConsistent)
 	}
 
 	func begin() {
@@ -148,10 +162,19 @@ final class RecordBuffer {
 			samples![(head % capacity) * channels + channel] = input[channel]
 		}
 		head += 1
-		let oldest = max(0, head - capacity)
 
-		// The capture always advances at 1x only the dry playback cursor changes speed.
+		// The capture always advances at 1x; only the dry playback cursor changes speed.
 		var selectedPitch = pitch.load(ordering: .sequentiallyConsistent)
+		if live && selectedPitch == 0 && fade == 0 {
+			gain += smoothing * (1 - gain)
+			for channel in 0..<channels {
+				output[channel] = input[channel]
+				last[channel] = input[channel]
+			}
+			cursor = Double(head)
+			return
+		}
+		let oldest = max(0, head - capacity)
 		if !held && selectedPitch != 0 {
 			let remaining =
 				selectedPitch > 0

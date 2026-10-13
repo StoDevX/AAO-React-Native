@@ -56,6 +56,21 @@ final class VisualizationSamples: @unchecked Sendable {
 	}
 }
 
+enum VisualizationMode {
+	case waveform, spectrum
+}
+
+/// Subscriber demand is independent of DJ mode and can serve an always-visible waveform.
+struct VisualizationDemand {
+	private var subscribers: [UUID: VisualizationMode] = [:]
+	var isEmpty: Bool { subscribers.isEmpty }
+	var waveform: Bool { subscribers.values.contains(.waveform) }
+	var spectrum: Bool { subscribers.values.contains(.spectrum) }
+
+	mutating func subscribe(_ id: UUID, mode: VisualizationMode) { subscribers[id] = mode }
+	mutating func unsubscribe(_ id: UUID) { subscribers.removeValue(forKey: id) }
+}
+
 /// A rolling stereo analyzer. Only the analysis queue touches its mutable storage.
 final class VisualizationAnalysis {
 	static let fftSize = 2048
@@ -63,7 +78,8 @@ final class VisualizationAnalysis {
 	static let waveformRate = 120.0
 	static let historyCount = 480
 	private let setup = vDSP_create_fftsetup(11, FFTRadix(kFFTRadix2))!
-	private let window = vDSP.window(ofType: Float.self, usingSequence: .hanningDenormalized, count: fftSize, isHalfWindow: false)
+	private let window = vDSP.window(
+		ofType: Float.self, usingSequence: .hanningDenormalized, count: fftSize, isHalfWindow: false)
 	private var left = [Float](repeating: 0, count: fftSize)
 	private var right = [Float](repeating: 0, count: fftSize)
 	private var real = [Float](repeating: 0, count: fftSize)
@@ -76,9 +92,23 @@ final class VisualizationAnalysis {
 	private var envelope = [Float](repeating: 0, count: historyCount)
 	private(set) var columns = 0
 	private(set) var bands = [Float](repeating: 0, count: bandCount)
+	private let bandBins: [Range<Int>]
 	let sampleRate: Double
 
-	init(sampleRate: Double) { self.sampleRate = sampleRate }
+	init(sampleRate: Double) {
+		self.sampleRate = sampleRate
+		let nyquist = min(20000, sampleRate / 2)
+		bandBins = (0..<Self.bandCount).map { band in
+			let low = 20 * pow(nyquist / 20, Double(band) / Double(Self.bandCount))
+			let high = 20 * pow(nyquist / 20, Double(band + 1) / Double(Self.bandCount))
+			let start = max(
+				1, min(Self.fftSize / 2 - 1, Int(low * Double(Self.fftSize) / sampleRate)))
+			let end = max(
+				start + 1,
+				min(Self.fftSize / 2, Int(ceil(high * Double(Self.fftSize) / sampleRate))))
+			return start..<end
+		}
+	}
 	deinit { vDSP_destroy_fftsetup(setup) }
 
 	func append(_ l: Float, _ r: Float) {
@@ -101,18 +131,23 @@ final class VisualizationAnalysis {
 		power.withUnsafeMutableBufferPointer { $0.initialize(repeating: 0) }
 		transform(left)
 		transform(right)
-		let nyquist = min(20000, sampleRate / 2)
+		let attack = Float(1 - exp(-elapsed / 0.025))
+		let release = Float(1 - exp(-elapsed / 0.18))
 		for band in 0..<Self.bandCount {
-			let low = 20 * pow(nyquist / 20, Double(band) / Double(Self.bandCount))
-			let high = 20 * pow(nyquist / 20, Double(band + 1) / Double(Self.bandCount))
-			let start = max(1, min(Self.fftSize / 2 - 1, Int(low * Double(Self.fftSize) / sampleRate)))
-			let end = max(start + 1, min(Self.fftSize / 2, Int(ceil(high * Double(Self.fftSize) / sampleRate))))
-			let magnitude = sqrt(power[start..<end].max() ?? 0)
+			let magnitude = sqrt(power[bandBins[band]].max() ?? 0)
 			let db = 20 * log10(max(magnitude, 0.00001))
 			let target = min(1, max(0, (db + 72) / 72))
-			let coefficient = Float(1 - exp(-elapsed / (target > bands[band] ? 0.025 : 0.18)))
+			let coefficient = target > bands[band] ? attack : release
 			bands[band] += (target - bands[band]) * coefficient
 		}
+	}
+
+	/// Keep both sample histories warm, but calculate only the requested output.
+	func snapshot(_ demand: VisualizationDemand, elapsed: Double) -> VisualizationFrame {
+		if demand.spectrum { spectrum(elapsed: elapsed) }
+		return VisualizationFrame(
+			bands: demand.spectrum ? bands : [],
+			waveform: demand.waveform ? waveform() : [], columns: columns)
 	}
 
 	private func transform(_ samples: [Float]) {
@@ -146,15 +181,47 @@ struct VisualizationTransition {
 	private var duration = 1.0 / 30
 
 	mutating func retarget(_ values: [Float], at time: Double, duration: Double) {
-		start = target.isEmpty ? [Float](repeating: 0, count: values.count) : value(at: time)
+		if start.count != values.count {
+			start = [Float](repeating: 0, count: values.count)
+		}
+		for index in start.indices { start[index] = value(at: time, index: index) }
 		target = values
 		began = time
 		self.duration = max(1.0 / 120, duration)
 	}
 
-	func value(at time: Double) -> [Float] {
+	func value(at time: Double, index: Int) -> Float {
+		guard index < target.count else { return 0 }
 		let progress = Float(min(1, max(0, (time - began) / duration)))
-		return zip(start, target).map { $0 + ($1 - $0) * progress }
+		return start[index] + (target[index] - start[index]) * progress
+	}
+
+	func isAnimating(at time: Double) -> Bool {
+		time < began + duration && start != target
+	}
+}
+
+/// Scalar timeline interpolation avoids allocating single-element arrays each refresh.
+struct VisualizationPosition {
+	private var start = 0.0
+	private var target = 0.0
+	private var began = 0.0
+	private var duration = 1.0 / 30
+
+	mutating func retarget(_ value: Double, at time: Double, duration: Double) {
+		start = self.value(at: time)
+		target = value
+		began = time
+		self.duration = max(1.0 / 120, duration)
+	}
+
+	func value(at time: Double) -> Double {
+		let progress = min(1, max(0, (time - began) / duration))
+		return start + (target - start) * progress
+	}
+
+	func isAnimating(at time: Double) -> Bool {
+		time < began + duration && start != target
 	}
 }
 
@@ -173,7 +240,7 @@ final class AudioVisualization: @unchecked Sendable {
 	private let queue = DispatchQueue(label: "radio.visualization", qos: .utility)
 	private let lock = NSLock()
 	private var latest = VisualizationFrame()
-	private var subscribers = Set<UUID>()
+	private var demand = VisualizationDemand()
 	private var timer: DispatchSourceTimer?
 	private var analysis = VisualizationAnalysis(sampleRate: 48000)
 	private var revision: UInt64 = 0
@@ -184,9 +251,9 @@ final class AudioVisualization: @unchecked Sendable {
 
 	func frame() -> VisualizationFrame { lock.withLock { latest } }
 
-	func subscribe(_ id: UUID) {
+	func subscribe(_ id: UUID, mode: VisualizationMode) {
 		queue.async { [self] in
-			subscribers.insert(id)
+			demand.subscribe(id, mode: mode)
 			guard timer == nil else { return }
 			reset()
 			samples.enabled.store(true, ordering: .releasing)
@@ -200,8 +267,8 @@ final class AudioVisualization: @unchecked Sendable {
 
 	func unsubscribe(_ id: UUID) {
 		queue.async { [self] in
-			subscribers.remove(id)
-			guard subscribers.isEmpty else { return }
+			demand.unsubscribe(id)
+			guard demand.isEmpty else { return }
 			samples.enabled.store(false, ordering: .releasing)
 			timer?.cancel()
 			timer = nil
@@ -228,12 +295,14 @@ final class AudioVisualization: @unchecked Sendable {
 			if lastAudio > 0 && now - lastAudio > 0.25 { reset() }
 			return
 		}
-		analysis.spectrum(elapsed: lastUpdate == 0 ? 1.0 / 30 : min(0.2, now - lastUpdate))
+		var frame = analysis.snapshot(
+			demand, elapsed: lastUpdate == 0 ? 1.0 / 30 : min(0.2, now - lastUpdate))
 		lastAudio = now
 		lastUpdate = now
 		sequence &+= 1
-		let frame = VisualizationFrame(sequence: sequence, revision: epoch, time: now,
-			bands: analysis.bands, waveform: analysis.waveform(), columns: analysis.columns)
+		frame.sequence = sequence
+		frame.revision = epoch
+		frame.time = now
 		lock.withLock { latest = frame }
 	}
 }

@@ -5,7 +5,7 @@ import {audioActivity, shouldRenderScratch, type AudioActivity} from './audio-ac
 import type {NowPlayingPresentation} from './now-playing'
 import type {HtmlAudioError, PlayState} from './types'
 import type {Station} from './stations'
-import {useRadioScrub} from './use-radio-scrub'
+import {customRendererOwnsOutput, useRadioScrub} from './use-radio-scrub'
 
 type Props = {
 	station: Pick<Station, 'id' | 'stationName'>
@@ -138,7 +138,7 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 			reloadTimer.current = setTimeout(endReload, RELOAD_TIMEOUT_MS)
 			player.replace(streamSourceUrl)
 			// oxlint-disable-next-line react/immutability
-			player.muted = false
+			player.muted = customRendererOwnsOutput(callbacks.current.station.id)
 			player.play()
 			callbacks.current.onResume?.()
 		}
