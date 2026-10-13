@@ -12,11 +12,4 @@ schedule:
     hours:
       - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:00pm', to: '12:00am'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer: []
+breakSchedule: {}

@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/react-native'
-import {IS_PRODUCTION, isDebugBuild} from '@frogpond/constants'
-import {isChaos} from '@frogpond/launch-arguments'
+import {isDebugBuild} from '@frogpond/constants'
 
 import {SENTRY_DSN} from './constants'
+import {IS_REPORTING_BUILD} from './reporting-build'
 import {privacyOptions} from './sentry-options'
 import {useTelemetryStore} from '../features/telemetry/store'
 
@@ -22,12 +22,14 @@ function start(): void {
 	Sentry.init({
 		dsn: SENTRY_DSN,
 		...privacyOptions({
-			// A chaos run's failures are injected; none of them belong in Sentry.
-			isProduction: IS_PRODUCTION && !isChaos,
+			isProduction: IS_REPORTING_BUILD,
 			consented: isConsented(),
 			isPrerelease: isDebugBuild(),
 			isConsented,
 		}),
+		// A disabled native SDK still installs its crash and hang trackers, and
+		// still flushes reports saved on disk when it starts.
+		enableNative: IS_REPORTING_BUILD,
 
 		tracesSampleRate: 0.2,
 		profilesSampleRate: 0.1,

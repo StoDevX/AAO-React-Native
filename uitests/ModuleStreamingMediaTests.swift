@@ -1,70 +1,41 @@
 import XCTest
 
-class ModuleStreamingMediaTests: UITestCaseUnbooted {
-	/// The bar on Home opens the sheet on the last station viewed. Picking
-	/// another station there only browses: the bar says what is loaded, not
-	/// what the sheet shows. The sheet carries both stations, and the player's
-	/// controls are buttons and links VoiceOver can name. Pausing leaves the
-	/// station loaded, with Play to start it again. KSTO plays here, as KRLX's
-	/// native stream needs a network the simulator's TLS does not always have.
-	///
-	/// Last, Streaming Media lists the streams under its tabs.
-	func testTheBarOpensTheSheetOnBothStations() throws {
+/// Tags: campus:example.college
+class ModuleStreamingMediaTests: UITestCase {
+	/// The bar on Home opens the sheet on KMNK, Wiki Monkeys' one station. The
+	/// player's controls are buttons VoiceOver can name. Leave playback idle:
+	/// KMNK's fixture uses a live stream, whose failure can replace Pause with Stop.
+	func testTheBarOpensTheSheetOnTheStation() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
-		app.launch()
 		StreamingMediaScreen(app: app)
-			.openSheetFromBar(expecting: ids.playKsto)
-			.press(ids.playKsto, expecting: ids.pauseKsto)
-			.pick(ids.krlxSegment, expecting: ids.playKrlx)
-			.capture("Sheet, KRLX, with KSTO playing")
-			.checkButtons([ids.playKrlx] + ids.krlxActions)
-			.checkLinks(ids.krlxLinks)
-			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
-			.closeSheet(expectingBar: ids.pauseKsto)
-			.capture("Home, KSTO loaded")
-			.press(ids.pauseKsto, expecting: ids.playKsto)
-			.openFromHome()
-			.checkStreamListExists()
-			.checkTabs()
-	}
-
-	/// Turning Customize's Radio Player off while a station plays stops it and
-	/// takes the bar off Home, but Streaming Media keeps its own, so the radio
-	/// is still a tap away. Turning it on again brings back Home's idle bar.
-	func testSwitchOffStopsThePlayingStationAndHidesOnlyHomesBar() throws {
-		let ids = TestIdentifiers.StreamingMedia.self
-		app.launch()
-		StreamingMediaScreen(app: app)
-			.checkShows(ids.idleBar)
-			.openSheetFromBar(expecting: ids.playKsto)
-			.press(ids.playKsto, expecting: ids.pauseKsto)
-			.closeSheet(expectingBar: ids.pauseKsto)
-			.toggleShowRadioPlayer()
-			.checkGone(ids.pauseKsto)
-			.checkGone(ids.idleBar)
-			.capture("Home, switch turned off while KSTO played")
-			.openFromHome()
-			.checkShows(ids.idleBar)
-			.openSheetFromBar(expecting: ids.playKsto)
+			.openSheetFromBar(expecting: ids.playKmnk)
+			.checkButtons([ids.playKmnk] + ids.kmnkActions)
 			.closeSheet(expectingBar: ids.idleBar)
-			.goBack()
+	}
+
+	/// Turning Customize's Radio Player off takes the idle bar off Home, but
+	/// Streaming Media keeps its own, so the radio is still a tap away.
+	func testSwitchOffHidesOnlyHomesBar() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		let screen = StreamingMediaScreen(app: app)
+			.checkShows(ids.idleBar)
 			.toggleShowRadioPlayer()
+			.checkGone(ids.idleBar)
+		keepStateForNextLaunch(adding: [])
+		screen
+			.navigate()
 			.checkShows(ids.idleBar)
 	}
 
-	/// Each tap on the KSTO logo moves it to the next, and a drag across the
-	/// record turns it, leaving the logo as it was. Whether the sheet also
+	/// A drag across the record turns it, leaving the logo as it was: the
+	/// scrub must not count as a tap on the logo. Whether the sheet also
 	/// moves is UIKit's, and only a device shows it: a synthetic drag never
 	/// closes this sheet over React Native content.
-	func testTheLogoCyclesAndTheRecordCanBeScratched() throws {
+	func testTheRecordCanBeScratchedWithoutChangingTheLogo() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
-		let logos = ids.kstoLogos
-		app.launch()
 		StreamingMediaScreen(app: app)
-			.openSheetFromBar(expecting: ids.playKsto)
-			.checkLogoCycles(logos)
-			.tapLogo(labelled: ids.kstoLogoPrefix, until: logos[3])
-			.checkScrubKeepsLogo(logos[3])
+			.openSheetFromBar(expecting: ids.playKmnk)
+			.checkScrubKeepsLogo(ids.kmnkFirstLogo)
 			.closeSheet(expectingBar: ids.idleBar)
 	}
 }

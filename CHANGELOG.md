@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.9.0-rc.6
+
+### Minor Changes
+
+- 0a49f68: CARLS offers the three windmill app icons beside the penguin, under Customize's App Icon.
+
+### Patch Changes
+
+- 524a715: Dev mode starts off in beta builds too, so the Developer tile and other debugging tools stay hidden until "Enable dev mode" is checked in the Home notice's menu.
+- 3935f32: Tapping a search result on the map shows only that place's pin while its card is open; the other results' pins come back when it closes.
+
+## 2.9.0-rc.5
+
+### Patch Changes
+
+- 709091e: The campus map tints the open place's building gold, and for a room or office inside a building, tints the building around it.
+- f015f08: The Olaf Messenger's image viewer now shows a picture's caption, or its alt text when the paper wrote words in it, and a long caption opens to its full length and scrolls.
+
+## 2.9.0-rc.4
+
+### Minor Changes
+
+- 963774f: Athletics shows every day's games in one list that opens at Today: scroll up for yesterday's results, down for upcoming games. The sport filter moves to a Sports button above the list, like the filters on other screens.
+- 35b94ba: Student orgs show their cover photo, contacts and advisors, Instagram, office hours, more information and constitution, list where and when they meet on separate lines, and link to their upcoming events on the calendar.
+
+### Patch Changes
+
+- d0f6da0: Athletics shows kickoff times for upcoming games again, lists games in progress under Ongoing, and refreshes every 30 seconds while a game is being played.
+- da75428: Athletics shows a finished meet's placing, such as "18th of 35", or "Final" when there is none, instead of a blank score.
+- ebd7d6c: Athletics narrows its list from a sports menu in the bottom toolbar, as Calendar does, and its day headings match the section headings elsewhere in the app.
+- 5e3dec2: Tapping a search result on the map goes to that place, rather than zooming out to show every result.
+- 149dcec: Make the download smaller by shipping the Old Main (Retro) icon as a plain light and dark icon.
+
 ## 2.9.0-rc.3
 
 ### Minor Changes

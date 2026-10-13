@@ -8,7 +8,8 @@ import {cutoutBounds} from '../../map/lib/cutout-bounds'
 import type {Building, Feature} from '../../map/types'
 import {useMapStyleUrl} from '../../map/style-query'
 import {basemapScheme} from '../../map/urls'
-import type {Campus} from '../types'
+import type {CampusId} from '../../../campuses/ids'
+import type {MapSection} from '../../map/campus-section'
 import {PICTURE_CORNER_RADIUS} from '../../../components/place-card/card-style'
 
 /** How tall the cutout draws. */
@@ -19,19 +20,14 @@ const CUTOUT_HEIGHT = 160
  */
 const LABEL_FONT = ['Noto Sans Medium']
 /**
- * The St. Olaf basemap's building-name layer. Carleton's style has no layer by
- * this id.
- */
-const STOLAF_BUILDING_LABELS = 'campus_labels_buildings'
-/**
  * The framed building's name, drawn to read against each basemap appearance:
  * dark on a white halo over the light basemap, light on a dark halo over the
  * dark one.
  *
  * Literal colours, not PlatformColor: MapLibre's paint spec takes style-spec
  * strings and cannot resolve a dynamic system colour. Keyed by the basemap's
- * appearance rather than the system's, because Carleton's basemap stays light
- * in dark mode.
+ * appearance rather than the system's, because a campus without a dark style
+ * stays light in dark mode.
  */
 const LABEL_PAINT = {
 	light: {
@@ -50,7 +46,9 @@ const LABEL_PAINT = {
 const CUTOUT_PADDING = 32
 
 type Props = {
-	campus: Campus
+	campus: CampusId
+	/// The campus's map, whose style and label layer the cutout draws.
+	map: MapSection
 	feature: Feature<Building>
 	/// How wide the cutout draws. A width of 100% would resolve against the
 	/// whole sheet rather than the inset row the cutout sits in.
@@ -67,9 +65,9 @@ type Props = {
  * Renders `null` when there is nothing to frame, which `cutoutBounds` signals
  * by returning `undefined`, and until `width` is known.
  */
-export function BuildingCutout({campus, feature, width}: Props): React.ReactNode {
+export function BuildingCutout({campus, map, feature, width}: Props): React.ReactNode {
 	let scheme = useColorScheme()
-	let mapStyleUrl = useMapStyleUrl(campus, scheme)
+	let mapStyleUrl = useMapStyleUrl(campus, map, scheme)
 
 	// Framed on the same geometry the layers below draw, so the two cannot
 	// disagree. Callers are expected to have checked `hasFootprint` already --
@@ -124,16 +122,16 @@ export function BuildingCutout({campus, feature, width}: Props): React.ReactNode
 					{/* A Layer whose id the style already has adopts that layer, and
 					    its filter replaces the style's own. This one keeps the style's
 					    `kind` match and drops the framed building, whose name the label
-					    below draws instead. Every St. Olaf label carries `buildingId`,
+					    below draws instead. Every label in such a layer carries `buildingId`,
 					    the same id as `feature`. */}
-					{campus === 'stolaf' ? (
+					{map.buildingLabelsLayer ? (
 						<Layer
 							filter={[
 								'all',
 								['match', ['get', 'kind'], ['building'], true, false],
 								['!=', ['get', 'buildingId'], feature.id],
 							]}
-							id={STOLAF_BUILDING_LABELS}
+							id={map.buildingLabelsLayer}
 							type="symbol"
 						/>
 					) : null}
@@ -164,7 +162,7 @@ export function BuildingCutout({campus, feature, width}: Props): React.ReactNode
 								'text-ignore-placement': true,
 								'text-size': 13,
 							}}
-							paint={LABEL_PAINT[basemapScheme(campus, scheme)]}
+							paint={LABEL_PAINT[basemapScheme(map, scheme)]}
 							type="symbol"
 						/>
 					</GeoJSONSource>

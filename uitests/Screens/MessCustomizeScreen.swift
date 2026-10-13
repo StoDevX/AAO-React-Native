@@ -1,6 +1,6 @@
 import XCTest
 
-/// The Messenger's paintbrush sheet: paper stains, front page photos, and dark Photo stories.
+/// A paper's paintbrush sheet: paper stains, front page photos, and dark Photo stories.
 struct MessCustomizeScreen: Screen {
 	let app: XCUIApplication
 
@@ -13,30 +13,9 @@ struct MessCustomizeScreen: Screen {
 
 	@discardableResult
 	func checkOpen() -> Self {
-		XCTAssertTrue(sheet.waitForExistence(timeout: 10), "the Messenger's Customize should open")
+		XCTAssertTrue(sheet.waitUntilExists(timeout: 10), "the paper's Customize should open")
 		XCTAssertTrue(
-			issueStains.waitForExistence(timeout: 10), "Customize should offer Paper Stains")
-		return self
-	}
-
-	/// Choose a stain kind from the picker's menu and wait for the picker to show it.
-	@discardableResult
-	func chooseStain(_ name: String) -> Self {
-		choose(name, from: issueStains)
-	}
-
-	private func choose(_ name: String, from picker: XCUIElement) -> Self {
-		XCTAssertTrue(picker.waitForExistence(timeout: 10), "Customize should offer the picker for \(name)")
-		picker.tap()
-		let item = app.buttons[name].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "the menu should offer \(name)")
-		item.tap()
-		let chosen = XCTNSPredicateExpectation(
-			predicate: NSPredicate(format: "value == %@ OR label CONTAINS %@", name, name),
-			object: picker)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [chosen], timeout: 10), .completed,
-			"the picker should show \(name) (it reads \(picker.label), \(String(describing: picker.value)))")
+			issueStains.waitUntilExists(timeout: 10), "Customize should offer Paper Stains")
 		return self
 	}
 
@@ -44,14 +23,15 @@ struct MessCustomizeScreen: Screen {
 	/// row's centre lands on the label, which flips nothing in a Form.
 	@discardableResult
 	func keepPhotoStoriesDark(_ on: Bool) -> Self {
-		let toggle = sheet.switches[TestIdentifiers.MessCustomize.keepPhotoStoriesDark]
-		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Dark page for Photo stories")
+		let id = TestIdentifiers.MessCustomize.keepPhotoStoriesDark
+		let toggle = sheet.switches[id]
+		XCTAssertTrue(toggle.waitUntilExists(timeout: 10), "Customize should offer Dark page for Photo stories")
 		let wanted = on ? "1" : "0"
 		if toggle.value as? String != wanted {
-			toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+			let flipped = sheet.switches
+				.matching(NSPredicate(format: "identifier == %@ AND value == %@", id, wanted)).firstMatch
+			tap(toggle, until: flipped, named: "Dark page for Photo stories", wait: 5, at: CGVector(dx: 0.92, dy: 0.5))
 		}
-		let set = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", wanted), object: toggle)
-		XCTAssertEqual(XCTWaiter().wait(for: [set], timeout: 5), .completed, "the switch should read \(wanted)")
 		return self
 	}
 
@@ -59,9 +39,9 @@ struct MessCustomizeScreen: Screen {
 	@discardableResult
 	func close() -> Self {
 		let button = app.buttons[TestIdentifiers.Customize.close].firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "Customize should have a close button")
+		XCTAssertTrue(button.waitUntilExists(timeout: 10), "Customize should have a close button")
 		button.tap()
-		XCTAssertTrue(sheet.waitForNonExistence(timeout: 10), "Customize should close")
+		XCTAssertTrue(sheet.waitUntilGone(timeout: 10), "Customize should close")
 		return self
 	}
 }

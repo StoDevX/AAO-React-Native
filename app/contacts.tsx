@@ -1,24 +1,50 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {Host, List} from '@expo/ui/swift-ui'
-import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {Button, Host, Label, List} from '@expo/ui/swift-ui'
+import {buttonStyle, controlSize, frame, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {contactsOptions} from '../source/features/directory/contacts-query'
+import {NoticeView} from '@frogpond/notice'
+import {openUrl} from '@frogpond/open-url'
+
+import {contactsOptionsFor} from '../source/features/directory/contacts-query'
+import {useCampusId, useCampusSection} from '../source/features/campus/store'
 import {ImportantContactsGrid} from '../source/features/directory/important-contacts-grid'
+import {requiresSection} from '../source/features/campus/section-gate'
+import {FILL_WIDTH} from '../source/components/tile-layout'
 
 /// The curated campus contacts on their own, for the Help group on home. The
 /// same grid heads the Directory, where it shares the screen with the
 /// department roster.
-export default function ContactsPage(): React.ReactNode {
+function ContactsPage(): React.ReactNode {
 	let router = useRouter()
-	let contacts = useQuery(contactsOptions)
+	let section = useCampusSection('contacts')
+	let {college} = useCampusSection('branding')
+	let contacts = useQuery({
+		...contactsOptionsFor(useCampusId()),
+		enabled: section !== undefined,
+	})
+
+	// The route stays reachable by URL on a campus without contacts.
+	if (!section) {
+		return (
+			<>
+				<Stack.Title>Contacts</Stack.Title>
+				<NoticeView
+					description={`The app has no contacts for ${college}.`}
+					systemImage="phone"
+					title="No Contacts"
+				/>
+			</>
+		)
+	}
 
 	return (
 		<>
-			<Stack.Title>Contacts</Stack.Title>
+			{/* Named as each campus's home tile names it. */}
+			<Stack.Title>{section.title}</Stack.Title>
 			<Host matchContents={false} style={styles.host}>
 				<List
 					modifiers={[
@@ -39,7 +65,43 @@ export default function ContactsPage(): React.ReactNode {
 					/>
 				</List>
 			</Host>
+			{section.directoryUrl ? <OpenDirectoryButton url={section.directoryUrl} /> : null}
 		</>
+	)
+}
+
+/** Where a search bar's edges sit in the bottom toolbar, from the screen's. */
+const TOOLBAR_MARGIN = 28
+
+/**
+ * The college's own directory, on the web, in the bottom toolbar where the
+ * Directory screen's search bar sits, and as wide.
+ */
+function OpenDirectoryButton({url}: {url: string}): React.ReactNode {
+	let {width} = useWindowDimensions()
+	return (
+		<Stack.Toolbar placement="bottom">
+			{/* The button draws its own glass, so the toolbar's capsule would wrap it in a second. */}
+			<Stack.Toolbar.View hidesSharedBackground={true}>
+				<Host matchContents={true}>
+					<Button
+						modifiers={[
+							buttonStyle('glass'),
+							controlSize('large'),
+							frame({width: width - 2 * TOOLBAR_MARGIN}),
+						]}
+						onPress={() => openUrl(url)}
+					>
+						{/* A glass button's capsule is as wide as its label, so the label fills the frame. */}
+						<Label
+							modifiers={[frame({maxWidth: FILL_WIDTH})]}
+							systemImage="arrow.up.right"
+							title="Open the Directory"
+						/>
+					</Button>
+				</Host>
+			</Stack.Toolbar.View>
+		</Stack.Toolbar>
 	)
 }
 
@@ -49,3 +111,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'contacts',
+	{title: 'Contacts', noun: 'important contacts', systemImage: 'phone'},
+	ContactsPage,
+)

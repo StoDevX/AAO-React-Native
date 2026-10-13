@@ -1,0 +1,31 @@
+[
+  {
+    "AssetStorageVersion": "Xcode 27.0 (27A266a) via AssetCatalogAgent-AssetRuntime",
+    "Platform": "ios"
+  },
+  {
+    "AssetType": "Icon Image",
+    "Name": "windmill",
+    "SizeOnDisk": 1042748
+  },
+  {
+    "AssetType": "Icon Image",
+    "Name": "windmill",
+    "SizeOnDisk": 1050179
+  },
+  {
+    "AssetType": "Color",
+    "Name": "old-main_Assets/Color-1",
+    "SizeOnDisk": 244
+  },
+  {
+    "AssetType": "Image",
+    "Name": "windmill_Assets/forest",
+    "SizeOnDisk": 240352
+  },
+  {
+    "AssetType": "PackedImage",
+    "Name": "ZZZZPackedAsset-3.0.1-gamut0",
+    "SizeOnDisk": 4059
+  }
+]

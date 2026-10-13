@@ -1,0 +1,145 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"data": {
+			"type": "object",
+			"properties": {
+				"carleton": {
+					"type": "object",
+					"properties": {
+						"groups": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"categories": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"gradient": {
+										"type": "string"
+									},
+									"icon": {
+										"type": "string"
+									},
+									"label": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"categories",
+									"gradient",
+									"icon",
+									"label"
+								]
+							}
+						},
+						"icons": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"categories": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"gradient": {
+										"type": "string"
+									},
+									"icon": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"categories",
+									"gradient",
+									"icon"
+								]
+							}
+						}
+					},
+					"required": [
+						"groups",
+						"icons"
+					]
+				},
+				"stolaf": {
+					"type": "object",
+					"properties": {
+						"groups": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"categories": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"gradient": {
+										"type": "string"
+									},
+									"icon": {
+										"type": "string"
+									},
+									"label": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"categories",
+									"gradient",
+									"icon",
+									"label"
+								]
+							}
+						},
+						"icons": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"categories": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"gradient": {
+										"type": "string"
+									},
+									"icon": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"categories",
+									"gradient",
+									"icon"
+								]
+							}
+						}
+					},
+					"required": [
+						"groups",
+						"icons"
+					]
+				}
+			},
+			"required": [
+				"carleton",
+				"stolaf"
+			]
+		}
+	},
+	"required": [
+		"data"
+	]
+}

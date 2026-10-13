@@ -28,3 +28,15 @@ test('code in a __fixtures__ folder is left alone', () => {
 		false,
 	)
 })
+
+// A campus keeps one recording per request in a folder of its own.
+test('a production bundle stubs a fixture in a folder inside __fixtures__', () => {
+	let path = '/repo/source/features/campus/__fixtures__/edu.stolaf/GET-contacts.json'
+	assert.equal(stubsFixture(path, {dev: false, keep: false}), true)
+})
+
+// Wiki Monkeys' fixtures are its server in every build, so a release bundle keeps them.
+test('a production bundle keeps a .yaml fixture', () => {
+	let path = '/repo/source/features/campus/__fixtures__/example.college/GET-dictionary.yaml'
+	assert.equal(stubsFixture(path, {dev: false, keep: false}), false)
+})

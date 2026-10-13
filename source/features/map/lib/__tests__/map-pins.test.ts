@@ -2,7 +2,15 @@ import {describe, expect, test} from '@jest/globals'
 
 import {makeBuilding} from '../../__tests__/fixtures'
 import type {Building, Feature} from '../../types'
-import {framingFor, pinBounds, pinCollection, pinIds, pressedPin} from '../map-pins'
+import {
+	framingFor,
+	onlyPin,
+	pinBounds,
+	pinCollection,
+	pinIds,
+	pressedPin,
+	type MapPins,
+} from '../map-pins'
 
 function at(id: string, lng: number, lat: number): Feature<Building> {
 	let place = makeBuilding({id, name: id})
@@ -109,5 +117,29 @@ describe('pinIds', () => {
 
 	test('skips a feature that names no place', () => {
 		expect(pinIds([point(1, 2, {}), point(3, 4, {buildingId: 'b', name: 'b'})])).toEqual(['b'])
+	})
+})
+
+describe('onlyPin', () => {
+	const pins: MapPins = {places: [at('a', 1, 2), at('b', 3, 4)], color: 'red', frameKey: 3}
+
+	test("keeps just the named place's pin, in the same color", () => {
+		let only = onlyPin(pins, 'b')
+		expect(only?.places.map((place) => place.id)).toEqual(['b'])
+		expect(only?.color).toBe('red')
+	})
+
+	// Narrowing is not a request to frame: the camera is already on the place.
+	test('keeps the frame key', () => {
+		expect(onlyPin(pins, 'b')?.frameKey).toBe(3)
+	})
+
+	test('leaves the pins alone for no place, or one they do not hold', () => {
+		expect(onlyPin(pins, null)).toBe(pins)
+		expect(onlyPin(pins, 'c')).toBe(pins)
+	})
+
+	test('nothing stays nothing', () => {
+		expect(onlyPin(null, 'a')).toBeNull()
 	})
 })

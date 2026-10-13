@@ -53,6 +53,25 @@ test("ignores the today's-hours list, which shares a class but is not a day-part
 	assert.ok(!rows.some((row) => row.daypart === ''))
 })
 
+test('ignores dated special hours before and after the weekly list', () => {
+	let weekly = fixture('stav-hall')
+	let special =
+		"<div class='cafe-hours-special'><p class='current-status'>SPECIAL HOURS</p>" +
+		"<ul class='list-unstyled'><li class='day-part dotted-leader-container'>" +
+		"<span class='dotted-leader-content pull-left'>Dinner&nbsp;</span>" +
+		"<span class='dotted-leader-content pull-right'>&nbsp;October 9, 4:30 pm - 6:00 pm</span></li>" +
+		"<li class='day-part'><span style='text-transform: none;'>Have a well-deserved break!</span></li></ul></div>"
+	assert.deepEqual(parseWeeklySchedule(special + weekly + special), parseWeeklySchedule(weekly))
+})
+
+test('rejects dated rows inside the weekly list rather than silently skipping them', () => {
+	let html =
+		"<p>Weekly Schedule</p><ul><li class='day-part'>" +
+		"<span class='pull-left'>Dinner</span>" +
+		"<span class='pull-right'>October 9, 4:30 pm - 6:00 pm</span></li></ul>"
+	assert.throws(() => parseWeeklySchedule(html), /unknown day "October 9"/u)
+})
+
 test('expands a Mon-Sun range across the whole week', () => {
 	let rows = parseWeeklySchedule(fixture('the-cave'))
 	assert.deepEqual(rows, [
@@ -98,8 +117,8 @@ test('throws when the heading is present but no rows parse', () => {
 test('throws on a time the data schema would reject', () => {
 	let html =
 		"<p class='current-status'>Weekly Schedule</p>" +
-		"<li class='day-part'><span class='pull-left'>Lunch</span>" +
-		"<span class='pull-right'>Mon, 25:99 xm - 1:30 pm</span></li>"
+		"<ul><li class='day-part'><span class='pull-left'>Lunch</span>" +
+		"<span class='pull-right'>Mon, 25:99 xm - 1:30 pm</span></li></ul>"
 	assert.throws(() => parseWeeklySchedule(html), /25:99 xm/u)
 })
 
@@ -195,11 +214,52 @@ test('replaces the schedule block and nothing else', () => {
 	assert.ok(!out.includes('7:30am'))
 })
 
-test('throws when the file has no breakSchedule anchor', () => {
-	assert.throws(
-		() => spliceSchedule('\nschedule:\n  - title: X\n', 'schedule:\n'),
-		/breakSchedule/u,
-	)
+for (let [position, prefix] of [
+	['at file start', ''],
+	['after metadata', '# Venue\nname: The Cage\n\n'],
+]) {
+	for (let [ending, suffix] of [
+		['at EOF', ''],
+		['before another field', 'exceptions: []\n'],
+		['before comments and another field', '# Date replacements\n\nexceptions: []\n'],
+		['before trailing comments', '# Hand maintained'],
+	]) {
+		test(`adds missing breakSchedule with a schedule ${position} ${ending}`, () => {
+			let original = 'schedule:\n  - title: Hours\n    hours: []\n\n'
+			let block = composeSchedule(parseWeeklySchedule(fixture('the-cage')), CAGE)
+			let text = prefix + original + suffix
+			assert.equal(extractSchedule(text), original)
+			let updated = spliceSchedule(text, block)
+			let separator = suffix && !suffix.endsWith('\n') ? '\n' : ''
+			assert.equal(updated, prefix + block + suffix + separator + 'breakSchedule: {}\n')
+			assert.equal(extractSchedule(updated), block)
+			assert.equal(spliceSchedule(updated, block), updated)
+		})
+	}
+}
+
+test('replaces a schedule ending at EOF without a final newline', () => {
+	let text = 'name: The Cage\nschedule:\n  - title: Hours\n    hours: []'
+	let block = 'schedule:\n  - title: New\n    hours: []\n\n'
+	assert.equal(extractSchedule(text), text.slice(text.indexOf('schedule:')))
+	assert.equal(spliceSchedule(text, block), 'name: The Cage\n' + block + 'breakSchedule: {}\n')
+})
+
+test('keeps comments within the schedule and before existing break overrides', () => {
+	let block =
+		'schedule:\n  # Hours\n  - title: Hours\n    hours: []\n# Second service\n  - title: Lunch\n    hours: []\n\n'
+	let suffix =
+		'# Verified overrides\nbreakSchedule:\n  fall:\n    - title: Closed\n      hours: []\n'
+	let replacement = 'schedule:\n  - title: New\n    hours: []\n\n'
+	assert.equal(extractSchedule(block + suffix), block)
+	assert.equal(spliceSchedule(block + suffix, replacement), replacement + suffix)
+})
+
+test('preserves break overrides before the normal schedule', () => {
+	let prefix = 'breakSchedule:\n  fall: []\n\n'
+	let original = 'schedule:\n  - title: Hours\n    hours: []\n'
+	let replacement = 'schedule:\n  - title: New\n    hours: []\n'
+	assert.equal(spliceSchedule(prefix + original, replacement), prefix + replacement)
 })
 
 test('throws when the file has no schedule anchor', () => {
@@ -224,3 +284,16 @@ test('what splice writes is what extract reads back', () => {
 	let block = composeSchedule(parseWeeklySchedule(fixture('the-cage')), CAGE)
 	assert.equal(extractSchedule(spliceSchedule(FILE, block)), block)
 })
+
+for (let anchor of ['breakSchedule: {}\n', 'breakSchedule: {}', 'breakSchedule: {}  \n']) {
+	test(`extracts and splices with an empty breakSchedule mapping: ${JSON.stringify(anchor)}`, () => {
+		let prefix = FILE.slice(0, FILE.indexOf('schedule:'))
+		let original = extractSchedule(FILE)
+		let text = prefix + original + anchor
+		let block = composeSchedule(parseWeeklySchedule(fixture('the-cage')), CAGE)
+		assert.equal(extractSchedule(text), original)
+		assert.equal(spliceSchedule(text, original), text)
+		assert.equal(spliceSchedule(text, block), prefix + block + anchor)
+		assert.equal(extractSchedule(spliceSchedule(text, block)), block)
+	})
+}

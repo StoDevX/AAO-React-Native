@@ -26,6 +26,16 @@ describe('jobRowDetail', () => {
 		).toBe('$13.50/hr · Posted Aug 8, 2026')
 	})
 
+	test('leaves the wage off until the wages load', () => {
+		expect(
+			jobRowDetail(
+				{title: 'AY Stav Student Server (WS-NST1)', postedDate: '2026-08-08'},
+				undefined,
+				'en-US',
+			),
+		).toBe('Posted Aug 8, 2026')
+	})
+
 	test('shows only the posted date when the title has no pay code', () => {
 		expect(
 			jobRowDetail(

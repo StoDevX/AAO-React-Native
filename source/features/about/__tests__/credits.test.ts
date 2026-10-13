@@ -1,5 +1,4 @@
-import {acknowledgements, contributors, creditRows, inTwoColumns} from '../credits'
-import {timeline} from '../timeline'
+import {creditRows, inTwoColumns} from '../credits'
 
 describe('inTwoColumns', () => {
 	it('reads down the left column, then down the right', () => {
@@ -25,30 +24,5 @@ describe('creditRows', () => {
 
 	it('gives each name its own row at the accessibility sizes', () => {
 		expect(creditRows(['A', 'B'], 1.65)).toEqual([['A'], ['B']])
-	})
-})
-
-describe('credits', () => {
-	it('names nobody twice', () => {
-		let names = [...contributors, ...acknowledgements]
-		expect(new Set(names).size).toBe(names.length)
-	})
-
-	it('keeps each list in alphabetical order', () => {
-		expect(contributors).toEqual([...contributors].sort())
-		expect(acknowledgements).toEqual([...acknowledgements].sort())
-	})
-})
-
-describe('timeline', () => {
-	it('starts with the current version of the app', () => {
-		expect(timeline[0]?.period).toMatch(/Today/u)
-	})
-
-	it('gives every era a heading and a story', () => {
-		for (let era of timeline) {
-			expect(era.period).not.toBe('')
-			expect(era.story).not.toBe('')
-		}
 	})
 })

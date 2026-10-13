@@ -1,0 +1,93 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/contacts
+json:
+  data:
+    - buttonText: Call Ski Patrol
+      category: Safety
+      gradient: red
+      icon: shield.lefthalf.filled
+      phoneNumber: '5555550110'
+      synopsis: Ski Patrol answers around the clock, on the slopes and off them.
+      text: '**Ski Patrol answers around the clock, on the slopes and off them.**'
+      title: Ski Patrol
+    - buttonText: Call Mountain Rescue
+      category: Safety
+      gradient: purple
+      icon: light.beacon.max.fill
+      phoneNumber: '5555550111'
+      synopsis: For anyone lost above the treeline.
+      text: '**For anyone lost above the treeline.**'
+      title: Mountain Rescue
+    - buttonText: Call College Administration
+      category: Safety
+      gradient: indigo
+      icon: building.columns.fill
+      phoneNumber: '5555550112'
+      synopsis: Reports of harassment and discrimination.
+      text: '**Reports of harassment and discrimination.**'
+      title: Title IX Office
+    - buttonText: Call 24-Hour Hotline
+      category: Safety
+      gradient: violet
+      icon: hand.raised.fill
+      phoneNumber: '5555550113'
+      synopsis: Confidential support, any hour.
+      text: '**Confidential support, any hour.**'
+      title: Summit Center
+    - buttonText: Open Anonymous Report Form
+      category: Safety
+      gradient: tan
+      icon: eye.slash.fill
+      synopsis: Tell the college something without giving your name.
+      text: '**Tell the college something without giving your name.**'
+      title: Anonymous Reports
+      buttonLink: https://college.example/report
+    - buttonText: Call Valley Listeners
+      category: Wellness
+      gradient: pink
+      icon: heart.circle.fill
+      phoneNumber: '5555550115'
+      synopsis: Students trained to listen.
+      text: '**Students trained to listen.**'
+      title: Valley Listeners
+    - buttonText: Contact Chalet Counseling
+      category: Wellness
+      gradient: green
+      icon: brain.head.profile
+      phoneNumber: '5555550116'
+      synopsis: Counseling for every monkey.
+      text: '**Counseling for every monkey.**'
+      title: Chalet Counseling
+    - buttonText: Call Chaplains' Office
+      category: Wellness
+      gradient: gold
+      icon: tree.fill
+      phoneNumber: '5555550117'
+      synopsis: Chaplains of every tradition.
+      text: '**Chaplains of every tradition.**'
+      title: Valley Chaplains
+    - buttonText: Call The Monkey's Pause
+      category: Food
+      gradient: orange
+      icon: fork.knife
+      phoneNumber: '5555550118'
+      synopsis: Late-night pizza, delivered across the valley.
+      text: '**Late-night pizza, delivered across the valley.**'
+      title: The Monkey's Pause Kitchen
+    - buttonText: Call Health Services
+      category: Health
+      gradient: blue
+      icon: cross.case.fill
+      phoneNumber: '5555550119'
+      synopsis: Nurses and doctors, weekdays.
+      text: '**Nurses and doctors, weekdays.**'
+      title: Health Services
+    - buttonText: Learn About Telehealth
+      category: Health
+      gradient: light-blue
+      icon: stethoscope
+      synopsis: Care by video, day or night.
+      text: '**Care by video, day or night.**'
+      title: Telehealth
+      buttonLink: https://college.example/telehealth

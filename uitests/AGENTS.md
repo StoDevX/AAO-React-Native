@@ -28,12 +28,15 @@ bundle. To drive the app by hand instead of asserting on it, see
 as a chain of named steps, with no `app.buttons[...]` in it:
 
 ```swift
-func testSearchResultsOpenAsTiles() throws {
-    DirectoryScreen(app: app)
+func testACategoryNarrowsTheListAndResetBringsItBack() throws {
+    CalendarScreen(app: app)
         .navigate()
-        .search(for: "olaf")
-        .verifyResultsGalleried()
-        .capture("Directory search results as a tile gallery")
+        .verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
+        .openPicker()
+        .openSubmenu(TestIdentifiers.Calendar.categoryMenu)
+        .tapMenuItem(TestIdentifiers.Calendar.categories[0])
+        .dismissMenu()
+        .verifyRowAbsent(TestIdentifiers.Calendar.unfilteredDayRow)
 }
 ```
 
@@ -60,37 +63,61 @@ button carries no identifier and, on iOS 26, the label `Close` — which the
 building card's own dismiss button also has — so query it inside the bar rather
 than across the whole screen.
 
+**Wait with `waitUntilExists`, `waitUntilGone` or `waitUntil`,** from
+`XCUITestHelpers.swift`, not XCTest's `waitForExistence`, `waitForNonExistence`
+or `XCTWaiter`. XCTest's waits check about once a second, so even an element
+already there costs a second; ours check at once, then back off from 0.2s to
+1s. A check that needs a pause between reads, like a frame holding still, is
+the exception.
+
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized
 in between lands natively and does nothing. Waiting longer never fixes a tap
-that was dropped, so tap again.
+that was dropped, so tap again: `tap(_:until:named:)` in `Screen.swift` taps
+until a marker appears — the next screen, or the control's new label — and
+retries only while the element can still be hit. A native menu item's tap is
+UIKit's to deliver, so it needs no retry.
 
 **A screen's `navigate()` opens its route by URL,** through
 `open(route:mountedWhen:)`, and waits for the screen's `mounted` element --
 something only that screen draws. The wait is not optional: a relaunched app
 has no home screen while it is still blank, so "Home has gone" is true before
-anything has mounted. `XCUIApplication.open(_:)` relaunches an already running
-app, so a URL always takes the cold-launch path. To relaunch mid-test
+anything has mounted. When the app is already running with the same launch
+arguments, `open` resets it in place instead -- it unmounts every screen,
+clears AsyncStorage, the database and UserDefaults, and reloads its JavaScript
+at the route (`ResetChannel` in `UITestCase.swift`). Otherwise
+`XCUIApplication.open(_:)` relaunches it. To relaunch mid-test
 with state kept, call `keepStateForNextLaunch(adding:)` and then `navigate()`;
 set launch arguments on `app` before the first `navigate()` for anything the
-first launch needs, such as a text size.
+first launch needs, such as a text size. Either changes the arguments, so the
+app is relaunched.
 
-**The home tiles are tapped by one test,**
-`testEveryTileOpensItsScreen` in `ModuleHomeTests`, which checks each tile against its screen's
-`mounted` element. A new tile goes in its list.
+**No test taps Home's tiles or its ⋯ menu.** Each screen's own tests open it by
+URL, and a tap that only shows a screen opened earns no slot (see below).
 
 **Assert the precondition before the action.** Read a field's text back after
 typing it; confirm a row exists before tapping. A test that silently did nothing
 otherwise passes exactly like one that worked.
+
+**A test gets two minutes.** CI stops a test that runs longer and fails it,
+with a spindump attached; it is not retried, so a stall fails the shard. A test
+that needs longer is two tests, or is waiting
+on something it should not: a launch it could skip with a deep link, or
+SpringBoard while the app sits in the background. One that genuinely needs
+more sets `executionTimeAllowance` in its `setUp`, with a comment saying why;
+the limit is xcodebuild's default, which a test's own allowance overrides.
+XCTest rounds either up to whole minutes, so 90 seconds is two minutes.
 
 ## What earns a slot
 
 Every test cold-launches the app. On CI, launching and tapping through the
 home screen took a median 23 seconds before the screen under test was up —
 **roughly 1% of a 45-minute shard**. Opening the route by URL skips the home
-screen's share of that. Three shards is
-a ceiling, not a preference: this is a public repo on a free org plan, so
-GitHub allows 5 concurrent macOS jobs and a merge group already needs 4. The
+screen's share of that. The suite runs in two shards, and that is a
+ceiling, not a preference: this is a public repo on a free org plan, so
+GitHub allows 5 concurrent macOS jobs, and every shard of every run is one of
+them. Once the simulator stopped running services the app never uses, two
+shards took as long as three, 23 minutes, for 13% fewer runner-minutes. The
 only lever on the suite's wall-clock is how many tests are in it.
 
 So:
@@ -106,10 +133,10 @@ Four disqualifiers, each of which has removed a test here:
    appearance to dark, the app did not follow, and its assertions passed either
    way — it photographed a light screen, called it dark, and could not fail at
    the one thing it was for.
-2. **Reachability is already asserted elsewhere.**
-   `testEveryTileOpensItsScreen` taps every tile, and `navigate()` asserts its
-   screen mounted. A capture-only test is therefore a second copy of both at
-   the price of a full cold launch.
+2. **Reachability is already asserted elsewhere.** A screen's `navigate()`
+   asserts it mounted, so a test that only opens a screen, or only captures
+   it, repeats that at the price of a launch. That is why no test taps Home's
+   tiles or its ⋯ menu any more.
 3. **The defect would be in iOS or a library, not in us.**
    `testAddToCalendarSurvivesReopeningTheSheet` asserted that
    react-native-screens reuses a navigation controller, which is not ours to
@@ -128,6 +155,43 @@ it.
 A reachability test is still worth keeping when it is a class's *only* test —
 "the screen crashes on mount" is a real defect and nothing else catches it.
 
+## Campus tests
+
+Every test names a campus. The deep tests, every `Module*Tests` class, run on
+The College of the Norway Valley Wiki Monkeys (`example.college`), the default
+`campus` in `UITestCase.swift`: a made-up campus with no server, whose every
+request is answered from the hand-written `.yaml` fixtures in
+`source/features/campus/__fixtures__/example.college/`, in any mode, so it has
+nothing to record. A class on it carries `/// Tags: campus:example.college`. No
+feature has a test-only data branch; a test reads what the app reads.
+
+A new request on Wiki Monkeys is a new `.yaml` (start one from
+`mise run fixture-to-yaml`), an endpoint pattern in
+`source/features/campus/fixture-endpoints.ts`, and `mise run
+update-fixture-schemas`; `fixture-schemas.test.ts` checks every fixture against
+its endpoint's schema.
+
+St. Olaf and Carleton have only their smoke tests. `CampusSmokeTests.swift`
+holds one template, `CampusSmokeTests`, and a subclass per campus that sets
+`campus` and `expected` and carries a `/// Tags: campus:<id>` marker. XCTest
+runs the template's tests in each subclass; the template's own
+`defaultTestSuite` is empty, and `scripts/split-uitests.mjs` never schedules a
+class other test classes inherit from. A new campus is one subclass plus its
+recording, re-recorded with `mise run update-campus-fixtures <id>`. `--campus`
+is the one launch argument an in-place reset may change, so campus tests
+interleave with the rest in the same shards without relaunching.
+
+Missing fixtures are strict. A request no fixture answers is listed in
+`missing-fixtures.jsonl` in the reset channel's directory, and `UITestCase`
+fails the test with "Missing fixtures for <campus>: <keys>", even a test that
+otherwise passed (`MissingFixtureReportTests` pins this). Write the named
+fixture, or re-record the campus, rather than loosening the check.
+
+A check on a value from a recording goes through `verifyRecorded`. On replay a
+missing value fails. While recording it skips instead, naming the value: live
+data moves, and the calendar's dates move onto the frozen day only after the
+run. The recorder writes nothing if a test fails, but a skip does not stop it.
+
 ## Two things that will catch you out
 
 **A new `.swift` file needs `mise run prebuild`.**
@@ -135,8 +199,9 @@ A reachability test is still worth keeping when it is a class's *only* test —
 writes one `PBXFileReference` per file, so a file added afterwards is invisible
 to the build and nothing warns you. Editing an existing file is fine.
 
-**Every test cold-launches the app** with `--uitesting` and `--reset-state`, so
-UserDefaults and AsyncStorage start empty each time. Anything a test needs
+**Every test starts from a cleared app**: cold-launched with `--uitesting` and
+`--reset-state`, or reset in place to the same effect, so UserDefaults,
+AsyncStorage and the database start empty each time. Anything a test needs
 turned on — dev mode, a persisted setting — it has to turn on itself.
 
 ## Checking VoiceOver

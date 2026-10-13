@@ -8,6 +8,8 @@ import {keys} from '../../building-hours/query'
 import {keys as mapKeys} from '../query'
 import {directoryKeys} from '../card-queries'
 import type {BuildingType} from '../../building-hours/types'
+import * as campuses from '../../../campuses'
+import {stolaf} from '../../../campuses/edu-stolaf'
 import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
 import {loadBeforeTests} from '../../../testing/load-before-tests'
@@ -30,7 +32,10 @@ beforeEach(() => {
 
 /// The Hours each campus's cache holds while a card renders; a test sets it
 /// before rendering.
-let mockVenues: Record<'stolaf' | 'carleton', BuildingType[]> = {stolaf: [], carleton: []}
+let mockVenues: Record<'edu.stolaf' | 'edu.carleton', BuildingType[]> = {
+	'edu.stolaf': [],
+	'edu.carleton': [],
+}
 
 // Cleared after each test, or its gc timers keep the Jest worker alive.
 const trackedQueryClients: QueryClient[] = []
@@ -42,7 +47,7 @@ afterEach(() => {
 		queryClient.clear()
 	}
 	trackedQueryClients.length = 0
-	mockVenues = {stolaf: [], carleton: []}
+	mockVenues = {'edu.stolaf': [], 'edu.carleton': []}
 })
 
 /// Renders a card over a cache seeded with `mockVenues`. Seeding rather than
@@ -51,11 +56,11 @@ afterEach(() => {
 function renderCard(ui: React.ReactElement) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
 	trackedQueryClients.push(client)
-	client.setQueryData(keys.all('stolaf'), mockVenues.stolaf)
-	client.setQueryData(keys.all('carleton'), mockVenues.carleton)
-	client.setQueryData(mapKeys.all('stolaf'), [])
-	client.setQueryData(directoryKeys.all('stolaf'), [])
-	client.setQueryData(mapKeys.all('carleton'), [])
+	client.setQueryData(keys.all('edu.stolaf'), mockVenues['edu.stolaf'])
+	client.setQueryData(keys.all('edu.carleton'), mockVenues['edu.carleton'])
+	client.setQueryData(mapKeys.all('edu.stolaf'), [])
+	client.setQueryData(directoryKeys.all('edu.stolaf'), [])
+	client.setQueryData(mapKeys.all('edu.carleton'), [])
 	return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
 }
 
@@ -66,7 +71,7 @@ describe('BuildingInfo', () => {
 	it('opens an address through Linking, not the in-app browser', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'a',
 					name: 'Alpha Hall',
@@ -85,7 +90,7 @@ describe('BuildingInfo', () => {
 	it('ends cited About text with its sources', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'pond-bigpond',
 					name: 'Big Pond',
@@ -103,7 +108,7 @@ describe('BuildingInfo', () => {
 	it('cites nothing without About text, or without citations', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'pond-x',
 					name: 'Pond',
@@ -118,7 +123,7 @@ describe('BuildingInfo', () => {
 
 		await renderCard(
 			<BuildingInfo
-				campus="carleton"
+				campus="edu.carleton"
 				building={makeBuilding({id: 'hall', name: 'Hall', description: 'A hall.'})}
 				onClose={jest.fn()}
 				stop="medium"
@@ -130,7 +135,7 @@ describe('BuildingInfo', () => {
 	it('shows the address under Details', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'a', name: 'Alpha Hall', address: '1520 St Olaf Ave'})}
 				onClose={jest.fn()}
 				stop="medium"
@@ -143,7 +148,7 @@ describe('BuildingInfo', () => {
 	it('opens a parsed department link from its tile', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'a',
 					name: 'Alpha Hall',
@@ -162,7 +167,7 @@ describe('BuildingInfo', () => {
 	it('renders St. Olaf-only links', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'a',
 					name: 'Alpha Hall',
@@ -180,7 +185,7 @@ describe('BuildingInfo', () => {
 
 	it('renders a not-found state when the building is missing', async () => {
 		await renderCard(
-			<BuildingInfo campus="stolaf" building={undefined} onClose={jest.fn()} stop="medium" />,
+			<BuildingInfo campus="edu.stolaf" building={undefined} onClose={jest.fn()} stop="medium" />,
 		)
 
 		expect(screen.getByText(/not found/iu)).toBeTruthy()
@@ -192,7 +197,7 @@ describe('BuildingInfo header', () => {
 		let onClose = jest.fn()
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
 				onClose={onClose}
 				stop="collapsed"
@@ -209,7 +214,7 @@ describe('BuildingInfo at large', () => {
 	it('shows the name as the big title, with no header title', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'a', name: 'Regents Hall', type: 'Administrative & Academic'})}
 				onClose={jest.fn()}
 				stop="large"
@@ -228,14 +233,14 @@ describe('BuildingInfo at large', () => {
 		async (type) => {
 			await renderCard(
 				<BuildingInfo
-					campus="stolaf"
-					building={makeBuilding({id: 'a', name: 'Sayles-Hill Campus Center', type})}
+					campus="edu.stolaf"
+					building={makeBuilding({id: 'a', name: 'Sayles-Hill CampusId Center', type})}
 					onClose={jest.fn()}
 					stop="large"
 				/>,
 			)
 
-			expect(screen.getByText('Sayles-Hill Campus Center')).toBeTruthy()
+			expect(screen.getByText('Sayles-Hill CampusId Center')).toBeTruthy()
 			expect(screen.queryByTestId('card-big-subtitle')).toBeNull()
 		},
 	)
@@ -244,7 +249,7 @@ describe('BuildingInfo at large', () => {
 		let onClose = jest.fn()
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
 				onClose={onClose}
 				stop="large"
@@ -270,7 +275,7 @@ describe('BuildingInfo sections', () => {
 	it('lays out every section in Maps order', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'a',
 					name: 'Alpha Hall',
@@ -302,7 +307,7 @@ describe('BuildingInfo sections', () => {
 	it('copes with a description and nickname the feed left out', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'a',
 					name: 'Lot Q',
@@ -320,7 +325,7 @@ describe('BuildingInfo sections', () => {
 	it('leaves out every section with nothing to show', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'a', name: 'Lot Q'})}
 				onClose={jest.fn()}
 				stop="medium"
@@ -333,7 +338,7 @@ describe('BuildingInfo sections', () => {
 	it('names the abbreviation in Good to Know, once when the nickname matches it', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'a',
 					name: 'Regents Hall',
@@ -354,7 +359,7 @@ describe('BuildingInfo sections', () => {
 		let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({
 					id: 'a',
 					name: 'Tomson Hall',
@@ -375,7 +380,7 @@ describe('BuildingInfo sections', () => {
 		let offices = Array.from({length: 7}, (_, i) => `Office ${i} <https://example.com/o${i}>`)
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'a', name: 'Tomson Hall', departments, offices})}
 				onClose={jest.fn()}
 				stop="medium"
@@ -399,7 +404,7 @@ describe('BuildingInfo sections', () => {
 		let building = makeBuilding({id: 'a', name: 'Alpha Hall'})
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={{
 					...building,
 					geometry: {
@@ -420,7 +425,7 @@ describe('BuildingInfo sections', () => {
 	it('hands About its text without trailing blank lines', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'a', name: 'Alpha Hall', description: 'A hall.\n\n'})}
 				onClose={jest.fn()}
 				stop="medium"
@@ -430,10 +435,11 @@ describe('BuildingInfo sections', () => {
 		expect(screen.getByText('A hall.', {normalizer: (text) => text})).toBeTruthy()
 	})
 
+	// Carleton's map names a photo host; St. Olaf's has none.
 	it('shows a photo tile for a building with a photo', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.carleton"
 				building={makeBuilding({id: 'a', name: 'Alpha Hall', photos: ['alpha.jpg']})}
 				onClose={jest.fn()}
 				stop="medium"
@@ -464,8 +470,15 @@ function venue(
 }
 
 describe('BuildingInfo hours', () => {
+	// No campus has both venues by building and a photo host yet, so St. Olaf
+	// is given one here.
 	it("shows a building's own hours between its photo and About", async () => {
-		mockVenues.stolaf = [venue('Holland Hall', 'hh', 'building')]
+		let realCampusById = campuses.campusById
+		let withPhotos = {...stolaf, map: {...stolaf.map, photoRoot: 'https://photos.example.test'}}
+		let spy = jest
+			.spyOn(campuses, 'campusById')
+			.mockImplementation((id) => (id === 'edu.stolaf' ? withPhotos : realCampusById(id)))
+		mockVenues['edu.stolaf'] = [venue('Holland Hall', 'hh', 'building')]
 		await renderCard(
 			<BuildingInfo
 				building={makeBuilding({
@@ -474,7 +487,7 @@ describe('BuildingInfo hours', () => {
 					description: 'A hall.',
 					photos: ['hh.jpg'],
 				})}
-				campus="stolaf"
+				campus="edu.stolaf"
 				onClose={jest.fn()}
 				stop="medium"
 			/>,
@@ -484,13 +497,14 @@ describe('BuildingInfo hours', () => {
 		let photo = tree.indexOf('Photo of Holland Hall')
 		let hours = tree.indexOf('"Hours"')
 		let about = tree.indexOf('"About"')
+		spy.mockRestore()
 		expect(photo).toBeGreaterThan(-1)
 		expect(hours).toBeGreaterThan(photo)
 		expect(about).toBeGreaterThan(hours)
 	})
 
 	it('shows no Hours for a point with several venues', async () => {
-		mockVenues.stolaf = [
+		mockVenues['edu.stolaf'] = [
 			venue('The Pause Kitchen', 'thelionspause', 'space'),
 			venue("Lion's Pause Pizza Delivery", 'thelionspause', 'space'),
 			venue('C-Store', 'thelionspause', 'space'),
@@ -498,7 +512,7 @@ describe('BuildingInfo hours', () => {
 		await renderCard(
 			<BuildingInfo
 				building={makeBuilding({id: 'thelionspause', name: "The Lion's Pause", parent: 'bc'})}
-				campus="stolaf"
+				campus="edu.stolaf"
 				onClose={jest.fn()}
 				stop="medium"
 			/>,
@@ -516,7 +530,7 @@ describe('BuildingInfo hours', () => {
 			<QueryClientProvider client={client}>
 				<BuildingInfo
 					building={makeBuilding({id: 'sayles', name: 'Sayles-Hill'})}
-					campus="carleton"
+					campus="edu.carleton"
 					onClose={jest.fn()}
 					stop="medium"
 				/>
@@ -524,17 +538,17 @@ describe('BuildingInfo hours', () => {
 		)
 
 		// Idle and still pending: it neither ran nor is running.
-		let state = client.getQueryState(keys.all('carleton'))
+		let state = client.getQueryState(keys.all('edu.carleton'))
 		expect(state?.fetchStatus).toBe('idle')
 		expect(state?.status).toBe('pending')
 	})
 
 	it('shows no Hours on a Carleton card, whose venues carry no building', async () => {
-		mockVenues.carleton = [venue('Sayles-Hill', undefined, 'building')]
+		mockVenues['edu.carleton'] = [venue('Sayles-Hill', undefined, 'building')]
 		await renderCard(
 			<BuildingInfo
 				building={makeBuilding({id: 'sayles', name: 'Sayles-Hill'})}
-				campus="carleton"
+				campus="edu.carleton"
 				onClose={jest.fn()}
 				stop="medium"
 			/>,
@@ -548,7 +562,7 @@ describe('BuildingInfo places', () => {
 	// St. Olaf's feed files offices under departments, so the Registrar's link
 	// is a department; its Hours venue is an office. They are one place.
 	it('shows a linked office once, where its link is, opening its card', async () => {
-		mockVenues.stolaf = [
+		mockVenues['edu.stolaf'] = [
 			venue('Tomson Hall', 'toh', 'building'),
 			venue('Registrar', 'toh', 'office'),
 			venue('Writing Desk', 'toh', 'office'),
@@ -561,7 +575,7 @@ describe('BuildingInfo places', () => {
 					name: 'Tomson Hall',
 					departments: ['Registrar <https://wp.stolaf.edu/registrar>'],
 				})}
-				campus="stolaf"
+				campus="edu.stolaf"
 				onClose={jest.fn()}
 				onOpen={onOpen}
 				stop="medium"
@@ -587,16 +601,16 @@ describe('BuildingInfo while the Hours feed loads', () => {
 	it('keeps the Departments grid open as the Hours feed arrives', async () => {
 		let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
 		trackedQueryClients.push(client)
-		client.setQueryData(mapKeys.all('stolaf'), [])
-		client.setQueryData(directoryKeys.all('stolaf'), [])
+		client.setQueryData(mapKeys.all('edu.stolaf'), [])
+		client.setQueryData(directoryKeys.all('edu.stolaf'), [])
 		// Empty for now, as a feed still on its way is.
-		client.setQueryData(keys.all('stolaf'), [])
+		client.setQueryData(keys.all('edu.stolaf'), [])
 		let departments = Array.from({length: 8}, (_, i) => `Dept ${i} <https://example.com/${i}>`)
 		await render(
 			<QueryClientProvider client={client}>
 				<BuildingInfo
 					building={makeBuilding({id: 'toh', name: 'Tomson Hall', departments})}
-					campus="stolaf"
+					campus="edu.stolaf"
 					onClose={jest.fn()}
 					onOpen={jest.fn()}
 					stop="medium"
@@ -610,7 +624,7 @@ describe('BuildingInfo while the Hours feed loads', () => {
 		// The cache tells its observers on the next tick, so the arrival is
 		// awaited past it.
 		await act(async () => {
-			client.setQueryData(keys.all('stolaf'), [venue('Dept 0', 'toh', 'office')])
+			client.setQueryData(keys.all('edu.stolaf'), [venue('Dept 0', 'toh', 'office')])
 			await new Promise((resolve) => setTimeout(resolve, 0))
 		})
 		// The venue has merged with its department: the tile now opens it.
@@ -623,7 +637,7 @@ describe('BuildingInfo with nothing to say', () => {
 	it('says there are no details for a place with only a name', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'swing-set', name: 'Swing Set'})}
 				onClose={jest.fn()}
 				onOpen={jest.fn()}
@@ -637,7 +651,7 @@ describe('BuildingInfo with nothing to say', () => {
 	it('says nothing of the kind once a place has a section to show', async () => {
 		await renderCard(
 			<BuildingInfo
-				campus="stolaf"
+				campus="edu.stolaf"
 				building={makeBuilding({id: 'swing-set', name: 'Swing Set', description: 'Two swings.'})}
 				onClose={jest.fn()}
 				onOpen={jest.fn()}
@@ -653,15 +667,15 @@ describe('BuildingInfo with nothing to say', () => {
 	it('waits for the Hours feed before saying so', async () => {
 		let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
 		trackedQueryClients.push(client)
-		client.setQueryData(mapKeys.all('stolaf'), [])
-		client.setQueryData(directoryKeys.all('stolaf'), [])
+		client.setQueryData(mapKeys.all('edu.stolaf'), [])
+		client.setQueryData(directoryKeys.all('edu.stolaf'), [])
 		// The Hours feed is held in flight until the test answers it, so the card
 		// mounts while it loads. Left to the card, the fetch would answer at once
 		// from the bundled copy, as it does under UI testing, and whether the card
 		// heard of it before the first assertion would come down to timing.
 		let answerHours: (venues: BuildingType[]) => void = () => undefined
 		let hoursArrival = client.query({
-			queryKey: keys.all('stolaf'),
+			queryKey: keys.all('edu.stolaf'),
 			queryFn: () =>
 				new Promise<BuildingType[]>((resolve) => {
 					answerHours = resolve
@@ -671,7 +685,7 @@ describe('BuildingInfo with nothing to say', () => {
 			<QueryClientProvider client={client}>
 				<BuildingInfo
 					building={makeBuilding({id: 'swing-set', name: 'Swing Set'})}
-					campus="stolaf"
+					campus="edu.stolaf"
 					onClose={jest.fn()}
 					onOpen={jest.fn()}
 					stop="medium"

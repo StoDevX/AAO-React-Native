@@ -18,9 +18,9 @@ function testCase(name, result, durationInSeconds) {
 function tree(...cases) {
 	return [
 		{
-			name: 'AllAboutOlaf',
+			name: 'AllAboutAnything',
 			nodeType: 'Test Plan',
-			children: [{name: 'AllAboutOlafUITests', nodeType: 'Test Suite', children: cases}],
+			children: [{name: 'AllAboutAnythingUITests', nodeType: 'Test Suite', children: cases}],
 		},
 	]
 }
@@ -47,6 +47,17 @@ describe('collectDurations', () => {
 
 	it('ignores a passing test with no duration recorded', () => {
 		assert.deepEqual(collectDurations(tree(testCase('testOne', 'Passed', 0))), {})
+	})
+
+	it("takes a retried test's passing attempt, not the mean Xcode reports over its attempts", () => {
+		let retried = {
+			...testCase('testOne', 'Passed', 143.08),
+			children: [
+				{nodeType: 'Repetition', name: 'First Run', result: 'Failed', durationInSeconds: 236.59},
+				{nodeType: 'Repetition', name: 'Retry 1', result: 'Passed', durationInSeconds: 49.57},
+			],
+		}
+		assert.deepEqual(collectDurations(tree(retried)), {'SomeTests/testOne()': 49.57})
 	})
 
 	it('returns an empty table for an empty tree', () => {

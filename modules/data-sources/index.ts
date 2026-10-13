@@ -1,6 +1,15 @@
 export {fetchSourceBody, isAbsoluteHref, SourceFetchError} from './fetch-source'
-export {fetchManifest, manifestOptions, resolveSource, resolveSources} from './resolve'
 export {
+	fetchManifest,
+	hasBundledSource,
+	manifestOptions,
+	resolveSource,
+	resolveSources,
+} from './resolve'
+export {setManifestServer} from './manifest-server'
+export {useManifest} from './use-manifest'
+export {
+	CAMPUS_PROPERTY,
 	ID_PROPERTY,
 	JrdSchema,
 	REL_A_TO_Z,
@@ -11,9 +20,13 @@ export {
 	REL_MAP_STYLE,
 	REL_NEWS,
 	REL_ORG_CATEGORIES,
+	REL_RADIO_NOW_PLAYING,
+	REL_RADIO_PLAYER_PAGE,
+	REL_RADIO_STREAM,
 	REL_STUDENT_WAGES,
 	REL_STUDENT_WORK_AREAS,
 	REL_STUDENT_WORK_UNITS,
 	type Jrd,
 	type ResolvedSource,
+	type SourceCampus,
 } from './types'

@@ -7,7 +7,6 @@ import {
 } from '@frogpond/html-lib'
 import {z} from 'zod'
 import type {JobDetail, JobField} from '../types'
-import {unitNumberOfDescription} from './unit-number'
 
 /// The labels worth a row of their own, keyed by their normalised form.
 const PROMOTED = new Map<string, string>([
@@ -142,11 +141,7 @@ function runsOf(html: string): ChildNode[][] {
 	return runs
 }
 
-export function parseDescription(html: string): {
-	fields: JobField[]
-	body: string
-	unit: string | null
-} {
+export function parseDescription(html: string): {fields: JobField[]; body: string} {
 	let fields: JobField[] = []
 	let kept: ChildNode[][] = []
 
@@ -175,7 +170,7 @@ export function parseDescription(html: string): {
 		.filter((markdown) => markdown !== '')
 		.join('\n\n')
 
-	return {fields, body, unit: unitNumberOfDescription(html)}
+	return {fields, body}
 }
 
 const DetailSchema = z.object({
@@ -197,7 +192,7 @@ export function parseDetail(body: unknown, url: string): JobDetail {
 	let posting = items[0]
 	if (!posting) throw new Error('no posting in the detail response')
 
-	let {fields, body: markdown, unit} = parseDescription(posting.ExternalDescriptionStr ?? '')
+	let {fields, body: markdown} = parseDescription(posting.ExternalDescriptionStr ?? '')
 
 	return {
 		id: posting.Id,
@@ -207,7 +202,6 @@ export function parseDetail(body: unknown, url: string): JobDetail {
 		location: posting.PrimaryLocation ?? undefined,
 		postedDate: posting.ExternalPostedStartDate ?? undefined,
 		fields,
-		unit,
 		body: markdown,
 		url,
 	}

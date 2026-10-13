@@ -18,14 +18,16 @@ import {DetailRow, DisclosureRow} from '../../source/components/rows'
 import * as c from '@frogpond/colors'
 import {PersonHeader} from '../../source/features/directory/person-header'
 import {directoryContactOptions} from '../../source/features/directory/query'
+import {useDirectory} from '../../source/features/directory/use-directory'
 import type {
 	CampusLocation,
 	Department,
 	DirectorySearchTypeEnum,
 } from '../../source/features/directory/types'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
-export default function DirectoryDetailPage(): React.ReactNode {
+function DirectoryDetailPage(): React.ReactNode {
 	let {index, query, type} = useLocalSearchParams<{
 		index: string
 		query?: string
@@ -56,13 +58,14 @@ type DirectoryDetailProps = {
 
 function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.ReactNode {
 	let router = useRouter()
+	let {directory} = useDirectory()
 
 	let {
 		data: contact,
 		isLoading,
 		error,
 		refetch,
-	} = useQuery(directoryContactOptions(query, type, index))
+	} = useQuery(directoryContactOptions(directory, query, type, index))
 
 	// No title in the bar: the heading below carries the name, and the bar
 	// repeating it said the same thing twice.
@@ -116,7 +119,7 @@ function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.Reac
 
 							{email ? (
 								<DetailRow
-									destination="action"
+									destination="external"
 									label="Email"
 									onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 									value={email}
@@ -148,7 +151,7 @@ function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.Reac
 							{loc.display ? <DetailRow label="Location" value={loc.display} /> : null}
 							{loc.phone ? (
 								<DetailRow
-									destination="action"
+									destination="external"
 									label="Phone"
 									onPress={() => callPhone(loc.phone, {prompt: false})}
 									value={loc.phone}
@@ -199,3 +202,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'directory',
+	{title: 'Directory', noun: 'a people directory', systemImage: 'person.2'},
+	DirectoryDetailPage,
+)

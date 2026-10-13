@@ -29,6 +29,6 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ],
-  "exclude": ["node_modules", "ios"],
+  "exclude": ["node_modules", "ios", ".claude"],
   "extends": "expo/tsconfig.base"
 }

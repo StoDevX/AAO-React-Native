@@ -30,6 +30,7 @@ import {
 } from '../../../source/features/stoprint/query'
 import {credentialsOptions} from '../../../source/lib/login'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -262,7 +263,7 @@ function PrintJobReleaseLoader(): React.ReactNode {
 	return <PrintJobReleaseView job={job} printer={printer} />
 }
 
-export default function PrintJobReleasePage(): React.ReactNode {
+function PrintJobReleasePage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Release job</Stack.Title>
@@ -270,3 +271,9 @@ export default function PrintJobReleasePage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'printing',
+	{title: 'stoPrint', noun: 'printing', systemImage: 'printer'},
+	PrintJobReleasePage,
+)

@@ -37,7 +37,9 @@ import {useQuery} from '@tanstack/react-query'
 import {FILL_WIDTH} from '../../components/tile-layout'
 import {HoursSection} from '../building-hours/hours-section'
 import {ownHours} from '../building-hours/lib'
-import type {BuildingType, Campus} from '../building-hours/types'
+import type {BuildingType} from '../building-hours/types'
+import {campusById} from '../../campuses'
+import type {CampusId} from '../../campuses/ids'
 import {AboutSection} from './card/about-section'
 import {ActionsRow} from './card/actions-row'
 import {DetailsSection} from './card/details-section'
@@ -99,7 +101,7 @@ const CARD_BIG_SUBTITLE_ID = 'card-big-subtitle'
 type Props = {
 	building: Feature<Building> | undefined
 	/// Whose Hours to look the building up in.
-	campus: Campus
+	campus: CampusId
 	onClose: () => void
 	/// Which stop the sheet is at: large lays the name out differently, and only the other two let a long one move.
 	stop: SheetDetent
@@ -161,7 +163,7 @@ function BuildingCard({
 	stop,
 }: {
 	building: Feature<Building>
-	campus: Campus
+	campus: CampusId
 	extraLinks?: Array<LabelLink>
 	onClose: () => void
 	onOpen?: (entry: StackEntry) => void
@@ -198,7 +200,7 @@ function BuildingCard({
 				actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
 			/>
 			{noDetails ? <NoDetails /> : null}
-			<PhotoStrip name={name} photos={photos} />
+			<PhotoStrip name={name} photos={photos} root={campusById(campus).map?.photoRoot} />
 			{hours ? <CardHours venue={hours} /> : null}
 			{onOpen ? <AlsoHereSection onOpen={onOpen} tiles={sections.alsoHere} /> : null}
 			<LinkedPlaces

@@ -1,26 +1,26 @@
-import {client} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {clientFor} from '@frogpond/api'
 
-import bundled from '../../../../docs/building-directory.json'
+import {campusById, type CampusId} from '../../../campuses'
 import {useForceBundledData} from '../../building-hours/dev/data-source-store'
+import {sectionServer} from '../../campus/section-server'
 import type {BuildingDirectory} from './types'
 
-const bundledDirectories = (bundled as {data: Array<BuildingDirectory>}).data
-
 /**
- * Every St. Olaf building's directory. UI tests and the dev override read
- * this repository's copy, as the Hours data does. The server's copy is
- * preferred otherwise, and the bundled one stands in when it cannot be had:
- * the route is newer than the app, and a card is whole without a directory.
+ * Every building's directory on `campus`. The dev override reads the
+ * campus's bundled copy, as the Hours data does, where it has one. The server's copy is read otherwise. A card is whole without a
+ * directory, so a failed fetch just leaves it out.
  */
-export async function fetchDirectories(signal: AbortSignal): Promise<Array<BuildingDirectory>> {
-	if (isUITesting || useForceBundledData.getState().forced) {
-		return bundledDirectories
+export async function fetchDirectories(
+	campus: CampusId,
+	signal: AbortSignal,
+): Promise<Array<BuildingDirectory>> {
+	let map = campusById(campus).map
+	let bundled = map?.buildingDirectory?.bundled
+	if (bundled && useForceBundledData.getState().forced) {
+		return [...bundled]
 	}
-	try {
-		let response = await client.get('spaces/directory', {signal}).json()
-		return (response as {data: Array<BuildingDirectory>}).data
-	} catch {
-		return bundledDirectories
-	}
+	let response = await clientFor(sectionServer(campus, map))
+		.get('spaces/directory', {signal})
+		.json()
+	return (response as {data: Array<BuildingDirectory>}).data
 }

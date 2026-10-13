@@ -15,6 +15,7 @@ import {ActionRow} from '../../source/components/rows'
 import {BalancesView} from '../../source/features/sis/balances'
 import {useAppDispatch, useAppSelector} from '../../source/redux'
 import {acknowledgeAcknowledgement, selectAcknowledgement} from '../../source/redux/parts/settings'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 /** What a student agrees to before the app shows their balances. */
 const TERMS: {symbol: SFSymbol; text: string}[] = [
@@ -29,7 +30,7 @@ const TERMS: {symbol: SFSymbol; text: string}[] = [
 	{symbol: 'building.columns', text: 'This app is not an official college app.'},
 ]
 
-export default function BalancesPage(): React.ReactNode {
+function BalancesPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let alertSeen = useAppSelector(selectAcknowledgement)
 
@@ -83,3 +84,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'balances',
+	{title: 'Balances', noun: 'balances', systemImage: 'creditcard'},
+	BalancesPage,
+)

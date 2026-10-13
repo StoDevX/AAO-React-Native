@@ -117,7 +117,10 @@ export default function ReportProblemPage(): React.ReactNode {
 		setSending(false)
 
 		if (result === 'disabled') {
-			Alert.alert('Sentry is disabled', 'Problem reporting only works in production builds.')
+			Alert.alert(
+				'Sentry is disabled',
+				'Problem reporting only works in App Store and TestFlight builds.',
+			)
 			return
 		}
 

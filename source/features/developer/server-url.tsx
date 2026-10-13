@@ -3,7 +3,7 @@ import {Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
 import {disabled, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
 import {Restart} from 'react-native-restart-newarch'
 import * as storage from '../../lib/storage'
-import {DEFAULT_URL} from '../../lib/constants'
+import type {CampusDefinition} from '../../campuses'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {serverUrlOptions} from './query'
 import {useServerDiscovery} from './use-server-discovery'
@@ -18,11 +18,18 @@ const isHttpUrl = (value: string): boolean => {
 	}
 }
 
-export const ServerUrlSection = (): React.ReactElement => {
+type Props = {
+	/** The campus whose server this section sets. */
+	campus: CampusDefinition
+}
+
+export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
+	const {api} = campus
 	const [serverAddress, setServerAddress] = React.useState('')
 	const serverAddressState = useNativeState('')
 
-	let serverUrlQuery = useQuery(serverUrlOptions)
+	let urlOptions = serverUrlOptions(api.storageKey)
+	let serverUrlQuery = useQuery(urlOptions)
 	let {isLoading} = serverUrlQuery
 
 	const discoveredServers = useServerDiscovery()
@@ -38,8 +45,8 @@ export const ServerUrlSection = (): React.ReactElement => {
 	}, [serverUrlQuery.data])
 
 	let storeServerAddress = useMutation({
-		mutationKey: ['settings', 'server-url'],
-		mutationFn: () => storage.setServerAddress(serverAddress),
+		mutationKey: urlOptions.queryKey,
+		mutationFn: () => storage.setServerAddressFor(api.storageKey, serverAddress),
 		onSuccess: () => Restart(),
 	})
 
@@ -66,7 +73,7 @@ export const ServerUrlSection = (): React.ReactElement => {
 								disabled(storeServerAddress.isPending),
 							]}
 							onTextChange={setServerAddress}
-							placeholder={DEFAULT_URL}
+							placeholder={api.defaultUrl}
 							text={serverAddressState}
 						/>
 						<ActionRow

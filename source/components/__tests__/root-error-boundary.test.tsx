@@ -3,6 +3,7 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {Text} from 'react-native'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
+import {useCampusStore} from '../../features/campus/store'
 import {openEmail} from '../../features/support/open-email'
 import {RootErrorBoundary} from '../root-error-boundary'
 
@@ -19,6 +20,7 @@ function Screen(): React.ReactNode {
 
 describe('RootErrorBoundary', () => {
 	beforeEach(() => {
+		useCampusStore.setState({campus: 'edu.stolaf'})
 		broken = true
 		// React logs the error it catches; the test expects that, so it is
 		// silenced here rather than left to bury the output.
@@ -76,5 +78,28 @@ describe('RootErrorBoundary', () => {
 		)
 
 		expect(screen.getByText('All is well')).toBeTruthy()
+	})
+
+	test("names the campus's app in the message", async () => {
+		useCampusStore.setState({campus: 'edu.carleton'})
+		await render(
+			<RootErrorBoundary>
+				<Screen />
+			</RootErrorBoundary>,
+		)
+
+		expect(screen.getByText(/^CARLS hit an error/u)).toBeTruthy()
+	})
+
+	test('still shows, without an email to send, before any campus is chosen', async () => {
+		useCampusStore.setState({campus: null})
+		await render(
+			<RootErrorBoundary>
+				<Screen />
+			</RootErrorBoundary>,
+		)
+
+		expect(screen.getByText(/^The app hit an error/u)).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'Send Us an Email'})).toBeNull()
 	})
 })

@@ -1,12 +1,8 @@
 import {useSelector} from 'react-redux'
-import {isDebugBuild} from '@frogpond/constants'
 import {selectDevModeOverride} from '../redux/parts/settings'
 
-// Combines the build-time isDebugBuild() flag with the persisted runtime
-// override so that beta testers (or XCUITests against Release) can opt into
-// dev-gated UI. Non-React callers (e.g. pre-rehydrate init) should keep
-// using isDebugBuild() directly.
-export const useIsDevMode = (): boolean => {
-	const override = useSelector(selectDevModeOverride)
-	return isDebugBuild() || override
-}
+// Dev-gated UI follows the Home notice's dev mode toggle alone, which starts
+// off in every build: a prerelease or Metro build counts as a debug build,
+// and testers on those should see what a store build shows until they ask
+// for more. isDebugBuild() still decides what Sentry attaches to reports.
+export const useIsDevMode = (): boolean => useSelector(selectDevModeOverride)

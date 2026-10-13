@@ -3,7 +3,7 @@ import {act, fireEvent, render, screen, waitFor} from '@testing-library/react-na
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {lightBlueGradient} from '@frogpond/colors'
 
-import type {Campus} from '../../building-hours/types'
+import type {CampusId} from '../../../campuses/ids'
 import {BuildingPicker} from '../building-picker'
 import {keys as categoryKeys} from '../category-groups-query'
 import type {MapCategoryTable} from '../lib/category-groups'
@@ -30,8 +30,8 @@ const fixtures = [
 ]
 
 const TABLE: MapCategoryTable = {
-	stolaf: {groups: [], icons: []},
-	carleton: {
+	'edu.stolaf': {groups: [], icons: []},
+	'edu.carleton': {
 		groups: [
 			{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
 			{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'},
@@ -57,12 +57,12 @@ afterEach(() => {
 	trackedQueryClients.length = 0
 })
 
-type PickerOverrides = {compact?: boolean; campus?: Campus}
+type PickerOverrides = {compact?: boolean; campus?: CampusId}
 
 async function renderPicker({
 	buildings = fixtures,
 	compact = false,
-	campus = 'carleton' as Campus,
+	campus = 'edu.carleton' as CampusId,
 	table = TABLE as MapCategoryTable | null,
 	onSelect = jest.fn(),
 	onSearchFocusChange = jest.fn(),
@@ -75,8 +75,8 @@ async function renderPicker({
 	trackedQueryClients.push(client)
 	// Seeding the cache rather than mocking the query module keeps the
 	// component on its real data path.
-	client.setQueryData(keys.all('carleton'), buildings)
-	client.setQueryData(keys.all('stolaf'), buildings)
+	client.setQueryData(keys.all('edu.carleton'), buildings)
+	client.setQueryData(keys.all('edu.stolaf'), buildings)
 	if (table) {
 		client.setQueryData(categoryKeys.all, table)
 	}
@@ -186,6 +186,23 @@ describe('BuildingPicker', () => {
 		expect(screen.getByText('Beta Lot')).toBeTruthy()
 	})
 
+	it('says a row was a search result when one is tapped', async () => {
+		let {onSelect} = await renderPicker()
+		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+		await waitFor(() => {
+			expect(screen.getByText('Gamma Field')).toBeTruthy()
+		})
+		await fireEvent.press(screen.getByText('Gamma Field'))
+		expect(onSelect).toHaveBeenCalledWith('c', 'search')
+	})
+
+	it('says a row in a group was listed, not searched for', async () => {
+		let {onSelect} = await renderPicker()
+		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+		await fireEvent.press(screen.getByText('Beta Lot'))
+		expect(onSelect).toHaveBeenCalledWith('b', 'list')
+	})
+
 	it('hides the grid and searches across every group while typing', async () => {
 		await renderPicker()
 		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
@@ -200,7 +217,7 @@ describe('BuildingPicker', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
 		await act(() => {
 			client.setQueryData(
-				keys.all('carleton'),
+				keys.all('edu.carleton'),
 				fixtures.filter((place) => place.id !== 'b'),
 			)
 		})
@@ -215,7 +232,7 @@ describe('BuildingPicker', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
 		await act(() => {
 			client.setQueryData(
-				keys.all('carleton'),
+				keys.all('edu.carleton'),
 				fixtures.filter((place) => place.id !== 'b'),
 			)
 		})
@@ -223,7 +240,7 @@ describe('BuildingPicker', () => {
 			expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
 		})
 		await act(() => {
-			client.setQueryData(keys.all('carleton'), fixtures)
+			client.setQueryData(keys.all('edu.carleton'), fixtures)
 		})
 		await waitFor(() => {
 			expect(screen.getByRole('button', {name: 'Parking'})).toBeTruthy()
@@ -235,11 +252,11 @@ describe('BuildingPicker', () => {
 	it("draws each row's icon from its own campus's list", async () => {
 		await renderPicker({
 			table: {
-				stolaf: {
+				'edu.stolaf': {
 					groups: [],
 					icons: [{categories: ['outdoors'], icon: 'leaf.fill', gradient: 'green'}],
 				},
-				carleton: {
+				'edu.carleton': {
 					groups: [],
 					icons: [{categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'}],
 				},
@@ -256,8 +273,8 @@ describe('BuildingPicker', () => {
 	it('lists every place by name when no group has any', async () => {
 		await renderPicker({
 			table: {
-				stolaf: {groups: [], icons: []},
-				carleton: {
+				'edu.stolaf': {groups: [], icons: []},
+				'edu.carleton': {
 					groups: [
 						{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
 					],
@@ -285,7 +302,7 @@ describe('BuildingPicker', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
 		await act(() => {
 			client.setQueryData(
-				keys.all('carleton'),
+				keys.all('edu.carleton'),
 				fixtures.map((place) => ({
 					...place,
 					properties: {...place.properties, categories: []},
@@ -296,7 +313,7 @@ describe('BuildingPicker', () => {
 			expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
 		})
 		await act(() => {
-			client.setQueryData(keys.all('carleton'), fixtures)
+			client.setQueryData(keys.all('edu.carleton'), fixtures)
 		})
 		await waitFor(() => {
 			expect(screen.getByRole('button', {name: 'Parking'})).toBeTruthy()
@@ -307,8 +324,8 @@ describe('BuildingPicker', () => {
 	it('closes the open group when the campus changes', async () => {
 		let {rerenderWith} = await renderPicker()
 		await fireEvent.press(screen.getByRole('button', {name: 'Outdoors'}))
-		await rerenderWith({campus: 'stolaf'})
-		await rerenderWith({campus: 'carleton'})
+		await rerenderWith({campus: 'edu.stolaf'})
+		await rerenderWith({campus: 'edu.carleton'})
 		expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
 	})
 
@@ -464,7 +481,7 @@ describe('BuildingPicker', () => {
 			await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
 			expect(track).toHaveBeenCalledWith({
 				name: 'map.group.open',
-				attributes: {group: 'Parking', campus: 'carleton'},
+				attributes: {group: 'Parking', campus: 'edu.carleton'},
 			})
 		})
 
@@ -581,11 +598,11 @@ describe('BuildingPicker', () => {
 
 	describe('recents', () => {
 		beforeEach(() => {
-			useRecentPlacesStore.setState({recent: {stolaf: [], carleton: []}})
+			useRecentPlacesStore.setState({recent: {'edu.stolaf': [], 'edu.carleton': []}})
 		})
 
 		let remember = (...ids: string[]) =>
-			useRecentPlacesStore.setState({recent: {stolaf: [], carleton: ids}})
+			useRecentPlacesStore.setState({recent: {'edu.stolaf': [], 'edu.carleton': ids}})
 
 		it('lists the places opened most recently under the grid, newest first', async () => {
 			remember('c', 'a')
@@ -623,10 +640,13 @@ describe('BuildingPicker', () => {
 		})
 
 		it('clears the campus it shows', async () => {
-			useRecentPlacesStore.setState({recent: {stolaf: ['x'], carleton: ['a']}})
+			useRecentPlacesStore.setState({recent: {'edu.stolaf': ['x'], 'edu.carleton': ['a']}})
 			await renderPicker()
 			await fireEvent.press(screen.getByRole('button', {name: 'Clear Recents'}))
-			expect(useRecentPlacesStore.getState().recent).toEqual({stolaf: ['x'], carleton: []})
+			expect(useRecentPlacesStore.getState().recent).toEqual({
+				'edu.stolaf': ['x'],
+				'edu.carleton': [],
+			})
 			expect(screen.queryByText('Recents')).toBeNull()
 		})
 
@@ -634,7 +654,7 @@ describe('BuildingPicker', () => {
 			remember('a')
 			let {onSelect} = await renderPicker()
 			await fireEvent.press(screen.getByText('Alpha Hall'))
-			expect(onSelect).toHaveBeenCalledWith('a')
+			expect(onSelect).toHaveBeenCalledWith('a', 'list')
 		})
 	})
 
@@ -676,7 +696,7 @@ describe('BuildingPicker', () => {
 		it('draws the picker again once the places can be drawn', async () => {
 			let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
 			let {client} = await renderPicker({buildings: [...fixtures, NAMELESS], table: null})
-			client.setQueryData(keys.all('carleton'), fixtures)
+			client.setQueryData(keys.all('edu.carleton'), fixtures)
 			await fireEvent.press(screen.getByText('Tap to try again.'))
 			expect(screen.getByLabelText('Search for a place')).toBeTruthy()
 			expect(screen.queryByText('Tap to try again.')).toBeNull()

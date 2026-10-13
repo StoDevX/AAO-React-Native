@@ -1,6 +1,17 @@
 import {describe, expect, it} from '@jest/globals'
-import {appIcons} from '../../../../images/icons'
-import {ICONS, currentIconEntry, galleryColumns, iconEntry, iconsByGroup} from '../icons'
+import {DEFAULT_ICON, appIcons, iconFor} from '../../../../images/icons'
+import {campusById} from '../../../campuses'
+import {
+	ICONS,
+	currentIconEntry,
+	galleryColumns,
+	iconEntry,
+	iconForCampus,
+	iconsByGroup,
+} from '../icons'
+
+const stolafIcons = campusById('edu.stolaf').appIcons
+const carletonIcons = campusById('edu.carleton').appIcons
 
 describe('ICONS', () => {
 	it('lists every shipped icon exactly once', () => {
@@ -16,11 +27,11 @@ describe('ICONS', () => {
 
 describe('iconsByGroup', () => {
 	it('orders the groups Classic, Windmill', () => {
-		expect(iconsByGroup().map((g) => g.group)).toEqual(['Classic', 'Windmill'])
+		expect(iconsByGroup(stolafIcons).map((g) => g.group)).toEqual(['Classic', 'Windmill'])
 	})
 
 	it('keeps Classic to Big Ole and the two Old Main icons', () => {
-		expect(iconsByGroup()[0].icons.map((i) => i.type)).toEqual([
+		expect(iconsByGroup(stolafIcons)[0].icons.map((i) => i.type)).toEqual([
 			'windmill',
 			'old-main',
 			'old-main-retro',
@@ -28,9 +39,15 @@ describe('iconsByGroup', () => {
 	})
 
 	it('gathers the windmill variants', () => {
-		let windmills = iconsByGroup()[1].icons
-		expect(windmills).toHaveLength(4)
+		let windmills = iconsByGroup(stolafIcons)[1].icons
+		expect(windmills).toHaveLength(3)
 		expect(windmills.every((i) => i.type.startsWith('windmill-'))).toBe(true)
+	})
+})
+
+describe('iconFor', () => {
+	it('shows the primary for the retired Stars icon', () => {
+		expect(iconFor('windmill-stars')).toBe(DEFAULT_ICON)
 	})
 })
 
@@ -67,5 +84,58 @@ describe('galleryColumns', () => {
 
 	it.each([2.35, 3.12])('drops to one at the largest sizes (%s)', (scale) => {
 		expect(galleryColumns(scale)).toBe(1)
+	})
+})
+
+describe('iconsByGroup on Carleton', () => {
+	it('offers the CARLS icons, then the windmills', () => {
+		let groups = iconsByGroup(carletonIcons)
+		expect(groups.map((g) => g.group)).toEqual(['CARLS', 'Windmill'])
+		expect(groups[0].icons).toEqual([{title: 'Penguin', type: 'carls-penguin', group: 'CARLS'}])
+		expect(groups[1].icons.map((i) => i.type)).toEqual([
+			'windmill-sky',
+			'windmill-dawn',
+			'windmill-golden-hour',
+		])
+	})
+
+	it("keeps the CARLS icons out of St. Olaf's gallery", () => {
+		let types = iconsByGroup(stolafIcons).flatMap((g) => g.icons.map((i) => i.type))
+		expect(types).not.toContain('carls-penguin')
+	})
+})
+
+describe('iconForCampus', () => {
+	it('moves a St. Olaf icon to the penguin on Carleton', () => {
+		expect(iconForCampus('old-main', carletonIcons)).toBe('carls-penguin')
+	})
+
+	it('keeps a windmill on Carleton, which offers them', () => {
+		expect(iconForCampus('windmill-dawn', carletonIcons)).toBeNull()
+	})
+
+	it('moves the penguin back to the primary on St. Olaf', () => {
+		expect(iconForCampus('carls-penguin', stolafIcons)).toBe(DEFAULT_ICON)
+	})
+
+	it('keeps an icon the campus would only switch back to', () => {
+		expect(
+			iconForCampus('carls-penguin', {groups: ['Classic'], default: 'carls-penguin'}),
+		).toBeNull()
+	})
+
+	it("keeps an icon of the campus's own", () => {
+		expect(iconForCampus('old-main', stolafIcons)).toBeNull()
+		expect(iconForCampus('carls-penguin', carletonIcons)).toBeNull()
+	})
+})
+
+describe('a campus without app icons', () => {
+	it('offers no gallery', () => {
+		expect(iconsByGroup(undefined)).toEqual([])
+	})
+
+	it('leaves the icon as it is', () => {
+		expect(iconForCampus('carls-penguin', undefined)).toBeNull()
 	})
 })

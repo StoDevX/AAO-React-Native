@@ -1,0 +1,75 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/directory/departments
+json:
+  results:
+    - buildingabbr: NVN
+      buildingname: Norway Valley Hall of Natural Sciences
+      buildingroom: '210'
+      email: alpine-biology@college.example
+      extension: 3101
+      fax: null
+      headcount: 9
+      name: Alpine Biology
+      text: null
+      website: null
+    - buildingabbr: NVN
+      buildingname: Norway Valley Hall of Natural Sciences
+      buildingroom: '120'
+      email: avalanche-studies@college.example
+      extension: 3102
+      fax: null
+      headcount: 6
+      name: Avalanche Studies
+      text: null
+      website: null
+    - buildingabbr: GLH
+      buildingname: Glacier Hall
+      buildingroom: '120'
+      email: financial-aid@college.example
+      extension: 3103
+      fax: null
+      headcount: 5
+      name: Financial Aid
+      text: null
+      website: null
+    - buildingabbr: NVN
+      buildingname: Norway Valley Hall of Natural Sciences
+      buildingroom: '310'
+      email: glaciology@college.example
+      extension: 3104
+      fax: null
+      headcount: 7
+      name: Glaciology
+      text: null
+      website: null
+    - buildingabbr: EHM
+      buildingname: Echo Hall of Music
+      buildingroom: '101'
+      email: music@college.example
+      extension: 3105
+      fax: null
+      headcount: 14
+      name: Music
+      text: null
+      website: null
+    - buildingabbr: GLH
+      buildingname: Glacier Hall
+      buildingroom: '110'
+      email: registrar@college.example
+      extension: 3106
+      fax: null
+      headcount: 4
+      name: Registrar
+      text: null
+      website: null
+    - buildingabbr: SUM
+      buildingname: Summit Library
+      buildingroom: null
+      email: summit-library@college.example
+      extension: null
+      fax: null
+      headcount: 11
+      name: Summit Library
+      text: null
+      website: null

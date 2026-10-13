@@ -65,30 +65,19 @@ struct MapScreen: Screen {
 		searchField
 	}
 
-	/// St. Olaf's map is a home tile of its own, pushing `/map?campus=stolaf`.
+	/// The active campus's map.
 	@discardableResult
 	func navigate() -> Self {
 		// The sheet, not the map: MapLibre draws nothing XCUITest can see.
-		open(route: "/map?campus=stolaf", mountedWhen: mounted, timeout: 60)
+		open(route: "/map", mountedWhen: mounted, timeout: 60)
 	}
 
-	/// The map draws through MapLibre, which XCUITest cannot see into, so the
-	/// sheet over it is what tells us the screen came up.
+	/// The active campus's map, opened by a link on the card of the place whose
+	/// feature id is `id`, skipping the search a user would type.
 	@discardableResult
-	func checkSheetPresented() -> Self {
-		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 60),
-			"The map should present its building sheet")
-		return self
-	}
-
-	/// The sheet is the map's alone: once another screen is pushed over the
-	/// map, it must go with the map rather than float over the new screen.
-	@discardableResult
-	func verifySheetDismissed() -> Self {
-		XCTAssertTrue(
-			searchField.waitForNonExistence(timeout: 10),
-			"The map's sheet should not stay up over another screen")
+	func navigate(toPlace id: String) -> Self {
+		open(route: "/map?place=\(id)", mountedWhen: mounted, timeout: 60)
+		XCTAssertTrue(closeButton.waitUntilExists(timeout: 30), "The link should open \(id)'s card")
 		return self
 	}
 
@@ -121,30 +110,41 @@ struct MapScreen: Screen {
 
 	/// Drags the sheet from its collapsed detent up to full height, where the
 	/// building list is.
+	///
+	/// A drag that starts just after the sheet mounts can leave it at a lower
+	/// detent, so this drags again, up to three times, until the search field
+	/// sits in the top quarter of the screen, where only the full detent puts it.
 	@discardableResult
 	func expandSheet() -> Self {
-		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.93))
-			.press(
-				forDuration: 0.1,
-				thenDragTo: app.coordinate(
-					withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08)))
+		let fullTop = app.frame.height / 4
+		for _ in 1...3 {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.93))
+				.press(
+					forDuration: 0.1,
+					thenDragTo: app.coordinate(
+						withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08)))
+			if waitUntil("Waiting 3.0s for the sheet to reach full height", timeout: 3, {
+				searchField.exists && searchField.frame.minY < fullTop
+			}) {
+				return self
+			}
+		}
+		XCTFail("The sheet should reach full height")
 		return self
 	}
 
+	/// Focusing the field shows its cancel button, which iOS labels Close.
 	@discardableResult
 	func focusSearch() -> Self {
-		searchField.tap()
-		XCTAssertTrue(
-			cancelButton.waitForExistence(timeout: 10),
-			"Focusing the search field should show its cancel button, which iOS labels Close")
-		return self
+		tap(searchField, until: cancelButton, named: "the map's search field")
 	}
 
 	@discardableResult
 	func cancelSearch() -> Self {
+		XCTAssertTrue(cancelButton.waitUntilExists(timeout: 10), "The search field should offer Close")
 		cancelButton.tap()
 		XCTAssertTrue(
-			cancelButton.waitForNonExistence(timeout: 10),
+			cancelButton.waitUntilGone(timeout: 10),
 			"Cancel should hide itself once there is nothing to cancel")
 		return self
 	}
@@ -153,7 +153,7 @@ struct MapScreen: Screen {
 	@discardableResult
 	func verifyKeyboardHidden() -> Self {
 		XCTAssertTrue(
-			app.keyboards.firstMatch.waitForNonExistence(timeout: 5),
+			app.keyboards.firstMatch.waitUntilGone(timeout: 5),
 			"The search field should not be editing, but the keyboard is up")
 		return self
 	}
@@ -184,9 +184,9 @@ struct MapScreen: Screen {
 	}
 
 	/// A building's row in the sheet's list: the name alone, or the name and
-	/// then its abbreviation -- a building carrying one reads as "Buntrock
-	/// Commons, BC". Not any label beginning with the name, which would take
-	/// Baseball Pond Loop's row for Baseball Pond's.
+	/// then its abbreviation -- a building carrying one reads as "Treeline
+	/// Commons, TLC". Not any label beginning with the name, which would take
+	/// Baseball Tarn Loop's row for Baseball Tarn's.
 	private func row(named name: String) -> XCUIElement {
 		app.buttons.matching(
 			NSPredicate(format: "label == %@ OR label BEGINSWITH %@", name, "\(name), ")
@@ -295,7 +295,7 @@ struct MapScreen: Screen {
 	func verifyAttributionClearOfSheet() -> Self {
 		let button = app.buttons[TestIdentifiers.Map.attribution].firstMatch
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30) && button.isHittable,
+			button.waitUntilExists(timeout: 30) && button.isHittable,
 			"The map's attribution button should be on screen and tappable")
 		let sheet = sheetFrame()
 		XCTContext.runActivity(named: "attribution \(button.frame) sheet \(sheet)") { _ in }
@@ -312,7 +312,7 @@ struct MapScreen: Screen {
 	func openPlaceTile(named name: String) -> Self {
 		let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
 		scrollCard(toReach: tile)
-		XCTAssertTrue(tile.waitForExistence(timeout: 10) && tile.isHittable, "The card should list \(name)")
+		XCTAssertTrue(tile.waitUntilExists(timeout: 10) && tile.isHittable, "The card should list \(name)")
 		tile.tap()
 		return self
 	}
@@ -347,7 +347,7 @@ struct MapScreen: Screen {
 	@discardableResult
 	func verifyFloorSheetOnTop() -> Self {
 		let entries = app.buttons.matching(identifier: TestIdentifiers.Map.directoryEntry)
-		XCTAssertTrue(entries.firstMatch.waitForExistence(timeout: 10), "A floor's sheet should be up")
+		XCTAssertTrue(entries.firstMatch.waitUntilExists(timeout: 10), "A floor's sheet should be up")
 		XCTAssertTrue(
 			entries.allElementsBoundByIndex.contains { $0.isHittable },
 			"The floor's sheet should be on top")
@@ -363,7 +363,7 @@ struct MapScreen: Screen {
 			.matching(NSPredicate(
 				format: "identifier == %@ AND label BEGINSWITH %@", TestIdentifiers.Map.directoryEntry, name))
 			.firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 10) && row.isHittable, "The floor should list \(name)")
+		XCTAssertTrue(row.waitUntilExists(timeout: 10) && row.isHittable, "The floor should list \(name)")
 		row.tap()
 		return self
 	}
@@ -376,14 +376,25 @@ struct MapScreen: Screen {
 	func verifyTopCard(_ name: String) -> Self {
 		let named = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label BEGINSWITH %@", name))
-		XCTAssertTrue(named.firstMatch.waitForExistence(timeout: 20), "\(name)'s card should be up")
+		XCTAssertTrue(named.firstMatch.waitUntilExists(timeout: 20), "\(name)'s card should be up")
+		// The sheets settle after the title appears; the count is read once they have.
+		let closes = hittableCloseButtons(settlingOn: 1)
 		let visible = named.allElementsBoundByIndex.filter { $0.isHittable }
-		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
-			.allElementsBoundByIndex.filter { $0.isHittable }
-		XCTContext.runActivity(named: "\(visible.count) visible \(name), \(closes.count) close buttons") { _ in }
+		XCTContext.runActivity(named: "\(visible.count) visible \(name), \(closes) close buttons") { _ in }
 		XCTAssertFalse(visible.isEmpty, "\(name)'s card should be in view")
-		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
+		XCTAssertEqual(closes, 1, "Only the top card's close button should be tappable")
 		return self
+	}
+
+	/// How many cards' close buttons can be tapped, once that number is
+	/// `expected` or five seconds have passed: a sheet takes a moment to leave.
+	private func hittableCloseButtons(settlingOn expected: Int) -> Int {
+		let query = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+		let count = { query.allElementsBoundByIndex.filter { $0.isHittable }.count }
+		_ = waitUntil("Waiting 5.0s for \(expected) hittable card close buttons", timeout: 5) {
+			count() == expected
+		}
+		return count()
 	}
 
 	/// `name`'s card is back as the only card, and closing it by a tap where
@@ -398,13 +409,10 @@ struct MapScreen: Screen {
 	func verifyBaseCardAnswersTouch(_ name: String) -> Self {
 		let title = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 20), "\(name)'s card should be back")
+		XCTAssertTrue(title.waitUntilExists(timeout: 20), "\(name)'s card should be back")
 		// The sheets above may still be leaving; their close buttons go with them.
 		let query = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
-		let deadline = Date().addingTimeInterval(5)
-		while query.count != 1 && Date() < deadline {
-			Thread.sleep(forTimeInterval: 0.25)
-		}
+		_ = waitUntil("Waiting 5.0s for one card close button", timeout: 5) { query.count == 1 }
 		let closes = query.allElementsBoundByIndex
 		XCTAssertEqual(closes.count, 1, "Only \(name)'s card should be left")
 		guard let close = closes.first else { return self }
@@ -412,7 +420,7 @@ struct MapScreen: Screen {
 			.withOffset(CGVector(dx: close.frame.midX, dy: close.frame.midY))
 			.tap()
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 10),
+			searchField.waitUntilExists(timeout: 10),
 			"Tapping \(name)'s close button should close the card")
 		return self
 	}
@@ -427,32 +435,16 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// The map runs under a clear header: no title drawn, and the About menu
-	/// there opens the map's credits.
-	@discardableResult
-	func verifyClearHeaderWithCredits() -> Self {
-		XCTAssertFalse(
-			app.navigationBars.staticTexts[TestIdentifiers.Map.stolafTitle].exists,
-			"The map's header should draw no title")
-		let about = app.buttons[TestIdentifiers.Map.attribution].firstMatch
-		XCTAssertTrue(about.waitForExistence(timeout: 30), "The header should offer the map's credits")
-		about.tap()
-		let credit = app.buttons[TestIdentifiers.Map.osmCredit].firstMatch
-		XCTAssertTrue(
-			credit.waitForExistence(timeout: 10),
-			"The About menu should credit OpenStreetMap, as the tiles' licence requires")
-		capture("The map's About menu")
-		return self
-	}
+	enum SheetDirection { case up, down }
 
 	/// A move is a change of at least a hundred points: the collapsed stop
 	/// renders at about 65pt, the middle stop at `MAP_MIDDLE_FRACTION` of
 	/// the screen, and large at nearly all of it, so anything smaller is a
 	/// scroll or a wobble, not a detent change.
 	@discardableResult
-	func verifySheetMoved(from before: CGFloat, direction: String, _ message: String) -> Self {
+	func verifySheetMoved(from before: CGFloat, _ direction: SheetDirection, _ message: String) -> Self {
 		let after = searchFieldTop()
-		let moved = direction == "up" ? before - after : after - before
+		let moved = direction == .up ? before - after : after - before
 		XCTAssertTrue(
 			moved > 100,
 			"\(message): the field's top went from \(before) to \(after)")
@@ -479,7 +471,7 @@ struct MapScreen: Screen {
 	func selectBuilding(named name: String) -> Self {
 		let row = self.row(named: name)
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"The expanded sheet should list \(name)")
 
 		for attempt in 1...3 {
@@ -488,7 +480,7 @@ struct MapScreen: Screen {
 			// label draws -- the row carries a contentShape so the whole of it
 			// responds, and tapping over the name would pass either way.
 			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-			if closeButton.waitForExistence(timeout: 10) {
+			if closeButton.waitUntilExists(timeout: 10) {
 				return self
 			}
 			XCTContext.runActivity(
@@ -538,20 +530,12 @@ struct MapScreen: Screen {
 			.withOffset(CGVector(dx: app.frame.midX, dy: sheet.minY / 2))
 	}
 
-	/// Taps a spot on the map found earlier, which stays put while the sheet
-	/// moves, since the camera does not follow the sheet.
-	@discardableResult
-	func tapMap(at spot: XCUICoordinate) -> Self {
-		spot.tap()
-		return self
-	}
-
 	/// The card on top is `name`'s own, read from its title rather than any
 	/// label beginning with the name: a building's card lists what is inside
 	/// it, so `name` can be on screen in someone else's card.
 	@discardableResult
 	func verifyCardTitled(_ name: String) -> Self {
-		XCTAssertTrue(cardTitle.waitForExistence(timeout: 20), "A card should be up")
+		XCTAssertTrue(cardTitle.waitUntilExists(timeout: 20), "A card should be up")
 		XCTAssertTrue(
 			cardTitle.label.hasPrefix(name),
 			"The card on top should be \(name)'s, not \(cardTitle.label)")
@@ -562,13 +546,7 @@ struct MapScreen: Screen {
 	/// row once the text size turns the grid into a list.
 	@discardableResult
 	func openCategory(_ label: String) -> Self {
-		let tile = app.buttons[label].firstMatch
-		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The sheet should offer \(label)")
-		tile.tap()
-		XCTAssertTrue(
-			groupBackButton.waitForExistence(timeout: 10),
-			"Opening \(label) should show its header's back button")
-		return self
+		tap(app.buttons[label].firstMatch, until: groupBackButton, named: "\(label) in the sheet")
 	}
 
 	/// A tile's name is drawn down to its first letter's lower edge: there is
@@ -577,7 +555,7 @@ struct MapScreen: Screen {
 	@discardableResult
 	func verifyTileNameDrawnWhole(_ label: String) -> Self {
 		let name = app.staticTexts[label].firstMatch
-		XCTAssertTrue(name.waitForExistence(timeout: 10), "The grid should show \(label)")
+		XCTAssertTrue(name.waitUntilExists(timeout: 10), "The grid should show \(label)")
 		settle { name.frame.minY }
 		let frame = name.frame
 		guard let pixels = ScreenPixels(app.screenshot().image) else {
@@ -605,77 +583,12 @@ struct MapScreen: Screen {
 		app.buttons.matching(identifier: TestIdentifiers.Map.groupBack).firstMatch
 	}
 
-	/// The open group's header names it.
-	@discardableResult
-	func verifyGroupOpen(_ label: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts[label].waitForExistence(timeout: 10),
-			"The header should read \(label)")
-		XCTAssertTrue(groupBackButton.exists, "\(label)'s header should have a back button")
-		return self
-	}
-
-	/// At large text sizes the categories are rows rather than a grid.
-	@discardableResult
-	func verifyCategoriesAsList(including label: String) -> Self {
-		XCTAssertTrue(
-			app.buttons[label].firstMatch.waitForExistence(timeout: 30),
-			"The sheet should list \(label)")
-		XCTAssertFalse(
-			app.otherElements[TestIdentifiers.Map.categoryGrid].exists,
-			"At this text size the categories should be a list, not a grid")
-		return self
-	}
-
-	/// Recents lists `name` below the categories.
-	@discardableResult
-	func verifyRecentsList(_ name: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForExistence(timeout: 10),
-			"The sheet should show Recents once a place has been opened")
-		XCTAssertTrue(row(named: name).waitForExistence(timeout: 10), "Recents should list \(name)")
-		return self
-	}
-
-	/// Swipes `name`'s row in Recents away.
-	@discardableResult
-	func removeRecent(_ name: String) -> Self {
-		row(named: name).swipeLeft()
-		let remove = app.buttons[TestIdentifiers.Map.recentsRemove].firstMatch
-		// A full swipe removes the row by itself; a shorter one leaves the
-		// button to tap.
-		if remove.waitForExistence(timeout: 3) {
-			remove.tap()
-		}
-		return self
-	}
-
-	/// With nothing left in it, Recents is gone.
-	@discardableResult
-	func verifyNoRecents() -> Self {
-		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForNonExistence(timeout: 10),
-			"Recents should go once its last place is removed")
-		return self
-	}
-
-	/// Leaves the open group for the grid.
-	@discardableResult
-	func goBackToCategories() -> Self {
-		groupBackButton.tap()
-		XCTAssertTrue(
-			app.otherElements[TestIdentifiers.Map.categoryGrid].waitForExistence(timeout: 10),
-			"Back should return to the category grid")
-		XCTAssertFalse(groupBackButton.exists, "The group's header should be gone after Back")
-		return self
-	}
-
 	/// The open group's title sits clear of its back button, whatever its
 	/// length or the text size.
 	@discardableResult
 	func verifyGroupTitleClearsBackButton(_ label: String) -> Self {
 		let title = app.staticTexts[label].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 10), "The header should read \(label)")
+		XCTAssertTrue(title.waitUntilExists(timeout: 10), "The header should read \(label)")
 		XCTAssertFalse(
 			title.frame.intersects(groupBackButton.frame),
 			"\(label) (\(title.frame)) should not run under the back button (\(groupBackButton.frame))")
@@ -745,12 +658,11 @@ struct MapScreen: Screen {
 	@discardableResult
 	func verifyListKeptItsPlace(category: String, row name: String, offset: CGFloat) -> Self {
 		settle { searchField.frame.minY }
-		capture("The list after closing the card")
 		XCTAssertTrue(
 			app.staticTexts[category].exists && groupBackButton.exists,
 			"\(category) should still be open after closing a card")
 		let row = self.row(named: name)
-		XCTAssertTrue(row.waitForExistence(timeout: 10), "\(name) should still be listed")
+		XCTAssertTrue(row.waitUntilExists(timeout: 10), "\(name) should still be listed")
 		let now = row.frame.minY - searchField.frame.minY
 		// The list shifts a few points as the sheet changes stop. A list that lost
 		// its place would put this row two screens away, not twenty points.
@@ -796,12 +708,12 @@ struct MapScreen: Screen {
 	@discardableResult
 	func tapAFootprint() -> Self {
 		XCTAssertTrue(
-			mapView.waitForExistence(timeout: 30),
+			mapView.waitUntilExists(timeout: 30),
 			"The map should be on screen before anything tries to tap it")
 
 		for (index, probe) in Self.footprintProbes.enumerated() {
 			mapView.coordinate(withNormalizedOffset: probe).tap()
-			if closeButton.waitForExistence(timeout: 10) {
+			if closeButton.waitUntilExists(timeout: 10) {
 				return self
 			}
 			XCTContext.runActivity(
@@ -872,7 +784,7 @@ struct MapScreen: Screen {
 	func verifyCardHeaderWithinSheet() -> Self {
 		let sheet = sheetFrame()
 		verifyWithinSheet("close button", closeButton.frame, sheet)
-		XCTAssertTrue(cardTitle.waitForExistence(timeout: 10), "The card should show the building's name")
+		XCTAssertTrue(cardTitle.waitUntilExists(timeout: 10), "The card should show the building's name")
 		verifyWithinSheet("title", cardTitle.frame, sheet)
 		return self
 	}
@@ -886,7 +798,7 @@ struct MapScreen: Screen {
 	func verifyCardHeaderTopWithinSheet() -> Self {
 		let sheet = sheetFrame()
 		verifyWithinSheet("close button", closeButton.frame, sheet)
-		XCTAssertTrue(cardTitle.waitForExistence(timeout: 10), "The card should show the building's name")
+		XCTAssertTrue(cardTitle.waitUntilExists(timeout: 10), "The card should show the building's name")
 		let title = cardTitle.frame
 		XCTContext.runActivity(named: "title \(title) in sheet \(sheet)") { _ in }
 		XCTAssertTrue(
@@ -906,7 +818,7 @@ struct MapScreen: Screen {
 	/// navigation bar at the top and of the sheet's grabber at the bottom.
 	/// Taken before the sheet moves, it stays map at every lower stop.
 	func mapAboveSheet() -> CGRect {
-		XCTAssertTrue(mapView.waitForExistence(timeout: 30), "The map should be on screen")
+		XCTAssertTrue(mapView.waitUntilExists(timeout: 30), "The map should be on screen")
 		let map = mapView.frame
 		let sheetTop = sheetFrame().minY
 		return CGRect(x: map.minX, y: map.minY + 8, width: map.width, height: sheetTop - 24 - map.minY)
@@ -969,13 +881,7 @@ struct MapScreen: Screen {
 				forDuration: 0.1,
 				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.02)))
 		// The stop is only settled once the close button stops moving.
-		var previous = closeButton.frame.minY
-		for _ in 1...10 {
-			Thread.sleep(forTimeInterval: 0.3)
-			let now = closeButton.frame.minY
-			if abs(now - previous) < 0.5 { break }
-			previous = now
-		}
+		settle { closeButton.frame.minY }
 		return self
 	}
 
@@ -984,43 +890,7 @@ struct MapScreen: Screen {
 	@discardableResult
 	func verifyHoursStatus() -> Self {
 		let status = app.descendants(matching: .any)[TestIdentifiers.Hours.status].firstMatch
-		XCTAssertTrue(status.waitForExistence(timeout: 30), "The card should show its hours' status row")
-		return self
-	}
-
-	/// The card's About text, scrolled to until it can be tapped.
-	private func aboutText() -> XCUIElement {
-		let about = app.element(matching: TestIdentifiers.Map.cardAbout)
-		scrollCard(toReach: about)
-		XCTAssertTrue(about.waitForExistence(timeout: 10) && about.isHittable, "The card should show its About text")
-		return about
-	}
-
-	/// Taps the About text, which shows the rest of a description cut short.
-	@discardableResult
-	func expandAbout() -> Self {
-		aboutText().tap()
-		return self
-	}
-
-	/// Long-presses the About text and checks whether iOS offers to copy it,
-	/// which it does only for text that can be selected. The press lands near
-	/// the text's top, which stays on screen however far it grows.
-	@discardableResult
-	func verifyAboutOffersCopy(_ expected: Bool) -> Self {
-		aboutText().coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0))
-			.withOffset(CGVector(dx: 0, dy: 30))
-			.press(forDuration: 1.0)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
-		// Proving Copy absent needs a wait too, but a short one: the menu shows
-		// in well under a second when it shows at all.
-		let offered = copy.waitForExistence(timeout: expected ? 5 : 1.5)
-		capture("Long press on the card's About text")
-		XCTAssertEqual(
-			offered, expected,
-			expected
-				? "A long press on the expanded About text should offer Copy"
-				: "A long press on About text cut short should not offer Copy")
+		XCTAssertTrue(status.waitUntilExists(timeout: 30), "The card should show its hours' status row")
 		return self
 	}
 }

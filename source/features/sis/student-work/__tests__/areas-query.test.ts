@@ -22,9 +22,7 @@ afterEach(() => {
 
 describe('studentWorkAreasOptions', () => {
 	// fetchManifest never rejects -- it falls back to the manifest the app
-	// ships -- so the failure that can happen is the areas file itself. It must
-	// not pass the shipped copy off as the live one: React Query keeps the
-	// areas it already has, shipped or published.
+	// ships -- so the failure that can happen is the areas file itself.
 	test('fails when the areas file cannot be fetched', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue({
 			links: [],
@@ -46,13 +44,7 @@ describe('studentWorkAreasOptions', () => {
 		await expect(run(studentWorkAreasOptions)).rejects.toThrow()
 	})
 
-	// A query that has never run does not run offline, so a fallback inside
-	// the fetch would never be reached; the shipped areas are there from the
-	// start instead, and marked stale so the live copy replaces them.
-	test('starts from the areas the app shipped with, already stale', () => {
-		let initial = studentWorkAreasOptions.initialData
-		let areas = typeof initial === 'function' ? initial() : initial
-		expect(areas).toHaveLength(16)
-		expect(studentWorkAreasOptions.initialDataUpdatedAt).toBe(0)
+	test('has no areas until they are fetched', () => {
+		expect(studentWorkAreasOptions.initialData).toBeUndefined()
 	})
 })

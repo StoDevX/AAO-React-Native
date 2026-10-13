@@ -54,6 +54,13 @@ jest.mock('expo-image-picker', () => ({
 
 // The app's version is read from a native module Jest does not have; the
 // query cache marks what it saves with it.
+// The app config's `extra`, which source/lib/app-identity.ts reads: an All
+// About Olaf build, starting on St. Olaf. A test of CARLS mocks app-identity instead.
+jest.mock('expo-constants', () => ({
+	__esModule: true,
+	default: {expoConfig: {extra: {app: 'aao', defaultCampus: 'edu.stolaf'}}},
+}))
+
 jest.mock('expo-application', () => ({
 	nativeApplicationVersion: '2.8.0',
 	nativeBuildVersion: '17',
@@ -86,13 +93,15 @@ jest.mock('expo-localization', () => ({
 	getCalendars: () => [{uses24hourClock: false}],
 }))
 // expo-file-system wires up a native event emitter when imported, and Jest has
-// none. Only a recording run of the UI tests writes a file (mess/lib/fixtures.ts).
+// none. Only a recording run of the UI tests writes a file (campus/fixtures.ts).
 jest.mock('expo-file-system', () => ({
 	File: jest.fn(),
 	Paths: {document: 'documents'},
 }))
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
+	// No campus named, as outside a UI test.
+	uiTestCampus: null,
 	// Live, so a test that stubs fetchSourceBody gets its stub, not a fixture.
 	fixtureMode: 'live',
 	isChaos: false,
@@ -100,6 +109,23 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	chaosLaunch: 0,
 	chaosMode: 'record',
 	chaosFaultRate: 0,
+	chaosProfile: 'fuzz',
+	isSimulator: true,
+	isDebugNativeBuild: true,
+	addResetListener: jest.fn(() => () => {}),
+	finishReset: jest.fn(() => Promise.resolve()),
+	takePendingResetURL: jest.fn(() => null),
+	reportMissingFixture: jest.fn(),
+}))
+// DebugSwift is reached through a native module Jest does not have. Absent,
+// as in a Release build; a test of the Debug-only paths replaces this.
+jest.mock('@frogpond/debug-tools', () => ({
+	isDebugSwiftAvailable: false,
+	isDebugSwiftEnabled: jest.fn(() => false),
+	isDebugSwiftRunning: jest.fn(() => Promise.resolve(false)),
+	setDebugSwiftEnabled: jest.fn(() => Promise.resolve()),
+	openDebugSwift: jest.fn(() => Promise.resolve()),
+	setFloatingButtonEnabled: jest.fn(() => Promise.resolve()),
 }))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({
@@ -129,3 +155,7 @@ jest.mock('react-native/Libraries/Settings/NativeSettingsManager', () => ({
 		deleteValues: jest.fn(),
 	},
 }))
+
+// Boot names the server that publishes the sources manifest (source/init/api.ts);
+// a test starts where boot leaves the app.
+require('../modules/data-sources/manifest-server').setManifestServer('edu.stolaf')

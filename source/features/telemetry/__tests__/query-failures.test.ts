@@ -1,4 +1,5 @@
 import ky from 'ky'
+import {SourceFetchError} from '@frogpond/data-sources'
 import {QueryClient} from '@tanstack/react-query'
 
 import {describeQueryFailure, watchQueryFailures} from '../query-failures'
@@ -29,6 +30,15 @@ describe('describeQueryFailure', () => {
 		expect(describeQueryFailure(['news', {page: 2}], error)).toStrictEqual({
 			name: 'api.failure',
 			attributes: {source: 'news', kind: 'http', status: 503},
+		})
+	})
+
+	it('reports a source that answered with an error status as an http failure, with its status', () => {
+		let error = new SourceFetchError('Olaf Messenger fetch failed: 503', 503)
+
+		expect(describeQueryFailure(['mess', 'feed'], error)).toStrictEqual({
+			name: 'api.failure',
+			attributes: {source: 'mess', kind: 'http', status: 503},
 		})
 	})
 

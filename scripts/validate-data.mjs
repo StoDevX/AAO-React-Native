@@ -7,18 +7,11 @@ import {isDataEntry} from './data-entries.mjs'
 import {parseArgs} from 'node:util'
 import {validate} from './validate.mjs'
 import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
+import {loadScheduleData} from './schedule-data.ts'
 
 const isDir = (pth) => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = (pth) =>
 	JSON.parse(JSON.stringify(loadYaml(fs.readFileSync(pth, 'utf-8'), {filename: pth})))
-
-/*
-const readYamlPipe = (pth) =>
-	fs.readFileSync(pth, 'utf-8')
-		|> loadYaml(%, {filename: pth})
-		|> JSON.stringify(%)
-		|> JSON.parse(%)
-*/
 
 const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 
@@ -27,14 +20,47 @@ const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 // get cli arguments
 const args = getArgs(process.argv.slice(2))
 
-// allow either --data/--schema or automatic schema loading
+const scheduleSchemas = new Set(['breaks', 'building-hours'])
+
+// Scheduling inputs share one preparation path with publication.
 let iterator
 if (args.data) {
-	let dataFile = readYaml(args.data)
 	let schemaFile = readYaml(args.schema)
-	iterator = [[[args.schema, schemaFile, dataFile]]]
+	let kind =
+		schemaFile.$id === 'building-hours.json'
+			? 'space'
+			: schemaFile.$id === 'breaks.json'
+				? 'calendar'
+				: undefined
+	if (kind !== undefined) {
+		loadScheduleData(DATA_BASE, {kind, filename: args.data})
+		let canonicalSchema = path.join(
+			SCHEMA_BASE,
+			kind === 'space' ? 'building-hours.yaml' : 'breaks.yaml',
+		)
+		if (fs.realpathSync.native(args.schema) === fs.realpathSync.native(canonicalSchema)) {
+			args.quiet || console.log(args.data + ' is valid')
+			iterator = []
+		} else {
+			// An override adds its own rules to the canonical authoring checks.
+			iterator = [[[args.schema, schemaFile, readYaml(args.data)]]]
+		}
+	} else {
+		iterator = [[[args.schema, schemaFile, readYaml(args.data)]]]
+	}
 } else {
-	iterator = args.schemaNames.map((schemaName) => load(schemaName))
+	if (args.schemaNames.some((name) => scheduleSchemas.has(name))) {
+		let schedules = loadScheduleData(DATA_BASE)
+		if (!args.quiet) {
+			if (args.schemaNames.includes('breaks')) console.log('breaks.yaml is valid')
+			if (args.schemaNames.includes('building-hours')) {
+				for (let {label} of schedules.spaces) {
+					console.log(path.relative(DATA_BASE, label) + ' is valid')
+				}
+			}
+		}
+	}
+	iterator = args.schemaNames.filter((name) => !scheduleSchemas.has(name)).map((name) => load(name))
 }
 
 // iterate!

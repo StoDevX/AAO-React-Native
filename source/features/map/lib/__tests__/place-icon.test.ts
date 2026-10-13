@@ -5,12 +5,14 @@ import mapCategoriesData from '../../../../../docs/map-categories.json'
 import {
 	FALLBACK_GROUP_ICON,
 	placeIcon,
-	type MapCategoryTable,
+	type CampusMapCategories,
 	type MapIconEntry,
 } from '../category-groups'
 
 /// The list this build ships, as the grid reads it before the first fetch.
-const BUNDLED = (mapCategoriesData as unknown as {data: MapCategoryTable}).data
+const BUNDLED = (
+	mapCategoriesData as unknown as {data: Record<'stolaf' | 'carleton', CampusMapCategories>}
+).data
 
 const ICONS: MapIconEntry[] = [
 	{categories: ['water'], icon: 'drop.fill', gradient: 'blue'},

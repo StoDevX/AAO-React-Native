@@ -1,3 +1,5 @@
+import {execFileSync} from 'node:child_process'
+
 import type {ExpoConfig} from 'expo/config'
 
 import {version as fullVersion} from './package.json'
@@ -12,39 +14,169 @@ const shippableVersion = fullVersion.split('-')[0]
 
 const BUNDLE_ID = 'NFMTHAZVS9.com.drewvolz.stolaf'
 
+/** The CARLS app's identifier, so a CARLS build updates the App Store's CARLS. */
+const CARLS_BUNDLE_ID = 'com.rives.carls'
+
+/** The windmill, an Icon Composer document. */
+const AAO_ICON = './assets/windmill.icon'
+
+/** The CARLS penguin, the CARLS app's own 1024px artwork. */
+const CARLS_ICON = './assets/carls-penguin.xcassets/carls-penguin.appiconset/light.png'
+
+/** All About Anything's identifier. */
+const AAA_BUNDLE_ID = 'tech.frogpond.allaboutanything'
+
+/** Windmill (Sky), an Icon Composer document, as All About Anything's primary. */
+const AAA_ICON = './assets/windmill-sky.icon'
+
 /**
- * Which build this is. Set `APP_VARIANT=development` to get an app that
- * installs alongside the real one instead of replacing it on your device.
+ * Each app's Sentry project. A variant names its own organization too, so a
+ * future app can report somewhere else without code changes. A DSN only
+ * routes reports, so it isn't secret.
+ */
+const AAO_SENTRY = {
+	organization: 'frog-pond-labs',
+	project: 'all-about-olaf',
+	dsn: 'https://7f68e814c5c24c32a582f2ddc3d42b4c@o524787.ingest.sentry.io/5637838',
+}
+const CARLS_SENTRY = {
+	organization: 'frog-pond-labs',
+	project: 'carls',
+	dsn: 'https://a539fb427f9f4380971602c1e21e6959@o524787.ingest.us.sentry.io/5637839',
+}
+const AAA_SENTRY = {
+	organization: 'frog-pond-labs',
+	project: 'all-about-anything',
+	dsn: 'https://daa452d0505f2c883df86e0a0b6196fa@o524787.ingest.us.sentry.io/4512230081363968',
+}
+
+/**
+ * Which app this build is, which `APP_VARIANT` must name: `aao`, `carls`,
+ * `aaa`, or their `-dev` builds, which install alongside the App Store's instead of
+ * replacing it on your device. There is no default, so a forgotten variant
+ * fails here rather than building and launching the other app.
+ *
+ * `carls` and `carls-dev` build the same code as CARLS: Carleton's
+ * app (`extra.app`, read by source/lib/app-identity.ts), opening on Carleton,
+ * with the penguin as its icon and the windmills to switch to.
+ *
+ * `aaa` and `aaa-dev` build All About Anything: no default campus, so a fresh
+ * install asks, with Windmill (Sky) as its icon and its own scheme, which AAO
+ * and CARLS don't register.
  *
  * The identity has to differ in three places, not one: iOS keys installs on the
  * bundle identifier, the home screen shows the name, and two apps claiming the
  * same URL scheme is undefined behaviour — whichever iOS feels like wins.
+ *
+ * `defaultCampus` is the campus a fresh install opens on; any build can switch
+ * in dev mode.
  *
  * Defined inline rather than imported from a helper: Expo's config loader
  * compiles this file on its own, so `import {x} from './somewhere'` throws
  * `Cannot find module` at prebuild time. See __tests__/app.config.test.ts.
  */
 const VARIANTS = {
-	production: {
+	aao: {
+		app: 'aao',
+		defaultCampus: 'edu.stolaf',
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
+		icon: AAO_ICON,
+		primaryIcon: 'windmill',
+		sentry: AAO_SENTRY,
 	},
-	development: {
+	'aao-dev': {
+		app: 'aao',
+		defaultCampus: 'edu.stolaf',
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
 		scheme: 'AllAboutOlafDev',
+		icon: AAO_ICON,
+		primaryIcon: 'windmill',
+		sentry: AAO_SENTRY,
 	},
+	carls: {
+		app: 'carls',
+		defaultCampus: 'edu.carleton',
+		displayName: 'CARLS',
+		bundleIdentifier: CARLS_BUNDLE_ID,
+		// The CARLS app's own scheme, so links made for it still open it.
+		scheme: 'carls',
+		icon: CARLS_ICON,
+		primaryIcon: 'carls-penguin',
+		sentry: CARLS_SENTRY,
+	},
+	'carls-dev': {
+		app: 'carls',
+		defaultCampus: 'edu.carleton',
+		displayName: 'CARLS Dev',
+		bundleIdentifier: `${CARLS_BUNDLE_ID}.dev`,
+		scheme: 'carlsDev',
+		icon: CARLS_ICON,
+		primaryIcon: 'carls-penguin',
+		sentry: CARLS_SENTRY,
+	},
+	aaa: {
+		app: 'aaa',
+		defaultCampus: null,
+		displayName: 'All About Anything',
+		bundleIdentifier: AAA_BUNDLE_ID,
+		scheme: 'allaboutanything',
+		icon: AAA_ICON,
+		primaryIcon: 'windmill-sky',
+		sentry: AAA_SENTRY,
+	},
+	'aaa-dev': {
+		app: 'aaa',
+		defaultCampus: null,
+		displayName: 'AAA Dev',
+		bundleIdentifier: `${AAA_BUNDLE_ID}.dev`,
+		scheme: 'allaboutanythingDev',
+		icon: AAA_ICON,
+		primaryIcon: 'windmill-sky',
+		sentry: AAA_SENTRY,
+	},
+} as const
+
+const requested = process.env.APP_VARIANT
+
+if (!requested) {
+	throw new Error(`APP_VARIANT is not set. Set it to one of ${Object.keys(VARIANTS).join(', ')}.`)
 }
 
-const requested = process.env.APP_VARIANT ?? 'production'
-
 if (!(requested in VARIANTS)) {
-	// Loudly, rather than quietly shipping production's identity under a typo.
+	// Loudly, rather than quietly building another app's identity under a typo.
 	throw new Error(`APP_VARIANT="${requested}" is not one of ${Object.keys(VARIANTS).join(', ')}.`)
 }
 
 const variant = VARIANTS[requested as keyof typeof VARIANTS]
+
+/**
+ * The short git SHA of the checkout, which says which commit a build came
+ * from. Undefined outside a git checkout.
+ */
+function commitSha(): string | undefined {
+	try {
+		return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+			encoding: 'utf8',
+			stdio: ['ignore', 'pipe', 'ignore'],
+		}).trim()
+	} catch {
+		return undefined
+	}
+}
+
+const commit = commitSha()
+
+/**
+ * The build number: Xcode Cloud's, when it sets one. A local build has no such
+ * counter, so it takes the commit's SHA, which says which commit a device is
+ * running. A SHA is not a number, so this suits a build to your own device,
+ * never an upload to App Store Connect (CI always sets one). Falls back to a
+ * fixed number outside a git checkout.
+ */
+const buildNumber = process.env.CI_BUILD_NUMBER ?? commit ?? '17'
 
 /**
  * The declarative description of the iOS project.
@@ -53,8 +185,8 @@ const config: ExpoConfig = {
 	// Constant across variants: this also names the generated Xcode project,
 	// its target, its scheme and its directory. The variant's own name goes to
 	// CFBundleDisplayName below, which is what the home screen shows.
-	name: 'All About Olaf',
-	slug: 'all-about-olaf',
+	name: 'All About Anything',
+	slug: 'all-about-anything',
 	scheme: variant.scheme,
 	version: shippableVersion,
 
@@ -87,11 +219,14 @@ const config: ExpoConfig = {
 
 	ios: {
 		bundleIdentifier: variant.bundleIdentifier,
-		// An Icon Composer document; plugins/with-alternate-icons adds the others.
-		icon: './assets/windmill.icon',
+		// Written into every target as DEVELOPMENT_TEAM. Without it, `expo run:ios
+		// --device` reads the Mac's signing certificates to pick a team itself.
+		appleTeamId: 'TMK6S7TPX2',
+		// plugins/with-alternate-icons adds the others.
+		icon: variant.icon,
 		// Xcode Cloud's build number becomes an input to generation rather than
 		// something agvtool edits afterwards.
-		buildNumber: process.env.CI_BUILD_NUMBER ?? '17',
+		buildNumber,
 		supportsTablet: true,
 
 		// Expo's schema covers both keys the PrivacyInfo.xcprivacy needs, so no
@@ -197,6 +332,10 @@ const config: ExpoConfig = {
 				NSAllowsArbitraryLoadsInWebContent: true,
 				NSExceptionDomains: {
 					localhost: {NSTemporaryExceptionAllowsInsecureHTTPLoads: true},
+					// KRLX's stream server offers no forward-secret cipher. A device
+					// loads the stream in mediaplaybackd, outside the app's ATS, but
+					// the simulator loads it in the app, where ATS refuses it.
+					's3.voscast.com': {NSExceptionRequiresForwardSecrecy: false},
 				},
 			},
 			NSBonjourServices: ['_ccc-server._tcp.'],
@@ -230,7 +369,14 @@ const config: ExpoConfig = {
 		},
 	},
 
-	extra: {fullVersion},
+	extra: {
+		fullVersion,
+		commit,
+		app: variant.app,
+		defaultCampus: variant.defaultCampus,
+		primaryIcon: variant.primaryIcon,
+		sentry: {dsn: variant.sentry.dsn},
+	},
 
 	plugins: [
 		[
@@ -291,17 +437,20 @@ const config: ExpoConfig = {
 		// and Expo runs a later plugin's project mod first, so it goes above.
 		'./plugins/with-sentry-debug-files-environment',
 		'./plugins/with-sentry-cli-executable',
+		'./plugins/with-tree-shaking',
+		// Xcode's own build phases read app.config.ts too, so ios/ remembers its variant.
+		['./plugins/with-app-variant', {variant: requested}],
 		[
 			'@sentry/react-native/expo',
-			{
-				organization: 'frog-pond-labs',
-				project: 'all-about-olaf',
-			},
+			{organization: variant.sentry.organization, project: variant.sentry.project},
 		],
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
 		// its options now live in the `enriched-markdown` block of package.json.
 		'./plugins/with-app-delegate-customizations',
-		'./plugins/with-alternate-icons',
+		// DebugSwift, in Debug builds only; Release never links it.
+		'./plugins/with-debug-swift',
+		// Every variant bundles every icon but its primary; the campus decides which Customize offers.
+		['./plugins/with-alternate-icons', {primary: variant.primaryIcon}],
 		'./plugins/with-custom-symbols',
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',

@@ -9,8 +9,11 @@ import {fileURLToPath} from 'node:url'
 const APP_DIR = new URL('../app/', import.meta.url)
 const OUTPUT = new URL('../uitests/Chaos/ChaosRoutes.swift', import.meta.url)
 
-/** Routes the monkey should not open: the canary's own crash. */
-const SKIPPED = new Set(['chaos-crash'])
+/** Routes the monkey should not open: the canaries' own screens. */
+const SKIPPED = new Set(['chaos-crash', 'chaos-canary-targets'])
+
+/** Route prefixes the monkey should not open: internal tools no one outside the team sees. */
+const SKIPPED_PREFIXES = ['developer']
 
 /** Every file under app/, relative to it. */
 export function appRouteFiles() {
@@ -32,6 +35,9 @@ export function routesIn(paths) {
 		if (last === 'index') segments.pop()
 		let route = segments.filter((s) => !/^\(.*\)$/u.test(s)).join('/')
 		if (SKIPPED.has(route)) continue
+		if (SKIPPED_PREFIXES.some((prefix) => route === prefix || route.startsWith(`${prefix}/`))) {
+			continue
+		}
 		routes.add(route)
 	}
 	return [...routes].sort(compareStrings)

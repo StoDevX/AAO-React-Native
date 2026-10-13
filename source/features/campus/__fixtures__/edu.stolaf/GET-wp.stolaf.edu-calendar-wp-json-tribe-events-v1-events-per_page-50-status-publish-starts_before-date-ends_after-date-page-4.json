@@ -1,0 +1,984 @@
+{
+	"contentType": "application/json; charset=UTF-8",
+	"json": {
+		"events": [
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Alumni"
+					},
+					{
+						"name": "Vocation and Career"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Students are welcome to attend the Ole Alumni Career Chats hosted by the Piper Center and Alumni and Parent Relations.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Piper Center"
+					},
+					{
+						"organizer": "Alumni and Parent Relations"
+					}
+				],
+				"title": "Ole Alumni Career Chats",
+				"url": "https://wp.stolaf.edu/calendar/event/ole-alumni-career-chats/",
+				"utc_end_date": "2026-10-02 20:00:00",
+				"utc_start_date": "2026-09-28 14:00:00",
+				"venue": {
+					"venue": "BC Crossroads"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Dia de los Muertos/Day of the Dead",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-dia-de-los-muertos-day-of-the-dead/",
+				"utc_end_date": "2026-09-28 15:30:00",
+				"utc_start_date": "2026-09-28 15:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Multicultural"
+					},
+					{
+						"name": "Special Events/Celebrations"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>The St. Olaf community is invited to join the Taylor Center, ¡PRESENTE! &amp; SOMOS to honor an ancient tradition that celebrates the lives of the departed and learn more about a celebration named by the UNESCO as an Oral and Intangible Heritage of Humanity.</p>\n<p>Enjoy tamales, <em>pan de muerto, </em>traditional drinks, activities and more!</p>\n<p>For those participating in the <em>Altar de Ofrendas</em> to honor a loved one that passed away, bring a 4&#215;6 photo. A picture frame will be provided.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Taylor Center"
+					},
+					{
+						"organizer": "¡PRESENTE! and SOMOS."
+					}
+				],
+				"title": "Día de los Muertos / Day of the Dead Celebration",
+				"url": "https://wp.stolaf.edu/calendar/event/dia-de-los-muertos-day-of-the-dead-celebration-2/",
+				"utc_end_date": "2026-09-29 00:00:00",
+				"utc_start_date": "2026-09-28 22:00:00",
+				"venue": {
+					"venue": "BC 111 &#8211; Taylor Center Lounge"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Vocation and Career"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Students are welcome to attend the Pre-Health Gap Year Showcase hosted by the Piper Center.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Piper Center"
+					}
+				],
+				"title": "Pre-Health Gap Year Showcase",
+				"url": "https://wp.stolaf.edu/calendar/event/pre-health-gap-year-showcase-2/",
+				"utc_end_date": "2026-09-29 01:15:00",
+				"utc_start_date": "2026-09-28 23:50:00",
+				"venue": {
+					"venue": "TBD"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400;\">Faculty, staff, students, and the wider community are welcome to attend this faculty/guest recital featuring Instructor of Music at St. Olaf College <a href=\"https://www.stolaf.edu/profile/shows\">Ray Shows</a>, <em>violin </em>with John Jensen, <em>piano. </em> </span></p>\n<p><span style=\"font-weight: 400;\">This event is free and open to the public.</span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Faculty Recital: Ray Shows, violin with John Jensen, piano",
+				"url": "https://wp.stolaf.edu/calendar/event/faculty-recital-ray-shows-violin-with-john-jensen-piano/",
+				"utc_end_date": "2026-09-29 01:00:00",
+				"utc_start_date": "2026-09-29 00:00:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection></div>",
+				"organizer": [],
+				"title": "Registration for Spring (by grad year)",
+				"url": "https://wp.stolaf.edu/calendar/event/registration-for-spring-by-grad-year/",
+				"utc_end_date": "2026-10-02 04:59:59",
+				"utc_start_date": "2026-09-29 05:00:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Toay’s chapel service is part of the First Generation Celebration on campus.</p>\n<p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: First Generation Celebration",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-first-generation-celebration/",
+				"utc_end_date": "2026-09-29 16:30:00",
+				"utc_start_date": "2026-09-29 16:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Service of Holy Communion",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-service-of-holy-communion-2/",
+				"utc_end_date": "2026-09-30 15:30:00",
+				"utc_start_date": "2026-09-30 15:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Recreation"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Students are welcome to join our student fellows and other students for CommuniTEA every Wednesday from 2:30-3:30 p.m. in the Lutheran Center. Come and chat (or not!), color, and drink tea.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "The Lutheran Center for Faith, Values, and Community"
+					}
+				],
+				"title": "Student CommuniTEA",
+				"url": "https://wp.stolaf.edu/calendar/event/student-communitea/2026-11-04/",
+				"utc_end_date": "2026-09-30 20:30:00",
+				"utc_start_date": "2026-09-30 19:30:00",
+				"venue": {
+					"venue": "the Lutheran Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><em>Crafting Resilience: Finding Community and Connection through Fiber Arts</em> is an artist-led workshop where participants gather together — without technology — to build community while working on a fiber craft of their choosing. Bring your own project that&#8217;s in process or start a new one with materials and tools provided; we&#8217;ll be working primarily in knitting, crochet, needle-felting, and embroidery. Stop by or stay for the whole time: we&#8217;ll get to know each other and share ways that we’re practicing resilience together and on our own. From novice to expert, everyone is welcome and demonstrations will be available for those looking to learn. Light snacks and refreshments provided. This workshop is led by FAM Collections Manager Krista Anderson-Larson and made possible by funding from the Gimse <em>Striving for Peace on Horizon&#8217;s Brim</em> Art Endowment.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Flaten Art Museum"
+					}
+				],
+				"title": "Crafting Resilience: Finding Community and Connection through Fiber Arts",
+				"url": "https://wp.stolaf.edu/calendar/event/crafting-resilience-finding-community-and-connection-through-fiber-arts/",
+				"utc_end_date": "2026-09-30 23:00:00",
+				"utc_start_date": "2026-09-30 20:00:00",
+				"venue": {
+					"venue": "Center for Art and Dance"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, students, and the wider community are welcome to attend this faculty/guest masterclass featuring Kimberly Cole Luevano, <em>clarinet</em>.</p>\n<p>Luevano is a member of Haven trio and serves as Regents Professor of Clarinet and Director of Chamber Music at University of North Texas College of Music, among other notable accomplishments.</p>\n<p>This event is free an open to the public</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Guest Masterclass: Kimberly Cole Luevano, clarinet",
+				"url": "https://wp.stolaf.edu/calendar/event/guest-masterclass-dr-kimberly-cole-luevano-clarinet/",
+				"utc_end_date": "2026-10-01 00:30:00",
+				"utc_start_date": "2026-09-30 23:00:00",
+				"venue": {
+					"venue": "Skifter Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Vespers is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship is led by members of the St. Olaf Student Congregation, Pastor Matt and Pastor Sarah.  All are welcome!</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Vespers: Holden Evening Prayer",
+				"url": "https://wp.stolaf.edu/calendar/event/vespers-holden-evening-prayer-4/",
+				"utc_end_date": "2026-10-01 02:30:00",
+				"utc_start_date": "2026-10-01 02:00:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": true,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection></div>",
+				"organizer": [],
+				"title": "Last day to add a second half of semester course",
+				"url": "https://wp.stolaf.edu/calendar/event/last-day-to-add-a-second-half-of-semester-course-2/",
+				"utc_end_date": "2026-10-02 04:59:59",
+				"utc_start_date": "2026-10-01 05:00:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					},
+					{
+						"name": "Special Events/Celebrations"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p dir=\"ltr\">This year’s service will include the awarding of the Founders Medal, which recognizes recipients as modern founders of the college. The award serves as a public declaration of deep gratitude from the entire St. Olaf community, highlighting the transformative power of philanthropy in supporting higher education.</p>\n<p dir=\"ltr\">The Founders Medal is amongst the highest honors the college can bestow, recognizing individuals whose extraordinary contributions have significantly advanced the college’s mission and improved the lives and outcomes of St. Olaf students today and for centuries to come. The recipient of this year&#8217;s Founders Medal are O. Jay and Pat Tomson.</p>\n<p dir=\"ltr\">All are invited to a reception in the King’s Dining Room following the chapel service.</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "college events"
+					}
+				],
+				"title": "Daily Chapel: Founders Day",
+				"url": "https://wp.stolaf.edu/calendar/event/founders-day/",
+				"utc_end_date": "2026-10-01 16:20:00",
+				"utc_start_date": "2026-10-01 16:00:00",
+				"venue": {
+					"venue": "Boe Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>St. Olaf Orientation to Academics and Resources (SOAR) provides an extended orientation for students in their first year to intentionally foster peer connections and equip them with the knowledge, skills, and resources to be successful at St. Olaf.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "SOAR"
+					}
+				],
+				"title": "SOAR Session",
+				"url": "https://wp.stolaf.edu/calendar/event/soar-session/2026-11-05/",
+				"utc_end_date": "2026-10-01 17:30:00",
+				"utc_start_date": "2026-10-01 16:30:00",
+				"venue": []
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Meetings/Workshops"
+					}
+				],
+				"description": "<div data-modular-content-collection><h3>Celebrating Trans Joy as Resistance</h3>\n<p>This event, hosted by the Taylor Center for Equity and Inclusion, aims to provide space and time for community affirmations, make connections, and celebrating Trans Joy with members of the campus community. All are welcome!</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Taylor Center for Equity and Inclusion"
+					}
+				],
+				"title": "Out For Lunch Series",
+				"url": "https://wp.stolaf.edu/calendar/event/out-for-lunch-series-celebrating-trans-joy-as-resistance/",
+				"utc_end_date": "2026-10-01 17:30:00",
+				"utc_start_date": "2026-10-01 16:30:00",
+				"venue": {
+					"venue": "Regents Natural Sciences Room 356-B"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, students, and the wider community are welcome to attend this faculty/guest masterclass featuring the Haven Trio: Lindsay Kesselman, <em>soprano,</em> Kimberly Cole Luevano, <em>clarinet, </em>Midori Koga, <em>piano.</em></p>\n<p>This event is free and open to the public.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Guest Masterclass: Haven Trio",
+				"url": "https://wp.stolaf.edu/calendar/event/guest-masterclass-haven-trio/",
+				"utc_end_date": "2026-10-01 17:30:00",
+				"utc_start_date": "2026-10-01 16:30:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Recreation"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Staff and Faculty are welcome to join us for CommuniTEA every Thursday during community time 11:30 a.m.-12:30 p.m. in the Lutheran Center. Come and chat (or not!), color, and drink tea.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "The Lutheran Center for Faith, Values, and Community"
+					}
+				],
+				"title": "Faculty/Staff CommuniTEA time",
+				"url": "https://wp.stolaf.edu/calendar/event/faculty-staff-communitea-time/2026-11-05/",
+				"utc_end_date": "2026-10-01 17:30:00",
+				"utc_start_date": "2026-10-01 16:30:00",
+				"venue": {
+					"venue": "the Lutheran Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Special Events/Celebrations"
+					}
+				],
+				"description": "<div data-modular-content-collection><p dir=\"ltr\">Staff, faculty, students, and the community are invited to a reception in the King’s Dining Room following the chapel service.</p>\n<p dir=\"ltr\">The Founders Medal is amongst the highest honors the college can bestow, recognizing individuals whose extraordinary contributions have significantly advanced the college’s mission and improved the lives and outcomes of St. Olaf students today and for centuries to come. The recipient of this year’s Founders Medal are O. Jay and Pat Tomson.</p>\n<p dir=\"ltr\">\n</div>",
+				"organizer": [
+					{
+						"organizer": "college events"
+					}
+				],
+				"title": "Founder&#8217;s Day Community Celebration",
+				"url": "https://wp.stolaf.edu/calendar/event/founders-day-community-celebration/",
+				"utc_end_date": "2026-10-01 17:30:00",
+				"utc_start_date": "2026-10-01 16:30:00",
+				"venue": {
+					"venue": "Kings Dining Room &#8211; Buntrock Commons"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Cross Country vs Cannon River Closer</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Cross Country vs Cannon River Closer",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-cross-country-vs-cannon-river-closer-2/",
+				"utc_end_date": "2026-10-02 01:30:00",
+				"utc_start_date": "2026-10-01 22:30:00",
+				"venue": {
+					"venue": "Northfield, Minn., St. Olaf Cross Country Course"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Cross Country vs AECMR</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Cross Country vs AECMR",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-cross-country-vs-aecmr-3/",
+				"utc_end_date": "2026-10-02 02:00:00",
+				"utc_start_date": "2026-10-01 23:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., St. Olaf Cross Country Course"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400;\">Faculty, staff, students, and the wider community are welcome to attend this Music Department recital, featuring a variety of students fulfilling their degree requirements.</span></p>\n<p><span style=\"font-weight: 400;\">This event is free and open to the public.</span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Student Recital",
+				"url": "https://wp.stolaf.edu/calendar/event/student-recital-20/",
+				"utc_end_date": "2026-10-02 02:15:00",
+				"utc_start_date": "2026-10-02 01:15:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Academic Year"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, and students are welcome to gather at the Buntrock Institute for Freedom and Community every Friday from 8:30 to 9:30 a.m. Politics and Pastries provides opportunities to discuss politics, campaigns, and current events. Coffee and light pastries will be provided.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Buntrock Institute for Freedom and Community"
+					}
+				],
+				"title": "Politics and Pastries",
+				"url": "https://wp.stolaf.edu/calendar/event/politics-and-pastries-17/",
+				"utc_end_date": "2026-10-02 14:30:00",
+				"utc_start_date": "2026-10-02 13:30:00",
+				"venue": {
+					"venue": "Tomson Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>The chapel speaker today is a recipient of the Distinguished Alumni Award, Glen Gunderson &#8217;90, CEO of YMCA of the North.</p>\n<p>Daily Chapel is a time of inspiration for body, mind, and spirit; a quiet harbor in a busy day; worship. Students, faculty, and staff witness to their faith and invite the community to join them. All are welcome!</p>\n<p>If you are unable to join us in person but would like to watch live or archived chapel services, please click the web link below.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Daily Chapel: Glen Gunderson &#8217;90",
+				"url": "https://wp.stolaf.edu/calendar/event/daily-chapel-distinguished-alumni-award/",
+				"utc_end_date": "2026-10-02 15:30:00",
+				"utc_start_date": "2026-10-02 15:10:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Faculty, staff, students, and the wider community are welcome to attend this Composition Reading featuring the Haven Trio: Lindsay Kesselman, <em>soprano,</em> Kimberly Cole Luevano, <em>clarinet, </em>Midori Koga, <em>piano. </em>The Haven Trio will read and perform student works and then workshop them in this more informal performance.</p>\n<p>This event is free and open to the public.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Composition Readings with Haven Trio",
+				"url": "https://wp.stolaf.edu/calendar/event/composition-readings-with-haven-trio/",
+				"utc_end_date": "2026-10-02 21:30:00",
+				"utc_start_date": "2026-10-02 20:00:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Alumni"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Alumni Award winners and guests are invited to attend the 2026 Alumni Awards reception and dinner hosted by Alumni and Parent Relations. Please contact <a href=\"mailto:person@example.com\">person@example.com</a> with questions.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Alumni and Parent Relations"
+					}
+				],
+				"title": "2026 Alumni Awards",
+				"url": "https://wp.stolaf.edu/calendar/event/2026-alumni-awards/",
+				"utc_end_date": "2026-10-03 01:30:00",
+				"utc_start_date": "2026-10-02 22:30:00",
+				"venue": {
+					"venue": "Ballrooms in Buntrock Commons"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Swimming and Diving at Gustavus Adolphus College</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Swimming and Diving at Gustavus Adolphus College",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-swimming-and-diving-at-gustavus-adolphus-college-2/",
+				"utc_end_date": "2026-10-03 02:00:00",
+				"utc_start_date": "2026-10-02 23:00:00",
+				"venue": {
+					"venue": "St. Peter, Minn. / Lund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Swimming and Diving at Gustavus Adolphus College</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Swimming and Diving at Gustavus Adolphus College",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-swimming-and-diving-at-gustavus-adolphus-college-2/",
+				"utc_end_date": "2026-10-03 02:00:00",
+				"utc_start_date": "2026-10-02 23:00:00",
+				"venue": {
+					"venue": "St. Peter, Minn. / Lund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400\">Faculty, staff, students, and the wider community are welcome to attend this faculty/guest recital featuring the Haven Trio: Lindsay Kesselman, <em>soprano,</em> Kimberly Cole Luevano, <em>clarinet, </em>Midori Koga, <em>piano.</em><br />\n</span></p>\n<p><span style=\"font-weight: 400\">This event is free and open to the public.</span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					}
+				],
+				"title": "Guest Recital: Haven Trio",
+				"url": "https://wp.stolaf.edu/calendar/event/faculty-guest-recital-haven-trio/",
+				"utc_end_date": "2026-10-03 01:00:00",
+				"utc_start_date": "2026-10-03 00:00:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Basketball at University of Wisconsin-Superior</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Basketball at University of Wisconsin-Superior",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-basketball-at-university-of-wisconsin-superior-2/",
+				"utc_end_date": "2026-10-03 03:00:00",
+				"utc_start_date": "2026-10-03 01:00:00",
+				"venue": {
+					"venue": "Superior, Wis. / Mertz Mortorelli Gymnasium"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Women&#8217;s Basketball vs Crown College</p>\n</div>",
+				"organizer": [],
+				"title": "Women&#8217;s Basketball vs Crown College",
+				"url": "https://wp.stolaf.edu/calendar/event/womens-basketball-vs-crown-college-2/",
+				"utc_end_date": "2026-10-03 03:00:00",
+				"utc_start_date": "2026-10-03 01:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Hockey vs St. Norbert College</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Hockey vs St. Norbert College",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-hockey-vs-st-norbert-college/",
+				"utc_end_date": "2026-10-03 04:00:00",
+				"utc_start_date": "2026-10-03 01:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., St. Olaf Ice Arena"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>The Music Teachers National Association State Competition will occur at St. Olaf College on November 7.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Events"
+					}
+				],
+				"title": "Music Teachers National Association State Competition (MTNA)",
+				"url": "https://wp.stolaf.edu/calendar/event/music-teachers-national-association-state-competition-mtna/",
+				"utc_end_date": "2026-10-03 22:00:00",
+				"utc_start_date": "2026-10-03 13:00:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400;\">The St. Olaf Handbell Choir will present a concert at Bethel Lutheran Church, conducted by Adjunct Instructor in Music Jill Mahr. </span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "St. Olaf Handbells Concert at Bethel Lutheran Church",
+				"url": "https://wp.stolaf.edu/calendar/event/st-olaf-handbells-concert-at-bethel-lutheran-church/",
+				"utc_end_date": "2026-10-03 21:00:00",
+				"utc_start_date": "2026-10-03 19:00:00",
+				"venue": {
+					"venue": "Off campus"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Football at Hamline University<br />\nStreaming Video: https://miacsportsnetwork.com/hamline/<br />\nTickets: https://hamlineathletics.com/sports/2022/8/23/game-day-tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Football at Hamline University",
+				"url": "https://wp.stolaf.edu/calendar/event/football-at-hamline-university/",
+				"utc_end_date": "2026-10-03 22:00:00",
+				"utc_start_date": "2026-10-03 19:00:00",
+				"venue": {
+					"venue": "St. Paul, Minn. / Klas Field"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>All are welcome to Fresh Space, an annual concert displaying the dance works of St. Olaf students, student organizations, staff and faculty, as well as groups from the greater Northfield area and Carleton College! It’s an open show intended to bring area dancers and creators together to share a performance in The Wagner Bundgaard Studio on the St. Olaf Campus.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Dance Department"
+					}
+				],
+				"title": "Fresh Space &#8211; Fall Dance Concert",
+				"url": "https://wp.stolaf.edu/calendar/event/fresh-space-fall-dance-concert-2/2026-11-07/1/",
+				"utc_end_date": "2026-10-03 21:00:00",
+				"utc_start_date": "2026-10-03 19:00:00",
+				"venue": {
+					"venue": "Center for Art and Dance Wagner/Bundgaard Studio One"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Basketball vs University of Wisconsin-La Crosse</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Basketball vs University of Wisconsin-La Crosse",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-basketball-vs-university-of-wisconsin-la-crosse/",
+				"utc_end_date": "2026-10-03 22:00:00",
+				"utc_start_date": "2026-10-03 20:00:00",
+				"venue": {
+					"venue": "Superior, Wis. / Mertz Mortorelli Gymnasium"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs College of St. Scholastica<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs College of St. Scholastica",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-college-of-st-scholastica-2/",
+				"utc_end_date": "2026-10-04 00:00:00",
+				"utc_start_date": "2026-10-03 22:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Men&#8217;s Hockey vs St. Norbert College &#8211; 2006 MIAC Championship Team Recognition</p>\n</div>",
+				"organizer": [],
+				"title": "Men&#8217;s Hockey vs St. Norbert College &#8211; 2006 MIAC Championship Team Recognition",
+				"url": "https://wp.stolaf.edu/calendar/event/mens-hockey-vs-st-norbert-college-2006-miac-championship-team-recognition/",
+				"utc_end_date": "2026-10-04 01:00:00",
+				"utc_start_date": "2026-10-03 22:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., St. Olaf Ice Arena"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs College of St. Scholastica vs. Wartburg College<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs College of St. Scholastica vs. Wartburg College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-college-of-st-scholastica-vs-wartburg-college/",
+				"utc_end_date": "2026-10-04 02:00:00",
+				"utc_start_date": "2026-10-04 00:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>All are welcome to Fresh Space, an annual concert displaying the dance works of St. Olaf students, student organizations, staff and faculty, as well as groups from the greater Northfield area and Carleton College! It’s an open show intended to bring area dancers and creators together to share a performance in The Wagner Bundgaard Studio on the St. Olaf Campus.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Dance Department"
+					}
+				],
+				"title": "Fresh Space &#8211; Fall Dance Concert",
+				"url": "https://wp.stolaf.edu/calendar/event/fresh-space-fall-dance-concert-2/2026-11-07/2/",
+				"utc_end_date": "2026-10-04 02:00:00",
+				"utc_start_date": "2026-10-04 00:00:00",
+				"venue": {
+					"venue": "Center for Art and Dance Wagner/Bundgaard Studio One"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Athletics"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>Volleyball vs Wartburg College<br />\nStreaming Video: https://miacsportsnetwork.com/stolaf/<br />\nTickets: https://athletics.stolaf.edu/sports/2024/8/9/tickets.aspx</p>\n</div>",
+				"organizer": [],
+				"title": "Volleyball vs Wartburg College",
+				"url": "https://wp.stolaf.edu/calendar/event/volleyball-vs-wartburg-college-2/",
+				"utc_end_date": "2026-10-04 04:00:00",
+				"utc_start_date": "2026-10-04 02:00:00",
+				"venue": {
+					"venue": "Northfield, Minn., Bob Gelle Court at Skoglund Center"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Chapel"
+					}
+				],
+				"description": "<div data-modular-content-collection><p>24th Sunday after Pentecost; Sunday Worship with Holy Communion</p>\n<p>The preacher today will be Associate College Chaplain Sarah Semmler Smith ’04;  presided by College Chaplain Matthew Marohl and assisted by Jonathan Madden ’20, Interim Cantor to the Student Congregation. The Manitou Singers will be conducted by Therees Hibbard, Associate Professor of Practice and Robert Scholz Endowed Chair in Music. Comprised of alto and soprano voices from the first-year class, the Manitou Singers is one of the most popular music organizations on the St. Olaf College campus. With a repertoire that ranges from sacred to secular to popular ballads, the 100-voice choir sings at the opening worship service of the college as well as at various campus functions throughout the year.</p>\n<p>Sunday Worship is a time of inspiration and worship for body, mind, and spirit; a meaningful beginning to a new week. All are welcome!</p>\n<p>Click the web link below to access streamed and archived services.</p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "College Ministry"
+					}
+				],
+				"title": "Sunday Morning Worship: 24th Sunday after Pentecost",
+				"url": "https://wp.stolaf.edu/calendar/event/sunday-morning-worship-24th-sunday-after-pentecost/",
+				"utc_end_date": "2026-10-04 16:30:00",
+				"utc_start_date": "2026-10-04 15:30:00",
+				"venue": {
+					"venue": "Boe Memorial Chapel"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400\"><strong>John Rasmussen  ’27, <em>baritone</em></strong> will present a senior recital in fulfillment of their B.M. Music Education degree requirements. </span></p>\n<p><span style=\"font-weight: 400\">This event is free and open to the public.</span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Senior Recital: John Rasmussen &#8217;27, baritone",
+				"url": "https://wp.stolaf.edu/calendar/event/senior-recital-john-rasmussen-27-baritone/",
+				"utc_end_date": "2026-10-04 19:30:00",
+				"utc_start_date": "2026-10-04 19:00:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400;\"><strong>Avery Calhoon ’27</strong>, <i>violin </i></span><span style=\"font-weight: 400;\">will present a senior recital in fulfillment of their B.M. Music Education degree requirements. </span></p>\n<p><span style=\"font-weight: 400;\">This event is free and open to the public.</span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Senior Recital: Avery Calhoon &#8217;27, violin",
+				"url": "https://wp.stolaf.edu/calendar/event/senior-recital-avery-calhoon-27-violin/",
+				"utc_end_date": "2026-10-04 20:45:00",
+				"utc_start_date": "2026-10-04 20:15:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			},
+			{
+				"all_day": false,
+				"categories": [
+					{
+						"name": "Music"
+					},
+					{
+						"name": "Performing and Visual Arts"
+					}
+				],
+				"description": "<div data-modular-content-collection><p><span style=\"font-weight: 400;\"><strong>Audrey Jensen &#8217;27</strong>, </span><i><span style=\"font-weight: 400;\">mezzo soprano,</span></i><span style=\"font-weight: 400;\"> and <strong>Ryan Heminway &#8217;27</strong>, <em>bass-baritone,</em> will present a senior recital in fulfillment of their B.M. Music Education degree requirements. </span></p>\n<p><span style=\"font-weight: 400;\">This event is free and open to the public.</span></p>\n</div>",
+				"organizer": [
+					{
+						"organizer": "Music Department"
+					},
+					{
+						"organizer": "Taylor Wesseln"
+					}
+				],
+				"title": "Senior Recital: Audrey Jensen &#8217;27, mezzo soprano &amp; Ryan Hemingway &#8217;27, bass-baritone",
+				"url": "https://wp.stolaf.edu/calendar/event/senior-recital-audrey-jensen-27-mezzo-soprano-ryan-hemingway-27-bass-baritone/",
+				"utc_end_date": "2026-10-05 01:00:00",
+				"utc_start_date": "2026-10-05 00:00:00",
+				"venue": {
+					"venue": "Christiansen Hall of Music 100 Urness Recital Hall"
+				}
+			}
+		]
+	},
+	"key": "GET https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events/?per_page=50&status=publish&starts_before={date}&ends_after={date}&page=4",
+	"status": 200
+}

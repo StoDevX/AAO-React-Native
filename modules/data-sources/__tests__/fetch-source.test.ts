@@ -1,5 +1,6 @@
-import {setApiRoot} from '@frogpond/api'
+import {isHTTPError, registerCampusServer} from '@frogpond/api'
 import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
+import {setManifestServer} from '../manifest-server'
 
 describe('isAbsoluteHref', () => {
 	test('an absolute href has a scheme', () => {
@@ -15,7 +16,8 @@ describe('fetchSourceBody', () => {
 	let originalFetch = global.fetch
 
 	beforeEach(() => {
-		setApiRoot(new URL('https://example.test/'))
+		registerCampusServer('edu.stolaf', new URL('https://example.test/'))
+		setManifestServer('edu.stolaf')
 	})
 
 	afterEach(() => {
@@ -23,7 +25,7 @@ describe('fetchSourceBody', () => {
 		jest.useRealTimers()
 	})
 
-	test('a relative href resolves through client, honouring the configured api root', async () => {
+	test("a relative href resolves through St. Olaf's client, honoring the configured api root", async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/mess')
 			return Promise.resolve(new Response(JSON.stringify({ok: true}), {status: 200}))
@@ -34,6 +36,41 @@ describe('fetchSourceBody', () => {
 		let body = await fetchSourceBody('news/named/mess', controller.signal, 'News')
 
 		expect(body).toEqual({ok: true})
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	test("a relative href naming no campus resolves against the manifest's own server", async () => {
+		registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
+		setManifestServer('edu.carleton')
+		let fetchMock = jest.fn((request: Request) => {
+			expect(request.url).toBe('https://carleton.example.test/v1/jobs')
+			return Promise.resolve(new Response(JSON.stringify([]), {status: 200}))
+		})
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		await fetchSourceBody('jobs', new AbortController().signal, 'Jobs')
+
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	test("a Carleton source's relative href resolves against Carleton's server", async () => {
+		registerCampusServer('edu.carleton', new URL('https://carleton.example.test/v1/'))
+		let fetchMock = jest.fn((request: Request) => {
+			expect(request.url).toBe('https://carleton.example.test/v1/calendar/named/sumo-schedule')
+			return Promise.resolve(new Response(JSON.stringify([]), {status: 200}))
+		})
+		global.fetch = fetchMock as unknown as typeof fetch
+
+		let controller = new AbortController()
+		let body = await fetchSourceBody(
+			'calendar/named/sumo-schedule',
+			controller.signal,
+			'Calendar',
+			'json',
+			'edu.carleton',
+		)
+
+		expect(body).toEqual([])
 		expect(fetchMock).toHaveBeenCalledTimes(1)
 	})
 
@@ -71,6 +108,54 @@ describe('fetchSourceBody', () => {
 			status: 400,
 			message: 'Olaf Messenger issues fetch failed: 400',
 		})
+	})
+
+	describe.each([
+		['an absolute', 'https://olafmessenger.com/wp-json/wp/v2/posts?page=54'],
+		['a relative', 'news/mess/wp/v2/posts?page=54'],
+	])('%s href answered with a WordPress error', (_kind, href) => {
+		test('carries the code WordPress named', async () => {
+			global.fetch = jest.fn(() =>
+				Promise.resolve(
+					new Response('{"code":"rest_post_invalid_page_number","data":{"status":400}}', {
+						status: 400,
+						headers: {'content-type': 'application/json'},
+					}),
+				),
+			) as unknown as typeof fetch
+
+			let failure = fetchSourceBody(href, new AbortController().signal, 'Olaf Messenger')
+
+			await expect(failure).rejects.toMatchObject({
+				status: 400,
+				code: 'rest_post_invalid_page_number',
+			})
+		})
+
+		test('carries no code for a body that names none', async () => {
+			global.fetch = jest.fn(() =>
+				Promise.resolve(new Response('<html>no</html>', {status: 400})),
+			) as unknown as typeof fetch
+
+			let failure = fetchSourceBody(href, new AbortController().signal, 'Olaf Messenger')
+
+			await expect(failure).rejects.toMatchObject({status: 400, code: undefined})
+		})
+	})
+
+	test("keeps ky's error as a relative failure's cause", async () => {
+		global.fetch = jest.fn(() =>
+			Promise.resolve(new Response('', {status: 502})),
+		) as unknown as typeof fetch
+
+		let error: unknown = await fetchSourceBody(
+			'calendar/named/ksto-schedule',
+			new AbortController().signal,
+			'Calendar',
+		).catch((caught: unknown) => caught)
+
+		expect(error).toBeInstanceOf(SourceFetchError)
+		expect(isHTTPError((error as Error).cause)).toBe(true)
 	})
 
 	// This app's `AbortSignal` comes from react-native's `abort-controller`
@@ -118,7 +203,7 @@ describe('fetchSourceBody', () => {
 		await assertion
 	})
 
-	test('a relative href in text format resolves through client as text, not json', async () => {
+	test("a relative href in text format resolves through St. Olaf's client as text, not json", async () => {
 		let fetchMock = jest.fn((request: Request) => {
 			expect(request.url).toBe('https://example.test/news/named/rss-feed')
 			return Promise.resolve(new Response('<rss>not json</rss>', {status: 200}))

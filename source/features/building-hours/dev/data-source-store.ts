@@ -1,16 +1,14 @@
 import {create} from 'zustand'
 
 type DataSourceOverride = {
-	/** Whether St. Olaf hours come from this checkout rather than the server. */
+	/** Whether the campus's hours come from its bundled copy (`hours.bundled`) rather than the server. */
 	forced: boolean
 	setForced: (forced: boolean) => void
 }
 
 /**
- * A dev-only override for where St. Olaf's hours come from.
- *
- * St. Olaf only: the bundled file is this repository's data, and Carleton's
- * hours live outside it, so there is nothing to fall back to there.
+ * A dev-only override for where a campus's hours and building directories come
+ * from, for a campus that bundles a copy in this repository.
  *
  * It exists because a field added to the data here reaches a device only after
  * ccc-server redeploys, which makes new fields invisible in the meantime and

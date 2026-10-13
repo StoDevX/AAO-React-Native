@@ -14,6 +14,15 @@ const mockSentry = {
 }
 jest.mock('@sentry/react-native', () => mockSentry)
 jest.mock('@frogpond/constants', () => ({IS_PRODUCTION: true, isDebugBuild: () => false}))
+/** A store build on a phone, launched by hand; a test changes one field. */
+const SHIPPED_LAUNCH = {
+	isUITesting: false,
+	isChaos: false,
+	isSimulator: false,
+	isDebugNativeBuild: false,
+}
+const mockLaunch = {...SHIPPED_LAUNCH}
+jest.mock('@frogpond/launch-arguments', () => mockLaunch)
 // constants.ts reads expo-constants, which needs a native module.
 jest.mock('../constants', () => ({SENTRY_DSN: 'https://key@example.test/1'}))
 
@@ -54,13 +63,40 @@ beforeEach(() => {
 	jest.clearAllMocks()
 	mockItems.clear()
 	mockNextId = 0
+	Object.assign(mockLaunch, SHIPPED_LAUNCH)
+})
+
+// A release bundle is embedded in local builds too: the UI tests' and
+// `mise run device`'s. None of those may report.
+describe.each([
+	['a UI test', 'isUITesting'],
+	['a chaos run', 'isChaos'],
+	['a simulator', 'isSimulator'],
+	['a Debug native build', 'isDebugNativeBuild'],
+] as const)('under %s', (_name, flag) => {
+	it('sends nothing', () => {
+		mockLaunch[flag] = true
+
+		launch()
+
+		expect(lastInitOptions()).toMatchObject({enabled: false})
+	})
+
+	// The native SDK's own trackers flush what they saved on disk at start.
+	it('does not start the native SDK', () => {
+		mockLaunch[flag] = true
+
+		launch()
+
+		expect(lastInitOptions()).toMatchObject({enableNative: false})
+	})
 })
 
 describe('starting Sentry', () => {
 	it('sends by default, with the device ID as the only user field', () => {
 		launch()
 
-		expect(lastInitOptions()).toMatchObject({enabled: true})
+		expect(lastInitOptions()).toMatchObject({enabled: true, enableNative: true})
 		expect(mockSentry.setUser).toHaveBeenCalledWith({id: 'id-1'})
 	})
 

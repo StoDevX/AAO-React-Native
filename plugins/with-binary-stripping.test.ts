@@ -29,8 +29,8 @@ function settingsFor(project: XcodeProject, target: string) {
 
 describe('applyStripping', () => {
 	it('strips in every build configuration of the app target', () => {
-		let project = applyStripping(loadProject(), 'AllAboutOlaf')
-		let configurations = settingsFor(project, 'AllAboutOlaf')
+		let project = applyStripping(loadProject(), 'AllAboutAnything')
+		let configurations = settingsFor(project, 'AllAboutAnything')
 		assert.ok(configurations.length > 0)
 		for (let settings of configurations) {
 			assert.equal(settings.DEPLOYMENT_POSTPROCESSING, 'YES')
@@ -39,16 +39,16 @@ describe('applyStripping', () => {
 	})
 
 	it('leaves unrelated settings alone', () => {
-		let before = settingsFor(loadProject(), 'AllAboutOlaf')[0].PRODUCT_NAME
-		let project = applyStripping(loadProject(), 'AllAboutOlaf')
-		assert.equal(settingsFor(project, 'AllAboutOlaf')[0].PRODUCT_NAME, before)
+		let before = settingsFor(loadProject(), 'AllAboutAnything')[0].PRODUCT_NAME
+		let project = applyStripping(loadProject(), 'AllAboutAnything')
+		assert.equal(settingsFor(project, 'AllAboutAnything')[0].PRODUCT_NAME, before)
 	})
 
 	it('is idempotent', () => {
-		let once = applyStripping(loadProject(), 'AllAboutOlaf').writeSync()
+		let once = applyStripping(loadProject(), 'AllAboutAnything').writeSync()
 		let twice = applyStripping(
-			applyStripping(loadProject(), 'AllAboutOlaf'),
-			'AllAboutOlaf',
+			applyStripping(loadProject(), 'AllAboutAnything'),
+			'AllAboutAnything',
 		).writeSync()
 		assert.equal(twice, once)
 	})

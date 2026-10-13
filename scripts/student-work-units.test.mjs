@@ -90,8 +90,14 @@ test('takes a five-digit unit, with or without its fund', () => {
 	assert.equal(unitNumberOf('900-23040'), '23040')
 })
 
+test('reads the unit after an account-string prefix', () => {
+	assert.equal(unitNumberOf('41066-11300'), '11300')
+	assert.equal(unitNumberOf('45452-11565.'), '11565')
+	assert.equal(unitNumberOf('41203-11184-53000-00512'), '11184')
+})
+
 test('refuses anything that is not a unit number', () => {
-	for (let value of ['', 'n/a', '11-707', '41203-11184-53000-00512', '1512', '151200', undefined]) {
+	for (let value of ['', 'n/a', '11-707', '1512', '151200', undefined]) {
 		assert.equal(unitNumberOf(value), undefined, `${value}`)
 	}
 })

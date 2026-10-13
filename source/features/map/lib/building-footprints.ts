@@ -25,9 +25,10 @@ export type BuildingFootprintCollection = {
  * one MultiPolygon feature rather than several, so that a tap resolves to one
  * building and the whole outline highlights together.
  *
- * The id is carried in `properties` as well as on the feature: the press event
- * hands back properties, and relying on the top-level id would mean trusting
- * MapLibre to round-trip a string id through the native layer.
+ * The id is carried on the feature and in `properties`. The top-level id is
+ * what feature state is keyed on, so the open place's footprint can be
+ * tinted; the press event hands back properties, so a tap reads the copy
+ * there rather than trusting MapLibre to round-trip a string id.
  */
 export function toBuildingFootprints(
 	buildings: Array<Feature<Building>>,

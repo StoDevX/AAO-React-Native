@@ -1,0 +1,32 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/webcams
+json:
+  data:
+    - name: Summit Lift
+      streamUrl: https://college.example/webcams/summit-lift/live.m3u8
+      pageUrl: https://college.example/webcams/summit-lift
+      thumbnail: summit-lift
+      textColor: white
+      accentColor:
+        - 47
+        - 107
+        - 143
+    - name: Treeline Commons
+      streamUrl: https://college.example/webcams/treeline-commons/live.m3u8
+      pageUrl: https://college.example/webcams/treeline-commons
+      thumbnail: treeline-commons
+      textColor: white
+      accentColor:
+        - 96
+        - 128
+        - 72
+    - name: Valley Floor
+      streamUrl: https://college.example/webcams/valley-floor/live.m3u8
+      pageUrl: https://college.example/webcams/valley-floor
+      thumbnail: valley-floor
+      textColor: black
+      accentColor:
+        - 220
+        - 228
+        - 232

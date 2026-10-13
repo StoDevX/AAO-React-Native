@@ -38,11 +38,9 @@ import {MoreTileView, PlaceTileView, type TileStatus} from './place-tile'
 import {venueStatus} from './venue-status'
 import type {StackEntry} from '../lib/also-here'
 import {SectionHeading} from '../../../components/place-card/section-heading'
+import {TAP_TARGET} from '../../../lib/tap-target'
 
 const TILE_SPACING = 12
-
-/// Apple's smallest comfortable tap target, in points.
-const TAP_TARGET = 44
 
 /// The carousel runs to the sheet's edges, so its row has no insets of its own.
 const CAROUSEL_ROW = [

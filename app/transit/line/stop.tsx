@@ -13,6 +13,8 @@ import {useMomentTimer} from '@frogpond/timer'
 import type {Moment} from 'moment-timezone'
 
 import {busLineOptions} from '../../../source/features/transit/bus/query'
+import {useCampusId, useCampusSection} from '../../../source/features/campus/store'
+import {sectionServer} from '../../../source/features/campus/section-server'
 import {createMomentForDay} from '../../../source/features/transit/bus/components/days'
 import type {
 	DayOfWeek,
@@ -27,7 +29,7 @@ import {
 import {useLineState} from '../../../source/features/transit/bus/use-line-state'
 import {formatDeparture} from '../../../source/features/transit/bus/components/times'
 import {TimetableRow} from '../../../source/features/transit/bus/components/timetable-row'
-import {BUS_FOOTER_MESSAGE} from '../../../source/features/transit/bus/constants'
+import {useBusFooterMessage} from '../../../source/features/transit/bus/constants'
 
 const styles = StyleSheet.create({
 	host: {
@@ -52,6 +54,7 @@ type Props = {
 
 function BusStopDetail(props: Props): React.ReactNode {
 	let {stop, line, now, status, currentBusIteration, subtitle} = props
+	let footerMessage = useBusFooterMessage()
 
 	let departureTimes = stop.departures.filter(Boolean)
 
@@ -118,10 +121,7 @@ function BusStopDetail(props: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
-				<SheetSection
-					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
-					title={`${stop.name} — ${subtitle}`}
-				>
+				<SheetSection footer={<Text>{footerMessage}</Text>} title={`${stop.name} — ${subtitle}`}>
 					{rows}
 				</SheetSection>
 			</List>
@@ -177,6 +177,7 @@ function BusStopForLine({
 }
 
 export default function BusStopPage(): React.ReactNode {
+	let server = sectionServer(useCampusId(), useCampusSection('transit'))
 	let {
 		line: lineName,
 		day,
@@ -189,7 +190,7 @@ export default function BusStopPage(): React.ReactNode {
 
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 
-	let {data: line, isLoading, error, refetch} = useQuery(busLineOptions(lineName))
+	let {data: line, isLoading, error, refetch} = useQuery(busLineOptions(lineName, server))
 
 	let screenTitle = <Stack.Title>{line ? `${line.line} Schedule` : ''}</Stack.Title>
 

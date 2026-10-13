@@ -11,8 +11,7 @@ import {
 
 import {FullScheduleSheet} from './full-schedule-sheet'
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
-import {prefetchImages} from '../../../lib/remote-images'
-import {STATIONS, allStationImageUrls} from './stations'
+import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 
 /**
@@ -36,14 +35,6 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let fit = useFitOrScroll()
-
-	// The logos are fetched from the server rather than bundled, so opening the
-	// sheet starts fetching them all, for either station the picker offers.
-	React.useEffect(() => {
-		if (open) {
-			void prefetchImages(allStationImageUrls())
-		}
-	}, [open])
 
 	return (
 		// Presented in its own window, so the Host needs no size and lets every

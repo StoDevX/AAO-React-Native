@@ -12,10 +12,10 @@ import {flushQueryNotifications} from '../../../testing/query-notifications'
 const FAQS_QUERY_KEY = ['faqs'] as const
 
 jest.mock('../query', () => ({
-	faqsOptions: {
+	faqsOptionsFor: () => ({
 		queryKey: FAQS_QUERY_KEY,
 		queryFn: () => Promise.reject(new Error('queryFn should not be called')),
-	},
+	}),
 }))
 
 const baseFaq: Faq = {

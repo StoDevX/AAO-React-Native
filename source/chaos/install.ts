@@ -1,5 +1,5 @@
 import type {Linking, Share} from 'react-native'
-import type {ChaosMode} from '@frogpond/launch-arguments'
+import type {ChaosMode, ChaosProfile} from '@frogpond/launch-arguments'
 
 import {chaosFetch} from './fetch'
 import {setFindingsFile} from './findings'
@@ -8,6 +8,7 @@ import type {LineFile} from './line-file'
 import {installProbe, type ProbeHost} from './probe'
 import {launchSeed, seededRandom} from './random'
 import {guardShare} from './share-guard'
+import {watchForStalls, type StallHost} from './stall'
 
 /** One launch's chaos settings, from its launch arguments. */
 export type ChaosSettings = {
@@ -16,6 +17,7 @@ export type ChaosSettings = {
 	launch: number
 	mode: ChaosMode
 	faultRate: number
+	profile: ChaosProfile
 }
 
 /** What installing chaos changes. */
@@ -24,21 +26,24 @@ export type ChaosHost = {
 	probe: ProbeHost
 	linking: Pick<typeof Linking, 'openURL'>
 	share: Pick<typeof Share, 'share'>
+	stalls: StallHost
 	tape: LineFile
 	findings: LineFile
 }
 
-/** Wraps fetch, installs the probe, and guards linking and sharing, in a chaos run only. Returns whether it did. */
+/** Wraps fetch, installs the probe and stall watch, and guards linking and sharing, in a chaos run only. Returns whether it did. */
 export function installChaos(settings: ChaosSettings, host: ChaosHost): boolean {
 	if (!settings.isChaos) {
 		return false
 	}
-	setFindingsFile(host.findings)
+	setFindingsFile(host.findings, settings.launch)
 	installProbe(host.probe)
+	watchForStalls(host.stalls)
 	guardLinking(host.linking)
 	guardShare(host.share)
 	host.global.fetch = chaosFetch(host.global.fetch.bind(globalThis), {
 		mode: settings.mode,
+		profile: settings.profile,
 		launch: settings.launch,
 		random: seededRandom(launchSeed(settings.seed, settings.launch)),
 		faultRate: settings.faultRate,

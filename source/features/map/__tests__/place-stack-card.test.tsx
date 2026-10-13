@@ -57,12 +57,18 @@ afterEach(() => {
 async function renderStack(stack: Array<StackEntry>, dispatch = jest.fn()) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
 	trackedQueryClients.push(client)
-	client.setQueryData(mapKeys.all('stolaf'), features)
-	client.setQueryData(hoursKeys.all('stolaf'), venues)
-	client.setQueryData(directoryKeys.all('stolaf'), directories)
+	client.setQueryData(mapKeys.all('edu.stolaf'), features)
+	client.setQueryData(hoursKeys.all('edu.stolaf'), venues)
+	client.setQueryData(directoryKeys.all('edu.stolaf'), directories)
 	await render(
 		<QueryClientProvider client={client}>
-			<PlaceStackCard campus="stolaf" depth={0} dispatch={dispatch} stack={stack} stop="medium" />
+			<PlaceStackCard
+				campus="edu.stolaf"
+				depth={0}
+				dispatch={dispatch}
+				stack={stack}
+				stop="medium"
+			/>
 		</QueryClientProvider>,
 	)
 	return dispatch
@@ -129,13 +135,13 @@ describe('PlaceStackCard caching', () => {
 	test('reads the cached feeds without refetching them', async () => {
 		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 		trackedQueryClients.push(client)
-		client.setQueryData(mapKeys.all('stolaf'), features)
-		client.setQueryData(hoursKeys.all('stolaf'), venues)
-		client.setQueryData(directoryKeys.all('stolaf'), directories)
+		client.setQueryData(mapKeys.all('edu.stolaf'), features)
+		client.setQueryData(hoursKeys.all('edu.stolaf'), venues)
+		client.setQueryData(directoryKeys.all('edu.stolaf'), directories)
 		await render(
 			<QueryClientProvider client={client}>
 				<PlaceStackCard
-					campus="stolaf"
+					campus="edu.stolaf"
 					depth={0}
 					dispatch={jest.fn()}
 					stack={[buntrock, theCage]}
@@ -144,11 +150,11 @@ describe('PlaceStackCard caching', () => {
 			</QueryClientProvider>,
 		)
 
-		expect(client.getQueryState(hoursKeys.all('stolaf'))?.fetchStatus).toBe('idle')
-		expect(client.getQueryState(mapKeys.all('stolaf'))?.fetchStatus).toBe('idle')
-		expect(client.getQueryState(hoursKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
-		expect(client.getQueryState(mapKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
-		expect(client.getQueryState(directoryKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
+		expect(client.getQueryState(hoursKeys.all('edu.stolaf'))?.fetchStatus).toBe('idle')
+		expect(client.getQueryState(mapKeys.all('edu.stolaf'))?.fetchStatus).toBe('idle')
+		expect(client.getQueryState(hoursKeys.all('edu.stolaf'))?.dataUpdateCount).toBe(1)
+		expect(client.getQueryState(mapKeys.all('edu.stolaf'))?.dataUpdateCount).toBe(1)
+		expect(client.getQueryState(directoryKeys.all('edu.stolaf'))?.dataUpdateCount).toBe(1)
 	})
 })
 

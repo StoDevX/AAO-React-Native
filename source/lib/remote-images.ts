@@ -1,6 +1,5 @@
-import {Image} from 'react-native'
-import {getApiRoot} from '@frogpond/api'
-import {DEFAULT_URL} from './constants'
+import {apiUrl} from './api-url'
+import {PLATFORM_SERVER} from '../campuses'
 
 /**
  * The folders ccc-server serves images from, one per kind of picture. They
@@ -28,8 +27,8 @@ export type RemoteImage = {uri: string; cache: 'force-cache'}
  * server is the one to ask.
  */
 export function imageUrl(group: ImageGroup, name: string): string {
-	let root = getApiRoot() ?? new URL(DEFAULT_URL)
-	return new URL(`images/${group}/${name}.webp`, root).toString()
+	// The platform server publishes every campus's images (images/groups.json).
+	return apiUrl(PLATFORM_SERVER, `images/${group}/${name}.webp`)
 }
 
 /**
@@ -41,14 +40,4 @@ export function imageUrl(group: ImageGroup, name: string): string {
  */
 export function remoteImage(group: ImageGroup, name: string): RemoteImage {
 	return {uri: imageUrl(group, name), cache: 'force-cache'}
-}
-
-/**
- * Starts fetching images into the cache so they are there when drawn. A
- * failure is ignored: the image is fetched again when it is drawn, and fails
- * visibly there if the network is still out. The promise settles once every
- * fetch has, and never rejects, for a caller that wants to wait.
- */
-export async function prefetchImages(urls: readonly string[]): Promise<void> {
-	await Promise.all([...new Set(urls)].map((url) => Image.prefetch(url).catch(() => false)))
 }

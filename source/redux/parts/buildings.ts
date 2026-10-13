@@ -1,16 +1,16 @@
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
 import type {RootState} from '../store'
-import type {Campus} from '../../features/building-hours/types'
+import type {CampusId} from '../../campuses/ids'
 
 /**
- * A favourited building, identified by campus AND name. St. Olaf and
- * Carleton run separate `spaces/hours` feeds that happen to share some venue
+ * A favourited building, identified by campus AND name. Campuses run
+ * separate `spaces/hours` feeds that can share venue
  * names (Bookstore, Post Office, ...) -- a bare name alone can't tell which
  * campus's venue was favourited.
  */
 export type FavoriteBuilding = {
-	campus: Campus
+	campus: CampusId
 	name: string
 }
 
@@ -64,7 +64,7 @@ export const selectFavoriteBuildings = (state: RootState): State['favorites'] =>
  */
 export function favoriteNamesForCampus(
 	favorites: Array<FavoriteBuilding>,
-	campus: Campus,
+	campus: CampusId,
 ): string[] {
 	return favorites.filter((favorite) => favorite.campus === campus).map((favorite) => favorite.name)
 }
@@ -72,7 +72,7 @@ export function favoriteNamesForCampus(
 /** Whether `name` on `campus` is among `favorites`. */
 export function isFavoriteBuilding(
 	favorites: Array<FavoriteBuilding>,
-	campus: Campus,
+	campus: CampusId,
 	name: string,
 ): boolean {
 	return favorites.some((favorite) => favorite.campus === campus && favorite.name === name)

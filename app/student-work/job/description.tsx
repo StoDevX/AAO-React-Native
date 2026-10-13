@@ -8,6 +8,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {jobDetailOptions} from '@frogpond/ccc-jobs'
 import {JOB_DESCRIPTION_TITLE} from '../../../source/features/sis/student-work/lib'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	screen: {
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
 /// A posting's description on a screen of its own, reached from its detail
 /// screen. The query is the one that screen already ran, so this reads it from
 /// the cache rather than fetching again.
-export default function JobDescriptionPage(): React.ReactNode {
+function JobDescriptionPage(): React.ReactNode {
 	let {jobId} = useLocalSearchParams<{jobId: string}>()
 	let {data: job, isLoading, error} = useQuery(jobDetailOptions(jobId))
 
@@ -59,3 +60,9 @@ export default function JobDescriptionPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'studentWork',
+	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	JobDescriptionPage,
+)

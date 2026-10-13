@@ -18,7 +18,7 @@ const dept = (name: string): DepartmentListing => ({
 
 describe('directoryDepartmentsOptions', () => {
 	test('select sorts the rows by name', () => {
-		let sorted = directoryDepartmentsOptions.select?.([
+		let sorted = directoryDepartmentsOptions('edu.stolaf').select?.([
 			dept('Theater'),
 			dept('Art'),
 			dept('Nursing'),
@@ -29,8 +29,14 @@ describe('directoryDepartmentsOptions', () => {
 
 	test('select does not mutate the input array', () => {
 		let input = [dept('Theater'), dept('Art')]
-		directoryDepartmentsOptions.select?.(input)
+		directoryDepartmentsOptions('edu.stolaf').select?.(input)
 
 		expect(input.map((d) => d.name)).toEqual(['Theater', 'Art'])
+	})
+
+	test("keeps each server's roster under a key of its own", () => {
+		expect(directoryDepartmentsOptions('edu.carleton').queryKey).not.toEqual(
+			directoryDepartmentsOptions('edu.stolaf').queryKey,
+		)
 	})
 })

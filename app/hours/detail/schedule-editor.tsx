@@ -19,10 +19,11 @@ import {
 } from '../../../source/features/building-hours/lib'
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
 import {useDismissOnce} from '../../../source/lib/use-dismiss-once'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 const ALL_DAYS: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
+function BuildingHoursScheduleEditorPage(): React.ReactNode {
 	let {scheduleIndex: scheduleIndexParam, setIndex: setIndexParam} = useLocalSearchParams<{
 		scheduleIndex: string
 		setIndex: string
@@ -141,3 +142,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	BuildingHoursScheduleEditorPage,
+)

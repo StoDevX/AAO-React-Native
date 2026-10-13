@@ -1,25 +1,39 @@
 import assert from 'node:assert/strict'
+import {readFileSync} from 'node:fs'
 import {test} from 'node:test'
 
 import {
+	CHAOS_HELP,
 	chaosOutputDir,
+	coldStartLaunches,
 	checkAppContainer,
 	checkOutputDir,
 	isRunFile,
 	recordedTapes,
 	tapeFiles,
 	firstDivergence,
+	formatSummary,
 	jsSourceProblem,
 	metroProblem,
 	parseChaosArgs,
 	parseDuration,
 	parseFindingLines,
+	parseIgnoreList,
 	REPLAY_DURATION,
 	replayVerdict,
+	runSettings,
+	simulatorUdid,
 	runOutcome,
 	stoppingFindings,
+	stopLaunch,
+	stopMutations,
+	summarizeRun,
 	testEnv,
+	readableAttachmentNames,
 	testFailureMessages,
+	withRecordedRotation,
+	withRecordedSettings,
+	wantsHelp,
 	withReplayBudget,
 } from './chaos-run.mjs'
 
@@ -38,6 +52,7 @@ test('defaults to a random seed, 10 minutes and 0.25', () => {
 	assert.equal(options.faultRate, '0.25')
 	assert.equal(options.replay, null)
 	assert.equal(options.overwrite, false)
+	assert.equal(options.rotate, false)
 })
 
 test('reads every flag', () => {
@@ -53,6 +68,8 @@ test('reads every flag', () => {
 			'0.5',
 			'--prebuilt',
 			'--overwrite',
+			'--rotate',
+			'--session',
 		]),
 		{
 			seed: 42,
@@ -61,7 +78,12 @@ test('reads every flag', () => {
 			faultRate: '0.5',
 			replay: null,
 			prebuilt: true,
+			bundled: false,
 			overwrite: true,
+			rotate: true,
+			profile: 'session',
+			simulator: null,
+			udid: null,
 		},
 	)
 })
@@ -507,6 +529,7 @@ test('refuses a run with no JavaScript source, naming the variable to set', () =
 	let problem = jsSourceProblem({env: {}, hasEmbeddedBundle: false})
 	assert.match(problem, /TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise run chaos/u)
 	assert.match(problem, /mise run chaos:8081/u)
+	assert.match(problem, /mise run chaos:bundled/u)
 })
 
 test('accepts a Metro serving this checkout', () => {
@@ -543,7 +566,7 @@ test('collects the failure messages from xcresulttool test results', () => {
 	let results = {
 		testNodes: [
 			{
-				name: 'AllAboutOlaf',
+				name: 'AllAboutAnything',
 				nodeType: 'Test Plan',
 				children: [
 					{
@@ -560,4 +583,375 @@ test('collects the failure messages from xcresulttool test results', () => {
 	}
 	assert.deepEqual(testFailureMessages(results), ['failed: caught error: "No Metro was named"'])
 	assert.deepEqual(testFailureMessages({}), [])
+})
+
+test('hands the run --rotate only when asked', () => {
+	let base = {seed: 1, steps: 10, duration: 60, faultRate: '0.25', replay: null}
+	assert.equal(testEnv({...base, rotate: false}).TEST_RUNNER_AAO_CHAOS_ROTATE, undefined)
+	assert.equal(testEnv({...base, rotate: true}).TEST_RUNNER_AAO_CHAOS_ROTATE, '1')
+})
+
+/** A recorded step log line for `action`, with `label`. */
+function step(action, label = '') {
+	return JSON.stringify({action, label})
+}
+
+test('a replay rotates as the recording did, whatever it was told', () => {
+	let turned = [step('tap'), step('rotate')]
+	let stayed = [step('tap'), step('rotate', 'off')]
+	assert.equal(withRecordedRotation({rotate: false}, turned).rotate, true)
+	assert.equal(withRecordedRotation({rotate: true}, stayed).rotate, false)
+})
+
+test('a replay of a recording that never rotated keeps the flag it was given', () => {
+	assert.equal(withRecordedRotation({rotate: true}, [step('tap')]).rotate, true)
+	assert.equal(withRecordedRotation({rotate: false}, null).rotate, false)
+})
+
+/** One test's attachments, as xcresulttool's manifest.json lists them. */
+function manifest(...names) {
+	return [
+		{
+			attachments: names.map((name, i) => ({
+				exportedFileName: `EXPORT-${i}.bin`,
+				suggestedHumanReadableName: name,
+			})),
+		},
+	]
+}
+
+test('names each attachment for what it is, without its UUID', () => {
+	let names = readableAttachmentNames(
+		manifest(
+			'chaos-steps_0_1AAFA218-54BB-42E5-B847-A2EB09C46066.jsonl',
+			'chaos stop screen (portrait)_0_369403D5-2FF0-496A-9162-D8310B06B0A2.png',
+			'chaos-stop_0_369403D5-2FF0-496A-9162-D8310B06B0A3.txt',
+		),
+	)
+	assert.deepEqual(
+		[...names],
+		[
+			['EXPORT-0.bin', 'chaos-steps.jsonl'],
+			['EXPORT-1.bin', 'chaos stop screen (portrait).png'],
+			['EXPORT-2.bin', 'chaos-stop.txt'],
+		],
+	)
+})
+
+test('numbers a second attachment of the same name rather than overwrite the first', () => {
+	let names = readableAttachmentNames(
+		manifest(
+			'chaos trapped screen (portrait)_0_369403D5-2FF0-496A-9162-D8310B06B0A2.png',
+			'chaos trapped screen (portrait)_1_469403D5-2FF0-496A-9162-D8310B06B0A2.png',
+		),
+	)
+	assert.deepEqual(
+		[...names.values()],
+		['chaos trapped screen (portrait).png', 'chaos trapped screen (portrait) 2.png'],
+	)
+})
+
+test('keeps a name that has no UUID to drop', () => {
+	assert.deepEqual([...readableAttachmentNames(manifest('notes.txt')).values()], ['notes.txt'])
+})
+
+/** A finding as the app writes it. */
+function finding(kind, message) {
+	return {kind, message, stack: null, at: ''}
+}
+
+test('groups warnings by kind, counting each and keeping the first as its example', () => {
+	let summary = summarizeRun({
+		findings: [],
+		warnings: [
+			'dead end: Back changed nothing three times on a sheet: Sketchy',
+			'unlabelled: 9 24×24 at (330,58) on "Customize"',
+			'dead end: Back changed nothing three times on |All',
+			'escaped the app (state 3) after tap',
+			'escaped the app (state 3) after tap',
+			'',
+		],
+		ignore: [],
+	})
+	assert.deepEqual(summary.warnings, [
+		{kind: 'dead end', count: 2, example: 'Back changed nothing three times on a sheet: Sketchy'},
+		{kind: 'unlabelled', count: 1, example: '9 24×24 at (330,58) on "Customize"'},
+		{kind: 'escaped the app', count: 2, example: 'escaped the app (state 3) after tap'},
+	])
+})
+
+test('groups console errors and stalls by first line with digits collapsed', () => {
+	let summary = summarizeRun({
+		findings: [
+			finding('stall', 'JS stalled 1340ms'),
+			finding('console-error', 'VirtualizedLists should never be nested\n    in ScrollView'),
+			finding('stall', 'JS stalled 1210ms'),
+			finding('console-error', 'VirtualizedLists should never be nested\n    in FlatList'),
+			finding('console-error', 'Each child in a list should have a unique "key" prop.'),
+		],
+		warnings: [],
+		ignore: [],
+	})
+	assert.deepEqual(summary.findings, [
+		{kind: 'stall', count: 2, example: 'JS stalled 1340ms'},
+		{kind: 'console-error', count: 2, example: 'VirtualizedLists should never be nested'},
+		{
+			kind: 'console-error',
+			count: 1,
+			example: 'Each child in a list should have a unique "key" prop.',
+		},
+	])
+})
+
+test('counts mutations and attempts to leave the app, and leaves stopping findings to the outcome', () => {
+	let summary = summarizeRun({
+		findings: [
+			finding('mutation', '0 GET https://a.test/ #0 $.x: 1 → 0'),
+			finding('mutation', '0 GET https://a.test/ #1 $.y: true → false'),
+			finding('out-of-app', 'https://www.kstoradio.org/'),
+			finding('fatal', 'boom'),
+		],
+		warnings: [],
+		ignore: [],
+	})
+	assert.deepEqual(summary.counts, {mutation: 2, 'out-of-app': 1})
+	assert.deepEqual(summary.findings, [])
+})
+
+test('counts what the ignore list matches instead of showing it', () => {
+	let summary = summarizeRun({
+		findings: [finding('console-error', 'VirtualizedLists should never be nested')],
+		warnings: ['dead end: Back changed nothing on |All'],
+		ignore: [
+			{kind: 'console-error', match: 'VirtualizedLists', why: 'known'},
+			{kind: 'dead end', match: '|All', why: 'known'},
+		],
+	})
+	assert.deepEqual(summary.findings, [])
+	assert.deepEqual(summary.warnings, [])
+	assert.equal(summary.ignored, 2)
+})
+
+test('reads an ignore list, refusing an entry with no reason', () => {
+	assert.deepEqual(parseIgnoreList('[]'), [])
+	assert.deepEqual(parseIgnoreList('[{"kind":"stall","match":"JS","why":"debug build"}]'), [
+		{kind: 'stall', match: 'JS', why: 'debug build'},
+	])
+	assert.throws(() => parseIgnoreList('[{"kind":"stall","match":"JS"}]'), /why/u)
+	assert.throws(() => parseIgnoreList('[{"kind":"stall","match":"JS","why":""}]'), /why/u)
+	assert.throws(() => parseIgnoreList('{}'), /list/u)
+})
+
+test('the shipped ignore list is empty, so nothing is hidden by default', () => {
+	let text = readFileSync(new URL('chaos-ignore.json', import.meta.url), 'utf8')
+	assert.deepEqual(parseIgnoreList(text), [])
+})
+
+test('prints warnings, then findings, then the counts', () => {
+	let text = formatSummary({
+		warnings: [{kind: 'dead end', count: 2, example: 'Back changed nothing'}],
+		findings: [{kind: 'stall', count: 3, example: 'JS stalled 1200ms'}],
+		counts: {mutation: 31, 'out-of-app': 17},
+		ignored: 0,
+	})
+	assert.equal(
+		text,
+		[
+			'  warnings',
+			'    dead end ×2  Back changed nothing',
+			'  stall ×3  JS stalled 1200ms',
+			'  mutations ×31   out-of-app ×17   ignored ×0',
+		].join('\n'),
+	)
+})
+
+test('prints only the counts when nothing else was seen', () => {
+	let text = formatSummary({
+		warnings: [],
+		findings: [],
+		counts: {mutation: 0, 'out-of-app': 0},
+		ignored: 0,
+	})
+	assert.equal(text, '  mutations ×0   out-of-app ×0   ignored ×0')
+})
+
+test("lists the stopping launch's mutations from its tape", () => {
+	let lines = [
+		JSON.stringify({key: '4 GET https://a.test/ #0', fault: 'none'}),
+		JSON.stringify({
+			key: '4 GET https://a.test/m #0',
+			fault: 'mutated',
+			mutation: {path: '$.x', change: '1 → 0'},
+		}),
+		'{"torn',
+	]
+	assert.deepEqual(stopMutations(lines), ['4 GET https://a.test/m #0 $.x: 1 → 0'])
+})
+
+test('cuts a long example short, so each group fits on a line', () => {
+	let text = formatSummary({
+		warnings: [],
+		findings: [{kind: 'console-error', count: 1, example: 'x'.repeat(200)}],
+		counts: {mutation: 0, 'out-of-app': 0},
+		ignored: 0,
+	})
+	assert.equal(text.split('\n')[0], `  console-error ×1  ${'x'.repeat(99)}…`)
+})
+
+test('names a warning whose detail is empty by what comes before its colon', () => {
+	let summary = summarizeRun({
+		findings: [],
+		warnings: ['system alert: ', 'system alert:'],
+		ignore: [],
+	})
+	assert.deepEqual(summary.warnings, [{kind: 'system alert', count: 2, example: ''}])
+})
+
+test('a run stops in the launch of its last step, or the first launch when it took none', () => {
+	assert.equal(stopLaunch([JSON.stringify({launch: 0}), JSON.stringify({launch: 3})]), 3)
+	assert.equal(stopLaunch([]), 0)
+})
+
+test('reads --session, and defaults to fuzzing', () => {
+	assert.equal(parseChaosArgs([]).profile, 'fuzz')
+	assert.equal(parseChaosArgs(['--session']).profile, 'session')
+})
+
+test('hands a session its profile, and leaves a fuzzing run as it was', () => {
+	let base = {seed: 1, steps: 10, duration: 60, faultRate: '0.25', replay: null, rotate: false}
+	assert.equal(testEnv({...base, profile: 'session'}).TEST_RUNNER_AAO_CHAOS_PROFILE, 'session')
+	assert.equal(testEnv({...base, profile: 'fuzz'}).TEST_RUNNER_AAO_CHAOS_PROFILE, undefined)
+})
+
+test("records a run's settings, and a replay takes them", () => {
+	let settings = runSettings({profile: 'session', rotate: true, seed: 1})
+	assert.deepEqual(settings, {profile: 'session', rotate: true})
+	let replay = withRecordedSettings({profile: 'fuzz', rotate: false}, JSON.stringify(settings), [])
+	assert.equal(replay.profile, 'session')
+	assert.equal(replay.rotate, true)
+})
+
+test('a replay of a recording without run.json is a fuzzing run, its rotation read from its steps', () => {
+	let turned = [JSON.stringify({action: 'rotate', label: ''})]
+	let replay = withRecordedSettings({profile: 'session', rotate: false}, null, turned)
+	assert.equal(replay.profile, 'fuzz')
+	assert.equal(replay.rotate, true)
+})
+
+test('finds the launches a kill began', () => {
+	let steps = [
+		JSON.stringify({action: 'tap', launch: 0}),
+		JSON.stringify({action: 'kill', launch: 1}),
+		JSON.stringify({action: 'tap', launch: 1}),
+		JSON.stringify({action: 'openRoute', launch: 2}),
+	]
+	assert.deepEqual(coldStartLaunches(steps), new Set([1]))
+})
+
+test("marks a finding from a cold start's launch", () => {
+	let made = (kind, message, launch) => ({
+		kind,
+		message,
+		stack: null,
+		at: '',
+		launch,
+		sinceLaunchMs: 0,
+	})
+	let summary = summarizeRun({
+		findings: [made('console-error', 'rehydrate failed', 1), made('console-error', 'later', 0)],
+		warnings: [],
+		ignore: [],
+		coldLaunches: new Set([1]),
+	})
+	assert.deepEqual(
+		summary.findings.map((group) => group.kind),
+		['console-error (cold start)', 'console-error'],
+	)
+})
+
+test('a step recorded before steps logged their text still matches its replay', () => {
+	let recorded = [JSON.stringify({step: 0, action: 'tap', label: 'Menus'})]
+	let replayed = [JSON.stringify({step: 0, action: 'tap', label: 'Menus', text: ''})]
+	assert.equal(firstDivergence(recorded, replayed), null)
+})
+
+test('a step that typed something else still diverges', () => {
+	let recorded = [JSON.stringify({step: 0, action: 'type', text: 'Stav'})]
+	let replayed = [JSON.stringify({step: 0, action: 'type', text: 'Cage'})]
+	assert.equal(firstDivergence(recorded, replayed), 0)
+})
+
+test("marks only a cold start's own findings, not the rest of its launch", () => {
+	let made = (message, sinceLaunchMs) => ({
+		kind: 'console-error',
+		message,
+		stack: null,
+		at: '',
+		launch: 1,
+		sinceLaunchMs,
+	})
+	let summary = summarizeRun({
+		findings: [made('rehydrate failed', 4000), made('much later', 400_000)],
+		warnings: [],
+		ignore: [],
+		coldLaunches: new Set([1]),
+	})
+	assert.deepEqual(
+		summary.findings.map((group) => group.kind),
+		['console-error (cold start)', 'console-error'],
+	)
+})
+
+test('reads the simulator by name or UDID, and whether to embed the bundle', () => {
+	let defaults = parseChaosArgs([])
+	assert.equal(defaults.bundled, false)
+	assert.equal(defaults.simulator, null)
+	assert.equal(defaults.udid, null)
+
+	let options = parseChaosArgs(['--bundled', '--simulator', 'iPhone 17e'])
+	assert.equal(options.bundled, true)
+	assert.equal(options.simulator, 'iPhone 17e')
+	assert.equal(parseChaosArgs(['--udid', 'ABC']).udid, 'ABC')
+	assert.throws(() => parseChaosArgs(['--simulator', 'iPhone 17e', '--udid', 'ABC']), /--udid/u)
+})
+
+test('finds the UDID of a simulator named on the command line', () => {
+	let booted = [
+		{name: 'iPhone 17e', udid: 'A'},
+		{name: 'iPad', udid: 'B'},
+	]
+	assert.equal(simulatorUdid(booted, {simulator: 'iPad', udid: null}), 'B')
+	assert.equal(simulatorUdid(booted, {simulator: null, udid: 'A'}), 'A')
+	assert.equal(simulatorUdid(booted, {simulator: null, udid: null}), undefined)
+	assert.throws(() => simulatorUdid(booted, {simulator: 'iPod', udid: null}), /iPod/u)
+	assert.throws(
+		() => simulatorUdid([...booted, {name: 'iPad', udid: 'C'}], {simulator: 'iPad', udid: null}),
+		/B, C|several/u,
+	)
+})
+
+test('asks for help with --help or -h', () => {
+	assert.equal(wantsHelp(['--seed', '5', '--help']), true)
+	assert.equal(wantsHelp(['-h']), true)
+	assert.equal(wantsHelp(['--seed', '5']), false)
+})
+
+test('documents every flag in its help', () => {
+	for (let flag of [
+		'--seed',
+		'--steps',
+		'--duration',
+		'--fault-rate',
+		'--replay',
+		'--prebuilt',
+		'--bundled',
+		'--overwrite',
+		'--rotate',
+		'--session',
+		'--simulator',
+		'--udid',
+		'--help',
+	]) {
+		assert.ok(CHAOS_HELP.includes(flag), `${flag} is missing from the help`)
+	}
 })

@@ -5,11 +5,16 @@ import {
 	accessibilityLabel,
 	foregroundStyle,
 	menuActionDismissBehavior,
+	menuOrder,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
 /**
- * Category picker for one feed. Deselecting a category shows every story.
+ * Category picker for one feed: All Stories, then each category. Deselecting a
+ * category shows every story.
+ *
+ * `menuOrder('fixed')` keeps the rows in the order they are written here; a
+ * menu opened from the bottom bar otherwise draws its contents bottom to top.
  */
 type Props = {
 	/** The feed's categories, in the order the menu lists them */
@@ -26,15 +31,16 @@ export function NewsPicker({categories, selectedCategory, onSelect}: Props): Rea
 	// Keep the modifier list structurally identical every render — only the
 	// colour value changes. Swapping modifier types/count rebuilds the native
 	// Menu and closes it mid-interaction.
-	let menuModifiers = [LABEL, foregroundStyle(isActive ? c.systemBlue : c.label)]
+	let menuModifiers = [
+		LABEL,
+		menuOrder('fixed'),
+		foregroundStyle(isActive ? c.systemBlue : c.label),
+	]
 
 	// Tapping the selected category deselects it → shows every story
 	let handleToggle = (category: string) => {
 		onSelect(category === selectedCategory ? null : category)
 	}
-
-	// Sorted A-Z, and the Menu renders bottom-to-top
-	let reversed = [...categories].reverse()
 
 	return (
 		<Stack.Toolbar placement="bottom">
@@ -43,7 +49,12 @@ export function NewsPicker({categories, selectedCategory, onSelect}: Props): Rea
 				<Host matchContents={true}>
 					<Menu label={<Image systemName="line.3.horizontal.decrease" />} modifiers={menuModifiers}>
 						<Section modifiers={STAYS_OPEN}>
-							{reversed.map((category) => (
+							<Toggle
+								isOn={selectedCategory === null}
+								label="All Stories"
+								onIsOnChange={() => onSelect(null)}
+							/>
+							{categories.map((category) => (
 								<Toggle
 									isOn={selectedCategory === category}
 									key={category}
@@ -51,11 +62,6 @@ export function NewsPicker({categories, selectedCategory, onSelect}: Props): Rea
 									onIsOnChange={() => handleToggle(category)}
 								/>
 							))}
-							<Toggle
-								isOn={selectedCategory === null}
-								label="All Stories"
-								onIsOnChange={() => onSelect(null)}
-							/>
 						</Section>
 					</Menu>
 				</Host>

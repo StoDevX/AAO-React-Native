@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native'
 
 import {useTelemetryStore} from '../../../telemetry/store'
 import {reportEmail, submitReport} from '../submit'
+import {useCampusStore} from '../../../campus/store'
 
 jest.mock('@sentry/react-native', () => ({
 	captureFeedback: jest.fn(),
@@ -21,7 +22,7 @@ jest.mock('expo-sqlite/kv-store', () => ({
 	Storage: {getItemSync: () => null, setItemSync: () => undefined, removeItemSync: () => true},
 }))
 jest.mock('expo-crypto', () => ({randomUUID: () => 'id-1'}))
-jest.mock('@frogpond/constants', () => ({IS_PRODUCTION: true}))
+jest.mock('../../../../init/reporting-build', () => ({IS_REPORTING_BUILD: true}))
 jest.mock('expo-device', () => ({
 	brand: 'Apple',
 	modelName: 'iPhone 14 Pro',
@@ -143,12 +144,24 @@ describe('reportEmail', () => {
 	it('leaves out contact details that were not given', () => {
 		expect(reportEmail({message: 'the map is blank'}).body).toBe('the map is blank')
 	})
+
+	it("addresses a Carleton install's report to CARLS' support", () => {
+		useCampusStore.setState({campus: 'edu.carleton'})
+		try {
+			expect(reportEmail({message: 'the map is blank'})).toMatchObject({
+				to: ['carls@frogpond.tech'],
+				subject: 'CARLS problem report',
+			})
+		} finally {
+			useCampusStore.setState({campus: 'edu.stolaf'})
+		}
+	})
 })
 
-describe('submitReport in non-production', () => {
+describe('submitReport in a build that sends nothing', () => {
 	it('reports that Sentry is disabled and does not call Sentry.captureFeedback', () => {
 		jest.resetModules()
-		jest.doMock('@frogpond/constants', () => ({IS_PRODUCTION: false}))
+		jest.doMock('../../../../init/reporting-build', () => ({IS_REPORTING_BUILD: false}))
 		jest.doMock('@sentry/react-native', () => ({captureFeedback: jest.fn()}))
 		const SentryDev =
 			// oxlint-disable-next-line typescript/no-require-imports -- re-require after jest.doMock to pick up the mocked deps

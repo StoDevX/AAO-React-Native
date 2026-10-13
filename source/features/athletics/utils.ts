@@ -123,8 +123,8 @@ function dayTitle(day: Date, today: Date): string {
 
 /**
  * Lays the games out one section per local day, earliest first, each day in
- * kickoff order. Today always has a section, games or not: the list opens
- * scrolled to it, with the days before above and the days after below.
+ * kickoff order. Today always has a section, games or not, so the list
+ * always says what today holds.
  */
 export function daySections(scores: ProcessedScore[], now: Date = new Date()): DaySection[] {
 	const today = startOfDay(now)
@@ -173,6 +173,15 @@ export function sportFilterSections(scores: ProcessedScore[]): SportSection[] {
 }
 
 /**
+ * A sport's name without its division prefix, for use where the section header
+ * already says which division it is -- "Men's Basketball" under a "Men's"
+ * heading reads as a stutter.
+ */
+export function shortSportName(sport: string): string {
+	return sport.replace(/^(Men's|Women's)\s/u, '')
+}
+
+/**
  * Narrows the games to the selected sports. An empty selection means "show
  * everything" -- see `isFilterActive`.
  */
@@ -199,18 +208,30 @@ export interface GameSummary {
 }
 
 /**
- * Decides whether a score row shows a kickoff time or a scoreline.
+ * What a live or finished row shows: the score, with the result letter in
+ * front once there is one. A meet -- cross country, golf, swimming --
+ * finishes with no score, and the feed puts the team's placing, when it has
+ * one, in `prescore_info` instead.
+ */
+function resultLabel(score: ProcessedScore): string {
+	let hasScore = score.team_score !== '' || score.opponent_score !== ''
+	if (score.status.indicator === 'final' && !hasScore) {
+		return score.prescore_info.trim() || 'Final'
+	}
+	return [score.result, `${score.team_score}-${score.opponent_score}`].filter(Boolean).join(' ')
+}
+
+/**
+ * Decides whether a score row shows a kickoff time or a result.
  *
  * A game that is scheduled, or has started with no score reported yet, shows
  * its time -- ccc-server blanks the score for both. Anything live or finished
- * shows the score, with the result letter in front of it once there is one.
+ * shows its result; see `resultLabel`.
  */
 export function gameSummary(score: ProcessedScore): GameSummary {
 	let showsTime = score.status.indicator === 'scheduled' || score.status.indicator === 'started'
 	// All-day and multi-day fixtures carry no `time` string.
-	let label = showsTime
-		? score.time || 'All day'
-		: [score.result, `${score.team_score}-${score.opponent_score}`].filter(Boolean).join(' ')
+	let label = showsTime ? score.time || 'All day' : resultLabel(score)
 
 	return {
 		showsTime,

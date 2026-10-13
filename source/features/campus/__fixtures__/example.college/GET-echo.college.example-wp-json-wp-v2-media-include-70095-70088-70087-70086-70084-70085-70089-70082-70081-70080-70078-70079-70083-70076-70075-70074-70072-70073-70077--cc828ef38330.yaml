@@ -1,0 +1,186 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/media?include=70095,70088,70087,70086,70084,70085,70089,70082,70081,70080,70078,70079,70083,70076,70075,70074,70072,70073,70077,70070,70069,70068,70066,70067,70071,70064,70063,70062,70060,70061,70065,70058,70057,70056,70054,70055,70059,70052,70051,70050,70048,70049,70053,70046,70045,70044,70042,70043,70047,70040,70039,70038,70036,70037,70041,70034,70033,70032,70030,70031,70035,70028,70027,70026,70024,70025,70029,70022,70021,70020,70018,70019,70023,70016,70015,70014,70012,70013,70017,70010,70009,70008,70006,70007,70011,70004,70003,70002,70000,70001,70005&per_page=100&_fields=id,source_url
+json:
+  - id: 70095
+    source_url: https://echo.college.example/wp-content/uploads/2026/01/echo-60095.jpg
+  - id: 70088
+    source_url: https://echo.college.example/wp-content/uploads/2026/01/echo-60088.jpg
+  - id: 70087
+    source_url: https://echo.college.example/wp-content/uploads/2026/01/echo-60087.jpg
+  - id: 70086
+    source_url: https://echo.college.example/wp-content/uploads/2026/01/echo-60086.jpg
+  - id: 70084
+    source_url: https://echo.college.example/wp-content/uploads/2026/01/echo-60084.jpg
+  - id: 70085
+    source_url: https://echo.college.example/wp-content/uploads/2026/01/echo-60085.jpg
+  - id: 70089
+    source_url: https://echo.college.example/wp-content/uploads/2026/01/echo-60089.jpg
+  - id: 70082
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60082.jpg
+  - id: 70081
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60081.jpg
+  - id: 70080
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60080.jpg
+  - id: 70078
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60078.jpg
+  - id: 70079
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60079.jpg
+  - id: 70083
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60083.jpg
+  - id: 70076
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60076.jpg
+  - id: 70075
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60075.jpg
+  - id: 70074
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60074.jpg
+  - id: 70072
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60072.jpg
+  - id: 70073
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60073.jpg
+  - id: 70077
+    source_url: https://echo.college.example/wp-content/uploads/2025/12/echo-60077.jpg
+  - id: 70070
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60070.jpg
+  - id: 70069
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60069.jpg
+  - id: 70068
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60068.jpg
+  - id: 70066
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60066.jpg
+  - id: 70067
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60067.jpg
+  - id: 70071
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60071.jpg
+  - id: 70064
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60064.jpg
+  - id: 70063
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60063.jpg
+  - id: 70062
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60062.jpg
+  - id: 70060
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60060.jpg
+  - id: 70061
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60061.jpg
+  - id: 70065
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60065.jpg
+  - id: 70058
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60058.jpg
+  - id: 70057
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60057.jpg
+  - id: 70056
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60056.jpg
+  - id: 70054
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60054.jpg
+  - id: 70055
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60055.jpg
+  - id: 70059
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60059.jpg
+  - id: 70052
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60052.jpg
+  - id: 70051
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60051.jpg
+  - id: 70050
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60050.jpg
+  - id: 70048
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60048.jpg
+  - id: 70049
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60049.jpg
+  - id: 70053
+    source_url: https://echo.college.example/wp-content/uploads/2025/11/echo-60053.jpg
+  - id: 70046
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60046.jpg
+  - id: 70045
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60045.jpg
+  - id: 70044
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60044.jpg
+  - id: 70042
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60042.jpg
+  - id: 70043
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60043.jpg
+  - id: 70047
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60047.jpg
+  - id: 70040
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60040.jpg
+  - id: 70039
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60039.jpg
+  - id: 70038
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60038.jpg
+  - id: 70036
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60036.jpg
+  - id: 70037
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60037.jpg
+  - id: 70041
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60041.jpg
+  - id: 70034
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60034.jpg
+  - id: 70033
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60033.jpg
+  - id: 70032
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60032.jpg
+  - id: 70030
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60030.jpg
+  - id: 70031
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60031.jpg
+  - id: 70035
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60035.jpg
+  - id: 70028
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60028.jpg
+  - id: 70027
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60027.jpg
+  - id: 70026
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60026.jpg
+  - id: 70024
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60024.jpg
+  - id: 70025
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60025.jpg
+  - id: 70029
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60029.jpg
+  - id: 70022
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60022.jpg
+  - id: 70021
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60021.jpg
+  - id: 70020
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60020.jpg
+  - id: 70018
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60018.jpg
+  - id: 70019
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60019.jpg
+  - id: 70023
+    source_url: https://echo.college.example/wp-content/uploads/2025/10/echo-60023.jpg
+  - id: 70016
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60016.jpg
+  - id: 70015
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60015.jpg
+  - id: 70014
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60014.jpg
+  - id: 70012
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60012.jpg
+  - id: 70013
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60013.jpg
+  - id: 70017
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60017.jpg
+  - id: 70010
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60010.jpg
+  - id: 70009
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60009.jpg
+  - id: 70008
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60008.jpg
+  - id: 70006
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60006.jpg
+  - id: 70007
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60007.jpg
+  - id: 70011
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60011.jpg
+  - id: 70004
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60004.jpg
+  - id: 70003
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60003.jpg
+  - id: 70002
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60002.jpg
+  - id: 70000
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60000.jpg
+  - id: 70001
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60001.jpg
+  - id: 70005
+    source_url: https://echo.college.example/wp-content/uploads/2025/09/echo-60005.jpg

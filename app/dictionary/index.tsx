@@ -12,8 +12,11 @@ import {
 	groupEntries,
 	normalizeEntry,
 } from '../../source/features/dictionary/lib/entry'
-import {dictionaryOptions} from '../../source/features/dictionary/query'
+import {dictionaryOptionsFor} from '../../source/features/dictionary/query'
+import {useCampusId, useCampusSection} from '../../source/features/campus/store'
+import {sectionServer} from '../../source/features/campus/section-server'
 import type {NormalizedEntry} from '../../source/features/dictionary/types'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -26,7 +29,8 @@ function DictionaryView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data = [], refetch, isLoading, isError} = useQuery(dictionaryOptions)
+	let server = sectionServer(useCampusId(), useCampusSection('dictionary'))
+	let {data = [], refetch, isLoading, isError} = useQuery(dictionaryOptionsFor(server))
 
 	let groups = React.useMemo(
 		() => groupEntries(filterEntries(data.map(normalizeEntry), searchQuery)),
@@ -64,7 +68,7 @@ function DictionaryView(): React.ReactNode {
 	)
 }
 
-export default function DictionaryPage(): React.ReactNode {
+function DictionaryPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Dictionary</Stack.Title>
@@ -72,3 +76,9 @@ export default function DictionaryPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'dictionary',
+	{title: 'Dictionary', noun: 'a campus dictionary', systemImage: 'book'},
+	DictionaryPage,
+)

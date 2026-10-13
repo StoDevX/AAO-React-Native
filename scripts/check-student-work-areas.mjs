@@ -4,8 +4,7 @@
 // each from the unit number in its description.
 //
 // A posting is in an area when the unit ccc-server publishes for it is one the
-// area lists, and a posting the published map lacks is read from its detail.
-// This sorts the board the same way, with the app's own URLs and parsers from
+// area lists. This sorts the board the same way, with the app's own URLs from
 // modules/ccc-jobs, and reports what lands in no area.
 //
 // Prints a Markdown report. With --check, exits 1 when some posting carries a
@@ -30,7 +29,7 @@ const SOURCES = new URL('../data/sources.yaml', import.meta.url)
 const REL_JOBS = 'https://frogpond.tech/rel/jobs'
 const REL_UNITS = 'https://frogpond.tech/rel/student-work-units'
 /** What the app resolves a relative source against; see source/lib/constants.ts. */
-const API_ROOT = 'https://stolaf.api.frogpond.tech/v1/'
+const API_ROOT = 'https://stolaf.frogpond.tech/v1/'
 const UNIT_NAMES_URL =
 	'https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json'
 
@@ -55,7 +54,11 @@ async function main() {
 	if (!units) throw new Error(`student-work: no ${REL_UNITS} link in data/sources.yaml`)
 
 	let areas = load(readFileSync(AREAS, 'utf8'))
+	// ccc-server publishes "other" for a posting whose unit no area lists, or that
+	// has none. The Other area holds those, but this report is about getting them
+	// into a real area, so they stay in it.
 	let listedUnits = new Set(areas.flatMap((area) => area.units))
+	listedUnits.delete('other')
 
 	let [board, published] = await Promise.all([
 		fetchJson(requisitionsUrl(site)).then(parseRequisitions),

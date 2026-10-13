@@ -8,11 +8,12 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import {Stack, useRouter} from 'expo-router'
 
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
-import {dataSources} from '../../source/features/contributing/data-sources'
+import {useCampusSection} from '../../source/features/campus/store'
 import {openEmail} from '../../source/features/support/open-email'
 import {GH_BASE_URL} from '../../source/lib/constants'
 
 const OSM_URL = 'https://www.openstreetmap.org/'
+const CCC_SERVER_URL = 'https://github.com/frog-pond/ccc-server'
 
 const styles = StyleSheet.create({
 	host: {
@@ -32,6 +33,8 @@ function Blurb({children}: {children: string}): React.ReactNode {
 /// How to help build the app and its data, and where that data comes from.
 export default function ContributingPage(): React.ReactNode {
 	let router = useRouter()
+	let {appName} = useCampusSection('branding')
+	let dataSources = useCampusSection('about')?.dataSources ?? []
 
 	return (
 		<>
@@ -52,12 +55,19 @@ export default function ContributingPage(): React.ReactNode {
 
 					<SheetSection title="We have source code">
 						<Blurb>
-							All About Olaf is open source. Read the code, report a bug, or send a change.
+							{`${appName} and the server behind it are open source on GitHub. Read the code, report a bug, or send a change.`}
 						</Blurb>
 						<DisclosureRow
 							destination="external"
+							detail="This app"
 							onPress={() => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})}
-							title="GitHub"
+							title={appName}
+						/>
+						<DisclosureRow
+							destination="external"
+							detail="The server that gathers the app’s data"
+							onPress={() => trackedOpenUrl({url: CCC_SERVER_URL})}
+							title="ccc-server"
 						/>
 					</SheetSection>
 
@@ -73,17 +83,19 @@ export default function ContributingPage(): React.ReactNode {
 						/>
 					</SheetSection>
 
-					<SheetSection title="Data sources">
-						{dataSources.map((source) => (
-							<DisclosureRow
-								destination="external"
-								detail={source.provides}
-								key={source.name}
-								onPress={() => trackedOpenUrl({url: source.url})}
-								title={source.name}
-							/>
-						))}
-					</SheetSection>
+					{dataSources.length > 0 ? (
+						<SheetSection title="Data sources">
+							{dataSources.map((source) => (
+								<DisclosureRow
+									destination="external"
+									detail={source.provides}
+									key={source.name}
+									onPress={() => trackedOpenUrl({url: source.url})}
+									title={source.name}
+								/>
+							))}
+						</SheetSection>
+					) : null}
 				</Form>
 			</Host>
 		</>

@@ -1,6 +1,7 @@
 import type {AppIconName} from '../../../images/icons'
-import type {Campus} from '../building-hours/types'
+import type {CampusId} from '../../campuses'
 import type {StationId} from '../streaming/radio/stations'
+import type {PlaybackFailureMessage} from '../streaming/radio/playback-diagnostics'
 
 /**
  * A route's file-system pattern, such as `/dictionary/[word]`. Only
@@ -39,7 +40,17 @@ export type MapGroupLabel = string & {readonly __brand: 'MapGroupLabel'}
 export type QuickActionId = string & {readonly __brand: 'QuickActionId'}
 
 /** The calendar feeds an event can come from; `other` for anything unrecognized. */
-export type CalendarSourceId = 'stolaf' | 'presence' | 'ksto-schedule' | 'krlx-schedule' | 'other'
+export type CalendarSourceId =
+	| 'stolaf'
+	| 'presence'
+	| 'carleton'
+	| 'wiki-monkeys'
+	| 'ksto-schedule'
+	| 'krlx-schedule'
+	| 'kmnk-schedule'
+	| 'sumo-schedule'
+	| 'upcoming-convos'
+	| 'other'
 
 /**
  * Marks an anonymous log on its way to Sentry, so `beforeSendLog` knows to
@@ -59,7 +70,8 @@ export type TelemetryEvent =
 	| {name: 'screen.view'; attributes: {route: RoutePattern}}
 	| {name: 'calendar.filter.apply'; attributes: {axis: 'category' | 'organization' | 'none'}}
 	| {name: 'map.search.empty'; attributes: Record<string, never>}
-	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: Campus}}
+	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: CampusId}}
+	| {name: 'campus.picked'; attributes: {campus: CampusId}}
 	| {
 			name: 'calendar.add_to_device'
 			attributes: {result: 'saved' | 'cancelled' | 'error'; source: CalendarSourceId}
@@ -97,6 +109,18 @@ export type TelemetryEvent =
 	  }
 	| {name: 'radio.play.error'; attributes: {station: StationId}}
 	| {
+			name: 'radio.play.failure'
+			attributes: {
+				station: StationId
+				message: PlaybackFailureMessage
+				source: 'published' | 'shipped'
+				phase: 'startup' | 'after_playback'
+				outcome: 'trying_fallback' | 'stopped'
+			}
+	  }
+	// A published stream failed before any audio, and the shipped one was tried instead.
+	| {name: 'radio.stream.fallback'; attributes: {station: StationId}}
+	| {
 			name: 'api.failure'
 			attributes: {
 				source: QueryKeyHead
@@ -114,6 +138,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'calendar.filter.apply': 'metric',
 	'map.search.empty': 'metric',
 	'map.group.open': 'metric',
+	'campus.picked': 'metric',
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',
@@ -126,6 +151,8 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'radio.station.browse': 'metric',
 	'radio.action': 'metric',
 	'radio.play.error': 'metric',
+	'radio.play.failure': 'log',
+	'radio.stream.fallback': 'metric',
 	'api.failure': 'log',
 }
 

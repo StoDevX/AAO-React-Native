@@ -190,8 +190,7 @@ order by o.start_utc`
  * `exclude` drops events the list hides, so the menu never offers or counts a
  * value that could only filter to hidden events.
  *
- * Sorted Z-A because SwiftUI's `Menu` renders its contents bottom-to-top, so
- * this reads A-Z on screen. See `source/features/calendar/filter.ts`.
+ * Sorted A-Z, the order the calendar's filter menu shows them in.
  *
  * `collate nocase` because the filter menu must not split a value by case --
  * SQLite's default BINARY collation puts every capital ahead of every
@@ -222,7 +221,7 @@ where t.axis = ?
   )
 ${exclusion.sql}
 group by t.value
-order by t.value collate nocase desc`
+order by t.value collate nocase`
 
 	return {
 		sql,

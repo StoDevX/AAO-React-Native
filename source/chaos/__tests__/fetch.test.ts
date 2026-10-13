@@ -1,8 +1,11 @@
+import {pickFault, pickSessionFault} from '../faults'
 import {useChaosFindings} from '../findings'
 import {chaosFetch, type ChaosFetchOptions} from '../fetch'
 import {memoryLineFile} from '../line-file'
+import {useChaosNetwork} from '../network'
 import {seededRandom} from '../random'
 import {parseLines, type TapeEntry} from '../tape'
+import {useChaosVocab} from '../vocab'
 
 const URL_A = 'https://a.test/menu'
 
@@ -25,9 +28,23 @@ function fileServer() {
 	)
 }
 
+/** The first seed whose first fault, at rate 1, is a mutation. */
+function mutatingSeed(): number {
+	for (let seed = 1; seed < 1000; seed++) {
+		if (pickFault(seededRandom(seed), 1).kind === 'mutated') return seed
+	}
+	throw new Error('no seed in the first thousand begins with a mutation')
+}
+
+/** The answers on `tape`, without the line taped as each request started. */
+function answers(tape: ReturnType<typeof memoryLineFile>): TapeEntry[] {
+	return parseLines<TapeEntry>(tape.readLines()).filter((entry) => !entry.pending)
+}
+
 function options(overrides: Partial<ChaosFetchOptions> = {}): ChaosFetchOptions {
 	return {
 		mode: 'record',
+		profile: 'fuzz',
 		launch: 0,
 		random: seededRandom(1),
 		faultRate: 0,
@@ -42,12 +59,22 @@ beforeEach(() => {
 })
 
 describe('record mode', () => {
+	test('publishes the strings in what it delivers, and in what a replay delivers', async () => {
+		useChaosVocab.setState({words: []})
+		let tape = memoryLineFile()
+		await chaosFetch(server('{"name":"Stav Hall"}'), options({tape}))(URL_A)
+		expect(useChaosVocab.getState().words).toEqual(['Stav Hall'])
+		useChaosVocab.setState({words: []})
+		await chaosFetch(server(), options({tape, mode: 'replay'}))(URL_A)
+		expect(useChaosVocab.getState().words).toEqual(['Stav Hall'])
+	})
+
 	test('passes an unfaulted response through and records it', async () => {
 		let tape = memoryLineFile()
 		let wrapped = chaosFetch(server(), options({tape}))
 		let response = await wrapped(URL_A)
 		expect(await response.json()).toEqual({ok: true})
-		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		let [entry] = answers(tape)
 		expect(entry).toMatchObject({
 			key: `0 GET ${URL_A} #0`,
 			status: 200,
@@ -64,7 +91,7 @@ describe('record mode', () => {
 			// oxlint-disable-next-line no-await-in-loop
 			await wrapped(URL_A).catch(() => undefined)
 		}
-		let entries = parseLines<TapeEntry>(tape.readLines())
+		let entries = answers(tape)
 		expect(entries).toHaveLength(20)
 		expect(entries.every((e) => e.fault !== 'none')).toBe(true)
 	})
@@ -102,7 +129,7 @@ describe('record mode', () => {
 		let response = await wrapped(URL_A)
 		expect(response).toBe(await network.mock.results[0].value)
 		expect(new Uint8Array(await response.arrayBuffer())).toEqual(CATALOG_BYTES)
-		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		let [entry] = answers(tape)
 		expect(entry).toMatchObject({status: 200, body: '', fault: 'none', live: true})
 	})
 
@@ -114,7 +141,7 @@ describe('record mode', () => {
 			// oxlint-disable-next-line no-await-in-loop
 			await wrapped(URL_A).catch(() => undefined)
 		}
-		let entries = parseLines<TapeEntry>(tape.readLines())
+		let entries = answers(tape)
 		let faults = new Set(entries.map((e) => e.fault))
 		expect([...faults].sort()).toEqual(['latency', 'network', 'none', 'status'])
 		for (let entry of entries.filter((e) => e.fault === 'status')) {
@@ -138,7 +165,7 @@ describe('record mode', () => {
 		})
 		let wrapped = chaosFetch(aborting, options({tape}))
 		await expect(wrapped(URL_A)).rejects.toMatchObject({name: 'AbortError'})
-		expect(parseLines<TapeEntry>(tape.readLines())[0].error).toBe('abort')
+		expect(answers(tape)[0].error).toBe('abort')
 	})
 
 	test('waits out a latency fault', async () => {
@@ -151,9 +178,122 @@ describe('record mode', () => {
 		}
 		expect(sleep.mock.calls.some(([ms]) => ms >= 500)).toBe(true)
 	})
+
+	test('delivers a mutated body, tapes it, and reports what changed', async () => {
+		let tape = memoryLineFile()
+		let findings = memoryLineFile()
+		useChaosFindings.setState({latest: '', file: findings})
+		let body = '{"items":[{"label":"Lunch"}],"open":true}'
+		let wrapped = chaosFetch(
+			server(body),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		let delivered = await (await wrapped(URL_A)).text()
+		let [entry] = answers(tape)
+		expect(entry.fault).toBe('mutated')
+		expect(entry.body).toBe(delivered)
+		expect(delivered).not.toBe(body)
+		expect(entry.mutation?.path).toMatch(/^\$/u)
+		let [finding] = parseLines<{kind: string; message: string}>(findings.readLines())
+		expect(finding).toMatchObject({
+			kind: 'mutation',
+			message: `${entry.key} ${entry.mutation?.path}: ${entry.mutation?.change}`,
+		})
+		expect(useChaosFindings.getState().latest).toBe('')
+	})
+
+	test('delivers a body it cannot mutate untouched, taped as no fault', async () => {
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(
+			server('{}'),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		expect(await (await wrapped(URL_A)).text()).toBe('{}')
+		let [entry] = answers(tape)
+		expect(entry).toMatchObject({fault: 'none', body: '{}'})
+		expect(entry.mutation).toBeUndefined()
+	})
+
+	test('passes a binary body through when its fault is a mutation', async () => {
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(
+			fileServer(),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		let bytes = new Uint8Array(await (await wrapped(URL_A)).arrayBuffer())
+		expect(bytes).toEqual(CATALOG_BYTES)
+		let [entry] = answers(tape)
+		expect(entry).toMatchObject({fault: 'none', live: true})
+	})
+})
+
+describe('a seed repeats its faults', () => {
+	/** A server that answers each URL once its gate opens, in whatever order the gates open. */
+	function gatedServer() {
+		let gates = new Map<string, () => void>()
+		let network = jest.fn(
+			(input: Parameters<typeof fetch>[0]) =>
+				new Promise<Response>((resolve) => {
+					// chaosFetch always hands the network a Request.
+					gates.set((input as Request).url, () =>
+						resolve(
+							new Response('{"items":[{"label":"Lunch"},{"label":"Dinner"}],"open":true,"n":3}', {
+								headers: {'content-type': 'application/json'},
+							}),
+						),
+					)
+				}),
+		)
+		return {network, open: (url: string) => gates.get(url)?.()}
+	}
+
+	/** The tape of a seed's run of three concurrent requests, answered in `order`. */
+	async function tapeFor(order: string[]): Promise<Map<string, TapeEntry>> {
+		let urls = ['https://a.test/1', 'https://a.test/2', 'https://a.test/3']
+		let {network, open} = gatedServer()
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(network, options({tape, faultRate: 1, random: seededRandom(21)}))
+		let pending = urls.map((url) => wrapped(url).catch(() => undefined))
+		// Let every request reach the server before any answers.
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		for (let url of order) {
+			open(url)
+			// One at a time, so each answer is handled before the next arrives.
+			// oxlint-disable-next-line no-await-in-loop
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		}
+		await Promise.all(pending)
+		return new Map(answers(tape).map((entry) => [entry.key, entry]))
+	}
+
+	test('whatever order the network answers in', async () => {
+		let forwards = await tapeFor(['https://a.test/1', 'https://a.test/2', 'https://a.test/3'])
+		let backwards = await tapeFor(['https://a.test/3', 'https://a.test/2', 'https://a.test/1'])
+		expect([...forwards.values()].some((entry) => entry.fault === 'mutated')).toBe(true)
+		for (let [key, entry] of forwards) {
+			expect([key, backwards.get(key)?.body, backwards.get(key)?.fault]).toEqual([
+				key,
+				entry.body,
+				entry.fault,
+			])
+		}
+	})
 })
 
 describe('replay mode', () => {
+	test('replays a mutated body byte for byte', async () => {
+		let tape = memoryLineFile()
+		let recorded = chaosFetch(
+			server('{"items":[1,2,3],"open":true}'),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		let first = await (await recorded(URL_A)).text()
+		let network = server('{"something":"else"}')
+		let replayed = chaosFetch(network, options({tape, mode: 'replay'}))
+		expect(await (await replayed(URL_A)).text()).toBe(first)
+		expect(network).not.toHaveBeenCalled()
+	})
+
 	async function recordThenReplay(requests: (f: typeof fetch) => Promise<unknown>) {
 		let tape = memoryLineFile()
 		let recorder = chaosFetch(server(), options({tape, faultRate: 0.5}))
@@ -237,5 +377,100 @@ describe('replay mode', () => {
 		expect(useChaosFindings.getState().latest).toBe(
 			`divergence: no recorded answer for 0 GET ${URL_A} #0`,
 		)
+	})
+})
+
+describe('session profile', () => {
+	/** The first seed whose first session fault, online, starts an offline window. */
+	function offlineSeed(): number {
+		for (let seed = 1; seed < 5000; seed++) {
+			if (pickSessionFault(seededRandom(seed), 0, 0).offline) return seed
+		}
+		throw new Error('no seed in the first 5000 starts offline')
+	}
+
+	beforeEach(() => {
+		// An offline window ends on a timer, which must not outlive the test.
+		jest.useFakeTimers()
+		useChaosNetwork.setState({offline: false})
+	})
+
+	afterEach(() => {
+		jest.useRealTimers()
+	})
+
+	test('takes the network away for a window, failing every request in it', async () => {
+		let tape = memoryLineFile()
+		let clock = 0
+		let network = server()
+		let wrapped = chaosFetch(
+			network,
+			options({tape, profile: 'session', random: seededRandom(offlineSeed()), now: () => clock}),
+		)
+		await expect(wrapped(URL_A)).rejects.toThrow('Network request failed')
+		expect(useChaosNetwork.getState().offline).toBe(true)
+		clock = 4000
+		await expect(wrapped(URL_A)).rejects.toThrow('Network request failed')
+		expect(network).not.toHaveBeenCalled()
+		let [first, second] = answers(tape)
+		expect(first).toMatchObject({error: 'network', offline: true})
+		expect(first.offlineMs).toBeGreaterThanOrEqual(5000)
+		expect(second).toMatchObject({error: 'network', offline: true})
+		expect(second.offlineMs).toBeUndefined()
+	})
+
+	test('a replay takes the network away where the recording did', async () => {
+		let tape = memoryLineFile()
+		let recorded = chaosFetch(
+			server(),
+			options({tape, profile: 'session', random: seededRandom(offlineSeed()), now: () => 0}),
+		)
+		await recorded(URL_A).catch(() => undefined)
+		useChaosNetwork.setState({offline: false})
+		let replayed = chaosFetch(server(), options({tape, mode: 'replay', profile: 'session'}))
+		await expect(replayed(URL_A)).rejects.toThrow('Network request failed')
+		expect(useChaosNetwork.getState().offline).toBe(true)
+	})
+
+	test("keys a later launch's requests by its own number", async () => {
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(server(), options({tape, launch: 3, profile: 'session'}))
+		await wrapped(URL_A).catch(() => undefined)
+		expect(answers(tape)[0].key).toBe(`3 GET ${URL_A} #0`)
+	})
+})
+
+describe('a request the app never saw answered', () => {
+	test('is taped as pending before it is answered', async () => {
+		let tape = memoryLineFile()
+		let release: () => void = () => undefined
+		let network = jest.fn(
+			() =>
+				new Promise<Response>((resolve) => {
+					release = () =>
+						resolve(new Response('{}', {headers: {'content-type': 'application/json'}}))
+				}),
+		)
+		let pending = chaosFetch(network, options({tape}))(URL_A)
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		// The app is killed here, in a real run, before the answer arrives.
+		expect(parseLines<{key: string; pending?: true}>(tape.readLines())).toEqual([
+			{key: `0 GET ${URL_A} #0`, pending: true},
+		])
+		release()
+		await pending
+	})
+
+	test('stays unanswered on replay, rather than stopping the run as a divergence', async () => {
+		let tape = memoryLineFile()
+		tape.append(JSON.stringify({key: `0 GET ${URL_A} #0`, pending: true}))
+		let replayed = chaosFetch(server(), options({tape, mode: 'replay'}))
+		let settled = false
+		void replayed(URL_A).finally(() => {
+			settled = true
+		})
+		await new Promise((resolve) => setTimeout(resolve, 10))
+		expect(settled).toBe(false)
+		expect(useChaosFindings.getState().latest).toBe('')
 	})
 })

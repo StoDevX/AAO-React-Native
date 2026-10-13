@@ -27,6 +27,7 @@ import {
 	Map,
 	UserLocation,
 	type CameraRef,
+	type GeoJSONSourceRef,
 	type MapRef,
 	type PressEvent,
 	type PressEventWithFeatures,
@@ -36,18 +37,30 @@ import {Stack, useIsFocused, useLocalSearchParams} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 
-import {parseCampus} from '../../source/features/building-hours/query'
+import {campusById, type CampusId} from '../../source/campuses'
+import type {MapSection} from '../../source/features/map/campus-section'
+import {useCampusParam} from '../../source/features/campus/campus-param'
 import {cardVenuesOptions} from '../../source/features/map/card-queries'
-import type {Campus} from '../../source/features/building-hours/types'
 import {PlaceStackCard} from '../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../source/features/map/building-picker'
-import {framingFor, type Framing, type MapPins} from '../../source/features/map/lib/map-pins'
+import {
+	framingFor,
+	onlyPin,
+	type Framing,
+	type MapPins,
+} from '../../source/features/map/lib/map-pins'
 import {placeForTap, tapCandidates} from '../../source/features/map/lib/place-for-tap'
-import {selectionFor, selectionFraming} from '../../source/features/map/lib/selection'
+import {
+	highlightedFootprint,
+	selectionFor,
+	selectionFraming,
+} from '../../source/features/map/lib/selection'
 import {MapPinImages, MapPinsLayer} from '../../source/features/map/map-pins-layer'
+import {linkedPlace} from '../../source/features/map/lib/linked-place'
 import {MapSelectionLayer} from '../../source/features/map/map-selection-layer'
 import {useFrameRequests} from '../../source/features/map/use-frame-requests'
+import {SELECTED, useFootprintHighlight} from '../../source/features/map/use-footprint-highlight'
 import {sheetHeightFor} from '../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../source/features/map/lib/building-footprints'
 import {
@@ -58,22 +71,10 @@ import {
 import {collapsedDetentFor, detentsFor, nameOf} from '../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../source/features/map/query'
 import {useRecentPlacesStore} from '../../source/features/map/store'
-import type {Building, Coordinate, Feature} from '../../source/features/map/types'
+import type {Building, Feature} from '../../source/features/map/types'
 import {useMapStyleUrl} from '../../source/features/map/style-query'
 import {mapCredits} from '../../source/features/map/urls'
-
-/** Each campus's starting camera position. Carleton's predates this file
- * reading a campus from the route, and is kept exactly as it was. St. Olaf's
- * is the median of its 128 map features. */
-const CAMPUS_CENTER: Record<Campus, Coordinate> = {
-	carleton: [-93.15488752015, 44.460800862266],
-	stolaf: [-93.1839, 44.4618],
-}
-
-const CAMPUS_TITLE: Record<Campus, string> = {
-	carleton: 'Carleton Map',
-	stolaf: 'St. Olaf Map',
-}
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
@@ -89,34 +90,34 @@ const LINE_TOUCH_RADIUS = 8
 const PIN_MARGIN = 40
 const HEADER_CLEARANCE = 44
 
-/// The footprints are drawn by the tileset now, so this layer paints nothing.
-/// It stays because it is the tap target, and now the source's only child:
-/// MapLibre resolves a source press against a *rendered* layer. If a device
-/// shows taps landing nowhere, a hair above zero is the fix -- zero opacity
-/// should still hit-test, since it is `visibility: none` rather than opacity
-/// that drops a layer from the tree.
-const FOOTPRINT_OPACITY = 0
+/// The footprints are drawn by the tileset, so this layer paints only the open
+/// place's building, tinted under its dot. It stays for every building
+/// because it is the tap target, and the source's only child: MapLibre
+/// resolves a source press against a *rendered* layer. Zero opacity still
+/// hit-tests, since it is `visibility: none` rather than opacity that drops a
+/// layer from the tree.
+const SELECTED_FOOTPRINT_OPACITY = 0.3
 
-export default function MapPage(): React.ReactNode {
-	// `/map` has served Carleton alone since before it read the route, so a
-	// missing param keeps that default rather than falling through to
-	// parseCampus' own St. Olaf default, which belongs to `/hours`. A param
-	// that is present but unrecognised still falls back through parseCampus
-	// rather than crashing.
-	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
-	// Wrapped in useMemo, rather than a plain `let`, so the React Compiler
-	// treats it as one reactive value with a clear dependency -- otherwise it
-	// loses track of `dispatchStack`'s stability below and refuses to
-	// preserve handleBuildingPress's manual memoization.
-	let campus = React.useMemo(
-		() => (campusParam === undefined ? 'carleton' : parseCampus(campusParam)),
-		[campusParam],
-	)
+function MapPage(): React.ReactNode {
+	// A link with no campus, or one this build doesn't know -- `?campus=carleton`
+	// from a 2.9 Home Screen quick action -- opens the active campus's map.
+	// Every link the app draws names its campus.
+	let {campus: campusParam, place} = useLocalSearchParams<{campus?: string; place?: string}>()
+	let campus = useCampusParam(campusParam)
+	let map = campusById(campus).map
+	// The section gate, below, draws the notice for a campus without a map.
+	if (!map) return null
+	return <CampusMap campus={campus} map={map} placeParam={place} />
+}
 
+type CampusMapProps = {campus: CampusId; map: MapSection; placeParam: string | undefined}
+
+function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	let scheme = useColorScheme()
-	let mapStyleUrl = useMapStyleUrl(campus, scheme)
+	let mapStyleUrl = useMapStyleUrl(campus, map, scheme)
 	let cameraRef = React.useRef<CameraRef>(null)
 	let mapRef = React.useRef<MapRef>(null)
+	let footprintsRef = React.useRef<GeoJSONSourceRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
 	// The places open on the map, bottom to top: the sheet's card, then each
 	// stacked over it.
@@ -183,6 +184,18 @@ export default function MapPage(): React.ReactNode {
 		},
 		[dispatchSheet],
 	)
+
+	// A link can open a place by its feature id: `/map?campus=edu.stolaf&place=toh`.
+	// It opens once its places have loaded, and only once per link, so closing
+	// its card leaves the map as the user left it.
+	let opened = React.useRef<string | null>(null)
+	let linked = linkedPlace(placeParam, buildings)
+	React.useEffect(() => {
+		if (linked && opened.current !== linked) {
+			opened.current = linked
+			openPlace(linked)
+		}
+	}, [linked, openPlace])
 
 	// A tap opens the place whose name is drawn under it -- The Cage, inside
 	// Buntrock -- or the trail drawn under it, before the building it landed
@@ -266,6 +279,17 @@ export default function MapPage(): React.ReactNode {
 	// What the sheet is listing, pinned. The picker stays mounted under a
 	// card, so these persist while a card is open.
 	let [pins, setPins] = React.useState<MapPins | null>(null)
+	// A place opened from a search result is the only search pin drawn while
+	// its card is open; the rest come back when it closes. A place opened any
+	// other way -- a pin, a building, a group's row -- leaves the pins alone.
+	let [searchedId, setSearchedId] = React.useState<string | null>(null)
+	// Cleared during render rather than in an effect, as React recommends for
+	// state that follows other state, so the other pins never wait a render.
+	if (searchedId && openedId !== searchedId) {
+		setSearchedId(null)
+	}
+	// Memoized, so the pins' layer does not rebuild its source every render.
+	let shownPins = React.useMemo(() => onlyPin(pins, searchedId), [pins, searchedId])
 
 	// Frames what a Framing asks for in the map above the sheet and below the
 	// header: a box fitted, one place eased to at the selection zoom.
@@ -307,6 +331,19 @@ export default function MapPage(): React.ReactNode {
 		() => (selectedPlace ? selectionFor(selectedPlace) : null),
 		[selectedPlace],
 	)
+	let footprintIds = React.useMemo(
+		() => new Set(footprints.features.map((footprint) => footprint.id)),
+		[footprints],
+	)
+	// A source takes no feature state until its style has loaded, so each load
+	// sets the highlight again, as new footprints do.
+	let [styleLoads, countStyleLoad] = React.useReducer((count: number) => count + 1, 0)
+	let footprintsResetKey = React.useMemo(() => ({footprints, styleLoads}), [footprints, styleLoads])
+	useFootprintHighlight(
+		footprintsRef,
+		selectedPlace ? highlightedFootprint(selectedPlace, footprintIds) : null,
+		footprintsResetKey,
+	)
 
 	// Reads the sheet's height at the moment of selection without depending on
 	// it: Apple Maps leaves the map where it is when its sheet changes stop, so
@@ -339,14 +376,12 @@ export default function MapPage(): React.ReactNode {
 			{/* The map runs up under a clear header, as Maps' does: only the Back
 			    button and the About menu float over it. The title stays for the
 			    next screen's Back button, but the header draws none. */}
-			<Stack.Screen
-				options={{title: CAMPUS_TITLE[campus], headerTitle: '', headerTransparent: true}}
-			/>
+			<Stack.Screen options={{title: map.title, headerTitle: '', headerTransparent: true}} />
 			{/* The credits the tiles' licence requires, in place of MapLibre's own
 			    button, which would sit loose on the map beside Back. */}
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu accessibilityLabel="About this map" icon="info.circle">
-					{mapCredits(campus).map((credit) => (
+					{mapCredits(map).map((credit) => (
 						// The compass says the item opens a site, as Safari's own icon does.
 						<Stack.Toolbar.MenuAction
 							key={credit.url}
@@ -362,13 +397,14 @@ export default function MapPage(): React.ReactNode {
 				ref={mapRef}
 				attribution={false}
 				logo={false}
+				onDidFinishLoadingStyle={countStyleLoad}
 				onPress={handleMapPress}
 				mapStyle={mapStyleUrl}
 				style={StyleSheet.absoluteFill}
 			>
 				<Camera
 					ref={cameraRef}
-					initialViewState={{center: CAMPUS_CENTER[campus], zoom: DEFAULT_ZOOM}}
+					initialViewState={{center: [map.center[0], map.center[1]], zoom: DEFAULT_ZOOM}}
 				/>
 				<UserLocation />
 
@@ -379,18 +415,36 @@ export default function MapPage(): React.ReactNode {
 				    quirks out of the tap path: features repeat across tile
 				    boundaries, the 28 places with no polygon are absent, and the
 				    layer floors out at z14. A GeoJSON source has none of those. */}
-				<GeoJSONSource data={footprints} id="campus-buildings" onPress={handleBuildingPress}>
+				<GeoJSONSource
+					data={footprints}
+					id="campus-buildings"
+					onPress={handleBuildingPress}
+					ref={footprintsRef}
+				>
 					<Layer
 						id="campus-buildings-hit"
-						paint={{'fill-color': c.gold, 'fill-opacity': FOOTPRINT_OPACITY}}
+						paint={{
+							'fill-color': c.gold,
+							'fill-opacity': [
+								'case',
+								['boolean', ['feature-state', SELECTED], false],
+								SELECTED_FOOTPRINT_OPACITY,
+								0,
+							],
+						}}
 						type="fill"
 					/>
 				</GeoJSONSource>
 
 				<MapPinImages />
-				<MapPinsLayer onCluster={frameCluster} onSelect={openPlace} pins={pins} />
+				<MapPinsLayer
+					font={map.labelFont}
+					onCluster={frameCluster}
+					onSelect={openPlace}
+					pins={shownPins}
+				/>
 
-				<MapSelectionLayer selection={selection} />
+				<MapSelectionLayer font={map.labelFont} selection={selection} />
 			</Map>
 			{/* Covers the map, and lets every touch through. The sheet is
 			    presented rather than laid out, so the Host needs no size of its
@@ -464,9 +518,10 @@ export default function MapPage(): React.ReactNode {
 											focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
 										)
 									}
-									onSelect={(id) => {
+									onSelect={(id, from) => {
 										dispatchStack({type: 'start', id})
 										dispatchSheet({type: 'row-tapped'})
+										setSearchedId(from === 'search' ? id : null)
 									}}
 								/>
 							</Group>
@@ -510,3 +565,9 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 })
+
+export default requiresSection(
+	'map',
+	{title: 'Map', noun: 'a campus map', systemImage: 'map'},
+	MapPage,
+)

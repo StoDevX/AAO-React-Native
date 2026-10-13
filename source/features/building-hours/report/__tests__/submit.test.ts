@@ -17,34 +17,44 @@ function makeBuilding(name: string): BuildingType {
 	}
 }
 
+const CARLETON = {label: 'Carleton', supportEmail: 'carls@frogpond.tech'}
+const ST_OLAF = {label: 'St. Olaf', supportEmail: 'allaboutolaf@frogpond.tech'}
+
 describe('submitReport', () => {
 	// CRITICAL regression: Bookstore, Post Office, Business Office, Financial
 	// Aid, and Registrar all exist on both campuses. A subject or issue title
 	// naming only the building leaves a maintainer with no way to tell which
 	// campus's venue was reported.
 	it('names the campus in the email subject', () => {
-		submitReport(makeBuilding('Bookstore'), makeBuilding('Bookstore'), 'carleton', '')
+		submitReport(makeBuilding('Bookstore'), makeBuilding('Bookstore'), CARLETON, '')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{subject: string}]
 		expect(args.subject).toBe('[building] Suggestion for Bookstore (Carleton)')
 	})
 
+	it("sends the report to the campus's support address", () => {
+		submitReport(makeBuilding('Bookstore'), makeBuilding('Bookstore'), CARLETON, '')
+
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{to: Array<string>}]
+		expect(args.to).toEqual(['carls@frogpond.tech'])
+	})
+
 	it('attaches the images picked for the report', () => {
-		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', '', ['file:///tmp/sign.jpg'])
+		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), ST_OLAF, '', ['file:///tmp/sign.jpg'])
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{attachments: Array<string>}]
 		expect(args.attachments).toEqual(['file:///tmp/sign.jpg'])
 	})
 
 	it('names St. Olaf in the subject for a St. Olaf report', () => {
-		submitReport(makeBuilding('Bookstore'), makeBuilding('Bookstore'), 'stolaf', '')
+		submitReport(makeBuilding('Bookstore'), makeBuilding('Bookstore'), ST_OLAF, '')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{subject: string}]
 		expect(args.subject).toBe('[building] Suggestion for Bookstore (St. Olaf)')
 	})
 
 	it('names the campus in the pre-filled issue title', () => {
-		submitReport(makeBuilding('Registrar'), makeBuilding('Registrar'), 'carleton', '')
+		submitReport(makeBuilding('Registrar'), makeBuilding('Registrar'), CARLETON, '')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		let issueUrl = /Project maintainers: (\S+)/u.exec(args.body)?.[1] ?? ''
@@ -54,7 +64,7 @@ describe('submitReport', () => {
 	})
 
 	it('puts the note in the email, above the do-not-change line', () => {
-		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', 'Closed all of interim.')
+		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), ST_OLAF, 'Closed all of interim.')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		let noteAt = args.body.indexOf('Closed all of interim.')
@@ -65,7 +75,7 @@ describe('submitReport', () => {
 	})
 
 	it('puts the note in the pre-filled issue body', () => {
-		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', 'Closed all of interim.')
+		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), ST_OLAF, 'Closed all of interim.')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		let issueUrl = /Project maintainers: (\S+)/u.exec(args.body)?.[1] ?? ''
@@ -80,7 +90,7 @@ describe('submitReport', () => {
 	// The note is an addition, not a rewrite: a report without one has to look
 	// exactly as it always did.
 	it('changes nothing when there is no note', () => {
-		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', '')
+		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), ST_OLAF, '')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain(
@@ -92,7 +102,7 @@ describe('submitReport', () => {
 	// maintainer as `- title: ''` / `url: ''`: it carries no information.
 	it('drops a wholly blank link from the emailed diff', () => {
 		let after: BuildingType = {...makeBuilding('Cage'), links: [{title: '', url: ''}]}
-		submitReport(makeBuilding('Cage'), after, 'stolaf', '')
+		submitReport(makeBuilding('Cage'), after, ST_OLAF, '')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).not.toContain('links:')
@@ -101,7 +111,7 @@ describe('submitReport', () => {
 	// A title with no url (or vice versa) is a real, if incomplete, report.
 	it('keeps a link with only one of title or url filled in', () => {
 		let after: BuildingType = {...makeBuilding('Cage'), links: [{title: 'Instagram', url: ''}]}
-		submitReport(makeBuilding('Cage'), after, 'stolaf', '')
+		submitReport(makeBuilding('Cage'), after, ST_OLAF, '')
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('title: Instagram')

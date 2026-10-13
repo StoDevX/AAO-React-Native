@@ -1,0 +1,77 @@
+import type {Block, MessStory, StoryLayout} from '../types'
+import {parseFeature} from './feature'
+import {parseHoroscopes} from './horoscopes'
+import {parsePlaylist} from './playlist'
+import {parsePoem} from './poem'
+import {parsePuzzle} from './puzzle'
+import {parseRecipe} from './recipe'
+
+/** What a story brings to `chooseLayout`: its column, its parsed body and photo, and the raw HTML. */
+export type LayoutInput = {
+	column: string | null
+	blocks: Block[]
+	photo: MessStory['photo']
+	/** The raw body, for templates that need what the block parser discards */
+	html: string
+}
+
+/**
+ * The template for a story's column, or the article when it has none or its
+ * rules fail, with the body blocks the template leaves to draw.
+ */
+export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: Block[]} {
+	switch (input.column) {
+		// The reader draws the layout rather than the blocks; they stay for the article fallback.
+		case 'Horoscopes':
+			return {layout: parseHoroscopes(input.blocks), blocks: input.blocks}
+		case 'Poetry':
+			return {layout: parsePoem(input.html), blocks: input.blocks}
+		case 'Recipes':
+			return {layout: parseRecipe(input.blocks), blocks: input.blocks}
+		case 'Comic':
+		case 'Artwork': {
+			if (input.photo) {
+				let {url, width, height, caption, alt} = input.photo
+				return {
+					layout: {kind: 'image', image: {url, width, height, caption, ...(alt ? {alt} : {})}},
+					blocks: input.blocks,
+				}
+			}
+			let index = input.blocks.findIndex((b) => b.type === 'figure')
+			let figure = input.blocks[index]
+			if (figure?.type !== 'figure') return {layout: {kind: 'article'}, blocks: input.blocks}
+			let {url, largeUrl, width, height, caption, alt} = figure
+			return {
+				layout: {
+					kind: 'image',
+					image: {
+						url,
+						...(largeUrl ? {largeUrl} : {}),
+						width,
+						height,
+						caption,
+						...(alt ? {alt} : {}),
+					},
+				},
+				blocks: input.blocks.filter((_, i) => i !== index),
+			}
+		}
+		case 'Crossword':
+		case 'Puzzle': {
+			let found = parsePuzzle(input.html)
+			if (!found) return {layout: {kind: 'article'}, blocks: input.blocks}
+			return {layout: {kind: 'puzzle', puzzle: found.puzzle}, blocks: found.blocks}
+		}
+		case 'Playlist': {
+			let {spotify, blocks} = parsePlaylist(input.html, input.blocks)
+			return {layout: {kind: 'playlist', spotify}, blocks}
+		}
+		case 'Photo':
+		case 'Short Story': {
+			let {images, blocks} = parseFeature(input.photo, input.blocks)
+			return {layout: {kind: 'feature', images}, blocks}
+		}
+		default:
+			return {layout: {kind: 'article'}, blocks: input.blocks}
+	}
+}

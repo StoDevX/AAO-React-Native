@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {parseCampus, useGroupedBuildings} from '../../source/features/building-hours/query'
+import {useGroupedBuildings} from '../../source/features/building-hours/query'
+import {useCampusParam} from '../../source/features/campus/campus-param'
 import {BuildingType} from '../../source/features/building-hours/types'
 import {BuildingList} from '../../source/features/building-hours/list'
 import {withoutFavorites} from '../../source/features/building-hours/lib/listed-sections'
@@ -14,12 +15,13 @@ import {timezone} from '@frogpond/constants'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 /// Every venue on the campus by category, including those the Hours list
 /// leaves out of its sections.
-export default function AllSpacesPage(): React.ReactNode {
+function AllSpacesPage(): React.ReactNode {
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
-	let campus = parseCampus(campusParam)
+	let campus = useCampusParam(campusParam)
 	let router = useRouter()
 	let dispatch = useAppDispatch()
 	let allFavorites = useAppSelector(selectFavoriteBuildings)
@@ -83,3 +85,9 @@ export default function AllSpacesPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'hours',
+	{title: 'Hours', noun: 'building hours', systemImage: 'clock'},
+	AllSpacesPage,
+)

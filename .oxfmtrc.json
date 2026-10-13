@@ -4,7 +4,11 @@
     "scripts/fixtures/",
     ".mise/",
     "assets/*.icon/",
-    "source/features/mess/__fixtures__/mess.json"
+    "assets/0-source-icons/*.icon/",
+    "source/features/newspaper/__fixtures__/mess.json",
+    "source/features/campus/__fixtures__/*/*.json",
+    "source/features/campus/__fixtures__/*/index.ts",
+    "source/features/campus/__schemas__/*.json"
   ],
   "useTabs": true,
   "singleQuote": true,

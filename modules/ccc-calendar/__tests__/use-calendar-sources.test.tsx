@@ -14,10 +14,10 @@ function wrapper({children}: {children: React.ReactNode}) {
 
 describe('useCalendarSources', () => {
 	test('toggling a source changes what is enabled', async () => {
-		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
+		let {result} = await renderHook(() => useCalendarSources(['stolaf']), {wrapper})
 
 		await act(() => {
-			result.current.toggle('uitest')
+			result.current.toggle('stolaf')
 		})
 
 		// Switching off the last calendar leaves none enabled. The list draws its
@@ -28,27 +28,27 @@ describe('useCalendarSources', () => {
 	})
 
 	// A source id the settings still remember -- a device calendar enabled
-	// before those were dropped, or 'uitest' left over from a test run -- names
+	// before those were dropped, or 'uitest' left over from an old test run -- names
 	// no calendar the app has, and must not reach the list as one.
 	test('an enabled id naming no calendar is left out', async () => {
 		let store = configureStore({reducer: {settings}})
 		let withStore = ({children}: {children: React.ReactNode}) => (
 			<Provider store={store}>{children}</Provider>
 		)
-		let {result} = await renderHook(() => useCalendarSources(), {wrapper: withStore})
+		let {result} = await renderHook(() => useCalendarSources(['stolaf']), {wrapper: withStore})
 
 		await act(() => {
 			result.current.toggle('device:ABC')
 		})
 
-		expect(result.current.enabled.map((s) => s.id)).toEqual(['uitest'])
+		expect(result.current.enabled.map((s) => s.id)).toEqual(['stolaf'])
 	})
 
 	// The detail screen arrives knowing only an id, and must reach the same
 	// colour the list used.
 	test('a source id resolves to its source', async () => {
-		let {result} = await renderHook(() => useCalendarSource('uitest'), {wrapper})
+		let {result} = await renderHook(() => useCalendarSource('wiki-monkeys'), {wrapper})
 
-		expect(result.current?.title).toBe('UI Test Fixtures')
+		expect(result.current?.title).toBe('Wiki Monkeys')
 	})
 })

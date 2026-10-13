@@ -38,3 +38,17 @@ export function selectionFraming(place: Feature<Building>): Framing {
 	let anchor = anchorOf(place)
 	return anchor ? {kind: 'ease', center: anchor.coordinates} : null
 }
+
+/// The footprint to tint for the open place: its own, or for a place inside
+/// a building, its building's. A place with neither -- a trail, a point
+/// outdoors -- tints nothing and keeps only its dot or line.
+export function highlightedFootprint(
+	place: Feature<Building>,
+	footprintIds: ReadonlySet<string>,
+): string | null {
+	if (footprintIds.has(place.id)) {
+		return place.id
+	}
+	let parent = place.properties.parent
+	return parent && footprintIds.has(parent) ? parent : null
+}

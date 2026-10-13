@@ -1,5 +1,11 @@
 import {blueGradient} from '@frogpond/colors'
-import {areaMembership, chosenAreaState, toAreas, type StudentWorkArea} from '../areas'
+import {
+	areaMembership,
+	chosenAreaState,
+	toAreas,
+	type AreaEntry,
+	type StudentWorkArea,
+} from '../areas'
 
 function area(slug: string, units: string[]): StudentWorkArea {
 	return {name: slug, slug, icon: 'star', gradient: ['#000', '#fff'], units}
@@ -69,6 +75,28 @@ describe('chosenAreaState', () => {
 })
 
 describe('toAreas', () => {
+	function entry(name: string, units: string[] = ['10000']): AreaEntry {
+		return {name, slug: name.toLowerCase(), icon: 'star', gradient: 'blue', units}
+	}
+
+	function names(entries: AreaEntry[]): string[] {
+		return toAreas(entries).map((area) => area.name)
+	}
+
+	test('orders the areas by name, whatever order they were published in', () => {
+		expect(names([entry('Music'), entry('art'), entry('Dining')])).toEqual([
+			'art',
+			'Dining',
+			'Music',
+		])
+	})
+
+	test('keeps the area that collects unlisted postings last', () => {
+		expect(names([entry('Everything Else', ['other']), entry('Music'), entry('Research')])).toEqual(
+			['Music', 'Research', 'Everything Else'],
+		)
+	})
+
 	test('resolves an area’s gradient by name and keeps its units in order', () => {
 		let [area] = toAreas([
 			{

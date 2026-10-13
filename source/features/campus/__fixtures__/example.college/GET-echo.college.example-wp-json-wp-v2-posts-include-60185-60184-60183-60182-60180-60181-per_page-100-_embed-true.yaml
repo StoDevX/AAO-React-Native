@@ -1,0 +1,1500 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/posts?include=60185,60184,60183,60182,60180,60181&per_page=100&_embed=true
+json:
+  - author: 2
+    comment_status: closed
+    date: '2026-05-08T13:00:00'
+    date_gmt: '2026-05-08T18:00:00'
+    featured_media: 0
+    format: standard
+    id: 60185
+    link: https://echo.college.example/60185/variety/horoscopes/horoscopes-week-4/
+    modified: '2026-05-08T13:00:00'
+    modified_gmt: '2026-05-08T18:00:00'
+    ping_status: closed
+    slug: horoscopes-week-4
+    status: publish
+    sticky: false
+    template: ''
+    type: post
+    _embedded:
+      author:
+        - code: rest_no_route
+          message: No route was found matching the URL and request method.
+          data:
+            status: 404
+      wp:term:
+        - - id: 62
+            link: https://echo.college.example/category/variety/horoscopes/
+            name: Horoscopes
+            slug: horoscopes
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/62
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=62
+              up:
+                - embeddable: true
+                  href: https://echo.college.example/wp-json/wp/v2/categories/6
+          - id: 6
+            link: https://echo.college.example/category/variety/
+            name: Variety
+            slug: variety
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/6
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=6
+        - []
+        - - id: 505
+            link: https://echo.college.example/staff_name/rafael-ortiz/
+            name: Rafael Ortiz
+            slug: rafael-ortiz
+            taxonomy: staff_name
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name/505
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=505
+                - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=505
+                - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=505
+    _links:
+      about:
+        - href: https://echo.college.example/wp-json/wp/v2/types/post
+      author:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/users/2
+      collection:
+        - href: https://echo.college.example/wp-json/wp/v2/posts
+      curies:
+        - href: https://api.w.org/{rel}
+          name: wp
+          templated: true
+      predecessor-version:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60185/revisions/60186
+          id: 60186
+      replies:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/comments?post=60185
+      self:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60185
+          targetHints:
+            allow:
+              - GET
+      version-history:
+        - count: 1
+          href: https://echo.college.example/wp-json/wp/v2/posts/60185/revisions
+      wp:attachment:
+        - href: https://echo.college.example/wp-json/wp/v2/media?parent=60185
+      wp:term:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/categories?post=60185
+          taxonomy: category
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/tags?post=60185
+          taxonomy: post_tag
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60185
+          taxonomy: staff_name
+    categories:
+      - 62
+      - 6
+    class_list:
+      - post-60185
+      - post
+      - type-post
+      - status-publish
+      - format-standard
+      - hentry
+      - category-horoscopes
+      - category-variety
+    content:
+      protected: false
+      rendered: |-
+        <p>The stars over the valley are clear this week. Here is what they say.</p>
+        <p><strong>Aries:</strong> The commons runs out of cocoa at nine. Arrive at eight fifty-five with a plan and a mug. Write the email you are putting off. It is three sentences long and you know all three.</p>
+        <p><strong>Taurus:</strong> A quiet week for you, which is a gift. Spend it on the book you keep carrying around. A long walk up the ridge clears the fog in your head better than another coffee will.</p>
+        <p><strong>Gemini:</strong> Wax your skis, or at least think about it. The valley rewards anyone who prepares a little. The monkeys in the library mural are watching you study. Make them proud this week.</p>
+        <p><strong>Cancer:</strong> You will find a glove that is not yours. Return it; the owner has been cold for days. The first chair is yours if you set two alarms. Bring a thermos for whoever rides up with you.</p>
+        <p><strong>Leo:</strong> Volunteer for the ski patrol shift nobody wants. The sunrise from the top is worth it. Someone in your seminar has the notes you missed. Ask before the snow piles up on the path.</p>
+        <p><strong>Virgo:</strong> Write the email you are putting off. It is three sentences long and you know all three. A friend will drag you to the pond on Friday. Go: the ice is thicker than your excuses.</p>
+        <p><strong>Libra:</strong> A long walk up the ridge clears the fog in your head better than another coffee will. Your laundry has been waiting since Tuesday. Today it wins, and you will thank it.</p>
+        <p><strong>Scorpio:</strong> The monkeys in the library mural are watching you study. Make them proud this week. The commons runs out of cocoa at nine. Arrive at eight fifty-five with a plan and a mug.</p>
+        <p><strong>Sagittarius:</strong> The first chair is yours if you set two alarms. Bring a thermos for whoever rides up with you. A quiet week for you, which is a gift. Spend it on the book you keep carrying around.</p>
+        <p><strong>Capricorn:</strong> Someone in your seminar has the notes you missed. Ask before the snow piles up on the path. Wax your skis, or at least think about it. The valley rewards anyone who prepares a little.</p>
+        <p><strong>Aquarius:</strong> A friend will drag you to the pond on Friday. Go: the ice is thicker than your excuses. You will find a glove that is not yours. Return it; the owner has been cold for days.</p>
+        <p><strong>Pisces:</strong> Your laundry has been waiting since Tuesday. Today it wins, and you will thank it. Volunteer for the ski patrol shift nobody wants. The sunrise from the top is worth it.</p>
+    excerpt:
+      protected: false
+      rendered: |
+        <p>The stars over the valley are clear this week. Here is what they say.</p>
+    guid:
+      rendered: https://echo.college.example/?p=60185
+    meta:
+      footnotes: ''
+    staff_name:
+      - 505
+    tags: []
+    title:
+      rendered: 'Horoscopes: Week 4'
+  - author: 2
+    comment_status: closed
+    date: '2026-05-08T12:00:00'
+    date_gmt: '2026-05-08T17:00:00'
+    featured_media: 70181
+    format: standard
+    id: 60184
+    link: https://echo.college.example/60184/arts/valley-choir-sings-the-season-in/
+    modified: '2026-05-08T12:00:00'
+    modified_gmt: '2026-05-08T17:00:00'
+    ping_status: closed
+    slug: valley-choir-sings-the-season-in
+    status: publish
+    sticky: false
+    template: ''
+    type: post
+    _embedded:
+      author:
+        - code: rest_no_route
+          message: No route was found matching the URL and request method.
+          data:
+            status: 404
+      wp:featuredmedia:
+        - alt_text: ''
+          author: 2
+          date: '2026-05-08T12:00:00'
+          featured_media: 0
+          id: 70181
+          link: https://echo.college.example/60184/attachment/echo-70181/
+          media_type: image
+          mime_type: image/jpeg
+          slug: echo-70181
+          source_url: https://echo.college.example/wp-content/uploads/2026/05/echo-60184.jpg
+          type: attachment
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/types/attachment
+            author:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/users/2
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/media
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            replies:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/comments?post=70181
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/media/70181
+                targetHints:
+                  allow:
+                    - GET
+            wp:attached-to:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/posts/60184
+                id: 60184
+                post_type: post
+            wp:term:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/staff_name?post=70181
+                taxonomy: staff_name
+          caption:
+            rendered: ''
+          media_details:
+            file: echo-60184.jpg
+            filesize: 180000
+            height: 800
+            width: 1200
+            image_meta:
+              aperture: '0'
+              camera: ''
+              caption: ''
+              copyright: ''
+              created_timestamp: '0'
+              credit: ''
+              focal_length: '0'
+              iso: '0'
+              orientation: '0'
+              shutter_speed: '0'
+              title: ''
+              keywords: []
+            sizes:
+              1536x1536:
+                file: echo-60184-1536x1024.jpg
+                filesize: 314573
+                height: 1024
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60184-1536x1024.jpg
+                width: 1536
+              full:
+                file: echo-60184.jpg
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60184.jpg
+                width: 1200
+              large:
+                file: echo-60184-1200x800.jpg
+                filesize: 192000
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60184-1200x800.jpg
+                width: 1200
+              medium:
+                file: echo-60184-600x400.jpg
+                filesize: 48000
+                height: 400
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60184-600x400.jpg
+                width: 600
+              medium_large:
+                file: echo-60184-768x512.jpg
+                filesize: 78643
+                height: 512
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60184-768x512.jpg
+                width: 768
+              small:
+                file: echo-60184-300x200.jpg
+                filesize: 12000
+                height: 200
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60184-300x200.jpg
+                width: 300
+              thumbnail:
+                file: echo-60184-70x47.jpg
+                filesize: 658
+                height: 70
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60184-70x47.jpg
+                width: 70
+          title:
+            rendered: echo-70181
+      wp:term:
+        - - id: 5
+            link: https://echo.college.example/category/arts/
+            name: Arts
+            slug: arts
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/5
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=5
+        - []
+        - - id: 505
+            link: https://echo.college.example/staff_name/rafael-ortiz/
+            name: Rafael Ortiz
+            slug: rafael-ortiz
+            taxonomy: staff_name
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name/505
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=505
+                - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=505
+                - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=505
+    _links:
+      about:
+        - href: https://echo.college.example/wp-json/wp/v2/types/post
+      author:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/users/2
+      collection:
+        - href: https://echo.college.example/wp-json/wp/v2/posts
+      curies:
+        - href: https://api.w.org/{rel}
+          name: wp
+          templated: true
+      predecessor-version:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60184/revisions/60185
+          id: 60185
+      replies:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/comments?post=60184
+      self:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60184
+          targetHints:
+            allow:
+              - GET
+      version-history:
+        - count: 1
+          href: https://echo.college.example/wp-json/wp/v2/posts/60184/revisions
+      wp:attachment:
+        - href: https://echo.college.example/wp-json/wp/v2/media?parent=60184
+      wp:featuredmedia:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/media/70181
+      wp:term:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/categories?post=60184
+          taxonomy: category
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/tags?post=60184
+          taxonomy: post_tag
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60184
+          taxonomy: staff_name
+    categories:
+      - 5
+    class_list:
+      - post-60184
+      - post
+      - type-post
+      - status-publish
+      - format-standard
+      - hentry
+      - category-arts
+    content:
+      protected: false
+      rendered: |-
+        <p>Valley Choir sings the season in. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+        <p>Students and staff we spoke to were mostly hopeful, if a little tired of waiting. “It has been a long time coming,” one said, stamping snow off their boots.</p>
+        <p>More on this from the Arts desk in next week’s Echo.</p>
+    excerpt:
+      protected: false
+      rendered: |
+        <p>Valley Choir sings the season in. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+    guid:
+      rendered: https://echo.college.example/?p=60184
+    meta:
+      footnotes: ''
+    staff_name:
+      - 505
+    tags: []
+    title:
+      rendered: Valley Choir sings the season in
+  - author: 2
+    comment_status: closed
+    date: '2026-05-08T11:00:00'
+    date_gmt: '2026-05-08T16:00:00'
+    featured_media: 70180
+    format: standard
+    id: 60183
+    link: https://echo.college.example/60183/slopes/race-results/nordic-team-sweeps-the-valley-relay/
+    modified: '2026-05-08T11:00:00'
+    modified_gmt: '2026-05-08T16:00:00'
+    ping_status: closed
+    slug: nordic-team-sweeps-the-valley-relay
+    status: publish
+    sticky: false
+    template: ''
+    type: post
+    _embedded:
+      author:
+        - code: rest_no_route
+          message: No route was found matching the URL and request method.
+          data:
+            status: 404
+      wp:featuredmedia:
+        - alt_text: ''
+          author: 2
+          date: '2026-05-08T11:00:00'
+          featured_media: 0
+          id: 70180
+          link: https://echo.college.example/60183/attachment/echo-70180/
+          media_type: image
+          mime_type: image/jpeg
+          slug: echo-70180
+          source_url: https://echo.college.example/wp-content/uploads/2026/05/echo-60183.jpg
+          type: attachment
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/types/attachment
+            author:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/users/2
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/media
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            replies:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/comments?post=70180
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/media/70180
+                targetHints:
+                  allow:
+                    - GET
+            wp:attached-to:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/posts/60183
+                id: 60183
+                post_type: post
+            wp:term:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/staff_name?post=70180
+                taxonomy: staff_name
+          caption:
+            rendered: ''
+          media_details:
+            file: echo-60183.jpg
+            filesize: 180000
+            height: 800
+            width: 1200
+            image_meta:
+              aperture: '0'
+              camera: ''
+              caption: ''
+              copyright: ''
+              created_timestamp: '0'
+              credit: ''
+              focal_length: '0'
+              iso: '0'
+              orientation: '0'
+              shutter_speed: '0'
+              title: ''
+              keywords: []
+            sizes:
+              1536x1536:
+                file: echo-60183-1536x1024.jpg
+                filesize: 314573
+                height: 1024
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60183-1536x1024.jpg
+                width: 1536
+              full:
+                file: echo-60183.jpg
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60183.jpg
+                width: 1200
+              large:
+                file: echo-60183-1200x800.jpg
+                filesize: 192000
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60183-1200x800.jpg
+                width: 1200
+              medium:
+                file: echo-60183-600x400.jpg
+                filesize: 48000
+                height: 400
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60183-600x400.jpg
+                width: 600
+              medium_large:
+                file: echo-60183-768x512.jpg
+                filesize: 78643
+                height: 512
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60183-768x512.jpg
+                width: 768
+              small:
+                file: echo-60183-300x200.jpg
+                filesize: 12000
+                height: 200
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60183-300x200.jpg
+                width: 300
+              thumbnail:
+                file: echo-60183-70x47.jpg
+                filesize: 658
+                height: 70
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60183-70x47.jpg
+                width: 70
+          title:
+            rendered: echo-70180
+      wp:term:
+        - - id: 41
+            link: https://echo.college.example/category/slopes/race-results/
+            name: Race Results
+            slug: race-results
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/41
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=41
+              up:
+                - embeddable: true
+                  href: https://echo.college.example/wp-json/wp/v2/categories/4
+          - id: 4
+            link: https://echo.college.example/category/slopes/
+            name: Slopes
+            slug: slopes
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/4
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=4
+        - []
+        - - id: 501
+            link: https://echo.college.example/staff_name/ingrid-fjell/
+            name: Ingrid Fjell
+            slug: ingrid-fjell
+            taxonomy: staff_name
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name/501
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=501
+                - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=501
+                - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=501
+    _links:
+      about:
+        - href: https://echo.college.example/wp-json/wp/v2/types/post
+      author:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/users/2
+      collection:
+        - href: https://echo.college.example/wp-json/wp/v2/posts
+      curies:
+        - href: https://api.w.org/{rel}
+          name: wp
+          templated: true
+      predecessor-version:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60183/revisions/60184
+          id: 60184
+      replies:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/comments?post=60183
+      self:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60183
+          targetHints:
+            allow:
+              - GET
+      version-history:
+        - count: 1
+          href: https://echo.college.example/wp-json/wp/v2/posts/60183/revisions
+      wp:attachment:
+        - href: https://echo.college.example/wp-json/wp/v2/media?parent=60183
+      wp:featuredmedia:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/media/70180
+      wp:term:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/categories?post=60183
+          taxonomy: category
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/tags?post=60183
+          taxonomy: post_tag
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60183
+          taxonomy: staff_name
+    categories:
+      - 41
+      - 4
+    class_list:
+      - post-60183
+      - post
+      - type-post
+      - status-publish
+      - format-standard
+      - hentry
+      - category-race-results
+      - category-slopes
+    content:
+      protected: false
+      rendered: |-
+        <p>Nordic team sweeps the valley relay. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+        <p>Students and staff we spoke to were mostly hopeful, if a little tired of waiting. “It has been a long time coming,” one said, stamping snow off their boots.</p>
+        <p>More on this from the Slopes desk in next week’s Echo.</p>
+    excerpt:
+      protected: false
+      rendered: |
+        <p>Nordic team sweeps the valley relay. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+    guid:
+      rendered: https://echo.college.example/?p=60183
+    meta:
+      footnotes: ''
+    staff_name:
+      - 501
+    tags: []
+    title:
+      rendered: Nordic team sweeps the valley relay
+  - author: 2
+    comment_status: closed
+    date: '2026-05-08T10:00:00'
+    date_gmt: '2026-05-08T15:00:00'
+    featured_media: 70179
+    format: standard
+    id: 60182
+    link: https://echo.college.example/60182/opinion/in-defence-of-the-eight-o-clock-lecture/
+    modified: '2026-05-08T10:00:00'
+    modified_gmt: '2026-05-08T15:00:00'
+    ping_status: closed
+    slug: in-defence-of-the-eight-o-clock-lecture
+    status: publish
+    sticky: false
+    template: ''
+    type: post
+    _embedded:
+      author:
+        - code: rest_no_route
+          message: No route was found matching the URL and request method.
+          data:
+            status: 404
+      wp:featuredmedia:
+        - alt_text: ''
+          author: 2
+          date: '2026-05-08T10:00:00'
+          featured_media: 0
+          id: 70179
+          link: https://echo.college.example/60182/attachment/echo-70179/
+          media_type: image
+          mime_type: image/jpeg
+          slug: echo-70179
+          source_url: https://echo.college.example/wp-content/uploads/2026/05/echo-60182.jpg
+          type: attachment
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/types/attachment
+            author:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/users/2
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/media
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            replies:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/comments?post=70179
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/media/70179
+                targetHints:
+                  allow:
+                    - GET
+            wp:attached-to:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/posts/60182
+                id: 60182
+                post_type: post
+            wp:term:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/staff_name?post=70179
+                taxonomy: staff_name
+          caption:
+            rendered: ''
+          media_details:
+            file: echo-60182.jpg
+            filesize: 180000
+            height: 800
+            width: 1200
+            image_meta:
+              aperture: '0'
+              camera: ''
+              caption: ''
+              copyright: ''
+              created_timestamp: '0'
+              credit: ''
+              focal_length: '0'
+              iso: '0'
+              orientation: '0'
+              shutter_speed: '0'
+              title: ''
+              keywords: []
+            sizes:
+              1536x1536:
+                file: echo-60182-1536x1024.jpg
+                filesize: 314573
+                height: 1024
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60182-1536x1024.jpg
+                width: 1536
+              full:
+                file: echo-60182.jpg
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60182.jpg
+                width: 1200
+              large:
+                file: echo-60182-1200x800.jpg
+                filesize: 192000
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60182-1200x800.jpg
+                width: 1200
+              medium:
+                file: echo-60182-600x400.jpg
+                filesize: 48000
+                height: 400
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60182-600x400.jpg
+                width: 600
+              medium_large:
+                file: echo-60182-768x512.jpg
+                filesize: 78643
+                height: 512
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60182-768x512.jpg
+                width: 768
+              small:
+                file: echo-60182-300x200.jpg
+                filesize: 12000
+                height: 200
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60182-300x200.jpg
+                width: 300
+              thumbnail:
+                file: echo-60182-70x47.jpg
+                filesize: 658
+                height: 70
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60182-70x47.jpg
+                width: 70
+          title:
+            rendered: echo-70179
+      wp:term:
+        - - id: 3
+            link: https://echo.college.example/category/opinion/
+            name: Opinion
+            slug: opinion
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/3
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=3
+        - []
+        - - id: 502
+            link: https://echo.college.example/staff_name/sol-avery/
+            name: Sol Avery
+            slug: sol-avery
+            taxonomy: staff_name
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name/502
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=502
+                - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=502
+                - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=502
+    _links:
+      about:
+        - href: https://echo.college.example/wp-json/wp/v2/types/post
+      author:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/users/2
+      collection:
+        - href: https://echo.college.example/wp-json/wp/v2/posts
+      curies:
+        - href: https://api.w.org/{rel}
+          name: wp
+          templated: true
+      predecessor-version:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60182/revisions/60183
+          id: 60183
+      replies:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/comments?post=60182
+      self:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60182
+          targetHints:
+            allow:
+              - GET
+      version-history:
+        - count: 1
+          href: https://echo.college.example/wp-json/wp/v2/posts/60182/revisions
+      wp:attachment:
+        - href: https://echo.college.example/wp-json/wp/v2/media?parent=60182
+      wp:featuredmedia:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/media/70179
+      wp:term:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/categories?post=60182
+          taxonomy: category
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/tags?post=60182
+          taxonomy: post_tag
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60182
+          taxonomy: staff_name
+    categories:
+      - 3
+    class_list:
+      - post-60182
+      - post
+      - type-post
+      - status-publish
+      - format-standard
+      - hentry
+      - category-opinion
+    content:
+      protected: false
+      rendered: |-
+        <p>In defence of the eight o’clock lecture. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+        <p>Students and staff we spoke to were mostly hopeful, if a little tired of waiting. “It has been a long time coming,” one said, stamping snow off their boots.</p>
+        <p>More on this from the Opinion desk in next week’s Echo.</p>
+    excerpt:
+      protected: false
+      rendered: |
+        <p>In defence of the eight o’clock lecture. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+    guid:
+      rendered: https://echo.college.example/?p=60182
+    meta:
+      footnotes: ''
+    staff_name:
+      - 502
+    tags: []
+    title:
+      rendered: In defence of the eight o’clock lecture
+  - author: 2
+    comment_status: closed
+    date: '2026-05-08T09:00:00'
+    date_gmt: '2026-05-08T14:00:00'
+    featured_media: 70177
+    format: standard
+    id: 60180
+    link: https://echo.college.example/60180/news/summit-lift-reopens-after-a-summer-of-repairs/
+    modified: '2026-05-08T09:00:00'
+    modified_gmt: '2026-05-08T14:00:00'
+    ping_status: closed
+    slug: summit-lift-reopens-after-a-summer-of-repairs
+    status: publish
+    sticky: false
+    template: ''
+    type: post
+    _embedded:
+      author:
+        - code: rest_no_route
+          message: No route was found matching the URL and request method.
+          data:
+            status: 404
+      wp:featuredmedia:
+        - alt_text: ''
+          author: 2
+          date: '2026-05-08T09:00:00'
+          featured_media: 0
+          id: 70177
+          link: https://echo.college.example/60180/attachment/echo-70177/
+          media_type: image
+          mime_type: image/jpeg
+          slug: echo-70177
+          source_url: https://echo.college.example/wp-content/uploads/2026/05/echo-60180.jpg
+          type: attachment
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/types/attachment
+            author:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/users/2
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/media
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            replies:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/comments?post=70177
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/media/70177
+                targetHints:
+                  allow:
+                    - GET
+            wp:attached-to:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/posts/60180
+                id: 60180
+                post_type: post
+            wp:term:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/staff_name?post=70177
+                taxonomy: staff_name
+          caption:
+            rendered: ''
+          media_details:
+            file: echo-60180.jpg
+            filesize: 180000
+            height: 800
+            width: 1200
+            image_meta:
+              aperture: '0'
+              camera: ''
+              caption: ''
+              copyright: ''
+              created_timestamp: '0'
+              credit: ''
+              focal_length: '0'
+              iso: '0'
+              orientation: '0'
+              shutter_speed: '0'
+              title: ''
+              keywords: []
+            sizes:
+              1536x1536:
+                file: echo-60180-1536x1024.jpg
+                filesize: 314573
+                height: 1024
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60180-1536x1024.jpg
+                width: 1536
+              full:
+                file: echo-60180.jpg
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60180.jpg
+                width: 1200
+              large:
+                file: echo-60180-1200x800.jpg
+                filesize: 192000
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60180-1200x800.jpg
+                width: 1200
+              medium:
+                file: echo-60180-600x400.jpg
+                filesize: 48000
+                height: 400
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60180-600x400.jpg
+                width: 600
+              medium_large:
+                file: echo-60180-768x512.jpg
+                filesize: 78643
+                height: 512
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60180-768x512.jpg
+                width: 768
+              small:
+                file: echo-60180-300x200.jpg
+                filesize: 12000
+                height: 200
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60180-300x200.jpg
+                width: 300
+              thumbnail:
+                file: echo-60180-70x47.jpg
+                filesize: 658
+                height: 70
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60180-70x47.jpg
+                width: 70
+          title:
+            rendered: echo-70177
+      wp:term:
+        - - id: 2
+            link: https://echo.college.example/category/news/
+            name: News
+            slug: news
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/2
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=2
+          - id: 8
+            link: https://echo.college.example/category/featured/
+            name: Featured
+            slug: featured
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/8
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=8
+        - []
+        - - id: 501
+            link: https://echo.college.example/staff_name/ingrid-fjell/
+            name: Ingrid Fjell
+            slug: ingrid-fjell
+            taxonomy: staff_name
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name/501
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=501
+                - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=501
+                - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=501
+    _links:
+      about:
+        - href: https://echo.college.example/wp-json/wp/v2/types/post
+      author:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/users/2
+      collection:
+        - href: https://echo.college.example/wp-json/wp/v2/posts
+      curies:
+        - href: https://api.w.org/{rel}
+          name: wp
+          templated: true
+      predecessor-version:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60180/revisions/60181
+          id: 60181
+      replies:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/comments?post=60180
+      self:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60180
+          targetHints:
+            allow:
+              - GET
+      version-history:
+        - count: 1
+          href: https://echo.college.example/wp-json/wp/v2/posts/60180/revisions
+      wp:attachment:
+        - href: https://echo.college.example/wp-json/wp/v2/media?parent=60180
+      wp:featuredmedia:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/media/70177
+      wp:term:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/categories?post=60180
+          taxonomy: category
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/tags?post=60180
+          taxonomy: post_tag
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60180
+          taxonomy: staff_name
+    categories:
+      - 2
+      - 8
+    class_list:
+      - post-60180
+      - post
+      - type-post
+      - status-publish
+      - format-standard
+      - hentry
+      - category-news
+      - category-featured
+    content:
+      protected: false
+      rendered: |-
+        <p>Summit Lift reopens after a summer of repairs. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+        <p>Students and staff we spoke to were mostly hopeful, if a little tired of waiting. “It has been a long time coming,” one said, stamping snow off their boots.</p>
+        <p>More on this from the News desk in next week’s Echo.</p>
+    excerpt:
+      protected: false
+      rendered: |
+        <p>Summit Lift reopens after a summer of repairs. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+    guid:
+      rendered: https://echo.college.example/?p=60180
+    meta:
+      footnotes: ''
+    staff_name:
+      - 501
+    tags: []
+    title:
+      rendered: Summit Lift reopens after a summer of repairs
+  - author: 2
+    comment_status: closed
+    date: '2026-05-07T15:00:00'
+    date_gmt: '2026-05-07T20:00:00'
+    featured_media: 70178
+    format: standard
+    id: 60181
+    link: https://echo.college.example/60181/news/campus/treeline-commons-extends-its-weekend-hours/
+    modified: '2026-05-07T15:00:00'
+    modified_gmt: '2026-05-07T20:00:00'
+    ping_status: closed
+    slug: treeline-commons-extends-its-weekend-hours
+    status: publish
+    sticky: false
+    template: ''
+    type: post
+    _embedded:
+      author:
+        - code: rest_no_route
+          message: No route was found matching the URL and request method.
+          data:
+            status: 404
+      wp:featuredmedia:
+        - alt_text: ''
+          author: 2
+          date: '2026-05-07T15:00:00'
+          featured_media: 0
+          id: 70178
+          link: https://echo.college.example/60181/attachment/echo-70178/
+          media_type: image
+          mime_type: image/jpeg
+          slug: echo-70178
+          source_url: https://echo.college.example/wp-content/uploads/2026/05/echo-60181.jpg
+          type: attachment
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/types/attachment
+            author:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/users/2
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/media
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            replies:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/comments?post=70178
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/media/70178
+                targetHints:
+                  allow:
+                    - GET
+            wp:attached-to:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/posts/60181
+                id: 60181
+                post_type: post
+            wp:term:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/staff_name?post=70178
+                taxonomy: staff_name
+          caption:
+            rendered: ''
+          media_details:
+            file: echo-60181.jpg
+            filesize: 180000
+            height: 800
+            width: 1200
+            image_meta:
+              aperture: '0'
+              camera: ''
+              caption: ''
+              copyright: ''
+              created_timestamp: '0'
+              credit: ''
+              focal_length: '0'
+              iso: '0'
+              orientation: '0'
+              shutter_speed: '0'
+              title: ''
+              keywords: []
+            sizes:
+              1536x1536:
+                file: echo-60181-1536x1024.jpg
+                filesize: 314573
+                height: 1024
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60181-1536x1024.jpg
+                width: 1536
+              full:
+                file: echo-60181.jpg
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60181.jpg
+                width: 1200
+              large:
+                file: echo-60181-1200x800.jpg
+                filesize: 192000
+                height: 800
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60181-1200x800.jpg
+                width: 1200
+              medium:
+                file: echo-60181-600x400.jpg
+                filesize: 48000
+                height: 400
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60181-600x400.jpg
+                width: 600
+              medium_large:
+                file: echo-60181-768x512.jpg
+                filesize: 78643
+                height: 512
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60181-768x512.jpg
+                width: 768
+              small:
+                file: echo-60181-300x200.jpg
+                filesize: 12000
+                height: 200
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60181-300x200.jpg
+                width: 300
+              thumbnail:
+                file: echo-60181-70x47.jpg
+                filesize: 658
+                height: 70
+                mime_type: image/jpeg
+                source_url: https://echo.college.example/wp-content/uploads/echo-60181-70x47.jpg
+                width: 70
+          title:
+            rendered: echo-70178
+      wp:term:
+        - - id: 21
+            link: https://echo.college.example/category/news/campus/
+            name: Campus
+            slug: campus
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/21
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=21
+              up:
+                - embeddable: true
+                  href: https://echo.college.example/wp-json/wp/v2/categories/2
+          - id: 2
+            link: https://echo.college.example/category/news/
+            name: News
+            slug: news
+            taxonomy: category
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/categories
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/categories/2
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/posts?categories=2
+        - []
+        - - id: 502
+            link: https://echo.college.example/staff_name/sol-avery/
+            name: Sol Avery
+            slug: sol-avery
+            taxonomy: staff_name
+            _links:
+              about:
+                - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+              collection:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name
+              curies:
+                - href: https://api.w.org/{rel}
+                  name: wp
+                  templated: true
+              self:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_name/502
+                  targetHints:
+                    allow:
+                      - GET
+              wp:post_type:
+                - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=502
+                - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=502
+                - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=502
+    _links:
+      about:
+        - href: https://echo.college.example/wp-json/wp/v2/types/post
+      author:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/users/2
+      collection:
+        - href: https://echo.college.example/wp-json/wp/v2/posts
+      curies:
+        - href: https://api.w.org/{rel}
+          name: wp
+          templated: true
+      predecessor-version:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60181/revisions/60182
+          id: 60182
+      replies:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/comments?post=60181
+      self:
+        - href: https://echo.college.example/wp-json/wp/v2/posts/60181
+          targetHints:
+            allow:
+              - GET
+      version-history:
+        - count: 1
+          href: https://echo.college.example/wp-json/wp/v2/posts/60181/revisions
+      wp:attachment:
+        - href: https://echo.college.example/wp-json/wp/v2/media?parent=60181
+      wp:featuredmedia:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/media/70178
+      wp:term:
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/categories?post=60181
+          taxonomy: category
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/tags?post=60181
+          taxonomy: post_tag
+        - embeddable: true
+          href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60181
+          taxonomy: staff_name
+    categories:
+      - 21
+      - 2
+    class_list:
+      - post-60181
+      - post
+      - type-post
+      - status-publish
+      - format-standard
+      - hentry
+      - category-campus
+      - category-news
+    content:
+      protected: false
+      rendered: |-
+        <p>Treeline Commons extends its weekend hours. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+        <p>Students and staff we spoke to were mostly hopeful, if a little tired of waiting. “It has been a long time coming,” one said, stamping snow off their boots.</p>
+        <p>More on this from the News desk in next week’s Echo.</p>
+    excerpt:
+      protected: false
+      rendered: |
+        <p>Treeline Commons extends its weekend hours. The story broke on a cold morning in the valley, and by lunch everyone at Treeline Commons had an opinion about it.</p>
+    guid:
+      rendered: https://echo.college.example/?p=60181
+    meta:
+      footnotes: ''
+    staff_name:
+      - 502
+    tags: []
+    title:
+      rendered: Treeline Commons extends its weekend hours

@@ -8,7 +8,9 @@ import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 import {NavigationRow} from '../../source/components/rows'
 import {noticesInForce} from '../../source/features/faqs/notices'
-import {faqsOptions} from '../../source/features/faqs/query'
+import {useCampus} from '../../source/features/campus/store'
+import {faqsOptionsFor} from '../../source/features/faqs/query'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -18,7 +20,7 @@ const styles = StyleSheet.create({
 
 function NoticesList(): React.ReactNode {
 	let router = useRouter()
-	let {data, error, isLoading, refetch} = useQuery(faqsOptions)
+	let {data, error, isLoading, refetch} = useQuery(faqsOptionsFor(useCampus()))
 
 	if (isLoading) {
 		return <LoadingView />
@@ -60,7 +62,7 @@ function NoticesList(): React.ReactNode {
 }
 
 /// The banners now in force, each opening its FAQ.
-export default function NoticesPage(): React.ReactNode {
+function NoticesPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Notices</Stack.Title>
@@ -69,3 +71,9 @@ export default function NoticesPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'faqs',
+	{title: 'Notices', noun: 'notices', systemImage: 'bell'},
+	NoticesPage,
+)

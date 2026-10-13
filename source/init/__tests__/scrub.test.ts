@@ -24,8 +24,8 @@ describe('scrubUrl', () => {
 	})
 
 	it('leaves a URL with nothing to remove unchanged', () => {
-		expect(scrubUrl('https://stolaf.api.frogpond.tech/v1/menus')).toBe(
-			'https://stolaf.api.frogpond.tech/v1/menus',
+		expect(scrubUrl('https://stolaf.frogpond.tech/v1/menus')).toBe(
+			'https://stolaf.frogpond.tech/v1/menus',
 		)
 	})
 })

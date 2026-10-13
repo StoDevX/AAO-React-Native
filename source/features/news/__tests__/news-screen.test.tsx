@@ -7,9 +7,13 @@ import {NewsList} from '../news-list'
 import {NewsPicker} from '../news-picker'
 import {NewsScreen} from '../news-screen'
 import {keys} from '../query'
-import {OLAF_MESSENGER, STOLAF_NEWS} from '../sources'
 import {useNewsFilterStore} from '../store'
 import type {StoryType} from '../types'
+import {stolaf} from '../../../campuses/edu-stolaf'
+import type {NewsSource} from '../campus-section'
+
+const OLAF_MESSENGER: NewsSource = {id: 'mess', title: 'The Olaf Messenger', thumbnail: 'mess'}
+const STOLAF_NEWS = stolaf.news.source
 
 // The list and the picker render `@expo/ui`, which cannot mount under Jest.
 // What the screen hands them is read off the call.

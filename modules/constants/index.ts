@@ -25,9 +25,9 @@ let IS_ALPHA = false
 let IS_PRE = false
 let IS_RC = false
 
-// checks if the build should show debugging tools. build-time only — use
-// useIsDevMode() from source/lib for React-tree callers that should also
-// honor the runtime override.
+// Whether this is a development or prerelease build, which only decides what
+// Sentry attaches to reports. Debugging tools follow the dev mode toggle
+// instead -- useIsDevMode() from source/lib -- which starts off everywhere.
 export const isDebugBuild: () => boolean = () =>
 	!IS_PRODUCTION || IS_ALPHA || IS_BETA || IS_PRE || IS_RC
 

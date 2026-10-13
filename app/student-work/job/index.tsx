@@ -17,6 +17,7 @@ import {
 import {displayTitle} from '../../../source/features/sis/student-work/posting'
 import {studentWagesOptions} from '../../../source/features/sis/student-work/wages-query'
 import {DetailRow, DisclosureRow, NavigationRow} from '../../../source/components/rows'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	screen: {
@@ -83,7 +84,7 @@ function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 	)
 }
 
-export default function JobDetailPage(): React.ReactNode {
+function JobDetailPage(): React.ReactNode {
 	let {jobId} = useLocalSearchParams<{jobId: string}>()
 	let {data: job, isLoading, error, refetch} = useQuery(jobDetailOptions(jobId))
 
@@ -128,3 +129,9 @@ export default function JobDetailPage(): React.ReactNode {
 		</>
 	)
 }
+
+export default requiresSection(
+	'studentWork',
+	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	JobDetailPage,
+)

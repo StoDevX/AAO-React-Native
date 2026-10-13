@@ -1,0 +1,123 @@
+{
+	"contentType": "application/json; charset=utf-8",
+	"json": {
+		"data": [
+			{
+				"buttonText": "Call Public Safety",
+				"category": "Safety",
+				"gradient": "red",
+				"icon": "shield.lefthalf.filled",
+				"image": "pubsafe",
+				"phoneNumber": "5077863666",
+				"synopsis": "24-Hour Public Safety Dispatch. Public Safety is available 24 hours a day, most days of the year. Call Public Safety in many situations, but there is always the option of calling the police as well.",
+				"text": "**24-Hour Public Safety Dispatch.** [Public Safety][pubsafe] is available 24 hours a day, most days of the year. Call Public Safety in many situations, but there is always the option of calling the police as well.\n\n[pubsafe]: https://wp.stolaf.edu/publicsafety/ \"PubSafe\"\n",
+				"title": "PubSafe"
+			},
+			{
+				"buttonText": "Call Mobile Crisis Team",
+				"category": "Safety",
+				"gradient": "purple",
+				"icon": "light.beacon.max.fill",
+				"phoneNumber": "8773993040",
+				"synopsis": "The South Central Mobile Crisis Team is available 24/7 for mental health crisis assessment and management. Call to talk through what is happening; if needed, the team can send two members to meet you where you are.",
+				"text": "The [South Central Mobile Crisis Team][crisis] is available 24/7 for mental health crisis assessment and management, including in Rice County.\n\nCall to talk through what is happening. If needed, the team can send two members to meet you where you are.\n\n[crisis]: https://www.horizonhomes.org/south-central-mobile-crisis-team/ \"South Central Mobile Crisis Team\"\n",
+				"title": "Mobile Crisis"
+			},
+			{
+				"buttonText": "Call College Administration",
+				"category": "Safety",
+				"gradient": "indigo",
+				"icon": "building.columns.fill",
+				"phoneNumber": "5077863465",
+				"synopsis": "Any member of the college community who feels they have experienced sexual misconduct has the option of reporting to the college. Reporting enables the college to take measures to stop the behavior, prevent it from occurring in the future, and provide support, resources, and protection. You can report to the college without initiating a formal investigation or reporting to law enforcement. To make a report, contact the Title IX Case Manager or use St. Olaf’s online reporting form, which can be filled out anonymously to report discrimination, harassment, or retaliation.",
+				"text": "Any member of the college community who feels they have experienced sexual misconduct has the option of reporting to the college. Reporting enables the college to take measures to stop the behavior, prevent it from occurring in the future, and provide support, resources, and protection. You can report to the college without initiating a formal investigation or reporting to law enforcement.\n\nTo make a report, contact the Title IX Case Manager or use St. Olaf’s [online reporting form][report], which can be filled out anonymously to report discrimination, harassment, or retaliation.\n\n[report]: https://cm.maxient.com/reportingform.php?StOlafCollege&layout_id=18 \"Title IX and Discrimination Reporting Form\"\n",
+				"title": "Title IX Office"
+			},
+			{
+				"buttonText": "Call 24-Hour Hotline",
+				"category": "Safety",
+				"gradient": "violet",
+				"icon": "hand.raised.fill",
+				"phoneNumber": "8006072330",
+				"synopsis": "The HOPE Center, located in Faribault, MN, provides free, confidential advocacy services to victims of sexual and domestic violence. Advocates at the HOPE Center provide crisis intervention, support counseling, information, help with protection planning, and referrals. The HOPE Center also provides legal advocacy regarding court procedures, victim rights, and accompaniment to civil and criminal court proceedings.",
+				"text": "The [HOPE Center][hope], located in Faribault, MN, provides free, confidential advocacy services to victims of sexual and domestic violence. Advocates at the HOPE Center provide crisis intervention, support counseling, information, help with protection planning, and referrals.\n\nThe HOPE Center also provides legal advocacy regarding court procedures, victim rights, and accompaniment to civil and criminal court proceedings.\n\n[hope]: http://hopecentermn.org \"HOPE Center\"\n",
+				"title": "HOPE Center"
+			},
+			{
+				"buttonLink": "https://report.syntrio.com/CCH2442",
+				"buttonText": "Open Anonymous Report Form",
+				"category": "Safety",
+				"gradient": "tan",
+				"icon": "eye.slash.fill",
+				"synopsis": "Anyone who would rather report anonymously a known or suspected policy violation or unlawful activity can do so through Lighthouse Anonymous Reporting, a hotline run by an independent organization. Unless given permission, Lighthouse will not share with St. Olaf who made a report.",
+				"text": "Anyone who would rather report anonymously a known or suspected policy violation or unlawful activity can do so through Lighthouse Anonymous Reporting, a hotline run by an independent organization.\n\nUnless given permission, Lighthouse will not share with St. Olaf who made a report.\n\nYou can also call Lighthouse at [866-943-5787](tel:8669435787).\n",
+				"title": "Anonymous Reports"
+			},
+			{
+				"buttonText": "Call SARN",
+				"category": "Wellness",
+				"gradient": "pink",
+				"icon": "heart.circle.fill",
+				"image": "sarn",
+				"phoneNumber": "5076493367",
+				"synopsis": "SARN, the Sexual Assault Resource Network, is a confidential resource available to all students. Calls to SARN will be picked up by a trained advocate to provide services to students struggling with issues of sexual and domestic violence. Students can also visit the SARN office in Buntrock Commons Room 14, next to KSTO.",
+				"text": "SARN, the [Sexual Assault Resource Network][sarn], is a confidential resource available to all students. Calls to SARN will be picked up by a trained advocate to provide services to students struggling with issues of sexual and domestic violence.\n\nStudents can also visit the SARN office in Buntrock Commons Room 14, next to KSTO.\n\n[sarn]: https://pages.stolaf.edu/sarn/ \"SARN\"\n",
+				"title": "SARN"
+			},
+			{
+				"buttonText": "Contact Boe House",
+				"category": "Wellness",
+				"gradient": "green",
+				"icon": "brain.head.profile",
+				"image": "boe-house",
+				"phoneNumber": "5077863062",
+				"synopsis": "The Counseling Center was established by St. Olaf College to enhance the personal growth and development of its students. The Center supports students in their academic pursuits and facilitates personal and interpersonal learning and growth. The center provides preventive as well as remedial programs. When contacting us to make an appointment, please note that we are often busy which may cause a delay in how quickly we can schedule you in. However, if you are in need of an appointment, please call and we will accommodate you as best we can.",
+				"text": "The [Counseling Center][boehouse] was established by St. Olaf College to enhance the personal growth and development of its students. The Center supports students in their academic pursuits and facilitates personal and interpersonal learning and growth.\n\nThe center provides preventive as well as remedial programs. When contacting us to make an appointment, please note that we are often busy which may cause a delay in how quickly we can schedule you in. However, if you are in need of an appointment, please call and we will accommodate you as best we can.\n\n[boehouse]: https://wp.stolaf.edu/counseling-center/ \"Boe House Counseling Center\"\n",
+				"title": "Boe House"
+			},
+			{
+				"buttonText": "Call Pastors' Office",
+				"category": "Wellness",
+				"gradient": "gold",
+				"icon": "tree.fill",
+				"phoneNumber": "5077863092",
+				"synopsis": "College Pastors are confidential resources trained in pastoral care. They are able to speak with students of any faith, or who don’t practice a religious faith, about all aspects of life.",
+				"text": "[College Pastors][pastors] are confidential resources trained in pastoral care. They are able to speak with students of any faith, or who don’t practice a religious faith, about all aspects of life.\n\n[pastors]: https://wp.stolaf.edu/ministry/about-us/ \"College Ministry Staff\"\n",
+				"title": "College Pastors"
+			},
+			{
+				"buttonText": "Call The Pause",
+				"category": "Food",
+				"gradient": "orange",
+				"icon": "fork.knife",
+				"image": "pause-kitchen",
+				"phoneNumber": "5077863869",
+				"synopsis": "Place orders in The Pause Kitchen. The Pause delivers anywhere on campus, or orders can be placed for pickup. The Pause does not deliver to honor houses.",
+				"text": "Place orders in The Pause Kitchen. The Pause delivers anywhere on campus, or orders can be placed for pickup. The Pause does not deliver to honor houses.\n",
+				"title": "The Pause Kitchen"
+			},
+			{
+				"buttonText": "Call Health Services",
+				"category": "Health",
+				"gradient": "blue",
+				"icon": "cross.case.fill",
+				"phoneNumber": "5077863063",
+				"synopsis": "The St. Olaf Health Service provides free, confidential, on-campus healthcare visits for students. Medications and testing are available to students during their clinic visit, when appropriate, for a minimal out-of-pocket fee. Appointments can be made to discuss education and questions regarding birth control and Plan B as well as Sexual Transmitted Infection education and testing, and pregnancy testing.",
+				"text": "The [St. Olaf Health Service][hs] provides free, confidential, on-campus healthcare visits for students. Medications and testing are available to students during their clinic visit, when appropriate, for a minimal out-of-pocket fee.\n\nAppointments can be made to discuss education and questions regarding birth control and Plan B as well as Sexual Transmitted Infection education and testing, and pregnancy testing.\n\n[hs]: https://wp.stolaf.edu/health/ \"Health Service\"\n",
+				"title": "Health Services"
+			},
+			{
+				"buttonLink": "https://wp.stolaf.edu/timelycare/",
+				"buttonText": "Learn About TimelyCare",
+				"category": "Health",
+				"gradient": "light-blue",
+				"icon": "stethoscope",
+				"synopsis": "TimelyCare gives current St. Olaf students free, 24/7 access to mental health support and medical visits with licensed providers, through the TimelyCare app or a web browser.",
+				"text": "[TimelyCare][timelycare] gives current St. Olaf students free, 24/7 access to mental health support and medical visits with licensed providers, through the TimelyCare app or a web browser.\n\nSign up with the name and email St. Olaf has on file for you.\n\n[timelycare]: https://wp.stolaf.edu/timelycare/ \"TimelyCare\"\n",
+				"title": "TimelyCare"
+			}
+		]
+	},
+	"key": "GET {server:edu.stolaf}/contacts",
+	"status": 200
+}

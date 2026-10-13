@@ -1,10 +1,10 @@
 import type {RawCourseType} from '../types'
 
 /// Mirrored by `TestIdentifiers.CourseCatalog.aCourse`.
-export const UITEST_COURSE_NAME = 'Hybrid Test Course'
+export const UITEST_COURSE_NAME = 'Introduction to Glaciology'
 
 /**
- * One course, for UI testing, written into the catalog UI tests search.
+ * One Wiki Monkeys course, for UI testing, written into the catalog UI tests search.
  *
  * The catalogue is several megabytes of live data that changes every
  * registration cycle, so a test searching it cannot say what it will find. This
@@ -21,28 +21,28 @@ export const UITEST_COURSES: RawCourseType[] = [
 		clbid: 170131,
 		credits: 1,
 		crsid: 1,
-		department: 'CSCI',
+		department: 'GLAC',
 		description: [
-			'A course that exists only under UI testing, so the detail screen has every one of its sections to draw.',
+			'How ice forms, flows and remembers, from the snowfield above campus to the ice sheets, with a lab on the glacier itself.',
 		],
 		enrolled: 12,
 		gereqs: ['SED', 'WRI'],
 		instructors: ['Ada Lovelace', 'Grace Hopper'],
-		level: 200,
+		level: 100,
 		max: 30,
 		name: UITEST_COURSE_NAME,
-		notes: ['Meets in the second half of the semester.'],
-		number: 251,
+		notes: ['The Friday afternoon lab meets at the trailhead behind Glacier Hall.'],
+		number: 151,
 		offerings: [
-			{day: 'Mo', start: '9:00', end: '10:00', location: 'RNS 310'},
-			{day: 'We', start: '9:00', end: '10:00', location: 'RNS 310'},
+			{day: 'Mo', start: '9:00', end: '10:00', location: 'Glacier Hall 310'},
+			{day: 'We', start: '9:00', end: '10:00', location: 'Glacier Hall 310'},
 			// Twice on one Friday: the case the schedule has to group rather
 			// than draw as two headings.
-			{day: 'Fr', start: '9:00', end: '10:00', location: 'RNS 310'},
-			{day: 'Fr', start: '13:00', end: '15:00', location: 'RNS 190'},
+			{day: 'Fr', start: '9:00', end: '10:00', location: 'Glacier Hall 310'},
+			{day: 'Fr', start: '13:00', end: '15:00', location: 'Glacier Hall 190'},
 		],
 		pn: true,
-		prerequisites: 'CSCI 125 or consent of instructor',
+		prerequisites: 'GLAC 110 or consent of instructor',
 		section: 'A',
 		semester: 1,
 		status: 'O',

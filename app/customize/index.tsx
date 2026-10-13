@@ -10,7 +10,9 @@ import {previewFor} from '../../images/icons'
 import {MenuPickerRow} from '../../source/components/menu-picker-row'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
+import {useCampusSection} from '../../source/features/campus/store'
 import {type LinkTarget, useOpenLinksIn} from '../../source/features/customize/open-links-in'
+import {type HomeLayout, useHomeLayoutStore} from '../../source/features/home/store'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 import {useRadioPlayerSetting} from '../../source/features/customize/radio-player-setting'
 
@@ -19,6 +21,12 @@ const LINK_TARGETS = [
 	['app', 'In App'],
 	['safari', 'Safari'],
 ] as const satisfies ReadonlyArray<readonly [LinkTarget, string]>
+
+/// How home can lay out its tiles, and what the menu calls each.
+const HOME_LAYOUTS = [
+	['tiled', 'Tiled'],
+	['list', 'List'],
+] as const satisfies ReadonlyArray<readonly [HomeLayout, string]>
 
 /// Settings' own row-icon size, as `rows.tsx` draws a gradient icon.
 const ROW_ICON_SIZE = 30
@@ -43,6 +51,10 @@ export default function CustomizePage(): React.ReactNode {
 	)
 	let [linkTarget, setLinkTarget] = useOpenLinksIn()
 	let [showRadio, setShowRadio] = useRadioPlayerSetting()
+	let homeLayout = useHomeLayoutStore((state) => state.layout)
+	let setHomeLayout = useHomeLayoutStore((state) => state.setLayout)
+	let appIcons = useCampusSection('appIcons')
+	let quickActions = useCampusSection('quickActions')
 
 	return (
 		<>
@@ -50,19 +62,21 @@ export default function CustomizePage(): React.ReactNode {
 			<SheetCloseButton />
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-customize')]}>
 				<Form>
-					<SheetSection>
-						<DisclosureRow
-							detail={[current.title]}
-							identifier="app-icon-row"
-							image={{
-								source: previewFor(current.type, scheme),
-								width: ROW_ICON_SIZE,
-								height: ROW_ICON_SIZE,
-							}}
-							onPress={() => router.navigate('/customize/app-icon')}
-							title="App Icon"
-						/>
-					</SheetSection>
+					{appIcons ? (
+						<SheetSection>
+							<DisclosureRow
+								detail={[current.title]}
+								identifier="app-icon-row"
+								image={{
+									source: previewFor(current.type, scheme),
+									width: ROW_ICON_SIZE,
+									height: ROW_ICON_SIZE,
+								}}
+								onPress={() => router.navigate('/customize/app-icon')}
+								title="App Icon"
+							/>
+						</SheetSection>
+					) : null}
 					<SheetSection title="Browsing">
 						<MenuPickerRow
 							id="open-links-in"
@@ -73,16 +87,25 @@ export default function CustomizePage(): React.ReactNode {
 						/>
 					</SheetSection>
 					<SheetSection title="Home Screen">
+						<MenuPickerRow
+							id="home-layout"
+							label="Layout"
+							onSelectionChange={setHomeLayout}
+							options={HOME_LAYOUTS}
+							selection={homeLayout}
+						/>
 						<Toggle
 							isOn={showRadio}
 							label="Radio Player"
 							modifiers={[accessibilityIdentifier('show-radio-player')]}
 							onIsOnChange={setShowRadio}
 						/>
-						<NavigationRow
-							onPress={() => router.navigate('/customize/quick-actions')}
-							title="Quick Actions"
-						/>
+						{quickActions ? (
+							<NavigationRow
+								onPress={() => router.navigate('/customize/quick-actions')}
+								title="Quick Actions"
+							/>
+						) : null}
 					</SheetSection>
 				</Form>
 			</Host>

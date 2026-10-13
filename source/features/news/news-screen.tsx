@@ -8,7 +8,7 @@ import {NewsPicker} from './news-picker'
 import {summarizeFeed} from './lib/feed'
 import {resolveCategory} from './lib/util'
 import {namedNewsOptions} from './query'
-import type {NewsSource} from './sources'
+import type {NewsSource} from './campus-section'
 import {useNewsFilterStore} from './store'
 
 type Props = {

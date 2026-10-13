@@ -1,0 +1,25 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Add a screen") {
+        This is a **tutorial**: numbered steps, each pairing text with code.
+    }
+
+    @Section(title: "Create the route") {
+        @ContentAndMedia {
+            Routes live in `app/`.
+        }
+
+        @Steps {
+            @Step {
+                Make a file for the route.
+
+                @Code(name: "example.tsx", file: example-1.tsx)
+            }
+
+            @Step {
+                Give it a title.
+
+                @Code(name: "example.tsx", file: example-2.tsx)
+            }
+        }
+    }
+}

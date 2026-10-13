@@ -5,6 +5,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import PreviewScreen from '../../../../app/dictionary/entry/preview'
 import {normalizeEntry} from '../lib/entry'
 import {submitReport} from '../report/submit'
+import {useCampusStore} from '../../campus/store'
 import {useDictionaryDraftStore} from '../store'
 import {track} from '../../telemetry/track'
 
@@ -17,6 +18,7 @@ let alertSpy = jest.spyOn(Alert, 'alert').mockReturnValue(undefined)
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 
 beforeEach(() => {
+	useCampusStore.setState({campus: 'edu.stolaf'})
 	mockSubmit.mockReset()
 	jest.mocked(track).mockClear()
 	alertSpy.mockClear()
@@ -37,9 +39,11 @@ describe('the dictionary preview screen', () => {
 
 		await fireEvent.press(screen.getByLabelText('Submit Report'))
 
+		// To the active campus's support address.
 		expect(mockSubmit).toHaveBeenCalledWith(
 			{word: 'Caf', definition: 'The dining hall.'},
 			{word: 'Caf', definition: 'The caf.'},
+			'allaboutolaf@frogpond.tech',
 		)
 	})
 

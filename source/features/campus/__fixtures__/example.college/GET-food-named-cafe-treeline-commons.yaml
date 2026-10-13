@@ -1,0 +1,39 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/food/named/cafe/treeline-commons
+json:
+  cafe:
+    address: ''
+    city: ''
+    description: ''
+    eod: ''
+    latitude: ''
+    longitude: ''
+    menu_html: ''
+    menu_type: ''
+    message: ''
+    name: Treeline Commons
+    state: ''
+    timezone: ''
+    weekly_schedule: ''
+    zip: ''
+    days:
+      - date: '2026-09-05'
+        message: false
+        status: ''
+        dayparts:
+          - endtime: '09:45'
+            id: '1'
+            label: Breakfast
+            message: ''
+            starttime: '07:15'
+          - endtime: '14:00'
+            id: '3'
+            label: Lunch
+            message: ''
+            starttime: '10:30'
+          - endtime: '20:00'
+            id: '4'
+            label: Dinner
+            message: ''
+            starttime: '16:30'

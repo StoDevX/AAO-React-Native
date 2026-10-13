@@ -34,7 +34,7 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	private var discardChangesAlert: XCUIElement {
-		app.alerts["Discard changes?"]
+		app.alerts[TestIdentifiers.UnsavedChanges.alert]
 	}
 
 	private var searchField: XCUIElement {
@@ -42,16 +42,16 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	/// SwiftUI's native A-Z jumplist rail, iOS 26+ (`sectionIndexLabel()`, added
-	/// via `patches/@expo__ui@57.0.14.patch`). It carries no per-letter
+	/// via `patches/@expo__ui@*.patch`). It carries no per-letter
 	/// accessibility elements -- it is one `Other` spanning every section -- so
 	/// nothing here can query a specific letter, only the rail as a whole.
 	private var sectionIndexRail: XCUIElement {
-		app.otherElements["Section index"]
+		app.element(matching: TestIdentifiers.Dictionary.sectionIndex)
 	}
 
 	/// Drawn by this screen alone, so its presence says the screen has mounted.
 	var mounted: XCUIElement {
-		app.navigationBars["Dictionary"]
+		app.navigationBars[TestIdentifiers.Dictionary.title]
 	}
 
 	@discardableResult
@@ -61,20 +61,14 @@ struct CampusDictionaryScreen: Screen {
 
 	/// Taps near the bottom of the section index rail and asserts the list
 	/// actually scrolled. Cannot assert *which* section it landed on -- see
-	/// `sectionIndexRail`. `sectionIndexLabel()` is iOS 26+, so this skips
-	/// below that, where the rail does not exist at all.
+	/// `sectionIndexRail`.
 	@discardableResult
-	func verifySectionIndexRailScrolls() throws -> Self {
-		guard #available(iOS 26.0, *) else {
-			throw XCTSkip("sectionIndexLabel() needs iOS 26; the rail does not exist below it")
-		}
-
-		let list = app.collectionViews[TestIdentifiers.Dictionary.list]
-		XCTAssertTrue(list.waitForExistence(timeout: 10), "the dictionary list never appeared")
+	func verifySectionIndexRailScrolls() -> Self {
+		let list = app.element(matching: TestIdentifiers.Dictionary.list)
+		XCTAssertTrue(list.waitUntilExists(timeout: 10), "the dictionary list never appeared")
 		XCTAssertTrue(
-			sectionIndexRail.waitForExistence(timeout: 10),
-			"no section index rail appeared -- sectionIndexLabel needs iOS 26")
-		capture("Dictionary with a section index rail")
+			sectionIndexRail.waitUntilExists(timeout: 10),
+			"no section index rail appeared")
 
 		let firstRowBefore = list.buttons.firstMatch.label
 
@@ -90,7 +84,7 @@ struct CampusDictionaryScreen: Screen {
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			searchField.waitForExistence(timeout: 30),
+			searchField.waitUntilExists(timeout: 30),
 			"the dictionary should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
@@ -103,7 +97,7 @@ struct CampusDictionaryScreen: Screen {
 
 		// The keyboard covers the lower half of the results, and a row it hides
 		// is neither rendered nor hittable.
-		app.keyboards.buttons["search"].firstMatch.tap()
+		app.keyboards.buttons[TestIdentifiers.Dictionary.keyboardSearch].firstMatch.tap()
 		return self
 	}
 
@@ -113,8 +107,7 @@ struct CampusDictionaryScreen: Screen {
 	@discardableResult
 	func verifyFirstEntryIsOnScreen() -> Self {
 		let row = app.elementWithLabel(startingWith: TestIdentifiers.Dictionary.firstEntry)
-		_ = row.waitForExistence(timeout: 5)
-		capture("Dictionary search results")
+		_ = row.waitUntilExists(timeout: 5)
 		XCTAssertTrue(
 			row.exists && row.isHittable,
 			"the results should start at \(TestIdentifiers.Dictionary.firstEntry), not wherever the list was scrolled before the search")
@@ -146,10 +139,10 @@ struct CampusDictionaryScreen: Screen {
 		// finds nothing on the first run, dump `app.debugDescription` and use
 		// whichever element type actually carries the identifier.
 		let list = app.collectionViews[TestIdentifiers.Dictionary.list]
-		XCTAssertTrue(list.waitForExistence(timeout: 10), "the dictionary list never appeared")
+		XCTAssertTrue(list.waitUntilExists(timeout: 10), "the dictionary list never appeared")
 
 		let firstWord = list.buttons.firstMatch
-		XCTAssertTrue(firstWord.waitForExistence(timeout: 10), "the list had no entries")
+		XCTAssertTrue(firstWord.waitUntilExists(timeout: 10), "the list had no entries")
 		firstWord.tap()
 		return self
 	}
@@ -157,7 +150,7 @@ struct CampusDictionaryScreen: Screen {
 	@discardableResult
 	func verifyDefinitionSheetIsPresented() -> Self {
 		XCTAssertTrue(
-			definitionSheet.waitForExistence(timeout: 5), "the definition sheet never appeared")
+			definitionSheet.waitUntilExists(timeout: 5), "the definition sheet never appeared")
 		return self
 	}
 
@@ -171,7 +164,7 @@ struct CampusDictionaryScreen: Screen {
 		let sense = sheetTexts.matching(
 			NSPredicate(format: "label BEGINSWITH %@", definition)
 		).firstMatch
-		XCTAssertTrue(headword.waitForExistence(timeout: 5), "the sheet showed no headword")
+		XCTAssertTrue(headword.waitUntilExists(timeout: 5), "the sheet showed no headword")
 		XCTAssertTrue(sense.exists, "the sheet showed no definition")
 
 		XCTAssertEqual(
@@ -201,10 +194,9 @@ struct CampusDictionaryScreen: Screen {
 	@discardableResult
 	/// Taps Suggest an Edit in the entry's own navigation bar.
 	func openEditor() -> Self {
-		let button = app.navigationBars.buttons[TestIdentifiers.Dictionary.suggestAnEdit]
-		XCTAssertTrue(button.waitForExistence(timeout: 5), "the sheet had no Suggest an Edit button")
-		button.tap()
-		return self
+		tap(
+			app.navigationBars.buttons[TestIdentifiers.Dictionary.suggestAnEdit], until: editForm,
+			named: "Suggest an Edit")
 	}
 
 	/// Opens the sense in row `position`, counting from 1.
@@ -212,10 +204,10 @@ struct CampusDictionaryScreen: Screen {
 	func openSense(_ position: Int) -> Self {
 		let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
 		scrollUntilExists(row)
-		XCTAssertTrue(row.waitForExistence(timeout: 15), "sense row \(position) never appeared")
+		XCTAssertTrue(row.waitUntilExists(timeout: 15), "sense row \(position) never appeared")
 		row.tap()
 		XCTAssertTrue(
-			senseForm.waitForExistence(timeout: 15),
+			senseForm.waitUntilExists(timeout: 15),
 			"tapping sense row \(position) should open that sense")
 		return self
 	}
@@ -234,7 +226,7 @@ struct CampusDictionaryScreen: Screen {
 		// query resolves to the header, which takes no taps.
 		let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
 		XCTAssertTrue(
-			field.waitForExistence(timeout: 15), "the sense's definition field never appeared")
+			field.waitUntilExists(timeout: 15), "the sense's definition field never appeared")
 
 		// An empty `TextField` reads its placeholder back as its value, the
 		// same quirk `searchField` has (see uitests/CLAUDE.md) -- and this
@@ -247,7 +239,7 @@ struct CampusDictionaryScreen: Screen {
 
 		field.tap()
 		XCTAssertTrue(
-			app.keyboards.firstMatch.waitForExistence(timeout: 10),
+			app.keyboards.firstMatch.waitUntilExists(timeout: 10),
 			"tapping the definition field should raise the keyboard -- if it did not, the field "
 				+ "is not taking taps")
 
@@ -267,10 +259,10 @@ struct CampusDictionaryScreen: Screen {
 	func addSubsense() -> Self {
 		let button = app.buttons[TestIdentifiers.Dictionary.addSubsense]
 		scrollUntilExists(button)
-		XCTAssertTrue(button.waitForExistence(timeout: 15), "the sense had no Add Sub-sense button")
+		XCTAssertTrue(button.waitUntilExists(timeout: 15), "the sense had no Add Sub-sense button")
 		button.tap()
 		XCTAssertTrue(
-			senseForm.waitForExistence(timeout: 15), "adding a sub-sense should show a sense form")
+			senseForm.waitUntilExists(timeout: 15), "adding a sub-sense should show a sense form")
 		return self
 	}
 
@@ -285,10 +277,10 @@ struct CampusDictionaryScreen: Screen {
 	func leaveSense() -> Self {
 		let back = app.navigationBars[TestIdentifiers.Dictionary.senseFormTitle]
 			.buttons[TestIdentifiers.Navigation.backButton]
-		XCTAssertTrue(back.waitForExistence(timeout: 15), "the sense form had no back button")
+		XCTAssertTrue(back.waitUntilExists(timeout: 15), "the sense form had no back button")
 		back.tap()
 		XCTAssertTrue(
-			editForm.waitForExistence(timeout: 15), "Back should return to the edit form")
+			editForm.waitUntilExists(timeout: 15), "Back should return to the edit form")
 		return self
 	}
 
@@ -306,7 +298,7 @@ struct CampusDictionaryScreen: Screen {
 	@discardableResult
 	func verifyEntrySheetIsGone() -> Self {
 		XCTAssertTrue(
-			definitionSheet.waitForNonExistence(timeout: 5),
+			definitionSheet.waitUntilGone(timeout: 5),
 			"the entry sheet stayed up after the dismiss gesture"
 		)
 		return self
@@ -320,12 +312,12 @@ struct CampusDictionaryScreen: Screen {
 	/// bar behind the sheet carries a button with this label too.
 	@discardableResult
 	func verifyEditFormPushedIntoSheet() -> Self {
-		XCTAssertTrue(editForm.waitForExistence(timeout: 15), "the edit form never appeared")
+		XCTAssertTrue(editForm.waitUntilExists(timeout: 15), "the edit form never appeared")
 
 		let back = app.navigationBars[TestIdentifiers.Dictionary.editFormTitle]
 			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
-			back.exists && back.isHittable,
+			back.waitForHittable(timeout: 10),
 			"the edit form should push into the sheet's stack, so it carries a back button")
 		return self
 	}
@@ -339,63 +331,10 @@ struct CampusDictionaryScreen: Screen {
 		return openSense(1).typeDefinition(prepending: text).leaveSense()
 	}
 
-	/// Scrolls the edit form until `text` is on screen and unobstructed. The
-	/// Senses section's footer -- the last thing in the form -- sits below the
-	/// fold on return from a sense screen, so a capture taken where
-	/// `editFirstDefinition` leaves off shows neither the footer nor the
-	/// wording it carries.
-	///
-	/// A press-and-drag between two fixed points inside the form's own
-	/// content, rather than `app.swipeUp()`. A swipe spans the whole element
-	/// it is sent to, so sent to `app` its start and end points are computed
-	/// from the app's full frame rather than the form's own bounds -- and
-	/// this helper then reports content that was scrollable all along as
-	/// unreachable if either point misses the form.
-	@discardableResult
-	func revealInForm(_ text: String) -> Self {
-		let label = app.staticTexts[text]
-		// Both ends lie inside the form's own content, between the navigation
-		// bar and the bottom of the screen.
-		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.43))
-		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.18))
-		for _ in 1...8 {
-			if label.exists && label.isHittable {
-				return self
-			}
-			start.press(forDuration: 0.05, thenDragTo: end)
-		}
-		XCTFail(
-			label.exists
-				? "\"\(text)\" is in the form but never became hittable -- something is drawn "
-					+ "over it"
-				: "eight drags up the form never produced an element reading \"\(text)\"")
-		return self
-	}
-
-	@discardableResult
-	func verifyPreviewDisabled() -> Self {
-		XCTAssertTrue(
-			previewButton.waitForExistence(timeout: 15), "the edit form should offer Preview")
-		XCTAssertFalse(
-			previewButton.isEnabled,
-			"Preview should stay disabled until something in the draft has actually changed")
-		return self
-	}
-
-	@discardableResult
-	func verifyPreviewEnabled() -> Self {
-		XCTAssertTrue(
-			previewButton.waitForExistence(timeout: 15), "the edit form should offer Preview")
-		XCTAssertTrue(
-			previewButton.isEnabled,
-			"Preview should enable once the draft has an actual change")
-		return self
-	}
-
 	@discardableResult
 	func openPreview() -> Self {
 		XCTAssertTrue(
-			previewButton.isEnabled, "Preview should be enabled before it can be opened")
+			previewButton.waitForEnabled(true, timeout: 10), "Preview should be enabled before it can be opened")
 		previewButton.tap()
 		return self
 	}
@@ -407,7 +346,7 @@ struct CampusDictionaryScreen: Screen {
 	/// a substitute for it.
 	@discardableResult
 	func verifyPreviewPresented() -> Self {
-		XCTAssertTrue(previewSheet.waitForExistence(timeout: 15), "the preview never appeared")
+		XCTAssertTrue(previewSheet.waitUntilExists(timeout: 15), "the preview never appeared")
 		return self
 	}
 
@@ -432,7 +371,7 @@ struct CampusDictionaryScreen: Screen {
 				TestIdentifiers.Dictionary.previewSheet, text)
 		).firstMatch
 		XCTAssertTrue(
-			element.waitForExistence(timeout: 15),
+			element.waitUntilExists(timeout: 15),
 			"the preview should show \"\(text)\" -- if it is missing, @expo/ui's Text silently "
 				+ "dropped a run")
 		return self
@@ -440,7 +379,7 @@ struct CampusDictionaryScreen: Screen {
 
 	/// Asserts the DEBUG-only marker `@expo/ui` splices into a sentence when a
 	/// modifier falls outside its nested-`Text` whitelist never appears. Our
-	/// patch (`patches/@expo__ui@57.0.14.patch`) adds `strikethrough` and
+	/// patch (`patches/@expo__ui@*.patch`) adds `strikethrough` and
 	/// `underline` to that whitelist; this is what would prove the patch had
 	/// come loose. Matched by `CONTAINS`, not a prefix match -- SwiftUI
 	/// collapses a run of nested `Text` into one accessibility element, so the
@@ -475,11 +414,11 @@ struct CampusDictionaryScreen: Screen {
 	func addSense(expectingRow position: Int = 2, withDefinition text: String? = nil) -> Self {
 		let button = app.buttons[TestIdentifiers.Dictionary.addSense]
 		scrollUntilExists(button)
-		XCTAssertTrue(button.waitForExistence(timeout: 15), "the edit form should offer Add Sense")
+		XCTAssertTrue(button.waitUntilExists(timeout: 15), "the edit form should offer Add Sense")
 
 		for _ in 1...3 {
 			button.tap()
-			guard senseForm.waitForExistence(timeout: 5) else { continue }
+			guard senseForm.waitUntilExists(timeout: 5) else { continue }
 
 			if let text {
 				typeDefinition(prepending: text)
@@ -488,7 +427,7 @@ struct CampusDictionaryScreen: Screen {
 			leaveSense()
 			let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
 			XCTAssertTrue(
-				row.waitForExistence(timeout: 15),
+				row.waitUntilExists(timeout: 15),
 				"Add Sense should have left a row at position \(position)")
 			return self
 		}
@@ -499,7 +438,7 @@ struct CampusDictionaryScreen: Screen {
 	@discardableResult
 	func verifyDiscardChangesAlertPresented() -> Self {
 		XCTAssertTrue(
-			discardChangesAlert.waitForExistence(timeout: 15),
+			discardChangesAlert.waitUntilExists(timeout: 15),
 			"the unsaved-changes guard should have raised its alert")
 		return self
 	}
@@ -507,7 +446,9 @@ struct CampusDictionaryScreen: Screen {
 	/// Cancels the discard, staying on the form with edits intact.
 	@discardableResult
 	func chooseToKeepEditing() -> Self {
-		discardChangesAlert.buttons["Edit"].tap()
+		let keep = discardChangesAlert.buttons[TestIdentifiers.UnsavedChanges.keepEditing]
+		XCTAssertTrue(keep.waitUntilExists(timeout: 10), "the alert should offer to keep editing")
+		keep.tap()
 		return self
 	}
 

@@ -5,8 +5,8 @@ type Entry = {name: string; slug: string; icon: string; gradient: string; units:
 const areas = (bundled as {data: Entry[]}).data
 
 describe('student-work-areas.yaml', () => {
-	test('lists the sixteen tiles', () => {
-		expect(areas).toHaveLength(16)
+	test('lists the seventeen tiles', () => {
+		expect(areas).toHaveLength(17)
 	})
 
 	test('gives every area its own slug', () => {
@@ -27,10 +27,15 @@ describe('student-work-areas.yaml', () => {
 		expect(new Set(units).size).toBe(units.length)
 	})
 
-	test('uses only five-digit unit numbers', () => {
+	test('uses only five-digit unit numbers, and the other unit', () => {
 		for (let unit of areas.flatMap((area) => area.units)) {
-			expect(unit).toMatch(/^\d{5}$/u)
+			expect(unit).toMatch(/^(\d{5}|other)$/u)
 		}
+	})
+
+	// ccc-server publishes "other" for a posting with no unit number it can read.
+	test('collects the other unit in an Other area', () => {
+		expect(areas.find((area) => area.units.includes('other'))?.slug).toBe('other')
 	})
 
 	test('uses only named gradients', () => {

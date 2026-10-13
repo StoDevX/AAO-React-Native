@@ -1,7 +1,7 @@
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {resolveGradient, type Gradient} from '@frogpond/colors'
 
-import type {Campus} from '../../building-hours/types'
+import type {CampusId} from '../../../campuses/ids'
 import type {MapGroupLabel} from '../../telemetry/catalog'
 import type {Building, Feature} from '../types'
 
@@ -28,8 +28,11 @@ export type MapIconEntry = {
 	gradient?: string
 }
 
-/** data/map-categories.yaml: per campus, its tiles and its places' icons. */
-export type MapCategoryTable = Record<Campus, {groups: MapCategoryEntry[]; icons: MapIconEntry[]}>
+/** One campus's entry in data/map-categories.yaml: its tiles and its places' icons. */
+export type CampusMapCategories = {groups: MapCategoryEntry[]; icons: MapIconEntry[]}
+
+/** data/map-categories.yaml, by campus id. A campus the file leaves out has no groups. */
+export type MapCategoryTable = Partial<Record<CampusId, CampusMapCategories>>
 
 /** A group ready to draw as a tile. */
 export type CategoryGroup = {
@@ -51,13 +54,13 @@ function belongsTo(group: {categories: string[]}): (place: Feature<Building>) =>
 /// until it does.
 export function groupsFor(
 	table: MapCategoryTable,
-	campus: Campus,
+	campus: CampusId,
 	places: Array<Feature<Building>>,
 ): CategoryGroup[] {
 	// A label is how a group is keyed and found again, so the first entry
 	// with a label wins and any later one sharing it is dropped.
 	let seen = new Set<string>()
-	return table[campus].groups
+	return (table[campus]?.groups ?? [])
 		.filter((entry) => {
 			if (seen.has(entry.label)) {
 				return false

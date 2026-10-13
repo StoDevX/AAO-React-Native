@@ -4,6 +4,8 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import EntryScreen from '../../../../app/dictionary/entry/[word]'
 import {keys} from '../query'
+import {useCampusStore} from '../../campus/store'
+import type {CampusId} from '../../../campuses'
 import {useDictionaryDraftStore} from '../store'
 import type {WordType} from '../types'
 
@@ -17,6 +19,21 @@ jest.mock('expo-router', () => ({
 	useRouter: () => ({navigate: mockNavigate}),
 }))
 
+// Every campus's dictionary takes suggestions; one that took none is stood in for here.
+let mockRefusesSuggestions = false
+jest.mock('../../campus/store', () => {
+	let actual = jest.requireActual('../../campus/store') as typeof import('../../campus/store')
+	return {
+		...actual,
+		useCampusSection: (key: Parameters<typeof actual.useCampusSection>[0]) => {
+			let section = actual.useCampusSection(key)
+			return key === 'dictionary' && mockRefusesSuggestions && section
+				? {...(section as object), acceptsSuggestions: false}
+				: section
+		},
+	}
+})
+
 const wordEntry: WordType = {word: 'Caf', definition: 'The dining hall.'}
 
 // Every query left without observers gets a garbage-collection timeout, and
@@ -25,11 +42,11 @@ const wordEntry: WordType = {word: 'Caf', definition: 'The dining hall.'}
 // See the identical comment in ../../faqs/__tests__/banner.test.tsx.
 const trackedQueryClients: QueryClient[] = []
 
-const renderWithQuery = (words: WordType[]) => {
+const renderWithQuery = (words: WordType[], server: CampusId = 'edu.stolaf') => {
 	let queryClient = new QueryClient({
 		defaultOptions: {queries: {retry: false, staleTime: Infinity}},
 	})
-	queryClient.setQueryData(keys.all, words)
+	queryClient.setQueryData(keys.forServer(server), words)
 	trackedQueryClients.push(queryClient)
 	return render(
 		<QueryClientProvider client={queryClient}>
@@ -39,6 +56,8 @@ const renderWithQuery = (words: WordType[]) => {
 }
 
 beforeEach(() => {
+	useCampusStore.setState({campus: 'edu.stolaf'})
+	mockRefusesSuggestions = false
 	mockNavigate.mockClear()
 	useDictionaryDraftStore.getState().clearDraft()
 })
@@ -51,6 +70,20 @@ afterEach(() => {
 })
 
 describe('the dictionary entry screen', () => {
+	it('offers no Suggest an Edit where the dictionary takes no suggestions', async () => {
+		mockRefusesSuggestions = true
+		await renderWithQuery([wordEntry])
+
+		expect(screen.queryByText('Suggest an Edit')).toBeNull()
+	})
+
+	it("offers Suggest an Edit on Carleton's dictionary", async () => {
+		useCampusStore.setState({campus: 'edu.carleton'})
+		await renderWithQuery([wordEntry], 'edu.carleton')
+
+		expect(screen.getByText('Suggest an Edit')).toBeTruthy()
+	})
+
 	it('starts a draft from the entry on screen and pushes to the edit form', async () => {
 		await renderWithQuery([wordEntry])
 

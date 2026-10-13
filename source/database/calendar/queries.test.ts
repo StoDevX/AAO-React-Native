@@ -333,12 +333,12 @@ describe('facetsQuery', () => {
 			facetsQuery({axis: 'organization', window: WINDOW, sourceIds: ['stolaf', 'presence']}),
 		)
 		assert.deepEqual(rows, [
-			{value: 'Student Activities', count: 1},
 			{value: 'Music Dept', count: 1},
+			{value: 'Student Activities', count: 1},
 		])
 	})
 
-	it('sorts Z-A, because the SwiftUI menu renders bottom-to-top', () => {
+	it('sorts A-Z, the order the menu shows them in', () => {
 		let runner = seed()
 		runner.run({
 			sql: 'insert into event_tag values (?,?,?,?)',
@@ -349,7 +349,7 @@ describe('facetsQuery', () => {
 		)
 		assert.deepEqual(
 			rows.map((r) => r.value),
-			['Music', 'Athletics'],
+			['Athletics', 'Music'],
 		)
 	})
 
@@ -572,9 +572,9 @@ describe('excluding tags', () => {
 			facetsQuery({axis: 'category', window: WINDOW, sourceIds}),
 		)
 		assert.deepEqual(unhidden, [
-			{value: 'Music', count: 1},
-			{value: 'Athletics', count: 2},
 			{value: 'Alumni', count: 1},
+			{value: 'Athletics', count: 2},
+			{value: 'Music', count: 1},
 		])
 
 		// Athletics still counts the event that stays visible, and only it.
@@ -582,9 +582,9 @@ describe('excluding tags', () => {
 			facetsQuery({axis: 'category', window: WINDOW, sourceIds, exclude: ATHLETICS}),
 		)
 		assert.deepEqual(categories, [
-			{value: 'Music', count: 1},
-			{value: 'Athletics', count: 1},
 			{value: 'Alumni', count: 1},
+			{value: 'Athletics', count: 1},
+			{value: 'Music', count: 1},
 		])
 
 		let organizations = runner.all<{value: string; count: number}>(

@@ -1,0 +1,73 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET https://jobs.college.example/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=categoriesFacet&finder=findReqs%3BsiteNumber%3DWM_1%2CfacetsList%3DCATEGORIES%2Climit%3D1
+json:
+  count: 1
+  hasMore: false
+  limit: 200
+  offset: 0
+  items:
+    - SearchId: 1
+      Keyword: null
+      CorrectedKeyword: null
+      UseExactKeywordFlag: false
+      SuggestedKeyword: null
+      ExecuteSpellCheckFlag: true
+      Location: null
+      LocationId: null
+      Radius: 0
+      RadiusUnit: MI
+      SelectedTitlesFacet: null
+      SelectedCategoriesFacet: null
+      SelectedPostingDatesFacet: null
+      SelectedLocationsFacet: null
+      LastSelectedFacet: null
+      Facets: CATEGORIES
+      Offset: 0
+      Limit: 1
+      SortBy: RELEVANCY
+      TotalJobsCount: 23
+      Latitude: null
+      Longitude: null
+      SiteNumber: WM_1
+      JobFamilyId: null
+      PostingStartDate: null
+      PostingEndDate: null
+      SelectedWorkLocationsFacet: null
+      RequisitionId: null
+      CandidateNumber: null
+      WorkLocationZipCode: null
+      WorkLocationCountryCode: null
+      SelectedFlexFieldsFacets: null
+      OrganizationId: null
+      SelectedOrganizationsFacet: null
+      UserTargetFacetName: null
+      UserTargetFacetInputTerm: null
+      HotJobFlag: null
+      WorkplaceType: null
+      SelectedWorkplaceTypesFacet: null
+      BotQRShortCode: null
+      categoriesFacet:
+        - Id: 1
+          Name: Student Work
+          TotalCount: 23
+      locationsFacet: []
+      postingDatesFacet: []
+      titlesFacet: []
+      workLocationsFacet: []
+      flexFieldsFacet: []
+      organizationsFacet: []
+      workplaceTypesFacet: []
+  links:
+    - rel: self
+      href: https://jobs.college.example/hcmRestApi/resources/11.13.18.05/recruitingCEJobRequisitions
+      name: recruitingCEJobRequisitions
+      kind: collection
+    - rel: action
+      href: https://jobs.college.example/hcmRestApi/resources/11.13.18.05/recruitingCEJobRequisitions/action/getRequisitionsLocationCoordinates
+      name: getRequisitionsLocationCoordinates
+      kind: other
+    - rel: action
+      href: https://jobs.college.example/hcmRestApi/resources/11.13.18.05/recruitingCEJobRequisitions/action/getRequisitionDetailsForMap
+      name: getRequisitionDetailsForMap
+      kind: other

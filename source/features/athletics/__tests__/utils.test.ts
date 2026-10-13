@@ -5,6 +5,7 @@ import {
 	sportFilterSections,
 	filterBySport,
 	isInPlay,
+	shortSportName,
 } from '../utils'
 import {Constants} from '../constants'
 import {GameResult, ProcessedScore, Score, StatusInfo} from '../types'
@@ -234,5 +235,20 @@ describe('filterBySport', () => {
 
 	it('returns nothing when no game is in a selected sport', () => {
 		expect(filterBySport([baseball, golf], ['Volleyball'])).toEqual([])
+	})
+})
+
+describe('shortSportName', () => {
+	it('drops the division prefix, which the section header already states', () => {
+		expect(shortSportName("Men's Basketball")).toBe('Basketball')
+		expect(shortSportName("Women's Nordic Skiing")).toBe('Nordic Skiing')
+	})
+
+	it('leaves a sport with no division prefix alone', () => {
+		expect(shortSportName('Football')).toBe('Football')
+	})
+
+	it('only strips a prefix at the start of the name', () => {
+		expect(shortSportName("Cheer for Men's Hockey")).toBe("Cheer for Men's Hockey")
 	})
 })

@@ -4,13 +4,12 @@ import {
 	REL_MAP_CATEGORIES,
 	resolveSources,
 } from '@frogpond/data-sources'
-import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {z} from 'zod'
 
 import {queryClient} from '../../init/tanstack-query'
-import mapCategoriesData from '../../../docs/map-categories.json'
-import type {MapCategoryTable} from './lib/category-groups'
+import {campusIdFromPublished} from '../../campuses'
+import type {CampusMapCategories, MapCategoryTable} from './lib/category-groups'
 
 const MAP_CATEGORIES_TYPE = 'application/vnd.frogpond.map-categories+json'
 
@@ -31,13 +30,32 @@ const CampusSchema = z.object({
 	icons: z.array(MapIconEntrySchema),
 })
 
+/// Each campus's entry is checked only for a campus this build has, so a file
+/// naming a newer campus, in whatever shape, cannot fail the whole table.
 const PublishedMapCategoriesSchema = z.object({
-	data: z.object({stolaf: CampusSchema, carleton: CampusSchema}),
+	data: z.record(z.string(), z.unknown()),
 })
 
-/// The copy this build shipped with: what the grid draws before the first
-/// fetch, offline, and under UI tests.
-export const BUNDLED_MAP_CATEGORIES = (mapCategoriesData as {data: MapCategoryTable}).data
+/// The table by campus id, or none if any known campus's entry is unreadable.
+/// The published file still keys campuses as 2.9's release candidates read
+/// them (`stolaf`, `carleton`); a table this build cached is keyed by id.
+/// `campusIdFromPublished` reads both.
+function byCampusId(data: Record<string, unknown>): MapCategoryTable | string {
+	let table: MapCategoryTable = {}
+	for (let [key, entry] of Object.entries(data)) {
+		let campus = campusIdFromPublished(key)
+		if (!campus) {
+			continue
+		}
+		let parsed = CampusSchema.safeParse(entry)
+		if (!parsed.success) {
+			return `${key}: ${parsed.error.message}`
+		}
+		// An icon is checked as a string; whether it names an SF Symbol cannot be.
+		table[campus] = parsed.data as CampusMapCategories
+	}
+	return table
+}
 
 export const keys = {
 	all: ['map-categories'] as const,
@@ -48,19 +66,13 @@ export const keys = {
 const staleTime = 1000 * 60 * 5
 
 async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapCategoryTable> {
-	// UI tests read the bundled copy, so a screenshot's tiles match this
-	// checkout rather than whatever is published at test time.
-	if (isUITesting) {
-		return BUNDLED_MAP_CATEGORIES
-	}
-
 	let manifest = await fetchManifest(queryClient)
 	let source = resolveSources(manifest, REL_MAP_CATEGORIES, [MAP_CATEGORIES_TYPE])[0]
 	if (!source) {
-		return BUNDLED_MAP_CATEGORIES
+		throw new Error('map-categories: the manifest lists no source')
 	}
 
-	let body = await fetchSourceBody(source.href, signal, 'Map categories')
+	let body = await fetchSourceBody(source.href, signal, 'Map categories', 'json', source.campus)
 	// The schema in data/_schemas gates what this repo publishes today, not
 	// what an older install can read, so the file is checked again here: a
 	// shape this build cannot read fails the fetch, leaving the table the
@@ -69,8 +81,11 @@ async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapC
 	if (!parsed.success) {
 		throw new UnreadableMapCategoriesError(parsed.error.message)
 	}
-	// An icon is checked as a string; whether it names an SF Symbol cannot be.
-	return parsed.data.data as MapCategoryTable
+	let table = byCampusId(parsed.data.data)
+	if (typeof table === 'string') {
+		throw new UnreadableMapCategoriesError(table)
+	}
+	return table
 }
 
 /// A published file of a shape this build cannot read. It fails the same way
@@ -81,13 +96,17 @@ class UnreadableMapCategoriesError extends Error {
 	}
 }
 
-/// The cached table if this build can read it, else the bundled copy. A
+/// The cached table if this build can read it, else none. A
 /// table restored from the persisted cache never passed through
 /// `fetchMapCategories`, so one an older build saved in an older shape would
 /// otherwise reach the picker unchecked.
-function readableMapCategories(table: unknown): MapCategoryTable {
+function readableMapCategories(table: unknown): MapCategoryTable | undefined {
 	let parsed = PublishedMapCategoriesSchema.safeParse({data: table})
-	return parsed.success ? (parsed.data.data as MapCategoryTable) : BUNDLED_MAP_CATEGORIES
+	if (!parsed.success) {
+		return undefined
+	}
+	let byId = byCampusId(parsed.data.data)
+	return typeof byId === 'string' ? undefined : byId
 }
 
 const MAX_FETCH_RETRIES = 3
@@ -97,10 +116,6 @@ export const mapCategoriesOptions = queryOptions({
 	queryFn: fetchMapCategories,
 	staleTime,
 	select: readableMapCategories,
-	// There from the start, since a query that has never run does not run
-	// offline; marked stale so the live copy replaces it when it can.
-	initialData: BUNDLED_MAP_CATEGORIES,
-	initialDataUpdatedAt: 0,
 	retry: (failures, error) =>
 		!(error instanceof UnreadableMapCategoriesError) && failures < MAX_FETCH_RETRIES,
 })

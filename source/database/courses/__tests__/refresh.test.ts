@@ -1,6 +1,8 @@
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 
-import {DEFAULT_URL} from '../../../lib/constants'
+import {campusById} from '../../../campuses'
+
+const STOLAF_URL = campusById('edu.stolaf').api.defaultUrl
 
 const mockSteps: string[] = []
 const mockStored = {etag: 'old' as string | null, failToStore: false}
@@ -87,6 +89,7 @@ type RefreshModule = typeof import('../refresh')
 let refreshCatalog: RefreshModule['refreshCatalog']
 let shouldRetryCatalog: RefreshModule['shouldRetryCatalog']
 let CatalogRejectedError: RefreshModule['CatalogRejectedError']
+let useCampusStore: typeof import('../../../features/campus/store').useCampusStore
 
 /** Every request the refresh made, by its headers. */
 let mockRequests: Array<Record<string, string>> = []
@@ -120,8 +123,15 @@ function publishedEtag(etag: string, {ignoresIfNoneMatch = false} = {}) {
 
 beforeEach(() => {
 	jest.isolateModules(() => {
+		// A fresh copy of the modules, so boot's naming of the manifest's server is redone here.
+		jest
+			.requireActual<typeof import('@frogpond/data-sources')>('@frogpond/data-sources')
+			.setManifestServer('edu.stolaf')
 		;({refreshCatalog, shouldRetryCatalog, CatalogRejectedError} =
 			jest.requireActual<RefreshModule>('../refresh'))
+		;({useCampusStore} = jest.requireActual<typeof import('../../../features/campus/store')>(
+			'../../../features/campus/store',
+		))
 	})
 	jest.clearAllMocks()
 	mockRunner.run.mockImplementation(
@@ -144,7 +154,15 @@ describe('refreshCatalog', () => {
 	test("fetches the catalog from the manifest's address on the server", async () => {
 		publishedEtag('new')
 		await refreshCatalog()
-		expect(mockUrls).toEqual([`${DEFAULT_URL}courses/catalog.db`])
+		expect(mockUrls).toEqual([`${STOLAF_URL}courses/catalog.db`])
+	})
+
+	// Wiki Monkeys has no server, and nothing it does may reach the network.
+	test('asks no server for a catalog on a campus its fixtures answer', async () => {
+		publishedEtag('new')
+		useCampusStore.setState({campus: 'example.college'})
+		await expect(refreshCatalog()).resolves.toEqual({etag: 'old', changed: false})
+		expect(mockUrls).toEqual([])
 	})
 
 	test('downloads nothing when the ETag is unchanged', async () => {

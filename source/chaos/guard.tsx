@@ -4,7 +4,9 @@ import {isChaos} from '@frogpond/launch-arguments'
 import {describeError, NoticeView} from '@frogpond/notice'
 
 import {reportFinding, useChaosFindings} from './findings'
-import {BEACON_ID, BEACON_QUIET, FATAL_BOUNDARY_ID} from './identifiers'
+import {BEACON_ID, BEACON_QUIET, FATAL_BOUNDARY_ID, NETWORK_ID, VOCAB_ID} from './identifiers'
+import {networkLabel, useChaosNetwork} from './network'
+import {useChaosVocab, vocabLabel} from './vocab'
 
 /** The first stopping finding, as a label the monkey reads after every step. */
 function ChaosBeacon(): React.ReactNode {
@@ -16,6 +18,34 @@ function ChaosBeacon(): React.ReactNode {
 			pointerEvents="none"
 			style={styles.beacon}
 			testID={BEACON_ID}
+		/>
+	)
+}
+
+/** Whether a session has the network, as a label the monkey reads to time a stuck spinner. */
+function ChaosNetwork(): React.ReactNode {
+	let offline = useChaosNetwork((state) => state.offline)
+	return (
+		<View
+			accessibilityLabel={networkLabel(offline)}
+			accessible={true}
+			pointerEvents="none"
+			style={styles.beacon}
+			testID={NETWORK_ID}
+		/>
+	)
+}
+
+/** The strings the app has received, as a label a session reads to type something real. */
+function ChaosVocab(): React.ReactNode {
+	let words = useChaosVocab((state) => state.words)
+	return (
+		<View
+			accessibilityLabel={vocabLabel(words)}
+			accessible={true}
+			pointerEvents="none"
+			style={styles.beacon}
+			testID={VOCAB_ID}
 		/>
 	)
 }
@@ -67,6 +97,8 @@ export function ChaosGuardFor(props: {
 		<>
 			<FatalBoundary>{props.children}</FatalBoundary>
 			<ChaosBeacon />
+			<ChaosNetwork />
+			<ChaosVocab />
 		</>
 	)
 }

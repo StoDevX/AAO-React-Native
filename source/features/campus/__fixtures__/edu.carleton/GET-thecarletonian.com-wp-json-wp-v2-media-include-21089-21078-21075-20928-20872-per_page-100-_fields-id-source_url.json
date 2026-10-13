@@ -1,0 +1,27 @@
+{
+	"contentType": "application/json; charset=UTF-8",
+	"json": [
+		{
+			"id": 21089,
+			"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/prairie-pit.jpg"
+		},
+		{
+			"id": 21078,
+			"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/Screenshot-2026-10-02-at-1.26.40-PM.png"
+		},
+		{
+			"id": 21075,
+			"source_url": "https://thecarletonian.com/wp-content/uploads/2026/10/gallery_image.webp"
+		},
+		{
+			"id": 20928,
+			"source_url": "https://thecarletonian.com/wp-content/uploads/2026/05/IMG_9550.jpg"
+		},
+		{
+			"id": 20872,
+			"source_url": "https://thecarletonian.com/wp-content/uploads/2026/05/A746480-1.jpeg"
+		}
+	],
+	"key": "GET https://thecarletonian.com/wp-json/wp/v2/media?include=21089,21078,21075,20928,20872&per_page=100&_fields=id,source_url",
+	"status": 200
+}

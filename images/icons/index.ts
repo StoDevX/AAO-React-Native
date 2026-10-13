@@ -1,4 +1,7 @@
 import type {ImageSourcePropType} from 'react-native'
+import {PRIMARY_ICON} from '../../source/lib/app-identity'
+import carlsPenguinDark from './carls-penguin-dark.png'
+import carlsPenguin from './carls-penguin.png'
 import oldMainRetroDark from './old-main-retro-dark.png'
 import oldMainRetro from './old-main-retro.png'
 import oldMainDark from './old-main-dark.png'
@@ -7,8 +10,6 @@ import windmillSkyDark from './windmill-sky-dark.png'
 import windmillSky from './windmill-sky.png'
 import windmillDawnDark from './windmill-dawn-dark.png'
 import windmillDawn from './windmill-dawn.png'
-import windmillStarsDark from './windmill-stars-dark.png'
-import windmillStars from './windmill-stars.png'
 import windmillGoldenHourDark from './windmill-golden-hour-dark.png'
 import windmillGoldenHour from './windmill-golden-hour.png'
 import windmillDark from './windmill-dark.png'
@@ -16,8 +17,13 @@ import windmill from './windmill.png'
 
 /**
  * Previews of each Icon Composer document in assets/, in its light and dark
- * renditions, rendered by `mise run icons`. The keys are the documents'
- * names, which are also what iOS reports as the alternate icon's name.
+ * renditions, rendered by `mise run icons`, and of each static app icon set.
+ * The keys are the documents' and sets' names, which are also what iOS
+ * reports as the alternate icon's name.
+ *
+ * The CARLS penguin is the CARLS app's own icon, a static set with no
+ * document: its previews are its artwork scaled down under the other
+ * previews' mask, and it had no dark rendition, so both show the same.
  */
 export const appIcons = {
 	windmill: {
@@ -44,16 +50,19 @@ export const appIcons = {
 		light: windmillGoldenHour,
 		dark: windmillGoldenHourDark,
 	},
-	'windmill-stars': {
-		light: windmillStars,
-		dark: windmillStarsDark,
+	'carls-penguin': {
+		light: carlsPenguin,
+		dark: carlsPenguinDark,
 	},
 } satisfies Record<string, {light: ImageSourcePropType; dark: ImageSourcePropType}>
 
 export type AppIconName = keyof typeof appIcons
 
-/** The primary icon, which `ios.icon` names in app.config.ts. */
-export const DEFAULT_ICON: AppIconName = 'windmill'
+/** The primary icon, which `ios.icon` names in app.config.ts. The windmill in a build that names none. */
+export const DEFAULT_ICON: AppIconName =
+	PRIMARY_ICON !== null && Object.hasOwn(appIcons, PRIMARY_ICON)
+		? (PRIMARY_ICON as AppIconName)
+		: 'windmill'
 
 /**
  * Which icon to show for the name `getIcon()` reports: "Default" for the

@@ -160,9 +160,9 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
  * Draws the published header.
  *
  * Must be mounted as a direct child of the stack -- `app/menus/_layout.tsx`
- * for the tabs, or a Carleton page for its own screen. Expo Router keys these
- * options by the nearest route, so the same components inside a tab register
- * against the tab's route and are dropped without a word.
+ * for the tabs. Expo Router keys these options by the nearest route, so the
+ * same components inside a tab register against the tab's route and are
+ * dropped without a word.
  */
 export function MenuHeaderHost(): React.ReactNode {
 	let header = React.useContext(MenuHeaderContext)

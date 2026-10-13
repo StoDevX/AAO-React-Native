@@ -1,0 +1,127 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"cafe": {
+			"type": "object",
+			"properties": {
+				"address": {
+					"type": "string"
+				},
+				"city": {
+					"type": "string"
+				},
+				"days": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"date": {
+								"type": "string"
+							},
+							"dayparts": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"endtime": {
+											"type": "string"
+										},
+										"id": {
+											"type": "string"
+										},
+										"label": {
+											"type": "string"
+										},
+										"message": {
+											"type": "string"
+										},
+										"starttime": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"endtime",
+										"id",
+										"label",
+										"message",
+										"starttime"
+									]
+								}
+							},
+							"message": {
+								"type": "boolean"
+							},
+							"status": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"date",
+							"dayparts",
+							"message",
+							"status"
+						]
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"eod": {
+					"type": "string"
+				},
+				"latitude": {
+					"type": "string"
+				},
+				"longitude": {
+					"type": "string"
+				},
+				"menu_html": {
+					"type": "string"
+				},
+				"menu_type": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"state": {
+					"type": "string"
+				},
+				"timezone": {
+					"type": "string"
+				},
+				"weekly_schedule": {
+					"type": "string"
+				},
+				"zip": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"address",
+				"city",
+				"days",
+				"description",
+				"eod",
+				"latitude",
+				"longitude",
+				"menu_html",
+				"menu_type",
+				"message",
+				"name",
+				"state",
+				"timezone",
+				"weekly_schedule",
+				"zip"
+			]
+		}
+	},
+	"required": [
+		"cafe"
+	]
+}

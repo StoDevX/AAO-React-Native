@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 /**
  * The entry sheet's own navigation stack.
@@ -8,7 +9,7 @@ import {Stack} from 'expo-router'
  * button — a flat sibling route pushed while the sheet is up renders inside it
  * with no way back out.
  */
-export default function DictionaryEntryLayout(): React.ReactNode {
+function DictionaryEntryLayout(): React.ReactNode {
 	return (
 		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
 			{/* A sense opens its sub-senses in this same route. Keyed by the
@@ -19,3 +20,9 @@ export default function DictionaryEntryLayout(): React.ReactNode {
 		</Stack>
 	)
 }
+
+export default requiresSection(
+	'dictionary',
+	{title: 'Dictionary', noun: 'a campus dictionary', systemImage: 'book'},
+	DictionaryEntryLayout,
+)

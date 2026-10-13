@@ -1,0 +1,336 @@
+{
+	"contentType": "application/json; charset=utf-8",
+	"json": {
+		"data": {
+			"carleton": {
+				"groups": [
+					{
+						"categories": [
+							"building"
+						],
+						"gradient": "gray",
+						"icon": "building.2.fill",
+						"label": "Buildings"
+					},
+					{
+						"categories": [
+							"academic"
+						],
+						"gradient": "gold",
+						"icon": "graduationcap.fill",
+						"label": "Academic"
+					},
+					{
+						"categories": [
+							"student-housing",
+							"hall",
+							"house",
+							"employee-housing"
+						],
+						"gradient": "indigo",
+						"icon": "bed.double.fill",
+						"label": "Housing"
+					},
+					{
+						"categories": [
+							"administrative"
+						],
+						"gradient": "blue",
+						"icon": "briefcase.fill",
+						"label": "Offices"
+					},
+					{
+						"categories": [
+							"athletics"
+						],
+						"gradient": "red",
+						"icon": "figure.run",
+						"label": "Athletics"
+					},
+					{
+						"categories": [
+							"outdoors"
+						],
+						"gradient": "green",
+						"icon": "tree.fill",
+						"label": "Outdoors"
+					},
+					{
+						"categories": [
+							"parking"
+						],
+						"gradient": "light-blue",
+						"icon": "parkingsign",
+						"label": "Parking"
+					}
+				],
+				"icons": [
+					{
+						"categories": [
+							"athletics"
+						],
+						"gradient": "red",
+						"icon": "figure.run"
+					},
+					{
+						"categories": [
+							"parking"
+						],
+						"gradient": "light-blue",
+						"icon": "parkingsign"
+					},
+					{
+						"categories": [
+							"student-housing",
+							"employee-housing"
+						],
+						"gradient": "indigo",
+						"icon": "bed.double.fill"
+					},
+					{
+						"categories": [
+							"academic"
+						],
+						"gradient": "gold",
+						"icon": "graduationcap.fill"
+					},
+					{
+						"categories": [
+							"administrative"
+						],
+						"gradient": "blue",
+						"icon": "briefcase.fill"
+					},
+					{
+						"categories": [
+							"outdoors"
+						],
+						"gradient": "green",
+						"icon": "tree.fill"
+					},
+					{
+						"categories": [
+							"building"
+						],
+						"gradient": "gray",
+						"icon": "building.2.fill"
+					}
+				]
+			},
+			"stolaf": {
+				"groups": [
+					{
+						"categories": [
+							"building"
+						],
+						"gradient": "gray",
+						"icon": "building.2.fill",
+						"label": "Buildings"
+					},
+					{
+						"categories": [
+							"academic"
+						],
+						"gradient": "gold",
+						"icon": "graduationcap.fill",
+						"label": "Academic"
+					},
+					{
+						"categories": [
+							"dining"
+						],
+						"gradient": "orange",
+						"icon": "fork.knife",
+						"label": "Dining"
+					},
+					{
+						"categories": [
+							"residence-hall",
+							"housing"
+						],
+						"gradient": "indigo",
+						"icon": "bed.double.fill",
+						"label": "Housing"
+					},
+					{
+						"categories": [
+							"administrative",
+							"admissions"
+						],
+						"gradient": "blue",
+						"icon": "briefcase.fill",
+						"label": "Offices"
+					},
+					{
+						"categories": [
+							"parking",
+							"campus-parking",
+							"accessible-parking",
+							"visitor-parking",
+							"admissions-parking"
+						],
+						"gradient": "light-blue",
+						"icon": "parkingsign",
+						"label": "Parking"
+					},
+					{
+						"categories": [
+							"landmark",
+							"memorial"
+						],
+						"gradient": "tan",
+						"icon": "building.columns.fill",
+						"label": "Landmarks"
+					},
+					{
+						"categories": [
+							"bookstore",
+							"student-center",
+							"visitor-center",
+							"visitor-information",
+							"ev-charging"
+						],
+						"gradient": "purple",
+						"icon": "info.circle.fill",
+						"label": "Services"
+					},
+					{
+						"categories": [
+							"athletics",
+							"field"
+						],
+						"gradient": "red",
+						"icon": "figure.run",
+						"label": "Athletics"
+					},
+					{
+						"categories": [
+							"outdoors"
+						],
+						"gradient": "green",
+						"icon": "tree.fill",
+						"label": "Outdoors"
+					},
+					{
+						"categories": [
+							"wellness-walk"
+						],
+						"gradient": "mint",
+						"icon": "figure.walk",
+						"label": "Wellness Walks"
+					}
+				],
+				"icons": [
+					{
+						"categories": [
+							"wellness-walk"
+						],
+						"gradient": "mint",
+						"icon": "figure.walk"
+					},
+					{
+						"categories": [
+							"trail"
+						],
+						"gradient": "green",
+						"icon": "figure.hiking"
+					},
+					{
+						"categories": [
+							"water"
+						],
+						"gradient": "blue",
+						"icon": "water.waves"
+					},
+					{
+						"categories": [
+							"athletics",
+							"field"
+						],
+						"gradient": "red",
+						"icon": "figure.run"
+					},
+					{
+						"categories": [
+							"accessible-parking"
+						],
+						"gradient": "light-blue",
+						"icon": "figure.roll"
+					},
+					{
+						"categories": [
+							"parking"
+						],
+						"gradient": "light-blue",
+						"icon": "parkingsign"
+					},
+					{
+						"categories": [
+							"dining"
+						],
+						"gradient": "orange",
+						"icon": "fork.knife"
+					},
+					{
+						"categories": [
+							"residence-hall",
+							"housing"
+						],
+						"gradient": "indigo",
+						"icon": "bed.double.fill"
+					},
+					{
+						"categories": [
+							"academic"
+						],
+						"gradient": "gold",
+						"icon": "graduationcap.fill"
+					},
+					{
+						"categories": [
+							"administrative",
+							"admissions"
+						],
+						"gradient": "blue",
+						"icon": "briefcase.fill"
+					},
+					{
+						"categories": [
+							"landmark",
+							"memorial"
+						],
+						"gradient": "tan",
+						"icon": "building.columns.fill"
+					},
+					{
+						"categories": [
+							"bookstore",
+							"student-center",
+							"visitor-center",
+							"visitor-information",
+							"ev-charging"
+						],
+						"gradient": "purple",
+						"icon": "info.circle.fill"
+					},
+					{
+						"categories": [
+							"outdoors"
+						],
+						"gradient": "green",
+						"icon": "tree.fill"
+					},
+					{
+						"categories": [
+							"building"
+						],
+						"gradient": "gray",
+						"icon": "building.2.fill"
+					}
+				]
+			}
+		}
+	},
+	"key": "GET {server:edu.stolaf}/map/categories",
+	"status": 200
+}

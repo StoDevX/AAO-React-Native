@@ -1,4 +1,5 @@
 import {useQuery} from '@tanstack/react-query'
+import {fetchSourceBody} from '@frogpond/data-sources'
 
 import {
 	parseStationNow,
@@ -7,15 +8,15 @@ import {
 	type StationNow,
 } from './now-playing'
 import {useSelectedLogo} from './player-view/use-logo-cycle'
+import {useNowPlayingSource, type SourceAddress} from './sources'
 import type {Station} from './stations'
 import {useRadioStore} from './store'
 
-async function fetchStationNow(url: string): Promise<StationNow> {
-	let response = await fetch(url)
-	if (!response.ok) {
-		throw new Error(`${url} answered ${response.status}`)
-	}
-	return parseStationNow(await response.json())
+/** The station-now feed at `source`, on the server it names when that server proxies the feed. */
+async function fetchStationNow(source: SourceAddress, signal: AbortSignal): Promise<StationNow> {
+	return parseStationNow(
+		await fetchSourceBody(source.href, signal, 'now playing', 'json', source.campus),
+	)
 }
 
 /**
@@ -34,11 +35,14 @@ export function useNowPlaying(
 			state.stationId === station.id &&
 			(state.playState === 'playing' || state.playState === 'starting'),
 	)
-	let url = station.nowPlayingUrl
+	let source = useNowPlayingSource(station.id)
 	let query = useQuery({
-		queryKey: ['radio-now-playing', station.id, url],
-		queryFn: () => fetchStationNow(url ?? ''),
-		enabled: playing && url !== undefined,
+		queryKey: ['radio-now-playing', station.id, source],
+		queryFn: ({signal}) =>
+			source === undefined
+				? Promise.reject(new Error(`${station.id} publishes no song feed`))
+				: fetchStationNow(source, signal),
+		enabled: playing && source !== undefined,
 		refetchInterval: (current) => current.state.data?.refreshMs ?? 60_000,
 		// A song that was on air before a relaunch says nothing now.
 		meta: {persist: false},

@@ -14,10 +14,10 @@
   },
   "devDependencies": {
     "@jest/globals": "30.5.2",
-    "@testing-library/react-native": "14.0.1"
+    "@testing-library/react-native": "14.1.0"
   },
   "peerDependencies": {
-    "moment-timezone": "^0.6.4",
+    "moment-timezone": "^0.6.5",
     "react": "catalog:",
     "react-native": "catalog:"
   }

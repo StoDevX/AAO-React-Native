@@ -5,8 +5,8 @@ import {withDangerousMod, withXcodeProject} from '@expo/config-plugins'
 import type {ConfigPlugin} from '@expo/config-plugins'
 import type {XcodeProject} from 'xcode'
 
-const APP_TARGET = 'AllAboutOlaf'
-const UITEST_TARGET = 'AllAboutOlafUITests'
+const APP_TARGET = 'AllAboutAnything'
+const UITEST_TARGET = 'AllAboutAnythingUITests'
 const BUNDLE_ID = 'hawkrives.All-About-Olaf-UI-Tests'
 
 /** Where the XCUITest sources live, relative to the repository root. */

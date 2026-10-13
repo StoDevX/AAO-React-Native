@@ -1,6 +1,15 @@
 {
-  "originHash" : "e70d3525c8e2819a8b34f22909815dab5c700c25a06c32388f3930f7b3627768",
+  "originHash" : "57834e77e4dbc45088109bc433f338ad1ed16d1147c4f845cf4c9ab5821cf62d",
   "pins" : [
+    {
+      "identity" : "debugswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DebugSwift/DebugSwift.git",
+      "state" : {
+        "revision" : "b85fd86581bc1b67710be82249d8aac2ef61b2f5",
+        "version" : "1.19.0"
+      }
+    },
     {
       "identity" : "maplibre-gl-native-distribution",
       "kind" : "remoteSourceControl",

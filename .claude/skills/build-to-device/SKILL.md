@@ -15,7 +15,7 @@ mise run device "<DEVICE NAME>"
 ```
 
 The name is what `xcrun devicectl list devices` prints, quoted. The task chains
-`pnpm:install:frozen`, `prebuild` under `APP_VARIANT=development`, `build:ios`,
+`pnpm:install:frozen`, `prebuild` and `bundle:ios` under `APP_VARIANT=aao-dev`, `build:ios`,
 `bundle:ios`, `embed-jsbundle:ios` and `device:deploy`, each cached on its own
 `sources`. It transfers an app to someone's phone, so **ask before running it**,
 even when a plan already calls for it.
@@ -30,9 +30,9 @@ fails, not to reassemble the sequence by hand.
 
 ## The build signs itself
 
-`APP_VARIANT=development` builds `NFMTHAZVS9.com.drewvolz.stolaf.dev`, which
-installs alongside whatever the person already has from the App Store; the
-production identity would replace it. `build:ios` signs against whichever Apple
+`APP_VARIANT=aao-dev` builds `NFMTHAZVS9.com.drewvolz.stolaf.dev`, which
+installs alongside whatever the person already has from the App Store; `aao`
+would replace it. `build:ios` signs against whichever Apple
 ID is signed into Xcode, so a paired phone and a logged-in Xcode are the whole
 prerequisite.
 
@@ -92,8 +92,8 @@ In a sysdiagnose, one report per launch attempt:
 ```bash
 xcrun devicectl device sysdiagnose --device <UDID> --destination /tmp/sysdiag
 # ~190 MB; list first, extract only what you need
-tar -tzf /tmp/sysdiag/*.tar.gz | grep AllAboutOlaf
-tar -xzf /tmp/sysdiag/*.tar.gz '<path>/crashes_and_spins/Retired/AllAboutOlaf-*.ips'
+tar -tzf /tmp/sysdiag/*.tar.gz | grep AllAboutAnything
+tar -xzf /tmp/sysdiag/*.tar.gz '<path>/crashes_and_spins/Retired/AllAboutAnything-*.ips'
 ```
 
 An `.ips` is JSON with a one-line header. `termination`, `exception` and the

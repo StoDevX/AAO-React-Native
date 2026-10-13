@@ -1,0 +1,205 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 2 samples; regenerate rather than edit.",
+	"type": "object",
+	"properties": {
+		"data": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"abbreviation": {
+						"type": "string"
+					},
+					"breakSchedule": {
+						"type": "object",
+						"properties": {
+							"easter": {
+								"type": "array",
+								"items": {}
+							},
+							"fall": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "object",
+										"properties": {
+											"exceptions": {
+												"type": "array",
+												"items": {}
+											},
+											"schedule": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"hours": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"days": {
+																		"type": "array",
+																		"items": {
+																			"type": "string"
+																		}
+																	},
+																	"from": {
+																		"type": "string"
+																	},
+																	"to": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"days",
+																	"from",
+																	"to"
+																]
+															}
+														},
+														"title": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"hours",
+														"title"
+													]
+												}
+											}
+										},
+										"required": [
+											"exceptions",
+											"schedule"
+										]
+									},
+									{
+										"type": "array",
+										"items": {}
+									}
+								]
+							},
+							"interim": {
+								"type": "array",
+								"items": {}
+							},
+							"spring": {
+								"type": "array",
+								"items": {}
+							},
+							"summer": {
+								"type": "array",
+								"items": {}
+							},
+							"thanksgiving": {
+								"type": "array",
+								"items": {}
+							},
+							"winter": {
+								"type": "array",
+								"items": {}
+							}
+						}
+					},
+					"building": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"kind": {
+						"type": "string"
+					},
+					"links": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"title": {
+									"type": "string"
+								},
+								"url": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"title",
+								"url"
+							]
+						}
+					},
+					"listed": {
+						"type": "boolean"
+					},
+					"name": {
+						"type": "string"
+					},
+					"schedule": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"closedForChapelTime": {
+									"type": "boolean"
+								},
+								"hours": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"days": {
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											},
+											"from": {
+												"type": "string"
+											},
+											"to": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"days",
+											"from",
+											"to"
+										]
+									}
+								},
+								"notes": {
+									"type": "string"
+								},
+								"title": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"hours",
+								"title"
+							]
+						}
+					},
+					"subtitle": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"breakSchedule",
+					"category",
+					"name",
+					"schedule"
+				]
+			}
+		}
+	},
+	"required": [
+		"data"
+	]
+}

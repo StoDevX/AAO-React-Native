@@ -36,7 +36,7 @@ jest.mock('expo-router', () => {
 		useFocusEffect,
 		useRouter: () => ({navigate: mockNavigate}),
 		useNavigation: () => ({goBack: jest.fn(), dispatch: jest.fn()}),
-		useLocalSearchParams: () => ({name: 'The Cage', campus: 'stolaf'}),
+		useLocalSearchParams: () => ({name: 'The Cage', campus: 'edu.stolaf'}),
 	}
 })
 jest.mock('../../../../components/send-email')
@@ -78,9 +78,10 @@ afterEach(() => {
 })
 
 async function renderReport() {
-	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+	// Fresh for good, so the seeded venues are what the screen reads rather than a refetch.
+	let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
 	trackedQueryClients.push(client)
-	client.setQueryData(keys.all('stolaf'), [cage, library])
+	client.setQueryData(keys.all('edu.stolaf'), [cage, library])
 
 	let view = await render(
 		<QueryClientProvider client={client}>

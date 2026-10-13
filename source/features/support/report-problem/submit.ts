@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/react-native'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
-import {IS_PRODUCTION} from '@frogpond/constants'
 
-import {SUPPORT_EMAIL} from '../../../lib/constants'
+import {IS_REPORTING_BUILD} from '../../../init/reporting-build'
+import {currentCampus} from '../../campus/store'
 import {useTelemetryStore} from '../../telemetry/store'
 
 /** An image to send alongside a report, already read into memory. */
@@ -27,7 +27,7 @@ type SubmitReportArgs = {
 export type SubmitResult = 'sent' | 'disabled' | 'opted-out'
 
 export function submitReport(args: SubmitReportArgs): SubmitResult {
-	if (!IS_PRODUCTION) {
+	if (!IS_REPORTING_BUILD) {
 		return 'disabled'
 	}
 	// Sentry is closed once sharing is off, so a report sent now would vanish.
@@ -80,9 +80,10 @@ export function reportEmail({message, name, email}: SubmitReportArgs): {
 	body: string
 } {
 	let contact = [name && `Name: ${name}`, email && `Email: ${email}`].filter(Boolean).join('\n')
+	let {appName, supportEmail} = currentCampus().branding
 	return {
-		to: [SUPPORT_EMAIL],
-		subject: 'All About Olaf problem report',
+		to: [supportEmail],
+		subject: `${appName} problem report`,
 		body: contact ? `${message}\n\n${contact}` : message,
 	}
 }

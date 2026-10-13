@@ -95,6 +95,37 @@ describe('DisclosureRow badge', () => {
 	})
 })
 
+describe('DisclosureRow tag', () => {
+	it('draws its tag', async () => {
+		await render(
+			<DisclosureRow onPress={jest.fn()} tag={{text: 'DELETE', color: 'red'}} title="/_cache" />,
+		)
+		expect(screen.getByText('DELETE')).toBeOnTheScreen()
+	})
+
+	it('carries its tag in its spoken label', async () => {
+		await render(
+			<DisclosureRow onPress={jest.fn()} tag={{text: 'DELETE', color: 'red'}} title="/_cache" />,
+		)
+		expect(screen.getByLabelText('/_cache, DELETE')).toBeOnTheScreen()
+	})
+
+	it('draws its tag beside the title at a standard text size', async () => {
+		await render(
+			<DisclosureRow onPress={jest.fn()} tag={{text: 'GET', color: 'blue'}} title="/ping" />,
+		)
+		expect(within(titleStackOf('/ping')).queryByText('GET')).toBeNull()
+	})
+
+	it('draws its tag under the title at an accessibility text size', async () => {
+		mockFontScale.mockReturnValue(3.571)
+		await render(
+			<DisclosureRow onPress={jest.fn()} tag={{text: 'GET', color: 'blue'}} title="/ping" />,
+		)
+		expect(within(titleStackOf('/ping')).getByText('GET')).toBeOnTheScreen()
+	})
+})
+
 describe('DisclosureRow leading image', () => {
 	it('shows a leading symbol', async () => {
 		await render(

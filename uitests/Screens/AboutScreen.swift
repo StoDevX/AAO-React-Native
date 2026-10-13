@@ -1,16 +1,16 @@
 import XCTest
 
-/// Home's ⋯ menu → About: the version, the app's story as cards that scroll
+/// About: the version, the app's story as cards that scroll
 /// sideways, its credits, and the Privacy and Legal pages.
 struct AboutScreen: Screen {
 	let app: XCUIApplication
 
 	var host: XCUIElement { app.element(matching: TestIdentifiers.About.screen) }
 
+	/// Open About by its route.
 	@discardableResult
-	func checkOpen() -> Self {
-		XCTAssertTrue(host.waitForExistence(timeout: 10), "About should open")
-		return self
+	func navigate() -> Self {
+		open(route: "/about", mountedWhen: host)
 	}
 
 	/// A text in the screen, found by its label: the host's identifier reaches
@@ -26,17 +26,34 @@ struct AboutScreen: Screen {
 			.matching(NSPredicate(format: "label == %@", TestIdentifiers.About.pageDots)).firstMatch
 	}
 
-	/// A row, found by its label.
-	func row(_ title: String) -> XCUIElement {
-		host.buttons[title].firstMatch
+	/// The version row. LabeledContent reads its label and value as one
+	/// element, so it is matched by its start.
+	var version: XCUIElement {
+		app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.About.version)).firstMatch
+	}
+
+	/// Open `page`'s row, check it opens a screen of its own, and come back.
+	@discardableResult
+	func openPageAndComeBack(_ page: String) -> Self {
+		let row = host.buttons[page].firstMatch
+		reveal(row)
+		tap(row, until: app.navigationBars[page], named: "About's \(page) row")
+		goBack()
+		XCTAssertTrue(host.waitUntilExists(timeout: 10), "Back should return to About")
+		return self
 	}
 
 	/// Scroll the screen until `element` is on it.
 	@discardableResult
 	func reveal(_ element: XCUIElement) -> Self {
 		// The screen draws a moment after it opens; swiping before then scrolls
-		// past rows that are about to appear.
-		_ = element.waitForExistence(timeout: 10)
+		// past rows that are about to appear. Wait for the screen's first text,
+		// not for `element`: a row further down is built only once it is
+		// scrolled to, so waiting for it spends the whole timeout.
+		if !element.exists {
+			_ = host.staticTexts.firstMatch.waitUntilExists(timeout: 10)
+		}
 		// Enough swipes for the whole page at the largest text sizes.
 		for _ in 0..<20 {
 			if element.exists && element.isHittable { break }
@@ -59,10 +76,8 @@ struct AboutScreen: Screen {
 		let start = card.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
 		let end = card.coordinate(withNormalizedOffset: CGVector(dx: -0.2, dy: 0.5))
 		start.press(forDuration: 0.1, thenDragTo: end)
-		let arrived = XCTNSPredicateExpectation(
-			predicate: NSPredicate { _, _ in isOnScreen(next) }, object: nil)
-		XCTAssertEqual(
-			XCTWaiter().wait(for: [arrived], timeout: 10), .completed,
+		XCTAssertTrue(
+			waitUntil("Waiting 10.0s for \(next) to come on screen", timeout: 10) { isOnScreen(next) },
 			"Swiping should bring \(next.label) onto the screen")
 		return self
 	}

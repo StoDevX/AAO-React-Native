@@ -1,0 +1,134 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$comment": "Written by mise run update-fixture-schemas from 1 samples; regenerate rather than edit.",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"coverage": {
+				"type": "object",
+				"properties": {}
+			},
+			"date": {
+				"type": "string"
+			},
+			"dateFormatted": {
+				"type": "string"
+			},
+			"date_end_utc": {
+				"type": "string"
+			},
+			"date_utc": {
+				"type": "string"
+			},
+			"hometeam": {
+				"type": "string"
+			},
+			"hometeam_logo": {
+				"type": "string"
+			},
+			"id": {
+				"type": "string"
+			},
+			"ip_time": {
+				"type": "string"
+			},
+			"links": {
+				"type": "object",
+				"properties": {}
+			},
+			"location": {
+				"type": "object",
+				"properties": {
+					"facility": {
+						"type": "string"
+					},
+					"homeAway": {
+						"type": "string"
+					},
+					"location": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"facility",
+					"homeAway",
+					"location"
+				]
+			},
+			"opponent": {
+				"type": "string"
+			},
+			"opponent_logo": {
+				"type": "string"
+			},
+			"opponent_score": {
+				"type": "string"
+			},
+			"postscore_info": {
+				"type": "string"
+			},
+			"prescore_info": {
+				"type": "string"
+			},
+			"result": {
+				"type": "string"
+			},
+			"sport": {
+				"type": "string"
+			},
+			"sport_abbrev": {
+				"type": "string"
+			},
+			"status": {
+				"type": "object",
+				"properties": {
+					"indicator": {
+						"type": "string"
+					},
+					"value": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"indicator",
+					"value"
+				]
+			},
+			"team_score": {
+				"type": "string"
+			},
+			"time": {
+				"type": "string"
+			},
+			"timestamp": {
+				"type": "number"
+			}
+		},
+		"required": [
+			"coverage",
+			"date",
+			"dateFormatted",
+			"date_end_utc",
+			"date_utc",
+			"hometeam",
+			"hometeam_logo",
+			"id",
+			"ip_time",
+			"links",
+			"location",
+			"opponent",
+			"opponent_logo",
+			"opponent_score",
+			"postscore_info",
+			"prescore_info",
+			"result",
+			"sport",
+			"sport_abbrev",
+			"status",
+			"team_score",
+			"time",
+			"timestamp"
+		]
+	}
+}

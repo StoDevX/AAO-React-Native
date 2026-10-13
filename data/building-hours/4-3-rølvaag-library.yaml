@@ -14,11 +14,8 @@ schedule:
       - {days: [Sa], from: '9:00am', to: '9:00pm'}
       - {days: [Su], from: '12:00pm', to: '12:00am'}
 
+# https://wp.stolaf.edu/current-students/breaks/ (2026–27, checked 2026-10-04)
+# Library Fall Break listing: closed Saturday October 10–Tuesday October 13, 2026.
+# Only the Fall Break closure is enrolled; other breaks remain unverified here.
 breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer: []
+  fall: library-fall-closed

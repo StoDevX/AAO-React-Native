@@ -1,0 +1,19 @@
+contentType: application/json; charset=utf-8
+status: 200
+key: GET {server:example.college}/faqs
+json:
+  text: |-
+    # Support
+    Say hello to the troop at [help@college.example](mailto:help@college.example).
+  faqs:
+    - answer: Email [help@college.example](mailto:help@college.example).
+      bannerText: Email [help@college.example](mailto:help@college.example).
+      bannerTitle: Say hello to the troop
+      dismissable: false
+      icon: envelope.circle
+      id: support
+      question: Say hello to the troop
+      severity: alert
+      updatedAt: '2025-12-14T00:00:00Z'
+      targets:
+        - Faq

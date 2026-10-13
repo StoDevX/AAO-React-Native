@@ -1,0 +1,175 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/posts/60149?_embed=true
+json:
+  author: 2
+  comment_status: closed
+  date: '2026-03-27T13:00:00'
+  date_gmt: '2026-03-27T18:00:00'
+  featured_media: 0
+  format: standard
+  id: 60149
+  link: https://echo.college.example/60149/variety/horoscopes/horoscopes-week-2/
+  modified: '2026-03-27T13:00:00'
+  modified_gmt: '2026-03-27T18:00:00'
+  ping_status: closed
+  slug: horoscopes-week-2
+  status: publish
+  sticky: false
+  template: ''
+  type: post
+  _embedded:
+    author:
+      - code: rest_no_route
+        message: No route was found matching the URL and request method.
+        data:
+          status: 404
+    wp:term:
+      - - id: 62
+          link: https://echo.college.example/category/variety/horoscopes/
+          name: Horoscopes
+          slug: horoscopes
+          taxonomy: category
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/categories
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/categories/62
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/posts?categories=62
+            up:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/categories/6
+        - id: 6
+          link: https://echo.college.example/category/variety/
+          name: Variety
+          slug: variety
+          taxonomy: category
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/categories
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/categories/6
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/posts?categories=6
+      - []
+      - - id: 505
+          link: https://echo.college.example/staff_name/rafael-ortiz/
+          name: Rafael Ortiz
+          slug: rafael-ortiz
+          taxonomy: staff_name
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_name
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_name/505
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=505
+              - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=505
+              - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=505
+  _links:
+    about:
+      - href: https://echo.college.example/wp-json/wp/v2/types/post
+    author:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/users/2
+    collection:
+      - href: https://echo.college.example/wp-json/wp/v2/posts
+    curies:
+      - href: https://api.w.org/{rel}
+        name: wp
+        templated: true
+    predecessor-version:
+      - href: https://echo.college.example/wp-json/wp/v2/posts/60149/revisions/60150
+        id: 60150
+    replies:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/comments?post=60149
+    self:
+      - href: https://echo.college.example/wp-json/wp/v2/posts/60149
+        targetHints:
+          allow:
+            - GET
+    version-history:
+      - count: 1
+        href: https://echo.college.example/wp-json/wp/v2/posts/60149/revisions
+    wp:attachment:
+      - href: https://echo.college.example/wp-json/wp/v2/media?parent=60149
+    wp:term:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/categories?post=60149
+        taxonomy: category
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/tags?post=60149
+        taxonomy: post_tag
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60149
+        taxonomy: staff_name
+  categories:
+    - 62
+    - 6
+  class_list:
+    - post-60149
+    - post
+    - type-post
+    - status-publish
+    - format-standard
+    - hentry
+    - category-horoscopes
+    - category-variety
+  content:
+    protected: false
+    rendered: |-
+      <p>The stars over the valley are clear this week. Here is what they say.</p>
+      <p><strong>Aries:</strong> A friend will drag you to the pond on Friday. Go: the ice is thicker than your excuses. You will find a glove that is not yours. Return it; the owner has been cold for days.</p>
+      <p><strong>Taurus:</strong> Your laundry has been waiting since Tuesday. Today it wins, and you will thank it. Volunteer for the ski patrol shift nobody wants. The sunrise from the top is worth it.</p>
+      <p><strong>Gemini:</strong> The commons runs out of cocoa at nine. Arrive at eight fifty-five with a plan and a mug. Write the email you are putting off. It is three sentences long and you know all three.</p>
+      <p><strong>Cancer:</strong> A quiet week for you, which is a gift. Spend it on the book you keep carrying around. A long walk up the ridge clears the fog in your head better than another coffee will.</p>
+      <p><strong>Leo:</strong> Wax your skis, or at least think about it. The valley rewards anyone who prepares a little. The monkeys in the library mural are watching you study. Make them proud this week.</p>
+      <p><strong>Virgo:</strong> You will find a glove that is not yours. Return it; the owner has been cold for days. The first chair is yours if you set two alarms. Bring a thermos for whoever rides up with you.</p>
+      <p><strong>Libra:</strong> Volunteer for the ski patrol shift nobody wants. The sunrise from the top is worth it. Someone in your seminar has the notes you missed. Ask before the snow piles up on the path.</p>
+      <p><strong>Scorpio:</strong> Write the email you are putting off. It is three sentences long and you know all three. A friend will drag you to the pond on Friday. Go: the ice is thicker than your excuses.</p>
+      <p><strong>Sagittarius:</strong> A long walk up the ridge clears the fog in your head better than another coffee will. Your laundry has been waiting since Tuesday. Today it wins, and you will thank it.</p>
+      <p><strong>Capricorn:</strong> The monkeys in the library mural are watching you study. Make them proud this week. The commons runs out of cocoa at nine. Arrive at eight fifty-five with a plan and a mug.</p>
+      <p><strong>Aquarius:</strong> The first chair is yours if you set two alarms. Bring a thermos for whoever rides up with you. A quiet week for you, which is a gift. Spend it on the book you keep carrying around.</p>
+      <p><strong>Pisces:</strong> Someone in your seminar has the notes you missed. Ask before the snow piles up on the path. Wax your skis, or at least think about it. The valley rewards anyone who prepares a little.</p>
+  excerpt:
+    protected: false
+    rendered: |
+      <p>The stars over the valley are clear this week. Here is what they say.</p>
+  guid:
+    rendered: https://echo.college.example/?p=60149
+  meta:
+    footnotes: ''
+  staff_name:
+    - 505
+  tags: []
+  title:
+    rendered: 'Horoscopes: Week 2'

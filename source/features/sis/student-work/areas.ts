@@ -20,8 +20,24 @@ export type StudentWorkArea = {
 	units: string[]
 }
 
+/// The unit ccc-server gives a posting whose unit no area lists, or that has
+/// none; the area listing it collects every posting the rest do not.
+const UNLISTED_UNIT = 'other'
+
+function collectsUnlisted(entry: AreaEntry): boolean {
+	return entry.units.includes(UNLISTED_UNIT)
+}
+
+/// The published areas in the order every screen draws and offers them: by
+/// name, with the one that collects unlisted postings last.
 export function toAreas(entries: AreaEntry[]): StudentWorkArea[] {
-	return entries.map((entry) => ({
+	// A copy and `sort`, not `toSorted`, which Hermes lacks.
+	let ordered = [...entries].sort(
+		(a, b) =>
+			Number(collectsUnlisted(a)) - Number(collectsUnlisted(b)) || a.name.localeCompare(b.name),
+	)
+
+	return ordered.map((entry) => ({
 		...entry,
 		// The schema checks only that this is a string; see org-categories.yaml.
 		icon: entry.icon as SFSymbol,

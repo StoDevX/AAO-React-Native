@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
+import {requiresSection} from '../../../source/features/campus/section-gate'
 
 /**
  * The line sheet's own navigation stack.
@@ -8,6 +9,12 @@ import {Stack} from 'expo-router'
  * button — a flat sibling route pushed while the sheet is up renders inside it
  * with no way back out.
  */
-export default function TransitLineLayout(): React.ReactNode {
+function TransitLineLayout(): React.ReactNode {
 	return <Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}} />
 }
+
+export default requiresSection(
+	'transit',
+	{title: 'Transit', noun: 'transit', systemImage: 'bus'},
+	TransitLineLayout,
+)

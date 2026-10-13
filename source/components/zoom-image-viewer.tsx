@@ -25,9 +25,8 @@ import {DoubleTapView, type DoubleTapPoint} from '@frogpond/double-tap'
 import {DragToDismissView} from '@frogpond/drag-to-dismiss'
 import {shareImage} from './lib/share-image'
 import {doubleTapZoom} from './lib/zoom'
-
-/** Apple's smallest comfortable tap target, in points. */
-const TAP_TARGET = 44
+import {ViewerCaption} from './viewer-caption'
+import {TAP_TARGET} from '../lib/tap-target'
 
 /** A button's symbol over the picture: white on a dark circle, filling the tap target. */
 const BUTTON_ICON = [
@@ -39,8 +38,11 @@ const BUTTON_ICON = [
 ]
 
 type Props = {
-	/** The picture, or null while there is none to show; `placeholder` stands in for it. */
-	image: {uri: string; accessibilityLabel: string; testID?: string} | null
+	/**
+	 * The picture, or null while there is none to show; `placeholder` stands in for it. Its
+	 * `caption`, when it has words, is drawn over the bottom of the picture.
+	 */
+	image: {uri: string; accessibilityLabel: string; testID?: string; caption?: string} | null
 	placeholder?: React.ReactNode
 	closeTestID: string
 	onClose: () => void
@@ -50,10 +52,12 @@ type Props = {
 
 /**
  * A picture on its own, on black, to pinch or double-tap to zoom, with a close
- * button that stays whether or not there is a picture, and a share button when there is one.
+ * button that stays whether or not there is a picture, a share button when there is one, and
+ * the picture's caption when it has one.
  * At its fitted size, a drag up or down carries the picture away and closes the viewer,
  * fading the black to show the screen beneath, so the viewer must be presented over that
- * screen. The buttons step aside for the drag, as Photos' controls do.
+ * screen. The buttons and the caption step aside for the drag, and a tap on the picture puts
+ * them away until the next, as Photos' controls do.
  *
  * The zooming view is a React Native `ScrollView`, because `@expo/ui` has no view that
  * zooms; the buttons over it are SwiftUI.
@@ -69,6 +73,10 @@ export function ZoomImageViewer({
 	let insets = useSafeAreaInsets()
 
 	let [dragging, setDragging] = React.useState(false)
+	// A tap on the picture puts the buttons and caption away, and another brings them back.
+	let [controlsHidden, setControlsHidden] = React.useState(false)
+	let onSingleTap = React.useCallback(() => setControlsHidden((hidden) => !hidden), [])
+	let controlsShown = !dragging && !controlsHidden
 
 	let scrollView = React.useRef<ScrollView>(null)
 	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events,
@@ -108,7 +116,7 @@ export function ZoomImageViewer({
 				showsVerticalScrollIndicator={false}
 				style={styles.fill}
 			>
-				<DoubleTapView onDoubleTap={onDoubleTap}>
+				<DoubleTapView onDoubleTap={onDoubleTap} onSingleTap={onSingleTap}>
 					<RNImage
 						accessibilityIgnoresInvertColors={true}
 						accessibilityLabel={image.accessibilityLabel}
@@ -137,7 +145,7 @@ export function ZoomImageViewer({
 			>
 				{content}
 			</DragToDismissView>
-			{dragging ? null : (
+			{controlsShown ? (
 				<View
 					pointerEvents="box-none"
 					style={[
@@ -174,7 +182,27 @@ export function ZoomImageViewer({
 						</Host>
 					</View>
 				</View>
-			)}
+			) : null}
+			{image?.caption ? (
+				// Kept mounted while it is put away, so an opened caption stays open, at the place it
+				// was read to, when it comes back.
+				<View
+					accessibilityElementsHidden={!controlsShown}
+					importantForAccessibility={controlsShown ? 'auto' : 'no-hide-descendants'}
+					pointerEvents={controlsShown ? 'box-none' : 'none'}
+					style={[
+						styles.captionOverlay,
+						{
+							paddingBottom: insets.bottom + 8,
+							paddingLeft: insets.left + 12,
+							paddingRight: insets.right + 12,
+						},
+						controlsShown ? null : styles.putAway,
+					]}
+				>
+					<ViewerCaption text={image.caption} />
+				</View>
+			) : null}
 		</View>
 	)
 }
@@ -184,6 +212,8 @@ const styles = StyleSheet.create({
 	backdrop: {flex: 1, backgroundColor: 'black'},
 	fill: {flex: 1},
 	overlay: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0},
+	captionOverlay: {position: 'absolute', right: 0, bottom: 0, left: 0},
+	putAway: {opacity: 0},
 	buttonRow: {flexDirection: 'row', justifyContent: 'flex-end', padding: 8},
 	buttonHost: {width: TAP_TARGET, height: TAP_TARGET},
 	// Share sits in the corner opposite Close, so a tap meant for one never lands on the other.

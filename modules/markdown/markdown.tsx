@@ -50,8 +50,8 @@ const baseMarkdownStyle: MarkdownStyle = {
 }
 
 // `react-native-enriched-markdown`'s parser pairs `$...$` as a math node by
-// default, even though the native math renderer is compiled out via the
-// `enableMath: false` Expo config plugin. With the renderer gone but the
+// default, even though the native math renderer is compiled out via
+// `enableMath: false` in package.json's `enriched-markdown` block. With the renderer gone but the
 // parser still matching, text between `$` characters silently disappears
 // instead of rendering literally. Disabling `latexMath` keeps `$` as a plain
 // character, matching the renderer's compiled-out math support.

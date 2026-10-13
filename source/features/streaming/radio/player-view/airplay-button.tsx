@@ -4,12 +4,10 @@ import {AirPlayButtonView} from '@frogpond/audio-route'
 
 import {LABEL_MAX_SCALE} from './action-button'
 import {palette} from './palette'
+import {TAP_TARGET} from '../../../../lib/tap-target'
 
 /** The height the other actions give their icon, which the picker's icon lines up with. */
 const ICON_BOX = 24
-
-/** A finger's height, which the picker is as tall as so the whole of it can be tapped. */
-const TAP_TARGET = 44
 
 /**
  * AirPlay in the bottom row, as the other actions are: the system's picker for

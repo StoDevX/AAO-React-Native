@@ -1,5 +1,6 @@
 import {z} from 'zod'
 
+import {isCampusId} from '../../campuses'
 import {parseConditionInput} from './conditions'
 import type {ConditionNode, FaqSeverity, RepeatRule} from './types'
 
@@ -12,6 +13,8 @@ const severitySchema = z
 
 const platformSchema = z.union([z.literal('ios'), z.literal('android'), z.literal('native')])
 
+const campusSchema = z.string().refine(isCampusId, {message: 'Not a campus id'})
+
 const dateTimeString = z
 	.string()
 	.trim()
@@ -21,6 +24,8 @@ const conditionRuleSchema = z
 	.object({
 		platform: platformSchema.optional(),
 		platforms: z.array(platformSchema).nonempty().optional(),
+		campus: campusSchema.optional(),
+		campuses: z.array(campusSchema).nonempty().optional(),
 		versionRange: optionalTrimmedString,
 		startDate: dateTimeString.optional(),
 		endDate: dateTimeString.optional(),
@@ -30,6 +35,8 @@ const conditionRuleSchema = z
 			Boolean(
 				value.platform ??
 				value.platforms?.length ??
+				value.campus ??
+				value.campuses?.length ??
 				value.versionRange ??
 				value.startDate ??
 				value.endDate,

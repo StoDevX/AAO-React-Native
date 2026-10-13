@@ -8,6 +8,11 @@ import XCTest
 class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
+	/// The campus this test runs on, serving its fixtures: Wiki Monkeys unless
+	/// the class names another. Every test names a campus; St. Olaf and
+	/// Carleton run only their smoke tests (`CampusSmokeTests.swift`).
+	class var campus: Campus? { .example }
+
 	/// Synchronous on purpose, as every test method here must be. With
 	/// `continueAfterFailure` false, a failure in an async `setUp` or an async
 	/// test ends the test runner process, and `-retry-tests-on-failure` never
@@ -24,14 +29,41 @@ class UITestCaseUnbooted: XCTestCase {
 		// Reset persisted state for every test. Without this, UserDefaults and
 		// AsyncStorage carry over between tests in a run, so a test's result can
 		// depend on what ran before it -- the long press that turns dev mode on
-		// in testEveryTileOpensItsScreen turns it off if it is already on, and
-		// failed only in long runs.
+		// turns it off if it is already on, which once failed a test only in long
+		// runs.
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		appendJsLocationIfProvided()
 		appendRecordFixturesIfAsked()
+		appendResetChannel()
+		appendCampus()
+		// A previous test's missing requests are not this test's.
+		MissingFixtures.clear()
+	}
+
+	/// Names this test's campus, when it has one. A reset may change it in
+	/// place; see `UITestResetChannel.withoutCampus`.
+	func appendCampus() {
+		if let campus = Self.campus {
+			app.launchArguments.append(contentsOf: [TestIdentifiers.LaunchArguments.campus, campus.rawValue])
+		}
+	}
+
+	/// Adds the requests the app had no fixture for to any failure, so a test
+	/// that timed out waiting on an error screen says what to write.
+	override func record(_ issue: XCTIssue) {
+		var issue = issue
+		if let missing = MissingFixtures.message() {
+			issue.compactDescription += "\n\(missing)"
+		}
+		super.record(issue)
 	}
 
 	override func tearDownWithError() throws {
+		// Strict: a test that passed while a request went unanswered fails.
+		if (testRun?.failureCount ?? 0) == 0, let missing = MissingFixtures.message() {
+			XCTFail(missing)
+		}
+		MissingFixtures.clear()
 		if (testRun?.failureCount ?? 0) > 0 {
 			captureFailureScreen()
 		}
@@ -54,12 +86,24 @@ class UITestCaseUnbooted: XCTestCase {
 		add(attachment)
 	}
 
+	/// Whether this run records what the app fetches: the test runner was started
+	/// with `TEST_RUNNER_AAO_RECORD_FIXTURES=1`, as the fixture tasks do.
+	var isRecordingFixtures: Bool {
+		ProcessInfo.processInfo.environment["AAO_RECORD_FIXTURES"] == "1"
+	}
+
 	/// Has the app record what it fetches, when the test runner was started with
-	/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1` -- as `mise run update-mess-fixtures` does.
+	/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1` -- as `mise run update-campus-fixtures` does.
 	func appendRecordFixturesIfAsked() {
-		if ProcessInfo.processInfo.environment["AAO_RECORD_FIXTURES"] == "1" {
+		if isRecordingFixtures {
 			app.launchArguments.append(TestIdentifiers.LaunchArguments.recordFixtures)
 		}
+	}
+
+	/// Gives the app the channel `open(route:mountedWhen:)` resets it through
+	/// between tests, in place of a relaunch. See `ResetChannel`.
+	func appendResetChannel() {
+		app.launchArguments.append(contentsOf: [ResetChannel.flag, ResetChannel.directory])
 	}
 
 	/// Points the app at a Metro other than the default localhost:8081, when
@@ -159,6 +203,8 @@ class UITestCaseUnbooted: XCTestCase {
 		app.launchArguments = [TestIdentifiers.LaunchArguments.uiTesting] + arguments
 		appendJsLocationIfProvided()
 		appendRecordFixturesIfAsked()
+		appendResetChannel()
+		appendCampus()
 	}
 }
 
@@ -168,5 +214,113 @@ class UITestCase: UITestCaseUnbooted {
 	override func setUpWithError() throws {
 		try super.setUpWithError()
 		app.launch()
+	}
+}
+
+/// The requests the app had no fixture for in this test, which it lists in the
+/// reset channel's directory (`UITestResetChannel.reportMissingFixture`).
+enum MissingFixtures {
+	static var file: URL {
+		URL(fileURLWithPath: ResetChannel.directory, isDirectory: true)
+			.appendingPathComponent("missing-fixtures.jsonl")
+	}
+
+	private struct Entry: Decodable, Hashable {
+		let campus: String
+		let key: String
+	}
+
+	/// "Missing fixtures for <campus>: <keys>", a line per campus, or nil when none are missing.
+	static func message() -> String? {
+		guard let text = try? String(contentsOf: file, encoding: .utf8) else { return nil }
+		let entries = text.split(separator: "\n").compactMap {
+			try? JSONDecoder().decode(Entry.self, from: Data($0.utf8))
+		}
+		guard !entries.isEmpty else { return nil }
+		let byCampus = Dictionary(grouping: Set(entries), by: \.campus)
+		return byCampus.keys.sorted().map { campus in
+			let keys = byCampus[campus, default: []].map(\.key).sorted().joined(separator: ", ")
+			return "Missing fixtures for \(campus): \(keys)"
+		}.joined(separator: "\n")
+	}
+
+	static func clear() {
+		try? FileManager.default.removeItem(at: file)
+	}
+}
+
+/// Resets a running app and opens a route in it, in place of the cold launch
+/// `XCUIApplication.open(_:)` makes. The app's half is
+/// `modules/launch-arguments/ios/UITestResetChannel.swift`.
+///
+/// The runner writes `request.json` into a directory both processes can reach
+/// -- the simulator does not sandbox its apps -- and posts a Darwin
+/// notification named after it. The app answers in a file named after the
+/// request: `ok` once every screen has unmounted, AsyncStorage, the database
+/// and UserDefaults are clear, and its JavaScript is about to reload; `refused`
+/// when its launch arguments are not the ones this launch would use.
+enum ResetChannel {
+	static let flag = "--uitest-reset-channel"
+
+	/// One per runner process, so two simulators on one Mac cannot hear each
+	/// other.
+	static let directory: String = {
+		let path = (NSTemporaryDirectory() as NSString).appendingPathComponent("aao-reset-\(UUID().uuidString)")
+		try? FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
+		return path
+	}()
+
+	/// Whether the app has answered a request in this run. One launched
+	/// without the channel -- from a Home Screen quick action, say -- never
+	/// answers, and costs one timeout. But a first request left unanswered
+	/// means the channel does not work in this run at all, and every later
+	/// test then cold-launches at once rather than waiting out the timeout.
+	nonisolated(unsafe) private static var hasAnswered = false
+	nonisolated(unsafe) private static var isBroken = false
+
+	/// How long the app gets to unmount its screens and clear its storage.
+	private static let answerTimeout: TimeInterval = 10
+
+	private struct Request: Encodable {
+		let id: String
+		let url: String
+		let arguments: [String]
+	}
+
+	/// Resets `app` and has it open `url`. False when the app has to be
+	/// launched instead: it is not running, it was launched with other
+	/// arguments, or it did not answer.
+	static func reset(_ app: XCUIApplication, opening url: URL) -> Bool {
+		guard !isBroken, app.launchArguments.contains(flag), app.state == .runningForeground else {
+			return false
+		}
+
+		let id = UUID().uuidString
+		let request = Request(id: id, url: url.absoluteString, arguments: app.launchArguments)
+		let directoryURL = URL(fileURLWithPath: directory, isDirectory: true)
+		guard
+			let data = try? JSONEncoder().encode(request),
+			(try? data.write(to: directoryURL.appendingPathComponent("request.json"), options: .atomic)) != nil
+		else {
+			return false
+		}
+
+		CFNotificationCenterPostNotification(
+			CFNotificationCenterGetDarwinNotifyCenter(),
+			CFNotificationName("AllAboutAnything.uitest-reset:\(directory)" as CFString),
+			nil, nil, true)
+
+		let answerURL = directoryURL.appendingPathComponent(id)
+		let answered = waitUntil("Waiting \(answerTimeout)s for the app to answer", timeout: answerTimeout) {
+			FileManager.default.fileExists(atPath: answerURL.path)
+		}
+		guard answered else {
+			isBroken = !hasAnswered
+			return false
+		}
+		hasAnswered = true
+		let answer = (try? String(contentsOf: answerURL, encoding: .utf8)) ?? ""
+		try? FileManager.default.removeItem(at: answerURL)
+		return answer == "ok"
 	}
 }

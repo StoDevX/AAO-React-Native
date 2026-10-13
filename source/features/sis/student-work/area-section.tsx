@@ -38,7 +38,7 @@ type Props = {
 	onSelectArea: (area: StudentWorkArea) => void
 }
 
-/// The landing screen's areas, above its presets, as tiles or as rows.
+/// The landing screen's areas, below its presets, as tiles or as rows.
 export function AreaSection({layout, ...props}: Props): React.ReactNode {
 	return layout === 'grid' ? <AreaGrid {...props} /> : <AreaRows {...props} />
 }
@@ -46,7 +46,7 @@ export function AreaSection({layout, ...props}: Props): React.ReactNode {
 type LayoutProps = Omit<Props, 'layout'>
 
 /// The area tiles, sitting in one row of the landing's list as Directory's
-/// contact grid does, so the presets below can be list rows.
+/// contact grid does, so the presets above can be list rows.
 function AreaGrid({areas, membership, onSelectArea}: LayoutProps): React.ReactNode {
 	let {width, fontScale} = useWindowDimensions()
 	let {columns, ratio} = wideGridShape(width - 2 * SCREEN_MARGIN, fontScale)

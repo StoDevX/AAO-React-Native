@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
@@ -11,11 +11,14 @@ import {openUrl} from '@frogpond/open-url'
 import {useMomentTimer} from '@frogpond/timer'
 
 import {DisclosureRow} from '../../source/components/rows'
-import {BUS_FOOTER_MESSAGE} from '../../source/features/transit/bus/constants'
+import {useBusFooterMessage} from '../../source/features/transit/bus/constants'
 import {visibleBusLines} from '../../source/features/transit/bus/lib'
-import {busRoutesOptions} from '../../source/features/transit/bus/query'
+import {busRoutesOptionsFor} from '../../source/features/transit/bus/query'
+import {useCampusId, useCampusSection} from '../../source/features/campus/store'
+import {sectionServer} from '../../source/features/campus/section-server'
 import {BusLineWidget} from '../../source/features/transit/bus/widget'
-import {otherModesGroupedOptions} from '../../source/features/transit/other-modes/query'
+import {otherModesGroupedOptionsFor} from '../../source/features/transit/other-modes/query'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 const styles = StyleSheet.create({
 	host: {
@@ -29,7 +32,10 @@ const styles = StyleSheet.create({
  * drives every widget: a clock per line would have them ticking over at
  * slightly different moments.
  */
-export default function TransitPage(): React.ReactNode {
+function TransitPage(): React.ReactNode {
+	let transit = useCampusSection('transit')
+	let server = sectionServer(useCampusId(), transit)
+	let footerMessage = useBusFooterMessage()
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 
@@ -39,7 +45,7 @@ export default function TransitPage(): React.ReactNode {
 		refetch: refetchBuses,
 		isLoading: busesLoading,
 		isError: busesErrored,
-	} = useQuery(busRoutesOptions)
+	} = useQuery(busRoutesOptionsFor(server))
 
 	let {
 		data: otherModes = [],
@@ -47,7 +53,7 @@ export default function TransitPage(): React.ReactNode {
 		refetch: refetchOtherModes,
 		isLoading: otherModesLoading,
 		isError: otherModesErrored,
-	} = useQuery(otherModesGroupedOptions)
+	} = useQuery(otherModesGroupedOptionsFor(server))
 
 	let lines = visibleBusLines(busLines)
 
@@ -137,22 +143,32 @@ export default function TransitPage(): React.ReactNode {
 	}
 
 	return (
-		<Host style={styles.host}>
-			<List
-				modifiers={[
-					listStyle('insetGrouped'),
-					refreshable(async () => {
-						await refetchAll()
-					}),
-				]}
-			>
-				{busSection}
+		<>
+			{/* A campus that names the screen apart from the root stack's "Transit". */}
+			{transit?.title ? <Stack.Title>{transit.title}</Stack.Title> : null}
+			<Host style={styles.host}>
+				<List
+					modifiers={[
+						listStyle('insetGrouped'),
+						refreshable(async () => {
+							await refetchAll()
+						}),
+					]}
+				>
+					{busSection}
 
-				{otherModesSection}
+					{otherModesSection}
 
-				{/* children is required, but this section has no rows of its own -- only a footer */}
-				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}>{null}</Section>
-			</List>
-		</Host>
+					{/* children is required, but this section has no rows of its own -- only a footer */}
+					<Section footer={<Text>{footerMessage}</Text>}>{null}</Section>
+				</List>
+			</Host>
+		</>
 	)
 }
+
+export default requiresSection(
+	'transit',
+	{title: 'Transit', noun: 'transit', systemImage: 'bus'},
+	TransitPage,
+)

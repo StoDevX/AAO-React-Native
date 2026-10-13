@@ -1,0 +1,245 @@
+{
+  "data": [
+    {
+      "name": "Example office",
+      "category": "Offices",
+      "kind": "office",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "6:00pm"
+            }
+          ]
+        }
+      ],
+      "exceptions": [
+        {
+          "date": "2026-10-10",
+          "schedule": [
+            {
+              "title": "By appointment",
+              "notes": "Call before visiting.",
+              "hours": []
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": {
+          "schedule": [
+            {
+              "title": "Closed",
+              "isPhysicallyOpen": false,
+              "hours": []
+            }
+          ],
+          "exceptions": []
+        },
+        "winter": {
+          "schedule": [
+            {
+              "title": "Hours",
+              "hours": [
+                {
+                  "days": [
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr"
+                  ],
+                  "from": "8:00am",
+                  "to": "6:00pm"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2026-10-10",
+              "schedule": [
+                {
+                  "title": "By appointment",
+                  "notes": "Call before visiting.",
+                  "hours": []
+                }
+              ]
+            }
+          ]
+        },
+        "spring": {
+          "schedule": [
+            {
+              "title": "Spring hours",
+              "hours": [
+                {
+                  "days": [
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr"
+                  ],
+                  "from": "10:00am",
+                  "to": "3:00pm"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2027-03-20",
+              "schedule": [
+                {
+                  "title": "Closed for the day",
+                  "isPhysicallyOpen": false,
+                  "hours": []
+                }
+              ]
+            }
+          ]
+        },
+        "easter": {
+          "schedule": [
+            {
+              "title": "Spring hours",
+              "hours": [
+                {
+                  "days": [
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr"
+                  ],
+                  "from": "10:00am",
+                  "to": "3:00pm"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2027-03-20",
+              "schedule": [
+                {
+                  "title": "Closed for the day",
+                  "isPhysicallyOpen": false,
+                  "hours": []
+                }
+              ]
+            }
+          ]
+        },
+        "interim": {
+          "schedule": [
+            {
+              "title": "Hours",
+              "hours": [
+                {
+                  "days": [
+                    "Mo"
+                  ],
+                  "from": "10:00am",
+                  "to": "2:00pm"
+                }
+              ]
+            }
+          ],
+          "exceptions": [
+            {
+              "date": "2027-01-30",
+              "schedule": [
+                {
+                  "title": "Closed",
+                  "isPhysicallyOpen": false,
+                  "hours": []
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Example building",
+      "category": "Buildings",
+      "kind": "building",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr",
+                "Sa",
+                "Su"
+              ],
+              "from": "7:00am",
+              "to": "11:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": {
+          "schedule": [
+            {
+              "title": "Reduced hours",
+              "hours": [
+                {
+                  "days": [
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr",
+                    "Sa",
+                    "Su"
+                  ],
+                  "from": "10:00am",
+                  "to": "5:00pm"
+                }
+              ]
+            }
+          ],
+          "exceptions": []
+        },
+        "winter": {
+          "schedule": [
+            {
+              "title": "By appointment",
+              "notes": "Contact the office to arrange a visit.",
+              "hours": []
+            }
+          ],
+          "exceptions": []
+        },
+        "interim": {
+          "schedule": [
+            {
+              "title": "Closed",
+              "isPhysicallyOpen": false,
+              "hours": []
+            }
+          ],
+          "exceptions": []
+        }
+      }
+    }
+  ]
+}

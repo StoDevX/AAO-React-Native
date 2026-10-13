@@ -1,13 +1,20 @@
 [tools]
 node = "24.21.0"
-pnpm = "12.8.0"
-hk = "2.5.0"
+pnpm = "12.10.0"
+hk = "2.6.0"
 shellcheck = "0.11.0"
 zizmor = "1.30.1"
 ruby = "3.4.11"
-"gem:bundler" = "4.0.21"
+"gem:bundler" = "4.0.22"
 "aqua:mgdm/htmlq" = "0.4.0"
 "npm:@changesets/cli" = "3.0.3"
+"npm:source-map-explorer" = "2.5.3"
+# Uploads the UI-test shards' results to flakiness.io; those jobs run no
+# pnpm install. Its weekly downloads sit under aube's 1000 floor, so it is
+# approved by hand: one maintainer, aslushnikov, who also publishes the
+# @flakiness/* reporters, and its dependencies are the @flakiness packages
+# and common CLI libraries.
+"npm:flakiness" = { version = "0.312.0", allow_low_downloads = true }
 
 # Taps and types on a simulator, which simctl cannot do -- see the
 # run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
@@ -45,6 +52,10 @@ _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"
 HK_MISE = "1"
 
+# The names of the devices and simulators Xcode knows, for completing a device.
+[vars]
+device_names = "xcrun devicectl list devices --omit-deprecated-fields-in-json --json-output=- 2>/dev/null | jq --raw-output '.result.devices[].properties.state.name'"
+
 [hooks]
 postinstall = "hk install --mise"
 
@@ -55,13 +66,99 @@ run = "pnpm install --frozen-lockfile"
 
 # --- App commands ---
 
+# Flags for expo go after `--`: mise run ios "iPhone 17e" -- --scheme Foo
 [tasks.ios]
 description = "Run the iOS app"
-run = "expo run:ios"
+usage = '''
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
+'''
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
+
+# Each app's development build, which installs beside the App Store's: AAO Dev
+# and CARLS Dev. Each prebuilds first, since ios/ holds one app at a time, and
+# runs Metro with the same APP_VARIANT, as the app's config reaches the
+# JavaScript through it. Every other task that reads the app's config (ios,
+# start, prebuild, bundle:ios, …) needs APP_VARIANT set by its caller:
+# app.config.ts has no default, so it cannot build the wrong app unasked.
+[tasks."aao:ios"]
+description = "Build and run All About Olaf (AAO Dev) on a simulator or device"
+usage = '''
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
+'''
+env = { APP_VARIANT = "aao-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "aao-dev" }]
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
+
+[tasks."carls:ios"]
+description = "Build and run CARLS (CARLS Dev) on a simulator or device"
+usage = '''
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
+'''
+env = { APP_VARIANT = "carls-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "carls-dev" }]
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
+
+[tasks."aaa:ios"]
+description = "Build and run All About Anything (AAA Dev) on a simulator or device"
+usage = '''
+  arg "[device]" help="The device to run on" default="" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
+  arg "[args]..." var=#true double_dash="required" help="Passed to expo run:ios"
+'''
+env = { APP_VARIANT = "aaa-dev" }
+depends = [{ task = "prebuild", env.APP_VARIANT = "aaa-dev" }]
+run = '''
+eval "set -- $usage_args"
+expo run:ios ${usage_device:+--device "$usage_device"} "$@"
+'''
 
 [tasks.start]
 description = "Start Metro bundler"
 run = "expo start"
+
+# ccc-server runs in the background so Metro keeps the terminal, and with it the
+# keys that reload the app and open the debugger; under `depends` both would
+# lose the TTY. The server advertises itself over mDNS, so a device finds it in
+# Settings -> Server URL. It runs in its own process group (`set -m`) so the
+# trap can stop mise and the server it spawned together; Ctrl-C then reaches
+# only Metro, and the trap stops the server. ccc-server is looked for beside
+# the main checkout, which a linked worktree is not: git's common directory
+# is the main checkout's .git for a clone and a worktree alike.
+[tasks."start:with-server"]
+description = "Start ccc-server for St. Olaf and Metro together"
+run = '''
+#!/usr/bin/env bash
+if test -z "${CCC_SERVER_DIR:-}"; then
+  main_checkout="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+  CCC_SERVER_DIR="$main_checkout/../ccc-server"
+fi
+if test ! -f "$CCC_SERVER_DIR/.config/mise.toml"; then
+  echo "error: no ccc-server checkout at $CCC_SERVER_DIR; set CCC_SERVER_DIR" >&2
+  exit 1
+fi
+
+set -m
+mise --cd "$CCC_SERVER_DIR" run stolaf-college:mdns &
+server=$!
+trap 'kill -- -"$server" 2>/dev/null' EXIT
+
+expo start
+'''
 
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
@@ -95,7 +192,15 @@ cp -R ios/ci_scripts/. "$shim/"
 # --version` answers, so the gems have to be in place before prebuild.
 bundle install --quiet
 
-expo prebuild --platform ios
+# ios/ holds one app at a time. Prebuilding over another variant's project
+# keeps that one's icons and settings, so a change of variant starts afresh.
+variant="${APP_VARIANT:?set APP_VARIANT to aao, aao-dev, carls, carls-dev, aaa or aaa-dev}"
+clean=""
+if test "$(cat ios/.app-variant 2>/dev/null)" != "$variant"; then
+  clean="--clean"
+fi
+expo prebuild --platform ios $clean
+echo "$variant" > ios/.app-variant
 
 mkdir -p ios/ci_scripts
 cp -R "$shim/." ios/ci_scripts/
@@ -115,8 +220,8 @@ usage = '''
 '''
 run = '''
 xcodebuild build \
-  -workspace ios/AllAboutOlaf.xcworkspace \
-  -scheme AllAboutOlaf \
+  -workspace ios/AllAboutAnything.xcworkspace \
+  -scheme AllAboutAnything \
   -configuration Debug \
   -destination "platform=iOS,name=${usage_device?}" \
   -derivedDataPath ios/build \
@@ -130,9 +235,9 @@ xcodebuild build \
 hide = true
 description = "Embed the .jsbundle into the ios app package"
 wait_for = ["bundle:ios", "build:ios"]
-env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutAnything.app"
 run = [
-	'''cp ios/AllAboutOlaf/main.jsbundle "$APP/"''',
+	'''cp ios/AllAboutAnything/main.jsbundle "$APP/"''',
 	'''rm -rf "$APP/assets" && cp -R ios/assets "$APP/"''',
 ]
 
@@ -152,7 +257,7 @@ description = "Deploy the app to a physical device"
 usage = '''
   arg "<device>" help="The device to target" default="simulator" env="DEVICE"
 '''
-env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutAnything.app"
 run = '''
   xcrun devicectl device install app --device "$(mise run device:find-udid "${usage_device?}")" "$APP"
 '''
@@ -161,14 +266,15 @@ run = '''
 description = "Build and deploy the app to a physical device"
 usage = '''
   arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
 '''
 depends = [
 	{ task = "pnpm:install:frozen" },
-	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = "prebuild", env.APP_VARIANT = "aao-dev" },
 	{ task = 'build:ios', args = [
 		"{{usage.device}}",
 	] },
-	{ task = "bundle:ios" },
+	{ task = "bundle:ios", env.APP_VARIANT = "aao-dev" },
 	{ task = "embed-jsbundle:ios" },
 ]
 run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
@@ -177,11 +283,12 @@ run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
 description = "Build and deploy a Debug app that loads its JavaScript from Metro, not from the app"
 usage = '''
   arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+  complete "device" run=#"{{ vars.device_names }}"#
 '''
-env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutAnything.app"
 depends = [
 	{ task = "pnpm:install:frozen" },
-	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = "prebuild", env.APP_VARIANT = "aao-dev" },
 	{ task = 'build:ios', args = [
 		"{{usage.device}}",
 	] },
@@ -218,7 +325,7 @@ run = '''
 if test -n "${GH_TOKEN:-}${GITHUB_TOKEN:-}"; then
   zizmor --no-progress .github/workflows
 else
-  zizmor --offline --no-progress .github/workflows
+  env -u GH_TOKEN -u GITHUB_TOKEN zizmor --offline --no-progress .github/workflows
 fi
 '''
 
@@ -232,7 +339,7 @@ run = "oxfmt --check ."
 
 [tasks.tsc]
 description = "Run TypeScript compiler"
-# source/features/faqs/local-faqs.ts imports docs/faqs.json, which bundle-data
+# source/features/faqs/query.ts imports docs/faqs.json, which bundle-data
 # generates, so tsc cannot run against a clean checkout without it.
 depends = ["bundle-data"]
 run = "tsc --noEmit"
@@ -272,7 +379,18 @@ run = "jest"
 [tasks."test:node"]
 description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "scripts/pr-report/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts" "modules/schedules/*.test.ts"'
+
+[tasks."test:claude-mods"]
+description = "Run the Claude Code mods' tests"
+# CI has no claude CLI, so there the task passes without running anything.
+run = '''
+if ! command -v claude >/dev/null; then
+	echo "claude is not installed; skipping the Claude Code mod tests"
+	exit 0
+fi
+claude plugin test .claude/skills/test-writing-reminder
+'''
 
 # --- Data ---
 
@@ -280,6 +398,15 @@ run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.tes
 description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
+
+[tasks.docs]
+description = "Build the DocC site from documentation/ into docs/documentation/"
+run = "scripts/build-docs.sh"
+
+[tasks."docs:serve"]
+description = "Build the DocC site and serve it at the path Pages serves it from"
+depends = ["docs"]
+run = "scripts/serve-docs.sh"
 
 [tasks.images]
 description = "Convert images/<group>/source/ originals to the WebP files the app fetches"
@@ -307,7 +434,7 @@ description = "Report when the Lion's Pantry hours line on the Taylor Center pag
 run = "scripts/watch-lions-pantry.sh"
 
 [tasks.icons]
-description = "Render the in-app icon previews from assets/*.icon"
+description = "Render the in-app icon previews from assets/*.icon, and the Retro app icon set"
 run = "node scripts/make-icons.mjs"
 
 [tasks."crt-pixels"]
@@ -318,29 +445,56 @@ run = "node scripts/make-crt-pixels.mjs"
 description = "Trace a logo into a custom SF Symbol in assets/symbols/"
 run = "node scripts/trace-symbol.mjs"
 
-# Needs the network, so it stays out of validate-data, as scrape-dining does.
-[tasks."update-map-fixtures"]
-description = "Replace the map fixtures the UI tests read with each campus's live map"
-run = "node scripts/update-map-fixtures.mjs"
+[tasks."update-campus-fixtures"]
+description = "Re-record a campus's UI-test fixtures from a run of its campus tests"
+usage = '''
+  arg "<campus>" help="The campus, by reverse-DNS id" {
+    choices "edu.stolaf" "edu.carleton"
+  }
+  flag "--allow-large" help="Keep a response over 200 KB"
+'''
+# The UI tests build All About Olaf, and Carleton mode in it runs CARLS's code.
+env = { APP_VARIANT = "aao" }
+run = '''
+node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/update-campus-fixtures.mjs "$usage_campus" ${usage_allow_large:+--allow-large}
+'''
 
-[tasks."update-mess-fixtures"]
-description = "Re-record Olaf Messenger's UI-test fixtures from a run of its UI tests"
-run = "node scripts/update-mess-fixtures.mjs"
+[tasks."fixture-to-yaml"]
+description = "Start a Wiki Monkeys fixture from a recording, as YAML under its new key"
+usage = '''
+  arg "<recording>" help="A St. Olaf or Carleton recording's .json file"
+  arg "<key>" help="The request Wiki Monkeys makes, as \"GET {server:example.college}/path\""
+'''
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fixture-to-yaml.mjs "$usage_recording" "$usage_key"'
+
+# Fetches the endpoints' live samples, so it stays out of validate-data.
+[tasks."update-fixture-schemas"]
+description = "Infer the fixture schemas from the campus recordings and live samples"
+run = "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/update-fixture-schemas.mjs"
 
 [tasks."chaos-routes"]
 description = "Regenerate the list of routes the chaos monkey opens"
 run = "node scripts/chaos-routes.mjs"
 
+# These tasks have no usage spec, so mise appends their arguments to the
+# command and scripts/chaos.mjs parses them; mise reads a flag it knows, such as
+# --help, itself, so that one needs `--` first. A replay takes its step budget
+# from its recording, which no default here may override.
 [tasks.chaos]
 description = "Drive the app at random with network faults on a booted simulator"
 run = "node scripts/chaos.mjs"
 
-# The chaos task names no Metro, since 8081 is whichever checkout started Metro
-# first. This one names 8081, and the run refuses it if it serves another.
+# TEST_RUNNER_ names the Metro to the test, since `xcodebuild` passes it only
+# prefixed variables.
 [tasks."chaos:8081"]
 description = "Run chaos against the Metro on localhost:8081"
+env = { TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081" }
 run = "node scripts/chaos.mjs"
-env.TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081"
+
+[tasks."chaos:bundled"]
+description = "Run chaos on a build with its JavaScript embedded, so no Metro is needed"
+depends = ["bundle:ios"]
+run = "node scripts/chaos.mjs --bundled"
 
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
@@ -432,8 +586,11 @@ run = "pnpm install --frozen-lockfile --lockfile-only --config.trust-lockfile=tr
 # dry run resolves every tool against the lock without installing anything:
 # it exits 1 for a tool the lock does not name, or a version it names
 # differently, and 0 when they agree -- whether or not the tools are present.
+# Only the project's tools are held to the lock: a tool in a contributor's own
+# ~/.config/mise/config.toml can never be in it.
 [tasks."validate-mise-lock"]
 description = "Check that mise.lock matches mise.toml"
+env = { MISE_LOCKED_SCOPES = "project" }
 run = "mise install --locked --dry-run"
 
 [tasks."compress-data"]
@@ -448,7 +605,7 @@ depends = ["bundle-data"]
 wait_for = ["prebuild"]
 # Keeps the UI-test fixtures a release bundle drops (metro.config.js): this bundle
 # serves the UI tests, and `mise run device` builds, which carry them unused.
-env = { KEEP_UITEST_FIXTURES = "1" }
+env = { KEEP_UITEST_FIXTURES = "1", EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH = "1", EXPO_UNSTABLE_TREE_SHAKING = "1" }
 # --reset-cache: Metro caches in $TMPDIR, which neither a pnpm install nor
 # deleting ios/ clears, so a bundle can embed a package copy pnpm has replaced.
 run = """
@@ -457,9 +614,80 @@ expo export:embed \
   --entry-file index.js \
   --dev false \
   --platform ios \
-  --bundle-output ./ios/AllAboutOlaf/main.jsbundle \
-  --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map \
+  --bundle-output ./ios/AllAboutAnything/main.jsbundle \
+  --sourcemap-output ./ios/AllAboutAnything/main.jsbundle.map \
   --assets-dest ./ios
+"""
+
+# Measures what ships: no UI-test fixtures and no mocked mode, unlike
+# bundle:ios, and the same hermesc flags as Xcode's Release build.
+#
+# Bundles twice. The unminified bundle is what a Release build ships
+# (expo/scripts/react-native-xcode.sh passes --minify false whenever Hermes
+# is on), so hermesc compiles it for the bytecode figure the headline and
+# gate use. Its own source map is mostly unattributable, though: indentation
+# and line endings are not worth minifying away, so source-map-explorer puts
+# several megabytes of them in [unmapped]/[EOLs], which no package or
+# feature owns. A minified copy's [unmapped] is Metro's module wrappers
+# instead, so the per-package and per-feature tables are built from the
+# minified bundle's source map.
+[tasks."size-report"]
+description = "Measure the production JS bundle for the PR report"
+depends = ["bundle-data"]
+# The same tree shaking as the Release build (plugins/with-tree-shaking.ts).
+env = { EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH = "1", EXPO_UNSTABLE_TREE_SHAKING = "1" }
+run = """
+set -euo pipefail
+out=size-report
+rm -rf "$out" && mkdir -p "$out"
+expo export:embed \
+  --reset-cache \
+  --entry-file index.js \
+  --dev false \
+  --minify false \
+  --platform ios \
+  --bundle-output "$out/main.jsbundle" \
+  --sourcemap-output "$out/main.jsbundle.map" \
+  --assets-dest "$out/assets"
+expo export:embed \
+  --reset-cache \
+  --entry-file index.js \
+  --dev false \
+  --platform ios \
+  --bundle-output "$out/minified/main.jsbundle" \
+  --sourcemap-output "$out/minified/main.jsbundle.map" \
+  --assets-dest "$out/minified/assets"
+hermes=$(node -p "require('path').dirname(require.resolve('hermes-compiler/package.json', {paths: [require('path').dirname(require.resolve('react-native/package.json'))]}))")
+case "$(uname -s)" in
+  Darwin) bin="$hermes/hermesc/osx-bin/hermesc" ;;
+  *) bin="$hermes/hermesc/linux64-bin/hermesc" ;;
+esac
+"$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log" || { cat "$out/hermesc.log" >&2; exit 1; }
+source-map-explorer "$out/minified/main.jsbundle" "$out/minified/main.jsbundle.map" --json --no-border-checks --no-root > "$out/explorer.json"
+node scripts/pr-report/js-size.mjs "$out"
+"""
+
+[tasks."app-size"]
+description = "Archive the native app without its JS bundle and measure it for the PR report"
+# The JS bundle and its images are measured by size-report, on Linux.
+env = { SKIP_BUNDLING = "1", SENTRY_DISABLE_AUTO_UPLOAD = "true" }
+run = """
+set -euo pipefail
+out=app-size
+rm -rf "$out" && mkdir -p "$out"
+mise run prebuild
+NSUnbufferedIO=YES xcodebuild archive \
+  -workspace ios/AllAboutAnything.xcworkspace \
+  -scheme AllAboutAnything \
+  -configuration Release \
+  -destination 'generic/platform=iOS' \
+  -archivePath "$out/AllAboutAnything.xcarchive" \
+  CODE_SIGN_IDENTITY="" \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
+  2>&1 | xcbeautify
+APP_SIZE_SHA="${APP_SIZE_SHA:-$(git rev-parse HEAD)}" \
+  node scripts/pr-report/app-size.mjs "$out/AllAboutAnything.xcarchive" "$out/app-size.json"
 """
 
 # --- Agent tasks ---

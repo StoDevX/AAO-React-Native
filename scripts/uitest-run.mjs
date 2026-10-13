@@ -1,11 +1,9 @@
 // Building and running the XCUITests against a booted simulator, for scripts
-// that need a UI test run's side effects: update-mess-fixtures and chaos.
+// that need a UI test run's side effects: update-campus-fixtures and chaos.
 
 import {execFileSync} from 'node:child_process'
-import {existsSync} from 'node:fs'
+import {cpSync, existsSync, rmSync} from 'node:fs'
 import {join} from 'node:path'
-
-import {pickSimulator} from './mess-fixtures.mjs'
 
 export const BUNDLE = 'NFMTHAZVS9.com.drewvolz.stolaf'
 
@@ -18,10 +16,33 @@ export function run(command, args, options = {}) {
 	return execFileSync(command, args, {encoding: 'utf8', ...options})
 }
 
+/**
+ * The simulator to run on: the one `udid` names, or the only one booted. It refuses to
+ * guess among several, since a run reinstalls the app on whichever it picks.
+ */
+export function pickSimulator(booted, udid) {
+	if (udid) {
+		let named = booted.find((device) => device.udid === udid)
+		if (!named) throw new Error(`simulator ${udid} is not booted`)
+		return named
+	}
+	if (booted.length === 0) throw new Error('boot a simulator with the app installed first')
+	if (booted.length > 1) {
+		let list = booted.map((device) => `${device.udid} (${device.name})`).join(', ')
+		throw new Error(`several simulators are booted; name one with SIMULATOR_UDID: ${list}`)
+	}
+	return booted[0]
+}
+
 /** The booted simulator to use, or the one SIMULATOR_UDID names. */
-export function bootedSimulator() {
+export function bootedSimulator(udid = process.env.SIMULATOR_UDID) {
+	return pickSimulator(bootedSimulators(), udid)
+}
+
+/** Every booted simulator. */
+export function bootedSimulators() {
 	let booted = JSON.parse(run('xcrun', ['simctl', 'list', 'devices', 'booted', '-j'])).devices
-	return pickSimulator(Object.values(booted).flat(), process.env.SIMULATOR_UDID)
+	return Object.values(booted).flat()
 }
 
 /**
@@ -46,9 +67,9 @@ export function appDataPath(udid, relative) {
 export function buildArgs(udid) {
 	return [
 		'-workspace',
-		'ios/AllAboutOlaf.xcworkspace',
+		'ios/AllAboutAnything.xcworkspace',
 		'-scheme',
-		'AllAboutOlaf',
+		'AllAboutAnything',
 		'-configuration',
 		'Debug',
 		'-sdk',
@@ -57,7 +78,7 @@ export function buildArgs(udid) {
 		'ios/build',
 		'-destination',
 		`platform=iOS Simulator,id=${udid}`,
-		'-only-testing:AllAboutOlafUITests',
+		'-only-testing:AllAboutAnythingUITests',
 		'CODE_SIGN_IDENTITY=',
 		'CODE_SIGNING_REQUIRED=NO',
 		'CODE_SIGNING_ALLOWED=NO',
@@ -65,7 +86,21 @@ export function buildArgs(udid) {
 }
 
 /** Where `buildForTesting` leaves the app. */
-export const BUILT_APP = 'ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app'
+export const BUILT_APP = 'ios/build/Build/Products/Debug-iphonesimulator/AllAboutAnything.app'
+
+/**
+ * Puts the bundle `mise run bundle:ios` wrote, and its assets, into the built
+ * app, which then runs without Metro; the CI shards do the same by hand.
+ */
+export function embedJsBundle(app = BUILT_APP) {
+	let bundle = 'ios/AllAboutAnything/main.jsbundle'
+	if (!existsSync(bundle)) {
+		throw new Error(`no ${bundle}; run mise run bundle:ios first`)
+	}
+	cpSync(bundle, join(app, 'main.jsbundle'))
+	rmSync(join(app, 'assets'), {recursive: true, force: true})
+	cpSync('ios/assets', join(app, 'assets'), {recursive: true})
+}
 
 /**
  * Installs the built app on `udid`. `build-for-testing` builds it without

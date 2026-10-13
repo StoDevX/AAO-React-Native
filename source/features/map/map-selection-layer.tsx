@@ -7,7 +7,8 @@ import {
 } from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
 
-import {PIN_IMAGE, PIN_NAME_LAYOUT, PIN_NAME_PAINT} from './map-pins-layer'
+import {PIN_IMAGE, PIN_NAME_PAINT} from './map-pins-layer'
+import {pinNameLayout} from './lib/pin-name-layout'
 import type {Selection} from './lib/selection'
 
 /// The ring around the selected place's gold dot: wider than a pin's, so
@@ -32,17 +33,22 @@ const IS_LINE: FilterSpecification = [
 /// A trail's name, set along its course where the course has room, as the base
 /// map sets it. At a single point -- one vertex of a long loop -- it lands
 /// beside whatever pin or cluster happens to be there, and gives way to it.
-const TRAIL_NAME_LAYOUT: SymbolLayerSpecification['layout'] = {
-	'text-field': ['get', 'name'],
-	'text-font': PIN_NAME_LAYOUT?.['text-font'],
-	'text-size': PIN_NAME_LAYOUT?.['text-size'],
-	'symbol-placement': 'line',
-	'text-max-angle': 30,
+function trailNameLayout(font: string | undefined): SymbolLayerSpecification['layout'] {
+	let name = pinNameLayout(font)
+	return {
+		'text-field': ['get', 'name'],
+		'text-font': name?.['text-font'],
+		'text-size': name?.['text-size'],
+		'symbol-placement': 'line',
+		'text-max-angle': 30,
+	}
 }
 
 type Props = {
 	/// The selected place, or nothing while no place is open.
 	selection: Selection | null
+	/// The font the basemap serves for names, as the campus's map names it.
+	font: string | undefined
 }
 
 /// The open place drawn over the map: a trail as its course in gold with its
@@ -51,7 +57,7 @@ type Props = {
 /// labels, so the base map's own name for the place gives way to it rather
 /// than drawing through it -- and the name it carries stands in for the one
 /// it hides.
-export function MapSelectionLayer({selection}: Props): React.ReactNode {
+export function MapSelectionLayer({selection, font}: Props): React.ReactNode {
 	let data = React.useMemo((): GeoJSON.FeatureCollection => {
 		if (!selection) {
 			return {type: 'FeatureCollection', features: []}
@@ -89,7 +95,7 @@ export function MapSelectionLayer({selection}: Props): React.ReactNode {
 			<Layer
 				filter={['==', ['geometry-type'], 'Point']}
 				id="map-selection-dot"
-				layout={{'icon-image': PIN_IMAGE, 'icon-allow-overlap': true, ...PIN_NAME_LAYOUT}}
+				layout={{'icon-image': PIN_IMAGE, 'icon-allow-overlap': true, ...pinNameLayout(font)}}
 				paint={{
 					'icon-color': c.gold,
 					'icon-halo-color': c.white,
@@ -101,7 +107,7 @@ export function MapSelectionLayer({selection}: Props): React.ReactNode {
 			<Layer
 				filter={IS_LINE}
 				id="map-selection-trail-name"
-				layout={TRAIL_NAME_LAYOUT}
+				layout={trailNameLayout(font)}
 				paint={PIN_NAME_PAINT}
 				type="symbol"
 			/>

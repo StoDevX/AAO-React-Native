@@ -11,11 +11,4 @@ schedule:
       - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '8:00pm', to: '8:00am'}
     notes: Call or text 507-649-3367 to reach a SARN advocate
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer: []
+breakSchedule: {}

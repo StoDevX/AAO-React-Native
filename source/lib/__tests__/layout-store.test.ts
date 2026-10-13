@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import {act} from '@testing-library/react-native'
 
 import {createLayoutStore} from '../layout-store'
@@ -22,6 +23,20 @@ describe('createLayoutStore', () => {
 			useStore.getState().setLayout('tiled')
 		})
 		expect(useStore.getState().layout).toBe('tiled')
+	})
+
+	// How a screen changes its default for people who already have one saved.
+	test('drops a layout saved under an earlier version for the default', async () => {
+		await AsyncStorage.setItem(
+			'test-layout-reset',
+			JSON.stringify({state: {layout: 'grid'}, version: 1}),
+		)
+		let useStore = createLayoutStore('test-layout-reset', 'list', {version: 2})
+
+		await act(async () => {
+			await useStore.persist.rehydrate()
+		})
+		expect(useStore.getState().layout).toBe('list')
 	})
 
 	// A screen drawn before the saved choice has loaded draws the default and

@@ -1,4 +1,5 @@
 import {isHTTPError, isNetworkError, isTimeoutError} from 'ky'
+import {SourceFetchError} from '@frogpond/data-sources'
 import type {QueryCache} from '@tanstack/react-query'
 
 import type {QueryKeyHead, TelemetryEvent} from './catalog'
@@ -19,6 +20,9 @@ export function queryKeyHead(queryKey: readonly unknown[]): QueryKeyHead {
 export function describeQueryFailure(queryKey: readonly unknown[], error: unknown): ApiFailure {
 	let source = queryKeyHead(queryKey)
 
+	if (error instanceof SourceFetchError) {
+		return {name: 'api.failure', attributes: {source, kind: 'http', status: error.status}}
+	}
 	if (isHTTPError(error)) {
 		return {name: 'api.failure', attributes: {source, kind: 'http', status: error.response.status}}
 	}

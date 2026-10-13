@@ -9,33 +9,38 @@ import {
 } from '../settings'
 import type {RootState} from '../../store'
 
+const DEFAULTS = ['stolaf', 'presence', 'carleton', 'wiki-monkeys']
+
 function initial() {
 	return reducer(undefined, {type: '@@INIT'})
 }
 
 describe('calendar source selection', () => {
-	// The shared jest setup reports UI-test mode, and that mode narrows the
-	// default list to the fixture calendar so a test run reads no network.
+	// Every campus's calendars, in UI tests too: a campus's fixtures answer
+	// its own calendar like any other request.
 	test('starts with the default list', () => {
-		expect(initial().enabledCalendarSources).toEqual(['uitest'])
+		expect(initial().enabledCalendarSources).toEqual(DEFAULTS)
 	})
 
 	test('toggling adds a source', () => {
 		let state = reducer(initial(), toggleCalendarSource('northfield'))
 
-		expect(state.enabledCalendarSources).toEqual(['uitest', 'northfield'])
+		expect(state.enabledCalendarSources).toEqual([...DEFAULTS, 'northfield'])
 	})
 
 	test('toggling again removes it', () => {
 		let state = reducer(initial(), toggleCalendarSource('northfield'))
 		state = reducer(state, toggleCalendarSource('northfield'))
 
-		expect(state.enabledCalendarSources).toEqual(['uitest'])
+		expect(state.enabledCalendarSources).toEqual(DEFAULTS)
 	})
 
 	// Turning everything off is a state the list handles, not one to prevent.
 	test('the last source can be turned off', () => {
-		let state = reducer(initial(), toggleCalendarSource('uitest'))
+		let state = DEFAULTS.reduce(
+			(current, id) => reducer(current, toggleCalendarSource(id)),
+			initial(),
+		)
 
 		expect(state.enabledCalendarSources).toEqual([])
 	})
@@ -53,7 +58,7 @@ describe('calendar source selection', () => {
 		test('the selector falls back to the default list', () => {
 			let rootState = {settings: staleRehydratedState} as RootState
 
-			expect(selectEnabledCalendarSources(rootState)).toEqual(['uitest'])
+			expect(selectEnabledCalendarSources(rootState)).toEqual(DEFAULTS)
 		})
 
 		test('toggling does not throw, and starts from the default list', () => {
@@ -61,7 +66,7 @@ describe('calendar source selection', () => {
 
 			let state = reducer(staleRehydratedState, toggleCalendarSource('northfield'))
 
-			expect(state.enabledCalendarSources).toEqual(['uitest', 'northfield'])
+			expect(state.enabledCalendarSources).toEqual([...DEFAULTS, 'northfield'])
 		})
 	})
 })
@@ -84,7 +89,7 @@ describe('directory results view', () => {
 		const staleRehydratedState = {
 			unofficialityAcknowledged: true,
 			devModeOverride: false,
-			enabledCalendarSources: ['uitest'],
+			enabledCalendarSources: ['stolaf'],
 		} as ReturnType<typeof reducer>
 
 		test('the selector falls back to the tile gallery', () => {

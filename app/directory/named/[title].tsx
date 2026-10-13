@@ -1,8 +1,8 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {Button, Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, Host, List, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	buttonStyle,
 	controlSize,
@@ -11,16 +11,15 @@ import {
 	frame,
 	listStyle,
 	multilineTextAlignment,
-	onGeometryChange,
 	padding,
 	scrollContentBackground,
 } from '@expo/ui/swift-ui/modifiers'
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
+import {useCampusId, useCampusSection} from '../../../source/features/campus/store'
 import {remoteImage, type RemoteImage} from '../../../source/lib/remote-images'
 import {useImageFailure} from '../../../source/lib/use-image-failure'
-import {Markdown} from '@frogpond/markdown'
 import {callPhone} from '../../../source/components/call-phone'
 import {openUrl} from '@frogpond/open-url'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
@@ -28,6 +27,7 @@ import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../source/components/tile-layout'
 import {SECTION_GAP, SHEET_ROW} from '../../../source/components/place-card/card-style'
 import {InsetImageRow} from '../../../source/components/inset-image-row'
+import {MarkdownRow} from '../../../source/components/markdown-row'
 
 const ACTION_ROW = [frame({maxWidth: FILL_WIDTH}), ...SHEET_ROW]
 
@@ -42,7 +42,12 @@ const FOOTER_ROW = [
 
 export default function ContactsDetailPage(): React.ReactNode {
 	let {title} = useLocalSearchParams<{title: string}>()
-	let {data: contact, error, isLoading, refetch} = useQuery(contactByTitleOptions(title))
+	let {
+		data: contact,
+		error,
+		isLoading,
+		refetch,
+	} = useQuery(contactByTitleOptions(title, useCampusId()))
 
 	// Set from the route param immediately, then from the resolved contact
 	// once it loads -- so the header never falls back to the raw route name
@@ -118,18 +123,7 @@ function ContactBody({
 }): React.ReactNode {
 	// A photo that cannot be fetched leaves its row out, as no photo does.
 	let [imageFailed, onImageError] = useImageFailure(headerImage?.uri)
-	// A hosted view is given the row's width outright: 100% inside RNHostView
-	// resolves against the whole sheet, and a paragraph's own width is however
-	// long its longest line would be unwrapped. The row fills its width
-	// whatever its content's, so measuring it can't feed back on itself.
-	let [rowWidth, setRowWidth] = React.useState(0)
-	// The list's row modifiers go last: outside the frame, where the list reads
-	// them.
-	let hostedRow = [
-		frame({maxWidth: FILL_WIDTH}),
-		onGeometryChange((box) => setRowWidth(box.width)),
-		...SHEET_ROW,
-	]
+	let {appName} = useCampusSection('branding')
 
 	return (
 		<Host style={styles.host}>
@@ -141,13 +135,7 @@ function ContactBody({
 				) : null}
 
 				<Section>
-					<VStack modifiers={hostedRow}>
-						<RNHostView matchContents={true}>
-							<View style={{width: rowWidth}}>
-								<Markdown source={contact.text} />
-							</View>
-						</RNHostView>
-					</VStack>
+					<MarkdownRow source={contact.text} />
 
 					<VStack modifiers={ACTION_ROW}>
 						<Button
@@ -159,7 +147,7 @@ function ContactBody({
 						/>
 					</VStack>
 
-					<Text modifiers={FOOTER_ROW}>Collected by the humans of All About Olaf</Text>
+					<Text modifiers={FOOTER_ROW}>Collected by the humans of {appName}</Text>
 				</Section>
 			</List>
 		</Host>

@@ -45,3 +45,14 @@ export function orgsInCategory(
 	let uris = new Set(membership.organizationUris)
 	return orgs.filter((org) => uris.has(org.organizationUri))
 }
+
+/// The orgs a category screen lists: those in the membership its route names,
+/// or none when no membership has that name.
+export function orgsForCategory(
+	orgs: StudentOrgType[],
+	memberships: OrgCategoryMembership[],
+	category: string | undefined,
+): StudentOrgType[] {
+	let membership = memberships.find((entry) => entry.name === category)
+	return membership ? orgsInCategory(orgs, membership) : []
+}

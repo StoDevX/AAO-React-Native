@@ -3,15 +3,15 @@ import XCTest
 struct CalendarScreen: Screen {
 	let app: XCUIApplication
 
-	/// Opens the Calendar and waits for its toolbar picker. Opening a URL
-	/// relaunches the app, and a relaunched app shows no home screen while it
-	/// is still blank, so `open(route:)` alone returns before the Calendar has
-	/// mounted -- on a slow CI runner, long before.
 	/// The toolbar picker: drawn by the Calendar alone.
 	var mounted: XCUIElement {
 		app.buttons[TestIdentifiers.Calendar.picker]
 	}
 
+	/// Opens the Calendar and waits for its toolbar picker. Opening a URL
+	/// relaunches the app, and a relaunched app shows no home screen while it
+	/// is still blank, so `open(route:)` alone returns before the Calendar has
+	/// mounted -- on a slow CI runner, long before.
 	@discardableResult
 	func navigate() -> Self {
 		open(route: "/calendar", mountedWhen: mounted)
@@ -20,12 +20,9 @@ struct CalendarScreen: Screen {
 	/// Open the toolbar menu that chooses which calendars the list merges.
 	@discardableResult
 	func openPicker() -> Self {
-		let picker = app.buttons[TestIdentifiers.Calendar.picker]
-    XCTAssertTrue(
-      picker.waitForExistence(timeout: 30),
-      "Calendar picker should be in the toolbar")
-		picker.tap()
-		return self
+		tap(
+			mounted, until: app.staticTexts[TestIdentifiers.Calendar.calendarsSection],
+			named: "the Calendar picker")
 	}
 
 	/// Tap an item in whichever menu is open. A category and an organisation are
@@ -35,7 +32,7 @@ struct CalendarScreen: Screen {
 	func tapMenuItem(_ title: String) -> Self {
 		let item = app.buttons[title]
 		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
+			item.waitUntilExists(timeout: 30),
 			"\(title) should be offered in the picker")
 		item.tap()
 		return self
@@ -53,7 +50,7 @@ struct CalendarScreen: Screen {
 			NSPredicate(format: "label BEGINSWITH %@", title)
 		).firstMatch
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
+			row.waitUntilExists(timeout: 30),
 			"\(title) should be a row of the open picker")
 		row.tap()
 		return self
@@ -65,9 +62,8 @@ struct CalendarScreen: Screen {
 	func tapResetFilters() -> Self {
 		tapMenuItem(TestIdentifiers.Calendar.resetFilters)
 		XCTAssertTrue(
-      app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
-        .waitForNonExistence(timeout: 10)
-    )
+			app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitUntilGone(timeout: 10),
+			"Reset Filters should close the picker")
 		return self
 	}
 
@@ -104,8 +100,7 @@ struct CalendarScreen: Screen {
 	/// `menuIsPresented` alone reads an open submenu as no menu at all. An axis
 	/// row alone is worse: an axis with nothing to offer draws an empty Menu,
 	/// which SwiftUI renders as no row, so a picker opened with every calendar
-	/// switched off has neither axis in it -- and that is exactly when
-	/// `testTogglingACalendarOffEmptiesTheList` looks.
+	/// switched off has neither axis in it.
 	func pickerIsPresented() -> Bool {
 		menuIsPresented() || axisRow().exists
 	}
@@ -124,15 +119,12 @@ struct CalendarScreen: Screen {
 	func dismissMenu() -> Self {
 		if menuIsPresented() || pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
-			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
-				.waitForNonExistence(timeout: 10)
-			_ = axisRow().waitForNonExistence(timeout: 10)
-			XCTAssertFalse(
-				pickerIsPresented(),
-				"Tapping away from the picker should close it, submenu and all")
 			XCTAssertTrue(
-				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForNonExistence(timeout: 10),
-				"Tapping away from the picker should close its CALENDARS section too")
+				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitUntilGone(timeout: 10),
+				"Tapping away from the picker should close its CALENDARS section")
+			XCTAssertTrue(
+				axisRow().waitUntilGone(timeout: 10),
+				"Tapping away from the picker should close it, submenu and all")
 		}
 		return self
 	}
@@ -145,7 +137,7 @@ struct CalendarScreen: Screen {
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
 		).firstMatch
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 30),
+			cell.waitUntilExists(timeout: 30),
 			"The day picker strip should be above the list")
 		return self
 	}
@@ -216,7 +208,7 @@ struct CalendarScreen: Screen {
 	func tapDay(_ isoDay: String) -> Self {
 		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 10),
+			cell.waitUntilExists(timeout: 10),
 			"The strip should offer \(isoDay)")
 		cell.tap()
 		return self
@@ -232,7 +224,7 @@ struct CalendarScreen: Screen {
 				format: "identifier BEGINSWITH %@ AND isSelected == true",
 				TestIdentifiers.Calendar.dayCellPrefix)
 		).firstMatch
-		guard selected.waitForExistence(timeout: 5) else {
+		guard selected.waitUntilExists(timeout: 5) else {
 			return nil
 		}
 		return selected.identifier
@@ -251,12 +243,10 @@ struct CalendarScreen: Screen {
   @discardableResult
   func verifyStripShows(_ expected: [String], _ message: String, timeout: TimeInterval = 10) -> Self {
     var last: [String] = []
-    let arrived = NSPredicate { _, _ in
-      last = self.datePickerDayIdentifiers()
+    _ = waitUntil("Waiting \(timeout)s for the strip to show \(expected)", timeout: timeout) {
+      last = datePickerDayIdentifiers()
       return last == expected
     }
-    let expectation = XCTNSPredicateExpectation(predicate: arrived, object: nil)
-    _ = XCTWaiter().wait(for: [expectation], timeout: timeout)
     XCTAssertEqual(last, expected, message)
     return self
   }
@@ -266,7 +256,7 @@ struct CalendarScreen: Screen {
 	func tapToday() -> Self {
 		let button = app.buttons[TestIdentifiers.Calendar.today]
 		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
+			button.waitUntilExists(timeout: 30),
 			"Today should be in the bottom bar")
 		button.tap()
 		return self
@@ -276,18 +266,9 @@ struct CalendarScreen: Screen {
     app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.eventRowPrefix))
   }
 
-	/// How many event rows are on screen.
-	///
-	/// A count of what is rendered, not of what the calendar holds -- the list
-	/// is lazy. Enough to tell "some rows" from "none", and to tell a narrowed
-	/// list from an unnarrowed one, which is all any assertion here claims.
-	func visibleRowCount() -> Int {
-		visibleRows().count
-	}
-
 	/// A row for `title` is in the list, found by its own identifier.
 	///
-	/// This, not `visibleRowCount()`, is how a test asks whether a filter let an
+	/// This, not a count of rows, is how a test asks whether a filter let an
 	/// event through: the list is a lazy stack, so its row count is how far
 	/// ahead SwiftUI has built rather than how many events the list holds, and
 	/// two counts taken at different scroll offsets differ without anything
@@ -295,7 +276,7 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func verifyRowPresent(_ title: String) -> Self {
 		XCTAssertTrue(
-			row(title).waitForExistence(timeout: 10),
+			row(title).waitUntilExists(timeout: 10),
 			"\(title) should be in the list")
 		return self
 	}
@@ -304,7 +285,7 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func verifyRowAbsent(_ title: String) -> Self {
 		XCTAssertTrue(
-			row(title).waitForNonExistence(timeout: 10),
+			row(title).waitUntilGone(timeout: 10),
 			"\(title) should have been filtered out of the list")
 		return self
 	}
@@ -314,37 +295,6 @@ struct CalendarScreen: Screen {
 	}
 
 	// MARK: - View mode
-
-	/// Open the top-right menu that chooses the calendar's view.
-	@discardableResult
-	func openModeMenu() -> Self {
-		let menu = app.buttons[TestIdentifiers.Calendar.modePicker]
-		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
-			"The calendar should offer a view menu in the navigation bar")
-		menu.tap()
-		return self
-	}
-
-	/// Choose a view from the open menu. A Toggle inside a Menu reaches
-	/// XCUITest as a button labelled with its title.
-	@discardableResult
-	func selectMode(_ title: String) -> Self {
-		let item = app.buttons[title]
-		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
-			"\(title) should be offered in the view menu")
-		item.tap()
-		return self
-	}
-
-	@discardableResult
-	func verifyModeAbsent(_ title: String) -> Self {
-		XCTAssertFalse(
-			app.buttons[title].exists,
-			"\(title) should not be offered yet")
-		return self
-	}
 
 	/// Whether a day's cell reports having events.
 	///
@@ -356,19 +306,8 @@ struct CalendarScreen: Screen {
 	/// actually matters.
 	func dayHasEvents(_ isoDay: String) -> Bool {
 		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
-		guard cell.waitForExistence(timeout: 10) else { return false }
+		guard cell.waitUntilExists(timeout: 10) else { return false }
 		return cell.label.hasSuffix("has events")
-	}
-
-	@discardableResult
-	func verifyStripAbsent() -> Self {
-		let cell = app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
-		).firstMatch
-		XCTAssertTrue(
-			cell.waitForNonExistence(timeout: 10),
-			"Upcoming should draw no day picker")
-		return self
 	}
 
 	/// A day's notice, actually painted -- not merely present in the tree.
@@ -395,7 +334,7 @@ struct CalendarScreen: Screen {
 		// see this collapse at all.
 		let notice = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", titlePart)).firstMatch
 		XCTAssertTrue(
-			notice.waitForExistence(timeout: 10),
+			notice.waitUntilExists(timeout: 10),
 			"\"\(titlePart)\" should be on screen")
 		XCTContext.runActivity(named: "\"\(titlePart)\" frame is \(notice.frame), isHittable \(notice.isHittable)") {
 			_ in

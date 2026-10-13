@@ -46,16 +46,16 @@ export function hourlyWage(code: JobCode, wages: HourlyWages): number {
 	return wages[code.structure][code.tier]
 }
 
-function formatWage(code: JobCode, wages: HourlyWages): string {
-	return `$${hourlyWage(code, wages).toFixed(2)}/hr`
+function formatWage(code: JobCode, wages: HourlyWages | undefined): string | undefined {
+	return wages ? `$${hourlyWage(code, wages).toFixed(2)}/hr` : undefined
 }
 
 /// The line under a posting's title in the list: its term, unless it is the
 /// academic year nearly every posting runs for; its wage, when the title
-/// carries a pay code; and when it went up.
+/// carries a pay code and the wages have loaded; and when it went up.
 export function jobRowDetail(
 	job: Pick<JobSummary, 'title' | 'postedDate'>,
-	wages: HourlyWages,
+	wages: HourlyWages | undefined,
 	locales?: string,
 ): string | undefined {
 	let code = jobCode(job.title)
@@ -89,12 +89,13 @@ const WAGE_LABEL = 'Wage'
 ///
 /// The listing's own Wage is what the employer wrote, so it wins. The wage the
 /// title's pay code implies fills in only when the listing states none.
-export function jobDetailFields(job: JobDetail, wages: HourlyWages): JobField[] {
+export function jobDetailFields(job: JobDetail, wages: HourlyWages | undefined): JobField[] {
 	let code = jobCode(job.title)
 	let term = jobTerm(job.title)
 
 	let statedWage = job.fields.find((field) => field.label === WAGE_LABEL)
-	let wage = statedWage ?? (code ? {label: WAGE_LABEL, value: formatWage(code, wages)} : undefined)
+	let impliedWage = code ? formatWage(code, wages) : undefined
+	let wage = statedWage ?? (impliedWage ? {label: WAGE_LABEL, value: impliedWage} : undefined)
 
 	let fromTitle: JobField[] = []
 	if (code) {

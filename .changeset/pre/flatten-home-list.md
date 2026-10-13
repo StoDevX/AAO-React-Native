@@ -1,5 +1,5 @@
 ---
-"all-about-olaf": patch
+"all-about-anything": patch
 ---
 
 The Home list layout is one list in the same order as the tiles, and the Grouped layout is gone.

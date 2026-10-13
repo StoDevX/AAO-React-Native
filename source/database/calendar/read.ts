@@ -236,8 +236,10 @@ export function useFacets(args: {
 	window: Window
 	sourceIds: string[]
 	exclude: FilterSelection[]
+	/** Off where no filter menu will show the choices, so they are not read. */
+	enabled?: boolean
 }): CalendarFilterOption[] {
-	let {axis, window, sourceIds, exclude} = args
+	let {axis, window, sourceIds, exclude, enabled = true} = args
 	let revision = useCalendarRevision()
 
 	let result = useQuery({
@@ -247,6 +249,7 @@ export function useFacets(args: {
 				getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds, exclude})),
 			),
 		placeholderData: keepPreviousData,
+		enabled,
 	})
 	useDropSupersededReads(revision)
 

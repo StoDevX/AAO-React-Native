@@ -1,0 +1,118 @@
+#!/usr/bin/env node
+/**
+ * Write the UITest duration table from flakiness.io's predicted durations.
+ *
+ * A test's time can double from one run to the next, so flakiness.io predicts
+ * each one from master's history. `split-uitests.mjs` packs the shards from
+ * the table, and guesses for any test it lacks.
+ *
+ * This only tunes the balance of the shards, so it must never fail the job: on
+ * any error it writes nothing, and the splitter weighs every test the same.
+ */
+
+import fs from 'node:fs'
+import {createRequire} from 'node:module'
+import path from 'node:path'
+import {pathToFileURL} from 'node:url'
+
+import {discoverTests, flagValue, readTestDir} from './split-uitests.mjs'
+import {
+	FLAKINESS_PROJECT,
+	UITEST_CATEGORY,
+	UITEST_ENVIRONMENT_NAME,
+} from './write-uitest-flakiness-report.mjs'
+
+/**
+ * A report naming every test and holding no results, for flakiness.io to
+ * attach predictions to.
+ *
+ * Tests are named as `write-uitest-flakiness-report.mjs` uploads them, since
+ * flakiness.io matches a test by its suite and title.
+ * @param {Array<{className: string, methods: string[]}>} classes
+ * @param {{commitId: string, now?: number}} options
+ */
+export function buildDurationsRequest(classes, {commitId, now = Date.now()}) {
+	return {
+		flakinessProject: FLAKINESS_PROJECT,
+		category: UITEST_CATEGORY,
+		commitId,
+		environments: [{name: UITEST_ENVIRONMENT_NAME}],
+		suites: classes.map((testClass) => ({
+			type: 'suite',
+			title: testClass.className,
+			tests: testClass.methods.map((method) => ({title: `${method}()`, attempts: []})),
+		})),
+		startTimestamp: now,
+		duration: 0,
+	}
+}
+
+/**
+ * Turn flakiness.io's answer into the table `split-uitests.mjs` reads: seconds,
+ * keyed `Class/testMethod()`.
+ *
+ * A test with no history comes back with no attempts and is left out.
+ */
+export function readPredictedDurations(report) {
+	const durations = {}
+	for (const suite of report.suites ?? []) {
+		for (const test of suite.tests ?? []) {
+			const milliseconds = test.attempts?.[0]?.duration
+			if (Number.isFinite(milliseconds)) {
+				durations[`${suite.title}/${test.title}`] = milliseconds / 1000
+			}
+		}
+	}
+	return durations
+}
+
+/**
+ * Load `@flakiness/sdk` from the mise install of the flakiness CLI, which
+ * depends on it, so the planner needs no `pnpm install`.
+ */
+function importSdk(flakinessDir) {
+	const cli = fs.realpathSync(path.join(flakinessDir, 'node_modules', 'flakiness', 'package.json'))
+	return import(pathToFileURL(createRequire(cli).resolve('@flakiness/sdk')).href)
+}
+
+async function main() {
+	const args = process.argv.slice(2)
+	const testDir = flagValue(args, '--test-dir')
+	const durationsPath = flagValue(args, '--durations')
+	const flakinessDir = flagValue(args, '--flakiness')
+	if (!testDir || !durationsPath || !flakinessDir) {
+		console.error(
+			'usage: fetch-uitest-durations.mjs --test-dir <dir> --durations <table> --flakiness <mise install dir>',
+		)
+		// A workflow that calls this wrongly is a bug in the workflow.
+		process.exit(2)
+	}
+
+	// flakiness.io answers a commit ID that is not a SHA with no predictions at
+	// all, rather than an error.
+	const commitId = process.env.GITHUB_SHA
+	if (!commitId) {
+		console.log('GITHUB_SHA is unset, so there is nothing to ask flakiness.io about')
+		return
+	}
+
+	try {
+		const {fetchTestDurations} = await importSdk(flakinessDir)
+		const classes = discoverTests(readTestDir(testDir))
+		const request = buildDurationsRequest(classes, {commitId})
+		const predicted = readPredictedDurations(await fetchTestDurations(request))
+
+		fs.writeFileSync(durationsPath, JSON.stringify(predicted))
+
+		const total = classes.reduce((n, testClass) => n + testClass.methods.length, 0)
+		console.log(`flakiness.io predicted ${Object.keys(predicted).length} of ${total} tests`)
+	} catch (error) {
+		console.log(
+			`Could not fetch durations from flakiness.io, so every test weighs the same: ${error.message}`,
+		)
+	}
+}
+
+if (import.meta.main) {
+	await main()
+}

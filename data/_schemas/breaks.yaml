@@ -1,62 +1,35 @@
 $schema: http://json-schema.org/draft-07/schema#
+$id: breaks.json
 
 type: object
 additionalProperties: false
-required:
-  - weekZero
-  - weekOne
-  - fall
-  - thanksgiving
-  - christmasfest
-  - winter
-  - interim
-  - spring
-  - easter
-
+required: [timezone, breaks]
 properties:
-  weekZero: {$ref: '#/definitions/break'}
-  weekOne: {$ref: '#/definitions/break'}
-  fall: {$ref: '#/definitions/break'}
-  thanksgiving: {$ref: '#/definitions/break'}
-  christmasfest: {$ref: '#/definitions/break'}
-  winter: {$ref: '#/definitions/break'}
-  interim: {$ref: '#/definitions/break'}
-  spring: {$ref: '#/definitions/break'}
-  easter: {$ref: '#/definitions/break'}
-
-  applicable: {$ref: '#/definitions/applicable-to'}
-  schoolYear: {$ref: '#/definitions/school-year'}
+  timezone: {$ref: 'schedules.json#/definitions/text'}
+  templates: {$ref: 'schedules.json#/definitions/templates'}
+  breaks:
+    type: object
+    propertyNames: {$ref: 'schedules.json#/definitions/text'}
+    additionalProperties: {$ref: '#/definitions/break'}
 
 definitions:
-  date-or-time:
-    anyOf:
-      - {type: string, format: date}
-      - {type: string, format: date-time}
-
   break:
     type: object
     additionalProperties: false
-    required: [description, start, end]
+    required: [name]
     properties:
-      description: {type: string}
-      hasMealPlan: {type: boolean}
-      limitedAccess: {type: boolean}
-      start: {$ref: '#/definitions/date-or-time'}
-      end: {$ref: '#/definitions/date-or-time'}
-
-  school-year:
-    type: object
-    additionalProperties: false
-    required: [start, end, endForSeniors]
-    properties:
-      start: {$ref: '#/definitions/date-or-time'}
-      end: {$ref: '#/definitions/date-or-time'}
-      endForSeniors: {$ref: '#/definitions/date-or-time'}
-
-  applicable-to:
-    type: object
-    additionalProperties: false
-    required: [from, to]
-    properties:
-      from: {type: number}
-      to: {type: number}
+      name: {$ref: 'schedules.json#/definitions/text'}
+      date: {$ref: 'schedules.json#/definitions/date'}
+      start: {$ref: 'schedules.json#/definitions/date'}
+      end: {$ref: 'schedules.json#/definitions/date'}
+      defaultSpaceSchedule: {$ref: 'schedules.json#/definitions/reference-or-schedule'}
+      templates: {$ref: 'schedules.json#/definitions/templates'}
+    oneOf:
+      - required: [date]
+        not:
+          anyOf:
+            - required: [start]
+            - required: [end]
+      - required: [start, end]
+        not:
+          required: [date]

@@ -14,3 +14,30 @@ index 3624fe49d4a538c792ac5b8a373e2c9ee09e592d..35479155e2fe8660671525c92a0cdfd0
 -#endif
  
  @end
+diff --git a/ios/ChangeIcon.mm b/ios/ChangeIcon.mm
+index 389fe0542c47ee1dcf6eed78ef221cb44f978f64..9de30b5962b836b3452621c804b4bbb420751a2e 100644
+--- a/ios/ChangeIcon.mm
++++ b/ios/ChangeIcon.mm
+@@ -37,14 +37,19 @@ RCT_REMAP_METHOD(changeIcon, iconName:(NSString *)iconName resolver:(RCTPromiseR
+         NSString *newIconName;
+         if (iconName == nil || [iconName length] == 0 || [iconName isEqualToString:@"Default"]) {
+             newIconName = nil;
+-            resolve(@"Default");
+         } else {
+             newIconName = iconName;
+-            resolve(newIconName);
+         }
+ 
++        // Settle once iOS has finished, so a caller that reads the icon back
++        // reads the outcome. A read during a change has been seen to hold the
++        // main thread for over a minute.
+         [[UIApplication sharedApplication] setAlternateIconName:newIconName completionHandler:^(NSError * _Nullable error) {
+-            return;
++            if (error) {
++                reject(@"Error", error.localizedDescription, error);
++            } else {
++                resolve(newIconName ?: @"Default");
++            }
+         }];
+     });
+ }

@@ -1,0 +1,23 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/radio/named/kmnk/now-playing
+json:
+  refreshSecs: 3600
+  now:
+    title: First Chair
+    artist: The Switchbacks
+    album: Morning Avalanche Sessions
+    time: '2026-09-05 11:58:00'
+    duration: 214
+    links:
+      artwork: ''
+      artwork_600: ''
+  recent:
+    - title: Powder Day
+      artist: Valley Echoes
+      album: ''
+      time: '2026-09-05 11:54:10'
+      duration: 228
+      links:
+        artwork: ''
+        artwork_600: ''

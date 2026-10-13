@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@expo/ui": "57.0.14",
+    "@expo/ui": "57.0.22",
     "@frogpond/collections": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/sheet-section": "workspace:*",
@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@jest/globals": "30.5.2",
-    "@testing-library/react-native": "14.0.1"
+    "@testing-library/react-native": "14.1.0"
   },
   "peerDependencies": {
     "react": "catalog:",

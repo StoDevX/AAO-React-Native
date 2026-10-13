@@ -71,7 +71,24 @@ These patterns are especially important in this codebase:
 - Mock native modules and external APIs
 - Descriptive test names; group with `describe` blocks
 - `beforeEach`/`afterEach` for setup/cleanup
-- **XCUITest debugging:** iOS UI tests live in `uitests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity.
+- **XCUITest debugging:** iOS UI tests live in `uitests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity. Every shard, passing or not, also uploads `uitest-evidence-{shard}`: the runner's busiest processes every five seconds (`runner-cpu.log`) and the simulator's log for the run (`simulator.log.gz`), for a test that ran far slower than usual without failing.
+- **Test history:** CI uploads every Jest, node:test and UI-test run to
+  [flakiness.io](https://flakiness.io/frogpond/all-about-olaf) through GitHub
+  OIDC. Jest uses `@flakiness/jest`; node:test and the UI tests write their
+  reports with `scripts/flakiness-node-test-reporter.mjs` and
+  `scripts/write-uitest-flakiness-report.mjs`, and the mise tool
+  `npm:flakiness` uploads them. Each UI-test retry is its own attempt, and the
+  simulator wait before the tests is reported as `CI/waitForSimulator`. Local
+  runs upload nothing. Runtime warnings, `XCTSkip` and `XCTExpectFailure`
+  reasons become annotations. XCTest has no tags, so a `/// Tags: live-data`
+  comment above a UI-test class or `func test…` tags it; other comments and
+  attributes may sit between, but any other line orphans the marker. The
+  UI-test planner asks flakiness.io for each test's predicted duration
+  (`scripts/fetch-uitest-durations.mjs`), drawn from master's history alone,
+  and packs the shards with those, guessing the p90 for a test without one.
+  The planner's log lists each shard's estimate and each test's, and the PR's
+  UI-test report sets each shard's estimate beside what it took and lists the
+  tests furthest from theirs.
 
 **Jest cannot see what a view looks like.** The test environment has no layout
 pass, no compositor, and no hit testing. A rendered view there is a tree of the
@@ -94,6 +111,36 @@ menu and sheet presentation, safe-area behaviour — belong in an XCUITest under
 If something cannot be checked on the simulator, say so. The failure mode is not
 a weak test; it is a weak test that makes a broken feature look covered.
 
+Six more kinds of test cost upkeep and catch nothing:
+
+- **A test of a mock.** Asserting that a stub returned what the test told it
+  to return checks the test, not the app.
+- **A test that needs heavy mocking to run.** When most of a test is stand-ins,
+  it checks how the stand-ins fit together. Move the decision into a pure
+  function and test that, or leave it to an XCUITest.
+- **A test of platform behavior.** What iOS, React Native, Hermes or a library
+  does is their concern. Test what this app decides with it.
+- **A test that a metric or Sentry call is sent.** Stub `track` and Sentry so
+  they stay quiet; never assert on them.
+- **A test that restates config.** Checking `app.config.ts` or a plugin's
+  settings for the values just written there catches nothing; prebuild and the
+  UI tests check the result.
+- **A data-flow UI test.** An XCUITest whose point is that feed data reaches
+  the screen (a tile is offered, a card shows a field) breaks on data, not on
+  the app. Test the decision in Jest and put simulator screenshots on the PR.
+
+**Campus smoke tests are the exception.** `uitests/CampusSmokeTests.swift`
+checks that each campus's data reaches its screens, which is a data-flow test,
+but it reads committed recordings (`source/features/campus/__fixtures__/`),
+never live data, so it breaks only when someone rerecords and the diff shows
+what moved.
+
+In Claude Code, the `test-writing-reminder` mod in
+`.claude/skills/test-writing-reminder/` refuses each agent's first write to
+each test file and lists these kinds; a subagent gets its own reminder, and so
+does a path written once absolute and once relative. Send the write again once
+the test is none of them.
+
 ## Development Commands
 
 pnpm is the package manager. npm and yarn both choke on the `workspace:*`
@@ -109,30 +156,50 @@ mise run test         # every test
 mise run test:jest    # Jest: app, source, modules
 mise run test:node    # node:test: scripts/, plugins/
 mise run tsc          # Type check
-mise run prebuild     # Generate ios/ from app.config.ts, and install pods
+APP_VARIANT=aao mise run prebuild   # Generate ios/ from app.config.ts, and install pods
 ```
 
 ### App Variants
 
-A development build can sit alongside the shipping app on one device.
-`APP_VARIANT` selects the build at generation time; unset means production, so
-every default path is unchanged.
+`APP_VARIANT` names the app a build is, and anything that reads the app's
+config needs it: prebuild, Metro (`expo start`), `expo run:ios`,
+`bundle:ios`, the size report. It has no default, so a forgotten variant fails
+at once instead of building and launching the other app. The `-dev` builds sit
+alongside the App Store's on one device. CI sets `aao`; each Xcode Cloud
+workflow sets its own in its environment.
 
-| `APP_VARIANT` | Bundle identifier | Home screen |
-| --- | --- | --- |
-| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf |
-| `development` | `…stolaf.dev` | AAO Dev |
+| `APP_VARIANT` | Bundle identifier | Home screen | Sentry project |
+| --- | --- | --- | --- |
+| `aao` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | `all-about-olaf` |
+| `aao-dev` | `…stolaf.dev` | AAO Dev | `all-about-olaf` |
+| `carls` | `com.rives.carls` | CARLS | `carls` |
+| `carls-dev` | `com.rives.carls.dev` | CARLS Dev | `carls` |
+| `aaa` | `tech.frogpond.allaboutanything` | All About Anything | `all-about-anything` |
+| `aaa-dev` | `…allaboutanything.dev` | AAA Dev | `all-about-anything` |
 
-Both variants share the windmill icon, so tell them apart by name.
+The two All About Olaf variants share the windmill icon, so tell them apart by
+name. The CARLS variants build the same code as Carleton's app: `extra.defaultCampus`
+opens them on Carleton (`source/lib/app-identity.ts`), the penguin is the
+primary icon, and the windmills are its alternates. `com.rives.carls` is the CARLS
+app's own identifier, so a release build updates CARLS on the App Store.
+All About Anything opens on the campus picker, wears Windmill (Sky), and alone
+answers `allaboutanything://`.
 
 ```bash
-APP_VARIANT=development mise run prebuild   # then build to your device
+mise run aao:ios [device]     # AAO Dev, prebuilt and run
+mise run carls:ios [device]   # CARLS Dev, prebuilt and run
+mise run aaa:ios [device]     # AAA Dev, prebuilt and run
 ```
+
+`ios/` holds one variant at a time; `mise run prebuild` starts it afresh when
+`APP_VARIANT` changes. The app's config reaches the JavaScript through Metro,
+so a Metro started on its own needs the variant too:
+`APP_VARIANT=carls-dev mise run start`.
 
 The URL scheme varies too — two apps claiming one scheme is undefined behaviour.
 
-TestFlight and App Store builds both ship the production identity, so a
-TestFlight build replaces the App Store app as it always has.
+TestFlight and App Store builds ship `aao` or `carls`, so a TestFlight build
+replaces the App Store app as it always has.
 
 **A build to a local device needs nothing beyond `mise run device "<DEVICE
 NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
@@ -142,9 +209,16 @@ record, which this config does not create.
 ### App Icons
 
 The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in
-`app.config.ts` names the primary, `windmill.icon`, and
-`plugins/with-alternate-icons.ts` bundles the rest as alternates. Each
+`app.config.ts` names the variant's primary (`windmill.icon`, or CARLS' penguin),
+and `plugins/with-alternate-icons.ts` bundles every other icon as an alternate;
+the campus's `appIcons` decides which Customize offers. Each
 alternate's file name is the name `react-native-change-icon` switches to.
+
+Old Main (Retro) is the exception: a static app icon set,
+`assets/old-main-retro.xcassets/old-main-retro.appiconset`, with a light and a
+dark image and no tinted one, since iOS tints it on its own and a rendered
+tinted look would cost another 1024px render. `STATIC_ICON_SETS` in the
+plugin lists such sets, which it copies into the app's `Images.xcassets`.
 
 Customize's App Icon gallery and the About screen show PNG previews of each icon,
 kept in `images/icons/`. Regenerate them after editing an `.icon`:
@@ -160,21 +234,33 @@ files are gitignored. Add `--table` to write `images/icons/logos.html`, a
 gitignored gallery of every logo, to compare them side by side.
 
 The task needs Xcode, whose Icon Composer renders the previews, and runs them
-through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
+through oxipng; the Retro set also needs ImageMagick (`brew install imagemagick`). A new `.icon` also needs an entry in `ICON_DOCUMENTS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
 `ICONS` in `source/features/customize/icons.ts`.
 
-The Old Main (Retro) icon's pixel layers are drawn by `scripts/make-crt-pixels.mjs`
-from the screen grid in that file: the cells as `pixels.svg` and
-`pixels-amber.svg`, and their glow as quarter-size PNGs rendered from the SVGs
-in `assets/old-main-retro.icon/source/`. Edit the grid, run
-`mise run crt-pixels`, then `mise run icons`. The pipeline is Display P3
-throughout: the palette holds P3 components, icon.json reads untagged SVG
-colors as P3, and the PNGs are tagged with the profile, not converted to it.
+The Old Main (Retro) icon's source is an Icon Composer document in
+`assets/0-source-icons/old-main-retro.icon`, kept out of the bundle. Its pixel
+layers are drawn by `scripts/make-crt-pixels.mjs` from the screen grid in that
+file: the cells as `pixels.svg` and `pixels-amber.svg`, and their glow as
+quarter-size PNGs rendered from the SVGs in the document's `source/`. Edit the
+grid, run `mise run crt-pixels`, then `mise run icons`.
 
-Every icon costs about 2.3 MiB of each iPhone's download, as actool stores a
+`mise run icons` makes the previews with ictool but the app icon set with
+ImageMagick, stacking the document's layers itself. ictool bakes a rounded mask
+and a lit rim into its render, iOS draws its own over any app icon, and the dark
+one's rim then glows, so the set is a plain full-bleed square. It is converted
+to sRGB, 8 bits and no alpha: actool stores a second, 16-bit copy beside every
+Display P3 image, and the app icon sets want no alpha. The drawing is Display P3
+throughout (the palette holds P3 components, icon.json reads untagged SVG colors
+as P3, and the glow PNGs are tagged with the profile, not converted to it), so
+only the set's images lose the wider gamut. The stack ignores the document's
+translucency and glass, which it matches to within a few percent. A change to
+the document's layer order or fill needs the same change in `retroSetImages`.
+
+Every `.icon` costs about 2.3 MiB of each iPhone's download, as actool stores a
 flat 1024px render per appearance without loss, and a layer's own images come
-on top. Keep both down:
+on top. A static app icon set costs one render per image it lists. Keep both
+down:
 
 - Grain and noise make every render bigger; the Retro icon's backgrounds were
   1.8 MB each until a blur took the grain out.
@@ -207,6 +293,31 @@ picture under a new name and point the data at it. Draw a fetched picture with
 `useImageFailure`, so one that cannot load leaves its row out instead of an
 empty frame.
 
+### DebugSwift
+
+A Debug build carries [DebugSwift](https://github.com/DebugSwift/DebugSwift)'s
+network log, view inspector and the rest, switched off: Developer → Enable
+DebugSwift sets it up, and every launch after until it is switched off again.
+Off means its `setup()` never runs, so nothing is swizzled or captured. Its
+instrumentation cannot be undone, so switching it off takes effect at the next
+launch. Its floating button has a switch of its own. It stays away under
+`--uitesting` and `--chaos`, whose runs are Debug builds too.
+
+JavaScript reaches it through `modules/debug-tools`. That module is a pod, and
+a pod cannot import a Swift package linked into the app target alone, so it
+holds hooks that AppDelegate fills in under `#if DEBUG`, and keeps the switch
+in `UserDefaults`, where launch can read it before JavaScript loads. It also draws the
+floating button as the Old Main Retro icon, without the request count:
+DebugSwift has no API for either, so it finds the button by its class name,
+`FloatBallView`. A DebugSwift update that renames it brings back the stock
+button, and nothing worse.
+
+It is a Swift package, added by `plugins/with-debug-swift.ts`. Xcode links a
+package product into every configuration, so outside Debug the plugin drops
+`DebugSwift.o` from the link with `EXCLUDED_SOURCE_FILE_NAMES` and a script
+phase deletes the resource bundle Xcode copies into the app. A Release build
+still compiles the package, and contains none of it.
+
 ### Custom Symbols
 
 A glyph iOS does not ship, like the Olaf Messenger's castle, is a custom SF
@@ -220,6 +331,10 @@ ImageMagick and potrace (`brew install imagemagick potrace`). The image's dark
 pixels become the symbol, so a white mark on a dark disc comes out as a disc
 with the mark cut out. The Messenger's came from
 `https://olafmessenger.com/wp-content/uploads/2021/02/Logo_white-e1713492149523.png`.
+The Carletonian's C came from the gray C in
+`https://thecarletonian.com/wp-content/uploads/2019/04/carletonianlogo-1.jpg`,
+with the wordmark that crosses it painted out and the stroke redrawn there
+before tracing.
 
 The template holds `Regular-S`, `Regular-M` and `Regular-L`. Other weights
 fall back to Regular, but a missing scale does not: without `Regular-L`, the
@@ -230,12 +345,13 @@ simulator, or validate it in the SF Symbols app.
 
 ### Local Server Discovery
 
-In dev mode (debug builds, or with the dev-mode override enabled in Settings), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.
+In dev mode (turned on from the long-press menu on Home's notice; it starts off in every build), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.
 
 To use this:
-1. Start `ccc-server` with mDNS advertisement enabled: `mise run stolaf-college:mdns` (in the `ccc-server` repo)
+1. Start `ccc-server` with mDNS advertisement enabled: `mise run start:with-server` starts it beside Metro, from a `ccc-server` checkout next to this one (set `CCC_SERVER_DIR` for one elsewhere). Metro keeps the terminal, and Ctrl-C stops both. To run the server alone, `mise run stolaf-college:mdns` in the `ccc-server` repo
 2. Run a debug build of the app on a device on the same network
-3. Navigate to Settings → Server URL — the server will appear automatically
+3. Turn dev mode on: long-press the notice at the bottom of Home and choose "Enable dev mode"
+4. Navigate to Settings → Server URL — the server will appear automatically
 
 The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run prebuild`), discovery is silently skipped — the screen won't crash.
 
@@ -313,34 +429,66 @@ Times are Central: the post's own script reads the visitor's clock, so it
 shows the wrong hour outside Minnesota. `updated` is when KSTO last edited the
 post, which tells a schedule left over from an earlier term apart.
 
+When KSTO publishes a term's schedule somewhere else first (fall 2026's was an
+image on Instagram), write it into the file by hand, with `updated` the day it
+came out. The scrape leaves a file dated after the post alone, listing how the
+two differ, and takes over again once KSTO edits the post.
+
 ### UI Test Fixtures
 
-Under UI tests the map reads copies of each campus's `map/geojson` from
-`source/features/map/__fixtures__/`, not ccc-server, so a data publish cannot
-move what the map tests measure. Refresh them on purpose, when a test needs a
-place or a field the copies lack:
+A UI test class can name a campus: `override class var campus: Campus? { .carleton }`,
+with a `/// Tags: campus:edu.carleton` marker. The app then answers every
+request made through `apiFetch` (both campus servers, the papers' own sites
+and the calendars) from `source/features/campus/__fixtures__/<campus id>/`, one
+file per request, and a request with no recording fails naming the fix. A few
+features fetch around `apiFetch` (the directory search, login, balances,
+StoPrint, the course catalog), so a smoke test on one of them reads live data
+until it moves onto `apiFetch`. Rerecord a campus with a
+simulator booted and Metro running:
 
 ```bash
-mise run update-map-fixtures
+mise run update-campus-fixtures edu.carleton
 ```
 
-It prints the places each campus added and removed, and how many changed, and
-writes nothing when any campus's response has no places. The copies are written
-with sorted keys, so the diff shows only the data that moved. Rerun the map UI
-tests after a refresh: a moved label point can change what a tap hits.
+It writes nothing if a test fails, and refuses a response over 200 KB unless
+run with `--allow-large`. What it writes differs from what the servers sent in
+four ways, all in `scripts/campus-fixtures.mjs`:
 
-Olaf Messenger's fetches are answered from
-`source/features/mess/__fixtures__/mess.json` under UI tests, and a fetch with
-no fixture fails naming its URL. Its URLs depend on what the paper published,
-so they are recorded, not listed: with a simulator booted and Metro running,
+- **Calendar dates move back.** The feeds answer from the day they are asked,
+  so the recorder moves a campus's events back by whole weeks until the first
+  day from the recording on with events, on the frozen day's weekday, is the
+  UI tests' frozen day (`UITEST_FROZEN_DATE`). Whole weeks keep each event on
+  its own weekday.
+- **The St. Olaf calendar's dates are `{date}` in its keys**, since its window
+  comes from the day's date, and the recorder fetches any page of it the run
+  ended before asking for.
+- **The St. Olaf calendar and Presence keep only the fields their parsers
+  read** (`TRIMS`). A parser that starts reading a field adds it there.
+  ccc-server's calendars come already shaped by the server and are kept whole.
+- **Every email address is `person@example.com`.** The feeds name people in
+  their event text.
 
-```bash
-TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run update-mess-fixtures
-```
+A recording run checks each screen against live data, where a value a test
+expects may have moved on: that check skips, naming the value, and the recorder
+still writes. Take each skipped value from the new files into the subclass's
+`expected`, then run the campus's tests once more without recording.
 
-runs the Messenger UI tests against the live paper with `--record-fixtures`
-and writes every fetch they made. It writes nothing if the tests fail. With
-more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
+The deep UI tests run on Wiki Monkeys, whose fixtures are hand-written YAML;
+`uitests/AGENTS.md` says how to add one. A few are worth knowing about.
+
+The map's UI tests run on Wiki Monkeys, whose map is a fixture
+(`source/features/campus/__fixtures__/example.college/GET-map-geojson.yaml`):
+St. Olaf's layout, moved to the valley and renamed, so a data publish cannot
+move what they measure. A moved footprint or label point can change what a
+tap hits, so rerun the map UI tests after editing it.
+
+The News UI tests read The Valley Echo, Wiki Monkeys' paper, a small
+WordPress site written as fixtures (`GET-echo.college.example-*.yaml` beside
+the map). It holds what the tests open: two pages of issues (2026 on the
+first, 2025 on the second), the newest issue and the special edition before
+it, Variety and its Comic, Horoscopes and Photo columns, and each Variety
+story on its own. `source/features/newspaper/__tests__/valley-echo-fixture.test.ts`
+says what has to stay true of it for those tests to mean anything.
 
 ### Chaos Runs
 
@@ -351,15 +499,19 @@ covers reading a finding, replaying a run, what the engine can't do, how it
 works, and how to extend it.
 
 ```bash
-mise run chaos:8081 -- --seed 1234 --duration 10m
-mise run chaos:8081 -- --replay logs/chaos/1234
+mise run chaos:8081 --seed 1234 --duration 10m
+mise run chaos:8081 --replay logs/chaos/1234
+mise run chaos:bundled --seed 1234
 ```
 
-`chaos:8081` runs against the Metro on port 8081. For any other, name it with
-the `TEST_RUNNER_` prefix -- `TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise
-run chaos` -- since `xcodebuild` passes the test only prefixed variables, so a
-bare `AAO_JS_LOCATION` never arrives. Either way, the run refuses a Metro
-serving another checkout. The run exits 0 when it found nothing, 1 when
+`chaos:8081` runs against the Metro on port 8081; `chaos:bundled` embeds the
+JavaScript in the build instead, so it needs no Metro. For another port, run
+`chaos` with `TEST_RUNNER_AAO_JS_LOCATION=localhost:8091` in the environment --
+`xcodebuild` passes the test only `TEST_RUNNER_`-prefixed variables, so a bare
+`AAO_JS_LOCATION` never arrives. Every task hands its arguments to
+`scripts/chaos.mjs`: `--simulator <name>` or `--udid <udid>` picks one of
+several booted simulators. Whichever Metro, the run refuses one serving another
+checkout. The run exits 0 when it found nothing, 1 when
 it found something, and 2 when it never started. Its evidence lands in
 `logs/chaos/<seed>/`, which a second run of the same seed won't replace
 without `--overwrite`.
@@ -374,7 +526,7 @@ after adding a route.
 
 Versions come from Changesets. A change that belongs in the release notes adds
 a file with `mise run changeset` (a plain markdown file in `.changeset/`:
-`"all-about-olaf": patch|minor|major` in the frontmatter, the note below it).
+`"all-about-anything": patch|minor|major` in the frontmatter, the note below it).
 The Release workflow turns those into a "Version Packages" pull request, and a
 `prerelease:alpha|beta|rc|none` label on it picks the channel. Do not edit
 `version` in `package.json` or add to `CHANGELOG.md` by hand. The logic is in

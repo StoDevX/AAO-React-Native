@@ -18,28 +18,3 @@ export function unitsAvailability(query: {
 	if (query.isError || query.fetchStatus === 'paused') return 'unavailable'
 	return 'loading'
 }
-
-/// The board postings the published map lacks, whose units the app reads
-/// from their details: usually the few that went up since the server's last
-/// hour. Without a map, none, since reading every posting one by one is the
-/// cost the map exists to avoid.
-export function idsNeedingDetail(
-	boardIds: string[],
-	published: Map<string, string | null> | undefined,
-): string[] {
-	if (published === undefined) return []
-	return boardIds.filter((id) => !published.has(id))
-}
-
-/// Every posting's unit the app knows, from the map and from the details it
-/// read itself.
-export function unitsByPosting(
-	published: Map<string, string | null> | undefined,
-	fromDetails: Map<string, string | null>,
-): Map<string, string | null> {
-	let units = new Map(published)
-	for (let [id, unit] of fromDetails) {
-		units.set(id, unit)
-	}
-	return units
-}

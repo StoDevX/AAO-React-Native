@@ -1,0 +1,82 @@
+{
+	"contentType": "application/json; charset=UTF-8",
+	"json": [
+		{
+			"id": 43,
+			"name": "Arb Notes",
+			"parent": 0
+		},
+		{
+			"id": 46,
+			"name": "Comics",
+			"parent": 41
+		},
+		{
+			"id": 1207,
+			"name": "Crosswords",
+			"parent": 41
+		},
+		{
+			"id": 38,
+			"name": "Features and Arts",
+			"parent": 0
+		},
+		{
+			"id": 1195,
+			"name": "Horoscope",
+			"parent": 41
+		},
+		{
+			"id": 7,
+			"name": "News",
+			"parent": 0
+		},
+		{
+			"id": 39,
+			"name": "Print Edition",
+			"parent": 0
+		},
+		{
+			"id": 40,
+			"name": "Security Blotters",
+			"parent": 0
+		},
+		{
+			"id": 11,
+			"name": "Showcase",
+			"parent": 0
+		},
+		{
+			"id": 8,
+			"name": "Sports",
+			"parent": 7
+		},
+		{
+			"id": 41,
+			"name": "The Bald Spot",
+			"parent": 0
+		},
+		{
+			"id": 42,
+			"name": "The Carletonian Zine",
+			"parent": 0
+		},
+		{
+			"id": 1,
+			"name": "Uncategorized",
+			"parent": 0
+		},
+		{
+			"id": 12,
+			"name": "Video",
+			"parent": 0
+		},
+		{
+			"id": 6,
+			"name": "Viewpoint",
+			"parent": 0
+		}
+	],
+	"key": "GET https://thecarletonian.com/wp-json/wp/v2/categories?per_page=100&_fields=id,name,parent",
+	"status": 200
+}

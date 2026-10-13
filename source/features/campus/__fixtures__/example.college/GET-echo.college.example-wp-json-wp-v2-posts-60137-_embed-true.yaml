@@ -1,0 +1,277 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/posts/60137?_embed=true
+json:
+  author: 2
+  comment_status: closed
+  date: '2026-03-13T13:00:00'
+  date_gmt: '2026-03-13T18:00:00'
+  featured_media: 70136
+  format: standard
+  id: 60137
+  link: https://echo.college.example/60137/variety/comic/monkey-business-first-chair/
+  modified: '2026-03-13T13:00:00'
+  modified_gmt: '2026-03-13T18:00:00'
+  ping_status: closed
+  slug: monkey-business-first-chair
+  status: publish
+  sticky: false
+  template: ''
+  type: post
+  _embedded:
+    author:
+      - code: rest_no_route
+        message: No route was found matching the URL and request method.
+        data:
+          status: 404
+    wp:featuredmedia:
+      - alt_text: ''
+        author: 2
+        date: '2026-03-13T13:00:00'
+        featured_media: 0
+        id: 70136
+        link: https://echo.college.example/60137/attachment/echo-70136/
+        media_type: image
+        mime_type: image/png
+        slug: echo-70136
+        source_url: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAADwCAIAAAD+Tyo8AAADMUlEQVR42u3dMVFEURQFQXSiZJUgAiV4IcEB5BuQkHDmdlUrOHUn/O+/fL4/gFEvJgABAwIGBAwCBgQMCBgQMAgYEDAgYBAwIGBAwICAQcCAgAEBAwIGAQMCBgQMAgYEDAgYEDAIGBAwIGBAwCBgQMCAgEHAgIABAQMCBgEDAgYEDAK2Ahu+vz6e2ETALBX7OwHDXreXMxYwnXQPZixggvXeyVjANNM9krGAidfbbljA9OsNNyxgTtRbbVjAXKk32bCAOVRvr2EBc6teAcN2wKWGBcy5eksNC5iL9QoYtgNuNCxgBCxgWKu30bCAEbCAQcACRr0aFjACFjAIWMAgYAEjYAELGAELGAQsYAQsYAEjYAGDgAUMAhYwAhawgBGwgKEcsK+RwOeEAkbAAhYwAvYmFpxoWMAgYAGjYfUKGAH7NxL0GxYwrDZcWlLA3Go4NqOAORRwb0YBc6Xh5IYC5kTD1QEFTD/j8HQCJt5wezcBk834wmICJtjwnbkETKrkaysJmPmSL48jYBAwIGBAwCBgQMCAgAEBg4ABAQMCBgEDAgYEDAgYBAwIGBAwIGAQMCBgQMAgYEDAgIABAYOAAQEDAgYEDAIGBAwIGAQMCBgQMCBgrnh9vP2RgOFfJ5ppW8DIdbhqAaPY4Z4FjGKHexYwoh2OWcCIdjhmASPa4ZIFjG6HYxYwuh0uWcCIdrhkAaPb4ZIFjG6HSxYwuh0uWcBId5iA0a2A0S0CRrcIGN2eCXjrARF0y3PAi08BIV2eA1aybikELGPdMh+wknVLIWAl65ZCwEqWLoWAlaxbCgErWbcUAlayaCkErGTdUghYzLolErCSRUshYDHrlkjAZ2N2dtQCbsfszjgUcKBnh4WAl5J2SQh4o2pHg4ABAYOAAQEDAgYEDAIGBAwIGBAwCBgQMCBgEDAgYEDAgIBBwICAAQEDAgYBAwIGBAwCBgQMCBgQMAgYEDAgYEDAIGBAwICAQcCAgAEBAwIGAQMCBgQMAgYEDAgYEDAIGBAwIGBAwCBgQMCAgEHAgIABAQMCBgEDAgYEDAgYBAwIGBAwCBgQMCBgQMAgYEDAgIBBwCaAXT9FIQl394/m6AAAAABJRU5ErkJggg==
+        type: attachment
+        _links:
+          about:
+            - href: https://echo.college.example/wp-json/wp/v2/types/attachment
+          author:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/users/2
+          collection:
+            - href: https://echo.college.example/wp-json/wp/v2/media
+          curies:
+            - href: https://api.w.org/{rel}
+              name: wp
+              templated: true
+          replies:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/comments?post=70136
+          self:
+            - href: https://echo.college.example/wp-json/wp/v2/media/70136
+              targetHints:
+                allow:
+                  - GET
+          wp:attached-to:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/posts/60137
+              id: 60137
+              post_type: post
+          wp:term:
+            - embeddable: true
+              href: https://echo.college.example/wp-json/wp/v2/staff_name?post=70136
+              taxonomy: staff_name
+        caption:
+          rendered: ''
+        media_details:
+          file: echo-60137.png
+          filesize: 2048
+          height: 240
+          width: 320
+          image_meta:
+            aperture: '0'
+            camera: ''
+            caption: ''
+            copyright: ''
+            created_timestamp: '0'
+            credit: ''
+            focal_length: '0'
+            iso: '0'
+            orientation: '0'
+            shutter_speed: '0'
+            title: ''
+            keywords: []
+          sizes:
+            1536x1536:
+              file: echo-60137-1536x1152.png
+              filesize: 353894
+              height: 1152
+              mime_type: image/png
+              source_url: https://echo.college.example/wp-content/uploads/echo-60137-1536x1152.png
+              width: 1536
+            full:
+              file: echo-60137.png
+              height: 240
+              mime_type: image/png
+              source_url: https://echo.college.example/wp-content/uploads/echo-60137.png
+              width: 320
+            large:
+              file: echo-60137-1200x900.png
+              filesize: 216000
+              height: 900
+              mime_type: image/png
+              source_url: https://echo.college.example/wp-content/uploads/echo-60137-1200x900.png
+              width: 1200
+            medium:
+              file: echo-60137-600x450.png
+              filesize: 54000
+              height: 450
+              mime_type: image/png
+              source_url: https://echo.college.example/wp-content/uploads/echo-60137-600x450.png
+              width: 600
+            medium_large:
+              file: echo-60137-768x576.png
+              filesize: 88474
+              height: 576
+              mime_type: image/png
+              source_url: https://echo.college.example/wp-content/uploads/echo-60137-768x576.png
+              width: 768
+            small:
+              file: echo-60137-300x225.png
+              filesize: 13500
+              height: 225
+              mime_type: image/png
+              source_url: https://echo.college.example/wp-content/uploads/echo-60137-300x225.png
+              width: 300
+            thumbnail:
+              file: echo-60137-70x53.png
+              filesize: 742
+              height: 70
+              mime_type: image/png
+              source_url: https://echo.college.example/wp-content/uploads/echo-60137-70x53.png
+              width: 70
+        title:
+          rendered: echo-70136
+    wp:term:
+      - - id: 61
+          link: https://echo.college.example/category/variety/comic/
+          name: Comic
+          slug: comic
+          taxonomy: category
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/categories
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/categories/61
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/posts?categories=61
+            up:
+              - embeddable: true
+                href: https://echo.college.example/wp-json/wp/v2/categories/6
+        - id: 6
+          link: https://echo.college.example/category/variety/
+          name: Variety
+          slug: variety
+          taxonomy: category
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/category
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/categories
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/categories/6
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/posts?categories=6
+      - []
+      - - id: 503
+          link: https://echo.college.example/staff_name/mika-strand/
+          name: Mika Strand
+          slug: mika-strand
+          taxonomy: staff_name
+          _links:
+            about:
+              - href: https://echo.college.example/wp-json/wp/v2/taxonomies/staff_name
+            collection:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_name
+            curies:
+              - href: https://api.w.org/{rel}
+                name: wp
+                templated: true
+            self:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_name/503
+                targetHints:
+                  allow:
+                    - GET
+            wp:post_type:
+              - href: https://echo.college.example/wp-json/wp/v2/staff_profile?staff_name=503
+              - href: https://echo.college.example/wp-json/wp/v2/posts?staff_name=503
+              - href: https://echo.college.example/wp-json/wp/v2/media?staff_name=503
+  _links:
+    about:
+      - href: https://echo.college.example/wp-json/wp/v2/types/post
+    author:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/users/2
+    collection:
+      - href: https://echo.college.example/wp-json/wp/v2/posts
+    curies:
+      - href: https://api.w.org/{rel}
+        name: wp
+        templated: true
+    predecessor-version:
+      - href: https://echo.college.example/wp-json/wp/v2/posts/60137/revisions/60138
+        id: 60138
+    replies:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/comments?post=60137
+    self:
+      - href: https://echo.college.example/wp-json/wp/v2/posts/60137
+        targetHints:
+          allow:
+            - GET
+    version-history:
+      - count: 1
+        href: https://echo.college.example/wp-json/wp/v2/posts/60137/revisions
+    wp:attachment:
+      - href: https://echo.college.example/wp-json/wp/v2/media?parent=60137
+    wp:featuredmedia:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/media/70136
+    wp:term:
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/categories?post=60137
+        taxonomy: category
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/tags?post=60137
+        taxonomy: post_tag
+      - embeddable: true
+        href: https://echo.college.example/wp-json/wp/v2/staff_name?post=60137
+        taxonomy: staff_name
+  categories:
+    - 61
+    - 6
+  class_list:
+    - post-60137
+    - post
+    - type-post
+    - status-publish
+    - format-standard
+    - hentry
+    - category-comic
+    - category-variety
+  content:
+    protected: false
+    rendered: <p>Our resident monkeys take on the valley.</p>
+  excerpt:
+    protected: false
+    rendered: |
+      <p>Our resident monkeys take on the valley.</p>
+  guid:
+    rendered: https://echo.college.example/?p=60137
+  meta:
+    footnotes: ''
+  staff_name:
+    - 503
+  tags: []
+  title:
+    rendered: 'Monkey Business: First Chair'

@@ -1,0 +1,30 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/transit/modes
+json:
+  data:
+    - category: Local
+      description: ''
+      name: Switchback Shuttle
+      synopsis: Free shuttle up and down the valley road, every hour from three until ten.
+      url: https://college.example/transportation/shuttle/
+    - category: Local
+      description: ''
+      name: Valley Bikes
+      synopsis: Fat-tire bikes for the valley road, checked out at Summit Library.
+      url: https://college.example/transportation/bikes/
+    - category: Local
+      description: ''
+      name: Ride Desk
+      synopsis: Daytime rides to appointments in the village. Call the Summit Center to book one.
+      url: https://college.example/transportation/ride-desk/
+    - category: Airport Shuttle
+      description: ''
+      name: Valley Express
+      synopsis: Coach to the regional airport on Fridays and Sundays during term.
+      url: https://college.example/transportation/airport/
+    - category: ''
+      description: ''
+      name: Getting Around
+      synopsis: Every way on and off campus, on the college’s transportation page.
+      url: https://college.example/transportation//

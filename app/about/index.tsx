@@ -2,7 +2,10 @@ import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Form, Grid, Host, LabeledContent, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
+	accessibilityHint,
 	accessibilityIdentifier,
+	contentShape,
 	fixedSize,
 	font,
 	foregroundStyle,
@@ -11,18 +14,22 @@ import {
 	listRowInsets,
 	listRowSeparator,
 	multilineTextAlignment,
+	onTapGesture,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as Application from 'expo-application'
+import Constants from 'expo-constants'
 import * as c from '@frogpond/colors'
 import {SheetSection} from '@frogpond/sheet-section'
 import {Stack, useRouter} from 'expo-router'
 
 import {NavigationRow} from '../../source/components/rows'
 import {PagedSection, type Card} from '../../source/features/about/card-carousel'
-import {acknowledgements, contributors, creditRows} from '../../source/features/about/credits'
+import {aboutFor} from '../../source/features/about/about-for'
+import {creditRows} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
-import {INTRO, timeline} from '../../source/features/about/timeline'
-import {formatVersion} from '../../source/features/about/version'
+import {useCampus, useCampusSection} from '../../source/features/campus/store'
+import {versionDetails} from '../../source/features/about/version'
 
 const styles = StyleSheet.create({
 	host: {
@@ -36,24 +43,24 @@ const BARE_ROW = [
 	listRowSeparator('hidden'),
 ]
 
-const timelineCards: Array<Card> = timeline.map((era) => ({
-	id: era.period,
-	heading: era.period,
-	body: era.story,
-}))
-
-/** Each credit and its names. */
-const credits = [
-	{id: 'contributors', heading: 'Contributors', names: contributors},
-	{id: 'acknowledgements', heading: 'Acknowledgements', names: acknowledgements},
-]
-
-const version = formatVersion(Application.nativeApplicationVersion, Application.nativeBuildVersion)
+const versions = versionDetails(
+	Application.nativeApplicationVersion,
+	Application.nativeBuildVersion,
+	Constants.expoConfig?.extra?.commit as string | undefined,
+)
 
 /// Who we are: what the app is and where it came from, who made it, and the policies that govern it.
 export default function AboutPage(): React.ReactNode {
 	let router = useRouter()
 	let {fontScale} = useWindowDimensions()
+	let [versionIndex, setVersionIndex] = React.useState(0)
+	let {branding} = useCampus()
+	let about = aboutFor(useCampusSection('about'))
+	let storyCards: Array<Card> = about.story.map((era) => ({
+		id: era.period,
+		heading: era.period,
+		body: era.story,
+	}))
 
 	return (
 		<>
@@ -68,7 +75,7 @@ export default function AboutPage(): React.ReactNode {
 						<Text
 							modifiers={[font({textStyle: 'title2', weight: 'bold'}), foregroundStyle(c.label)]}
 						>
-							All About Olaf
+							{branding.appName}
 						</Text>
 						<Text
 							modifiers={[
@@ -77,19 +84,28 @@ export default function AboutPage(): React.ReactNode {
 								multilineTextAlignment('center'),
 							]}
 						>
-							{INTRO}
+							{branding.intro}
 						</Text>
 					</VStack>
 
 					<SheetSection>
-						<LabeledContent label="App Version">
-							<Text>{version}</Text>
+						<LabeledContent
+							label={versions[versionIndex].label}
+							modifiers={[
+								// The whole row takes the tap, not only its text.
+								contentShape(shapes.rectangle()),
+								onTapGesture(() => setVersionIndex((index) => (index + 1) % versions.length)),
+								accessibilityAddTraits(['isButton']),
+								accessibilityHint('Shows the build number and commit'),
+							]}
+						>
+							<Text>{versions[versionIndex].value}</Text>
 						</LabeledContent>
 					</SheetSection>
 
-					<PagedSection cards={timelineCards} title="Our story" />
+					{storyCards.length > 0 ? <PagedSection cards={storyCards} title="Our story" /> : null}
 
-					{credits.map((credit) => (
+					{about.credits.map((credit) => (
 						<SheetSection key={credit.id} title={credit.heading}>
 							<Grid alignment="topLeading" horizontalSpacing={12} verticalSpacing={4}>
 								{creditRows(credit.names, fontScale).map((row) => (

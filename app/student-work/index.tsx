@@ -18,14 +18,15 @@ import {
 	useSeenPostingsStore,
 } from '../../source/features/sis/student-work/store'
 import {useStudentWorkBoard} from '../../source/features/sis/student-work/use-board'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 /// Offline, with no board saved to show.
 const OFFLINE_NOTICE = 'Student Work needs a connection to load the job board the first time.'
 
-/// Student Work's landing: area tiles, then presets, each opening the
+/// Student Work's landing: presets, then the areas, each opening the
 /// postings list with its filters prefilled. Typing a search swaps the
 /// landing for the whole board's matching postings.
-export default function StudentWorkPage(): React.ReactNode {
+function StudentWorkPage(): React.ReactNode {
 	let router = useRouter()
 	let {board, jobs, areas, context, refresh} = useStudentWorkBoard({checkForNewPostings: true})
 
@@ -125,15 +126,6 @@ export default function StudentWorkPage(): React.ReactNode {
 						}),
 					]}
 				>
-					<AreaSection
-						areas={areas}
-						layout={layout}
-						membership={context.membership}
-						onSelectArea={(area) =>
-							router.navigate({pathname: '/student-work/postings', params: {area: area.slug}})
-						}
-					/>
-
 					<Section>
 						{PRESETS.map((preset) => (
 							<DisclosureRow
@@ -147,6 +139,15 @@ export default function StudentWorkPage(): React.ReactNode {
 							/>
 						))}
 					</Section>
+
+					<AreaSection
+						areas={areas}
+						layout={layout}
+						membership={context.membership}
+						onSelectArea={(area) =>
+							router.navigate({pathname: '/student-work/postings', params: {area: area.slug}})
+						}
+					/>
 				</List>
 			</Host>
 		</>
@@ -164,3 +165,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'studentWork',
+	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	StudentWorkPage,
+)

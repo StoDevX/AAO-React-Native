@@ -18,6 +18,18 @@ export type MapPins = {
 	frameKey: number
 }
 
+/// Only the pin of the place a search result opened, so the open card's
+/// place is the one search pin left on the map. The frame key is kept, since
+/// narrowing is not a request to frame. Pins without that place, or no place
+/// at all, are left as they are.
+export function onlyPin(pins: MapPins | null, id: string | null): MapPins | null {
+	let place = id ? pins?.places.find((candidate) => candidate.id === id) : undefined
+	if (!pins || !place) {
+		return pins
+	}
+	return {...pins, places: [place]}
+}
+
 export type PinProperties = {buildingId: string; name: string}
 
 /// One GeoJSON point per place, at the place's own point. A place with none

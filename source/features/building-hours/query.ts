@@ -1,67 +1,92 @@
-import {carletonClient, client} from '@frogpond/api'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {clientFor} from '@frogpond/api'
+import type {BreakCalendarResponse} from '@frogpond/schedules'
+import {useNowOverride} from '@frogpond/timer'
+import {groupBy} from '@frogpond/collections'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
+
+import {campusById, type CampusId} from '../../campuses'
+import {queryClient} from '../../init/tanstack-query'
 import {useAppSelector} from '../../redux/hooks'
 import {favoriteNamesForCampus, selectFavoriteBuildings} from '../../redux/parts/buildings'
-import bundledBuildings from '../../../docs/building-hours.json'
-import {BuildingType, Campus} from './types'
+import {sectionServer} from '../campus/section-server'
+import {BuildingType} from './types'
 import {FAVORITES_TITLE} from './lib/listed-sections'
+import {withBreakInEffect} from './lib/break-in-effect'
 import {useForceBundledData} from './dev/data-source-store'
-import {groupBy} from '@frogpond/collections'
-
-/**
- * Narrows a route's `?campus=` param to a known `Campus`, falling back to
- * St. Olaf for anything else -- an unrecognised value should never crash the
- * screen or reach a client picked by casting an arbitrary string.
- */
-export function parseCampus(value: string | undefined): Campus {
-	return value === 'carleton' ? 'carleton' : 'stolaf'
-}
 
 export const keys = {
-	/** Campus first, so it namespaces by campus -- the two campuses' cached
+	/** Campus first, so it namespaces by campus -- two campuses' cached
 	 * buildings can never collide, even though several venue names (Bookstore,
-	 * Post Office, ...) exist on both. The map's geojson joins this namespace
-	 * when St. Olaf's lands. */
-	all: (campus: Campus) => [campus, 'buildings'] as const,
+	 * Post Office, ...) exist on both. The map's geojson joins this namespace. */
+	all: (campus: CampusId) => [campus, 'buildings'] as const,
 }
 
-// Both campuses run identical `spaces/hours` schemas on their own ccc-server
-// deployments, so only the client and the cache key vary by campus.
-function clientFor(campus: Campus): typeof client {
-	return campus === 'carleton' ? carletonClient : client
-}
+/** A campus's hours with no break applied, and its break calendar if it keeps one. */
+type UneditedHours = {buildings: BuildingType<unknown>[]; calendar?: BreakCalendarResponse}
 
-function fetchBuildings(campus: Campus) {
+/**
+ * The hours as the dev sheet's moved clock needs them: the server's usual
+ * schedules (`?breaks=none`) and the break calendar, so the app can apply
+ * whichever break the frozen moment falls in. Kept as long as the server's own
+ * answer, so moving the clock re-applies without asking again.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const uneditedHoursOptions = (campus: CampusId) =>
+	queryOptions({
+		queryKey: [campus, 'unedited-hours'],
+		queryFn: async ({signal}): Promise<UneditedHours> => {
+			let client = clientFor(sectionServer(campus, campusById(campus).hours))
+			let [hours, calendar] = await Promise.all([
+				client
+					.get('spaces/hours', {signal, searchParams: {breaks: 'none'}})
+					.json<{data: BuildingType<unknown>[]}>(),
+				// Only a campus whose server keeps a break calendar has one.
+				client
+					.get('breaks', {signal})
+					.json<BreakCalendarResponse>()
+					.catch(() => undefined),
+			])
+			return {buildings: hours.data, calendar}
+		},
+		staleTime: 10 * 60 * 1000,
+	})
+
+function fetchBuildings(campus: CampusId) {
 	return async ({signal}: {signal: AbortSignal}): Promise<BuildingType[]> => {
-		// UI tests assert against what a screen does with a venue, so they need
-		// the same venues every run, and they need this repository's copy rather
-		// than the deployed one -- a `building` key added here only reaches the
-		// server once it merges, and a test for it would fail in between for a
-		// reason nobody could act on. Carleton's data lives outside this
-		// repository, so it still comes over the wire.
-		//
-		// The dev override takes the same route, for the same reason: a field
-		// added here is invisible on a device until the server has it.
+		let hours = campusById(campus).hours
+		// The dev override reads this repository's copy rather than the deployed
+		// one, so a `building` key added here can be tried before it merges. A
+		// campus with no bundled copy still comes over the wire.
 		let forced = useForceBundledData.getState().forced
-		if ((isUITesting || forced) && campus === 'stolaf') {
-			return (bundledBuildings as {data: BuildingType[]}).data
+		if (forced && hours?.bundled) {
+			return [...hours.bundled]
 		}
 
-		let response = await clientFor(campus).get('spaces/hours', {signal}).json()
+		// The server answers for today, with any break's hours already in place
+		// of the usual ones. A clock moved in the dev sheet applies the break of
+		// its own moment instead, or it would show today's break on some other day.
+		let frozen = useNowOverride.getState().frozen
+		if (frozen) {
+			let {buildings, calendar} = await queryClient.query(uneditedHoursOptions(campus))
+			return withBreakInEffect(buildings, calendar, frozen.valueOf()) as BuildingType[]
+		}
+
+		let response = await clientFor(sectionServer(campus, hours))
+			.get('spaces/hours', {signal})
+			.json()
 		return (response as {data: BuildingType[]}).data
 	}
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const buildingsOptions = (campus: Campus) =>
+export const buildingsOptions = (campus: CampusId) =>
 	queryOptions({
 		queryKey: keys.all(campus),
 		queryFn: fetchBuildings(campus),
 	})
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const buildingByNameOptions = (campus: Campus, name: string) =>
+export const buildingByNameOptions = (campus: CampusId, name: string) =>
 	queryOptions({
 		// Shares buildingsOptions' key on purpose: the detail sheet reads the
 		// list query's warm cache instead of showing its own spinner.
@@ -71,7 +96,7 @@ export const buildingByNameOptions = (campus: Campus, name: string) =>
 	})
 
 export function useGroupedBuildings(
-	campus: Campus,
+	campus: CampusId,
 ): UseQueryResult<Array<{title: string; data: BuildingType[]}>, unknown> {
 	let favoriteBuildings = useAppSelector(selectFavoriteBuildings)
 

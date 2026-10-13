@@ -32,5 +32,8 @@ export const useSeenPostingsStore = create<SeenPostingsStore>()(
 )
 
 /// Whether the landing screen draws its areas as tiles or rows, as the
-/// student last picked from its layout menu.
-export const useAreaLayoutStore = createLayoutStore('student-work-area-layout', 'grid')
+/// student last picked from its layout menu. Version 2, so that tiles saved
+/// while they were the default give way to rows.
+export const useAreaLayoutStore = createLayoutStore('student-work-area-layout', 'list', {
+	version: 2,
+})

@@ -1,5 +1,5 @@
 /**
- * Draw the pixel layers of the Old Main (Retro) icon in assets/old-main-retro.icon/:
+ * Draw the pixel layers of the Old Main (Retro) icon in assets/0-source-icons/old-main-retro.icon/:
  * green for the light appearance, amber for the dark. Each color gets two
  * layers, so edit the screen below and run this to redraw both:
  *
@@ -179,8 +179,8 @@ function round(n, places = 2) {
 }
 
 const P3_PROFILE = '/System/Library/ColorSync/Profiles/Display P3.icc'
-const ASSETS = join('assets', 'old-main-retro.icon', 'Assets')
-const SOURCE = join('assets', 'old-main-retro.icon', 'source')
+const ASSETS = join('assets', '0-source-icons', 'old-main-retro.icon', 'Assets')
+const SOURCE = join('assets', '0-source-icons', 'old-main-retro.icon', 'source')
 /**
  * The glow layer's width in pixels. The blur leaves nothing a full-size layer
  * would show, and icon.json scales the layer up by `CANVAS / GLOW_SIZE`.

@@ -1,0 +1,75 @@
+name: Docs
+
+# Builds the DocC site in documentation/. docc ships with Xcode, so the build
+# runs on a Mac; the site is cached so a deploy that left documentation/ alone
+# never starts a Mac.
+on:
+  pull_request:
+    paths:
+      - 'documentation/**'
+      - 'scripts/build-docs.sh'
+      - '.github/workflows/docs.yml'
+  workflow_call:
+    outputs:
+      cache-key:
+        description: The key the built site is cached under
+        value: ${{ jobs.cache-lookup.outputs.cache-key }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  xcode_version: 'Xcode_27.0'
+
+jobs:
+  cache-lookup:
+    name: Look for the built site
+    runs-on: ubuntu-slim
+    outputs:
+      hit: ${{ steps.lookup.outputs.cache-hit }}
+      cache-key: ${{ steps.key.outputs.value }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Name the cache key
+        id: key
+        run: echo "value=docs-site/e=1/hash=${{ hashFiles('documentation/**', 'scripts/build-docs.sh') }}" >>"$GITHUB_OUTPUT"
+
+      # The Mac saves the site and the Linux deploy job restores it, so the
+      # archive must cross operating systems.
+      - name: Look for the cached site
+        id: lookup
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: docs/documentation
+          key: ${{ steps.key.outputs.value }}
+          lookup-only: true
+          enableCrossOsArchive: true
+
+  build:
+    name: Build the site
+    needs: cache-lookup
+    if: needs.cache-lookup.outputs.hit != 'true'
+    runs-on: xcode-27
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build the site
+        run: scripts/build-docs.sh
+
+      - name: Save the site
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: docs/documentation
+          key: ${{ needs.cache-lookup.outputs.cache-key }}
+          enableCrossOsArchive: true

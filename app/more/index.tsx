@@ -15,6 +15,7 @@ import {SearchBar} from '../../source/components/search-bar'
 import {filterLinkGroups} from '../../source/features/more/helpers'
 import {searchLinksOptions} from '../../source/features/more/query'
 import {sectionIndexLabel} from '../../source/lib/section-index-label'
+import {requiresSection} from '../../source/features/campus/section-gate'
 
 function MoreView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
@@ -79,7 +80,7 @@ function MoreView(): React.ReactNode {
 	)
 }
 
-export default function MorePage(): React.ReactNode {
+function MorePage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>More</Stack.Title>
@@ -94,3 +95,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
+
+export default requiresSection(
+	'more',
+	{title: 'More', noun: 'a list of campus links', systemImage: 'link'},
+	MorePage,
+)

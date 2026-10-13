@@ -1,0 +1,64 @@
+# Synthetic contract examples, not verified campus dates or operating policies.
+timezone: America/Chicago
+templates:
+  closed:
+    - title: Closed
+      isPhysicallyOpen: false
+      hours: []
+  office-hours:
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '5:00pm'}
+    exceptions:
+      - date: '2026-10-10'
+        schedule:
+          - title: Closed for the day
+            isPhysicallyOpen: false
+            hours: []
+breaks:
+  fall:
+    name: Fall Break
+    start: '2026-10-10'
+    end: '2026-10-13'
+    defaultSpaceSchedule: closed
+  winter:
+    name: Winter Break
+    start: '2026-12-21'
+    end: '2027-01-03'
+    defaultSpaceSchedule:
+      schedule:
+        - title: By appointment
+          notes: Contact the office to arrange a visit.
+          hours: []
+  interim:
+    name: Interim Break
+    start: '2027-01-30'
+    end: '2027-02-07'
+    defaultSpaceSchedule:
+      - title: Closed
+        isPhysicallyOpen: false
+        hours: []
+  spring:
+    name: Spring Break
+    start: '2027-03-20'
+    end: '2027-03-28'
+    templates:
+      office-hours:
+        schedule:
+          - title: Spring hours
+            hours:
+              - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '3:00pm'}
+        exceptions:
+          - date: '2027-03-20'
+            schedule:
+              - title: Closed for the day
+                isPhysicallyOpen: false
+                hours: []
+      spring-only:
+        - title: By appointment
+          notes: Arrange a visit.
+          hours: []
+  easter:
+    name: Easter
+    date: '2027-03-28'

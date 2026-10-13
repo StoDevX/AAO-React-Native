@@ -46,10 +46,15 @@ export type StainKind = 'coffee' | 'tea' | 'none'
 /** How a tile tints its lead photo: by the appearance, in Light Mode's tone in both appearances, or in sepia. */
 export type PhotoTone = 'auto' | 'color' | 'sepia'
 
-/** A grid tile, or the top tile laid out for a tall or a wide window. */
-export type TileLayout = 'grid' | 'topPortrait' | 'topLandscape'
+/**
+ * A grid tile, or the top tile: a tall sheet for a narrow window, and for a wide one a strip
+ * where the window is short, or a broadsheet where it is not.
+ */
+export type TileLayout = 'grid' | 'topPortrait' | 'topLandscape' | 'topBroadsheet'
 
 export type MessIssueTileProps = {
+	/** The paper's name across the top of the sheet, "The Olaf Messenger" */
+	nameplate: string
 	title: string
 	/** The issue's date as words, "April 29, 2026"; the tile sets it in capitals */
 	date: string

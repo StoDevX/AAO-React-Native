@@ -15,6 +15,11 @@ export const KSTO_POWERED_BY = {
 	href: 'https://pages.stolaf.edu/ksto/',
 }
 
+export const KMNK_POWERED_BY = {
+	title: 'Powered by the KMNK team',
+	href: 'https://kmnk.college.example/schedule',
+}
+
 export const KRLX_POWERED_BY = {
 	title: 'Powered by the KRLX team',
 	href: 'https://www.krlx.org/schedule/',

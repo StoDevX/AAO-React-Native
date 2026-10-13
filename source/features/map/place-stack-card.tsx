@@ -10,7 +10,7 @@ import {
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 
-import type {Campus} from '../building-hours/types'
+import type {CampusId} from '../../campuses/ids'
 import {BuildingInfo} from './building-info'
 import {stackEntryKey, type PlaceStackAction, type StackEntry} from './lib/place-stack'
 import {DETENT_FOR, nameOf, SHEET_DETENTS} from './lib/sheet-detents'
@@ -25,7 +25,7 @@ type Props = {
 	stack: Array<StackEntry>
 	/// Which entry of the stack this card shows.
 	depth: number
-	campus: Campus
+	campus: CampusId
 	dispatch: (action: PlaceStackAction) => void
 	/// The stop of the sheet this card is in.
 	stop: SheetDetent

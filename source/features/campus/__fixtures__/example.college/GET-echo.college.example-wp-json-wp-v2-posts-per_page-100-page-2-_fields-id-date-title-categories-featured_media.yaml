@@ -1,0 +1,661 @@
+status: 200
+contentType: application/json; charset=UTF-8
+key: GET https://echo.college.example/wp-json/wp/v2/posts?per_page=100&page=2&_fields=id,date,title,categories,featured_media
+json:
+  - id: 60095
+    date: '2026-01-22T10:00:00'
+    featured_media: 70095
+    title:
+      rendered: Student film festival announces its picks, again
+    categories:
+      - 5
+  - id: 60088
+    date: '2026-01-16T12:00:00'
+    featured_media: 70088
+    title:
+      rendered: A new mural for the old ski lodge
+    categories:
+      - 5
+  - id: 60087
+    date: '2026-01-16T11:00:00'
+    featured_media: 70087
+    title:
+      rendered: Hockey on the pond returns this winter
+    categories:
+      - 4
+  - id: 60086
+    date: '2026-01-16T10:00:00'
+    featured_media: 70086
+    title:
+      rendered: Stop cancelling class for powder days
+    categories:
+      - 3
+  - id: 60084
+    date: '2026-01-16T09:00:00'
+    featured_media: 70084
+    title:
+      rendered: Dining hall swaps trays for compost bins
+    categories:
+      - 2
+  - id: 60085
+    date: '2026-01-15T15:00:00'
+    featured_media: 70085
+    title:
+      rendered: Snowmelt Recital Hall wins a restoration grant
+    categories:
+      - 21
+      - 2
+  - id: 60089
+    date: '2026-01-15T10:00:00'
+    featured_media: 70089
+    title:
+      rendered: Jazz in the cellar, every other Thursday, again
+    categories:
+      - 5
+  - id: 60082
+    date: '2025-12-12T12:00:00'
+    featured_media: 70082
+    title:
+      rendered: Student film festival announces its picks
+    categories:
+      - 5
+  - id: 60081
+    date: '2025-12-12T11:00:00'
+    featured_media: 70081
+    title:
+      rendered: Cross-country runners take the ridge trail record
+    categories:
+      - 4
+  - id: 60080
+    date: '2025-12-12T10:00:00'
+    featured_media: 70080
+    title:
+      rendered: We should name the new lift after a monkey
+    categories:
+      - 3
+  - id: 60078
+    date: '2025-12-12T09:00:00'
+    featured_media: 70078
+    title:
+      rendered: New climbing wall opens in the field house
+    categories:
+      - 2
+  - id: 60079
+    date: '2025-12-11T15:00:00'
+    featured_media: 70079
+    title:
+      rendered: Ski patrol trains thirty new volunteers
+    categories:
+      - 21
+      - 2
+  - id: 60083
+    date: '2025-12-11T10:00:00'
+    featured_media: 70083
+    title:
+      rendered: Ice sculptures line the commons walk, again
+    categories:
+      - 5
+  - id: 60076
+    date: '2025-12-05T12:00:00'
+    featured_media: 70076
+    title:
+      rendered: Jazz in the cellar, every other Thursday
+    categories:
+      - 5
+  - id: 60075
+    date: '2025-12-05T11:00:00'
+    featured_media: 70075
+    title:
+      rendered: Freestyle club lands its first backflip contest
+    categories:
+      - 41
+      - 4
+  - id: 60074
+    date: '2025-12-05T10:00:00'
+    featured_media: 70074
+    title:
+      rendered: Let the library stay open all night
+    categories:
+      - 3
+  - id: 60072
+    date: '2025-12-05T09:00:00'
+    featured_media: 70072
+    title:
+      rendered: Library adds a quiet floor for finals
+    categories:
+      - 2
+  - id: 60073
+    date: '2025-12-04T15:00:00'
+    featured_media: 70073
+    title:
+      rendered: Valley road closures planned for the race weekend
+    categories:
+      - 21
+      - 2
+  - id: 60077
+    date: '2025-12-04T10:00:00'
+    featured_media: 70077
+    title:
+      rendered: Valley Choir sings the season in, again
+    categories:
+      - 5
+  - id: 60070
+    date: '2025-11-28T12:00:00'
+    featured_media: 70070
+    title:
+      rendered: Ice sculptures line the commons walk
+    categories:
+      - 5
+  - id: 60069
+    date: '2025-11-28T11:00:00'
+    featured_media: 70069
+    title:
+      rendered: Alpine squad opens its season at home
+    categories:
+      - 4
+  - id: 60068
+    date: '2025-11-28T10:00:00'
+    featured_media: 70068
+    title:
+      rendered: The valley deserves a later last bus
+    categories:
+      - 3
+  - id: 60066
+    date: '2025-11-28T09:00:00'
+    featured_media: 70066
+    title:
+      rendered: Glacier Hall gets a new roof before the snow
+    categories:
+      - 2
+  - id: 60067
+    date: '2025-11-27T15:00:00'
+    featured_media: 70067
+    title:
+      rendered: Student senate funds a late-night shuttle
+    categories:
+      - 21
+      - 2
+  - id: 60071
+    date: '2025-11-27T10:00:00'
+    featured_media: 70071
+    title:
+      rendered: A new mural for the old ski lodge, again
+    categories:
+      - 5
+  - id: 60064
+    date: '2025-11-21T12:00:00'
+    featured_media: 70064
+    title:
+      rendered: Valley Choir sings the season in
+    categories:
+      - 5
+  - id: 60063
+    date: '2025-11-21T11:00:00'
+    featured_media: 70063
+    title:
+      rendered: Nordic team sweeps the valley relay
+    categories:
+      - 4
+  - id: 60062
+    date: '2025-11-21T10:00:00'
+    featured_media: 70062
+    title:
+      rendered: In defence of the eight o’clock lecture
+    categories:
+      - 3
+  - id: 60060
+    date: '2025-11-21T09:00:00'
+    featured_media: 70060
+    title:
+      rendered: Summit Lift reopens after a summer of repairs
+    categories:
+      - 2
+  - id: 60061
+    date: '2025-11-20T15:00:00'
+    featured_media: 70061
+    title:
+      rendered: Treeline Commons extends its weekend hours
+    categories:
+      - 21
+      - 2
+  - id: 60065
+    date: '2025-11-20T10:00:00'
+    featured_media: 70065
+    title:
+      rendered: Student film festival announces its picks, again
+    categories:
+      - 5
+  - id: 60058
+    date: '2025-11-14T12:00:00'
+    featured_media: 70058
+    title:
+      rendered: A new mural for the old ski lodge
+    categories:
+      - 5
+  - id: 60057
+    date: '2025-11-14T11:00:00'
+    featured_media: 70057
+    title:
+      rendered: Hockey on the pond returns this winter
+    categories:
+      - 41
+      - 4
+  - id: 60056
+    date: '2025-11-14T10:00:00'
+    featured_media: 70056
+    title:
+      rendered: Stop cancelling class for powder days
+    categories:
+      - 3
+  - id: 60054
+    date: '2025-11-14T09:00:00'
+    featured_media: 70054
+    title:
+      rendered: Dining hall swaps trays for compost bins
+    categories:
+      - 2
+  - id: 60055
+    date: '2025-11-13T15:00:00'
+    featured_media: 70055
+    title:
+      rendered: Snowmelt Recital Hall wins a restoration grant
+    categories:
+      - 21
+      - 2
+  - id: 60059
+    date: '2025-11-13T10:00:00'
+    featured_media: 70059
+    title:
+      rendered: Jazz in the cellar, every other Thursday, again
+    categories:
+      - 5
+  - id: 60052
+    date: '2025-11-07T12:00:00'
+    featured_media: 70052
+    title:
+      rendered: Student film festival announces its picks
+    categories:
+      - 5
+  - id: 60051
+    date: '2025-11-07T11:00:00'
+    featured_media: 70051
+    title:
+      rendered: Cross-country runners take the ridge trail record
+    categories:
+      - 4
+  - id: 60050
+    date: '2025-11-07T10:00:00'
+    featured_media: 70050
+    title:
+      rendered: We should name the new lift after a monkey
+    categories:
+      - 3
+  - id: 60048
+    date: '2025-11-07T09:00:00'
+    featured_media: 70048
+    title:
+      rendered: New climbing wall opens in the field house
+    categories:
+      - 2
+  - id: 60049
+    date: '2025-11-06T15:00:00'
+    featured_media: 70049
+    title:
+      rendered: Ski patrol trains thirty new volunteers
+    categories:
+      - 21
+      - 2
+  - id: 60053
+    date: '2025-11-06T10:00:00'
+    featured_media: 70053
+    title:
+      rendered: Ice sculptures line the commons walk, again
+    categories:
+      - 5
+  - id: 60046
+    date: '2025-10-31T12:00:00'
+    featured_media: 70046
+    title:
+      rendered: Jazz in the cellar, every other Thursday
+    categories:
+      - 5
+  - id: 60045
+    date: '2025-10-31T11:00:00'
+    featured_media: 70045
+    title:
+      rendered: Freestyle club lands its first backflip contest
+    categories:
+      - 4
+  - id: 60044
+    date: '2025-10-31T10:00:00'
+    featured_media: 70044
+    title:
+      rendered: Let the library stay open all night
+    categories:
+      - 3
+  - id: 60042
+    date: '2025-10-31T09:00:00'
+    featured_media: 70042
+    title:
+      rendered: Library adds a quiet floor for finals
+    categories:
+      - 2
+  - id: 60043
+    date: '2025-10-30T15:00:00'
+    featured_media: 70043
+    title:
+      rendered: Valley road closures planned for the race weekend
+    categories:
+      - 21
+      - 2
+  - id: 60047
+    date: '2025-10-30T10:00:00'
+    featured_media: 70047
+    title:
+      rendered: Valley Choir sings the season in, again
+    categories:
+      - 5
+  - id: 60040
+    date: '2025-10-24T12:00:00'
+    featured_media: 70040
+    title:
+      rendered: Ice sculptures line the commons walk
+    categories:
+      - 5
+  - id: 60039
+    date: '2025-10-24T11:00:00'
+    featured_media: 70039
+    title:
+      rendered: Alpine squad opens its season at home
+    categories:
+      - 41
+      - 4
+  - id: 60038
+    date: '2025-10-24T10:00:00'
+    featured_media: 70038
+    title:
+      rendered: The valley deserves a later last bus
+    categories:
+      - 3
+  - id: 60036
+    date: '2025-10-24T09:00:00'
+    featured_media: 70036
+    title:
+      rendered: Glacier Hall gets a new roof before the snow
+    categories:
+      - 2
+  - id: 60037
+    date: '2025-10-23T15:00:00'
+    featured_media: 70037
+    title:
+      rendered: Student senate funds a late-night shuttle
+    categories:
+      - 21
+      - 2
+  - id: 60041
+    date: '2025-10-23T10:00:00'
+    featured_media: 70041
+    title:
+      rendered: A new mural for the old ski lodge, again
+    categories:
+      - 5
+  - id: 60034
+    date: '2025-10-17T12:00:00'
+    featured_media: 70034
+    title:
+      rendered: Valley Choir sings the season in
+    categories:
+      - 5
+  - id: 60033
+    date: '2025-10-17T11:00:00'
+    featured_media: 70033
+    title:
+      rendered: Nordic team sweeps the valley relay
+    categories:
+      - 4
+  - id: 60032
+    date: '2025-10-17T10:00:00'
+    featured_media: 70032
+    title:
+      rendered: In defence of the eight o’clock lecture
+    categories:
+      - 3
+  - id: 60030
+    date: '2025-10-17T09:00:00'
+    featured_media: 70030
+    title:
+      rendered: Summit Lift reopens after a summer of repairs
+    categories:
+      - 2
+  - id: 60031
+    date: '2025-10-16T15:00:00'
+    featured_media: 70031
+    title:
+      rendered: Treeline Commons extends its weekend hours
+    categories:
+      - 21
+      - 2
+  - id: 60035
+    date: '2025-10-16T10:00:00'
+    featured_media: 70035
+    title:
+      rendered: Student film festival announces its picks, again
+    categories:
+      - 5
+  - id: 60028
+    date: '2025-10-10T12:00:00'
+    featured_media: 70028
+    title:
+      rendered: A new mural for the old ski lodge
+    categories:
+      - 5
+  - id: 60027
+    date: '2025-10-10T11:00:00'
+    featured_media: 70027
+    title:
+      rendered: Hockey on the pond returns this winter
+    categories:
+      - 4
+  - id: 60026
+    date: '2025-10-10T10:00:00'
+    featured_media: 70026
+    title:
+      rendered: Stop cancelling class for powder days
+    categories:
+      - 3
+  - id: 60024
+    date: '2025-10-10T09:00:00'
+    featured_media: 70024
+    title:
+      rendered: Dining hall swaps trays for compost bins
+    categories:
+      - 2
+  - id: 60025
+    date: '2025-10-09T15:00:00'
+    featured_media: 70025
+    title:
+      rendered: Snowmelt Recital Hall wins a restoration grant
+    categories:
+      - 21
+      - 2
+  - id: 60029
+    date: '2025-10-09T10:00:00'
+    featured_media: 70029
+    title:
+      rendered: Jazz in the cellar, every other Thursday, again
+    categories:
+      - 5
+  - id: 60022
+    date: '2025-10-03T12:00:00'
+    featured_media: 70022
+    title:
+      rendered: Student film festival announces its picks
+    categories:
+      - 5
+  - id: 60021
+    date: '2025-10-03T11:00:00'
+    featured_media: 70021
+    title:
+      rendered: Cross-country runners take the ridge trail record
+    categories:
+      - 41
+      - 4
+  - id: 60020
+    date: '2025-10-03T10:00:00'
+    featured_media: 70020
+    title:
+      rendered: We should name the new lift after a monkey
+    categories:
+      - 3
+  - id: 60018
+    date: '2025-10-03T09:00:00'
+    featured_media: 70018
+    title:
+      rendered: New climbing wall opens in the field house
+    categories:
+      - 2
+  - id: 60019
+    date: '2025-10-02T15:00:00'
+    featured_media: 70019
+    title:
+      rendered: Ski patrol trains thirty new volunteers
+    categories:
+      - 21
+      - 2
+  - id: 60023
+    date: '2025-10-02T10:00:00'
+    featured_media: 70023
+    title:
+      rendered: Ice sculptures line the commons walk, again
+    categories:
+      - 5
+  - id: 60016
+    date: '2025-09-26T12:00:00'
+    featured_media: 70016
+    title:
+      rendered: Jazz in the cellar, every other Thursday
+    categories:
+      - 5
+  - id: 60015
+    date: '2025-09-26T11:00:00'
+    featured_media: 70015
+    title:
+      rendered: Freestyle club lands its first backflip contest
+    categories:
+      - 4
+  - id: 60014
+    date: '2025-09-26T10:00:00'
+    featured_media: 70014
+    title:
+      rendered: Let the library stay open all night
+    categories:
+      - 3
+  - id: 60012
+    date: '2025-09-26T09:00:00'
+    featured_media: 70012
+    title:
+      rendered: Library adds a quiet floor for finals
+    categories:
+      - 2
+  - id: 60013
+    date: '2025-09-25T15:00:00'
+    featured_media: 70013
+    title:
+      rendered: Valley road closures planned for the race weekend
+    categories:
+      - 21
+      - 2
+  - id: 60017
+    date: '2025-09-25T10:00:00'
+    featured_media: 70017
+    title:
+      rendered: Valley Choir sings the season in, again
+    categories:
+      - 5
+  - id: 60010
+    date: '2025-09-19T12:00:00'
+    featured_media: 70010
+    title:
+      rendered: Ice sculptures line the commons walk
+    categories:
+      - 5
+  - id: 60009
+    date: '2025-09-19T11:00:00'
+    featured_media: 70009
+    title:
+      rendered: Alpine squad opens its season at home
+    categories:
+      - 4
+  - id: 60008
+    date: '2025-09-19T10:00:00'
+    featured_media: 70008
+    title:
+      rendered: The valley deserves a later last bus
+    categories:
+      - 3
+  - id: 60006
+    date: '2025-09-19T09:00:00'
+    featured_media: 70006
+    title:
+      rendered: Glacier Hall gets a new roof before the snow
+    categories:
+      - 2
+  - id: 60007
+    date: '2025-09-18T15:00:00'
+    featured_media: 70007
+    title:
+      rendered: Student senate funds a late-night shuttle
+    categories:
+      - 21
+      - 2
+  - id: 60011
+    date: '2025-09-18T10:00:00'
+    featured_media: 70011
+    title:
+      rendered: A new mural for the old ski lodge, again
+    categories:
+      - 5
+  - id: 60004
+    date: '2025-09-12T12:00:00'
+    featured_media: 70004
+    title:
+      rendered: Valley Choir sings the season in
+    categories:
+      - 5
+  - id: 60003
+    date: '2025-09-12T11:00:00'
+    featured_media: 70003
+    title:
+      rendered: Nordic team sweeps the valley relay
+    categories:
+      - 41
+      - 4
+  - id: 60002
+    date: '2025-09-12T10:00:00'
+    featured_media: 70002
+    title:
+      rendered: In defence of the eight o’clock lecture
+    categories:
+      - 3
+  - id: 60000
+    date: '2025-09-12T09:00:00'
+    featured_media: 70000
+    title:
+      rendered: Summit Lift reopens after a summer of repairs
+    categories:
+      - 2
+  - id: 60001
+    date: '2025-09-11T15:00:00'
+    featured_media: 70001
+    title:
+      rendered: Treeline Commons extends its weekend hours
+    categories:
+      - 21
+      - 2
+  - id: 60005
+    date: '2025-09-11T10:00:00'
+    featured_media: 70005
+    title:
+      rendered: Student film festival announces its picks, again
+    categories:
+      - 5
