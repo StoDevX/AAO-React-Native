@@ -92,7 +92,7 @@ url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip"
 
 [[tools."npm:@changesets/cli"]]
 version = "3.0.3"
-aube = { path = ".mise/locks/npm-changesets-cli/3.0.3", digest = "sha256:d4d3059de2c0bd4fe9c5014c9234d61d9d8bcd2ac479960df5dfb1dee347fd50" }
+aube = { path = ".mise/locks/npm-changesets-cli/3.0.3", digest = "sha256:9ff83cb16aa22d6260c2f3756f3d600f9189168fddda4285ca94035d1c83863b" }
 backend = "npm:@changesets/cli"
 specifiers = ["3.0.3"]
 
