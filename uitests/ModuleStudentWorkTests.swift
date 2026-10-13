@@ -13,6 +13,7 @@ class ModuleStudentWorkTests: UITestCaseUnbooted {
 			.capture("Student Work landing")
 			.chooseLayout(TestIdentifiers.Layout.grid)
 			.verifyAreaTilesShown()
+			.capture("Student Work landing, tiles")
 			.chooseLayout(TestIdentifiers.Layout.list)
 			.verifyAreaRowsShown()
 			.openAllPostings()
