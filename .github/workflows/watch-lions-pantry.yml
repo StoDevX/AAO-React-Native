@@ -1,0 +1,63 @@
+name: Watch Lion's Pantry hours
+
+on:
+  # Daily at 14:00 UTC. The page is the only place the hours are published, and
+  # a term's schedule can change with a week's notice.
+  schedule:
+    - cron: '0 14 * * *'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  MISE_RUBY_COMPILE: 'false'
+
+jobs:
+  watch:
+    name: Check the hours line
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+
+      # Exit 1 means the line changed or vanished -- the thing to open an issue
+      # for -- so it is caught here; exit 2 (a failed fetch) fails the run.
+      - name: Check
+        id: check
+        run: |
+          set +e
+          mise run watch-lions-pantry > report.md
+          status=$?
+          set -e
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          case $status in
+            0) echo "changed=false" >> "$GITHUB_OUTPUT" ;;
+            1) echo "changed=true" >> "$GITHUB_OUTPUT" ;;
+            *) exit "$status" ;;
+          esac
+
+      - name: Open or update the issue
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: Lion's Pantry hours changed on the Taylor Center page
+        run: |
+          open=$(gh issue list --state open --search "in:title \"$TITLE\"" \
+            --json number,title --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n 1)
+
+          if [ -n "$open" ]; then
+            gh issue edit "$open" --body-file report.md
+          else
+            gh issue create --title "$TITLE" --body-file report.md
+          fi
