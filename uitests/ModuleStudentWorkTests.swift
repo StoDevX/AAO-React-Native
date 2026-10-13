@@ -10,6 +10,7 @@ class ModuleStudentWorkTests: UITestCaseUnbooted {
 	func testJobDescriptionOpensOnItsOwnScreen() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.capture("Student Work landing")
 			.chooseLayout(TestIdentifiers.Layout.grid)
 			.verifyAreaTilesShown()
 			.chooseLayout(TestIdentifiers.Layout.list)
