@@ -33,6 +33,8 @@ struct RadioView: View {
         }
         .padding(12)
         .frame(width: 340)
+        .onAppear { manager.isPanelOpen = true }
+        .onDisappear { manager.isPanelOpen = false }
     }
 
     private var nowPlayingText: some View {
@@ -99,8 +101,22 @@ struct RadioView: View {
         .accessibilityLabel(manager.isPlaying ? "Pause" : "Play")
     }
 
+    /// Today's shows at the listener's own time, with the one on air checked. The rows are there to read, so choosing one does nothing.
+    private var scheduleMenu: some View {
+        Menu("Today's Schedule") {
+            ForEach(manager.todaysShows, id: \.start) { airing in
+                // A tab, as the menu sets every title at its next tab stop, in one column.
+                Toggle("\(airing.startText())\t\(airing.show.title)", isOn: .constant(airing.show == manager.showOnAir))
+            }
+        }
+    }
+
     private var optionsMenu: some View {
         Menu {
+            if !manager.todaysShows.isEmpty {
+                scheduleMenu
+                Divider()
+            }
             Button("Settings…") {
                 NSApplication.showInDock()
                 openSettings()

@@ -1,6 +1,7 @@
 import type {AppIconName} from '../../../images/icons'
 import type {CampusId} from '../../campuses'
 import type {StationId} from '../streaming/radio/stations'
+import type {PlaybackFailureMessage} from '../streaming/radio/playback-diagnostics'
 
 /**
  * A route's file-system pattern, such as `/dictionary/[word]`. Only
@@ -107,6 +108,16 @@ export type TelemetryEvent =
 			}
 	  }
 	| {name: 'radio.play.error'; attributes: {station: StationId}}
+	| {
+			name: 'radio.play.failure'
+			attributes: {
+				station: StationId
+				message: PlaybackFailureMessage
+				source: 'published' | 'shipped'
+				phase: 'startup' | 'after_playback'
+				outcome: 'trying_fallback' | 'stopped'
+			}
+	  }
 	// A published stream failed before any audio, and the shipped one was tried instead.
 	| {name: 'radio.stream.fallback'; attributes: {station: StationId}}
 	| {
@@ -140,6 +151,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'radio.station.browse': 'metric',
 	'radio.action': 'metric',
 	'radio.play.error': 'metric',
+	'radio.play.failure': 'log',
 	'radio.stream.fallback': 'metric',
 	'api.failure': 'log',
 }

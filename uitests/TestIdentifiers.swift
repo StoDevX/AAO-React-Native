@@ -548,10 +548,8 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		/// Play and Stop, in source/features/streaming/radio/player-view and the
-		/// mini-player; each names Wiki Monkeys' station.
+		/// Play in source/features/streaming/radio/player-view, naming Wiki Monkeys' station.
 		static let playKmnk = "Play KMNK 91.7, The Peak"
-		static let pauseKmnk = "Pause KMNK 91.7, The Peak"
 		/// The player's bottom row, as VoiceOver names it. KMNK has no chat, so
 		/// its Chat button is a dimmed "Chat unavailable" rather than a link.
 		static let kmnkActions = [

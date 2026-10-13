@@ -24,9 +24,23 @@ struct SettingsView: View {
 
 struct GeneralSettingsView: View {
     @AppStorage(SettingsView.showsTitleInMenuBarKey) private var showsTitleInMenuBar = false
+    @AppStorage(StationPreferences.launchStationKey) private var launchStation = LaunchStation.lastPlayed
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
+            Section {
+                Picker("Open on", selection: $launchStation) {
+                    Text("Last Played").tag(LaunchStation.lastPlayed)
+                    Divider()
+                    ForEach(Station.allCases) { station in
+                        Text(station.name).tag(LaunchStation.station(station))
+                    }
+                }
+                .labelsHidden()
+                .fixedSize()
+            }
+            .modifier(PreferencesTabViewModifier(sectionTitle: "Open On"))
+
             Section {
                 Toggle("Show what's playing next to the icon", isOn: $showsTitleInMenuBar)
             }

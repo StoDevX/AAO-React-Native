@@ -46,6 +46,40 @@ function validateSelectedSchedule(
 }
 
 describe('schedule data contracts', () => {
+	it('rejects trailing periods only on named break closure messages', () => {
+		for (let notes of ['Closed for Fall Break.', 'Closed for Winter Break.  ']) {
+			let input = pair()
+			input.calendar.templates.closed[0].notes = notes
+			assert.throws(
+				() => parse(input),
+				/calendar.yaml.templates.closed.schedule\[0\].notes: break closure messages must not end with a period/u,
+			)
+		}
+	})
+
+	it('allows other notes to retain periods, including notes within break schedules', () => {
+		for (let notes of [
+			'Closed for Fall Break',
+			'Closed for renovation.',
+			'Contact the office to arrange a visit.',
+			'Closed for Fall Break. Reopens Wednesday.',
+		]) {
+			let input = pair()
+			input.calendar.templates.closed[0].notes = notes
+			assert.equal(parse(input).calendar.templates.closed.schedule[0].notes, notes)
+		}
+	})
+
+	it('checks named break closure messages in inline break exceptions', () => {
+		let input = pair()
+		input.spaces[0].breakSchedule.interim.exceptions[0].schedule[0].notes =
+			'Closed for Interim Break.'
+		assert.throws(
+			() => parse(input),
+			/space-0.yaml.breakSchedule.interim.exceptions\[0\].schedule\[0\].notes: break closure messages/u,
+		)
+	})
+
 	it('accepts shorthand, full policies, closures, notes, local overrides and date exceptions', () => {
 		let input = pair()
 		let before = structuredClone(input)
