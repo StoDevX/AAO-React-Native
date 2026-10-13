@@ -1,5 +1,5 @@
-# The Student Work landing screen's tiles, in the order it draws them, and
-# the St. Olaf unit numbers whose job postings belong to each. A posting is in
+# The Student Work landing screen's areas, which it draws by name whatever
+# their order here, and the St. Olaf unit numbers whose job postings belong to each. A posting is in
 # an area when the Unit Number in its description is one of the area's units,
 # five digits without any fund prefix, as ccc-server's /student-work/units
 # reads it. ccc-server publishes the unit `other` for a posting whose unit no
