@@ -6,6 +6,9 @@ import {STATION_LIST, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
 type RadioStore = {
+	/** Advanced controls are opt-in for this app session. */
+	djMode: boolean
+	setDJMode: (enabled: boolean) => void
 	/** The station the player has loaded; null when nothing is loaded. */
 	stationId: StationId | null
 	/** What the player is doing, or has been asked to do, with that station. */
@@ -91,6 +94,10 @@ export const useRadioStore = create<RadioStore>()(
 			let fromCurrentPlayer = (key: number) => key === get().playerKey
 
 			return {
+				djMode: false,
+				setDJMode: (enabled) => {
+					set({djMode: enabled})
+				},
 				stationId: null,
 				playState: 'stopped',
 				error: null,

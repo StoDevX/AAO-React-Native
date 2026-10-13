@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Button, Host, Image, Menu} from '@expo/ui/swift-ui'
+import {Button, Host, Image, Menu, Text, Toggle} from '@expo/ui/swift-ui'
 import {accessibilityLabel, frame} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 
@@ -8,8 +8,10 @@ import type {Station} from '../stations'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
 
-/** Full Schedule and Open Website, behind the title's ••• button. */
+/** Listening options and DJ Mode, behind the title's ••• button. */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
+	let djMode = useRadioStore((state) => state.djMode)
+	let setDJMode = useRadioStore((state) => state.setDJMode)
 	let openFullSchedule = useRadioStore((state) => state.openFullSchedule)
 	return (
 		<Host matchContents={true}>
@@ -20,6 +22,10 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 					frame({width: 44, height: 44}),
 				]}
 			>
+				<Toggle isOn={djMode} onIsOnChange={setDJMode}>
+					<Image systemName="slider.horizontal.3" />
+					<Text>DJ Mode</Text>
+				</Toggle>
 				<Button
 					label="Full Schedule"
 					onPress={() => {
