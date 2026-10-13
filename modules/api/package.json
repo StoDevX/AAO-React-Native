@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "ky": "2.1.0"
+    "ky": "2.2.0"
   },
   "devDependencies": {
     "@jest/globals": "30.5.2"
