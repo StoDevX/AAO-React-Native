@@ -16,6 +16,19 @@ public class RadioScrubModule: Module {
 
 	public func definition() -> ModuleDefinition {
 		Name("RadioScrub")
+		Function("supportsVisualization") { true }
+		View(RadioVisualizerView.self) {
+			Prop("attachment") { (view: RadioVisualizerView, attachment: String) in
+				view.provider = { [weak self] in
+					guard let self else { return nil }
+					return self.lock.withLock { self.token == attachment ? self.tap?.visualization : nil }
+				}
+			}
+			Prop("active") { (view: RadioVisualizerView, active: Bool) in view.active = active }
+			Prop("mode") { (view: RadioVisualizerView, mode: String) in view.mode = mode }
+			Prop("tint") { (view: RadioVisualizerView, color: UIColor?) in view.signalColor = color ?? .white }
+			OnViewDidUpdateProps { (view: RadioVisualizerView) in view.updateActivity() }
+		}
 
 		Events("onDeckSideChanged")
 		OnStartObserving("onDeckSideChanged") {

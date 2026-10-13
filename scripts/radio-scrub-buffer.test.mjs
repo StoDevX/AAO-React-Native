@@ -33,6 +33,17 @@ function runNativeTest(name, sources, args = []) {
 }
 
 test(
+	'the native visualizer preserves spectral energy and interpolates independently of refresh rate',
+	{skip: process.platform !== 'darwin'},
+	() => {
+		runNativeTest('audio-visualization', [
+			'ios/AudioVisualization.swift',
+			'tests/audio-visualization.swift',
+		])
+	},
+)
+
+test(
 	'the native record buffer reverses broadcast samples and preserves delayed playback',
 	{skip: process.platform !== 'darwin'},
 	() => {

@@ -4,6 +4,8 @@ import Foundation
 /// Streams MP3 on a serial delegate queue; the engine consumes only decoded PCM.
 /// The module serializes control calls. decoderLock protects delegate/teardown races.
 final class RadioScrubPCM: NSObject, RadioScrubbing, URLSessionDataDelegate {
+	let visualization = AudioVisualization()
+	private var visualizationTapInstalled = false
 	private var pcm: PCMBuffer?
 	private var engine: AVAudioEngine?
 	private var source: AVAudioSourceNode?
@@ -37,6 +39,27 @@ final class RadioScrubPCM: NSObject, RadioScrubbing, URLSessionDataDelegate {
 		self.engine = engine
 		self.source = source
 		self.effects = effects
+		let samples = visualization.samples
+		do {
+			try engine.mainMixerNode.installAudioTap(onBus: 0, bufferSize: 4800, format: nil) { buffer, _ in
+				let rate = buffer.format.sampleRate
+				if rate != samples.sampleRate.load(ordering: .relaxed) { samples.prepare(rate) }
+				guard samples.beginBlock(Int(buffer.frameLength)) else { return }
+				let channels = Int(buffer.format.channelCount)
+				guard channels > 0 else { samples.endBlock(); return }
+				guard case .float(let left) = buffer.channelData(0),
+					case .float(let right) = buffer.channelData(channels - 1)
+				else { samples.endBlock(); return }
+				let stride = buffer.stride
+				for i in 0..<Int(buffer.frameLength) {
+					samples.append(left[i * stride], right[i * stride])
+				}
+				samples.endBlock()
+			}
+			visualizationTapInstalled = true
+		} catch {
+			NSLog("RadioScrub visualization: %@", String(describing: error))
+		}
 		let queue = OperationQueue()
 		queue.maxConcurrentOperationCount = 1
 		let session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: queue)
@@ -81,6 +104,8 @@ final class RadioScrubPCM: NSObject, RadioScrubbing, URLSessionDataDelegate {
 		task = nil
 		session = nil
 		effects?.cancelRamps()
+		if visualizationTapInstalled { engine?.mainMixerNode.removeTap(onBus: 0) }
+		visualizationTapInstalled = false
 		engine?.stop()
 		engine = nil
 		source = nil

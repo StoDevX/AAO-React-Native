@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
+import type {VisualizationMode} from '@frogpond/radio-scrub/visualizer'
 import {currentCampus} from '../../campus/store'
 import {STATION_LIST, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
@@ -9,6 +10,9 @@ type RadioStore = {
 	/** Advanced controls are opt-in for this app session. */
 	djMode: boolean
 	setDJMode: (enabled: boolean) => void
+	/** Shared by station pages and cleared when the DJ session ends. */
+	visualizationMode: VisualizationMode
+	setVisualizationMode: (mode: VisualizationMode) => void
 	/** The station the player has loaded; null when nothing is loaded. */
 	stationId: StationId | null
 	/** What the player is doing, or has been asked to do, with that station. */
@@ -95,8 +99,10 @@ export const useRadioStore = create<RadioStore>()(
 
 			return {
 				djMode: false,
+				visualizationMode: 'waveform',
+				setVisualizationMode: (visualizationMode) => set({visualizationMode}),
 				setDJMode: (enabled) => {
-					set({djMode: enabled})
+					set({djMode: enabled, ...(!enabled ? {visualizationMode: 'waveform' as const} : {})})
 				},
 				stationId: null,
 				playState: 'stopped',

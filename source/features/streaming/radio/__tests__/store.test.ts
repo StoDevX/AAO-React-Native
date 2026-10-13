@@ -9,6 +9,7 @@ const ERROR = {code: 4, message: 'The stream could not be played.'}
 function reset() {
 	useRadioStore.setState({
 		djMode: false,
+		visualizationMode: 'waveform',
 		stationId: null,
 		playState: 'stopped',
 		error: null,
@@ -22,6 +23,18 @@ function reset() {
 
 describe('playback', () => {
 	beforeEach(reset)
+
+	test('keeps the visualization while browsing stations and resets it when DJ mode ends', () => {
+		let store = useRadioStore.getState()
+		store.setDJMode(true)
+		store.setVisualizationMode('spectrum')
+		store.play('krlx')
+		store.play('ksto')
+		expect(useRadioStore.getState().visualizationMode).toBe('spectrum')
+		store.setDJMode(false)
+		store.setDJMode(true)
+		expect(useRadioStore.getState().visualizationMode).toBe('waveform')
+	})
 
 	test('loads nothing until a station is played', () => {
 		expect(useRadioStore.getState()).toMatchObject({stationId: null, playState: 'stopped'})

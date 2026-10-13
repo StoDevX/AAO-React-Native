@@ -3,6 +3,7 @@ import {Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions} from
 import {SymbolView} from 'expo-symbols'
 import type {EventType} from '@frogpond/event-type'
 import {TouchClaimView} from '@frogpond/touch-claim'
+import {RadioVisualizer, visualizationAvailable} from '@frogpond/radio-scrub/visualizer'
 
 import {ScratchableLogo} from '../scratchable-logo'
 import {logoImage, type Station} from '../stations'
@@ -59,6 +60,12 @@ export function FullLayout({
 	let {playState} = useStationPlayback(station.id)
 	let djMode = useRadioStore((state) => state.djMode)
 	let setDJMode = useRadioStore((state) => state.setDJMode)
+	let visualizationMode = useRadioStore((state) => state.visualizationMode)
+	let setVisualizationMode = useRadioStore((state) => state.setVisualizationMode)
+	let attachment = useScrubPlayback((state) =>
+		state.stationId === station.id ? state.token : null,
+	)
+	let showingVisualization = djMode && !showingSchedule && visualizationAvailable
 	let delayed = useScrubPlayback(
 		(state) => state.stationId === station.id && state.delaySeconds >= 0.25,
 	)
@@ -86,7 +93,9 @@ export function FullLayout({
 		160,
 		viewportHeight - pickerHeight - PLAYER_GAP - 2 * PLAYER_VERTICAL_PADDING,
 	)
-	let deckWidth = landscape ? Math.min((fullWidth - LANDSCAPE_GAP) / 2, landscapeHeight) : fullWidth
+	let deckWidth = landscape
+		? Math.min((fullWidth - LANDSCAPE_GAP) / 2, landscapeHeight - (showingVisualization ? 44 : 0))
+		: fullWidth
 	let {artwork, onLayout} = useFittedArtwork({
 		width: deckWidth,
 		viewportHeight,
@@ -145,7 +154,13 @@ export function FullLayout({
 			) : null}
 			<AirStatusBar current={schedule.current} status={schedule.status} />
 			{djMode ? (
-				<AudioScrubControls key={station.id} stationId={station.id} tintColor={logo.tint} />
+				<AudioScrubControls
+					key={station.id}
+					stationId={station.id}
+					tintColor={logo.tint}
+					visualizationMode={visualizationAvailable ? visualizationMode : undefined}
+					onVisualizationModeChange={setVisualizationMode}
+				/>
 			) : null}
 			<View style={styles.centre}>
 				<PlayStopButton station={station} />
@@ -180,31 +195,42 @@ export function FullLayout({
 					landscape && deckSide === 'right' && styles.turntableRight,
 				]}
 			>
-				<View style={[styles.artwork, dimensions.artwork]}>
-					{showingSchedule ? (
-						<ScheduleList status={schedule.status} upcoming={schedule.upcoming} />
-					) : (
-						<TouchClaimView>
-							<ScratchableLogo
-								key={logo.name}
-								accessibilityLabel={
-									songArtwork
-										? `${nowPlaying.title}, ${station.stationName}`
-										: `${station.stationName} logo, ${logo.name}`
-								}
-								image={songArtwork ? SONG_ARTWORK(nowPlaying.artworkUri) : logoImage(logo)}
-								labelColor={logo.labelColor}
-								labelScale={songArtwork ? 1 : (logo.labelScale ?? 0.8)}
-								onTap={showNextLogo}
-								onScratchStart={scratchStart}
-								onScratchMove={scratchMove}
-								onScratchEnd={scratchEnd}
-								playbackRate={1 + pitch / 100}
-								playing={playState === 'playing'}
-								size={djMode ? artwork / 1.06 : artwork}
-							/>
-						</TouchClaimView>
-					)}
+				<View style={styles.recordColumn}>
+					<View style={[styles.artwork, dimensions.artwork]}>
+						{showingSchedule ? (
+							<ScheduleList status={schedule.status} upcoming={schedule.upcoming} />
+						) : (
+							<TouchClaimView>
+								<ScratchableLogo
+									key={logo.name}
+									accessibilityLabel={
+										songArtwork
+											? `${nowPlaying.title}, ${station.stationName}`
+											: `${station.stationName} logo, ${logo.name}`
+									}
+									image={songArtwork ? SONG_ARTWORK(nowPlaying.artworkUri) : logoImage(logo)}
+									labelColor={logo.labelColor}
+									labelScale={songArtwork ? 1 : (logo.labelScale ?? 0.8)}
+									onTap={showNextLogo}
+									onScratchStart={scratchStart}
+									onScratchMove={scratchMove}
+									onScratchEnd={scratchEnd}
+									playbackRate={1 + pitch / 100}
+									playing={playState === 'playing'}
+									size={djMode ? artwork / 1.06 : artwork}
+								/>
+							</TouchClaimView>
+						)}
+					</View>
+					{showingVisualization ? (
+						<RadioVisualizer
+							style={styles.visualizer}
+							attachment={attachment ?? ''}
+							active={playState === 'playing' && attachment !== null}
+							mode={visualizationMode}
+							tint={palette.primary}
+						/>
+					) : null}
 				</View>
 				{landscape ? (
 					<ScrollView
@@ -257,6 +283,8 @@ const styles = StyleSheet.create({
 		paddingVertical: PLAYER_VERTICAL_PADDING,
 	},
 	deck: {gap: PLAYER_GAP},
+	recordColumn: {gap: 8},
+	visualizer: {height: 36, alignSelf: 'stretch'},
 	landscapeDeck: {flexDirection: 'row', alignItems: 'flex-start', gap: LANDSCAPE_GAP},
 	turntableRight: {flexDirection: 'row-reverse'},
 	landscapeControls: {flex: 1},

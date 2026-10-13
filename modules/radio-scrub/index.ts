@@ -52,6 +52,7 @@ export type DeckSide = 'left' | 'right'
 type RadioScrubEvents = {onDeckSideChanged: (event: {side: DeckSide}) => void}
 
 declare class RadioScrubModule extends NativeModule<RadioScrubEvents> {
+	supportsVisualization(): boolean
 	getDeckSide(): Promise<DeckSide>
 	attach(player: AudioPlayer, streamURL: string, stationId: string): string
 	setPlaying(playing: boolean): void

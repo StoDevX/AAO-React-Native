@@ -30,11 +30,13 @@ import {
 import tinycolor from 'tinycolor2'
 import type {AudioEffect, EffectParameter, ReverbPreset} from '@frogpond/radio-scrub'
 import {ScrubSlider} from '@frogpond/radio-scrub/slider'
+import type {VisualizationMode} from '@frogpond/radio-scrub/visualizer'
 
 import {FILL_WIDTH} from '../../../../components/tile-layout'
 import {djAudio, useScrubControlsAvailable, useScrubPlayback} from '../use-radio-scrub'
 import {palette} from './palette'
 import {PitchControls} from './pitch-controls'
+import {VisualizationSelector} from './visualization-selector'
 
 const EFFECTS: {id: AudioEffect; label: string}[] = [
 	{id: 'echo', label: 'Echo'},
@@ -75,9 +77,13 @@ const ROOM_PROFILES: Partial<
 export function AudioScrubControls({
 	stationId,
 	tintColor,
+	visualizationMode,
+	onVisualizationModeChange,
 }: {
 	stationId: string
 	tintColor: string
+	visualizationMode?: VisualizationMode
+	onVisualizationModeChange?: (mode: VisualizationMode) => void
 }): React.ReactNode {
 	let available = useScrubControlsAvailable(stationId)
 	let customRoomsAvailable = useScrubPlayback(
@@ -103,6 +109,9 @@ export function AudioScrubControls({
 				) : null}
 			</View>
 			{!available ? <Text style={palette.styles.secondary}>Play to use DJ controls.</Text> : null}
+			{visualizationMode && onVisualizationModeChange ? (
+				<VisualizationSelector mode={visualizationMode} onChange={onVisualizationModeChange} />
+			) : null}
 			<PitchControls stationId={stationId} />
 			{EFFECTS.map(({id, label}) => {
 				let setting = effects?.[id]

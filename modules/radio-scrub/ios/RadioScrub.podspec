@@ -12,5 +12,5 @@ Pod::Spec.new do |s|
   s.dependency 'ExpoModulesCore'
   s.dependency 'ExpoAudio'
   s.source_files = '**/*.swift'
-  s.frameworks = 'AVFoundation', 'MediaToolbox', 'AudioToolbox'
+  s.frameworks = 'AVFoundation', 'MediaToolbox', 'AudioToolbox', 'Accelerate'
 end

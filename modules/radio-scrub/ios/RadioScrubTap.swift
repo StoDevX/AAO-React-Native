@@ -3,6 +3,7 @@ import MediaToolbox
 
 /// Both station transports expose the same scratch controls to Expo.
 protocol RadioScrubbing: AnyObject {
+	var visualization: AudioVisualization { get }
 	func detach()
 	func beginScratch()
 	func move(withRate rate: Double)
@@ -13,6 +14,7 @@ protocol RadioScrubbing: AnyObject {
 
 /// Owns the audio tap and its history for one AVPlayerItem.
 final class RadioScrubTap: RadioScrubbing {
+	var visualization: AudioVisualization { state.visualization }
 	private var state = ScrubTapState()
 	private var tap: MTAudioProcessingTap?
 	private var item: AVPlayerItem?
@@ -118,6 +120,7 @@ final class RadioScrubTap: RadioScrubbing {
 /// Prepare/process/unprepare are serialized by MediaToolbox. UI controls are atomic.
 private final class ScrubTapState {
 	let buffer = RecordBuffer()
+	let visualization = AudioVisualization()
 	private var format = AudioStreamBasicDescription()
 	private var supported = false
 	private let input = UnsafeMutablePointer<Float>.allocate(capacity: RecordBuffer.maxChannels)
@@ -150,6 +153,7 @@ private final class ScrubTapState {
 			&& format.mSampleRate > 0 && format.mSampleRate <= 96000
 		if supported {
 			buffer.prepare(format.mSampleRate, Int(format.mChannelsPerFrame))
+			visualization.samples.prepare(format.mSampleRate)
 		} else {
 			buffer.ready.store(false, ordering: .sequentiallyConsistent)
 		}
@@ -163,16 +167,19 @@ private final class ScrubTapState {
 		guard buffers.count >= (planar ? channels : 1) else { return }
 		for index in buffers.indices { if buffers[index].mData == nil { return } }
 		buffer.beginBlock()
+		let capture = visualization.samples.beginBlock(frames)
 		for frame in 0..<frames {
 			for channel in 0..<channels {
 				input[channel] = read(address(buffers, frame, channel))
 			}
 			buffer.processFrame(input, output)
+			if capture { visualization.samples.append(output[0], output[channels - 1]) }
 			for channel in 0..<channels {
 				write(address(buffers, frame, channel), output[channel])
 			}
 		}
 		buffer.endBlock()
+		if capture { visualization.samples.endBlock() }
 	}
 
 	private func address(_ buffers: UnsafeMutableAudioBufferListPointer, _ frame: Int, _ channel: Int)
