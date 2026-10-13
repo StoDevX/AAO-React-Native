@@ -56,4 +56,11 @@ struct EffectSetting {
 
   double cutoff() const { return 20000 * std::pow(250.0 / 20000, enabled ? amount : 0); }
   double wet(double maximum) const { return enabled ? amount * maximum : 0; }
+
+  /// Normalize the linear reverb crossfade's power without changing its wet/dry ratio.
+  static double reverbMakeupDb(double percent) {
+    double wet = finiteClamp(percent, 0, 100, 0) / 100;
+    double dry = 1 - wet;
+    return -10 * std::log10(dry * dry + wet * wet);
+  }
 };

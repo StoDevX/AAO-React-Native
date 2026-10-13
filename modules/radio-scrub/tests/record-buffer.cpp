@@ -237,6 +237,13 @@ int main() {
     require(!largeBlock.canRender(750, 1000) && largeBlock.canRender(1000, 1000), "The gate must require enough for the actual render block");
 
     EffectSetting effect;
+    for (double percent : {0.0, 10.0, 25.0, 50.0, 75.0, 100.0}) {
+      double gain = std::pow(10, EffectSetting::reverbMakeupDb(percent) / 20);
+      double dry = gain * (1 - percent / 100);
+      double wet = gain * percent / 100;
+      require(std::abs(dry * dry + wet * wet - 1) < 1e-9, "Reverb's crossfade must preserve equal-power signal energy");
+    }
+    require(EffectSetting::reverbMakeupDb(0) == 0 && EffectSetting::reverbMakeupDb(std::nan("")) == 0, "Dry or invalid reverb mixes must add no gain");
     require(!effect.enabled && effect.amount == 0, "Effects must start disabled with a neutral amount");
     effect.set(true, 1.5);
     require(effect.amount == 1 && effect.cutoff() == 250 && effect.wet(40) == 40, "Effect normalization must cap amounts and map their presets");

@@ -144,7 +144,9 @@ export function FullLayout({
 				</View>
 			) : null}
 			<AirStatusBar current={schedule.current} status={schedule.status} />
-			{djMode ? <AudioScrubControls key={station.id} stationId={station.id} /> : null}
+			{djMode ? (
+				<AudioScrubControls key={station.id} stationId={station.id} tintColor={logo.tint} />
+			) : null}
 			<View style={styles.centre}>
 				<PlayStopButton station={station} />
 				<PlaybackError station={station} />

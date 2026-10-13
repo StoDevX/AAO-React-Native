@@ -124,6 +124,12 @@ struct EffectRamps {
 - (void)setPitch:(double)percent { if (_pcm) _pcm->record.setPitch(percent); }
 - (void)setQuartzLocked:(BOOL)locked { if (_pcm) _pcm->record.setQuartzLocked(locked); }
 
+/// iOS reverb uses a linear crossfade; the existing EQ supplies equal-power makeup.
+- (void)setReverbMix:(float)mix {
+  _reverb.wetDryMix = mix;
+  _filter.globalGain = EffectSetting::reverbMakeupDb(mix);
+}
+
 - (void)setEffect:(NSString *)effect enabled:(BOOL)enabled amount:(double)amount {
   unsigned index;
   if ([effect isEqualToString:@"filter"]) index = 0;
@@ -181,7 +187,7 @@ struct EffectRamps {
           echo.wetDryMix = start + (setting.wet(40) - start) * progress;
         } else {
           if (changingPreset) {
-            if (step <= 10) reverb.wetDryMix = start * (1 - progress);
+            if (step <= 10) [self setReverbMix:start * (1 - progress)];
             if (step == 10) {
               AVAudioUnitReverbPreset presets[] = {AVAudioUnitReverbPresetSmallRoom, AVAudioUnitReverbPresetMediumHall, AVAudioUnitReverbPresetLargeHall};
               [reverb loadFactoryPreset:presets[std::min(setting.preset, 2)]];
@@ -201,12 +207,12 @@ struct EffectRamps {
                   if (result != noErr) NSLog(@"RadioScrub chapel parameter: %d", (int)result);
                 }
               }
-              reverb.wetDryMix = 0;
+              [self setReverbMix:0];
               self->_loadedPreset = setting.preset;
               self->_loadedOccupancy = setting.occupancy;
             }
-            if (step > 10) reverb.wetDryMix = setting.wet(50) * ((step - 10) / 10.0);
-          } else reverb.wetDryMix = start + (setting.wet(50) - start) * progress;
+            if (step > 10) [self setReverbMix:setting.wet(50) * ((step - 10) / 10.0)];
+          } else [self setReverbMix:start + (setting.wet(50) - start) * progress];
         }
       });
     }

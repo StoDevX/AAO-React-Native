@@ -1,8 +1,37 @@
 import * as React from 'react'
 import {Pressable, StyleSheet, Text, View} from 'react-native'
+import {
+	Button,
+	GlassEffectContainer,
+	Host,
+	HStack,
+	Picker,
+	Section,
+	Spacer,
+	Text as SwiftUIText,
+	Toggle,
+	VStack,
+} from '@expo/ui/swift-ui'
+import {
+	accessibilityAddTraits,
+	accessibilityLabel,
+	buttonStyle,
+	controlSize,
+	disabled as disabledModifier,
+	foregroundStyle,
+	frame,
+	labelsHidden,
+	padding,
+	pickerStyle,
+	tag,
+	tint,
+	toggleStyle,
+} from '@expo/ui/swift-ui/modifiers'
+import tinycolor from 'tinycolor2'
 import type {AudioEffect, EffectParameter, ReverbPreset} from '@frogpond/radio-scrub'
 import {ScrubSlider} from '@frogpond/radio-scrub/slider'
 
+import {FILL_WIDTH} from '../../../../components/tile-layout'
 import {djAudio, useScrubControlsAvailable, useScrubPlayback} from '../use-radio-scrub'
 import {palette} from './palette'
 import {PitchControls} from './pitch-controls'
@@ -39,11 +68,17 @@ const ROOM_PROFILES: Partial<
 	5: {decay: [1, 1]},
 	6: {decay: [1.75, 1.75]},
 	7: {decay: [2, 1.3], choices: ['Curtains stowed', 'Curtains out'], controlLabel: 'Acoustics'},
-	8: {decay: [2.5, 1.5], choices: ['Plain gym', 'Christmas Festival'], controlLabel: 'Setup'},
+	8: {decay: [2.5, 1.5], choices: ['Plain gym', 'Xmas fest'], controlLabel: 'Setup'},
 }
 
 /** Each effect expands into its own controls, starting from dry audio when enabled. */
-export function AudioScrubControls({stationId}: {stationId: string}): React.ReactNode {
+export function AudioScrubControls({
+	stationId,
+	tintColor,
+}: {
+	stationId: string
+	tintColor: string
+}): React.ReactNode {
 	let available = useScrubControlsAvailable(stationId)
 	let customRoomsAvailable = useScrubPlayback(
 		(state) => state.stationId === stationId && state.customRoomsAvailable,
@@ -76,29 +111,31 @@ export function AudioScrubControls({stationId}: {stationId: string}): React.Reac
 					djAudio.parameter(stationId, id, name, value)
 				return (
 					<View key={id} style={styles.effect}>
-						<Pressable
-							accessibilityLabel={label}
-							accessibilityRole="button"
-							accessibilityState={{selected: enabled, disabled: !available, expanded: enabled}}
-							disabled={!available}
-							onPress={() => djAudio.effect(stationId, id, !enabled, 0)}
-							style={[
-								styles.effectButton,
-								enabled && styles.selected,
-								!available && styles.disabled,
-							]}
+						<Host
+							matchContents={{vertical: true}}
+							ignoreSafeArea="all"
+							colorScheme="dark"
+							style={styles.nativeHost}
 						>
-							<Text style={[styles.buttonText, palette.styles.primary]}>
-								{label}
-								{enabled ? ' ✓' : ' ＋'}
-							</Text>
-						</Pressable>
+							<Toggle
+								label={label}
+								isOn={enabled}
+								onIsOnChange={(active) => djAudio.effect(stationId, id, active, 0)}
+								modifiers={[
+									toggleStyle('switch'),
+									foregroundStyle(palette.primary),
+									disabledModifier(!available),
+									frame({minHeight: 44}),
+									accessibilityLabel(label),
+								]}
+							/>
+						</Host>
 						{enabled && setting ? (
 							<View style={styles.parameters}>
 								{id === 'filter' ? (
 									<>
 										<EffectSlider
-											label="Low-cut · removes bass"
+											label="Low-cut (bass)"
 											spokenLabel="Filter low-cut amount"
 											value={setting.lowCut * 100}
 											maximum={100}
@@ -111,7 +148,7 @@ export function AudioScrubControls({stationId}: {stationId: string}): React.Reac
 											onChange={(value) => parameter('lowCut', value / 100)}
 										/>
 										<EffectSlider
-											label="High-cut · removes treble"
+											label="High-cut (treble)"
 											spokenLabel="Filter high-cut amount"
 											value={setting.highCut * 100}
 											maximum={100}
@@ -172,28 +209,50 @@ export function AudioScrubControls({stationId}: {stationId: string}): React.Reac
 								) : null}
 								{id === 'reverb' ? (
 									<View>
-										<Text style={palette.styles.secondary}>Room</Text>
-										<View style={styles.presets}>
-											{PRESETS.filter((preset) => preset.id < 3 || customRoomsAvailable).map(
-												(preset) => (
-													<Pressable
-														key={preset.id}
-														accessibilityLabel={`Reverb ${preset.label}`}
-														accessibilityRole="button"
-														accessibilityState={{
-															selected: setting.preset === preset.id,
-															disabled: !available,
-														}}
-														disabled={!available}
-														onPress={() => parameter('preset', preset.id)}
-														style={[styles.preset, setting.preset === preset.id && styles.selected]}
-													>
-														<Text style={palette.styles.primary}>{preset.label}</Text>
-													</Pressable>
-												),
-											)}
-										</View>
+										<Host
+											matchContents={{vertical: true}}
+											colorScheme="dark"
+											style={styles.nativeHost}
+										>
+											<HStack
+												modifiers={[foregroundStyle(palette.primary), frame({minHeight: 44})]}
+											>
+												<SwiftUIText>Room</SwiftUIText>
+												<Spacer />
+												<Picker<ReverbPreset>
+													label="Reverb room"
+													selection={setting.preset}
+													onSelectionChange={(value) => parameter('preset', value)}
+													modifiers={[
+														pickerStyle('menu'),
+														labelsHidden(),
+														tint(palette.primary),
+														disabledModifier(!available),
+														frame({minHeight: 44}),
+														accessibilityLabel('Reverb room'),
+													]}
+												>
+													<Section title="Standard">
+														{PRESETS.filter((preset) => preset.id < 3).map((preset) => (
+															<SwiftUIText key={preset.id} modifiers={[tag(preset.id)]}>
+																{preset.label}
+															</SwiftUIText>
+														))}
+													</Section>
+													{customRoomsAvailable ? (
+														<Section title="Campus spaces">
+															{PRESETS.filter((preset) => preset.id >= 3).map((preset) => (
+																<SwiftUIText key={preset.id} modifiers={[tag(preset.id)]}>
+																	{preset.label}
+																</SwiftUIText>
+															))}
+														</Section>
+													) : null}
+												</Picker>
+											</HStack>
+										</Host>
 										<RoomProfile
+											tintColor={tintColor}
 											preset={setting.preset}
 											occupancy={setting.occupancy}
 											disabled={!available}
@@ -212,11 +271,13 @@ export function AudioScrubControls({stationId}: {stationId: string}): React.Reac
 
 /** Venue setups adjust absorption while retaining the room’s reflection spacing. */
 function RoomProfile({
+	tintColor,
 	preset,
 	occupancy,
 	disabled,
 	onChange,
 }: {
+	tintColor: string
 	preset: ReverbPreset
 	occupancy: number
 	disabled: boolean
@@ -225,29 +286,58 @@ function RoomProfile({
 	let profile = ROOM_PROFILES[preset]
 	if (!profile) return null
 	let decay = profile.decay[0] + (profile.decay[1] - profile.decay[0]) * occupancy
+	let selectedTint = tinycolor(tintColor).lighten(4).toHexString()
 	return (
 		<View style={styles.roomProfile}>
 			{profile.choices ? (
-				<>
-					<Text style={palette.styles.secondary}>{profile.controlLabel}</Text>
-					<View style={styles.presets}>
-						{profile.choices.map((label, value) => (
-							<Pressable
-								key={label}
-								accessibilityLabel={`${PRESETS.find((room) => room.id === preset)?.label}, ${label}`}
-								accessibilityRole="button"
-								accessibilityState={{selected: occupancy === value, disabled}}
-								disabled={disabled}
-								onPress={() => onChange(value)}
-								style={[styles.preset, occupancy === value && styles.selected]}
-							>
-								<Text style={palette.styles.primary}>{label}</Text>
-							</Pressable>
-						))}
-					</View>
-				</>
+				<Host
+					matchContents={{vertical: true}}
+					colorScheme="dark"
+					seedColor={tintColor}
+					style={styles.nativeHost}
+				>
+					<VStack alignment="leading" spacing={12}>
+						<SwiftUIText modifiers={[foregroundStyle(palette.secondary)]}>
+							{profile.controlLabel}
+						</SwiftUIText>
+						<GlassEffectContainer spacing={8}>
+							<HStack spacing={8} modifiers={[padding({vertical: 4})]}>
+								{profile.choices.map((label, value) => {
+									let selected = occupancy === value
+									return (
+										<Button
+											key={label}
+											onPress={() => onChange(value)}
+											modifiers={[
+												buttonStyle(selected ? 'glassProminent' : 'glass'),
+												tint(selected ? selectedTint : tintColor),
+												controlSize('large'),
+												disabledModifier(disabled),
+												accessibilityLabel(
+													`${PRESETS.find((room) => room.id === preset)?.label}, ${label}`,
+												),
+												...(selected ? [accessibilityAddTraits(['isSelected'])] : []),
+											]}
+										>
+											<SwiftUIText
+												modifiers={[
+													foregroundStyle(palette.primary),
+													frame({maxWidth: FILL_WIDTH}),
+												]}
+											>
+												{label}
+											</SwiftUIText>
+										</Button>
+									)
+								})}
+							</HStack>
+						</GlassEffectContainer>
+					</VStack>
+				</Host>
 			) : null}
-			<Text style={palette.styles.secondary}>Approximation · ~{decay.toFixed(1)} s decay</Text>
+			<Text style={[styles.footnote, palette.styles.secondary]}>
+				Approximation · ~{decay.toFixed(1)} s decay
+			</Text>
 		</View>
 	)
 }
@@ -276,9 +366,10 @@ function EffectSlider({
 }): React.ReactNode {
 	return (
 		<View>
-			<Text style={palette.styles.secondary}>
-				{label} {display}
-			</Text>
+			<View style={styles.sliderHeader}>
+				<Text style={[styles.parameterLabel, palette.styles.primary]}>{label}</Text>
+				<Text style={[styles.parameterValue, palette.styles.secondary]}>{display}</Text>
+			</View>
 			<ScrubSlider
 				unit={unit}
 				label={spokenLabel}
@@ -305,26 +396,23 @@ const styles = StyleSheet.create({
 	heading: {fontSize: 14, fontWeight: '600'},
 	live: {minWidth: 64, minHeight: 44, alignItems: 'center', justifyContent: 'center'},
 	slider: {height: 44},
-	effect: {gap: 8},
-	roomProfile: {gap: 8},
-	parameters: {paddingHorizontal: 12, gap: 8},
-	effectButton: {
-		minHeight: 44,
-		paddingHorizontal: 12,
+	effect: {
+		gap: 8,
 		paddingVertical: 8,
-		justifyContent: 'center',
-		borderRadius: 12,
-		backgroundColor: palette.track,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+		borderBottomColor: palette.track,
 	},
-	presets: {flexDirection: 'row', flexWrap: 'wrap', gap: 8},
-	preset: {
-		minHeight: 44,
-		paddingHorizontal: 12,
-		justifyContent: 'center',
-		borderRadius: 12,
-		backgroundColor: palette.track,
+	nativeHost: {alignSelf: 'stretch'},
+	roomProfile: {gap: 8},
+	parameters: {gap: 8, paddingBottom: 8},
+	sliderHeader: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'baseline',
+		gap: 12,
 	},
-	selected: {borderWidth: 1, borderColor: palette.primary},
+	parameterLabel: {fontSize: 15, flexShrink: 1},
+	parameterValue: {fontSize: 14, fontVariant: ['tabular-nums']},
+	footnote: {fontSize: 13},
 	buttonText: {fontSize: 15, fontWeight: '600'},
-	disabled: {opacity: 0.4},
 })
