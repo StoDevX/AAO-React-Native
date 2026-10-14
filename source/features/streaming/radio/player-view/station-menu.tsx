@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Button, Host, Image, Menu, Text, Toggle} from '@expo/ui/swift-ui'
-import {accessibilityLabel, frame} from '@expo/ui/swift-ui/modifiers'
+import {accessibilityLabel, contentShape, frame, shapes} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 
 import {track} from '../../../telemetry/track'
@@ -16,11 +16,14 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 	return (
 		<Host matchContents={true}>
 			<Menu
-				label={<Image color={palette.primary} systemName="ellipsis" />}
-				modifiers={[
-					accessibilityLabel(`More for ${station.stationName}`),
-					frame({width: 44, height: 44}),
-				]}
+				label={
+					<Image
+						color={palette.primary}
+						modifiers={[frame({width: 56, height: 56}), contentShape(shapes.rectangle())]}
+						systemName="ellipsis"
+					/>
+				}
+				modifiers={[accessibilityLabel(`More for ${station.stationName}`)]}
 			>
 				<Toggle isOn={djMode} onIsOnChange={setDJMode}>
 					<Image systemName="slider.horizontal.3" />
