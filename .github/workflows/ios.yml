@@ -336,10 +336,12 @@ jobs:
       # unsigned (CODE_SIGNING_DISABLED above), so modes and links are the
       # whole of what has to survive, and tar carries them.
       - name: Pack the app and UITest bundle
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         run: tar -C ios/build/Build/Products -cf ios-app.tar .
 
       - name: Save iOS app as workflow artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
         with:
           name: ios-app
           path: ios-app.tar
