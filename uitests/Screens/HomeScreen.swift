@@ -47,4 +47,15 @@ struct HomeScreen: Screen {
 		tap(app.buttons[TestIdentifiers.Navigation.customizeButton], until: customize.sheet, named: "Customize")
 		return customize
 	}
+
+	/// Turn dev mode on from Home's menu, as a tester does. The radio's
+	/// mini-player is behind it, and a cleared app starts with it off.
+	@discardableResult
+	func enableDevMode() -> Self {
+		let item = app.buttons[TestIdentifiers.Home.enableDevMode].firstMatch
+		tap(app.buttons[TestIdentifiers.Navigation.homeMenu], until: item, named: "Home's menu")
+		item.tap()
+		XCTAssertTrue(item.waitUntilGone(timeout: 10), "The menu should close once dev mode is on")
+		return self
+	}
 }
