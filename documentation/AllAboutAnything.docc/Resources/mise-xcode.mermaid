@@ -1,15 +1,13 @@
 flowchart TD
     subgraph GH["GitHub"]
-        CS[".changeset/*.md"] --> RW["Release workflow<br/>opens 'Version Packages' PR"]
+        CS[".changeset/*.md on master"] --> RW["Release workflow<br/>opens 'Version Packages' PR"]
         RW -->|merge| TAG["vX.Y.Z tag + GitHub release"]
-        PR["Pull request"]
     end
 
-    TAG -->|triggers| XC
-    PR -->|triggers| XC
+    TAG -->|"tag push starts the build"| XC
 
     subgraph XC["Xcode Cloud workflow (APP_VARIANT = aao | carls | aaa)"]
-        CLONE["Clone repo<br/>ios/ holds only ci_scripts/<br/>(.gitignore: /ios/* !/ios/ci_scripts/)"]
+        CLONE["Clone at tag<br/>ios/ holds only ci_scripts/<br/>(.gitignore: /ios/* !/ios/ci_scripts/)"]
         CLONE --> SHIM["ios/ci_scripts/ci_post_clone.sh<br/>(tracked shim, must sit beside the .xcworkspace)"]
         SHIM -->|"exec — bash replaces itself,<br/>so it never reads the file prebuild deletes"| REAL
 
@@ -28,7 +26,7 @@ flowchart TD
             end
 
             PB --> R5["copy ios_scripts/Package.resolved<br/>→ ios/AllAboutAnything.xcworkspace/.../swiftpm<br/>(MapLibre via SPM, auto-resolve is off)"]
-            R5 --> R6["write ios/.xcode.env.local<br/>NODE_BINARY, SENTRY_CLI_BINARY,<br/>SENTRY_ALLOW_FAILURE, SENTRY_AUTH_TOKEN<br/>(or SENTRY_DISABLE_AUTO_UPLOAD)"]
+            R5 --> R6["write ios/.xcode.env.local<br/>NODE_BINARY, SENTRY_CLI_BINARY,<br/>SENTRY_ALLOW_FAILURE, SENTRY_AUTH_TOKEN"]
         end
 
         REAL --> BUILD["xcodebuild archive<br/>JS bundle via NODE_BINARY;<br/>Sentry phases → ios_scripts/sentry-cli.cjs → mise sentry-cli<br/>(source maps + dSYMs)"]
@@ -38,11 +36,7 @@ flowchart TD
 
         subgraph POST["ios_scripts/ci_post_xcodebuild.sh"]
             direction TB
-            Q1{"CI_ARCHIVE_PATH<br/>and SENTRY_AUTH_TOKEN?"} -->|no| QX["skip"]
-            Q1 -->|yes| Q2["sentry build upload (size analysis)"]
-            Q2 --> Q3{"pull request build?"}
-            Q3 -->|yes| QX
-            Q3 -->|no| Q4["sentry releases new / set-commits / finalize<br/>sentry deploys new --env testflight"]
+            Q2["sentry build upload (size analysis)"] --> Q4["sentry releases new / set-commits / finalize<br/>sentry deploys new --env testflight"]
         end
     end
 
