@@ -348,3 +348,82 @@ struct RadioManagerTests {
         #expect(manager(defaults: defaults).volume == 0.3)
     }
 }
+
+/// A sources manifest holding `links`, each written as JSON.
+private func manifest(_ links: String...) throws -> SourcesManifest {
+    try JSONDecoder().decode(SourcesManifest.self, from: Data(#"{"subject": "https://stolaf.edu", "links": [\#(links.joined(separator: ","))]}"#.utf8))
+}
+
+/// A manifest link of kind `rel` for `station`.
+private func link(_ rel: String, _ station: String, _ href: String, type: String = "audio/mpeg") -> String {
+    #"{"rel": "https://frogpond.tech/rel/\#(rel)", "href": "\#(href)", "type": "\#(type)", "properties": {"https://frogpond.tech/ns/id": "\#(station)"}}"#
+}
+
+private let fallback = StationSources(streamURL: URL(string: "https://fallback.example/krlx"), nowPlayingURL: URL(string: "https://fallback.example/now"))
+
+private func fallbackManifest() throws -> SourcesManifest {
+    try manifest(
+        link("radio-stream", "krlx", "https://fallback.example/krlx"),
+        link("radio-now-playing", "krlx", "https://fallback.example/now", type: "application/vnd.metaradio.stationnow+json")
+    )
+}
+
+struct SourcesManifestTests {
+    @Test func aPublishedEntryWins() throws {
+        let published = try manifest(
+            link("radio-stream", "krlx", "https://example.com/krlx"),
+            link("radio-now-playing", "krlx", "https://example.com/now", type: "application/vnd.metaradio.stationnow+json")
+        )
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()) == StationSources(streamURL: URL(string: "https://example.com/krlx"), nowPlayingURL: URL(string: "https://example.com/now")))
+    }
+
+    @Test func aMissingEntryFallsBack() throws {
+        #expect(try manifest().stationSources(for: .krlx, fallback: try fallbackManifest()) == fallback)
+    }
+
+    @Test func anEntryOfAnotherTypeFallsBack() throws {
+        let published = try manifest(link("radio-stream", "krlx", "https://example.com/krlx.ogg", type: "audio/ogg"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == fallback.streamURL)
+    }
+
+    @Test func anEntryThatIsNotAWebAddressFallsBack() throws {
+        let published = try manifest(link("radio-stream", "krlx", "ftp://example.com/krlx"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == fallback.streamURL)
+    }
+
+    @Test func aRelativeEntryNamesTheServer() throws {
+        let published = try manifest(link("radio-stream", "krlx", "radio/named/krlx"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == URL(string: "https://stolaf.frogpond.tech/v1/radio/named/krlx"))
+    }
+
+    @Test func theFirstEntryForAStationWins() throws {
+        let published = try manifest(
+            link("radio-stream", "krlx", "https://example.com/first"),
+            link("radio-stream", "krlx", "https://example.com/second")
+        )
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == URL(string: "https://example.com/first"))
+    }
+
+    @Test func anotherStationsEntryIsNotTaken() throws {
+        let published = try manifest(link("radio-stream", "ksto", "https://example.com/ksto.m3u8"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == fallback.streamURL)
+    }
+
+    @Test func aLinkWithoutATypeOrWithNullPropertiesStillDecodes() throws {
+        let published = try manifest(
+            #"{"rel": "https://frogpond.tech/rel/news", "href": "news", "properties": {"https://frogpond.tech/ns/id": null}, "extra": 1}"#,
+            link("radio-stream", "krlx", "https://example.com/krlx")
+        )
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == URL(string: "https://example.com/krlx"))
+    }
+
+    @Test func theBundledManifestHasAStreamForEveryStation() {
+        for station in Station.allCases {
+            #expect(SourcesManifest.bundled.stationSources(for: station, fallback: .bundled).streamURL != nil)
+        }
+    }
+
+    @Test func theBundledManifestHasKRLXsSongFeed() {
+        #expect(SourcesManifest.bundled.stationSources(for: .krlx, fallback: .bundled).nowPlayingURL != nil)
+    }
+}
