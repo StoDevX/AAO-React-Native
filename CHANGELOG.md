@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.9.1
+
+### Patch Changes
+
+- 49c0178: The radio's station addresses are checked for changes every hour instead of every day.
+
 ## 2.9.0
 
 ### Minor Changes
