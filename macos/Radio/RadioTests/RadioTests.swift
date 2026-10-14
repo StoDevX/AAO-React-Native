@@ -500,6 +500,16 @@ struct StationSourcesStoreTests {
         #expect(!FileManager.default.fileExists(atPath: directory.appending(path: "sources.json").path))
     }
 
+    @Test func aLaunchFetchesTheManifest() {
+        #expect(StationSourcesStore.refreshesAtLaunch(environment: [:]))
+    }
+
+    @Test func aLaunchHostingUnitTestsLeavesTheServerAndTheSavedCopyAlone() {
+        #expect(!StationSourcesStore.refreshesAtLaunch(environment: ["XCTestConfigurationFilePath": "/tmp/Radio.xctestconfiguration"]))
+        // This run is one: its host app must not have fetched.
+        #expect(!StationSourcesStore.refreshesAtLaunch())
+    }
+
     @Test func anUnreadableSavedCopyFallsBackToTheBundledManifest() throws {
         let directory = emptyDirectory()
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

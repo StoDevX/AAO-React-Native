@@ -12,6 +12,12 @@ final class StationSourcesStore {
         URL.applicationSupportDirectory.appending(path: Bundle.main.bundleIdentifier ?? "Radio", directoryHint: .isDirectory)
     }
 
+    /// Whether a launch in `environment` fetches the manifest: not one that
+    /// hosts unit tests, which must leave the server and the saved copy alone.
+    static func refreshesAtLaunch(environment: [String: String] = ProcessInfo.processInfo.environment) -> Bool {
+        environment["XCTestConfigurationFilePath"] == nil
+    }
+
     private let savedURL: URL
     private let fetch: @Sendable (URL) async -> Data?
     /// The last manifest fetched, in this launch or an earlier one.

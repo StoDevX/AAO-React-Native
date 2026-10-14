@@ -12,7 +12,9 @@ struct RadioMenuBarApp: App {
         let sources = StationSourcesStore()
         _radioManager = State(initialValue: RadioManager(sources: sources))
         // Once a launch: a station's address changes rarely, so a new one can wait for the next.
-        Task { await sources.refresh() }
+        if StationSourcesStore.refreshesAtLaunch() {
+            Task { await sources.refresh() }
+        }
     }
 
     var body: some Scene {
