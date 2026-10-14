@@ -1,0 +1,49 @@
+flowchart TD
+    subgraph GH["GitHub"]
+        CS[".changeset/*.md"] --> RW["Release workflow<br/>opens 'Version Packages' PR"]
+        RW -->|merge| TAG["vX.Y.Z tag + GitHub release"]
+        PR["Pull request"]
+    end
+
+    TAG -->|triggers| XC
+    PR -->|triggers| XC
+
+    subgraph XC["Xcode Cloud workflow (APP_VARIANT = aao | carls | aaa)"]
+        CLONE["Clone repo<br/>ios/ holds only ci_scripts/<br/>(.gitignore: /ios/* !/ios/ci_scripts/)"]
+        CLONE --> SHIM["ios/ci_scripts/ci_post_clone.sh<br/>(tracked shim, must sit beside the .xcworkspace)"]
+        SHIM -->|"exec — bash replaces itself,<br/>so it never reads the file prebuild deletes"| REAL
+
+        subgraph REAL["ios_scripts/ci_post_clone.sh (the real script, outside ios/)"]
+            direction TB
+            R1["cd ../../ → repo root"] --> R2["brew install mise<br/>mise install node, pnpm, ruby, bundler, sentry"]
+            R2 --> R3["pnpm install --frozen-lockfile"]
+            R3 --> R4["mise run bundle-data"]
+            R4 --> PB
+
+            subgraph PB["mise run prebuild"]
+                direction TB
+                P1["stash ios/ci_scripts → mktemp"] --> P2["bundle install (CocoaPods)"]
+                P2 --> P3["expo prebuild --platform ios [--clean]<br/>wipes ios/, generates project from app.config.ts,<br/>pod install, sentry.properties,<br/>buildNumber = CI_BUILD_NUMBER"]
+                P3 --> P4["restore ios/ci_scripts from stash"]
+            end
+
+            PB --> R5["copy ios_scripts/Package.resolved<br/>→ ios/AllAboutAnything.xcworkspace/.../swiftpm<br/>(MapLibre via SPM, auto-resolve is off)"]
+            R5 --> R6["write ios/.xcode.env.local<br/>NODE_BINARY, SENTRY_CLI_BINARY,<br/>SENTRY_ALLOW_FAILURE, SENTRY_AUTH_TOKEN<br/>(or SENTRY_DISABLE_AUTO_UPLOAD)"]
+        end
+
+        REAL --> BUILD["xcodebuild archive<br/>JS bundle via NODE_BINARY;<br/>Sentry phases → ios_scripts/sentry-cli.cjs → mise sentry-cli<br/>(source maps + dSYMs)"]
+
+        BUILD --> SHIM2["ios/ci_scripts/ci_post_xcodebuild.sh<br/>(restored shim)"]
+        SHIM2 -->|exec| POST
+
+        subgraph POST["ios_scripts/ci_post_xcodebuild.sh"]
+            direction TB
+            Q1{"CI_ARCHIVE_PATH<br/>and SENTRY_AUTH_TOKEN?"} -->|no| QX["skip"]
+            Q1 -->|yes| Q2["sentry build upload (size analysis)"]
+            Q2 --> Q3{"pull request build?"}
+            Q3 -->|yes| QX
+            Q3 -->|no| Q4["sentry releases new / set-commits / finalize<br/>sentry deploys new --env testflight"]
+        end
+    end
+
+    POST --> TF["TestFlight → App Store<br/>(aao: com.drewvolz.stolaf, carls: com.rives.carls)"]
