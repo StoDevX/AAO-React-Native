@@ -23,6 +23,7 @@
 		C947E2A55DFF7AB29F099A51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB61823EE980FFDA81AE5D7D /* Assets.xcassets */; };
 		5A0C1E7B2D4F6A8C0E1B3D52 /* SourcesManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C1E7B2D4F6A8C0E1B3D51 /* SourcesManifest.swift */; };
 		5A0C1E7B2D4F6A8C0E1B3D56 /* bundled.json in Resources */ = {isa = PBXBuildFile; fileRef = 5A0C1E7B2D4F6A8C0E1B3D55 /* bundled.json */; };
+		5A0C1E7B2D4F6A8C0E1B3D54 /* StationSourcesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C1E7B2D4F6A8C0E1B3D53 /* StationSourcesStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 		A1B2C3D4E5F60718293A4B5C /* StationPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPreferences.swift; sourceTree = "<group>"; };
 		5A0C1E7B2D4F6A8C0E1B3D51 /* SourcesManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesManifest.swift; sourceTree = "<group>"; };
 		5A0C1E7B2D4F6A8C0E1B3D55 /* bundled.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = bundled.json; path = "../../modules/data-sources/bundled.json"; sourceTree = SOURCE_ROOT; };
+		5A0C1E7B2D4F6A8C0E1B3D53 /* StationSourcesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSourcesStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -117,6 +119,7 @@
 				5A0C1E7B2D4F6A8C0E1B3D51 /* SourcesManifest.swift */,
 				FFCC85540025DE258BF7D71B /* Station.swift */,
 				A1B2C3D4E5F60718293A4B5C /* StationPreferences.swift */,
+				5A0C1E7B2D4F6A8C0E1B3D53 /* StationSourcesStore.swift */,
 				2A169B554F1DED118864FE19 /* Styles.swift */,
 			);
 			path = Radio;
@@ -260,6 +263,7 @@
 				5A0C1E7B2D4F6A8C0E1B3D52 /* SourcesManifest.swift in Sources */,
 				50C6365A65DC6A85C5AB5A24 /* Station.swift in Sources */,
 				C5B4A3928170F6E5D4C3B2A1 /* StationPreferences.swift in Sources */,
+				5A0C1E7B2D4F6A8C0E1B3D54 /* StationSourcesStore.swift in Sources */,
 				845A180EB07BFF3C384E644A /* Styles.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

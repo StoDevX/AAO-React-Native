@@ -427,3 +427,66 @@ struct SourcesManifestTests {
         #expect(SourcesManifest.bundled.stationSources(for: .krlx, fallback: .bundled).nowPlayingURL != nil)
     }
 }
+
+/// An empty directory of its own, for a store's saved copy.
+private func emptyDirectory() -> URL {
+    FileManager.default.temporaryDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
+}
+
+private let publishedKRLX = Data(#"""
+{"subject": "https://stolaf.edu", "links": [{"rel": "https://frogpond.tech/rel/radio-stream", "href": "https://example.com/krlx", "type": "audio/mpeg", "properties": {"https://frogpond.tech/ns/id": "krlx"}}]}
+"""#.utf8)
+
+@MainActor
+struct StationSourcesStoreTests {
+    private let bundledKRLX = SourcesManifest.bundled.stationSources(for: .krlx, fallback: .bundled)
+
+    @Test func beforeAnyFetchTheBundledManifestIsUsed() {
+        let store = StationSourcesStore(directory: emptyDirectory()) { _ in nil }
+        #expect(store.sources(for: .krlx) == bundledKRLX)
+    }
+
+    @Test func asksTheServerForTheManifest() async {
+        let requests = Requests()
+        let store = StationSourcesStore(directory: emptyDirectory()) { url in
+            await requests.record(url)
+            return nil
+        }
+        await store.refresh()
+        #expect(await requests.urls == [URL(string: "https://stolaf.frogpond.tech/v1/sources")!])
+    }
+
+    @Test func aFetchedManifestIsUsedAndKeptForTheNextLaunch() async {
+        let directory = emptyDirectory()
+        let store = StationSourcesStore(directory: directory) { _ in publishedKRLX }
+        await store.refresh()
+        #expect(store.sources(for: .krlx).streamURL == URL(string: "https://example.com/krlx"))
+
+        let nextLaunch = StationSourcesStore(directory: directory) { _ in nil }
+        #expect(nextLaunch.sources(for: .krlx).streamURL == URL(string: "https://example.com/krlx"))
+    }
+
+    @Test func aFailedFetchKeepsWhatWasSaved() async {
+        let directory = emptyDirectory()
+        await StationSourcesStore(directory: directory) { _ in publishedKRLX }.refresh()
+        let store = StationSourcesStore(directory: directory) { _ in nil }
+        await store.refresh()
+        #expect(store.sources(for: .krlx).streamURL == URL(string: "https://example.com/krlx"))
+    }
+
+    @Test func anAnswerThatIsNotAManifestChangesNothing() async {
+        let directory = emptyDirectory()
+        let store = StationSourcesStore(directory: directory) { _ in Data("<html>Sign in to the Wi-Fi</html>".utf8) }
+        await store.refresh()
+        #expect(store.sources(for: .krlx) == bundledKRLX)
+        #expect(!FileManager.default.fileExists(atPath: directory.appending(path: "sources.json").path))
+    }
+
+    @Test func anUnreadableSavedCopyFallsBackToTheBundledManifest() throws {
+        let directory = emptyDirectory()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try Data("not json".utf8).write(to: directory.appending(path: "sources.json"))
+        let store = StationSourcesStore(directory: directory) { _ in nil }
+        #expect(store.sources(for: .krlx) == bundledKRLX)
+    }
+}
