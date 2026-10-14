@@ -2,6 +2,12 @@ import XCTest
 
 /// Tags: campus:example.college
 class ModuleStreamingMediaTests: UITestCase {
+	/// The radio's mini-player is behind dev mode, which a cleared app starts without.
+	override func setUpWithError() throws {
+		try super.setUpWithError()
+		HomeScreen(app: app).checkHomescreenExists().enableDevMode()
+	}
+
 	/// The bar on Home opens the sheet on KMNK, Wiki Monkeys' one station. The
 	/// player's controls are buttons VoiceOver can name. Leave playback idle:
 	/// KMNK's fixture uses a live stream, whose failure can replace Pause with Stop.

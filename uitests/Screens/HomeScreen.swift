@@ -47,4 +47,26 @@ struct HomeScreen: Screen {
 		tap(app.buttons[TestIdentifiers.Navigation.customizeButton], until: customize.sheet, named: "Customize")
 		return customize
 	}
+
+	/// Turn dev mode on the way a tester does, by long-pressing the notice at
+	/// the foot of Home and choosing "Enable dev mode". The radio's mini-player
+	/// is behind it, and a cleared app starts with it off.
+	@discardableResult
+	func enableDevMode() -> Self {
+		let notice = app.element(matching: TestIdentifiers.Home.notice)
+		XCTAssertTrue(notice.waitUntilExists(timeout: 30), "Home's notice should exist")
+		// The notice follows the tiles, so a short screen leaves it below the fold.
+		for _ in 0..<4 where !notice.isHittable {
+			app.swipeUp()
+		}
+		let item = app.buttonLabelled(TestIdentifiers.Home.enableDevMode)
+		for _ in 1...3 {
+			notice.press(forDuration: 1.0)
+			if item.waitUntilExists(timeout: 5) { break }
+		}
+		XCTAssertTrue(item.exists, "Long-pressing Home's notice should offer \"Enable dev mode\"")
+		item.tap()
+		XCTAssertTrue(item.waitUntilGone(timeout: 10), "The menu should close once dev mode is on")
+		return self
+	}
 }
