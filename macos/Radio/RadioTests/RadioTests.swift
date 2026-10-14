@@ -287,7 +287,7 @@ struct RadioManagerTests {
     private let requests = Requests()
 
     private func manager(defaults: UserDefaults) -> RadioManager {
-        RadioManager(defaults: defaults) { [requests] url in
+        RadioManager(defaults: defaults, sources: StationSourcesStore(directory: emptyDirectory()) { _ in nil }) { [requests] url in
             await requests.record(url)
             return nil
         }
@@ -318,12 +318,30 @@ struct RadioManagerTests {
         let days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         let shows = days.map { #"{"day": "\#($0)", "start": "00:00", "end": "24:00", "title": "All Day"}"# }
         let schedule = Data(#"{"data": {"timezone": "America/Chicago", "shows": [\#(shows.joined(separator: ","))]}}"#.utf8)
-        let manager = RadioManager(defaults: emptyDefaults()) { _ in schedule }
+        let manager = RadioManager(defaults: emptyDefaults(), sources: StationSourcesStore(directory: emptyDirectory()) { _ in nil }) { _ in schedule }
         #expect(manager.todaysShows.isEmpty)
         manager.isPanelOpen = true
         try await settle()
         #expect(manager.todaysShows.map(\.show.title) == ["All Day"])
         #expect(manager.showOnAir?.title == "All Day")
+    }
+
+    @Test func asksKRLXsSongFeedWhereTheManifestNamesIt() async throws {
+        let directory = emptyDirectory()
+        let published = Data(#"""
+        {"subject": "https://stolaf.edu", "links": [{"rel": "https://frogpond.tech/rel/radio-now-playing", "href": "https://example.com/now", "type": "application/vnd.metaradio.stationnow+json", "properties": {"https://frogpond.tech/ns/id": "krlx"}}]}
+        """#.utf8)
+        let sources = StationSourcesStore(directory: directory) { _ in published }
+        await sources.refresh()
+        let defaults = emptyDefaults()
+        StationPreferences(defaults: defaults).lastPlayedStation = .krlx
+        let manager = RadioManager(defaults: defaults, sources: sources) { [requests] url in
+            await requests.record(url)
+            return nil
+        }
+        manager.isPanelOpen = true
+        try await settle()
+        #expect(await requests.urls == [URL(string: "https://example.com/now")!])
     }
 
     @Test func opensOnTheStationThePreferencesName() {
