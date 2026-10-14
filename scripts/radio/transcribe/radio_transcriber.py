@@ -1,9 +1,11 @@
 import argparse
+import json
 import subprocess
 import sys
 from contextlib import nullcontext
 from datetime import timedelta
 from pathlib import Path
+from urllib.parse import urlparse
 
 import ffmpeg
 import numpy as np
@@ -12,11 +14,11 @@ from faster_whisper import WhisperModel
 from faster_whisper.vad import VadOptions, get_speech_timestamps
 
 # --- CONFIGURATION ---
-# The internet radio streams that can be transcribed (.mp3, .aac, .m3u8, etc.), by station.
-STATION_STREAM_URLS = {
-    "krlx": "https://s3.voscast.com:10803/stream",
-    "ksto": "https://cdn.stobcm.com/ksto/live.m3u8",
-}
+# The sources manifest the app reads, in the copy committed beside it. `mise run bundle-data`
+# writes it from data/sources.yaml, which is where a station's stream is changed.
+SOURCES_MANIFEST_PATH = Path(__file__).parents[3] / "modules" / "data-sources" / "bundled.json"
+RADIO_STREAM_REL = "https://frogpond.tech/rel/radio-stream"
+SOURCE_ID_PROPERTY = "https://frogpond.tech/ns/id"
 DEFAULT_STATION = "krlx"
 
 # Model size (use "tiny" or "base" for speed, "small" for better accuracy)
@@ -50,6 +52,31 @@ YAMNET_MUSIC_CLASS = 132
 # While nobody is speaking, only this much trailing audio is kept so the start of the
 # next utterance is not lost.
 IDLE_AUDIO_KEPT_SECONDS = 1
+
+
+def station_stream_urls(manifest):
+    """Return each station's stream URL in the sources manifest, by station id.
+
+    A station's first stream wins, as in the app. A stream named by a path is one ccc-server
+    serves, which this script has no server to ask, so it is refused.
+    """
+    stream_urls = {}
+    for link in manifest["links"]:
+        station = link.get("properties", {}).get(SOURCE_ID_PROPERTY)
+        if link["rel"] != RADIO_STREAM_REL or station is None or station in stream_urls:
+            continue
+        href = link["href"]
+        parsed_href = urlparse(href)
+        if not (parsed_href.scheme and parsed_href.netloc):
+            raise ValueError(f"{station}'s stream, {href!r}, is not an absolute URL")
+        stream_urls[station] = href
+    return stream_urls
+
+
+def load_station_stream_urls(path=SOURCES_MANIFEST_PATH):
+    """Return each station's stream URL in the sources manifest at `path`, by station id."""
+    with open(path) as manifest_file:
+        return station_stream_urls(json.load(manifest_file))
 
 
 def read_pcm_blocks(pcm_stream, block_seconds):
@@ -181,12 +208,12 @@ def format_transcript_line(start, end, text, with_timestamps):
     return text.strip()
 
 
-def parse_arguments():
+def parse_arguments(stations):
     parser = argparse.ArgumentParser(
         description="Transcribe human speech from a live internet radio stream."
     )
     parser.add_argument(
-        "--station", choices=STATION_STREAM_URLS, default=DEFAULT_STATION,
+        "--station", choices=stations, default=DEFAULT_STATION,
         help="station to transcribe (default: %(default)s)",
     )
     parser.add_argument(
@@ -201,7 +228,8 @@ def parse_arguments():
 
 
 def main():
-    arguments = parse_arguments()
+    stream_urls = load_station_stream_urls()
+    arguments = parse_arguments(sorted(stream_urls))
 
     print("Loading Whisper Model and VAD…")
     # 'cpu' is safe for all macs; Apple Silicon will automatically optimize memory usage
@@ -213,7 +241,7 @@ def main():
     # failures are visible.
     ffmpeg_command = (
         ffmpeg
-        .input(STATION_STREAM_URLS[arguments.station])
+        .input(stream_urls[arguments.station])
         .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar='16000')
         .global_args('-loglevel', 'error')
         .compile()
