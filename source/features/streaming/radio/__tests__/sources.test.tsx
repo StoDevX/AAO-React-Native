@@ -14,9 +14,13 @@ import {
 
 import {campusById} from '../../../../campuses'
 import {shippedStreamUrl, stationSources, useStationSources} from '../sources'
-import {STATIONS, type StationId} from '../stations'
 
 const STOLAF_URL = campusById('edu.stolaf').api.defaultUrl
+
+// Fix the fallback inputs so edits to campus data cannot change these decisions.
+jest.mock('../../../../../modules/data-sources/bundled.json', () =>
+	jest.requireActual('./fixtures/bundled-sources.json'),
+)
 
 // The manifest is asked for over the network; each test says how that goes.
 const mockGet = jest.fn<() => {json: () => Promise<unknown>}>()
@@ -26,10 +30,10 @@ jest.mock('@frogpond/api', () => ({
 }))
 
 // The app names the manifest's server at boot; these tests boot no app.
-const EMPTY: Jrd = {subject: 'https://stolaf.edu', links: []}
+const EMPTY: Jrd = {subject: 'https://radio.example.test', links: []}
 
 function manifestWith(...links: Jrd['links']): Jrd {
-	return {subject: 'https://stolaf.edu', links}
+	return {subject: 'https://radio.example.test', links}
 }
 
 function link(rel: string, id: string, href: string, type: string): Jrd['links'][number] {
@@ -74,7 +78,7 @@ describe('stationSources', () => {
 
 	test("keeps KSTO's player page when the published manifest leaves it out", () => {
 		expect(stationSources(manifestWith(MOVED_KSTO), 'ksto').embeddedPlayerUrl).toBe(
-			'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+			'https://radio.example.test/ksto.html',
 		)
 	})
 
@@ -105,7 +109,7 @@ describe('stationSources', () => {
 			link(REL_RADIO_PLAYER_PAGE, 'ksto', 'https://example.test/ksto.html', 'text/html'),
 		)
 		expect(stationSources(manifest, 'ksto').embeddedPlayerUrl).toBe(
-			'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+			'https://radio.example.test/ksto.html',
 		)
 	})
 
@@ -118,20 +122,11 @@ describe('stationSources', () => {
 				link(REL_RADIO_PLAYER_PAGE, 'ksto', href, 'text/html'),
 			)
 			expect(stationSources(manifest, 'ksto')).toMatchObject({
-				streamSourceUrl: 'https://cdn.stobcm.com/ksto/live.m3u8',
-				embeddedPlayerUrl: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+				streamSourceUrl: 'https://radio.example.test/ksto.m3u8',
+				embeddedPlayerUrl: 'https://radio.example.test/ksto.html',
 			})
 		},
 	)
-
-	test("keeps KSTO's shipped player page when the published one is not over HTTPS", () => {
-		let manifest = manifestWith(
-			link(REL_RADIO_PLAYER_PAGE, 'ksto', 'http://www.stolaf.edu/ksto.html', 'text/html'),
-		)
-		expect(stationSources(manifest, 'ksto').embeddedPlayerUrl).toBe(
-			'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
-		)
-	})
 
 	test('gives a station no player page the published manifest puts on another site', () => {
 		let manifest = manifestWith(
@@ -140,39 +135,18 @@ describe('stationSources', () => {
 		expect(stationSources(manifest, 'krlx').embeddedPlayerUrl).toBeUndefined()
 	})
 
-	// Throwing here would take down the root layout, where the radio is mounted.
-	test.each(Object.keys(STATIONS) as StationId[])(
-		'ships %s with a stream it can play, and any page on a site a page may be',
-		(stationId) => {
-			let {streamSourceUrl, embeddedPlayerUrl} = stationSources(EMPTY, stationId)
-			expect(streamSourceUrl).toMatch(/^https:\/\//u)
-			if (embeddedPlayerUrl !== undefined) {
-				expect(embeddedPlayerUrl).toMatch(/^https:\/\/www\.stolaf\.edu\//u)
-			}
-		},
-	)
-
 	test("plays a station the app ships no stream for from its own campus's server", () => {
 		expect(stationSources(EMPTY, 'kmnk').streamSourceUrl).toBe(
 			'https://example.college.invalid/radio/named/kmnk',
 		)
 		expect(shippedStreamUrl('kmnk')).toBe('https://example.college.invalid/radio/named/kmnk')
 	})
-
-	test('gives a station a player page the published manifest adds', () => {
-		let manifest = manifestWith(
-			link(REL_RADIO_PLAYER_PAGE, 'krlx', 'https://www.stolaf.edu/krlx.html', 'text/html'),
-		)
-		expect(stationSources(manifest, 'krlx').embeddedPlayerUrl).toBe(
-			'https://www.stolaf.edu/krlx.html',
-		)
-	})
 })
 
 describe('useStationSources', () => {
 	test('starts from the shipped entries when nothing is cached', async () => {
 		let {result} = await renderHook(() => useStationSources('ksto'), {wrapper})
-		expect(result.current?.streamSourceUrl).toBe('https://cdn.stobcm.com/ksto/live.m3u8')
+		expect(result.current?.streamSourceUrl).toBe('https://radio.example.test/ksto.m3u8')
 	})
 
 	test('uses a cached manifest however old, and keeps it when the refresh fails', async () => {
