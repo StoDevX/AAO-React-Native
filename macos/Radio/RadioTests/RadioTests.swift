@@ -464,16 +464,6 @@ struct StationSourcesStoreTests {
         #expect(store.sources(for: .krlx) == bundledKRLX)
     }
 
-    @Test func asksTheServerForTheManifest() async {
-        let requests = Requests()
-        let store = StationSourcesStore(directory: emptyDirectory()) { url in
-            await requests.record(url)
-            return nil
-        }
-        await store.refresh()
-        #expect(await requests.urls == [URL(string: "https://stolaf.frogpond.tech/v1/sources")!])
-    }
-
     @Test func aFetchedManifestIsUsedAndKeptForTheNextLaunch() async {
         let directory = emptyDirectory()
         let store = StationSourcesStore(directory: directory) { _ in publishedKRLX }

@@ -21,7 +21,7 @@ nonisolated struct SourcesManifest: Decodable, Sendable {
 
     let links: [Link]
 
-    /// The server a relative address names, as in the app.
+    /// The server a relative address names: St. Olaf's, which publishes the manifest.
     static let serverURL = URL(string: "https://stolaf.frogpond.tech/v1/")!
     private static let streamRel = "https://frogpond.tech/rel/radio-stream"
     private static let nowPlayingRel = "https://frogpond.tech/rel/radio-now-playing"
