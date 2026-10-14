@@ -11,7 +11,7 @@ import {
 	type SourceCampus,
 } from './types'
 
-const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24
+const ONE_HOUR_IN_MS = 1000 * 60 * 60
 
 /// The copy shipped in the binary. Every fallback path resolves against this,
 /// so it is always parseable and always uses types this build can handle.
@@ -23,7 +23,7 @@ export const keys = {
 
 export const manifestOptions = queryOptions({
 	queryKey: keys.manifest,
-	staleTime: ONE_DAY_IN_MS,
+	staleTime: ONE_HOUR_IN_MS,
 	// Default `networkMode: 'online'` pauses the fetch (rather than rejecting
 	// it) while `onlineManager` reports offline, so `fetchManifest`'s catch
 	// below would never run and the promise would never settle. 'offlineFirst'
