@@ -156,7 +156,7 @@ links:
   # page again and update it. The page's commented-out
   # `.../radio/ksto1.stream/master.m3u8` answers 403; do not use it.
   - rel: https://frogpond.tech/rel/radio-stream
-    href: 'https://cdn.stobcm.com/ksto/live.m3u8'
+    href: 'https://cdn.stobcm.com/live/ksto/live.m3u8'
     type: application/vnd.apple.mpegurl
     titles: {und: KSTO 93.1 FM}
     properties: {'https://frogpond.tech/ns/id': ksto}

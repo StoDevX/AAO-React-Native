@@ -8,6 +8,11 @@ import {RadioHost as BareRadioHost} from '../host'
 import {STATIONS, logoImage} from '../stations'
 import {useRadioStore} from '../store'
 
+// Fix the fallback inputs so edits to campus data cannot change these decisions.
+jest.mock('../../../../../modules/data-sources/bundled.json', () =>
+	jest.requireActual('./fixtures/bundled-sources.json'),
+)
+
 // The native module needs a device; its player is a stand-in that records the
 // source it was given.
 const mockPlayer = {
@@ -114,7 +119,7 @@ describe('RadioHost', () => {
 	test('plays KSTO natively from its stream, and loads its player page beside it', async () => {
 		let {screen} = await renderHost()
 
-		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://cdn.stobcm.com/ksto/live.m3u8')
+		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://radio.example.test/ksto.m3u8')
 		// KSTO's owner counts listens through its page, so the page is loaded too.
 		expect(screen.root?.children.length).toBeGreaterThan(0)
 	})
@@ -141,7 +146,7 @@ describe('RadioHost', () => {
 
 		let screen = await render(<RadioHost />)
 
-		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://s3.voscast.com:10803/stream')
+		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://radio.example.test/krlx.mp3')
 		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
 			true,
 			{title: '88.1 KRLX-FM', artworkUrl: logoImage(STATIONS.krlx.logos[0]).uri},
@@ -191,7 +196,7 @@ describe('RadioHost', () => {
 		let screen = await render(<RadioHost />)
 
 		let moved: Jrd = {
-			subject: 'https://stolaf.edu',
+			subject: 'https://radio.example.test',
 			links: [
 				{
 					rel: REL_RADIO_STREAM,
@@ -216,12 +221,12 @@ describe('RadioHost', () => {
 	})
 
 	describe('when the published stream fails to load', () => {
-		const SHIPPED_KRLX = 'https://s3.voscast.com:10803/stream'
+		const SHIPPED_KRLX = 'https://radio.example.test/krlx.mp3'
 		const PUBLISHED_KRLX = 'https://example.test/krlx.mp3'
 
 		beforeEach(() => {
 			let published: Jrd = {
-				subject: 'https://stolaf.edu',
+				subject: 'https://radio.example.test',
 				links: [
 					{
 						rel: REL_RADIO_STREAM,

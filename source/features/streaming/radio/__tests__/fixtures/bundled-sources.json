@@ -1,0 +1,29 @@
+{
+  "subject": "https://radio.example.test",
+  "links": [
+    {
+      "rel": "https://frogpond.tech/rel/radio-stream",
+      "href": "https://radio.example.test/ksto.m3u8",
+      "type": "application/vnd.apple.mpegurl",
+      "properties": {
+        "https://frogpond.tech/ns/id": "ksto"
+      }
+    },
+    {
+      "rel": "https://frogpond.tech/rel/radio-player-page",
+      "href": "https://radio.example.test/ksto.html",
+      "type": "text/html",
+      "properties": {
+        "https://frogpond.tech/ns/id": "ksto"
+      }
+    },
+    {
+      "rel": "https://frogpond.tech/rel/radio-stream",
+      "href": "https://radio.example.test/krlx.mp3",
+      "type": "audio/mpeg",
+      "properties": {
+        "https://frogpond.tech/ns/id": "krlx"
+      }
+    }
+  ]
+}

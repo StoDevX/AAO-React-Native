@@ -2,11 +2,10 @@ import {describe, expect, jest, test} from '@jest/globals'
 
 import {stationSources} from '../sources'
 
-// The shipped manifest as a careless edit could leave it: KSTO's player page
-// named with a type this build does not load.
+// A fallback player page with a type this build does not load.
 jest.mock('../../../../../modules/data-sources/bundled.json', () => {
-	let bundled = jest.requireActual<{links: Array<{rel: string; type: string}>}>(
-		'../../../../../modules/data-sources/bundled.json',
+	let bundled = jest.requireActual<typeof import('./fixtures/bundled-sources.json')>(
+		'./fixtures/bundled-sources.json',
 	)
 	return {
 		...bundled,
