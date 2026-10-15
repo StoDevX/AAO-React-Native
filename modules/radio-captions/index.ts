@@ -22,24 +22,33 @@ type RadioCaptionsEvents = {
 }
 
 declare class RadioCaptionsModule extends NativeModule<RadioCaptionsEvents> {
-	start(url: string, locale: string): Promise<void>
-	stop(): void
+	start(url: string, locale: string, startId: number): Promise<void>
+	stop(throughStartId: number): void
 	captionStyle(): CaptionStyle
 }
 
 const RadioCaptions = requireNativeModule<RadioCaptionsModule>('RadioCaptions')
 
 /**
+ * Numbers each start. `stopCaptions` tells the native side the latest number, so a stop that
+ * arrives before a start's body has run on the native queue still cancels that start, while a
+ * start made after the stop is left alone.
+ */
+let latestStartId = 0
+
+/**
  * Starts captioning the stream at `url` in `locale`, replacing any captioning already running.
- * Resolves once the speech model is ready, which may take a download; rejects if `url` is invalid.
+ * Resolves once the speech model is ready, which may take a download; rejects if `url` is not
+ * an http(s) address. Resolves without captioning if `stopCaptions` was called meanwhile.
  */
 export function startCaptions(url: string, locale: string): Promise<void> {
-	return RadioCaptions.start(url, locale)
+	latestStartId += 1
+	return RadioCaptions.start(url, locale, latestStartId)
 }
 
-/** Stops captioning. Safe to call at any time, including when nothing is running. */
+/** Stops captioning, including a start still preparing. Safe to call at any time, even when nothing is running. */
 export function stopCaptions(): void {
-	RadioCaptions.stop()
+	RadioCaptions.stop(latestStartId)
 }
 
 /** The caption appearance the viewer chose in Settings. */

@@ -5,7 +5,9 @@ import Foundation
 ///
 /// At most one volatile caption passes per `interval`; one that arrives sooner waits as the
 /// pending text, replaced by any newer one, until `takeDue()` releases it. A final caption
-/// replaces whatever is pending, and a state event passes at once, so neither is delayed.
+/// replaces whatever is pending, and a state event passes at once, so neither is delayed. A state
+/// other than `.captioning` also drops the pending text, since it says the speech no longer
+/// applies; `.captioning` leaves it be.
 struct CaptionEventCoalescer {
 	private let interval: Double
 	private let now: () -> Double
@@ -19,7 +21,10 @@ struct CaptionEventCoalescer {
 
 	/// The events to deliver now for one arriving from the engine.
 	mutating func accept(_ event: EngineEvent) -> [EngineEvent] {
-		guard case .caption(let update) = event else { return [event] }
+		guard case .caption(let update) = event else {
+			if case .state(let state) = event, state != .captioning { pending = nil }
+			return [event]
+		}
 		if update.isFinal {
 			pending = nil
 			return [event]

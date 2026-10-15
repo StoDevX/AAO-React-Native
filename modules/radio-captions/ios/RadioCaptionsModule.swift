@@ -4,30 +4,46 @@ import MediaAccessibility
 import os
 
 public class RadioCaptionsModule: Module {
-	/// The running engine and what forwards its events; replaced by each `start`.
-	private struct Session {
+	/// The running engine and what forwards its events.
+	fileprivate struct Session {
 		var engine: RadioCaptionEngine
 		var forwarder: CaptionForwarder
 	}
-	private let session = OSAllocatedUnfairLock<Session?>(initialState: nil)
+	/// Which start is running, and which the JavaScript side has stopped. Every change is one
+	/// critical section, so a start and a stop cannot interleave into an orphaned engine.
+	private let ledger = OSAllocatedUnfairLock(initialState: CaptionSessionLedger<Session>())
 
 	public func definition() -> ModuleDefinition {
 		Name("RadioCaptions")
 		Events("onCaption", "onState")
 
-		AsyncFunction("start") { (url: String, locale: String) in
-			guard let streamURL = URL(string: url) else {
-				throw Exception(name: "InvalidURL", description: "The stream address is not a valid URL: \(url)")
+		// `startId` is the JavaScript side's count of starts; `stop` names the highest one it
+		// has made, so a stop that arrives before this body runs still cancels it.
+		AsyncFunction("start") { (url: String, locale: String, startId: Int) in
+			guard let streamURL = StreamURL.parse(url) else {
+				throw Exception(
+					name: "InvalidURL",
+					description: "The stream address must be an http or https URL with a host: \(url)")
 			}
-			self.stopEngine()
+			guard self.ledger.withLock({ $0.mayStart(id: startId) }) else { return }
 			let engine = RadioCaptionEngine(url: streamURL, locale: Locale(identifier: locale))
-			let forwarder = CaptionForwarder { [weak self] event in self?.send(event) }
+			let forwarder = CaptionForwarder(
+				isCurrent: { [weak self] in self?.ledger.withLock { $0.isCurrent(id: startId) } ?? false },
+				send: { [weak self] event in self?.send(event) })
+			let (installed, previous) = self.ledger.withLock {
+				$0.begin(id: startId, session: Session(engine: engine, forwarder: forwarder))
+			}
+			previous?.end()
+			guard installed else { return }
 			forwarder.forward(engine.events())
-			self.session.withLock { $0 = Session(engine: engine, forwarder: forwarder) }
 			await engine.start()
+			// A stop that came while the model downloaded has already ended this session.
+			if !self.ledger.withLock({ $0.isCurrent(id: startId) }) { Session(engine: engine, forwarder: forwarder).end() }
 		}
 
-		Function("stop") { self.stopEngine() }
+		Function("stop") { (throughStartId: Int) in
+			self.ledger.withLock { $0.stop(through: throughStartId) }?.end()
+		}
 
 		Function("captionStyle") { () -> [String: Any] in
 			// The viewer's Settings → Accessibility → Subtitles & Captioning choices.
@@ -43,7 +59,7 @@ public class RadioCaptionsModule: Module {
 			]
 		}
 
-		OnDestroy { self.stopEngine() }
+		OnDestroy { self.ledger.withLock { $0.stopAll() }?.end() }
 	}
 
 	private func send(_ event: EngineEvent) {
@@ -53,16 +69,6 @@ public class RadioCaptionsModule: Module {
 		case .state(let state):
 			sendEvent("onState", state.payload)
 		}
-	}
-
-	/// Ends the running engine, if any. Safe to call at any time and from any thread.
-	private func stopEngine() {
-		let ended = session.withLock { session in
-			defer { session = nil }
-			return session
-		}
-		ended?.engine.stop()
-		ended?.forwarder.cancel()
 	}
 
 	/// A color as `#RRGGBBAA` in sRGB, scaled by the viewer's opacity setting, which iOS keeps
@@ -93,8 +99,20 @@ extension EngineState {
 	}
 }
 
+extension RadioCaptionsModule.Session {
+	/// Stops the engine and the forwarding of what it said.
+	func end() {
+		engine.stop()
+		forwarder.cancel()
+	}
+}
+
 /// Reads an engine's events and hands them on through a `CaptionEventCoalescer`, sending a
 /// held-back volatile caption once its interval has passed even if nothing newer arrives.
+///
+/// Taking an event from the coalescer and sending it happen in one critical section, so events
+/// reach JavaScript in the order the coalescer produced them, and none is sent once the
+/// forwarder is cancelled or its session is no longer the current one.
 private final class CaptionForwarder: @unchecked Sendable {
 	private struct State {
 		var coalescer = CaptionEventCoalescer(now: { ProcessInfo.processInfo.systemUptime })
@@ -103,9 +121,11 @@ private final class CaptionForwarder: @unchecked Sendable {
 		var cancelled = false
 	}
 	private let state = OSAllocatedUnfairLock(initialState: State())
+	private let isCurrent: @Sendable () -> Bool
 	private let send: @Sendable (EngineEvent) -> Void
 
-	init(send: @escaping @Sendable (EngineEvent) -> Void) {
+	init(isCurrent: @escaping @Sendable () -> Bool, send: @escaping @Sendable (EngineEvent) -> Void) {
+		self.isCurrent = isCurrent
 		self.send = send
 	}
 
@@ -125,10 +145,11 @@ private final class CaptionForwarder: @unchecked Sendable {
 	}
 
 	private func handle(_ event: EngineEvent) {
-		let (ready, wait) = state.withLock { state in
-			(state.coalescer.accept(event), state.coalescer.dueIn)
+		let wait: Double? = state.withLock { state in
+			guard !state.cancelled, isCurrent() else { return nil }
+			state.coalescer.accept(event).forEach(send)
+			return state.coalescer.dueIn
 		}
-		ready.forEach(send)
 		if let wait { scheduleFlush(after: wait) }
 	}
 
@@ -140,19 +161,19 @@ private final class CaptionForwarder: @unchecked Sendable {
 				var wait = delay
 				while !Task.isCancelled {
 					try? await Task.sleep(for: .seconds(wait))
-					if Task.isCancelled { break }
-					// Ending and clearing `flushing` happen under one lock, so a caption held
-					// back just after this one's last check always finds a flusher to wake.
-					let (due, next) = self.state.withLock { state in
-						let due = state.coalescer.takeDue()
-						let next = state.coalescer.dueIn
+					// Ending and clearing `flushing` happen in the same critical section as
+					// the send, so a caption held back just after this one's last check
+					// always finds a flusher to wake.
+					let next: Double? = self.state.withLock { state in
+						if !state.cancelled, isCurrent(), let due = state.coalescer.takeDue() { send(due) }
+						let next = state.cancelled ? nil : state.coalescer.dueIn
 						if next == nil { state.flushing = nil }
-						return (due, next)
+						return next
 					}
-					if let due { send(due) }
 					guard let next else { return }
 					wait = next
 				}
+				self.state.withLock { $0.flushing = nil }
 			}
 		}
 	}
