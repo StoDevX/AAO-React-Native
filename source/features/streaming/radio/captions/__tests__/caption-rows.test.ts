@@ -13,6 +13,7 @@ describe('captionRows', () => {
 		let rows = captionRows(state.reduce(reduceCaptions, EMPTY_CAPTIONS))
 
 		expect(rows.map((row) => row.text)).toEqual(['one', 'two', 'three'])
+		expect(rows.every((row) => !row.live)).toBe(true)
 		expect(new Set(rows.map((row) => row.key)).size).toBe(3)
 	})
 
@@ -30,6 +31,8 @@ describe('captionRows', () => {
 		state = reduceCaptions(state, {kind: 'final', text: 'second line so far'})
 		let settled = captionRows(state).at(-1)
 
+		expect(live?.live).toBe(true)
+		expect(settled?.live).toBe(false)
 		expect(live?.text).toBe('second line so')
 		expect(settled?.text).toBe('second line so far')
 		expect(settled?.key).toBe(live?.key)

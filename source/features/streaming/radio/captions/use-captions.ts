@@ -12,6 +12,7 @@ import type {Station} from '../stations'
 import {useRadioStore, useStationPlayback} from '../store'
 import {captionsAvailability, shouldRunCaptions, type CaptionsAvailability} from './captions-panel'
 import {CAPTION_DISPLAY_DELAY_MS} from './caption-delay'
+import {useRadioDevStore} from '../dev-settings/store'
 import {EMPTY_CAPTIONS, reduceCaptions, type CaptionsState} from './reduce-captions'
 
 export {CAPTION_DISPLAY_DELAY_MS}
@@ -32,7 +33,7 @@ export function useCaptionsAvailability(station: Station): CaptionsAvailability 
  * sources name, which is what the player starts from. Stopping, pausing or
  * changing station ends the engine, whose late events are ignored, and the
  * captions start empty each time. `running` is whether the engine is wanted.
- * Captions and most engine states show `CAPTION_DISPLAY_DELAY_MS` after they
+ * Captions and most engine states show after the radio's caption delay setting (`CAPTION_DISPLAY_DELAY_MS` by default) once they
  * arrive, to line up with what the player is playing.
  *
  * Limits: the stream is the manifest's, so a player that has fallen back to
@@ -63,16 +64,19 @@ export function useCaptions(
 		if (!running || streamUrl === undefined) return
 		// Each effect run is one engine: its events are dropped once it has ended.
 		let current = true
-		// What waits to show, oldest first. Each timer shows the oldest, so the
+		// What waits to show, oldest first. Each timer shows what is due, oldest first, so the
 		// order is the engine's whatever order the timers fire in.
-		let waiting: (() => void)[] = []
+		let waiting: {due: number; show: () => void}[] = []
 		let timers = new Set<ReturnType<typeof setTimeout>>()
 		let showLater = (show: () => void) => {
-			waiting.push(show)
+			// The delay in force when it arrives, so a change applies to what comes
+			// after it; an item never shows before the ones ahead of it.
+			let delay = useRadioDevStore.getState().captionDelayMs
+			waiting.push({due: Date.now() + delay, show})
 			let timer = setTimeout(() => {
 				timers.delete(timer)
-				waiting.shift()?.()
-			}, CAPTION_DISPLAY_DELAY_MS)
+				while (waiting[0] !== undefined && waiting[0].due <= Date.now()) waiting.shift()?.show()
+			}, delay)
 			timers.add(timer)
 		}
 		let removeCaption = addCaptionListener((event) => {

@@ -5,7 +5,9 @@ import Animated, {FadeIn, ReduceMotion} from 'react-native-reanimated'
 import {captionStyle, type CaptionsEngineState} from '@frogpond/radio-captions'
 
 import {captionStatus} from './caption-status'
-import {captionRows, splitWords} from './caption-rows'
+import {presentCaption, dimColor} from '../dev-settings/present-caption'
+import {useRadioDevStore, type CaptionPresentation} from '../dev-settings/store'
+import {captionRows} from './caption-rows'
 import {hasContentAbove} from './caption-scroll'
 import type {CaptionsState} from './reduce-captions'
 
@@ -90,21 +92,28 @@ const CaptionWord = React.memo(function CaptionWord({
  */
 const CaptionRow = React.memo(function CaptionRow({
 	text,
+	presentation,
+	heldBackWords,
 	color,
 	fontFamily,
 	fontSize,
 }: {
 	text: string
+	/** How the line shows: always `live` for a settled line, which shows whole. */
+	presentation: CaptionPresentation
+	heldBackWords: number
 	color: string
 	fontFamily: string | null
 	fontSize: number
 }): React.ReactNode {
+	let {words, dimFrom} = presentCaption(text, {presentation, heldBackWords})
+	let dimmed = dimColor(color)
 	return (
 		<View accessibilityLabel={text} accessibilityRole="text" accessible={true} style={styles.line}>
-			{splitWords(text).map((word, index) => (
+			{words.map((word, index) => (
 				// The place in the line is the word's identity, as described above.
 				<CaptionWord
-					color={color}
+					color={index >= dimFrom ? dimmed : color}
 					fontFamily={fontFamily}
 					fontSize={fontSize}
 					// oxlint-disable-next-line react/no-array-index-key
@@ -147,6 +156,8 @@ export function CaptionsView({
 		setFadeTop((was) => (was === above ? was : above))
 	}
 	let rows = captionRows(state)
+	let presentation = useRadioDevStore((settings) => settings.captionPresentation)
+	let heldBackWords = useRadioDevStore((settings) => settings.heldBackWords)
 	let status = running
 		? captionStatus(engine, state.lines.length > 0)
 		: {text: PAUSED_STATUS, spoken: PAUSED_STATUS}
@@ -195,6 +206,8 @@ export function CaptionsView({
 					{rows.map((row) => (
 						<CaptionRow
 							color={style.foreground}
+							heldBackWords={row.live ? heldBackWords : 0}
+							presentation={row.live ? presentation : 'live'}
 							fontFamily={style.fontFamily}
 							fontSize={CAPTION_FONT_SIZE * style.fontScale}
 							key={row.key}

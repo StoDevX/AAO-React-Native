@@ -9,6 +9,7 @@ import {
 	type CaptionsEngineState,
 } from '@frogpond/radio-captions'
 
+import {useRadioDevStore} from '../../dev-settings/store'
 import {STATIONS, type Station} from '../../stations'
 import {useRadioStore} from '../../store'
 import {CAPTION_DISPLAY_DELAY_MS, useCaptions} from '../use-captions'
@@ -70,6 +71,7 @@ describe('useCaptions', () => {
 			return jest.fn()
 		})
 		useRadioStore.setState({stationId: null, playState: 'stopped'})
+		useRadioDevStore.setState(useRadioDevStore.getInitialState(), true)
 	})
 
 	test('captions the stream while the panel is showing and the station plays, and stops with it', async () => {
@@ -302,6 +304,29 @@ describe('useCaptions', () => {
 		await showDelayed()
 
 		expect(result.current.state.lines).toEqual([])
+	})
+
+	test('applies a changed display delay to captions that arrive after the change only', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Before'})
+		})
+		await act(() => {
+			useRadioDevStore.getState().setCaptionDelayMs(CAPTION_DISPLAY_DELAY_MS + 3000)
+			captionListeners[0]?.({kind: 'final', text: 'After'})
+		})
+
+		await act(() => {
+			jest.advanceTimersByTime(CAPTION_DISPLAY_DELAY_MS)
+		})
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Before'])
+
+		await act(() => {
+			jest.advanceTimersByTime(3000)
+		})
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Before', 'After'])
+		expect(startCaptions).toHaveBeenCalledTimes(1)
 	})
 
 	test('clears the line being spoken while reconnecting or on music', async () => {
