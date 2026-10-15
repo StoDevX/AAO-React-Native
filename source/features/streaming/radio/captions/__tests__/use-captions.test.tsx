@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, jest, test} from '@jest/globals'
+import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, renderHook} from '@testing-library/react-native'
 import {
 	addCaptionListener,
@@ -11,7 +11,7 @@ import {
 
 import {STATIONS, type Station} from '../../stations'
 import {useRadioStore} from '../../store'
-import {useCaptions} from '../use-captions'
+import {CAPTION_DISPLAY_DELAY_MS, useCaptions} from '../use-captions'
 
 const STREAM = 'https://stream.example/krlx.mp3'
 
@@ -27,12 +27,36 @@ type StateListener = (state: CaptionsEngineState) => void
 let captionListeners: CaptionListener[]
 let stateListeners: StateListener[]
 
+/** The timers set for the display delay so far, to check each is cancelled. */
+function delayTimers(
+	setTimeoutSpy: jest.SpiedFunction<typeof setTimeout>,
+): ReturnType<typeof setTimeout>[] {
+	let timers: ReturnType<typeof setTimeout>[] = []
+	setTimeoutSpy.mock.calls.forEach((call, i) => {
+		let result = setTimeoutSpy.mock.results[i]
+		if (call[1] === CAPTION_DISPLAY_DELAY_MS && result?.type === 'return') timers.push(result.value)
+	})
+	return timers
+}
+
+/** Lets the display delay pass, so what the engine reported is shown. */
+async function showDelayed(): Promise<void> {
+	await act(() => {
+		jest.advanceTimersByTime(CAPTION_DISPLAY_DELAY_MS)
+	})
+}
+
 function play(playState: 'playing' | 'paused'): void {
 	useRadioStore.setState({stationId: 'krlx', playState})
 }
 
 describe('useCaptions', () => {
+	afterEach(() => {
+		jest.useRealTimers()
+	})
+
 	beforeEach(() => {
+		jest.useFakeTimers()
 		captionListeners = []
 		stateListeners = []
 		jest.mocked(startCaptions).mockReset().mockResolvedValue(undefined)
@@ -89,6 +113,7 @@ describe('useCaptions', () => {
 		await act(() => {
 			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
 		})
+		await showDelayed()
 		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Good evening'])
 
 		await act(() => {
@@ -112,6 +137,7 @@ describe('useCaptions', () => {
 		await act(() => {
 			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
 		})
+		await showDelayed()
 
 		await act(() => {
 			useRadioStore.setState({playState: 'starting'})
@@ -135,6 +161,7 @@ describe('useCaptions', () => {
 		await act(() => {
 			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
 		})
+		await showDelayed()
 
 		useRadioStore.setState({stationId: 'ksto'})
 		await rerender({station: STATIONS.ksto})
@@ -158,6 +185,7 @@ describe('useCaptions', () => {
 			captionListeners[0]?.({kind: 'final', text: 'From the old engine'})
 			stateListeners[0]?.({kind: 'captioning'})
 		})
+		await showDelayed()
 
 		expect(result.current.state.lines).toEqual([])
 		expect(result.current.engine).toBeNull()
@@ -165,8 +193,115 @@ describe('useCaptions', () => {
 		await act(() => {
 			captionListeners[1]?.({kind: 'final', text: 'From the new one'})
 		})
+		await showDelayed()
 
 		expect(result.current.state.lines.map((line) => line.text)).toEqual(['From the new one'])
+	})
+
+	test('holds captions and engine states back for the display delay, then shows them in order', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+
+		await act(() => {
+			stateListeners[0]?.({kind: 'captioning'})
+			captionListeners[0]?.({kind: 'final', text: 'First'})
+		})
+		await act(() => {
+			jest.advanceTimersByTime(1000)
+			captionListeners[0]?.({kind: 'final', text: 'Second'})
+		})
+		await act(() => {
+			jest.advanceTimersByTime(CAPTION_DISPLAY_DELAY_MS - 1001)
+		})
+
+		expect(result.current.engine).toBeNull()
+		expect(result.current.state.lines).toEqual([])
+
+		await act(() => {
+			jest.advanceTimersByTime(1)
+		})
+
+		expect(result.current.engine).toEqual({kind: 'captioning'})
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['First'])
+
+		await act(() => {
+			jest.advanceTimersByTime(1000)
+		})
+
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['First', 'Second'])
+	})
+
+	test('shows a model download and an unavailable engine at once', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+
+		await act(() => {
+			stateListeners[0]?.({kind: 'downloading'})
+		})
+		expect(result.current.engine).toEqual({kind: 'downloading'})
+
+		await act(() => {
+			stateListeners[0]?.({kind: 'unavailable', reason: 'No speech model'})
+		})
+		expect(result.current.engine).toEqual({kind: 'unavailable', reason: 'No speech model'})
+	})
+
+	test('drops what is still waiting when the engine stops', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Never shown'})
+		})
+
+		await act(() => {
+			play('paused')
+		})
+		await act(() => {
+			play('playing')
+		})
+		await showDelayed()
+
+		expect(result.current.state.lines).toEqual([])
+	})
+
+	test('drops what is still waiting when the component unmounts', async () => {
+		play('playing')
+		let {unmount} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		let setTimeoutSpy = jest.spyOn(globalThis, 'setTimeout')
+		let clearTimeoutSpy = jest.spyOn(globalThis, 'clearTimeout')
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Never shown'})
+		})
+		let [pending] = delayTimers(setTimeoutSpy)
+		expect(pending).toBeDefined()
+
+		await unmount()
+
+		expect(clearTimeoutSpy).toHaveBeenCalledWith(pending)
+	})
+
+	test("drops the old station's waiting captions when the station changes", async () => {
+		play('playing')
+		let {result, rerender} = await renderHook(
+			({station}: {station: Station}) => useCaptions(station, true),
+			{initialProps: {station: STATIONS.krlx}},
+		)
+		let setTimeoutSpy = jest.spyOn(globalThis, 'setTimeout')
+		let clearTimeoutSpy = jest.spyOn(globalThis, 'clearTimeout')
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Never shown'})
+		})
+		let [pending] = delayTimers(setTimeoutSpy)
+		expect(pending).toBeDefined()
+
+		useRadioStore.setState({stationId: 'ksto'})
+		await rerender({station: STATIONS.ksto})
+
+		expect(clearTimeoutSpy).toHaveBeenCalledWith(pending)
+
+		await showDelayed()
+
+		expect(result.current.state.lines).toEqual([])
 	})
 
 	test('clears the line being spoken while reconnecting or on music', async () => {
@@ -176,11 +311,13 @@ describe('useCaptions', () => {
 		await act(() => {
 			captionListeners[0]?.({kind: 'volatile', text: 'And now the'})
 		})
+		await showDelayed()
 		expect(result.current.state.live).toBe('And now the')
 
 		await act(() => {
 			stateListeners[0]?.({kind: 'music'})
 		})
+		await showDelayed()
 
 		expect(result.current.state.live).toBe('')
 		expect(result.current.engine).toEqual({kind: 'music'})

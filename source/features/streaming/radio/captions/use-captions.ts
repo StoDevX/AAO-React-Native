@@ -13,6 +13,15 @@ import {useRadioStore, useStationPlayback} from '../store'
 import {captionsAvailability, shouldRunCaptions, type CaptionsAvailability} from './captions-panel'
 import {EMPTY_CAPTIONS, reduceCaptions, type CaptionsState} from './reduce-captions'
 
+/**
+ * How long a caption, and the engine states that go with it, wait before they
+ * show. The engine reads its own copy of the stream at the server's live edge,
+ * and the radio player plays a few seconds behind that, so captions shown on
+ * arrival run ahead of the sound. About 6 seconds, measured by ear on a phone
+ * on 2026-10-14; an estimate, which may drift with the network.
+ */
+export const CAPTION_DISPLAY_DELAY_MS = 6000
+
 /** The stations are English-language, and the app has no locale setting for speech. */
 const CAPTIONS_LOCALE = 'en-US'
 
@@ -29,6 +38,8 @@ export function useCaptionsAvailability(station: Station): CaptionsAvailability 
  * sources name, which is what the player starts from. Stopping, pausing or
  * changing station ends the engine, whose late events are ignored, and the
  * captions start empty each time. `running` is whether the engine is wanted.
+ * Captions and most engine states show `CAPTION_DISPLAY_DELAY_MS` after they
+ * arrive, to line up with what the player is playing.
  *
  * Limits: the stream is the manifest's, so a player that has fallen back to
  * the shipped stream (see `StationPlayers`) is captioned from the manifest's
@@ -58,13 +69,32 @@ export function useCaptions(
 		if (!running || streamUrl === undefined) return
 		// Each effect run is one engine: its events are dropped once it has ended.
 		let current = true
+		// What waits to show, oldest first. Each timer shows the oldest, so the
+		// order is the engine's whatever order the timers fire in.
+		let waiting: (() => void)[] = []
+		let timers = new Set<ReturnType<typeof setTimeout>>()
+		let showLater = (show: () => void) => {
+			waiting.push(show)
+			let timer = setTimeout(() => {
+				timers.delete(timer)
+				waiting.shift()?.()
+			}, CAPTION_DISPLAY_DELAY_MS)
+			timers.add(timer)
+		}
 		let removeCaption = addCaptionListener((event) => {
-			if (current) dispatch(event)
+			if (current) showLater(() => dispatch(event))
 		})
 		let removeState = addCaptionStateListener((next) => {
 			if (!current) return
-			setEngine(next)
-			if (next.kind === 'reconnecting' || next.kind === 'music') dispatch({kind: 'clearLive'})
+			// A download or a failure is news now, not something the sound is behind.
+			if (next.kind === 'downloading' || next.kind === 'unavailable') {
+				setEngine(next)
+				return
+			}
+			showLater(() => {
+				setEngine(next)
+				if (next.kind === 'reconnecting' || next.kind === 'music') dispatch({kind: 'clearLive'})
+			})
 		})
 		startCaptions(streamUrl, CAPTIONS_LOCALE).catch((error: unknown) => {
 			if (current) setEngine({kind: 'unavailable', reason: 'Captions could not start.'})
@@ -72,6 +102,9 @@ export function useCaptions(
 		})
 		return () => {
 			current = false
+			for (let timer of timers) clearTimeout(timer)
+			timers.clear()
+			waiting.length = 0
 			removeCaption()
 			removeState()
 			stopCaptions()
