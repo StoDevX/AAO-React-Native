@@ -28,7 +28,7 @@ enum SpeechFixture {
 	/// Real synthesized speech as an ADTS AAC file, the way a progressive radio stream carries
 	/// it, with the seconds of speech it holds. One encode, since the stream parser rejects
 	/// separately encoded files joined end to end.
-	static func aacFile(saying text: String) throws -> (url: URL, seconds: Double) {
+	static func aacFile(saying text: String) throws -> AACFile {
 		let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
 		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 		let aiff = directory.appendingPathComponent("speech.aiff")
@@ -36,7 +36,15 @@ enum SpeechFixture {
 		try run("/usr/bin/say", ["-o", aiff.path, "--", text])
 		try run("/usr/bin/afconvert", ["-f", "adts", "-d", "aac", aiff.path, aac.path])
 		let file = try AVAudioFile(forReading: aiff)
-		return (aac, Double(file.length) / file.processingFormat.sampleRate)
+		return AACFile(url: aac, seconds: Double(file.length) / file.processingFormat.sampleRate, directory: directory)
+	}
+
+	/// An encoded file and the temporary directory that holds it; `remove()` deletes both.
+	struct AACFile {
+		let url: URL
+		let seconds: Double
+		let directory: URL
+		func remove() { try? FileManager.default.removeItem(at: directory) }
 	}
 
 	private static func run(_ tool: String, _ arguments: [String]) throws {

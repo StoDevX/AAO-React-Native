@@ -7,13 +7,14 @@ struct StreamAudioDecoderTests {
 	private struct Fixture {
 		let url: URL
 		let seconds: Double
+		let remove: () -> Void
 	}
 
 	/// The sentence said `sentences` times, as ADTS AAC.
 	private func makeFixture(sentences: Int = 1) throws -> Fixture {
 		let sentence = "This is the radio station, broadcasting live from the hill, with music and news all afternoon long. "
 		let speech = try SpeechFixture.aacFile(saying: String(repeating: sentence, count: sentences))
-		return Fixture(url: speech.url, seconds: speech.seconds)
+		return Fixture(url: speech.url, seconds: speech.seconds, remove: speech.remove)
 	}
 
 	private func collectStatuses(_ decoder: StreamAudioDecoder) -> Task<[String], Never> {
@@ -50,6 +51,7 @@ struct StreamAudioDecoderTests {
 
 	@Test func decodesAStreamToLoudPCMAndFinishesAtTheEnd() async throws {
 		let fixture = try makeFixture()
+		defer { fixture.remove() }
 		let decoder = StreamAudioDecoder(url: fixture.url)
 		let statuses = collectStatuses(decoder)
 
@@ -79,6 +81,7 @@ struct StreamAudioDecoderTests {
 
 	@Test func stopFinishesTheStreamWhileDataIsStillArriving() async throws {
 		let fixture = try makeFixture(sentences: 30)
+		defer { fixture.remove() }
 		let decoder = StreamAudioDecoder(url: fixture.url)
 		let statuses = collectStatuses(decoder)
 
@@ -96,6 +99,7 @@ struct StreamAudioDecoderTests {
 
 	@Test func aSecondStartEndsTheFirstRun() async throws {
 		let fixture = try makeFixture(sentences: 30)
+		defer { fixture.remove() }
 		let decoder = StreamAudioDecoder(url: fixture.url)
 		let firstRun = decoder.start()
 		let secondRun = decoder.start()

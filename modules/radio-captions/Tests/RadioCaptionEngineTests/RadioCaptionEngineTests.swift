@@ -10,8 +10,13 @@ final class RadioCaptionEngineTests: XCTestCase {
 	private let sentence = "Good evening, and welcome back to the show. Tonight we will talk about the weather, the campus news, and the game on Saturday. "
 	private let shortRetry = Backoff(first: .milliseconds(200), longest: .milliseconds(400))
 
-	private func makeEngine(url: URL, stallTimeout: Duration = .seconds(10)) -> RadioCaptionEngine {
-		RadioCaptionEngine(url: url, locale: Locale(identifier: "en-US"), stallTimeout: stallTimeout, backoff: shortRetry)
+	private func makeEngine(
+		url: URL, stallTimeout: Duration = .seconds(10),
+		captionUpdates: @escaping (AsyncThrowingStream<CaptionUpdate, Error>) -> AsyncThrowingStream<CaptionUpdate, Error> = { $0 }
+	) -> RadioCaptionEngine {
+		RadioCaptionEngine(
+			url: url, locale: Locale(identifier: "en-US"), stallTimeout: stallTimeout, backoff: shortRetry,
+			captionUpdates: captionUpdates)
 	}
 
 	/// Starts `engine` and collects its events until `done` accepts one, or `timeout` passes;
@@ -64,18 +69,92 @@ final class RadioCaptionEngineTests: XCTestCase {
 		let stream = engine.events()
 		let starting = Task { await engine.start() }
 		var seen: [EngineEvent] = []
+		var afterStop: [EngineEvent] = []
 		for await event in stream {
-			seen.append(event)
-			engine.stop()
+			if seen.isEmpty {
+				seen.append(event)
+				engine.stop()
+			} else {
+				afterStop.append(event)
+			}
 		}
 		await starting.value
-		// start() returns once stopped, and nothing it was still doing reached the stream.
-		XCTAssertEqual(seen, [.state(.downloading)])
+		XCTAssertEqual(seen.first, .state(.downloading))
+		XCTAssertEqual(afterStop, [])
 		for await event in engine.events() { XCTFail("unexpected event after stop: \(event)") }
+	}
+
+	func testStopBeforeAnyoneAsksForEventsFinishesTheStreamAndStartDoesNothing() async {
+		let engine = makeEngine(url: URL(string: "http://127.0.0.1:1/stream")!)
+		engine.stop()
+		for await event in engine.events() { XCTFail("unexpected event: \(event)") }
+		await engine.start()
+		for await event in engine.events() { XCTFail("unexpected event after start: \(event)") }
+	}
+
+	func testStartAfterStopDoesNothingEvenWhenEventsWasAskedFirst() async {
+		let engine = makeEngine(url: URL(string: "http://127.0.0.1:1/stream")!)
+		let stream = engine.events()
+		engine.stop()
+		await engine.start()
+		for await event in stream { XCTFail("unexpected event: \(event)") }
+	}
+
+	func testATranscriberFailureEndsReadingAndStaysTheLastState() async throws {
+		let speech = try SpeechFixture.aacFile(saying: String(repeating: sentence, count: 4))
+		defer { speech.remove() }
+		// The real analyzer runs; its result stream is made to fail after its first update, the way
+		// it does when another app takes the speech recognizer.
+		let failing: (AsyncThrowingStream<CaptionUpdate, Error>) -> AsyncThrowingStream<CaptionUpdate, Error> = { real in
+			AsyncThrowingStream { continuation in
+				let task = Task {
+					do {
+						for try await update in real {
+							continuation.yield(update)
+							throw CaptionError.insufficientResources
+						}
+						continuation.finish()
+					} catch { continuation.finish(throwing: error) }
+				}
+				continuation.onTermination = { _ in task.cancel() }
+			}
+		}
+		let engine = makeEngine(url: speech.url, captionUpdates: failing)
+		let stream = engine.events()
+		let starting = Task { await engine.start() }
+		let deadline = Task {
+			try? await Task.sleep(for: .seconds(60))
+			engine.stop()
+		}
+		var events: [EngineEvent] = []
+		var stopper: Task<Void, Never>?
+		for await event in stream {
+			events.append(event)
+			if case .state(.unavailable(let reason)) = event {
+				if reason.contains("one-time download") {
+					engine.stop()
+					throw XCTSkip("the en-US speech model is not installed on this machine")
+				}
+				// The file would be read again within 200 ms if reading went on, so wait well past that.
+				stopper = Task {
+					try? await Task.sleep(for: .seconds(3))
+					engine.stop()
+				}
+			}
+		}
+		deadline.cancel()
+		await starting.value
+		_ = stopper
+		let unavailable = EngineState.unavailable("Another app is using speech recognition. Try again in a moment.")
+		XCTAssertEqual(states(events).last, unavailable, "states: \(states(events))")
+		XCTAssertEqual(states(events).filter { $0 == unavailable }.count, 1)
+		let failureIndex = try XCTUnwrap(events.firstIndex(of: .state(unavailable)))
+		XCTAssertEqual(Array(events[(failureIndex + 1)...]), [])
 	}
 
 	func testCaptionsSpeechFromAStreamAndKeepsCaptioningAcrossAReconnect() async throws {
 		let speech = try SpeechFixture.aacFile(saying: String(repeating: sentence, count: 4))
+		defer { speech.remove() }
 		let engine = makeEngine(url: speech.url)
 		// The file ends, which the decoder reports as a lost stream, so the engine reads it again.
 		// A second pass only captions if its times continue where the first ended.
@@ -95,6 +174,7 @@ final class RadioCaptionEngineTests: XCTestCase {
 
 	func testAStreamThatGoesSilentIsReadAgain() async throws {
 		let speech = try SpeechFixture.aacFile(saying: sentence)
+		defer { speech.remove() }
 		let data = try Data(contentsOf: speech.url)
 		let server = try StallingServer(sending: data.prefix(data.count / 2))
 		defer { server.stop() }

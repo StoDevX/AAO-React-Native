@@ -2,8 +2,8 @@ import AVFoundation
 import SoundAnalysis
 
 /// Scores how much of the audio sounds like speech and like music, with Apple's built-in
-/// sound classifier, which needs no bundled model. Scores arrive once per 3 s window, each
-/// 1.5 s after the last, on a queue of the analyzer's own.
+/// sound classifier, which needs no bundled model. Scores come once per 3 s window, 1.5 s
+/// apart, and are reported synchronously inside `analyze` (and `finish`), on the calling thread.
 public final class MusicClassifier: NSObject, SNResultsObserving {
 	private let analyzer: SNAudioStreamAnalyzer
 	private let onScores: (_ speech: Double, _ music: Double) -> Void
