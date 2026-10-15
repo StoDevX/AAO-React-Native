@@ -2,11 +2,20 @@ import SwiftUI
 
 @main
 struct RadioMenuBarApp: App {
-    @State private var radioManager = RadioManager()
+    @State private var radioManager: RadioManager
     @AppStorage(SettingsView.showsTitleInMenuBarKey) private var showsTitleInMenuBar = false
 
     /// The menu bar has room for a short title only.
     private static let menuBarTitleLength = 32
+
+    init() {
+        let sources = StationSourcesStore()
+        _radioManager = State(initialValue: RadioManager(sources: sources))
+        // Once a launch: a station's address changes rarely, so a new one can wait for the next.
+        if StationSourcesStore.refreshesAtLaunch() {
+            Task { await sources.refresh() }
+        }
+    }
 
     var body: some Scene {
         MenuBarExtra {

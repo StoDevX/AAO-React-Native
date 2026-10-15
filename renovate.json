@@ -211,6 +211,12 @@
       "groupName": "expo",
       "dependencyDashboardApproval": false,
       "schedule": ["before 9am on monday"]
+    },
+    {
+      "description": "hold the radio transcriber's Python below 3.15: ai-edge-litert publishes wheels for cp313 and cp314 only, so uv cannot install it on a newer Python. Lift this once it ships cp315 wheels.",
+      "matchFileNames": ["scripts/radio/transcribe/.python-version"],
+      "matchDepNames": ["python"],
+      "allowedVersions": "<3.15"
     }
   ],
   "prConcurrentLimit": 4

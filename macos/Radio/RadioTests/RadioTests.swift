@@ -287,7 +287,7 @@ struct RadioManagerTests {
     private let requests = Requests()
 
     private func manager(defaults: UserDefaults) -> RadioManager {
-        RadioManager(defaults: defaults) { [requests] url in
+        RadioManager(defaults: defaults, sources: StationSourcesStore(directory: emptyDirectory()) { _ in nil }) { [requests] url in
             await requests.record(url)
             return nil
         }
@@ -318,12 +318,30 @@ struct RadioManagerTests {
         let days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         let shows = days.map { #"{"day": "\#($0)", "start": "00:00", "end": "24:00", "title": "All Day"}"# }
         let schedule = Data(#"{"data": {"timezone": "America/Chicago", "shows": [\#(shows.joined(separator: ","))]}}"#.utf8)
-        let manager = RadioManager(defaults: emptyDefaults()) { _ in schedule }
+        let manager = RadioManager(defaults: emptyDefaults(), sources: StationSourcesStore(directory: emptyDirectory()) { _ in nil }) { _ in schedule }
         #expect(manager.todaysShows.isEmpty)
         manager.isPanelOpen = true
         try await settle()
         #expect(manager.todaysShows.map(\.show.title) == ["All Day"])
         #expect(manager.showOnAir?.title == "All Day")
+    }
+
+    @Test func asksKRLXsSongFeedWhereTheManifestNamesIt() async throws {
+        let directory = emptyDirectory()
+        let published = Data(#"""
+        {"subject": "https://stolaf.edu", "links": [{"rel": "https://frogpond.tech/rel/radio-now-playing", "href": "https://example.com/now", "type": "application/vnd.metaradio.stationnow+json", "properties": {"https://frogpond.tech/ns/id": "krlx"}}]}
+        """#.utf8)
+        let sources = StationSourcesStore(directory: directory) { _ in published }
+        await sources.refresh()
+        let defaults = emptyDefaults()
+        StationPreferences(defaults: defaults).lastPlayedStation = .krlx
+        let manager = RadioManager(defaults: defaults, sources: sources) { [requests] url in
+            await requests.record(url)
+            return nil
+        }
+        manager.isPanelOpen = true
+        try await settle()
+        #expect(await requests.urls == [URL(string: "https://example.com/now")!])
     }
 
     @Test func opensOnTheStationThePreferencesName() {
@@ -346,5 +364,147 @@ struct RadioManagerTests {
         let defaults = emptyDefaults()
         manager(defaults: defaults).volume = 0.3
         #expect(manager(defaults: defaults).volume == 0.3)
+    }
+}
+
+/// A sources manifest holding `links`, each written as JSON.
+private func manifest(_ links: String...) throws -> SourcesManifest {
+    try JSONDecoder().decode(SourcesManifest.self, from: Data(#"{"subject": "https://stolaf.edu", "links": [\#(links.joined(separator: ","))]}"#.utf8))
+}
+
+/// A manifest link of kind `rel` for `station`.
+private func link(_ rel: String, _ station: String, _ href: String, type: String = "audio/mpeg") -> String {
+    #"{"rel": "https://frogpond.tech/rel/\#(rel)", "href": "\#(href)", "type": "\#(type)", "properties": {"https://frogpond.tech/ns/id": "\#(station)"}}"#
+}
+
+private let fallback = StationSources(streamURL: URL(string: "https://fallback.example/krlx"), nowPlayingURL: URL(string: "https://fallback.example/now"))
+
+private func fallbackManifest() throws -> SourcesManifest {
+    try manifest(
+        link("radio-stream", "krlx", "https://fallback.example/krlx"),
+        link("radio-now-playing", "krlx", "https://fallback.example/now", type: "application/vnd.metaradio.stationnow+json")
+    )
+}
+
+struct SourcesManifestTests {
+    @Test func aPublishedEntryWins() throws {
+        let published = try manifest(
+            link("radio-stream", "krlx", "https://example.com/krlx"),
+            link("radio-now-playing", "krlx", "https://example.com/now", type: "application/vnd.metaradio.stationnow+json")
+        )
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()) == StationSources(streamURL: URL(string: "https://example.com/krlx"), nowPlayingURL: URL(string: "https://example.com/now")))
+    }
+
+    @Test func aMissingEntryFallsBack() throws {
+        #expect(try manifest().stationSources(for: .krlx, fallback: try fallbackManifest()) == fallback)
+    }
+
+    @Test func anEntryOfAnotherTypeFallsBack() throws {
+        let published = try manifest(link("radio-stream", "krlx", "https://example.com/krlx.ogg", type: "audio/ogg"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == fallback.streamURL)
+    }
+
+    @Test func anEntryThatIsNotAWebAddressFallsBack() throws {
+        let published = try manifest(link("radio-stream", "krlx", "ftp://example.com/krlx"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == fallback.streamURL)
+    }
+
+    @Test func aRelativeEntryNamesTheServer() throws {
+        let published = try manifest(link("radio-stream", "krlx", "radio/named/krlx"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == URL(string: "https://stolaf.frogpond.tech/v1/radio/named/krlx"))
+    }
+
+    @Test func theFirstEntryForAStationWins() throws {
+        let published = try manifest(
+            link("radio-stream", "krlx", "https://example.com/first"),
+            link("radio-stream", "krlx", "https://example.com/second")
+        )
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == URL(string: "https://example.com/first"))
+    }
+
+    @Test func anotherStationsEntryIsNotTaken() throws {
+        let published = try manifest(link("radio-stream", "ksto", "https://example.com/ksto.m3u8"))
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == fallback.streamURL)
+    }
+
+    @Test func aLinkWithoutATypeOrWithNullPropertiesStillDecodes() throws {
+        let published = try manifest(
+            #"{"rel": "https://frogpond.tech/rel/news", "href": "news", "properties": {"https://frogpond.tech/ns/id": null}, "extra": 1}"#,
+            link("radio-stream", "krlx", "https://example.com/krlx")
+        )
+        #expect(published.stationSources(for: .krlx, fallback: try fallbackManifest()).streamURL == URL(string: "https://example.com/krlx"))
+    }
+
+    @Test func theBundledManifestHasAStreamForEveryStation() {
+        for station in Station.allCases {
+            #expect(SourcesManifest.bundled.stationSources(for: station, fallback: .bundled).streamURL != nil)
+        }
+    }
+
+    @Test func theBundledManifestHasKRLXsSongFeed() {
+        #expect(SourcesManifest.bundled.stationSources(for: .krlx, fallback: .bundled).nowPlayingURL != nil)
+    }
+}
+
+/// An empty directory of its own, for a store's saved copy.
+private func emptyDirectory() -> URL {
+    FileManager.default.temporaryDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
+}
+
+private let publishedKRLX = Data(#"""
+{"subject": "https://stolaf.edu", "links": [{"rel": "https://frogpond.tech/rel/radio-stream", "href": "https://example.com/krlx", "type": "audio/mpeg", "properties": {"https://frogpond.tech/ns/id": "krlx"}}]}
+"""#.utf8)
+
+@MainActor
+struct StationSourcesStoreTests {
+    private let bundledKRLX = SourcesManifest.bundled.stationSources(for: .krlx, fallback: .bundled)
+
+    @Test func beforeAnyFetchTheBundledManifestIsUsed() {
+        let store = StationSourcesStore(directory: emptyDirectory()) { _ in nil }
+        #expect(store.sources(for: .krlx) == bundledKRLX)
+    }
+
+    @Test func aFetchedManifestIsUsedAndKeptForTheNextLaunch() async {
+        let directory = emptyDirectory()
+        let store = StationSourcesStore(directory: directory) { _ in publishedKRLX }
+        await store.refresh()
+        #expect(store.sources(for: .krlx).streamURL == URL(string: "https://example.com/krlx"))
+
+        let nextLaunch = StationSourcesStore(directory: directory) { _ in nil }
+        #expect(nextLaunch.sources(for: .krlx).streamURL == URL(string: "https://example.com/krlx"))
+    }
+
+    @Test func aFailedFetchKeepsWhatWasSaved() async {
+        let directory = emptyDirectory()
+        await StationSourcesStore(directory: directory) { _ in publishedKRLX }.refresh()
+        let store = StationSourcesStore(directory: directory) { _ in nil }
+        await store.refresh()
+        #expect(store.sources(for: .krlx).streamURL == URL(string: "https://example.com/krlx"))
+    }
+
+    @Test func anAnswerThatIsNotAManifestChangesNothing() async {
+        let directory = emptyDirectory()
+        let store = StationSourcesStore(directory: directory) { _ in Data("<html>Sign in to the Wi-Fi</html>".utf8) }
+        await store.refresh()
+        #expect(store.sources(for: .krlx) == bundledKRLX)
+        #expect(!FileManager.default.fileExists(atPath: directory.appending(path: "sources.json").path))
+    }
+
+    @Test func aLaunchFetchesTheManifest() {
+        #expect(StationSourcesStore.refreshesAtLaunch(environment: [:]))
+    }
+
+    @Test func aLaunchHostingUnitTestsLeavesTheServerAndTheSavedCopyAlone() {
+        #expect(!StationSourcesStore.refreshesAtLaunch(environment: ["XCTestConfigurationFilePath": "/tmp/Radio.xctestconfiguration"]))
+        // This run is one: its host app must not have fetched.
+        #expect(!StationSourcesStore.refreshesAtLaunch())
+    }
+
+    @Test func anUnreadableSavedCopyFallsBackToTheBundledManifest() throws {
+        let directory = emptyDirectory()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try Data("not json".utf8).write(to: directory.appending(path: "sources.json"))
+        let store = StationSourcesStore(directory: directory) { _ in nil }
+        #expect(store.sources(for: .krlx) == bundledKRLX)
     }
 }

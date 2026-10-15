@@ -30,14 +30,6 @@ nonisolated enum Station: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// The same streams as `data/sources.yaml`.
-    var streamURL: URL {
-        switch self {
-        case .ksto: URL(string: "https://cdn.stobcm.com/ksto/live.m3u8")!
-        case .krlx: URL(string: "https://s3.voscast.com:10803/stream")!
-        }
-    }
-
     var websiteURL: URL {
         switch self {
         case .ksto: URL(string: "https://www.kstoradio.org/")!
@@ -45,10 +37,12 @@ nonisolated enum Station: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var nowPlayingFeed: NowPlayingFeed {
+    /// KSTO's published weekly schedule. A station's song feed, and its stream,
+    /// come from the sources manifest; see `StationSourcesStore`.
+    var showScheduleURL: URL? {
         switch self {
-        case .ksto: .showSchedule(URL(string: "https://stolaf.dev/AAO-React-Native/ksto-schedule.json")!)
-        case .krlx: .metaradio(URL(string: "https://content.krlx.org/wp-json/metaradio/v1/stationnow/?station=1")!)
+        case .ksto: URL(string: "https://stolaf.dev/AAO-React-Native/ksto-schedule.json")!
+        case .krlx: nil
         }
     }
 

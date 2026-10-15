@@ -11,7 +11,8 @@ import pytest
 from faster_whisper import WhisperModel
 
 from radio_transcriber import (
-    MODEL_SIZE, SAMPLE_RATE, MusicDetector, read_pcm_blocks, transcribe_stream,
+    MODEL_SIZE, RADIO_STREAM_REL, SAMPLE_RATE, SOURCE_ID_PROPERTY, MusicDetector,
+    load_station_stream_urls, read_pcm_blocks, station_stream_urls, transcribe_stream,
 )
 
 SPOKEN_TEXT = (
@@ -71,7 +72,7 @@ def run_transcriber(stream, working_directory, *arguments, station="krlx"):
     """Run the transcriber to completion, as from the command line, with the stream as a station's."""
     run_on_stream = (
         "import radio_transcriber;"
-        f"radio_transcriber.STATION_STREAM_URLS = {{{station!r}: {str(stream)!r}}};"
+        f"radio_transcriber.load_station_stream_urls = lambda: {{{station!r}: {str(stream)!r}}};"
         "radio_transcriber.main()"
     )
     return subprocess.run(
@@ -201,7 +202,7 @@ def start_transcriber_on_long_stream(directory, stdin=None):
     )
     run_with_long_stream = (
         "import radio_transcriber;"
-        f"radio_transcriber.STATION_STREAM_URLS = {{'krlx': {str(long_stream)!r}}};"
+        f"radio_transcriber.load_station_stream_urls = lambda: {{'krlx': {str(long_stream)!r}}};"
         "radio_transcriber.main()"
     )
     transcriber = subprocess.Popen(
@@ -238,3 +239,45 @@ def test_keys_typed_in_the_terminal_do_not_reach_ffmpeg(tmp_path):
     _, stderr = transcriber.communicate(timeout=30)
 
     assert stderr == ""
+
+
+def manifest_link(rel, station, href):
+    """A sources-manifest link naming `station`'s source of kind `rel`."""
+    return {"rel": rel, "href": href, "type": "audio/mpeg", "properties": {SOURCE_ID_PROPERTY: station}}
+
+
+def test_station_stream_urls_reads_each_stations_stream():
+    manifest = {"links": [
+        manifest_link(RADIO_STREAM_REL, "krlx", "https://example.com/krlx"),
+        manifest_link("https://frogpond.tech/rel/radio-now-playing", "krlx", "https://example.com/now"),
+        manifest_link(RADIO_STREAM_REL, "ksto", "https://example.com/ksto.m3u8"),
+    ]}
+    assert station_stream_urls(manifest) == {
+        "krlx": "https://example.com/krlx",
+        "ksto": "https://example.com/ksto.m3u8",
+    }
+
+
+def test_the_first_stream_for_a_station_wins():
+    manifest = {"links": [
+        manifest_link(RADIO_STREAM_REL, "krlx", "https://example.com/first"),
+        manifest_link(RADIO_STREAM_REL, "krlx", "https://example.com/second"),
+    ]}
+    assert station_stream_urls(manifest) == {"krlx": "https://example.com/first"}
+
+
+def test_a_stream_without_a_station_id_is_ignored():
+    link = manifest_link(RADIO_STREAM_REL, "krlx", "https://example.com/krlx")
+    link["properties"] = {}
+    assert station_stream_urls({"links": [link]}) == {}
+
+
+def test_a_stream_ccc_server_would_serve_is_refused():
+    manifest = {"links": [manifest_link(RADIO_STREAM_REL, "ksto", "radio/named/ksto")]}
+    with pytest.raises(ValueError, match="ksto.*radio/named/ksto"):
+        station_stream_urls(manifest)
+
+
+def test_the_committed_manifest_names_both_stations_streams():
+    urls = load_station_stream_urls()
+    assert {"krlx", "ksto"} <= urls.keys()

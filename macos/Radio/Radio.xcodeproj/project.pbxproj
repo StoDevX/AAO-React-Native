@@ -21,6 +21,9 @@
 		B1FA0D274BB99EEE5A1E5D84 /* NowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F0D00042749667FA6407BCC /* NowPlaying.swift */; };
 		B2BF874BCCB14937F713AEF9 /* RadioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EBCEA2D151071DEB6F2A1FB /* RadioView.swift */; };
 		C947E2A55DFF7AB29F099A51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB61823EE980FFDA81AE5D7D /* Assets.xcassets */; };
+		5A0C1E7B2D4F6A8C0E1B3D52 /* SourcesManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C1E7B2D4F6A8C0E1B3D51 /* SourcesManifest.swift */; };
+		5A0C1E7B2D4F6A8C0E1B3D56 /* bundled.json in Resources */ = {isa = PBXBuildFile; fileRef = 5A0C1E7B2D4F6A8C0E1B3D55 /* bundled.json */; };
+		5A0C1E7B2D4F6A8C0E1B3D54 /* StationSourcesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C1E7B2D4F6A8C0E1B3D53 /* StationSourcesStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +61,9 @@
 		CB61823EE980FFDA81AE5D7D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FFCC85540025DE258BF7D71B /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B5C /* StationPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPreferences.swift; sourceTree = "<group>"; };
+		5A0C1E7B2D4F6A8C0E1B3D51 /* SourcesManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesManifest.swift; sourceTree = "<group>"; };
+		5A0C1E7B2D4F6A8C0E1B3D55 /* bundled.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = bundled.json; path = "../../modules/data-sources/bundled.json"; sourceTree = SOURCE_ROOT; };
+		5A0C1E7B2D4F6A8C0E1B3D53 /* StationSourcesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSourcesStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -101,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				CB61823EE980FFDA81AE5D7D /* Assets.xcassets */,
+				5A0C1E7B2D4F6A8C0E1B3D55 /* bundled.json */,
 				88C7032C5EC9F1BBC3F10EC5 /* MenuBarLabel.swift */,
 				0F0D00042749667FA6407BCC /* NowPlaying.swift */,
 				4BF8FC011D0DAC6CE4592138 /* NSApplication+Extension.swift */,
@@ -109,8 +116,10 @@
 				BCE3616894F19CB7497CACBF /* RadioMenuBarApp.swift */,
 				3EBCEA2D151071DEB6F2A1FB /* RadioView.swift */,
 				0C2BE55D739AC7EF577206E0 /* SettingsView.swift */,
+				5A0C1E7B2D4F6A8C0E1B3D51 /* SourcesManifest.swift */,
 				FFCC85540025DE258BF7D71B /* Station.swift */,
 				A1B2C3D4E5F60718293A4B5C /* StationPreferences.swift */,
+				5A0C1E7B2D4F6A8C0E1B3D53 /* StationSourcesStore.swift */,
 				2A169B554F1DED118864FE19 /* Styles.swift */,
 			);
 			path = Radio;
@@ -224,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C947E2A55DFF7AB29F099A51 /* Assets.xcassets in Resources */,
+				5A0C1E7B2D4F6A8C0E1B3D56 /* bundled.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,8 +260,10 @@
 				AFEFEF134325B804CDBD4DDC /* RadioMenuBarApp.swift in Sources */,
 				B2BF874BCCB14937F713AEF9 /* RadioView.swift in Sources */,
 				318C382FAC1A2061D5FFBF96 /* SettingsView.swift in Sources */,
+				5A0C1E7B2D4F6A8C0E1B3D52 /* SourcesManifest.swift in Sources */,
 				50C6365A65DC6A85C5AB5A24 /* Station.swift in Sources */,
 				C5B4A3928170F6E5D4C3B2A1 /* StationPreferences.swift in Sources */,
+				5A0C1E7B2D4F6A8C0E1B3D54 /* StationSourcesStore.swift in Sources */,
 				845A180EB07BFF3C384E644A /* Styles.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

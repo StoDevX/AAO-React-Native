@@ -11,6 +11,7 @@ class RadioManager {
     /// Each station's schedule and when it was fetched, as schedules change only between terms.
     @ObservationIgnored private var schedules: [Station: (schedule: ShowSchedule, fetchedAt: Date)] = [:]
     @ObservationIgnored private let preferences: StationPreferences
+    @ObservationIgnored private let sources: StationSourcesStore
     @ObservationIgnored private let fetch: @Sendable (URL) async -> Data?
 
     private static let scheduleLifetime: TimeInterval = 60 * 60
@@ -44,14 +45,17 @@ class RadioManager {
     /// The one of today's shows on air now, if any.
     private(set) var showOnAir: Show?
 
+    /// `sources` says where each station's stream and song feed are.
     /// `fetch` answers a feed's URL with its response, or nil if it cannot be had.
     init(
         defaults: UserDefaults = .standard,
+        sources: StationSourcesStore = StationSourcesStore(),
         fetch: @escaping @Sendable (URL) async -> Data? = { try? await URLSession.shared.data(from: $0).0 }
     ) {
         let preferences = StationPreferences(defaults: defaults)
         let station = preferences.openingStation
         self.preferences = preferences
+        self.sources = sources
         self.fetch = fetch
         selectedStation = station
         volume = preferences.volume(for: station)
@@ -82,7 +86,8 @@ class RadioManager {
     }
 
     private func setupAndPlay() {
-        let playerItem = AVPlayerItem(url: selectedStation.streamURL)
+        guard let streamURL = sources.sources(for: selectedStation).streamURL else { return }
+        let playerItem = AVPlayerItem(url: streamURL)
         if let player {
             player.replaceCurrentItem(with: playerItem)
         } else {
@@ -132,9 +137,19 @@ class RadioManager {
         }
     }
 
+    /// Where `station` says what is on air: its song feed if it publishes one, else its schedule.
+    private func nowPlayingFeed(for station: Station) -> Station.NowPlayingFeed? {
+        if let url = sources.sources(for: station).nowPlayingURL { return .metaradio(url) }
+        if let url = station.showScheduleURL { return .showSchedule(url) }
+        return nil
+    }
+
     /// Updates what is on air at `station`, and returns how long to wait before asking again.
     private func refreshNowPlaying(for station: Station) async -> Duration {
-        switch station.nowPlayingFeed {
+        switch nowPlayingFeed(for: station) {
+        case nil:
+            show(NowPlaying(song: nil, show: nil, station: station), for: station)
+            return Self.showCheckInterval
         case .metaradio(let url):
             let now = await fetch(url).map(StationNow.parse) ?? StationNow(song: nil, refreshInterval: Self.showCheckInterval)
             show(NowPlaying(song: now.song, show: nil, station: station), for: station)

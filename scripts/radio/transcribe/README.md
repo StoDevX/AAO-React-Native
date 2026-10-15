@@ -21,7 +21,7 @@ brew install ffmpeg uv
    ```
 
 2. **Configure the Stations:**
-   KRLX and KSTO are built in. To add another, open `radio_transcriber.py` and add its direct audio stream URL to `STATION_STREAM_URLS`.
+   The stations and their streams come from the app's sources manifest: each `radio-stream` entry in `data/sources.yaml`, read from its committed copy, `modules/data-sources/bundled.json`. To change a stream or add a station, edit `data/sources.yaml` and run `mise run bundle-data`.
 
 3. **Run the application:**
    ```bash
