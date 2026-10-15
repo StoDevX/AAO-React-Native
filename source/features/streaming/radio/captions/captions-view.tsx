@@ -5,6 +5,7 @@ import {captionStyle, type CaptionsEngineState} from '@frogpond/radio-captions'
 
 import {captionStatus} from './caption-status'
 import {captionRows, splitWords} from './caption-rows'
+import {hasContentAbove} from './caption-scroll'
 import type {CaptionsState} from './reduce-captions'
 
 /** How close to the end the captions must be scrolled for a new line to keep them pinned there. */
@@ -12,6 +13,24 @@ const NEAR_BOTTOM = 80
 
 /** The base size of a caption before the viewer's own caption scale. */
 const CAPTION_FONT_SIZE = 20
+
+/** How tall the fade at the top of the captions is. */
+const TOP_FADE_HEIGHT = 40
+
+/** How many strips the fade is drawn in; each is one step more transparent than the one above. */
+const TOP_FADE_STEPS = 8
+
+/** The panel's own colour as strips of falling opacity, for a fade from it into clear. */
+function fadeColors(background: string): {step: number; color: string}[] {
+	// `#RRGGBBAA`. Scaling by the background's own alpha means a translucent or
+	// clear background, which text could show through anyway, gets no visible fade.
+	let [r, g, b, a] = [1, 3, 5, 7].map((at) => Number.parseInt(background.slice(at, at + 2), 16))
+	let alpha = a === undefined || Number.isNaN(a) ? 1 : a / 255
+	return Array.from({length: TOP_FADE_STEPS}, (_, step) => ({
+		step,
+		color: `rgba(${r}, ${g}, ${b}, ${alpha * (1 - step / TOP_FADE_STEPS)})`,
+	}))
+}
 
 /** Said instead of the engine's state while the captions are not running. */
 const PAUSED_STATUS = 'Captions resume when the station plays'
@@ -102,6 +121,15 @@ export function CaptionsView({
 	let [style] = React.useState(() => captionStyle())
 	let scroll = React.useRef<ScrollView>(null)
 	let pinned = React.useRef(true)
+	// Whether lines have scrolled out of sight above. Set only when it changes.
+	let [fadeTop, setFadeTop] = React.useState(false)
+	let offsetY = React.useRef(0)
+	let viewportHeight = React.useRef(0)
+	let showFadeFor = (offset: number) => {
+		let above = hasContentAbove(offset)
+		setFadeTop((was) => (was === above ? was : above))
+	}
+	let fade = React.useMemo(() => fadeColors(style.background), [style.background])
 	let rows = captionRows(state)
 	let status = running
 		? captionStatus(engine, state.lines.length > 0)
@@ -114,36 +142,63 @@ export function CaptionsView({
 					{status.text}
 				</Text>
 			) : null}
-			<ScrollView
-				onContentSizeChange={() => {
-					// Unanimated, so a tall new line cannot leave the view mid-scroll.
-					if (pinned.current) scroll.current?.scrollToEnd({animated: false})
-				}}
-				// Only the viewer's own scrolling decides whether to keep following,
-				// so the view's scrolling to the end cannot unpin it.
-				onMomentumScrollEnd={({nativeEvent}) => {
-					pinned.current = isNearEnd(nativeEvent)
-				}}
-				onScrollBeginDrag={({nativeEvent}) => {
-					pinned.current = isNearEnd(nativeEvent)
-				}}
-				onScrollEndDrag={({nativeEvent}) => {
-					pinned.current = isNearEnd(nativeEvent)
-				}}
-				ref={scroll}
-				style={styles.list}
-				testID="radio-captions-list"
-			>
-				{rows.map((row) => (
-					<CaptionRow
-						color={style.foreground}
-						fontFamily={style.fontFamily}
-						fontSize={CAPTION_FONT_SIZE * style.fontScale}
-						key={row.key}
-						text={row.text}
-					/>
-				))}
-			</ScrollView>
+			<View style={styles.listArea}>
+				<ScrollView
+					onContentSizeChange={(_width, height) => {
+						// Unanimated, so a tall new line cannot leave the view mid-scroll.
+						if (pinned.current) {
+							scroll.current?.scrollToEnd({animated: false})
+							// Pinned to the end, the top is wherever the content now overflows to.
+							offsetY.current = Math.max(0, height - viewportHeight.current)
+						}
+						showFadeFor(offsetY.current)
+					}}
+					onLayout={({nativeEvent}) => {
+						viewportHeight.current = nativeEvent.layout.height
+					}}
+					onScroll={({nativeEvent}) => {
+						offsetY.current = nativeEvent.contentOffset.y
+						showFadeFor(offsetY.current)
+					}}
+					scrollEventThrottle={50}
+					// Only the viewer's own scrolling decides whether to keep following,
+					// so the view's scrolling to the end cannot unpin it.
+					onMomentumScrollEnd={({nativeEvent}) => {
+						pinned.current = isNearEnd(nativeEvent)
+					}}
+					onScrollBeginDrag={({nativeEvent}) => {
+						pinned.current = isNearEnd(nativeEvent)
+					}}
+					onScrollEndDrag={({nativeEvent}) => {
+						pinned.current = isNearEnd(nativeEvent)
+					}}
+					ref={scroll}
+					style={styles.list}
+					testID="radio-captions-list"
+				>
+					{rows.map((row) => (
+						<CaptionRow
+							color={style.foreground}
+							fontFamily={style.fontFamily}
+							fontSize={CAPTION_FONT_SIZE * style.fontScale}
+							key={row.key}
+							text={row.text}
+						/>
+					))}
+				</ScrollView>
+				{fadeTop ? (
+					<View
+						accessibilityElementsHidden={true}
+						importantForAccessibility="no-hide-descendants"
+						pointerEvents="none"
+						style={styles.topFade}
+					>
+						{fade.map(({step, color}) => (
+							<View key={step} style={[styles.fadeStrip, {backgroundColor: color}]} />
+						))}
+					</View>
+				) : null}
+			</View>
 		</View>
 	)
 }
@@ -152,7 +207,10 @@ const styles = StyleSheet.create({
 	// The record's place has a fixed height, so the panel takes it and the
 	// captions scroll within it.
 	panel: {alignSelf: 'stretch', flex: 1, borderRadius: 12, padding: 16},
+	listArea: {flex: 1},
 	list: {flex: 1},
+	topFade: {position: 'absolute', top: 0, left: 0, right: 0},
+	fadeStrip: {height: TOP_FADE_HEIGHT / TOP_FADE_STEPS},
 	status: {fontSize: 15, marginBottom: 8, opacity: 0.8},
 	line: {flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8},
 })
