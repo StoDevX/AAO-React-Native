@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {ScrollView, type NativeScrollEvent, StyleSheet, Text, View} from 'react-native'
+import MaskedView from '@react-native-masked-view/masked-view'
 import Animated, {FadeIn, ReduceMotion} from 'react-native-reanimated'
 import {captionStyle, type CaptionsEngineState} from '@frogpond/radio-captions'
 
@@ -17,19 +18,35 @@ const CAPTION_FONT_SIZE = 20
 /** How tall the fade at the top of the captions is. */
 const TOP_FADE_HEIGHT = 40
 
-/** How many strips the fade is drawn in; each is one step more transparent than the one above. */
+/** How many strips the fade is drawn in. */
 const TOP_FADE_STEPS = 8
 
-/** The panel's own colour as strips of falling opacity, for a fade from it into clear. */
-function fadeColors(background: string): {step: number; color: string}[] {
-	// `#RRGGBBAA`. Scaling by the background's own alpha means a translucent or
-	// clear background, which text could show through anyway, gets no visible fade.
-	let [r, g, b, a] = [1, 3, 5, 7].map((at) => Number.parseInt(background.slice(at, at + 2), 16))
-	let alpha = a === undefined || Number.isNaN(a) ? 1 : a / 255
-	return Array.from({length: TOP_FADE_STEPS}, (_, step) => ({
-		step,
-		color: `rgba(${r}, ${g}, ${b}, ${alpha * (1 - step / TOP_FADE_STEPS)})`,
-	}))
+/**
+ * The mask's strips, top down, each more opaque than the one above: only the
+ * mask's alpha counts, so the colour is black and the panel's background,
+ * whatever its own alpha, does not matter.
+ */
+const TOP_FADE_STRIPS = Array.from({length: TOP_FADE_STEPS}, (_, step) => ({
+	step,
+	color: `rgba(0, 0, 0, ${step / TOP_FADE_STEPS})`,
+}))
+
+/**
+ * What shows through: all of the captions, or with `fadeTop` all but a fade
+ * into the top edge. It is always a mask, so the scroll view is never
+ * remounted, which would lose its place, as the fade comes and goes.
+ */
+function CaptionsMask({fadeTop}: {fadeTop: boolean}): React.ReactNode {
+	return (
+		<View style={styles.mask}>
+			{fadeTop
+				? TOP_FADE_STRIPS.map(({step, color}) => (
+						<View key={step} style={[styles.fadeStrip, {backgroundColor: color}]} />
+					))
+				: null}
+			<View style={styles.maskRest} />
+		</View>
+	)
 }
 
 /** Said instead of the engine's state while the captions are not running. */
@@ -129,7 +146,6 @@ export function CaptionsView({
 		let above = hasContentAbove(offset)
 		setFadeTop((was) => (was === above ? was : above))
 	}
-	let fade = React.useMemo(() => fadeColors(style.background), [style.background])
 	let rows = captionRows(state)
 	let status = running
 		? captionStatus(engine, state.lines.length > 0)
@@ -142,7 +158,7 @@ export function CaptionsView({
 					{status.text}
 				</Text>
 			) : null}
-			<View style={styles.listArea}>
+			<MaskedView maskElement={<CaptionsMask fadeTop={fadeTop} />} style={styles.listArea}>
 				<ScrollView
 					onContentSizeChange={(_width, height) => {
 						// Unanimated, so a tall new line cannot leave the view mid-scroll.
@@ -186,19 +202,7 @@ export function CaptionsView({
 						/>
 					))}
 				</ScrollView>
-				{fadeTop ? (
-					<View
-						accessibilityElementsHidden={true}
-						importantForAccessibility="no-hide-descendants"
-						pointerEvents="none"
-						style={styles.topFade}
-					>
-						{fade.map(({step, color}) => (
-							<View key={step} style={[styles.fadeStrip, {backgroundColor: color}]} />
-						))}
-					</View>
-				) : null}
-			</View>
+			</MaskedView>
 		</View>
 	)
 }
@@ -209,7 +213,8 @@ const styles = StyleSheet.create({
 	panel: {alignSelf: 'stretch', flex: 1, borderRadius: 12, padding: 16},
 	listArea: {flex: 1},
 	list: {flex: 1},
-	topFade: {position: 'absolute', top: 0, left: 0, right: 0},
+	mask: {flex: 1},
+	maskRest: {flex: 1, backgroundColor: 'black'},
 	fadeStrip: {height: TOP_FADE_HEIGHT / TOP_FADE_STEPS},
 	status: {fontSize: 15, marginBottom: 8, opacity: 0.8},
 	line: {flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8},
