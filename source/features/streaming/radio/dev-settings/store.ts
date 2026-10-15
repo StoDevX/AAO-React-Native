@@ -29,8 +29,8 @@ type RadioDevState = {
 }
 
 const DEFAULTS = {
-	captionPresentation: 'live',
-	heldBackWords: 1,
+	captionPresentation: 'hold-back',
+	heldBackWords: 3,
 	captionDelayMs: CAPTION_DISPLAY_DELAY_MS,
 } as const
 

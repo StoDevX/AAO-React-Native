@@ -10,10 +10,10 @@ describe('useRadioDevStore', () => {
 		useRadioDevStore.setState(useRadioDevStore.getInitialState(), true)
 	})
 
-	test('starts as the app behaves without it: live captions, the standard delay', () => {
+	test('starts as the app behaves without it: the last three words held back, the standard delay', () => {
 		expect(useRadioDevStore.getInitialState()).toMatchObject({
-			captionPresentation: 'live',
-			heldBackWords: 1,
+			captionPresentation: 'hold-back',
+			heldBackWords: 3,
 			captionDelayMs: CAPTION_DISPLAY_DELAY_MS,
 		})
 	})
@@ -45,14 +45,14 @@ describe('useRadioDevStore', () => {
 	test('resets every setting to its default', () => {
 		let state = useRadioDevStore.getState()
 		state.setCaptionPresentation('two-tone')
-		state.setHeldBackWords(3)
+		state.setHeldBackWords(1)
 		state.setCaptionDelayMs(1500)
 
 		useRadioDevStore.getState().reset()
 
 		expect(useRadioDevStore.getState()).toMatchObject({
-			captionPresentation: 'live',
-			heldBackWords: 1,
+			captionPresentation: 'hold-back',
+			heldBackWords: 3,
 			captionDelayMs: CAPTION_DISPLAY_DELAY_MS,
 		})
 	})
@@ -60,14 +60,14 @@ describe('useRadioDevStore', () => {
 	test('takes defaults for settings an older or partial save lacks', async () => {
 		await AsyncStorage.setItem(
 			'radio-dev-settings',
-			JSON.stringify({state: {captionPresentation: 'hold-back'}, version: 1}),
+			JSON.stringify({state: {captionPresentation: 'two-tone'}, version: 1}),
 		)
 
 		await useRadioDevStore.persist.rehydrate()
 
 		expect(useRadioDevStore.getState()).toMatchObject({
-			captionPresentation: 'hold-back',
-			heldBackWords: 1,
+			captionPresentation: 'two-tone',
+			heldBackWords: 3,
 			captionDelayMs: CAPTION_DISPLAY_DELAY_MS,
 		})
 	})
