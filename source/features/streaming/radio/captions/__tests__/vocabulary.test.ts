@@ -28,6 +28,11 @@ describe('normalizeCaption: heard in real transcripts', () => {
 			'You can listen online or chat to the DJs at Karax.org or call into the studio',
 			'You can listen online or chat to the DJs at krlx.org or call into the studio',
 		],
+		['You are listening to Kerallax.', 'You are listening to KRLX.'],
+		[
+			'You can listen online or chat to the DJs at Carallax.org or call',
+			'You can listen online or chat to the DJs at krlx.org or call',
+		],
 		[
 			'Hello, you are listening to Car X 88.1 FM service',
 			'Hello, you are listening to KRLX 88.1 FM service',

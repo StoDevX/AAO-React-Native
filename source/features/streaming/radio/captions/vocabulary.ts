@@ -31,10 +31,11 @@ function always(text: string): (match: string, after: string) => string {
  */
 const RULES: readonly Rule[] = [
 	{
-		// Seen: "Carolex", "carolax", "Cara X" (also in "carolax.org"). Unverified: the spaced
-		// "Carol X", "Keralyx", "Cara lex" and the other prefix and ending combinations.
+		// Seen: "Carolex", "carolax", "Cara X", "Kerallax", "Carallax" (also in "carolax.org").
+		// Unverified: the spaced "Carol X", "Keralyx", "Cara lex" and the other prefix and
+		// ending combinations.
 		name: 'KRLX, heard as a name',
-		pattern: /\b(?:cara|carol|carrol|kara|karol|kera)(?:x|ex|ax|lex|lax|lyx)\b/giu,
+		pattern: /\b(?:cara|carol|carrol|kara|karol|kera)(?:x|ex|ax|lex|lax|llax|lyx)\b/giu,
 		replace: callSign('KRLX'),
 	},
 	{
