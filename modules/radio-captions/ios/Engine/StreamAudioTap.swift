@@ -128,6 +128,7 @@ public final class StreamAudioTap {
 			prepare: { tap, _, format in
 				let context = Unmanaged<TapContext>.fromOpaque(MTAudioProcessingTapGetStorage(tap)).takeUnretainedValue()
 				context.format = AVAudioFormat(streamDescription: format)
+				if context.format == nil { context.fail("The stream's audio format is not supported.") }
 			},
 			unprepare: { _ in },
 			process: { tap, frames, _, bufferList, framesOut, flagsOut in
