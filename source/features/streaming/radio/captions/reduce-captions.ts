@@ -4,8 +4,11 @@ import type {CaptionEvent} from '@frogpond/radio-captions'
 export type CaptionLine = {
 	id: number
 	text: string
-	/** A marker, with no text, where the captions were off. */
-	gap?: boolean
+	/**
+	 * Set on a marker, which has no text: where captions were off (`gap`) or
+	 * where the station played music (`music`).
+	 */
+	marker?: 'gap' | 'music'
 }
 
 /** The captions on screen: settled lines plus the one still being spoken. */
@@ -22,7 +25,7 @@ export const EMPTY_CAPTIONS: CaptionsState = {lines: [], live: '', nextId: 0}
 /** How many settled lines are kept, so hours of listening hold a bounded amount of text. */
 export const MAX_CAPTION_LINES = 100
 
-type Action = CaptionEvent | {kind: 'clearLive'} | {kind: 'reset'} | {kind: 'gap'}
+type Action = CaptionEvent | {kind: 'clearLive'} | {kind: 'reset'} | {kind: 'gap'} | {kind: 'music'}
 
 /**
  * Applies a caption event. A final replaces the live line, and a blank one
@@ -38,14 +41,9 @@ export function reduceCaptions(state: CaptionsState, action: Action): CaptionsSt
 			let lines = [...state.lines, {id: state.nextId, text}].slice(-MAX_CAPTION_LINES)
 			return {lines, live: '', nextId: state.nextId + 1}
 		}
-		case 'gap': {
-			// Nothing to mark in an empty transcript, and one marker marks a stretch.
-			if (state.lines.length === 0 || state.lines.at(-1)?.gap === true) return state
-			let lines = [...state.lines, {id: state.nextId, text: '', gap: true}].slice(
-				-MAX_CAPTION_LINES,
-			)
-			return {...state, lines, nextId: state.nextId + 1}
-		}
+		case 'gap':
+		case 'music':
+			return withMarker(state, action.kind)
 		case 'clearLive':
 			return {...state, live: ''}
 		case 'reset':
@@ -55,4 +53,14 @@ export function reduceCaptions(state: CaptionsState, action: Action): CaptionsSt
 			throw new Error(`Unhandled caption action: ${JSON.stringify(_exhaustive)}`)
 		}
 	}
+}
+
+/**
+ * Marks a stretch in the transcript. Nothing to mark in an empty transcript,
+ * and one marker marks a stretch, whichever kind came first.
+ */
+function withMarker(state: CaptionsState, marker: 'gap' | 'music'): CaptionsState {
+	if (state.lines.length === 0 || state.lines.at(-1)?.marker !== undefined) return state
+	let lines = [...state.lines, {id: state.nextId, text: '', marker}].slice(-MAX_CAPTION_LINES)
+	return {...state, lines, nextId: state.nextId + 1}
 }

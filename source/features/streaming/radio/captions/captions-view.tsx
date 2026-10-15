@@ -1,10 +1,11 @@
 import * as React from 'react'
 import {ScrollView, type NativeScrollEvent, StyleSheet, Text, View} from 'react-native'
+import {SymbolView} from 'expo-symbols'
 import MaskedView from '@react-native-masked-view/masked-view'
 import Animated, {FadeIn, ReduceMotion} from 'react-native-reanimated'
 import {captionStyle, type CaptionsEngineState} from '@frogpond/radio-captions'
 
-import {captionStatus} from './caption-status'
+import {captionPanelStatus} from './caption-status'
 import {presentCaption, dimColor} from '../dev-settings/present-caption'
 import {useRadioDevStore, type CaptionPresentation} from '../dev-settings/store'
 import {captionRows} from './caption-rows'
@@ -59,9 +60,6 @@ function CaptionsMask({
 function fadeStrip({step, color}: {step: number; color: string}): React.ReactNode {
 	return <View key={step} style={[styles.fadeStrip, {backgroundColor: color}]} />
 }
-
-/** Said instead of the engine's state while the captions are not running. */
-const PAUSED_STATUS = 'Captions resume when the station plays'
 
 /** Whether a scroll position is within `NEAR_BOTTOM` of the end of the content. */
 function isNearEnd({contentOffset, contentSize, layoutMeasurement}: NativeScrollEvent): boolean {
@@ -134,27 +132,35 @@ const CaptionRow = React.memo(function CaptionRow({
 	)
 })
 
-/** How large the gap marker is next to a caption. */
-const GAP_SCALE = 0.75
+/** How large the symbol in the empty view is. */
+const EMPTY_SYMBOL_SIZE = 44
 
-/** Said where the captions were off. */
-const GAP_TEXT = 'Captions were off'
+/** How large a marker is next to a caption. */
+const MARKER_SCALE = 0.75
 
-/** A faint line between what was said before captions were hidden and after, not animated. */
-const CaptionGap = React.memo(function CaptionGap({
+/** What each kind of marker says. */
+const MARKER_TEXT = {gap: 'Captions were off', music: '♪ Music'} as const
+
+/** What a marker says aloud: the music note is left out. */
+const MARKER_SPOKEN = {gap: 'Captions were off', music: 'Music'} as const
+
+/** A faint line in the transcript where captions were off or music played, not animated. */
+const CaptionMarker = React.memo(function CaptionMarker({
+	marker,
 	color,
 	fontSize,
 }: {
+	marker: 'gap' | 'music'
 	color: string
 	fontSize: number
 }): React.ReactNode {
 	return (
 		<Text
-			accessibilityLabel={GAP_TEXT}
+			accessibilityLabel={MARKER_SPOKEN[marker]}
 			accessibilityRole="text"
-			style={[styles.line, {color: dimColor(color), fontSize: fontSize * GAP_SCALE}]}
+			style={[styles.line, {color: dimColor(color), fontSize: fontSize * MARKER_SCALE}]}
 		>
-			{GAP_TEXT}
+			{MARKER_TEXT[marker]}
 		</Text>
 	)
 })
@@ -196,77 +202,104 @@ export function CaptionsView({
 	let rows = captionRows(state)
 	let presentation = useRadioDevStore((settings) => settings.captionPresentation)
 	let heldBackWords = useRadioDevStore((settings) => settings.heldBackWords)
-	let status = running
-		? captionStatus(engine, state.lines.length > 0)
-		: {text: PAUSED_STATUS, spoken: PAUSED_STATUS}
+	let {line, empty} = captionPanelStatus({engine, running, hasLines: rows.length > 0})
 
 	return (
 		<View style={[styles.panel, {backgroundColor: style.background}]}>
-			{status ? (
-				<Text accessibilityLabel={status.spoken} style={[styles.status, {color: style.foreground}]}>
-					{status.text}
+			{line ? (
+				<Text accessibilityLabel={line.spoken} style={[styles.status, {color: style.foreground}]}>
+					{line.text}
 				</Text>
 			) : null}
-			<MaskedView
-				maskElement={<CaptionsMask fadeBottom={fades.bottom} fadeTop={fades.top} />}
-				style={styles.listArea}
-			>
-				<ScrollView
-					onContentSizeChange={(_width, height) => {
-						// Unanimated, so a tall new line cannot leave the view mid-scroll.
-						contentHeight.current = height
-						if (pinned.current) {
-							scroll.current?.scrollToEnd({animated: false})
-							// Pinned to the end, the top is wherever the content now overflows to.
-							offsetY.current = Math.max(0, height - viewportHeight.current)
-						}
-						updateFades()
-					}}
-					onLayout={({nativeEvent}) => {
-						viewportHeight.current = nativeEvent.layout.height
-						updateFades()
-					}}
-					onScroll={({nativeEvent}) => {
-						offsetY.current = nativeEvent.contentOffset.y
-						updateFades()
-					}}
-					scrollEventThrottle={50}
-					// Only the viewer's own scrolling decides whether to keep following,
-					// so the view's scrolling to the end cannot unpin it.
-					onMomentumScrollEnd={({nativeEvent}) => {
-						pinned.current = isNearEnd(nativeEvent)
-					}}
-					onScrollBeginDrag={({nativeEvent}) => {
-						pinned.current = isNearEnd(nativeEvent)
-					}}
-					onScrollEndDrag={({nativeEvent}) => {
-						pinned.current = isNearEnd(nativeEvent)
-					}}
-					ref={scroll}
-					style={styles.list}
-					testID="radio-captions-list"
+			<View style={styles.listArea}>
+				<MaskedView
+					maskElement={<CaptionsMask fadeBottom={fades.bottom} fadeTop={fades.top} />}
+					style={styles.listArea}
 				>
-					{rows.map((row) =>
-						row.gap ? (
-							<CaptionGap
-								color={style.foreground}
-								fontSize={CAPTION_FONT_SIZE * style.fontScale}
-								key={row.key}
-							/>
-						) : (
-							<CaptionRow
-								color={style.foreground}
-								heldBackWords={row.live ? heldBackWords : 0}
-								presentation={row.live ? presentation : 'live'}
-								fontFamily={style.fontFamily}
-								fontSize={CAPTION_FONT_SIZE * style.fontScale}
-								key={row.key}
-								text={row.text}
-							/>
-						),
-					)}
-				</ScrollView>
-			</MaskedView>
+					<ScrollView
+						onContentSizeChange={(_width, height) => {
+							// Unanimated, so a tall new line cannot leave the view mid-scroll.
+							contentHeight.current = height
+							if (pinned.current) {
+								scroll.current?.scrollToEnd({animated: false})
+								// Pinned to the end, the top is wherever the content now overflows to.
+								offsetY.current = Math.max(0, height - viewportHeight.current)
+							}
+							updateFades()
+						}}
+						onLayout={({nativeEvent}) => {
+							viewportHeight.current = nativeEvent.layout.height
+							updateFades()
+						}}
+						onScroll={({nativeEvent}) => {
+							offsetY.current = nativeEvent.contentOffset.y
+							updateFades()
+						}}
+						scrollEventThrottle={50}
+						// Only the viewer's own scrolling decides whether to keep following,
+						// so the view's scrolling to the end cannot unpin it.
+						onMomentumScrollEnd={({nativeEvent}) => {
+							pinned.current = isNearEnd(nativeEvent)
+						}}
+						onScrollBeginDrag={({nativeEvent}) => {
+							pinned.current = isNearEnd(nativeEvent)
+						}}
+						onScrollEndDrag={({nativeEvent}) => {
+							pinned.current = isNearEnd(nativeEvent)
+						}}
+						ref={scroll}
+						style={styles.list}
+						testID="radio-captions-list"
+					>
+						{rows.map((row) =>
+							row.marker !== null ? (
+								<CaptionMarker
+									color={style.foreground}
+									fontSize={CAPTION_FONT_SIZE * style.fontScale}
+									key={row.key}
+									marker={row.marker}
+								/>
+							) : (
+								<CaptionRow
+									color={style.foreground}
+									heldBackWords={row.live ? heldBackWords : 0}
+									presentation={row.live ? presentation : 'live'}
+									fontFamily={style.fontFamily}
+									fontSize={CAPTION_FONT_SIZE * style.fontScale}
+									key={row.key}
+									text={row.text}
+								/>
+							),
+						)}
+					</ScrollView>
+				</MaskedView>
+				{empty ? (
+					// Over the transcript, which stays mounted beneath so its scroll state
+					// survives the first line arriving. One element for VoiceOver.
+					<View
+						accessibilityLabel={empty.text}
+						accessibilityRole="text"
+						accessible={true}
+						pointerEvents="none"
+						style={styles.empty}
+					>
+						<SymbolView
+							name={empty.symbol}
+							size={EMPTY_SYMBOL_SIZE}
+							tintColor={dimColor(style.foreground)}
+						/>
+						<Text
+							style={[
+								styles.emptyText,
+								{color: style.foreground, fontSize: CAPTION_FONT_SIZE * style.fontScale},
+								style.fontFamily === null ? null : {fontFamily: style.fontFamily},
+							]}
+						>
+							{empty.text}
+						</Text>
+					</View>
+				) : null}
+			</View>
 		</View>
 	)
 }
@@ -281,5 +314,16 @@ const styles = StyleSheet.create({
 	maskRest: {flex: 1, backgroundColor: 'black'},
 	fadeStrip: {height: FADE_HEIGHT / FADE_STEPS},
 	status: {fontSize: 15, marginBottom: 8, opacity: 0.8},
+	empty: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 12,
+	},
+	emptyText: {textAlign: 'center'},
 	line: {flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8},
 })

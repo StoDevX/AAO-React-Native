@@ -6,8 +6,8 @@ export type CaptionRow = {
 	text: string
 	/** Whether it is the line still being spoken, which may be shown differently. */
 	live: boolean
-	/** Whether it marks where captions were off, and has no text. */
-	gap: boolean
+	/** What a marker row marks, which has no text; null for a line of speech. */
+	marker: 'gap' | 'music' | null
 }
 
 /**
@@ -20,11 +20,11 @@ export function captionRows(state: CaptionsState): CaptionRow[] {
 		key: line.id,
 		text: line.text,
 		live: false,
-		gap: line.gap === true,
+		marker: line.marker ?? null,
 	}))
 	return state.live === ''
 		? rows
-		: [...rows, {key: state.nextId, text: state.live, live: true, gap: false}]
+		: [...rows, {key: state.nextId, text: state.live, live: true, marker: null}]
 }
 
 /** The words of a line, which fade in one at a time as the line grows. */

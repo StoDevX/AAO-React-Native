@@ -49,6 +49,17 @@ describe('captionRows', () => {
 	})
 })
 
+describe('captionRows markers', () => {
+	test('says which rows are markers, and of what kind', () => {
+		let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'one'})
+		state = reduceCaptions(state, {kind: 'music'})
+		state = reduceCaptions(state, {kind: 'final', text: 'two'})
+		state = reduceCaptions(state, {kind: 'gap'})
+
+		expect(captionRows(state).map((row) => row.marker)).toEqual([null, 'music', null, 'gap'])
+	})
+})
+
 describe('splitWords', () => {
 	test('splits on runs of spaces, ignoring leading and trailing ones', () => {
 		expect(splitWords('  and   now the  news ')).toEqual(['and', 'now', 'the', 'news'])

@@ -131,7 +131,7 @@ describe('useCaptions', () => {
 		})
 
 		expect(startCaptions).toHaveBeenCalledTimes(2)
-		expect(result.current.state.lines.map((line) => line.gap === true)).toEqual([false, true])
+		expect(result.current.state.lines.map((line) => line.marker === 'gap')).toEqual([false, true])
 		expect(result.current.state.lines[0]?.text).toBe('Good evening')
 		expect(result.current.engine).toBeNull()
 	})
@@ -152,7 +152,7 @@ describe('useCaptions', () => {
 		await rerender({active: false})
 		await rerender({active: true})
 
-		expect(result.current.state.lines.map((line) => line.gap === true)).toEqual([false, true])
+		expect(result.current.state.lines.map((line) => line.marker === 'gap')).toEqual([false, true])
 	})
 
 	test('shows at once what is still waiting when the panel is hidden', async () => {
@@ -380,6 +380,35 @@ describe('useCaptions', () => {
 		})
 		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Before', 'After'])
 		expect(startCaptions).toHaveBeenCalledTimes(1)
+	})
+
+	test('marks music in the transcript once, after a caption and not before one', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+
+		await act(() => {
+			stateListeners[0]?.({kind: 'music'})
+		})
+		await showDelayed()
+		expect(result.current.state.lines).toEqual([])
+
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
+		})
+		await showDelayed()
+		await act(() => {
+			stateListeners[0]?.({kind: 'music'})
+		})
+		await showDelayed()
+		await act(() => {
+			stateListeners[0]?.({kind: 'music'})
+		})
+		await showDelayed()
+
+		expect(result.current.state.lines.map((line) => line.marker ?? line.text)).toEqual([
+			'Good evening',
+			'music',
+		])
 	})
 
 	test('clears the line being spoken while reconnecting or on music', async () => {

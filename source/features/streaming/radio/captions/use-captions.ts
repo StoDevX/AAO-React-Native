@@ -108,6 +108,8 @@ export function useCaptions(
 				if (next.kind === 'reconnecting' || next.kind === 'music') {
 					useCaptionsStore.getState().apply({kind: 'clearLive'})
 				}
+				// Music is marked in the transcript, after the captions it interrupts.
+				if (next.kind === 'music') useCaptionsStore.getState().apply({kind: 'music'})
 			})
 		})
 		startCaptions(streamUrl, CAPTIONS_LOCALE).catch((error: unknown) => {

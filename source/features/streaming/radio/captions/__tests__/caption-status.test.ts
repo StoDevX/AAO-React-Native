@@ -1,28 +1,64 @@
-import {captionStatus} from '../caption-status'
+import {describe, expect, test} from '@jest/globals'
 
-describe('captionStatus', () => {
-	test('shows nothing while captioning', () => {
-		expect(captionStatus({kind: 'captioning'}, true)).toBeNull()
+import {captionPanelStatus} from '../caption-status'
+
+const SPEAK = {symbol: 'captions.bubble', text: 'Captions appear when someone speaks'}
+
+describe('captionPanelStatus', () => {
+	test('says nothing while captioning or on music, with lines to show', () => {
+		for (let kind of ['captioning', 'music'] as const) {
+			expect(captionPanelStatus({engine: {kind}, running: true, hasLines: true})).toEqual({
+				line: null,
+				empty: null,
+			})
+		}
 	})
-	test('says music is playing', () => {
-		expect(captionStatus({kind: 'music'}, true)?.text).toBe('Music')
+
+	test('invites speech in the empty view, never a top line, while captioning or on music', () => {
+		for (let kind of ['captioning', 'music'] as const) {
+			expect(captionPanelStatus({engine: {kind}, running: true, hasLines: false})).toEqual({
+				line: null,
+				empty: SPEAK,
+			})
+		}
 	})
-	test('says why captions are unavailable', () => {
-		expect(captionStatus({kind: 'unavailable', reason: 'No model'}, false)?.text).toBe('No model')
-	})
-	test('waits for a first line', () => {
-		expect(captionStatus({kind: 'captioning'}, false)?.text).toBe('Listening for speech…')
-	})
-	test('names the model download', () => {
-		expect(captionStatus({kind: 'downloading'}, false)?.text).toBe('Getting captions ready…')
-	})
-	test('names a lost stream', () => {
-		expect(captionStatus({kind: 'reconnecting'}, true)?.text).toBe('Reconnecting…')
-	})
-	test('names the wait before the engine reports anything', () => {
-		expect(captionStatus(null, false)?.text).toBe('Getting captions ready…')
-	})
-	test('speaks what it shows', () => {
-		expect(captionStatus({kind: 'music'}, true)?.spoken).toBe('Music')
+
+	test.each([
+		['downloading', {kind: 'downloading'}, 'Getting captions ready…', 'arrow.down.circle'],
+		['no word yet from the engine', null, 'Getting captions ready…', 'arrow.down.circle'],
+		['reconnecting', {kind: 'reconnecting'}, 'Reconnecting…', 'wifi.exclamationmark'],
+		[
+			'unavailable',
+			{kind: 'unavailable', reason: 'No model'},
+			'No model',
+			'exclamationmark.circle',
+		],
+	] as const)(
+		'%s: a top line over lines, the empty view without',
+		(_name, engine, text, symbol) => {
+			expect(captionPanelStatus({engine, running: true, hasLines: true})).toEqual({
+				line: {text, spoken: text},
+				empty: null,
+			})
+			expect(captionPanelStatus({engine, running: true, hasLines: false})).toEqual({
+				line: null,
+				empty: {symbol, text},
+			})
+		},
+	)
+
+	test('says the captions wait for the station while not running, whatever the engine last said', () => {
+		let text = 'Captions resume when the station plays'
+
+		expect(
+			captionPanelStatus({engine: {kind: 'captioning'}, running: false, hasLines: true}),
+		).toEqual({
+			line: {text, spoken: text},
+			empty: null,
+		})
+		expect(captionPanelStatus({engine: {kind: 'music'}, running: false, hasLines: false})).toEqual({
+			line: null,
+			empty: {symbol: 'pause.circle', text},
+		})
 	})
 })

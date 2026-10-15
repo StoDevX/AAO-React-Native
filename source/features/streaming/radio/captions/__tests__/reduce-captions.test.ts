@@ -95,7 +95,7 @@ describe('reduceCaptions', () => {
 			let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'Good evening.'})
 			state = reduceCaptions(state, {kind: 'gap'})
 
-			expect(state.lines.map((line) => line.gap === true)).toEqual([false, true])
+			expect(state.lines.map((line) => line.marker === 'gap')).toEqual([false, true])
 			expect(state.nextId).toBe(2)
 		})
 
@@ -116,7 +116,41 @@ describe('reduceCaptions', () => {
 
 			expect(state.lines).toHaveLength(MAX_CAPTION_LINES)
 			expect(state.lines[0]?.text).toBe('line 1')
-			expect(state.lines.at(-1)?.gap).toBe(true)
+			expect(state.lines.at(-1)?.marker).toBe('gap')
+		})
+	})
+
+	describe('music', () => {
+		test('marks nothing before anything was said', () => {
+			expect(reduceCaptions(EMPTY_CAPTIONS, {kind: 'music'})).toEqual(EMPTY_CAPTIONS)
+		})
+
+		test('appends one music marker after lines, however often music is heard', () => {
+			let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'Good evening.'})
+			state = reduceCaptions(state, {kind: 'music'})
+			state = reduceCaptions(state, {kind: 'music'})
+
+			expect(state.lines.map((line) => line.marker ?? null)).toEqual([null, 'music'])
+			expect(state.lines.at(-1)?.text).toBe('')
+		})
+
+		test('shares a marker with a gap: whichever came first stays, and nothing is doubled', () => {
+			let said = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'Good evening.'})
+
+			let musicThenGap = reduceCaptions(reduceCaptions(said, {kind: 'music'}), {kind: 'gap'})
+			let gapThenMusic = reduceCaptions(reduceCaptions(said, {kind: 'gap'}), {kind: 'music'})
+
+			expect(musicThenGap.lines.map((line) => line.marker ?? null)).toEqual([null, 'music'])
+			expect(gapThenMusic.lines.map((line) => line.marker ?? null)).toEqual([null, 'gap'])
+		})
+
+		test('marks again once something is said after it', () => {
+			let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'One.'})
+			state = reduceCaptions(state, {kind: 'music'})
+			state = reduceCaptions(state, {kind: 'final', text: 'Two.'})
+			state = reduceCaptions(state, {kind: 'music'})
+
+			expect(state.lines.map((line) => line.marker ?? null)).toEqual([null, 'music', null, 'music'])
 		})
 	})
 })

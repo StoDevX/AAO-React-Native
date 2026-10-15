@@ -8,7 +8,9 @@ function say(text: string): void {
 }
 
 function lines(): string[] {
-	return useCaptionsStore.getState().captions.lines.map((line) => (line.gap ? '[gap]' : line.text))
+	return useCaptionsStore
+		.getState()
+		.captions.lines.map((line) => (line.marker === 'gap' ? '[gap]' : line.text))
 }
 
 describe('useCaptionsStore', () => {
