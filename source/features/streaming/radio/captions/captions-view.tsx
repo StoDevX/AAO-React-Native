@@ -8,7 +8,7 @@ import {captionStatus} from './caption-status'
 import {presentCaption, dimColor} from '../dev-settings/present-caption'
 import {useRadioDevStore, type CaptionPresentation} from '../dev-settings/store'
 import {captionRows} from './caption-rows'
-import {hasContentAbove} from './caption-scroll'
+import {hasContentAbove, hasContentBelow} from './caption-scroll'
 import type {CaptionsState} from './reduce-captions'
 
 /** How close to the end the captions must be scrolled for a new line to keep them pinned there. */
@@ -17,38 +17,47 @@ const NEAR_BOTTOM = 80
 /** The base size of a caption before the viewer's own caption scale. */
 const CAPTION_FONT_SIZE = 20
 
-/** How tall the fade at the top of the captions is. */
-const TOP_FADE_HEIGHT = 40
+/** How tall the fade at the top, and at the bottom, of the captions is. */
+const FADE_HEIGHT = 40
 
 /** How many strips the fade is drawn in. */
-const TOP_FADE_STEPS = 8
+const FADE_STEPS = 8
 
 /**
- * The mask's strips, top down, each more opaque than the one above: only the
+ * The mask's strips for the top edge, top down, each more opaque than the one above (the bottom edge's are these reversed): only the
  * mask's alpha counts, so the colour is black and the panel's background,
  * whatever its own alpha, does not matter.
  */
-const TOP_FADE_STRIPS = Array.from({length: TOP_FADE_STEPS}, (_, step) => ({
+const FADE_STRIPS = Array.from({length: FADE_STEPS}, (_, step) => ({
 	step,
-	color: `rgba(0, 0, 0, ${step / TOP_FADE_STEPS})`,
+	color: `rgba(0, 0, 0, ${step / FADE_STEPS})`,
 }))
 
 /**
- * What shows through: all of the captions, or with `fadeTop` all but a fade
- * into the top edge. It is always a mask, so the scroll view is never
- * remounted, which would lose its place, as the fade comes and goes.
+ * What shows through: all of the captions, but with `fadeTop` a fade into the
+ * top edge and with `fadeBottom` one into the bottom. It is always a mask, so
+ * the scroll view is never remounted, which would lose its place, as the fades
+ * come and go.
  */
-function CaptionsMask({fadeTop}: {fadeTop: boolean}): React.ReactNode {
+function CaptionsMask({
+	fadeTop,
+	fadeBottom,
+}: {
+	fadeTop: boolean
+	fadeBottom: boolean
+}): React.ReactNode {
 	return (
 		<View style={styles.mask}>
-			{fadeTop
-				? TOP_FADE_STRIPS.map(({step, color}) => (
-						<View key={step} style={[styles.fadeStrip, {backgroundColor: color}]} />
-					))
-				: null}
+			{fadeTop ? FADE_STRIPS.map(fadeStrip) : null}
 			<View style={styles.maskRest} />
+			{fadeBottom ? [...FADE_STRIPS].reverse().map(fadeStrip) : null}
 		</View>
 	)
+}
+
+/** One strip of a fade. */
+function fadeStrip({step, color}: {step: number; color: string}): React.ReactNode {
+	return <View key={step} style={[styles.fadeStrip, {backgroundColor: color}]} />
 }
 
 /** Said instead of the engine's state while the captions are not running. */
@@ -173,12 +182,16 @@ export function CaptionsView({
 	let scroll = React.useRef<ScrollView>(null)
 	let pinned = React.useRef(true)
 	// Whether lines have scrolled out of sight above. Set only when it changes.
-	let [fadeTop, setFadeTop] = React.useState(false)
+	let [fades, setFades] = React.useState({top: false, bottom: false})
 	let offsetY = React.useRef(0)
 	let viewportHeight = React.useRef(0)
-	let showFadeFor = (offset: number) => {
-		let above = hasContentAbove(offset)
-		setFadeTop((was) => (was === above ? was : above))
+	let contentHeight = React.useRef(0)
+	// Fades where lines are out of sight above or below. State changes only when
+	// either flips, not on every scroll event.
+	let updateFades = () => {
+		let top = hasContentAbove(offsetY.current)
+		let bottom = hasContentBelow(offsetY.current, viewportHeight.current, contentHeight.current)
+		setFades((was) => (was.top === top && was.bottom === bottom ? was : {top, bottom}))
 	}
 	let rows = captionRows(state)
 	let presentation = useRadioDevStore((settings) => settings.captionPresentation)
@@ -194,23 +207,28 @@ export function CaptionsView({
 					{status.text}
 				</Text>
 			) : null}
-			<MaskedView maskElement={<CaptionsMask fadeTop={fadeTop} />} style={styles.listArea}>
+			<MaskedView
+				maskElement={<CaptionsMask fadeBottom={fades.bottom} fadeTop={fades.top} />}
+				style={styles.listArea}
+			>
 				<ScrollView
 					onContentSizeChange={(_width, height) => {
 						// Unanimated, so a tall new line cannot leave the view mid-scroll.
+						contentHeight.current = height
 						if (pinned.current) {
 							scroll.current?.scrollToEnd({animated: false})
 							// Pinned to the end, the top is wherever the content now overflows to.
 							offsetY.current = Math.max(0, height - viewportHeight.current)
 						}
-						showFadeFor(offsetY.current)
+						updateFades()
 					}}
 					onLayout={({nativeEvent}) => {
 						viewportHeight.current = nativeEvent.layout.height
+						updateFades()
 					}}
 					onScroll={({nativeEvent}) => {
 						offsetY.current = nativeEvent.contentOffset.y
-						showFadeFor(offsetY.current)
+						updateFades()
 					}}
 					scrollEventThrottle={50}
 					// Only the viewer's own scrolling decides whether to keep following,
@@ -261,7 +279,7 @@ const styles = StyleSheet.create({
 	list: {flex: 1},
 	mask: {flex: 1},
 	maskRest: {flex: 1, backgroundColor: 'black'},
-	fadeStrip: {height: TOP_FADE_HEIGHT / TOP_FADE_STEPS},
+	fadeStrip: {height: FADE_HEIGHT / FADE_STEPS},
 	status: {fontSize: 15, marginBottom: 8, opacity: 0.8},
 	line: {flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8},
 })
