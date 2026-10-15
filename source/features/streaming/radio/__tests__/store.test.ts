@@ -219,6 +219,28 @@ describe('viewing', () => {
 	})
 })
 
+describe('devSettingsOpen', () => {
+	beforeEach(reset)
+
+	test('opens and closes the dev settings over the sheet, which stays open', () => {
+		useRadioStore.getState().openSheet()
+		useRadioStore.getState().openDevSettings()
+		expect(useRadioStore.getState()).toMatchObject({devSettingsOpen: true, sheetOpen: true})
+
+		useRadioStore.getState().closeDevSettings()
+		expect(useRadioStore.getState()).toMatchObject({devSettingsOpen: false, sheetOpen: true})
+	})
+
+	test('closing the sheet closes them too', () => {
+		useRadioStore.getState().openSheet()
+		useRadioStore.getState().openDevSettings()
+
+		useRadioStore.getState().closeSheet()
+
+		expect(useRadioStore.getState().devSettingsOpen).toBe(false)
+	})
+})
+
 describe('showOnHome', () => {
 	beforeEach(reset)
 

@@ -3,16 +3,25 @@ import * as React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 import {openUrl} from '@frogpond/open-url'
 
+import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {StationMenu} from '../player-view/station-menu'
 import {STATIONS} from '../stations'
 import {useRadioStore} from '../store'
 
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('../../../telemetry/track', () => ({track: jest.fn()}))
+// Dev mode is a Redux setting; here a test says whether it is on.
+jest.mock('../../../../lib/use-is-dev-mode', () => ({useIsDevMode: jest.fn(() => false)}))
 
 describe('StationMenu', () => {
 	beforeEach(() => {
-		useRadioStore.setState({sheetOpen: true, fullScheduleOpen: false, viewedStationId: 'krlx'})
+		useRadioStore.setState({
+			sheetOpen: true,
+			fullScheduleOpen: false,
+			devSettingsOpen: false,
+			viewedStationId: 'krlx',
+		})
+		jest.mocked(useIsDevMode).mockReturnValue(false)
 	})
 
 	test('Full Schedule stacks over the sheet, which stays open beneath it', async () => {
@@ -26,5 +35,13 @@ describe('StationMenu', () => {
 		await render(<StationMenu station={STATIONS[id]} />)
 		await fireEvent.press(screen.getByRole('button', {name: 'Open Website'}))
 		expect(openUrl).toHaveBeenCalledWith(STATIONS[id].websiteUrl)
+	})
+
+	test('Radio Dev Settings, in dev mode, stacks over the sheet, which stays open beneath it', async () => {
+		jest.mocked(useIsDevMode).mockReturnValue(true)
+		await render(<StationMenu station={STATIONS.krlx} />)
+		await fireEvent.press(screen.getByRole('button', {name: 'Radio Dev Settings'}))
+		expect(useRadioStore.getState().devSettingsOpen).toBe(true)
+		expect(useRadioStore.getState().sheetOpen).toBe(true)
 	})
 })

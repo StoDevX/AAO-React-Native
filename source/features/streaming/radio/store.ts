@@ -21,6 +21,8 @@ type RadioStore = {
 	sheetOpen: boolean
 	/** Whether the full schedule is stacked over the Now Playing sheet. */
 	fullScheduleOpen: boolean
+	/** Whether the radio's dev settings are stacked over the Now Playing sheet. */
+	devSettingsOpen: boolean
 
 	/** Whether Home's Now Playing bar shows while nothing is loaded. Persisted. */
 	showOnHome: boolean
@@ -58,6 +60,9 @@ type RadioStore = {
 	/** Stacks the viewed station's full schedule over the sheet. */
 	openFullSchedule: () => void
 	closeFullSchedule: () => void
+	/** Stacks the radio's dev settings over the sheet. */
+	openDevSettings: () => void
+	closeDevSettings: () => void
 	/** Shows `stationId` in the sheet without touching playback. */
 	browse: (stationId: StationId) => void
 
@@ -103,6 +108,7 @@ export const useRadioStore = create<RadioStore>()(
 				viewedStationId: STATION_LIST[0].id,
 				sheetOpen: false,
 				fullScheduleOpen: false,
+				devSettingsOpen: false,
 				showOnHome: true,
 				captionsOn: false,
 				logoIndexes: {},
@@ -145,9 +151,11 @@ export const useRadioStore = create<RadioStore>()(
 						sheetOpen: true,
 						viewedStationId: stationId ?? state.stationId ?? offeredOrFirst(state.viewedStationId),
 					})),
-				closeSheet: () => set({sheetOpen: false, fullScheduleOpen: false}),
+				closeSheet: () => set({sheetOpen: false, fullScheduleOpen: false, devSettingsOpen: false}),
 				openFullSchedule: () => set({fullScheduleOpen: true}),
 				closeFullSchedule: () => set({fullScheduleOpen: false}),
+				openDevSettings: () => set({devSettingsOpen: true}),
+				closeDevSettings: () => set({devSettingsOpen: false}),
 				browse: (stationId) => set({viewedStationId: stationId}),
 
 				setLogoIndex: (stationId, index) =>

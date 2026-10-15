@@ -10,6 +10,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 
 import {resolvePanel, selectPanel, useCaptionsAvailability, type Panel} from './captions'
+import {RadioDevSettingsSheet} from './dev-settings/dev-settings-sheet'
 import {FullScheduleSheet} from './full-schedule-sheet'
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
@@ -92,6 +93,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 									station={station}
 								/>
 								<FullScheduleSheet />
+								<RadioDevSettingsSheet />
 							</ScrollView>
 						</RNHostView>
 					</ZStack>
