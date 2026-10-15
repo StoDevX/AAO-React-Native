@@ -50,7 +50,7 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 				{isDev ? <Divider /> : null}
 				{isDev ? (
 					<Button
-						label="Radio Dev Settings"
+						label="Dev Settings"
 						onPress={openDevSettings}
 						systemImage="slider.horizontal.3"
 					/>

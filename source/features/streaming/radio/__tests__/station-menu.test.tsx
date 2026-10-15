@@ -40,7 +40,7 @@ describe('StationMenu', () => {
 	test('Radio Dev Settings, in dev mode, stacks over the sheet, which stays open beneath it', async () => {
 		jest.mocked(useIsDevMode).mockReturnValue(true)
 		await render(<StationMenu station={STATIONS.krlx} />)
-		await fireEvent.press(screen.getByRole('button', {name: 'Radio Dev Settings'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Dev Settings'}))
 		expect(useRadioStore.getState().devSettingsOpen).toBe(true)
 		expect(useRadioStore.getState().sheetOpen).toBe(true)
 	})

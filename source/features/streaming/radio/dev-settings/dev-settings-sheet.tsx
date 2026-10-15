@@ -63,9 +63,6 @@ export function RadioDevSettingsSheet(): React.ReactNode {
 					]}
 				>
 					<Form>
-						<Section title="Radio Dev Settings">
-							<Button label="Done" onPress={closeDevSettings} />
-						</Section>
 						<Section
 							footer={
 								<Text>How the line being spoken shows. Settled lines always show whole.</Text>
