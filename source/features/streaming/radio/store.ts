@@ -24,6 +24,8 @@ type RadioStore = {
 
 	/** Whether Home's Now Playing bar shows while nothing is loaded. Persisted. */
 	showOnHome: boolean
+	/** Whether the sheet shows captions, which runs the caption engine. Persisted. */
+	captionsOn: boolean
 	/** The logo each station last showed, by its place in the station's logos. Persisted. */
 	logoIndexes: Partial<Record<StationId, number>>
 	/** Whether the saved preferences have been read, or could not be. */
@@ -64,6 +66,7 @@ type RadioStore = {
 
 	/** Turning it off also stops the radio. */
 	setShowOnHome: (on: boolean) => void
+	setCaptionsOn: (on: boolean) => void
 }
 
 /** Whether the station is starting or playing, which is when Pause has something to do. */
@@ -100,6 +103,7 @@ export const useRadioStore = create<RadioStore>()(
 				sheetOpen: false,
 				fullScheduleOpen: false,
 				showOnHome: true,
+				captionsOn: false,
 				logoIndexes: {},
 				hydrated: false,
 
@@ -152,6 +156,7 @@ export const useRadioStore = create<RadioStore>()(
 					set({showOnHome: on})
 					if (!on) get().stop()
 				},
+				setCaptionsOn: (on) => set({captionsOn: on}),
 			}
 		},
 		{
@@ -160,6 +165,7 @@ export const useRadioStore = create<RadioStore>()(
 			version: 1,
 			partialize: (state) => ({
 				showOnHome: state.showOnHome,
+				captionsOn: state.captionsOn,
 				logoIndexes: state.logoIndexes,
 				viewedStationId: state.viewedStationId,
 			}),

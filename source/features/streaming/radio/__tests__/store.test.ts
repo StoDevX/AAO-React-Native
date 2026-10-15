@@ -15,6 +15,7 @@ function reset() {
 		viewedStationId: 'ksto',
 		sheetOpen: false,
 		showOnHome: true,
+		captionsOn: false,
 		logoIndexes: {},
 	})
 }
@@ -238,9 +239,24 @@ describe('showOnHome', () => {
 		let {partialize} = useRadioStore.persist.getOptions()
 		expect(partialize?.(useRadioStore.getState())).toStrictEqual({
 			showOnHome: true,
+			captionsOn: false,
 			logoIndexes: {ksto: 1},
 			viewedStationId: 'krlx',
 		})
+	})
+})
+
+describe('captionsOn', () => {
+	beforeEach(reset)
+
+	test('is off by default', () => {
+		expect(useRadioStore.getState().captionsOn).toBe(false)
+	})
+
+	test('is saved with the preferences', () => {
+		useRadioStore.getState().setCaptionsOn(true)
+		let {partialize} = useRadioStore.persist.getOptions()
+		expect(partialize?.(useRadioStore.getState())).toMatchObject({captionsOn: true})
 	})
 })
 
