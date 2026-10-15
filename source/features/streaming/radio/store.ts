@@ -71,7 +71,7 @@ type RadioStore = {
 }
 
 /** Whether the station is starting or playing, which is when Pause has something to do. */
-function isRunning(playState: RadioPlayState): boolean {
+export function isRunning(playState: RadioPlayState): boolean {
 	return playState === 'starting' || playState === 'playing'
 }
 

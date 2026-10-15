@@ -81,8 +81,12 @@ describe('shouldRunCaptions', () => {
 		expect(shouldRunCaptions({...running, viewedIsPlaying: false})).toBe(false)
 	})
 
-	test('does not run unless the station is playing audio', () => {
-		for (let playState of ['stopped', 'starting', 'paused'] as const) {
+	test('runs while the player is starting or stalled on its buffer, which the engine rides out', () => {
+		expect(shouldRunCaptions({...running, playState: 'starting'})).toBe(true)
+	})
+
+	test('does not run once the station is paused or stopped', () => {
+		for (let playState of ['stopped', 'paused'] as const) {
 			expect(shouldRunCaptions({...running, playState})).toBe(false)
 		}
 	})

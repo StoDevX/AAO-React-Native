@@ -94,15 +94,4 @@ describe('StationActionRow', () => {
 
 		expect(onSelectPanel).not.toHaveBeenCalled()
 	})
-
-	test('keeps Captions live while its panel shows, so the viewer can leave it', async () => {
-		let onSelectPanel = jest.fn()
-		await render(
-			<StationActionRow onSelectPanel={onSelectPanel} panel="captions" station={STATIONS.krlx} />,
-		)
-
-		await fireEvent.press(screen.getByLabelText('Captions'))
-
-		expect(onSelectPanel).toHaveBeenCalledWith('captions')
-	})
 })

@@ -12,7 +12,7 @@ import {AirPlayButton} from './airplay-button'
 /**
  * The bottom row, after Music's: Call, Chat, AirPlay, and the schedule where
  * the queue sits, each labelled. Chat shows dimmed for a station without one,
- * and so does Captions, unless the station is playing and can be captioned.
+ * and so does Captions, unless the station is loaded and can be captioned.
  * Schedule and Captions each pick the panel that takes the record's place.
  */
 export function StationActionRow({
@@ -27,9 +27,6 @@ export function StationActionRow({
 }): React.ReactNode {
 	let chatUrl = station.chatUrl
 	let availability = useCaptionsAvailability(station)
-	// Showing captions keeps its button live whatever the station does, so the
-	// viewer can always leave the panel.
-	let captionsUsable = availability === 'available' || panel === 'captions'
 	return (
 		<View style={styles.row}>
 			<ActionButton
@@ -57,13 +54,10 @@ export function StationActionRow({
 			/>
 			<AirPlayButton />
 			<ActionButton
-				accessibilityLabel={captionsButtonLabel(
-					captionsUsable ? 'available' : availability,
-					station.stationName,
-				)}
+				accessibilityLabel={captionsButtonLabel(availability, station.stationName)}
 				icon="captions.bubble"
 				label="Captions"
-				onPress={captionsUsable ? () => onSelectPanel('captions') : undefined}
+				onPress={availability === 'available' ? () => onSelectPanel('captions') : undefined}
 				selected={panel === 'captions'}
 			/>
 			<ActionButton

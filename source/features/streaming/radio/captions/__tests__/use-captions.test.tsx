@@ -9,7 +9,7 @@ import {
 	type CaptionsEngineState,
 } from '@frogpond/radio-captions'
 
-import {STATIONS} from '../../stations'
+import {STATIONS, type Station} from '../../stations'
 import {useRadioStore} from '../../store'
 import {useCaptions} from '../use-captions'
 
@@ -104,6 +104,44 @@ describe('useCaptions', () => {
 		expect(startCaptions).toHaveBeenCalledTimes(2)
 		expect(result.current.state.lines).toEqual([])
 		expect(result.current.engine).toBeNull()
+	})
+
+	test('rides out the player stalling on its buffer without restarting or clearing', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
+		})
+
+		await act(() => {
+			useRadioStore.setState({playState: 'starting'})
+		})
+		await act(() => {
+			useRadioStore.setState({playState: 'playing'})
+		})
+
+		expect(stopCaptions).not.toHaveBeenCalled()
+		expect(startCaptions).toHaveBeenCalledTimes(1)
+		expect(result.current.running).toBe(true)
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Good evening'])
+	})
+
+	test('stops the engine and starts the next station from nothing when the station changes', async () => {
+		play('playing')
+		let {result, rerender} = await renderHook(
+			({station}: {station: Station}) => useCaptions(station, true),
+			{initialProps: {station: STATIONS.krlx}},
+		)
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
+		})
+
+		useRadioStore.setState({stationId: 'ksto'})
+		await rerender({station: STATIONS.ksto})
+
+		expect(stopCaptions).toHaveBeenCalledTimes(1)
+		expect(result.current.running).toBe(false)
+		expect(result.current.state.lines).toEqual([])
 	})
 
 	test('ignores what an engine that has ended reports late', async () => {

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, Text, View} from 'react-native'
+import {ScrollView, type NativeScrollEvent, StyleSheet, Text, View} from 'react-native'
 import {captionStyle, type CaptionsEngineState} from '@frogpond/radio-captions'
 
 import {captionStatus} from './caption-status'
@@ -13,6 +13,11 @@ const CAPTION_FONT_SIZE = 20
 
 /** Said instead of the engine's state while the captions are not running. */
 const PAUSED_STATUS = 'Captions resume when the station plays'
+
+/** Whether a scroll position is within `NEAR_BOTTOM` of the end of the content. */
+function isNearEnd({contentOffset, contentSize, layoutMeasurement}: NativeScrollEvent): boolean {
+	return contentOffset.y + layoutMeasurement.height >= contentSize.height - NEAR_BOTTOM
+}
 
 const CaptionRow = React.memo(function CaptionRow({
 	text,
@@ -66,19 +71,27 @@ export function CaptionsView({
 	return (
 		<View style={[styles.panel, {backgroundColor: style.background}]}>
 			{status ? (
-				<Text style={[styles.status, {color: style.foreground}]}>{status.text}</Text>
+				<Text accessibilityLabel={status.spoken} style={[styles.status, {color: style.foreground}]}>
+					{status.text}
+				</Text>
 			) : null}
 			<ScrollView
 				onContentSizeChange={() => {
-					if (pinned.current) scroll.current?.scrollToEnd({animated: true})
+					// Unanimated, so a tall new line cannot leave the view mid-scroll.
+					if (pinned.current) scroll.current?.scrollToEnd({animated: false})
 				}}
-				onScroll={({nativeEvent}) => {
-					let {contentOffset, contentSize, layoutMeasurement} = nativeEvent
-					pinned.current =
-						contentOffset.y + layoutMeasurement.height >= contentSize.height - NEAR_BOTTOM
+				// Only the viewer's own scrolling decides whether to keep following,
+				// so the view's scrolling to the end cannot unpin it.
+				onMomentumScrollEnd={({nativeEvent}) => {
+					pinned.current = isNearEnd(nativeEvent)
+				}}
+				onScrollBeginDrag={({nativeEvent}) => {
+					pinned.current = isNearEnd(nativeEvent)
+				}}
+				onScrollEndDrag={({nativeEvent}) => {
+					pinned.current = isNearEnd(nativeEvent)
 				}}
 				ref={scroll}
-				scrollEventThrottle={100}
 				style={styles.list}
 				testID="radio-captions-list"
 			>

@@ -1,4 +1,5 @@
 import type {Station} from '../campus-section'
+import {isRunning} from '../store'
 import type {RadioPlayState} from '../types'
 
 /** What takes the record's place in the sheet: the record itself, today's schedule, or the captions. */
@@ -50,7 +51,10 @@ export function captionsButtonLabel(
 
 /**
  * Whether the caption engine should be running: only while the captions panel
- * shows, and the station it shows is the one playing sound that can be captioned.
+ * shows, and the station it shows is the loaded one and running, starting or
+ * playing. The player's `starting` includes a stall while its buffer refills,
+ * which the engine rides out itself as `reconnecting`, so it does not stop
+ * for one; only pausing or stopping ends it.
  */
 export function shouldRunCaptions({
 	active,
@@ -59,7 +63,7 @@ export function shouldRunCaptions({
 	/** Whether the captions panel is the one showing. */
 	active: boolean
 }): boolean {
-	return active && captionsAvailability(state) === 'available' && state.playState === 'playing'
+	return active && captionsAvailability(state) === 'available' && isRunning(state.playState)
 }
 
 /** The panel after `pressed`'s button is pressed while `current` shows: pressing the showing panel's button returns to the record. */

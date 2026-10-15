@@ -29,6 +29,11 @@ export function useCaptionsAvailability(station: Station): CaptionsAvailability 
  * sources name, which is what the player starts from. Stopping, pausing or
  * changing station ends the engine, whose late events are ignored, and the
  * captions start empty each time. `running` is whether the engine is wanted.
+ *
+ * Limits: the stream is the manifest's, so a player that has fallen back to
+ * the shipped stream (see `StationPlayers`) is captioned from the manifest's
+ * all the same. And native events carry no start id, so a late event from an
+ * engine just stopped can be credited to the one that starts next.
  */
 export function useCaptions(
 	station: Station,
@@ -41,8 +46,15 @@ export function useCaptions(
 	let running = wanted && streamUrl !== undefined
 	let [state, dispatch] = React.useReducer(reduceCaptions, EMPTY_CAPTIONS)
 	let [engine, setEngine] = React.useState<CaptionsEngineState | null>(null)
+	// The stream an engine starts with is the one it keeps: a manifest that
+	// arrives mid-play changes the next engine, not this one, as the player does.
+	let latestStreamUrl = React.useRef(streamUrl)
+	React.useEffect(() => {
+		latestStreamUrl.current = streamUrl
+	})
 
 	React.useEffect(() => {
+		let streamUrl = latestStreamUrl.current
 		if (!running || streamUrl === undefined) return
 		// Each effect run is one engine: its events are dropped once it has ended.
 		let current = true
@@ -67,7 +79,7 @@ export function useCaptions(
 			dispatch({kind: 'reset'})
 			setEngine(null)
 		}
-	}, [running, streamUrl])
+	}, [running, station.id])
 
 	return {state, engine, running}
 }
