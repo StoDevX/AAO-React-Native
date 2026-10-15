@@ -342,6 +342,8 @@ const config: ExpoConfig = {
 			NSLocalNetworkUsageDescription:
 				'Used in development mode to discover a local ccc-server instance on the same network.',
 			NSLocationWhenInUseUsageDescription: 'Shows your location on the campus map.',
+			NSSpeechRecognitionUsageDescription:
+				"Turns what the radio's hosts say into captions you can read along with. The audio is processed on your device.",
 
 			// Radio playback continues when the screen locks, and ignores the
 			// silent switch — see the AppDelegate plugin for the other half.

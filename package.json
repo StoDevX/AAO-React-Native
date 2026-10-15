@@ -39,6 +39,7 @@
     "@frogpond/open-url": "workspace:*",
     "@frogpond/place-card-header": "workspace:*",
     "@frogpond/quick-actions": "workspace:*",
+    "@frogpond/radio-captions": "workspace:*",
     "@frogpond/schedules": "workspace:*",
     "@frogpond/selectable-text": "workspace:*",
     "@frogpond/separator": "workspace:*",
