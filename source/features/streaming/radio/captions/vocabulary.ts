@@ -83,6 +83,13 @@ const RULES: readonly Rule[] = [
 		replace: always('88.1'),
 	},
 	{
+		// Seen: "8.one FM", the first 8 dropped. Only before "FM", as "8.one" alone could be
+		// a version number.
+		name: '88.1 FM, heard with one 8',
+		pattern: /\b8\.one(?=\s+FM\b)/giu,
+		replace: always('88.1'),
+	},
+	{
 		// Unverified, as the 88.1 forms are not heard for 93.1 in any transcript.
 		name: '93.1 FM, written out',
 		pattern: /\b(?:93|ninety[- ]three)(?:\.one| point (?:1|one))\b/giu,
