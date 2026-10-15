@@ -17,6 +17,19 @@ export function hideLogBoxForUITests(uiTesting: boolean): void {
 }
 
 /**
+ * Removes LogBox from every launch.
+ *
+ * Its toast sits over the bottom of the screen -- a tab bar, the radio's action
+ * row -- and a finger aimed at the control under it lands on the toast. Warnings
+ * and errors still reach Metro's terminal. Uninstalling leaves LogBox's native
+ * warning handler in place, so its toasts are hidden as well.
+ */
+export function removeLogBox(): void {
+	LogBox.uninstall()
+	LogBox.ignoreAllLogs(true)
+}
+
+/**
  * Removes LogBox from a chaos launch.
  *
  * Its red screen covers the whole app, and with it the beacon a chaos run
@@ -34,3 +47,4 @@ export function removeLogBoxForChaos(chaos: boolean): void {
 
 hideLogBoxForUITests(isUITesting)
 removeLogBoxForChaos(isChaos)
+removeLogBox()
