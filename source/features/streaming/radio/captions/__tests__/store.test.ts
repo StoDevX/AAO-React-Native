@@ -45,11 +45,21 @@ describe('useCaptionsStore', () => {
 		expect(useCaptionsStore.getState().stationId).toBe('ksto')
 	})
 
-	test('is dropped when the sheet shows another station', () => {
+	test('is kept while the sheet only shows another station', () => {
 		useCaptionsStore.getState().begin('krlx')
 		say('Good evening')
 
 		useRadioStore.setState({viewedStationId: 'ksto'})
+
+		expect(lines()).toEqual(['Good evening'])
+		expect(useCaptionsStore.getState().stationId).toBe('krlx')
+	})
+
+	test('is dropped when the player loads another station', () => {
+		useCaptionsStore.getState().begin('krlx')
+		say('Good evening')
+
+		useRadioStore.setState({stationId: 'ksto'})
 
 		expect(lines()).toEqual([])
 		expect(useCaptionsStore.getState().stationId).toBeNull()

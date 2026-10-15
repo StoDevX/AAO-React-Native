@@ -24,7 +24,7 @@ type CaptionsStore = {
 /**
  * The transcript of the station being captioned. It lives outside the captions
  * panel so hiding the panel, or closing the sheet, keeps what was said; it is
- * dropped when the viewed station changes or the radio stops, and never written to disk.
+ * dropped when the loaded station changes or the radio stops, and never written to disk.
  */
 export const useCaptionsStore = create<CaptionsStore>()((set, get) => ({
 	captions: EMPTY_CAPTIONS,
@@ -39,11 +39,12 @@ export const useCaptionsStore = create<CaptionsStore>()((set, get) => ({
 	clear: () => set({captions: EMPTY_CAPTIONS, stationId: null}),
 }))
 
-// The transcript is dropped with the station it was for: when the sheet shows
-// another station, or the player stops or unloads.
+// The transcript is dropped with the station it was for, the one the player
+// has loaded: when another is loaded, or the player stops or unloads. Browsing
+// another station in the sheet leaves it.
 useRadioStore.subscribe((state, previous) => {
 	let stopped = state.stationId === null || state.playState === 'stopped'
-	if (stopped || state.viewedStationId !== previous.viewedStationId) {
+	if (stopped || state.stationId !== previous.stationId) {
 		useCaptionsStore.getState().clear()
 	}
 })

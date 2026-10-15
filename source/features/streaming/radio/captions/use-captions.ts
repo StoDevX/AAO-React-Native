@@ -34,7 +34,7 @@ export function useCaptionsAvailability(station: Station): CaptionsAvailability 
  * sources name, which is what the player starts from. Hiding the panel,
  * pausing or changing station ends the engine, whose late events are ignored.
  * What was said is kept in `useCaptionsStore`, so a later run carries on from
- * it with a marker where captions were off, until the viewed station changes or
+ * it with a marker where captions were off, until the loaded station changes or
  * the radio stops. `running` is whether the engine is wanted.
  *
  * Captions and most engine states show after the radio's caption delay setting
@@ -115,10 +115,7 @@ export function useCaptions(
 			for (let timer of timers) clearTimeout(timer)
 			timers.clear()
 			let radio = useRadioStore.getState()
-			let stillPlaying =
-				radio.stationId === station.id &&
-				radio.playState !== 'stopped' &&
-				radio.viewedStationId === station.id
+			let stillPlaying = radio.stationId === station.id && radio.playState !== 'stopped'
 			for (let item of stillPlaying ? waiting : []) item.show()
 			waiting.length = 0
 			removeCaption()
