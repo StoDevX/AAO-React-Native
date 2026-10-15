@@ -14,10 +14,24 @@ public final class StreamAudioTap {
 	public enum Status: Sendable { case buffering, playing, failed(String) }
 
 	private let url: URL
-	private var player: AVPlayer?
-	private var observation: NSKeyValueObservation?
-	private var statusContinuation: AsyncStream<Status>.Continuation?
+	private let lock = NSLock()
+	private var current: Session?
+	private let statusContinuation: AsyncStream<Status>.Continuation
 	public let status: AsyncStream<Status>
+
+	/// One run of the player. `start()` makes a fresh one each time, so a stale callback can tell
+	/// it no longer owns the tap. Its fields are set once under the tap's lock and used only after
+	/// being taken from `current` under that lock.
+	private final class Session {
+		let player: AVPlayer
+		let continuation: AsyncStream<TappedAudio>.Continuation
+		var observation: NSKeyValueObservation?
+
+		init(player: AVPlayer, continuation: AsyncStream<TappedAudio>.Continuation) {
+			self.player = player
+			self.continuation = continuation
+		}
+	}
 
 	public init(url: URL) {
 		self.url = url
@@ -26,45 +40,86 @@ public final class StreamAudioTap {
 		statusContinuation = continuation
 	}
 
+	/// Starts a new run, ending any earlier one first.
 	public func start() -> AsyncStream<TappedAudio> {
-		AsyncStream { continuation in
-			let context = TapContext(continuation: continuation)
+		end(takeCurrent())
+		return AsyncStream { continuation in
 			let item = AVPlayerItem(url: url)
 			let player = AVPlayer(playerItem: item)
 			player.isMuted = true
 			// A tap on a live stream must not make the player wait for a deep buffer.
 			player.automaticallyWaitsToMinimizeStalling = false
-			self.player = player
+			let session = Session(player: player, continuation: continuation)
+			let context = TapContext(continuation: continuation) { [weak self, weak session] message in
+				self?.fail(session, message)
+			}
 
-			observation = item.observe(\.status) { [weak self] item, _ in
-				guard let self else { return }
+			lock.withLock { current = session }
+			let observation = item.observe(\.status) { [weak self, weak session] item, _ in
+				guard let self, let session else { return }
 				switch item.status {
 				case .readyToPlay:
-					Task { await self.attachTap(to: item, context: context) }
+					Task { await self.attachTap(to: item, context: context, session: session) }
 				case .failed:
-					self.statusContinuation?.yield(.failed(item.error?.localizedDescription ?? "The stream failed."))
-					continuation.finish()
+					self.fail(session, item.error?.localizedDescription ?? "The stream failed.")
 				default: break
 				}
 			}
-			continuation.onTermination = { [weak self] _ in self?.stop() }
+			lock.withLock { session.observation = observation }
+			// A consumer that goes away ends only its own run.
+			continuation.onTermination = { [weak self, weak session] _ in
+				guard let self, let session else { return }
+				self.lock.withLock { if self.current === session { self.current = nil } }
+				self.end(session)
+			}
 			player.play()
 		}
 	}
 
+	/// Ends the run and both streams. Safe to call from any thread, and more than once.
 	public func stop() {
-		player?.pause()
-		player?.currentItem?.audioMix = nil
-		observation = nil
-		player = nil
+		end(takeCurrent())
+		statusContinuation.finish()
 	}
 
-	@MainActor private func attachTap(to item: AVPlayerItem, context: TapContext) async {
+	private func takeCurrent() -> Session? {
+		lock.withLock {
+			defer { current = nil }
+			return current
+		}
+	}
+
+	private func isCurrent(_ session: Session) -> Bool {
+		lock.withLock { current === session }
+	}
+
+	/// Finishes the run's audio stream and silences its player. The player and its audio mix belong
+	/// to the main actor.
+	private func end(_ session: Session?) {
+		guard let session else { return }
+		lock.withLock { session.observation = nil }
+		session.continuation.finish()
+		Task { @MainActor in
+			session.player.pause()
+			session.player.currentItem?.audioMix = nil
+		}
+	}
+
+	/// Reports a failure for a run that is still current, and ends that run.
+	private func fail(_ session: Session?, _ message: String) {
+		guard let session, isCurrent(session) else { return }
+		statusContinuation.yield(.failed(message))
+		lock.withLock { if current === session { current = nil } }
+		end(session)
+	}
+
+	@MainActor private func attachTap(to item: AVPlayerItem, context: TapContext, session: Session) async {
 		guard let track = try? await item.asset.loadTracks(withMediaType: .audio).first else {
-			statusContinuation?.yield(.failed("The stream has no audio track the tap can read."))
-			context.continuation.finish()
+			fail(session, "The stream has no audio track the tap can read.")
 			return
 		}
+		// The run may have ended while the tracks loaded.
+		guard isCurrent(session) else { return }
 		var callbacks = MTAudioProcessingTapCallbacks(
 			version: kMTAudioProcessingTapCallbacksVersion_0,
 			clientInfo: Unmanaged.passRetained(context).toOpaque(),
@@ -90,8 +145,7 @@ public final class StreamAudioTap {
 		else {
 			// A tap that was never created never runs finalize, so the callbacks' retain is ours to drop.
 			Unmanaged.passUnretained(context).release()
-			statusContinuation?.yield(.failed("Could not create the audio tap."))
-			context.continuation.finish()
+			fail(session, "Could not create the audio tap.")
 			return
 		}
 		let parameters = AVMutableAudioMixInputParameters(track: track)
@@ -99,7 +153,7 @@ public final class StreamAudioTap {
 		let mix = AVMutableAudioMix()
 		mix.inputParameters = [parameters]
 		item.audioMix = mix
-		statusContinuation?.yield(.playing)
+		statusContinuation.yield(.playing)
 	}
 }
 
@@ -108,10 +162,14 @@ public final class StreamAudioTap {
 /// `AsyncStream.Continuation` is itself thread-safe.
 private final class TapContext: @unchecked Sendable {
 	let continuation: AsyncStream<TappedAudio>.Continuation
+	let fail: @Sendable (String) -> Void
 	var format: AVAudioFormat?
 	private var framesSeen: AVAudioFramePosition = 0
 
-	init(continuation: AsyncStream<TappedAudio>.Continuation) { self.continuation = continuation }
+	init(continuation: AsyncStream<TappedAudio>.Continuation, fail: @escaping @Sendable (String) -> Void) {
+		self.continuation = continuation
+		self.fail = fail
+	}
 
 	func deliver(_ bufferList: UnsafeMutablePointer<AudioBufferList>, frames: CMItemCount) {
 		guard let format, frames > 0,
