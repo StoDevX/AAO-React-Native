@@ -9,6 +9,7 @@ import {
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
+import {resolvePanel, selectPanel, useCaptionsAvailability, type Panel} from './captions'
 import {FullScheduleSheet} from './full-schedule-sheet'
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
@@ -31,8 +32,19 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.sheetOpen)
 	let viewed = useRadioStore((state) => state.viewedStationId)
 	let closeSheet = useRadioStore((state) => state.closeSheet)
-	let [showingSchedule, setShowingSchedule] = React.useState(false)
+	let captionsOn = useRadioStore((state) => state.captionsOn)
+	let setCaptionsOn = useRadioStore((state) => state.setCaptionsOn)
 	let station = STATIONS[viewed]
+	// The panel the viewer picked since the sheet opened; until they pick one, it
+	// opens on the captions if they left those selected.
+	let [chosen, setChosen] = React.useState<Panel | null>(null)
+	let availability = useCaptionsAvailability(station)
+	let panel = resolvePanel({chosen, captionsOn, availability})
+	let onSelectPanel = (pressed: 'schedule' | 'captions') => {
+		let next = selectPanel(panel, pressed)
+		setChosen(next)
+		setCaptionsOn(next === 'captions')
+	}
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let fit = useFitOrScroll()
 
@@ -50,7 +62,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 				// After the slide, not before it, so the record does not replace the
 				// schedule while the sheet is still on screen.
 				onDismiss={() => {
-					setShowingSchedule(false)
+					setChosen(null)
 				}}
 			>
 				<Group
@@ -73,10 +85,10 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 							>
 								<FullLayout
 									logo={logo}
-									onToggleSchedule={() => setShowingSchedule((on) => !on)}
+									onSelectPanel={onSelectPanel}
+									panel={panel}
 									viewportHeight={fit.viewport}
 									showNextLogo={showNextLogo}
-									showingSchedule={showingSchedule}
 									station={station}
 								/>
 								<FullScheduleSheet />

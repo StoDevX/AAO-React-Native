@@ -3,6 +3,7 @@ import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import type {EventType} from '@frogpond/event-type'
 import {TouchClaimView} from '@frogpond/touch-claim'
 
+import {CaptionsView, useCaptions, type Panel} from '../captions'
 import {ScratchableLogo} from '../scratchable-logo'
 import {logoImage, type Station} from '../stations'
 import {useStationPlayback} from '../store'
@@ -35,16 +36,20 @@ export function FullLayout({
 	station,
 	logo,
 	showNextLogo,
-	showingSchedule,
-	onToggleSchedule,
+	panel,
+	onSelectPanel,
 	viewportHeight,
 }: {
 	station: Station
 	logo: RadioLogo
 	showNextLogo?: () => void
-	/** Whether today's schedule takes the record's place, as Music's queue does the art's. */
-	showingSchedule: boolean
-	onToggleSchedule: () => void
+	/**
+	 * What fills the record's place: the record, today's schedule as Music's
+	 * queue takes the art's, or the live captions.
+	 */
+	panel: Panel
+	/** Called with the panel whose button was pressed; the caller decides what shows. */
+	onSelectPanel: (panel: 'schedule' | 'captions') => void
 	/** The height the player has to fit in: the sheet's, or the tab's between its bars. */
 	viewportHeight: number
 }): React.ReactNode {
@@ -61,13 +66,21 @@ export function FullLayout({
 	// without a cover, or none on air, leaves the station's logo.
 	let nowPlaying = useNowPlaying(station)
 	let songArtwork = nowPlaying.isSong && nowPlaying.artworkUri !== logoImage(logo).uri
+	// The engine runs only while its panel shows.
+	let captions = useCaptions(station, panel === 'captions')
 
 	return (
 		<View onLayout={onLayout} style={styles.screen}>
 			<StationPicker />
 			<View style={[styles.artwork, {height: artwork}]}>
-				{showingSchedule ? (
+				{panel === 'schedule' ? (
 					<ScheduleList status={schedule.status} upcoming={schedule.upcoming} />
+				) : panel === 'captions' ? (
+					<CaptionsView
+						engine={captions.engine}
+						running={captions.running}
+						state={captions.state}
+					/>
 				) : (
 					<TouchClaimView>
 						<ScratchableLogo
@@ -97,7 +110,7 @@ export function FullLayout({
 				<PlaybackError station={station} />
 			</View>
 			<VolumeSlider />
-			<StationActionRow onShowSchedule={onToggleSchedule} station={station} />
+			<StationActionRow onSelectPanel={onSelectPanel} panel={panel} station={station} />
 		</View>
 	)
 }
