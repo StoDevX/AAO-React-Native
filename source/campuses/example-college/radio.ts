@@ -18,5 +18,6 @@ export const KMNK: Station = {
 	schedule: 'kmnk',
 	stationName: 'KMNK 91.7, The Peak',
 	stationNumber: '+15555550191',
+	captionsSupported: false,
 	title: 'Norway Valley College Radio',
 }

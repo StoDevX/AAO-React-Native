@@ -30,5 +30,6 @@ export const KRLX: Station = {
 	chatUrl: 'https://minnit.chat/KRLX',
 	stationName: '88.1 KRLX-FM',
 	stationNumber: '+15072224455',
+	captionsSupported: true,
 	title: 'Carleton College Radio',
 }
