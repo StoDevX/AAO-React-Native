@@ -11,16 +11,10 @@ import {useStationSources} from '../sources'
 import type {Station} from '../stations'
 import {useRadioStore, useStationPlayback} from '../store'
 import {captionsAvailability, shouldRunCaptions, type CaptionsAvailability} from './captions-panel'
+import {CAPTION_DISPLAY_DELAY_MS} from './caption-delay'
 import {EMPTY_CAPTIONS, reduceCaptions, type CaptionsState} from './reduce-captions'
 
-/**
- * How long a caption, and the engine states that go with it, wait before they
- * show. The engine reads its own copy of the stream at the server's live edge,
- * and the radio player plays a few seconds behind that, so captions shown on
- * arrival run ahead of the sound. About 6 seconds, measured by ear on a phone
- * on 2026-10-14; an estimate, which may drift with the network.
- */
-export const CAPTION_DISPLAY_DELAY_MS = 6000
+export {CAPTION_DISPLAY_DELAY_MS}
 
 /** The stations are English-language, and the app has no locale setting for speech. */
 const CAPTIONS_LOCALE = 'en-US'
