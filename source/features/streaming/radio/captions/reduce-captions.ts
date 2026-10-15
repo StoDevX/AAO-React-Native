@@ -1,7 +1,12 @@
 import type {CaptionEvent} from '@frogpond/radio-captions'
 
-/** One settled caption; its id is stable for list keys. */
-export type CaptionLine = {id: number; text: string}
+/** One settled caption, or a marker where captions stopped; its id is stable for list keys. */
+export type CaptionLine = {
+	id: number
+	text: string
+	/** A marker, with no text, where the captions were off. */
+	gap?: boolean
+}
 
 /** The captions on screen: settled lines plus the one still being spoken. */
 export type CaptionsState = {
@@ -17,7 +22,7 @@ export const EMPTY_CAPTIONS: CaptionsState = {lines: [], live: '', nextId: 0}
 /** How many settled lines are kept, so hours of listening hold a bounded amount of text. */
 export const MAX_CAPTION_LINES = 100
 
-type Action = CaptionEvent | {kind: 'clearLive'} | {kind: 'reset'}
+type Action = CaptionEvent | {kind: 'clearLive'} | {kind: 'reset'} | {kind: 'gap'}
 
 /**
  * Applies a caption event. A final replaces the live line, and a blank one
@@ -32,6 +37,14 @@ export function reduceCaptions(state: CaptionsState, action: Action): CaptionsSt
 			if (text === '') return {...state, live: ''}
 			let lines = [...state.lines, {id: state.nextId, text}].slice(-MAX_CAPTION_LINES)
 			return {lines, live: '', nextId: state.nextId + 1}
+		}
+		case 'gap': {
+			// Nothing to mark in an empty transcript, and one marker marks a stretch.
+			if (state.lines.length === 0 || state.lines.at(-1)?.gap === true) return state
+			let lines = [...state.lines, {id: state.nextId, text: '', gap: true}].slice(
+				-MAX_CAPTION_LINES,
+			)
+			return {...state, lines, nextId: state.nextId + 1}
 		}
 		case 'clearLive':
 			return {...state, live: ''}

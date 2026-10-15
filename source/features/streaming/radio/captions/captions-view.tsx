@@ -125,6 +125,31 @@ const CaptionRow = React.memo(function CaptionRow({
 	)
 })
 
+/** How large the gap marker is next to a caption. */
+const GAP_SCALE = 0.75
+
+/** Said where the captions were off. */
+const GAP_TEXT = 'Captions were off'
+
+/** A faint line between what was said before captions were hidden and after, not animated. */
+const CaptionGap = React.memo(function CaptionGap({
+	color,
+	fontSize,
+}: {
+	color: string
+	fontSize: number
+}): React.ReactNode {
+	return (
+		<Text
+			accessibilityLabel={GAP_TEXT}
+			accessibilityRole="text"
+			style={[styles.line, {color: dimColor(color), fontSize: fontSize * GAP_SCALE}]}
+		>
+			{GAP_TEXT}
+		</Text>
+	)
+})
+
 /**
  * The captions: settled lines and the one being spoken, in the viewer's own
  * caption style. It fills the record's place, which has a fixed height, and
@@ -203,17 +228,25 @@ export function CaptionsView({
 					style={styles.list}
 					testID="radio-captions-list"
 				>
-					{rows.map((row) => (
-						<CaptionRow
-							color={style.foreground}
-							heldBackWords={row.live ? heldBackWords : 0}
-							presentation={row.live ? presentation : 'live'}
-							fontFamily={style.fontFamily}
-							fontSize={CAPTION_FONT_SIZE * style.fontScale}
-							key={row.key}
-							text={row.text}
-						/>
-					))}
+					{rows.map((row) =>
+						row.gap ? (
+							<CaptionGap
+								color={style.foreground}
+								fontSize={CAPTION_FONT_SIZE * style.fontScale}
+								key={row.key}
+							/>
+						) : (
+							<CaptionRow
+								color={style.foreground}
+								heldBackWords={row.live ? heldBackWords : 0}
+								presentation={row.live ? presentation : 'live'}
+								fontFamily={style.fontFamily}
+								fontSize={CAPTION_FONT_SIZE * style.fontScale}
+								key={row.key}
+								text={row.text}
+							/>
+						),
+					)}
 				</ScrollView>
 			</MaskedView>
 		</View>

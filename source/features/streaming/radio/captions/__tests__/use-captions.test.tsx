@@ -10,6 +10,7 @@ import {
 } from '@frogpond/radio-captions'
 
 import {useRadioDevStore} from '../../dev-settings/store'
+import {useCaptionsStore} from '../store'
 import {STATIONS, type Station} from '../../stations'
 import {useRadioStore} from '../../store'
 import {CAPTION_DISPLAY_DELAY_MS, useCaptions} from '../use-captions'
@@ -48,7 +49,7 @@ async function showDelayed(): Promise<void> {
 }
 
 function play(playState: 'playing' | 'paused'): void {
-	useRadioStore.setState({stationId: 'krlx', playState})
+	useRadioStore.setState({stationId: 'krlx', playState, viewedStationId: 'krlx'})
 }
 
 describe('useCaptions', () => {
@@ -72,6 +73,7 @@ describe('useCaptions', () => {
 		})
 		useRadioStore.setState({stationId: null, playState: 'stopped'})
 		useRadioDevStore.setState(useRadioDevStore.getInitialState(), true)
+		useCaptionsStore.getState().clear()
 	})
 
 	test('captions the stream while the panel is showing and the station plays, and stops with it', async () => {
@@ -109,7 +111,7 @@ describe('useCaptions', () => {
 		expect(startCaptions).not.toHaveBeenCalled()
 	})
 
-	test('stops when the station is paused, and starts again with empty captions on resuming', async () => {
+	test('stops when the station is paused, and carries on from what was said, marked, on resuming', async () => {
 		play('playing')
 		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
 		await act(() => {
@@ -129,8 +131,62 @@ describe('useCaptions', () => {
 		})
 
 		expect(startCaptions).toHaveBeenCalledTimes(2)
-		expect(result.current.state.lines).toEqual([])
+		expect(result.current.state.lines.map((line) => line.gap === true)).toEqual([false, true])
+		expect(result.current.state.lines[0]?.text).toBe('Good evening')
 		expect(result.current.engine).toBeNull()
+	})
+
+	test('keeps what was said when the captions panel is hidden and shown again, with one marker', async () => {
+		play('playing')
+		let {result, rerender} = await renderHook(
+			({active}: {active: boolean}) => useCaptions(STATIONS.krlx, active),
+			{initialProps: {active: true}},
+		)
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
+		})
+		await showDelayed()
+
+		await rerender({active: false})
+		await rerender({active: true})
+		await rerender({active: false})
+		await rerender({active: true})
+
+		expect(result.current.state.lines.map((line) => line.gap === true)).toEqual([false, true])
+	})
+
+	test('shows at once what is still waiting when the panel is hidden', async () => {
+		play('playing')
+		let {result, rerender} = await renderHook(
+			({active}: {active: boolean}) => useCaptions(STATIONS.krlx, active),
+			{initialProps: {active: true}},
+		)
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Said just before hiding'})
+		})
+		expect(result.current.state.lines).toEqual([])
+
+		await rerender({active: false})
+
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Said just before hiding'])
+	})
+
+	test('adds no marker when the player only stalls and recovers', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
+		})
+		await showDelayed()
+
+		await act(() => {
+			useRadioStore.setState({playState: 'starting'})
+		})
+		await act(() => {
+			useRadioStore.setState({playState: 'playing'})
+		})
+
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Good evening'])
 	})
 
 	test('rides out the player stalling on its buffer without restarting or clearing', async () => {
@@ -248,7 +304,7 @@ describe('useCaptions', () => {
 		expect(result.current.engine).toEqual({kind: 'unavailable', reason: 'No speech model'})
 	})
 
-	test('drops what is still waiting when the engine stops', async () => {
+	test('drops what is still waiting when the radio stops', async () => {
 		play('playing')
 		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
 		await act(() => {
@@ -256,10 +312,7 @@ describe('useCaptions', () => {
 		})
 
 		await act(() => {
-			play('paused')
-		})
-		await act(() => {
-			play('playing')
+			useRadioStore.setState({stationId: null, playState: 'stopped'})
 		})
 		await showDelayed()
 

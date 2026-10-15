@@ -85,4 +85,38 @@ describe('reduceCaptions', () => {
 			expect(() => reduceCaptions(frozen, action)).not.toThrow()
 		}
 	})
+
+	describe('gap', () => {
+		test('marks nothing in an empty transcript', () => {
+			expect(reduceCaptions(EMPTY_CAPTIONS, {kind: 'gap'})).toEqual(EMPTY_CAPTIONS)
+		})
+
+		test('appends one marker after lines, with an id of its own', () => {
+			let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'Good evening.'})
+			state = reduceCaptions(state, {kind: 'gap'})
+
+			expect(state.lines.map((line) => line.gap === true)).toEqual([false, true])
+			expect(state.nextId).toBe(2)
+		})
+
+		test('is not doubled when the last line is already a marker', () => {
+			let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'Good evening.'})
+			state = reduceCaptions(state, {kind: 'gap'})
+			state = reduceCaptions(state, {kind: 'gap'})
+
+			expect(state.lines).toHaveLength(2)
+		})
+
+		test('counts toward the cap, which drops the oldest line first', () => {
+			let state = EMPTY_CAPTIONS
+			for (let index = 0; index < MAX_CAPTION_LINES; index++) {
+				state = reduceCaptions(state, {kind: 'final', text: `line ${index}`})
+			}
+			state = reduceCaptions(state, {kind: 'gap'})
+
+			expect(state.lines).toHaveLength(MAX_CAPTION_LINES)
+			expect(state.lines[0]?.text).toBe('line 1')
+			expect(state.lines.at(-1)?.gap).toBe(true)
+		})
+	})
 })

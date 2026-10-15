@@ -4,7 +4,10 @@ import type {CaptionsState} from './reduce-captions'
 export type CaptionRow = {
 	key: number
 	text: string
-	/** Whether it is the line still being spoken, which may be shown differently. */ live: boolean
+	/** Whether it is the line still being spoken, which may be shown differently. */
+	live: boolean
+	/** Whether it marks where captions were off, and has no text. */
+	gap: boolean
 }
 
 /**
@@ -13,8 +16,15 @@ export type CaptionRow = {
  * give it, so when it settles its row keeps its key and is not remounted.
  */
 export function captionRows(state: CaptionsState): CaptionRow[] {
-	let rows = state.lines.map((line) => ({key: line.id, text: line.text, live: false}))
-	return state.live === '' ? rows : [...rows, {key: state.nextId, text: state.live, live: true}]
+	let rows = state.lines.map((line) => ({
+		key: line.id,
+		text: line.text,
+		live: false,
+		gap: line.gap === true,
+	}))
+	return state.live === ''
+		? rows
+		: [...rows, {key: state.nextId, text: state.live, live: true, gap: false}]
 }
 
 /** The words of a line, which fade in one at a time as the line grows. */

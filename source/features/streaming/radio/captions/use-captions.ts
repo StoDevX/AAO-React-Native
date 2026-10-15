@@ -13,7 +13,8 @@ import {useRadioStore, useStationPlayback} from '../store'
 import {captionsAvailability, shouldRunCaptions, type CaptionsAvailability} from './captions-panel'
 import {CAPTION_DISPLAY_DELAY_MS} from './caption-delay'
 import {useRadioDevStore} from '../dev-settings/store'
-import {EMPTY_CAPTIONS, reduceCaptions, type CaptionsState} from './reduce-captions'
+import {EMPTY_CAPTIONS, type CaptionsState} from './reduce-captions'
+import {useCaptionsStore} from './store'
 
 export {CAPTION_DISPLAY_DELAY_MS}
 
@@ -30,11 +31,17 @@ export function useCaptionsAvailability(station: Station): CaptionsAvailability 
 /**
  * Runs the caption engine on `station`'s stream while `active` (the captions
  * panel is showing) and the station is playing. The stream is the one the
- * sources name, which is what the player starts from. Stopping, pausing or
- * changing station ends the engine, whose late events are ignored, and the
- * captions start empty each time. `running` is whether the engine is wanted.
- * Captions and most engine states show after the radio's caption delay setting (`CAPTION_DISPLAY_DELAY_MS` by default) once they
- * arrive, to line up with what the player is playing.
+ * sources name, which is what the player starts from. Hiding the panel,
+ * pausing or changing station ends the engine, whose late events are ignored.
+ * What was said is kept in `useCaptionsStore`, so a later run carries on from
+ * it with a marker where captions were off, until the viewed station changes or
+ * the radio stops. `running` is whether the engine is wanted.
+ *
+ * Captions and most engine states show after the radio's caption delay setting
+ * (`CAPTION_DISPLAY_DELAY_MS` by default) once they arrive, to line up with
+ * what the player is playing. A run that ends with the station still playing
+ * shows what is still waiting at once, as nobody is watching for the sound;
+ * one that ends because the station changed or the radio stopped drops it.
  *
  * Limits: the stream is the manifest's, so a player that has fallen back to
  * the shipped stream (see `StationPlayers`) is captioned from the manifest's
@@ -50,7 +57,9 @@ export function useCaptions(
 	let streamUrl = useStationSources(station.id)?.streamSourceUrl
 	let wanted = shouldRunCaptions({active, station, viewedIsPlaying, playState})
 	let running = wanted && streamUrl !== undefined
-	let [state, dispatch] = React.useReducer(reduceCaptions, EMPTY_CAPTIONS)
+	let captions = useCaptionsStore((store) => store.captions)
+	let captionsStation = useCaptionsStore((store) => store.stationId)
+	let state = captionsStation === station.id ? captions : EMPTY_CAPTIONS
 	let [engine, setEngine] = React.useState<CaptionsEngineState | null>(null)
 	// The stream an engine starts with is the one it keeps: a manifest that
 	// arrives mid-play changes the next engine, not this one, as the player does.
@@ -64,6 +73,7 @@ export function useCaptions(
 		if (!running || streamUrl === undefined) return
 		// Each effect run is one engine: its events are dropped once it has ended.
 		let current = true
+		useCaptionsStore.getState().begin(station.id)
 		// What waits to show, oldest first. Each timer shows what is due, oldest first, so the
 		// order is the engine's whatever order the timers fire in.
 		let waiting: {due: number; show: () => void}[] = []
@@ -80,7 +90,7 @@ export function useCaptions(
 			timers.add(timer)
 		}
 		let removeCaption = addCaptionListener((event) => {
-			if (current) showLater(() => dispatch(event))
+			if (current) showLater(() => useCaptionsStore.getState().apply(event))
 		})
 		let removeState = addCaptionStateListener((next) => {
 			if (!current) return
@@ -91,7 +101,9 @@ export function useCaptions(
 			}
 			showLater(() => {
 				setEngine(next)
-				if (next.kind === 'reconnecting' || next.kind === 'music') dispatch({kind: 'clearLive'})
+				if (next.kind === 'reconnecting' || next.kind === 'music') {
+					useCaptionsStore.getState().apply({kind: 'clearLive'})
+				}
 			})
 		})
 		startCaptions(streamUrl, CAPTIONS_LOCALE).catch((error: unknown) => {
@@ -102,12 +114,16 @@ export function useCaptions(
 			current = false
 			for (let timer of timers) clearTimeout(timer)
 			timers.clear()
+			let radio = useRadioStore.getState()
+			let stillPlaying =
+				radio.stationId === station.id &&
+				radio.playState !== 'stopped' &&
+				radio.viewedStationId === station.id
+			for (let item of stillPlaying ? waiting : []) item.show()
 			waiting.length = 0
 			removeCaption()
 			removeState()
 			stopCaptions()
-			// The next engine starts from nothing, not from this one's lines.
-			dispatch({kind: 'reset'})
 			setEngine(null)
 		}
 	}, [running, station.id])
