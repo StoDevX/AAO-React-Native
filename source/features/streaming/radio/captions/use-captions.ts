@@ -15,6 +15,7 @@ import {CAPTION_DISPLAY_DELAY_MS} from './caption-delay'
 import {useRadioDevStore} from '../dev-settings/store'
 import {EMPTY_CAPTIONS, type CaptionsState} from './reduce-captions'
 import {useCaptionsStore} from './store'
+import {normalizeCaption} from './vocabulary'
 
 export {CAPTION_DISPLAY_DELAY_MS}
 
@@ -90,7 +91,10 @@ export function useCaptions(
 			timers.add(timer)
 		}
 		let removeCaption = addCaptionListener((event) => {
-			if (current) showLater(() => useCaptionsStore.getState().apply(event))
+			if (current) {
+				let corrected = {...event, text: normalizeCaption(event.text)}
+				showLater(() => useCaptionsStore.getState().apply(corrected))
+			}
 		})
 		let removeState = addCaptionStateListener((next) => {
 			if (!current) return
