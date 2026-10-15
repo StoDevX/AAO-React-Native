@@ -9,28 +9,11 @@ struct StreamAudioDecoderTests {
 		let seconds: Double
 	}
 
-	private func run(_ tool: String, _ arguments: [String]) throws {
-		let process = Process()
-		process.executableURL = URL(fileURLWithPath: tool)
-		process.arguments = arguments
-		try process.run()
-		process.waitUntilExit()
-		try #require(process.terminationStatus == 0)
-	}
-
-	/// Speech made with the system's own tools, as ADTS AAC: the sentence said `sentences` times in
-	/// one encode, since the parser rejects separately encoded files joined end to end.
+	/// The sentence said `sentences` times, as ADTS AAC.
 	private func makeFixture(sentences: Int = 1) throws -> Fixture {
-		let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-		let aiff = directory.appendingPathComponent("speech.aiff")
-		let aac = directory.appendingPathComponent("speech.aac")
 		let sentence = "This is the radio station, broadcasting live from the hill, with music and news all afternoon long. "
-		try run("/usr/bin/say", ["-o", aiff.path, "--", String(repeating: sentence, count: sentences)])
-		try run("/usr/bin/afconvert", ["-f", "adts", "-d", "aac", aiff.path, aac.path])
-		let file = try AVAudioFile(forReading: aiff)
-		let seconds = Double(file.length) / file.processingFormat.sampleRate
-		return Fixture(url: aac, seconds: seconds)
+		let speech = try SpeechFixture.aacFile(saying: String(repeating: sentence, count: sentences))
+		return Fixture(url: speech.url, seconds: speech.seconds)
 	}
 
 	private func collectStatuses(_ decoder: StreamAudioDecoder) -> Task<[String], Never> {

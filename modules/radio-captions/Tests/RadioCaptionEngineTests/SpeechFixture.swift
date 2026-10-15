@@ -25,6 +25,29 @@ enum SpeechFixture {
 		return try result.map { try resample($0, to: format) }
 	}
 
+	/// Real synthesized speech as an ADTS AAC file, the way a progressive radio stream carries
+	/// it, with the seconds of speech it holds. One encode, since the stream parser rejects
+	/// separately encoded files joined end to end.
+	static func aacFile(saying text: String) throws -> (url: URL, seconds: Double) {
+		let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+		let aiff = directory.appendingPathComponent("speech.aiff")
+		let aac = directory.appendingPathComponent("speech.aac")
+		try run("/usr/bin/say", ["-o", aiff.path, "--", text])
+		try run("/usr/bin/afconvert", ["-f", "adts", "-d", "aac", aiff.path, aac.path])
+		let file = try AVAudioFile(forReading: aiff)
+		return (aac, Double(file.length) / file.processingFormat.sampleRate)
+	}
+
+	private static func run(_ tool: String, _ arguments: [String]) throws {
+		let process = Process()
+		process.executableURL = URL(fileURLWithPath: tool)
+		process.arguments = arguments
+		try process.run()
+		process.waitUntilExit()
+		guard process.terminationStatus == 0 else { throw FixtureError.toolFailed(tool) }
+	}
+
 	/// The seconds of audio in `buffers`.
 	static func duration(of buffers: [AVAudioPCMBuffer]) -> Double {
 		buffers.reduce(0) { $0 + Double($1.frameLength) / $1.format.sampleRate }
@@ -48,5 +71,5 @@ enum SpeechFixture {
 		return output
 	}
 
-	enum FixtureError: Error { case noConverter }
+	enum FixtureError: Error { case noConverter, toolFailed(String) }
 }
