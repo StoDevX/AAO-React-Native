@@ -1,7 +1,9 @@
 import type {CaptionEvent} from '@frogpond/radio-captions'
 
+/** One settled caption; its id is stable for list keys. */
 export type CaptionLine = {id: number; text: string}
 
+/** The captions on screen: settled lines plus the one still being spoken. */
 export type CaptionsState = {
 	/** Settled lines, oldest first. */
 	lines: CaptionLine[]
@@ -17,6 +19,10 @@ export const MAX_CAPTION_LINES = 100
 
 type Action = CaptionEvent | {kind: 'clearLive'} | {kind: 'reset'}
 
+/**
+ * Applies a caption event. A final replaces the live line, and a blank one
+ * still clears it, so a line that settled to nothing does not stay on screen.
+ */
 export function reduceCaptions(state: CaptionsState, action: Action): CaptionsState {
 	switch (action.kind) {
 		case 'volatile':

@@ -31,6 +31,21 @@ describe('hydration', () => {
 		expect(useRadioStore.getState().viewedStationId).toBe('krlx')
 	})
 
+	test('leaves captions off when the saved preferences predate them', async () => {
+		useRadioStore.setState(useRadioStore.getInitialState(), true)
+		await AsyncStorage.setItem(
+			'radio-preferences',
+			JSON.stringify({
+				state: {showOnHome: true, logoIndexes: {}, viewedStationId: 'krlx'},
+				version: 1,
+			}),
+		)
+
+		await useRadioStore.persist.rehydrate()
+
+		expect(useRadioStore.getState().captionsOn).toBe(false)
+	})
+
 	test('is done when the saved switch is corrupt, keeping the default', async () => {
 		await AsyncStorage.setItem('radio-preferences', '{not json')
 

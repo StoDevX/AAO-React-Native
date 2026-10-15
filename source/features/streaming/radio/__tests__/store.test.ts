@@ -232,14 +232,15 @@ describe('showOnHome', () => {
 		expect(useRadioStore.getState()).toMatchObject({showOnHome: false, stationId: null})
 	})
 
-	test('the logo each station shows and the station last viewed are the only other state saved', () => {
+	test('saves only the preferences: the Home switch, captions, each logo and the station last viewed', () => {
 		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().setCaptionsOn(true)
 		useRadioStore.getState().setLogoIndex('ksto', 1)
 		useRadioStore.getState().browse('krlx')
 		let {partialize} = useRadioStore.persist.getOptions()
 		expect(partialize?.(useRadioStore.getState())).toStrictEqual({
 			showOnHome: true,
-			captionsOn: false,
+			captionsOn: true,
 			logoIndexes: {ksto: 1},
 			viewedStationId: 'krlx',
 		})
@@ -247,16 +248,8 @@ describe('showOnHome', () => {
 })
 
 describe('captionsOn', () => {
-	beforeEach(reset)
-
-	test('is off by default', () => {
-		expect(useRadioStore.getState().captionsOn).toBe(false)
-	})
-
-	test('is saved with the preferences', () => {
-		useRadioStore.getState().setCaptionsOn(true)
-		let {partialize} = useRadioStore.persist.getOptions()
-		expect(partialize?.(useRadioStore.getState())).toMatchObject({captionsOn: true})
+	test('is off in a fresh store', () => {
+		expect(useRadioStore.getInitialState().captionsOn).toBe(false)
 	})
 })
 

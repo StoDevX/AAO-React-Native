@@ -19,4 +19,10 @@ describe('captionStatus', () => {
 	test('names a lost stream', () => {
 		expect(captionStatus({kind: 'reconnecting'}, true)?.text).toBe('Reconnecting…')
 	})
+	test('names the wait before the engine reports anything', () => {
+		expect(captionStatus(null, false)?.text).toBe('Getting captions ready…')
+	})
+	test('speaks what it shows', () => {
+		expect(captionStatus({kind: 'music'}, true)?.spoken).toBe('Music')
+	})
 })

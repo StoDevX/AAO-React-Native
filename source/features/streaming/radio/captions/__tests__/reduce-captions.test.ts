@@ -42,4 +42,47 @@ describe('reduceCaptions', () => {
 		let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'One.'})
 		expect(reduceCaptions(state, {kind: 'reset'})).toEqual(EMPTY_CAPTIONS)
 	})
+
+	test('exactly the maximum number of lines drops nothing', () => {
+		let state = EMPTY_CAPTIONS
+		for (let index = 0; index < MAX_CAPTION_LINES; index++) {
+			state = reduceCaptions(state, {kind: 'final', text: `line ${index}`})
+		}
+		expect(state.lines).toHaveLength(MAX_CAPTION_LINES)
+		expect(state.lines[0]?.text).toBe('line 0')
+	})
+
+	test('ids keep rising past the cap', () => {
+		let state = EMPTY_CAPTIONS
+		let finals = MAX_CAPTION_LINES + 5
+		for (let index = 0; index < finals; index++) {
+			state = reduceCaptions(state, {kind: 'final', text: `line ${index}`})
+		}
+		let ids = state.lines.map((line) => line.id)
+		expect(ids).toEqual([...ids].sort((a, b) => a - b))
+		expect(ids.at(-1)).toBe(finals - 1)
+	})
+
+	test('a final after clearLive becomes a line', () => {
+		let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'volatile', text: 'one'})
+		state = reduceCaptions(state, {kind: 'clearLive'})
+		state = reduceCaptions(state, {kind: 'final', text: 'One.'})
+		expect(state.lines.map((line) => line.text)).toEqual(['One.'])
+	})
+
+	test('does not change the state it is given', () => {
+		let state = reduceCaptions(EMPTY_CAPTIONS, {kind: 'final', text: 'One.'})
+		let frozen = Object.freeze({
+			...state,
+			lines: Object.freeze(state.lines.map((line) => Object.freeze(line))) as typeof state.lines,
+		})
+		for (let action of [
+			{kind: 'volatile', text: 'two'},
+			{kind: 'final', text: 'Two.'},
+			{kind: 'clearLive'},
+			{kind: 'reset'},
+		] as const) {
+			expect(() => reduceCaptions(frozen, action)).not.toThrow()
+		}
+	})
 })

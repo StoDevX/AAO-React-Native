@@ -66,6 +66,7 @@ type RadioStore = {
 
 	/** Turning it off also stops the radio. */
 	setShowOnHome: (on: boolean) => void
+	/** Selects the captions panel in the sheet, and keeps the choice across launches. */
 	setCaptionsOn: (on: boolean) => void
 }
 
@@ -156,6 +157,7 @@ export const useRadioStore = create<RadioStore>()(
 					set({showOnHome: on})
 					if (!on) get().stop()
 				},
+				/** Selects the captions panel in the sheet, and keeps the choice across launches. */
 				setCaptionsOn: (on) => set({captionsOn: on}),
 			}
 		},
