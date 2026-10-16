@@ -79,16 +79,25 @@ export function useCaptions(
 		// order is the engine's whatever order the timers fire in.
 		let waiting: {due: number; show: () => void}[] = []
 		let timers = new Set<ReturnType<typeof setTimeout>>()
+		// Shows what is due, and wakes again for the next item if the clock is
+		// not there yet: a timer can fire a little before `Date.now` reaches its time.
+		let wake = () => {
+			while (waiting[0] !== undefined && waiting[0].due <= Date.now()) waiting.shift()?.show()
+			if (waiting[0] !== undefined) arm(Math.max(1, waiting[0].due - Date.now()))
+		}
+		let arm = (delay: number) => {
+			let timer = setTimeout(() => {
+				timers.delete(timer)
+				wake()
+			}, delay)
+			timers.add(timer)
+		}
 		let showLater = (show: () => void) => {
 			// The delay in force when it arrives, so a change applies to what comes
 			// after it; an item never shows before the ones ahead of it.
 			let delay = useRadioDevStore.getState().captionDelayMs
 			waiting.push({due: Date.now() + delay, show})
-			let timer = setTimeout(() => {
-				timers.delete(timer)
-				while (waiting[0] !== undefined && waiting[0].due <= Date.now()) waiting.shift()?.show()
-			}, delay)
-			timers.add(timer)
+			arm(delay)
 		}
 		let removeCaption = addCaptionListener((event) => {
 			if (current) {

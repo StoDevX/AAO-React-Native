@@ -453,6 +453,24 @@ describe('useCaptions', () => {
 		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Said before it failed'])
 	})
 
+	test('shows a caption whose timer fired a few milliseconds before the clock caught up', async () => {
+		let realNow = Date.now.bind(Date)
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Slightly early'})
+		})
+		let now = jest.spyOn(Date, 'now').mockImplementation(() => realNow() - 5)
+
+		await showDelayed()
+		await act(() => {
+			jest.advanceTimersByTime(10)
+		})
+		now.mockRestore()
+
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Slightly early'])
+	})
+
 	test('clears the line being spoken while reconnecting or on music', async () => {
 		play('playing')
 		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
