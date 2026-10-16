@@ -28,6 +28,7 @@ describe('normalizeCaption: heard in real transcripts', () => {
 			'You can listen online or chat to the DJs at Karax.org or call into the studio',
 			'You can listen online or chat to the DJs at krlx.org or call into the studio',
 		],
+		["you're listening to care like 88.1 FM", "you're listening to KRLX 88.1 FM"],
 		['You are listening to Kerallax.', 'You are listening to KRLX.'],
 		[
 			'You can listen online or chat to the DJs at Carallax.org or call',
@@ -93,6 +94,7 @@ describe('normalizeCaption: left alone', () => {
 		'kind of',
 		'88 one',
 		'8.one',
+		'I care like crazy',
 		'it was 88 degrees',
 		'Carleton College',
 		'St. Olaf College',

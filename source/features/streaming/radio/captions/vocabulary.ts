@@ -58,6 +58,13 @@ const RULES: readonly Rule[] = [
 		replace: callSign('KRLX'),
 	},
 	{
+		// Seen: "care like 88.1 FM". "Care like" alone is ordinary English, so only before
+		// the frequency.
+		name: 'KRLX, heard as "care like" before its frequency',
+		pattern: /\bcare like(?=,?\s+(?:88|eighty[- ]eight)\b)/giu,
+		replace: callSign('KRLX'),
+	},
+	{
 		// Unverified: reported by hand.
 		name: 'KRLX, heard as "K or Lex"',
 		pattern: /\bK\.? or lex\b/giu,
