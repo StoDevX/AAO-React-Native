@@ -26,7 +26,7 @@ type RadioStore = {
 
 	/** Whether Home's Now Playing bar shows while nothing is loaded. Persisted. */
 	showOnHome: boolean
-	/** Whether the sheet shows captions, which runs the caption engine. Persisted. */
+	/** Whether the sheet opens on captions, which runs the caption engine. Kept until the app quits. */
 	captionsOn: boolean
 	/** The logo each station last showed, by its place in the station's logos. Persisted. */
 	logoIndexes: Partial<Record<StationId, number>>
@@ -175,7 +175,6 @@ export const useRadioStore = create<RadioStore>()(
 			version: 1,
 			partialize: (state) => ({
 				showOnHome: state.showOnHome,
-				captionsOn: state.captionsOn,
 				logoIndexes: state.logoIndexes,
 				viewedStationId: state.viewedStationId,
 			}),
