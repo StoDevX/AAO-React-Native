@@ -176,12 +176,9 @@ const CaptionMarker = React.memo(function CaptionMarker({
 export function CaptionsView({
 	state,
 	engine,
-	running,
 }: {
 	state: CaptionsState
 	engine: CaptionsEngineState | null
-	/** Whether the engine is wanted: false while the station is paused. */
-	running: boolean
 }): React.ReactNode {
 	// Read once: the style is the viewer's Settings choice and changes only there.
 	let [style] = React.useState(() => captionStyle())
@@ -202,7 +199,7 @@ export function CaptionsView({
 	let rows = captionRows(state)
 	let presentation = useRadioDevStore((settings) => settings.captionPresentation)
 	let heldBackWords = useRadioDevStore((settings) => settings.heldBackWords)
-	let {line, empty} = captionPanelStatus({engine, running, hasLines: rows.length > 0})
+	let {line, empty} = captionPanelStatus({engine, hasLines: rows.length > 0})
 
 	return (
 		<View style={[styles.panel, {backgroundColor: style.background}]}>
@@ -291,7 +288,7 @@ export function CaptionsView({
 						<Text
 							style={[
 								styles.emptyText,
-								{color: style.foreground, fontSize: CAPTION_FONT_SIZE * style.fontScale},
+								{color: dimColor(style.foreground), fontSize: CAPTION_FONT_SIZE * style.fontScale},
 								style.fontFamily === null ? null : {fontFamily: style.fontFamily},
 							]}
 						>

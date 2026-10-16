@@ -76,11 +76,7 @@ export function FullLayout({
 				{panel === 'schedule' ? (
 					<ScheduleList status={schedule.status} upcoming={schedule.upcoming} />
 				) : panel === 'captions' ? (
-					<CaptionsView
-						engine={captions.engine}
-						running={captions.running}
-						state={captions.state}
-					/>
+					<CaptionsView engine={captions.engine} state={captions.state} />
 				) : (
 					<TouchClaimView>
 						<ScratchableLogo
