@@ -33,7 +33,12 @@ export const useCaptionsStore = create<CaptionsStore>()((set, get) => ({
 	begin: (stationId) =>
 		set(
 			get().stationId === stationId
-				? {captions: reduceCaptions(get().captions, {kind: 'gap'})}
+				? {
+						// What the ended engine was still hearing is not coming back.
+						captions: reduceCaptions(reduceCaptions(get().captions, {kind: 'clearLive'}), {
+							kind: 'gap',
+						}),
+					}
 				: {captions: EMPTY_CAPTIONS, stationId},
 		),
 	clear: () => set({captions: EMPTY_CAPTIONS, stationId: null}),

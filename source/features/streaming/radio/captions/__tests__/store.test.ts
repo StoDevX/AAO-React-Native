@@ -30,6 +30,17 @@ describe('useCaptionsStore', () => {
 		expect(lines()).toEqual(['Good evening', '[gap]', 'Welcome back'])
 	})
 
+	test('drops a half-heard line left over from the engine that ended', () => {
+		useCaptionsStore.getState().begin('krlx')
+		say('Good evening')
+		useCaptionsStore.getState().apply({kind: 'volatile', text: 'and now the'})
+
+		useCaptionsStore.getState().begin('krlx')
+
+		expect(useCaptionsStore.getState().captions.live).toBe('')
+		expect(lines()).toEqual(['Good evening', '[gap]'])
+	})
+
 	test('marks nothing before anything was said', () => {
 		useCaptionsStore.getState().begin('krlx')
 		useCaptionsStore.getState().begin('krlx')
