@@ -30,6 +30,7 @@ describe('normalizeCaption: heard in real transcripts', () => {
 		],
 		["you're listening to care like 88.1 FM", "you're listening to KRLX 88.1 FM"],
 		['You are listening to Kerallax.', 'You are listening to KRLX.'],
+		['You are listening to Keralaax.', 'You are listening to KRLX.'],
 		[
 			'You can listen online or chat to the DJs at Carallax.org or call',
 			'You can listen online or chat to the DJs at krlx.org or call',
