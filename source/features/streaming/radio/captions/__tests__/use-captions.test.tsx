@@ -393,6 +393,7 @@ describe('useCaptions', () => {
 		expect(result.current.state.lines).toEqual([])
 
 		await act(() => {
+			stateListeners[0]?.({kind: 'captioning'})
 			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
 		})
 		await showDelayed()
@@ -408,6 +409,29 @@ describe('useCaptions', () => {
 		expect(result.current.state.lines.map((line) => line.marker ?? line.text)).toEqual([
 			'Good evening',
 			'music',
+		])
+	})
+
+	test('marks music only when speech gives way to it, not on the first buffer after a reconnect', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		await act(() => {
+			stateListeners[0]?.({kind: 'captioning'})
+			captionListeners[0]?.({kind: 'final', text: 'Good evening'})
+		})
+		await showDelayed()
+
+		await act(() => {
+			stateListeners[0]?.({kind: 'reconnecting'})
+		})
+		await showDelayed()
+		await act(() => {
+			stateListeners[0]?.({kind: 'music'})
+		})
+		await showDelayed()
+
+		expect(result.current.state.lines.map((line) => line.marker ?? line.text)).toEqual([
+			'Good evening',
 		])
 	})
 

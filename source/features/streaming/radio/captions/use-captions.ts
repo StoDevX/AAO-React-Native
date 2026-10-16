@@ -96,6 +96,9 @@ export function useCaptions(
 				showLater(() => useCaptionsStore.getState().apply(corrected))
 			}
 		})
+		// The last engine state shown, to tell speech giving way to music from the
+		// first buffer of a new connection, which the engine reports as music too.
+		let shownKind: CaptionsEngineState['kind'] | null = null
 		let removeState = addCaptionStateListener((next) => {
 			if (!current) return
 			// A download or a failure is news now, not something the sound is behind.
@@ -109,7 +112,10 @@ export function useCaptions(
 					useCaptionsStore.getState().apply({kind: 'clearLive'})
 				}
 				// Music is marked in the transcript, after the captions it interrupts.
-				if (next.kind === 'music') useCaptionsStore.getState().apply({kind: 'music'})
+				if (next.kind === 'music' && shownKind === 'captioning') {
+					useCaptionsStore.getState().apply({kind: 'music'})
+				}
+				shownKind = next.kind
 			})
 		})
 		startCaptions(streamUrl, CAPTIONS_LOCALE).catch((error: unknown) => {
