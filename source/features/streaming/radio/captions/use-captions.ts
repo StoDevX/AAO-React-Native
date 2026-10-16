@@ -99,14 +99,19 @@ export function useCaptions(
 		// The last engine state shown, to tell speech giving way to music from the
 		// first buffer of a new connection, which the engine reports as music too.
 		let shownKind: CaptionsEngineState['kind'] | null = null
+		// An engine that reports itself unavailable does not recover, so what it
+		// reported earlier, still waiting on the delay, must not overwrite that.
+		let failed = false
 		let removeState = addCaptionStateListener((next) => {
 			if (!current) return
 			// A download or a failure is news now, not something the sound is behind.
 			if (next.kind === 'downloading' || next.kind === 'unavailable') {
+				failed = next.kind === 'unavailable'
 				setEngine(next)
 				return
 			}
 			showLater(() => {
+				if (failed) return
 				setEngine(next)
 				if (next.kind === 'reconnecting' || next.kind === 'music') {
 					useCaptionsStore.getState().apply({kind: 'clearLive'})
@@ -119,7 +124,10 @@ export function useCaptions(
 			})
 		})
 		startCaptions(streamUrl, CAPTIONS_LOCALE).catch((error: unknown) => {
-			if (current) setEngine({kind: 'unavailable', reason: 'Captions could not start.'})
+			if (current) {
+				failed = true
+				setEngine({kind: 'unavailable', reason: 'Captions could not start.'})
+			}
 			console.warn('Captions failed to start', error)
 		})
 		return () => {

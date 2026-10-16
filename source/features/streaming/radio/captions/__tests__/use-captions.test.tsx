@@ -435,6 +435,24 @@ describe('useCaptions', () => {
 		])
 	})
 
+	test('keeps an unavailable engine unavailable, though earlier states are still waiting', async () => {
+		play('playing')
+		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
+		await act(() => {
+			captionListeners[0]?.({kind: 'final', text: 'Said before it failed'})
+			stateListeners[0]?.({kind: 'reconnecting'})
+			stateListeners[0]?.({kind: 'captioning'})
+		})
+		await act(() => {
+			stateListeners[0]?.({kind: 'unavailable', reason: 'No speech model'})
+		})
+
+		await showDelayed()
+
+		expect(result.current.engine).toEqual({kind: 'unavailable', reason: 'No speech model'})
+		expect(result.current.state.lines.map((line) => line.text)).toEqual(['Said before it failed'])
+	})
+
 	test('clears the line being spoken while reconnecting or on music', async () => {
 		play('playing')
 		let {result} = await renderHook(() => useCaptions(STATIONS.krlx, true))
