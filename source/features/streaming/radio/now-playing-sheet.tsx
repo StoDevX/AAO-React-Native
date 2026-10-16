@@ -9,7 +9,13 @@ import {
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
-import {resolvePanel, selectPanel, useCaptionsAvailability, type Panel} from './captions'
+import {
+	captionsPreferenceAfter,
+	resolvePanel,
+	selectPanel,
+	useCaptionsAvailability,
+	type Panel,
+} from './captions'
 import {RadioDevSettingsSheet} from './dev-settings/dev-settings-sheet'
 import {FullScheduleSheet} from './full-schedule-sheet'
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
@@ -44,7 +50,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let onSelectPanel = (pressed: 'schedule' | 'captions') => {
 		let next = selectPanel(panel, pressed)
 		setChosen(next)
-		setCaptionsOn(next === 'captions')
+		setCaptionsOn(captionsPreferenceAfter({panel, pressed, wasOn: captionsOn}))
 	}
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let fit = useFitOrScroll()

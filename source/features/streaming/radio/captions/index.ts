@@ -2,6 +2,7 @@ export {CaptionsView} from './captions-view'
 export {
 	captionsAvailability,
 	captionsButtonLabel,
+	captionsPreferenceAfter,
 	resolvePanel,
 	selectPanel,
 	shouldRunCaptions,

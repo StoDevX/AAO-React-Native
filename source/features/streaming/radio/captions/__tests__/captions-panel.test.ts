@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 
 import {
+	captionsPreferenceAfter,
 	captionsAvailability,
 	captionsButtonLabel,
 	resolvePanel,
@@ -143,6 +144,37 @@ describe('resolvePanel', () => {
 		)
 		expect(resolvePanel({chosen: 'captions', captionsOn: true, availability: 'not-playing'})).toBe(
 			'record',
+		)
+	})
+})
+
+describe('captionsPreferenceAfter', () => {
+	test('is kept when the viewer never left the record for captions and presses Schedule', () => {
+		expect(captionsPreferenceAfter({panel: 'record', pressed: 'schedule', wasOn: true})).toBe(true)
+		expect(captionsPreferenceAfter({panel: 'record', pressed: 'schedule', wasOn: false})).toBe(
+			false,
+		)
+	})
+
+	test('is turned off by leaving the captions panel, for Schedule or the record', () => {
+		expect(captionsPreferenceAfter({panel: 'captions', pressed: 'schedule', wasOn: true})).toBe(
+			false,
+		)
+		expect(captionsPreferenceAfter({panel: 'captions', pressed: 'captions', wasOn: true})).toBe(
+			false,
+		)
+	})
+
+	test('is turned on by selecting the captions panel', () => {
+		expect(captionsPreferenceAfter({panel: 'record', pressed: 'captions', wasOn: false})).toBe(true)
+		expect(captionsPreferenceAfter({panel: 'schedule', pressed: 'captions', wasOn: false})).toBe(
+			true,
+		)
+	})
+
+	test('is kept when pressing Schedule from the schedule', () => {
+		expect(captionsPreferenceAfter({panel: 'schedule', pressed: 'schedule', wasOn: true})).toBe(
+			true,
 		)
 	})
 })

@@ -72,6 +72,25 @@ export function selectPanel(current: Panel, pressed: 'schedule' | 'captions'): P
 }
 
 /**
+ * Whether the captions stay the panel the viewer chose, after `pressed`'s
+ * button is pressed while `panel` shows. Only leaving the captions panel or
+ * entering it changes that: pressing Schedule on a station whose captions
+ * cannot run, so the record shows, is not a choice against captions.
+ */
+export function captionsPreferenceAfter({
+	panel,
+	pressed,
+	wasOn,
+}: {
+	panel: Panel
+	pressed: 'schedule' | 'captions'
+	wasOn: boolean
+}): boolean {
+	if (panel !== 'captions' && pressed !== 'captions') return wasOn
+	return selectPanel(panel, pressed) === 'captions'
+}
+
+/**
  * The panel to show. `chosen` is the viewer's choice since the sheet last
  * opened; without one the sheet opens on the captions the viewer left selected
  * (`captionsOn`), if they can run. A chosen captions panel that can no longer
