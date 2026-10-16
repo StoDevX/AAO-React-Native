@@ -152,6 +152,79 @@ final class RadioCaptionEngineTests: XCTestCase {
 		XCTAssertEqual(Array(events[(failureIndex + 1)...]), [])
 	}
 
+	func testARecognizerThatStopsQuietlyIsStartedAgain() async throws {
+		let speech = try SpeechFixture.aacFile(saying: String(repeating: sentence, count: 4))
+		defer { speech.remove() }
+		// Once the recognizer has heard speech, the first results stream ends without an error and
+		// without passing anything on, the way it does when the recognizer dies; every caption comes
+		// from a later stream.
+		let streams = HookCalls()
+		let quietFirst: (AsyncThrowingStream<CaptionUpdate, Error>) -> AsyncThrowingStream<CaptionUpdate, Error> = { real in
+			guard streams.next() == 1 else { return real }
+			return AsyncThrowingStream { continuation in
+				let task = Task {
+					do {
+						for try await _ in real { break }
+						continuation.finish()
+					} catch { continuation.finish(throwing: error) }
+				}
+				continuation.onTermination = { _ in task.cancel() }
+			}
+		}
+		let engine = makeEngine(url: speech.url, captionUpdates: quietFirst)
+		let events = try await collect(engine, timeout: 90) { events in
+			self.captions(events).contains(where: \.isFinal)
+		}
+		let allStates = states(events)
+		XCTAssertFalse(allStates.contains { if case .unavailable = $0 { true } else { false } }, "states: \(allStates)")
+		XCTAssertGreaterThanOrEqual(streams.count, 2)
+		let text = captions(events).filter(\.isFinal).map(\.text).joined(separator: " ").lowercased()
+		XCTAssertFalse(text.isEmpty, "no final caption after the restart; states: \(allStates)")
+	}
+
+	func testARecognizerThatKeepsStoppingQuietlyEndsCaptions() async throws {
+		let speech = try SpeechFixture.aacFile(saying: String(repeating: sentence, count: 4))
+		defer { speech.remove() }
+		let streams = HookCalls()
+		let alwaysQuiet: (AsyncThrowingStream<CaptionUpdate, Error>) -> AsyncThrowingStream<CaptionUpdate, Error> = { _ in
+			_ = streams.next()
+			return AsyncThrowingStream { $0.finish() }
+		}
+		let engine = makeEngine(url: speech.url, captionUpdates: alwaysQuiet)
+		let stream = engine.events()
+		let starting = Task { await engine.start() }
+		let deadline = Task {
+			try? await Task.sleep(for: .seconds(60))
+			engine.stop()
+		}
+		var events: [EngineEvent] = []
+		var stopper: Task<Void, Never>?
+		for await event in stream {
+			events.append(event)
+			if case .state(.unavailable(let reason)) = event {
+				if reason.contains("one-time download") {
+					engine.stop()
+					throw XCTSkip("the en-US speech model is not installed on this machine")
+				}
+				// The file would be read again within 200 ms if reading went on, so wait well past that.
+				stopper = Task {
+					try? await Task.sleep(for: .seconds(3))
+					engine.stop()
+				}
+			}
+		}
+		deadline.cancel()
+		await starting.value
+		_ = stopper
+		let unavailable = EngineState.unavailable("Captions stopped.")
+		XCTAssertEqual(states(events).last, unavailable, "states: \(states(events))")
+		XCTAssertEqual(states(events).filter { $0 == unavailable }.count, 1)
+		let failureIndex = try XCTUnwrap(events.firstIndex(of: .state(unavailable)))
+		XCTAssertEqual(Array(events[(failureIndex + 1)...]), [])
+		// The first stream and three restarts.
+		XCTAssertEqual(streams.count, 4)
+	}
+
 	func testCaptionsSpeechFromAStreamAndKeepsCaptioningAcrossAReconnect() async throws {
 		let speech = try SpeechFixture.aacFile(saying: String(repeating: sentence, count: 4))
 		defer { speech.remove() }
@@ -183,6 +256,22 @@ final class RadioCaptionEngineTests: XCTestCase {
 		// The server never closes a connection, so only the silence can have ended the first.
 		XCTAssertGreaterThanOrEqual(server.connections, 2)
 		XCTAssertTrue(states(events).contains(.reconnecting), "states: \(states(events))")
+	}
+}
+
+/// Counts the results streams a `captionUpdates` hook is handed.
+private final class HookCalls: @unchecked Sendable {
+	private let lock = NSLock()
+	private var calls = 0
+
+	var count: Int { lock.withLock { calls } }
+
+	/// Counts one more stream and returns how many there have been.
+	func next() -> Int {
+		lock.withLock {
+			calls += 1
+			return calls
+		}
 	}
 }
 

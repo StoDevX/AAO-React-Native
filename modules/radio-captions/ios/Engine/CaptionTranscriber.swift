@@ -1,17 +1,26 @@
 import AVFoundation
 import Speech
+import os
 
 /// Turns speech audio into caption text on the device. Volatile updates are the analyzer's
 /// current guess and are replaced; final updates are settled.
 public final class CaptionTranscriber {
 	private let locale: Locale
+	/// The installed model's locale, which `restart()` builds a fresh transcriber for.
+	private var supportedLocale: Locale?
 	private var transcriber: SpeechTranscriber?
-	private var analyzer: SpeechAnalyzer?
-	private var input: AsyncStream<AnalyzerInput>.Continuation?
 	private var converter: AVAudioConverter?
 	private var analyzerFormat: AVAudioFormat?
-	private var expectedNextStart: Double?
 	private static let contiguityTolerance = 0.02
+
+	/// The running analyzer and where its audio goes. `feed()` runs on the decoder's thread
+	/// while `restart()` may replace these on another, so they are only touched under the lock.
+	private struct Session {
+		var analyzer: SpeechAnalyzer?
+		var input: AsyncStream<AnalyzerInput>.Continuation?
+		var expectedNextStart: Double?
+	}
+	private let session = OSAllocatedUnfairLock(initialState: Session())
 
 	public init(locale: Locale) { self.locale = locale }
 
@@ -20,12 +29,7 @@ public final class CaptionTranscriber {
 		guard let supported = await SpeechTranscriber.supportedLocale(equivalentTo: locale) else {
 			throw CaptionError.unsupportedLocale
 		}
-		let transcriber = SpeechTranscriber(
-			locale: supported,
-			transcriptionOptions: [],
-			reportingOptions: [.volatileResults],
-			attributeOptions: [.audioTimeRange]
-		)
+		let transcriber = Self.makeTranscriber(locale: supported)
 		do {
 			if let request = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) {
 				try await request.downloadAndInstall()
@@ -34,18 +38,47 @@ public final class CaptionTranscriber {
 			throw CaptionError.assetsUnavailable
 		}
 		self.transcriber = transcriber
+		supportedLocale = supported
 		analyzerFormat = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [transcriber])
 	}
 
 	public func start() async throws -> AsyncThrowingStream<CaptionUpdate, Error> {
 		guard let transcriber else { throw CaptionError.assetsUnavailable }
+		return try await begin(transcriber)
+	}
+
+	/// Ends the running analyzer's input and starts a new analyzer with a fresh transcriber,
+	/// for when the last results stream ended while audio was still coming. Audio fed while
+	/// this runs is dropped. The first buffer after it carries its time, so the new analyzer
+	/// places it in stream time.
+	public func restart() async throws -> AsyncThrowingStream<CaptionUpdate, Error> {
+		guard let supportedLocale else { throw CaptionError.assetsUnavailable }
+		let old = session.withLock { session in
+			defer { session = Session() }
+			return session.input
+		}
+		old?.finish()
+		return try await begin(Self.makeTranscriber(locale: supportedLocale))
+	}
+
+	private static func makeTranscriber(locale: Locale) -> SpeechTranscriber {
+		SpeechTranscriber(
+			locale: locale,
+			transcriptionOptions: [],
+			reportingOptions: [.volatileResults],
+			attributeOptions: [.audioTimeRange]
+		)
+	}
+
+	/// Starts an analyzer on `transcriber`, makes it the one `feed()` sends to, and returns
+	/// its results.
+	private func begin(_ transcriber: SpeechTranscriber) async throws -> AsyncThrowingStream<CaptionUpdate, Error> {
 		let analyzer = SpeechAnalyzer(modules: [transcriber])
-		self.analyzer = analyzer
 		let (sequence, continuation) = AsyncStream.makeStream(of: AnalyzerInput.self)
-		input = continuation
 		do { try await analyzer.start(inputSequence: sequence) } catch {
 			throw Self.map(error)
 		}
+		session.withLock { $0 = Session(analyzer: analyzer, input: continuation) }
 		return AsyncThrowingStream { results in
 			let task = Task {
 				do {
@@ -71,13 +104,17 @@ public final class CaptionTranscriber {
 	/// audio input", because resampled buffers rarely end exactly where the next one starts.
 	public func feed(_ buffer: AVAudioPCMBuffer, startSeconds: Double) {
 		guard let converted = convert(buffer) else { return }
-		let contiguous = expectedNextStart.map { abs(startSeconds - $0) < Self.contiguityTolerance } ?? false
-		expectedNextStart = startSeconds + Double(buffer.frameLength) / buffer.format.sampleRate
-		let time = contiguous ? nil : CMTime(seconds: startSeconds, preferredTimescale: 48_000)
-		input?.yield(AnalyzerInput(buffer: converted, bufferStartTime: time))
+		let end = startSeconds + Double(buffer.frameLength) / buffer.format.sampleRate
+		session.withLockUnchecked { session in
+			let contiguous = session.expectedNextStart.map { abs(startSeconds - $0) < Self.contiguityTolerance } ?? false
+			session.expectedNextStart = end
+			let time = contiguous ? nil : CMTime(seconds: startSeconds, preferredTimescale: 48_000)
+			session.input?.yield(AnalyzerInput(buffer: converted, bufferStartTime: time))
+		}
 	}
 
 	public func finish() async {
+		let (input, analyzer) = session.withLock { ($0.input, $0.analyzer) }
 		input?.finish()
 		try? await analyzer?.finalizeAndFinishThroughEndOfInput()
 	}

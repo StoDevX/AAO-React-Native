@@ -49,6 +49,12 @@ public final class RadioCaptionEngine {
 	/// The longest piece of audio the engine gates and feeds at once.
 	private static let sliceSeconds = 0.5
 
+	/// How many times in a row the transcriber is started again, with no caption between, before
+	/// captions give up. A recognizer that dies at once each time would otherwise restart forever.
+	private static let restartLimit = 3
+
+	private static let log = Logger(subsystem: "tech.frogpond.allaboutanything", category: "RadioCaptions")
+
 	public convenience init(url: URL, locale: Locale) {
 		self.init(
 			url: url, locale: locale, stallTimeout: .seconds(10),
@@ -113,11 +119,51 @@ public final class RadioCaptionEngine {
 			await transcriber.finish()
 			return
 		}
-		register(Task { [weak self] in
-			do { for try await update in updates { self?.emit(.caption(update)) } }
-			catch { self?.fail(((error as? CaptionError).map(Self.message(for:))) ?? "Captions stopped.") }
-		})
+		register(Task { [weak self] in await self?.transcribe(updates) })
 		register(Task { [weak self] in await self?.listen() })
+	}
+
+	/// Sends each caption in `updates` until the engine ends. A results stream that ends without
+	/// an error while the engine runs means the recognizer died, which nothing else reports, so
+	/// the transcriber is started again on the same audio; a few restarts in a row with no caption
+	/// between end captions instead.
+	private func transcribe(_ first: AsyncThrowingStream<CaptionUpdate, Error>) async {
+		var updates = first
+		var restarts = 0
+		while true {
+			do {
+				for try await update in updates {
+					restarts = 0
+					emit(.caption(update))
+				}
+			} catch {
+				Self.log.error("Results stream threw: \(error.localizedDescription, privacy: .public)")
+				fail(((error as? CaptionError).map(Self.message(for:))) ?? "Captions stopped.")
+				return
+			}
+			if Task.isCancelled || isStopped || isFailed { return }
+			Self.log.notice("Results stream ended quietly")
+			guard restarts < Self.restartLimit else {
+				fail("Captions stopped.")
+				return
+			}
+			restarts += 1
+			Self.log.notice("Restarting the transcriber, restart \(restarts, privacy: .public)")
+			do {
+				updates = captionUpdates(try await transcriber.restart())
+			} catch let error as CaptionError {
+				fail(Self.message(for: error))
+				return
+			} catch {
+				fail("Captions could not start.")
+				return
+			}
+			// `stop()` or `fail()` may have finished the analyzer this restart replaced.
+			if isStopped || isFailed {
+				await transcriber.finish()
+				return
+			}
+		}
 	}
 
 	/// Ends the engine and its event stream. Safe to call more than once, and while `start()`
@@ -144,6 +190,7 @@ public final class RadioCaptionEngine {
 	private func fail(_ message: String) {
 		let (tasks, decoder, finishTranscriber) = shared.withLock { shared -> ([Task<Void, Never>], StreamAudioDecoder?, Bool) in
 			guard !shared.stopped, !shared.failed else { return ([], nil, false) }
+			Self.log.error("Captions failed: \(message, privacy: .public)")
 			shared.failed = true
 			shared.state = .unavailable(message)
 			shared.continuation?.yield(.state(.unavailable(message)))
@@ -162,13 +209,14 @@ public final class RadioCaptionEngine {
 	private var isStopped: Bool { shared.withLock { $0.stopped } }
 	private var isFailed: Bool { shared.withLock { $0.failed } }
 
-	/// Keeps a task to cancel at `stop()`, or cancels it at once if the engine has stopped.
+	/// Keeps a task to cancel at `stop()`, or cancels it at once if the engine has stopped or failed.
 	private func register(_ task: Task<Void, Never>) {
-		let stopped = shared.withLock { shared in
-			if !shared.stopped { shared.tasks.append(task) }
-			return shared.stopped
+		let ended = shared.withLock { shared in
+			let ended = shared.stopped || shared.failed
+			if !ended { shared.tasks.append(task) }
+			return ended
 		}
-		if stopped { task.cancel() }
+		if ended { task.cancel() }
 	}
 
 	/// Reads the stream, again after each loss, until stopped.
