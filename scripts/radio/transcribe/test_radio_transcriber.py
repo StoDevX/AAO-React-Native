@@ -258,6 +258,14 @@ def test_station_stream_urls_reads_each_stations_stream():
     }
 
 
+def test_a_link_with_null_properties_is_skipped():
+    manifest = {"links": [
+        {"rel": RADIO_STREAM_REL, "href": "https://example.com/anon", "properties": None},
+        manifest_link(RADIO_STREAM_REL, "krlx", "https://example.com/krlx"),
+    ]}
+    assert station_stream_urls(manifest) == {"krlx": "https://example.com/krlx"}
+
+
 def test_the_first_stream_for_a_station_wins():
     manifest = {"links": [
         manifest_link(RADIO_STREAM_REL, "krlx", "https://example.com/first"),
