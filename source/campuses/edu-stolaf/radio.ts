@@ -56,5 +56,6 @@ export const KSTO: Station = {
 	schedule: 'ksto',
 	stationName: 'KSTO 93.1 FM',
 	stationNumber: '+15077863602',
+	captionsSupported: false,
 	title: 'St. Olaf College Radio',
 }

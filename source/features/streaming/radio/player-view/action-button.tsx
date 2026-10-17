@@ -20,6 +20,7 @@ export function ActionButton({
 	accessibilityLabel,
 	onPress,
 	role = 'button',
+	selected,
 }: {
 	icon: SFSymbol
 	label: string
@@ -27,12 +28,14 @@ export function ActionButton({
 	onPress?: () => void
 	/** `link` for one that leaves the app for the web, so VoiceOver says so. */
 	role?: 'button' | 'link'
+	/** For one that picks what the player shows, whether that is showing now, so VoiceOver says so. */
+	selected?: boolean
 }): React.ReactNode {
 	return (
 		<Pressable
 			accessibilityLabel={accessibilityLabel}
 			accessibilityRole={role}
-			accessibilityState={{disabled: !onPress}}
+			accessibilityState={{disabled: !onPress, selected}}
 			disabled={!onPress}
 			onPress={onPress}
 			style={styles.slot}
@@ -61,8 +64,8 @@ export function ActionButton({
 }
 
 const styles = StyleSheet.create({
-	// A quarter of the row each, the Pressable taking the width so the whole
-	// slot answers a tap.
+	// An equal share of the row each, the Pressable taking the width so the
+	// whole slot answers a tap.
 	slot: {flex: 1},
 	action: {minHeight: 44, alignItems: 'center', justifyContent: 'center', gap: 4},
 	label: {fontSize: 13, textAlign: 'center'},

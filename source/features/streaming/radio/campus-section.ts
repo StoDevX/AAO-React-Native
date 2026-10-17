@@ -20,6 +20,13 @@ export type Station = {
 	/** The station's listener chat, where it has one. */
 	chatUrl?: string
 	stationName: string
+	/**
+	 * Whether the sheet can caption the station. The caption decoder reads a
+	 * progressive stream (KRLX's MP3), but AVFoundation exposes no audio from a
+	 * streamed HLS asset (KSTO's; probed 2026-10-14 on macOS 27 and the iOS 27
+	 * simulator), so captioning that would need our own HLS fetch and demux.
+	 */
+	captionsSupported: boolean
 }
 
 /**

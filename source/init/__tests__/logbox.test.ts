@@ -1,7 +1,7 @@
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {LogBox} from 'react-native'
 
-import {hideLogBoxForUITests, removeLogBoxForChaos} from '../logbox'
+import {hideLogBoxForUITests, removeLogBox, removeLogBoxForChaos} from '../logbox'
 
 afterEach(() => {
 	jest.restoreAllMocks()
@@ -25,6 +25,20 @@ describe('hideLogBoxForUITests', () => {
 		hideLogBoxForUITests(false)
 
 		expect(ignoreAllLogs).not.toHaveBeenCalled()
+	})
+})
+
+describe('removeLogBox', () => {
+	// LogBox's toast sits over the bottom of the screen -- a tab bar, the radio's
+	// action row -- and a finger aimed at the control under it lands on the toast.
+	test('uninstalls LogBox and hides its toasts', () => {
+		let uninstall = jest.spyOn(LogBox, 'uninstall').mockReturnValue(undefined)
+		let ignoreAllLogs = jest.spyOn(LogBox, 'ignoreAllLogs').mockReturnValue(undefined)
+
+		removeLogBox()
+
+		expect(uninstall).toHaveBeenCalled()
+		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
 	})
 })
 
@@ -83,10 +97,16 @@ describe('at launch', () => {
 		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
 	})
 
-	test('a UI-test launch hides the toasts and keeps LogBox', () => {
-		let {ignoreAllLogs, uninstall} = launch({isUITesting: true, isChaos: false})
+	test('a UI-test launch hides the toasts', () => {
+		let {ignoreAllLogs} = launch({isUITesting: true, isChaos: false})
 
 		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
-		expect(uninstall).not.toHaveBeenCalled()
+	})
+
+	test('an ordinary launch uninstalls LogBox and hides its toasts', () => {
+		let {ignoreAllLogs, uninstall} = launch({isUITesting: false, isChaos: false})
+
+		expect(uninstall).toHaveBeenCalled()
+		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
 	})
 })
