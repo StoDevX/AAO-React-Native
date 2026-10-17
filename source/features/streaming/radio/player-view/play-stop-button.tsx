@@ -3,7 +3,7 @@ import {AccessibilityInfo, StyleSheet, Text, View} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 
-import {PLAYBACK_ERROR} from '../describe-playback'
+import {describePlaybackError} from '../describe-playback'
 import type {Station} from '../stations'
 import {useStationPlayback} from '../store'
 import {useRadioControl} from '../use-radio-control'
@@ -33,12 +33,13 @@ export function PlayStopButton({station}: {station: Station}): React.ReactNode {
 export function PlaybackError({station}: {station: Station}): React.ReactNode {
 	let {error} = useStationPlayback(station.id)
 	let failed = error !== null
+	let message = error ? describePlaybackError(error) : null
 
 	React.useEffect(() => {
-		if (failed) {
-			AccessibilityInfo.announceForAccessibility(PLAYBACK_ERROR)
+		if (message) {
+			AccessibilityInfo.announceForAccessibility(message)
 		}
-	}, [failed])
+	}, [message])
 
 	if (!failed) {
 		return null
@@ -46,7 +47,7 @@ export function PlaybackError({station}: {station: Station}): React.ReactNode {
 	return (
 		<View style={styles.error}>
 			<SymbolView name="exclamationmark.triangle.fill" size={15} tintColor={palette.primary} />
-			<Text style={[styles.errorText, palette.styles.primary]}>{PLAYBACK_ERROR}</Text>
+			<Text style={[styles.errorText, palette.styles.primary]}>{message}</Text>
 		</View>
 	)
 }
@@ -54,5 +55,5 @@ export function PlaybackError({station}: {station: Station}): React.ReactNode {
 const styles = StyleSheet.create({
 	button: {width: 88, height: 88, alignItems: 'center', justifyContent: 'center'},
 	error: {flexDirection: 'row', alignItems: 'center', gap: 6},
-	errorText: {fontSize: 15, fontWeight: '600'},
+	errorText: {fontSize: 15, fontWeight: '600', flexShrink: 1},
 })

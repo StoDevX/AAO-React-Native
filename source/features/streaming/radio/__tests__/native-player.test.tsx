@@ -6,6 +6,8 @@ import {NativeStreamPlayer} from '../native-player'
 import type {NowPlayingPresentation} from '../now-playing'
 import type {PlayState} from '../types'
 
+jest.mock('@frogpond/radio-scrub', () => ({radioScrub: null}))
+
 // The native module needs a device. Its player is a stand-in that records the
 // commands it is sent, and its status is set by each test. As the real one is,
 // it is released when its component unmounts, before the component's own
@@ -63,6 +65,7 @@ function player(
 ) {
 	return (
 		<NativeStreamPlayer
+			station={{id: 'krlx', stationName: '88.1 KRLX-FM'}}
 			playState={playState}
 			nowPlaying={nowPlaying}
 			streamSourceUrl="https://s3.voscast.com:10803/stream"

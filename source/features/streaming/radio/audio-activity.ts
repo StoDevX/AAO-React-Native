@@ -1,4 +1,5 @@
 import type {AudioStatus} from 'expo-audio'
+import type {PlayState} from './types'
 
 /** What the native player is doing, in the terms the radio's store cares about. */
 export type AudioActivity = 'idle' | 'waiting' | 'playing' | 'ended' | 'error'
@@ -20,4 +21,9 @@ export function audioActivity(
 		return 'waiting'
 	}
 	return status.playing ? 'playing' : 'idle'
+}
+
+/** The independently buffered scratch stream keeps running while AVPlayer buffers. */
+export function shouldRenderScratch(playState: PlayState, activity: AudioActivity): boolean {
+	return playState !== 'paused' && (activity === 'playing' || activity === 'waiting')
 }

@@ -9,6 +9,7 @@ import {shippedStreamUrl, useStationSources, type StationSources} from './source
 import {useStationSchedule} from './use-station-schedule'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
+import {djAudio} from './use-radio-scrub'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
 
 /** What each radio state asks of a player. */
@@ -28,12 +29,12 @@ function NativeStation({
 	...player
 }: {station: Station} & Omit<
 	React.ComponentProps<typeof NativeStreamPlayer>,
-	'nowPlaying'
+	'nowPlaying' | 'station'
 >): React.ReactNode {
 	// With no song on air, Control Center names the show the schedule has on.
 	let {current} = useStationSchedule(station.schedule)
 	let nowPlaying = useNowPlaying(station, current)
-	return <NativeStreamPlayer {...player} nowPlaying={nowPlaying} />
+	return <NativeStreamPlayer {...player} station={station} nowPlaying={nowPlaying} />
 }
 
 type PlayersProps = Omit<React.ComponentProps<typeof NativeStation>, 'streamSourceUrl'> & {
@@ -129,6 +130,13 @@ function LoadedStation(props: Omit<PlayersProps, 'sources'>): React.ReactNode {
  * new player, so only one ever plays and a retry never reuses a failed one.
  */
 export function RadioHost(): React.ReactNode {
+	React.useEffect(
+		() =>
+			useRadioStore.subscribe((state, previous) => {
+				if (previous.djMode && !state.djMode) djAudio.reset()
+			}),
+		[],
+	)
 	let stationId = useRadioStore((state) => state.stationId)
 	let playState = useRadioStore((state) => state.playState)
 	let playerKey = useRadioStore((state) => state.playerKey)

@@ -1,0 +1,13 @@
+{
+  "name": "@frogpond/radio-scrub",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "types": "index.ts",
+  "peerDependencies": {
+    "expo": "57.0.27",
+    "expo-audio": "~57.0.3",
+    "expo-modules-core": "~57.0.20",
+    "react": "catalog:",
+    "react-native": "catalog:"
+  }
+}
