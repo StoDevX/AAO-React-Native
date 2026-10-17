@@ -522,6 +522,49 @@ imported first in `app/_layout.tsx`, so `fetch` is wrapped before anything
 fetches, and they do nothing without the flag. Run `mise run chaos-routes`
 after adding a route.
 
+### Store Screenshots
+
+`mise run screenshots` takes the App Store screenshots into
+`logs/screenshots/<app>/<device>/NN-<screen>.png`: both apps on both devices,
+or the ones named. It runs `uitests/Screenshots/` on two simulators it makes on
+their first run, a 6.3-inch iPhone ("AAO Store Screenshots") and a 13-inch iPad
+("AAO Store Screenshots iPad"). Those are the two sizes App Store Connect
+requires of an app for iPhone and iPad; the rest are optional.
+
+```bash
+mise run screenshots:8081          # both apps, against the Metro on 8081
+mise run screenshots:8081 carls    # CARLS alone, on both devices
+mise run screenshots:8081 ipad     # both apps, on the iPad alone
+TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise run screenshots --prebuilt
+```
+
+Each app's screens read its campus's recordings on the frozen day, so two runs
+give the same pictures until someone rerecords. One build serves both: Carleton
+mode in All About Olaf runs CARLS's code. The map's tiles and the pictures the
+app fetches still come from the network. An iPad's status bar names the app in
+front, so CARLS's iPad screenshots say "All About Olaf" until they are taken
+from a `carls` build.
+
+Every screenshot shares a status bar, set with `simctl status_bar` and cleared
+after the run: full Wi-Fi, signal and battery, and the campus's wall clock at
+the frozen moment as its time. The app is launched in Central time, so its
+hours read as they do on campus whatever zone the Mac keeps. The simulator is
+put in light appearance. A run with a failed screen still collects the rest,
+then exits 1.
+
+A screenshot is `shoot("NN-name")` in `StoreScreenshotTests`, whose number
+orders it on the store page; a new one needs every request its screen makes to
+be in both campuses' recordings, so a smoke test has to open that screen and a
+rerecord has to follow. A tall screen asks for more than a short one (a
+paper's front page fetches issues until they fill it), so rerecord on the
+screenshot simulator: `SIMULATOR_UDID=<its udid> mise run
+update-campus-fixtures edu.stolaf`. The radio is the exception: its screenshot
+is the player as its sheet opens, with the station's schedule unrecorded, so
+the strip under the station's name reads LOADING. The classes assert only that a screen showed
+its recorded content, so the shard planner skips the folder and CI never runs
+them. The run fails on a screenshot of a size App Store Connect refuses.
+Uploading is by hand.
+
 ### Releases
 
 Versions come from Changesets. A change that belongs in the release notes adds

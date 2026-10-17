@@ -21,6 +21,7 @@ bundle. To drive the app by hand instead of asserting on it, see
 | `TestIdentifiers.swift` | Every identifier and label string, shared with the app |
 | `XCUITestHelpers.swift` | `XCUIApplication`/`XCUIElement` query extensions |
 | `Chaos/` | The chaos monkey (`mise run chaos`), its oracles, its canaries, and the generated route list; its `README.md` is the guide |
+| `Screenshots/` | The App Store screenshots (`mise run screenshots`), one class per app; they assert nothing about the app, so no shard runs them |
 
 ## Conventions
 
