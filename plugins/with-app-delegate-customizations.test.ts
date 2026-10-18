@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {describe, it} from 'node:test'
 
-import {appendSceneDelegate, patchAppDelegate} from './with-app-delegate-customizations.ts'
+import {patchAppDelegate} from './with-app-delegate-customizations.ts'
 
 // The stock file expo prebuild writes, taken verbatim from
 // expo-template-bare-minimum. Regenerate it after an SDK bump: the transform
@@ -43,8 +43,10 @@ describe('patchAppDelegate', () => {
 		)
 	})
 
+	// Expo's scene delegate starts React Native under `reactNativeFactoryModuleName`,
+	// which defaults to "main", the name expo-router registers.
 	it('leaves the default module name alone, matching what expo-router registers', () => {
-		assert.ok(patchAppDelegate(STOCK).includes('withModuleName: "main"'))
+		assert.ok(!patchAppDelegate(STOCK).includes('reactNativeFactoryModuleName'))
 	})
 
 	it('prefers an injected jsbundle over Metro in debug builds', () => {
@@ -85,19 +87,15 @@ describe('patchAppDelegate', () => {
 	})
 })
 
-describe('appendSceneDelegate', () => {
-	let result = appendSceneDelegate(patchAppDelegate(STOCK))
+describe('quick actions', () => {
+	let result = patchAppDelegate(STOCK)
 
-	// A quick action that launches the app arrives in the connection options,
-	// not in AppDelegate's launch options, once the app has a scene manifest.
-	it('opens the quick action a cold launch carries', () => {
-		assert.match(result, /connectionOptions\.shortcutItem/u)
-	})
-
-	it('opens a quick action tapped while the app runs', () => {
+	// Expo's scene delegate hands every quick action, cold launch or not, to
+	// this method; nothing else turns one into a route.
+	it('opens a quick action', () => {
 		assert.match(
 			result,
-			/func windowScene\([\s\S]*performActionFor shortcutItem: UIApplicationShortcutItem/u,
+			/override func application\([\s\S]*performActionFor shortcutItem: UIApplicationShortcutItem/u,
 		)
 	})
 
@@ -121,7 +119,17 @@ describe('appendSceneDelegate', () => {
 		assert.doesNotMatch(result, /AllAboutOlaf(Dev)?:\/\//u)
 	})
 
-	it('is idempotent', () => {
-		assert.equal(appendSceneDelegate(result), result)
+	// expo-linking keeps the URL for a cold launch, where Expo Router looks
+	// first; React Native's Linking event is what a running app hears.
+	it('hands the route to both expo-linking and React Native', () => {
+		assert.ok(result.includes('self.application(application, open: url, options: [:])'))
+		assert.ok(
+			result.includes('RCTLinkingManager.application(application, open: url, options: [:])'),
+		)
+	})
+
+	// Expo writes SceneDelegate.swift itself; a second class would not compile.
+	it('writes no scene delegate of its own', () => {
+		assert.ok(!result.includes('class SceneDelegate'))
 	})
 })
