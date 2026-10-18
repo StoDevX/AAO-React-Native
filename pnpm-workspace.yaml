@@ -126,8 +126,6 @@ overrides:
   'jest-worker@29': '30.5.1'
   'jest-haste-map@30>@parcel/watcher': '-'
   'test-exclude@7': '8.0.0'
-  # some GHSA vulnverability fixes
-  'postcss@': '8.5.29'
   # clis we don't use
   'handlebars>minimist': '-'
   'terser>commander': '-'
@@ -209,3 +207,6 @@ patchedDependencies:
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
   react-native-webview@14.0.1: patches/react-native-webview@14.0.1.patch
   react-native@0.88.0: patches/react-native@0.88.0.patch
+permissions:
+  expo-sqlite:
+    skills: true

@@ -33,7 +33,6 @@ overrides:
   jest-worker@29: 30.5.1
   jest-haste-map@30>@parcel/watcher: '-'
   test-exclude@7: 8.0.0
-  postcss@: 8.5.29
   handlebars>minimist: '-'
   terser>commander: '-'
   test-renderer: 1.2.0
