@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {FlexStyle, StyleSheet, View, ViewProps} from 'react-native'
+import {StyleSheet, View, ViewProps, ViewStyle} from 'react-native'
 
 type PropsType = {
-	flex?: FlexStyle['flex']
-	alignItems?: FlexStyle['alignItems']
+	flex?: ViewStyle['flex']
+	alignItems?: ViewStyle['alignItems']
 } & ViewProps
 
 const styles = StyleSheet.create({

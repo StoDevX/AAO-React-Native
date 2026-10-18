@@ -16,7 +16,9 @@ const JOB: JobDetail = {
 
 describe('shareJob', () => {
 	test('shares the posting url', () => {
-		const share = jest.spyOn(Share, 'share').mockResolvedValue({action: 'sharedAction'})
+		const share = jest
+			.spyOn(Share, 'share')
+			.mockResolvedValue({action: 'sharedAction', activityType: undefined})
 
 		shareJob(JOB)
 

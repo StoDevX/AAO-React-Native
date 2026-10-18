@@ -30,7 +30,7 @@ beforeEach(() => {
 	file = memoryLineFile()
 	useChaosFindings.setState({latest: '', file: null})
 	setFindingsFile(file)
-	openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
+	openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined)
 })
 
 afterEach(() => {

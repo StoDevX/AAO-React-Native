@@ -1,6 +1,13 @@
 import * as React from 'react'
 import {useCallback, useEffect, useRef} from 'react'
-import {GestureResponderEvent, Image, StyleSheet, View, type ImageURISource} from 'react-native'
+import {
+	GestureResponderEvent,
+	Image,
+	StyleSheet,
+	View,
+	type ImageURISource,
+	type ViewInstance,
+} from 'react-native'
 import Animated, {
 	Easing,
 	cancelAnimation,
@@ -73,7 +80,7 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 	let scale = useSharedValue(1)
 	// Grows while the station plays; set outright when motion is reduced.
 	let playScale = useSharedValue(playing ? PLAYING_SCALE : 1)
-	let view = useRef<View>(null)
+	let view = useRef<ViewInstance>(null)
 	let centre = useRef({x: 0, y: 0})
 	let start = useRef({x: 0, y: 0, time: 0})
 	// Null until the touch has moved far enough to be a scratch.

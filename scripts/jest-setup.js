@@ -145,6 +145,13 @@ jest.mock('react-native-webview/lib/NativeRNCWebViewModule', () => ({
 		shouldStartLoadWithLockIdentifier: jest.fn(),
 	},
 }))
+// WebView's commands (postMessage, goBack, …) go to a native view Jest has
+// none of, and React Native logs an error for each one sent.
+jest.mock('react-native-webview/lib/RNCWebViewNativeComponent', () => {
+	let actual = jest.requireActual('react-native-webview/lib/RNCWebViewNativeComponent')
+	let commands = Object.fromEntries(Object.keys(actual.Commands).map((name) => [name, jest.fn()]))
+	return {__esModule: true, ...actual, Commands: commands}
+})
 // Settings reads NSUserDefaults through a native module Jest does not have.
 // Every key reads as unset, as on a launch with no extra arguments.
 jest.mock('react-native/Libraries/Settings/NativeSettingsManager', () => ({
