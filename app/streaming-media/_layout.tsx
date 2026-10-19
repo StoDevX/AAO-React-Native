@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {NativeTabs} from 'expo-router/unstable-native-tabs'
+import {NativeTabs} from 'expo-router/native-tabs'
 import {RadioTabAccessory} from '../../source/features/streaming/radio'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {requiresSection} from '../../source/features/campus/section-gate'
