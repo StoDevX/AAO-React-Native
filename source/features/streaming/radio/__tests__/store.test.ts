@@ -15,6 +15,7 @@ function reset() {
 		viewedStationId: 'ksto',
 		sheetOpen: false,
 		showOnHome: true,
+		captionsOn: false,
 		logoIndexes: {},
 	})
 }
@@ -218,6 +219,28 @@ describe('viewing', () => {
 	})
 })
 
+describe('devSettingsOpen', () => {
+	beforeEach(reset)
+
+	test('opens and closes the dev settings over the sheet, which stays open', () => {
+		useRadioStore.getState().openSheet()
+		useRadioStore.getState().openDevSettings()
+		expect(useRadioStore.getState()).toMatchObject({devSettingsOpen: true, sheetOpen: true})
+
+		useRadioStore.getState().closeDevSettings()
+		expect(useRadioStore.getState()).toMatchObject({devSettingsOpen: false, sheetOpen: true})
+	})
+
+	test('closing the sheet closes them too', () => {
+		useRadioStore.getState().openSheet()
+		useRadioStore.getState().openDevSettings()
+
+		useRadioStore.getState().closeSheet()
+
+		expect(useRadioStore.getState().devSettingsOpen).toBe(false)
+	})
+})
+
 describe('showOnHome', () => {
 	beforeEach(reset)
 
@@ -231,8 +254,9 @@ describe('showOnHome', () => {
 		expect(useRadioStore.getState()).toMatchObject({showOnHome: false, stationId: null})
 	})
 
-	test('the logo each station shows and the station last viewed are the only other state saved', () => {
+	test('saves only the preferences: the Home switch, each logo and the station last viewed, not captions', () => {
 		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().setCaptionsOn(true)
 		useRadioStore.getState().setLogoIndex('ksto', 1)
 		useRadioStore.getState().browse('krlx')
 		let {partialize} = useRadioStore.persist.getOptions()
@@ -241,6 +265,12 @@ describe('showOnHome', () => {
 			logoIndexes: {ksto: 1},
 			viewedStationId: 'krlx',
 		})
+	})
+})
+
+describe('captionsOn', () => {
+	test('is off in a fresh store', () => {
+		expect(useRadioStore.getInitialState().captionsOn).toBe(false)
 	})
 })
 

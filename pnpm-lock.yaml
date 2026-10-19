@@ -176,6 +176,9 @@ importers:
       '@frogpond/quick-actions':
         specifier: workspace:*
         version: link:modules/quick-actions
+      '@frogpond/radio-captions':
+        specifier: workspace:*
+        version: link:modules/radio-captions
       '@frogpond/schedules':
         specifier: workspace:*
         version: link:modules/schedules
@@ -221,6 +224,9 @@ importers:
       '@react-native-community/netinfo':
         specifier: 12.0.1
         version: 12.0.1(react-native@0.86.3)(react@19.2.3)
+      '@react-native-masked-view/masked-view':
+        specifier: 0.3.2
+        version: 0.3.2(react-native@0.86.3)(react@19.2.3)
       '@reduxjs/toolkit':
         specifier: 2.13.0
         version: 2.13.0(react-redux@9.3.0)(react@19.2.3)
@@ -1085,6 +1091,12 @@ importers:
         version: 19.2.3
 
   modules/quick-actions:
+    dependencies:
+      expo-modules-core:
+        specifier: ~57.0.21
+        version: 57.0.21(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+
+  modules/radio-captions:
     dependencies:
       expo-modules-core:
         specifier: ~57.0.21

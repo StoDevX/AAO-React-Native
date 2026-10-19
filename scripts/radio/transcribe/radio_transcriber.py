@@ -62,7 +62,7 @@ def station_stream_urls(manifest):
     """
     stream_urls = {}
     for link in manifest["links"]:
-        station = link.get("properties", {}).get(SOURCE_ID_PROPERTY)
+        station = (link.get("properties") or {}).get(SOURCE_ID_PROPERTY)
         if link["rel"] != RADIO_STREAM_REL or station is None or station in stream_urls:
             continue
         href = link["href"]
