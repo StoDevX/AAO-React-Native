@@ -30,3 +30,6 @@ export const PRIMARY_ICON: string | null =
 	typeof Constants.expoConfig?.extra?.primaryIcon === 'string'
 		? Constants.expoConfig.extra.primaryIcon
 		: null
+
+/** Whether this app has a feature request board, as app.config.ts's variant says. */
+export const FEATURE_REQUESTS: boolean = Constants.expoConfig?.extra?.featureRequests === true

@@ -48,6 +48,7 @@ import {HomeListRows} from '../source/features/home/list-rows'
 import {useHomeLayoutStore} from '../source/features/home/store'
 import {openUrl} from '@frogpond/open-url'
 import {setDevModeOverride} from '../source/redux/parts/settings'
+import {FEATURE_REQUESTS} from '../source/lib/app-identity'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerSlot} from '../source/features/faqs/banner'
 import {CUSTOMIZE_LABEL} from '../source/features/customize/labels'
@@ -259,12 +260,14 @@ export default function HomePage(): React.ReactNode {
 						>
 							Feedback
 						</Stack.Toolbar.MenuAction>
-						<Stack.Toolbar.MenuAction
-							icon="lightbulb"
-							onPress={() => router.navigate('/feature-requests')}
-						>
-							Feature Requests
-						</Stack.Toolbar.MenuAction>
+						{FEATURE_REQUESTS ? (
+							<Stack.Toolbar.MenuAction
+								icon="lightbulb"
+								onPress={() => router.navigate('/feature-requests')}
+							>
+								Feature Requests
+							</Stack.Toolbar.MenuAction>
+						) : null}
 					</Stack.Toolbar.Menu>
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>

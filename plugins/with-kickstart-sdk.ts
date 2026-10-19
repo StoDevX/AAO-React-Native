@@ -91,10 +91,10 @@ const IMPORT = 'import KickstartSignal\nimport SwiftUI\ninternal import FeatureR
 // hands it the board. The board brings its own title, toolbar and detail
 // screens, so it needs a NavigationStack of its own; the route hides the
 // router's header, which leaves Back to this button.
-const START = `    FeatureRequests.makeBoard = { onBack in
+const start = (apiKey: string) => `    FeatureRequests.makeBoard = { onBack in
       AnyView(
         NavigationStack {
-          SignalBoardView(apiKey: "ks_live_sOB_c_zZAfsH8dG6CvSS51TYwEpcx-6vmd_SmUrltos")
+          SignalBoardView(apiKey: "${apiKey}")
             .toolbar {
               ToolbarItem(placement: .topBarLeading) {
                 Button(action: onBack) {
@@ -109,11 +109,12 @@ const START = `    FeatureRequests.makeBoard = { onBack in
 `
 
 /**
- * Hand the Signal board to the FeatureRequests module at launch.
+ * Hand the Signal board, for the app registered under `apiKey`, to the
+ * FeatureRequests module at launch.
  * Idempotent: prebuild runs this on an already-patched file whenever the native
  * project is regenerated in place.
  */
-export function startKickstartSignal(contents: string): string {
+export function startKickstartSignal(contents: string, apiKey: string): string {
 	if (contents.includes('import KickstartSignal')) {
 		return contents
 	}
@@ -127,16 +128,22 @@ export function startKickstartSignal(contents: string): string {
 
 	return contents
 		.replace(IMPORT_ANCHOR, `${IMPORT}${IMPORT_ANCHOR}`)
-		.replace(launch[0], `${START}${launch[0]}`)
+		.replace(launch[0], `${start(apiKey)}${launch[0]}`)
 }
 
-const withKickstartSdk: ConfigPlugin = (config) => {
+/**
+ * `apiKey` is the app's Signal key. An app with none (null) has no board, so it
+ * links nothing and patches nothing.
+ */
+const withKickstartSdk: ConfigPlugin<{apiKey: string | null}> = (config, {apiKey}) => {
+	if (apiKey === null) return config
+
 	config = withXcodeProject(config, (mod) => {
 		mod.modResults = addKickstartSdkPackage(mod.modResults, APP_TARGET)
 		return mod
 	})
 	return withAppDelegate(config, (mod) => {
-		mod.modResults.contents = startKickstartSignal(mod.modResults.contents)
+		mod.modResults.contents = startKickstartSignal(mod.modResults.contents, apiKey)
 		return mod
 	})
 }

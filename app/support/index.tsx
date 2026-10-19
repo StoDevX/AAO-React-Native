@@ -24,6 +24,7 @@ import {contactsOptionsFor} from '../../source/features/directory/contacts-query
 import {FaqBannerSlot} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 import {ShareTelemetryToggle} from '../../source/features/telemetry/consent-toggle'
+import {FEATURE_REQUESTS} from '../../source/lib/app-identity'
 
 const styles = StyleSheet.create({
 	host: {
@@ -108,10 +109,12 @@ export default function SupportPage(): React.ReactNode {
 								onPress={() => router.navigate('/report-problem')}
 								title="Send Feedback"
 							/>
-							<NavigationRow
-								onPress={() => router.navigate('/feature-requests')}
-								title="Feature Requests"
-							/>
+							{FEATURE_REQUESTS ? (
+								<NavigationRow
+									onPress={() => router.navigate('/feature-requests')}
+									title="Feature Requests"
+								/>
+							) : null}
 						</Section>
 
 						{helpdesk ? (

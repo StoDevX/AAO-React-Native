@@ -8,6 +8,8 @@ import type {XcodeProject} from 'xcode'
 
 import {addKickstartSdkPackage, startKickstartSignal} from './with-kickstart-sdk.ts'
 
+const API_KEY = 'ks_live_test'
+
 const STOCK_APP_DELEGATE = readFileSync(
 	join(import.meta.dirname, 'fixtures/AppDelegate.swift'),
 	'utf8',
@@ -72,7 +74,7 @@ describe('addKickstartSdkPackage', () => {
 
 describe('startKickstartSignal', () => {
 	it('imports the board and the module that shows it', () => {
-		let patched = startKickstartSignal(STOCK_APP_DELEGATE)
+		let patched = startKickstartSignal(STOCK_APP_DELEGATE, API_KEY)
 		assert.match(patched, /^import KickstartSignal$/mu)
 		assert.match(patched, /^internal import FeatureRequests$/mu)
 	})
@@ -80,21 +82,21 @@ describe('startKickstartSignal', () => {
 	// The module is a pod and cannot import the package, so the app target
 	// hands it the board, inside the NavigationStack the board requires.
 	it('hands the board to FeatureRequests inside a NavigationStack', () => {
-		let patched = startKickstartSignal(STOCK_APP_DELEGATE)
+		let patched = startKickstartSignal(STOCK_APP_DELEGATE, API_KEY)
 		let hook = patched.slice(
 			patched.indexOf('FeatureRequests.makeBoard'),
 			patched.indexOf('let delegate'),
 		)
-		assert.match(hook, /NavigationStack \{[\s\S]*SignalBoardView\(apiKey: "ks_live_/u)
+		assert.match(hook, /NavigationStack \{[\s\S]*SignalBoardView\(apiKey: "ks_live_test"\)/u)
 		assert.match(hook, /Button\(action: onBack\)/u)
 	})
 
 	it('adds nothing the second time', () => {
-		let once = startKickstartSignal(STOCK_APP_DELEGATE)
-		assert.equal(startKickstartSignal(once), once)
+		let once = startKickstartSignal(STOCK_APP_DELEGATE, API_KEY)
+		assert.equal(startKickstartSignal(once, API_KEY), once)
 	})
 
 	it('says so when the Expo template has moved', () => {
-		assert.throws(() => startKickstartSignal('// nothing'), /AppDelegate\.swift/u)
+		assert.throws(() => startKickstartSignal('// nothing', API_KEY), /AppDelegate\.swift/u)
 	})
 })
