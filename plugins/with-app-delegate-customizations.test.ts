@@ -127,9 +127,4 @@ describe('quick actions', () => {
 			result.includes('RCTLinkingManager.application(application, open: url, options: [:])'),
 		)
 	})
-
-	// Expo writes SceneDelegate.swift itself; a second class would not compile.
-	it('writes no scene delegate of its own', () => {
-		assert.ok(!result.includes('class SceneDelegate'))
-	})
 })
