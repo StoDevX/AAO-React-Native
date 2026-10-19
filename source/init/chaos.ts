@@ -14,10 +14,14 @@ import {documentLineFile} from '../chaos/line-file'
 import type {ProbeHost} from '../chaos/probe'
 import {tapeFile} from '../chaos/tape'
 
-/** React Native's `ExceptionsManager`, which has no public export. */
+/**
+ * React Native's `ExceptionsManager`, which has no public export. The private
+ * interface React Native's own renderer reads hands over the same instance, so
+ * the probe's replacement is the one React calls.
+ */
 const exceptionsManager: ProbeHost['exceptionsManager'] =
 	// oxlint-disable-next-line no-require-imports
-	require('react-native/Libraries/Core/ExceptionsManager').default
+	require('react-native/react-private-interface').ExceptionsManager
 
 /** Hermes's rejection tracker, which React Native only enables in development. */
 type HermesGlobal = {
