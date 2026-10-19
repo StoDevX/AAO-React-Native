@@ -112,7 +112,6 @@ overrides:
   'metro-symbolicate@': '0.87.1'
   '@react-native/metro-config': '-'
   '@react-native/community-cli-plugin': '-'
-  'babel-plugin-syntax-hermes-parser': '0.36.1'
   # others
   'babel-jest@29': '30.5.2'
   'jest-environment-node@29': '30.5.2'
@@ -131,10 +130,6 @@ overrides:
   'terser>commander': '-'
   # Peers and transitive ranges a fresh resolve floats past what we pin, and
   # strictPeerDependencies then refuses the result.
-  # test-renderer is a peer of @testing-library/react-native, so autoInstallPeers
-  # picks the newest; 1.3.0 wants react-reconciler 0.34, which wants React 19.3.
-  # We are on 19.2.3. Move it when React moves.
-  'test-renderer': '1.2.0'
   # @expo/cli ranges ^58.0.14, and a fresh resolve floats to the newest, whose
   # expo-constants, expo-font and @expo/metro-runtime peers can outrun the Expo
   # SDK we hold. 58.0.14 matches it. Move it when the Expo set moves.
@@ -173,10 +168,6 @@ overrides:
   # -- all needed only for their web targets. This app is iOS-only and never
   # renders any of their web variants, so drop it rather than just pinning it.
   'react-dom': '-'
-  # vaul is a react-dom drawer component @expo/ui only needs for its web
-  # target; this app is iOS-only and never renders @expo/ui's web variant.
-  # Pinned to the major version so an @expo/ui SDK bump forces a re-check
-  # that vaul is still unused before silently dropping it again.
   # @sentry/cli is a dependency of @sentry/react-native,
   # @sentry/expo-upload-sourcemaps and @sentry/bundler-plugins. Sentry's Xcode
   # build phases do run it, but take it from mise (see [tools.sentry] in
