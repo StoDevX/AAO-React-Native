@@ -9,8 +9,10 @@ import {settle} from '../../testing/settle'
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn(), hasAppFor: jest.fn()}))
 
 describe('sendEmail', () => {
+	let alert: jest.SpiedFunction<typeof Alert.alert>
+
 	beforeEach(() => {
-		jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
 	})
 
 	afterEach(() => {
@@ -41,7 +43,7 @@ describe('sendEmail', () => {
 		await settle()
 
 		expect(openUrl).toHaveBeenCalledWith('mailto:a@stolaf.edu')
-		expect(Alert.alert).not.toHaveBeenCalled()
+		expect(alert).not.toHaveBeenCalled()
 	})
 })
 

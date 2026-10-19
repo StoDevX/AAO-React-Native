@@ -381,7 +381,7 @@ beforeEach(() => {
 			GALLERY,
 		]),
 	)
-	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
+	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined)
 	useMessStore.setState({lastSign: null})
 	// Ashlyn has no profile; Kenzie has one.
 	queryClient.setQueryData(messKeys.profile(423), null)

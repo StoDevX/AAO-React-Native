@@ -51,7 +51,7 @@
   "ignorePatterns": ["**/*.min.js", "**/*-min.js"],
   "settings": {
     "react": {
-      "version": "19.2.3"
+      "version": "19.3.0"
     }
   },
   "rules": {

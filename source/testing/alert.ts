@@ -6,7 +6,7 @@ import {jest} from '@jest/globals'
  * `Alert.alert` spied on first.
  */
 export function pressAlertButton(text: string): void {
-	let buttons = jest.mocked(Alert.alert).mock.lastCall?.[2] as AlertButton[] | undefined
+	let buttons = jest.mocked(Alert).alert.mock.lastCall?.[2] as AlertButton[] | undefined
 	let button = buttons?.find((candidate) => candidate.text === text)
 	if (!button) {
 		throw new Error(`No "${text}" button on the last alert`)
@@ -17,5 +17,5 @@ export function pressAlertButton(text: string): void {
 
 /** The title of the alert most recently shown. */
 export function lastAlertTitle(): string | undefined {
-	return jest.mocked(Alert.alert).mock.lastCall?.[0]
+	return jest.mocked(Alert).alert.mock.lastCall?.[0] ?? undefined
 }

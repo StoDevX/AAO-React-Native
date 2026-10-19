@@ -43,16 +43,9 @@ const MORE_PREVIEW = 3
 function cardFrame(fill: boolean) {
 	return [
 		padding({all: 14}),
-		frame(
-			fill
-				? {maxWidth: FILL_WIDTH, minHeight: TILE_HEIGHT, alignment: 'topLeading'}
-				: {
-						width: PLACE_TILE_WIDTH,
-						minHeight: TILE_HEIGHT,
-						maxHeight: FILL_WIDTH,
-						alignment: 'topLeading',
-					},
-		),
+		fill
+			? frame({maxWidth: FILL_WIDTH, minHeight: TILE_HEIGHT, alignment: 'topLeading'})
+			: frame({width: PLACE_TILE_WIDTH, alignment: 'topLeading'}),
 		background(
 			c.secondarySystemGroupedBackground,
 			shapes.roundedRectangle({cornerRadius: CORNER_RADIUS}),

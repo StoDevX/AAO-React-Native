@@ -43,7 +43,7 @@ describe('basemapScheme', () => {
 	})
 
 	it('falls back to light when the appearance is unknown', () => {
-		expect(basemapScheme(stolaf.map, 'unspecified')).toBe('light')
+		expect(basemapScheme(stolaf.map, null)).toBe('light')
 		expect(basemapScheme(stolaf.map, undefined)).toBe('light')
 	})
 })

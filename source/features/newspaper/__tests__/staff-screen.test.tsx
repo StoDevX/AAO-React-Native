@@ -7,7 +7,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 import staff from './fixtures/staff-2026-2027.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {navigationTitleLines} from '../../../testing/navigation-title'
-import {waitForQueriesToSettle} from '../../../testing/query-notifications'
+import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {StaffMemberScreen, StaffScreen} from '../staff-screen'
 import {messKeys} from '../lib/keys'
 import {parseStaffProfiles} from '../lib/profiles'
@@ -138,6 +138,7 @@ describe('StaffMemberScreen', () => {
 				people.filter((p) => p.id !== SOREN?.id),
 			)
 		})
+		await act(flushQueryNotifications)
 
 		expect(screen.getByText('Senior Reporter')).toBeTruthy()
 		expect(screen.queryByText('Staff Member Not Found')).toBeNull()

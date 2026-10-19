@@ -1,8 +1,8 @@
 diff --git a/apple/RNCWebView.mm b/apple/RNCWebView.mm
-index c0816b6320820a8586f3735b7971790cac8704fa..0b84aef473142f142539f19aaca801279e9cf89c 100644
+index 2be7877..9197cd7 100644
 --- a/apple/RNCWebView.mm
 +++ b/apple/RNCWebView.mm
-@@ -555,6 +555,10 @@ - (void)requestFocus {
+@@ -558,6 +558,10 @@ Class<RCTComponentViewProtocol> RNCWebViewCls(void)
      [_view requestFocus];
  }
  
@@ -14,10 +14,10 @@ index c0816b6320820a8586f3735b7971790cac8704fa..0b84aef473142f142539f19aaca80127
      [_view stopLoading];
  }
 diff --git a/apple/RNCWebViewImpl.h b/apple/RNCWebViewImpl.h
-index 1f6bbfd697a4e0b0aef2db344386b786839a1969..6cd49fb6e1375bd665e3855c5129583f15390f9a 100644
+index 1f637c1..673ea60 100644
 --- a/apple/RNCWebViewImpl.h
 +++ b/apple/RNCWebViewImpl.h
-@@ -148,6 +148,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *)request
+@@ -149,6 +149,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *)request
  - (void)reload;
  - (void)stopLoading;
  - (void)requestFocus;
@@ -26,10 +26,10 @@ index 1f6bbfd697a4e0b0aef2db344386b786839a1969..6cd49fb6e1375bd665e3855c5129583f
  #ifdef RCT_NEW_ARCH_ENABLED
  - (void)destroyWebView;
 diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
-index 7f5c24d6e2cfb26eddbc513bf17a81c24a7273e2..7c963ffa243c6ab525fbf2c38f6c9986b098fde4 100644
+index 3890426..ed532ef 100644
 --- a/apple/RNCWebViewImpl.m
 +++ b/apple/RNCWebViewImpl.m
-@@ -517,6 +517,12 @@ - (void)didMoveToWindow
+@@ -517,6 +517,12 @@ RCTAutoInsetsProtocol>
    if (self.window != nil && _webView == nil) {
      WKWebViewConfiguration *wkWebViewConfig = [self setUpWkWebViewConfig];
      _webView = [[RNCWKWebView alloc] initWithFrame:self.bounds configuration: wkWebViewConfig];
@@ -41,8 +41,8 @@ index 7f5c24d6e2cfb26eddbc513bf17a81c24a7273e2..7c963ffa243c6ab525fbf2c38f6c9986
 +#endif // !TARGET_OS_OSX
      [self setBackgroundColor: _savedBackgroundColor];
  #if !TARGET_OS_OSX
-     _webView.menuItems = _menuItems;
-@@ -1666,6 +1672,15 @@ - (void)requestFocus
+     // Apply once at creation time. The prop is documented as non-reactive —
+@@ -1680,6 +1686,15 @@ didFinishNavigation:(WKNavigation *)navigation
  #endif // !TARGET_OS_OSX
  }
  
@@ -59,37 +59,45 @@ index 7f5c24d6e2cfb26eddbc513bf17a81c24a7273e2..7c963ffa243c6ab525fbf2c38f6c9986
  {
    NSMutableSet *dataTypes = [NSMutableSet setWithArray:@[
 diff --git a/index.d.ts b/index.d.ts
-index a3eef1390c51d49422bd2310d5b74a532e61afe8..c47cf3690c0a21b60b0b69657b0d11d01b49a2c0 100644
+index 10b9c14..7d5dfce 100644
 --- a/index.d.ts
 +++ b/index.d.ts
-@@ -36,6 +36,12 @@ declare class WebView<P = {}> extends Component<WebViewProps & P> {
-      * Focuses on WebView rendered page.
-      */
-     requestFocus: () => void;
+@@ -5,7 +5,8 @@ export { FileDownload, WebViewMessageEvent, WebViewNavigation } from './lib/WebV
+ 
+ export type WebViewProps = IOSWebViewProps & AndroidWebViewProps & WindowsWebViewProps;
+ 
+-declare class WebView<P = undefined> extends Component<WebViewProps & P> {
++// `{}` as 13.x had it: `WebViewProps & undefined` is `never`, which rejects every prop.
++declare class WebView<P = {}> extends Component<WebViewProps & P> {
+   /**
+    * Go back one page in the webview's history.
+    */
+@@ -36,6 +37,12 @@ declare class WebView<P = undefined> extends Component<WebViewProps & P> {
+    */
+   requestFocus: () => void;
+ 
++  /**
++   * (iOS only)
++   * Opens the system find bar to search the page, as Safari's Find on Page does.
++   */
++  presentFindNavigator: () => void;
 +
-+    /**
-+     * (iOS only)
-+     * Opens the system find bar to search the page, as Safari's Find on Page does.
-+     */
-+    presentFindNavigator: () => void;
-     
-      /**
-      * Posts a message to WebView.
+   /**
+    * Posts a message to WebView.
+    */
 diff --git a/src/RNCWebViewNativeComponent.ts b/src/RNCWebViewNativeComponent.ts
-index 7f4e6c4f73506efa9517314a3ff89f91b097763e..5d7fc2860cd7815fccda4b25f2beebd6200e7c02 100644
+index ca3af15..2e5138e 100644
 --- a/src/RNCWebViewNativeComponent.ts
 +++ b/src/RNCWebViewNativeComponent.ts
-@@ -307,6 +307,9 @@ export interface NativeCommands {
-     javascript: string
+@@ -283,6 +283,7 @@ export interface NativeCommands {
+     javascript: string,
    ) => void;
    requestFocus: (viewRef: React.ElementRef<HostComponent<NativeProps>>) => void;
-+  presentFindNavigator: (
-+    viewRef: React.ElementRef<HostComponent<NativeProps>>
-+  ) => void;
-   postMessage: (
-     viewRef: React.ElementRef<HostComponent<NativeProps>>,
-     data: string
-@@ -335,6 +338,7 @@ export const Commands = codegenNativeCommands<NativeCommands>({
++  presentFindNavigator: (viewRef: React.ElementRef<HostComponent<NativeProps>>) => void;
+   postMessage: (viewRef: React.ElementRef<HostComponent<NativeProps>>, data: string) => void;
+   // Android Only
+   loadUrl: (viewRef: React.ElementRef<HostComponent<NativeProps>>, url: string) => void;
+@@ -303,6 +304,7 @@ export const Commands = codegenNativeCommands<NativeCommands>({
      'stopLoading',
      'injectJavaScript',
      'requestFocus',
@@ -98,21 +106,19 @@ index 7f4e6c4f73506efa9517314a3ff89f91b097763e..5d7fc2860cd7815fccda4b25f2beebd6
      'loadUrl',
      'clearFormData',
 diff --git a/src/WebView.ios.tsx b/src/WebView.ios.tsx
-index deb179bc7cb21d4bda73a9a3adc1485ace9cd190..885885191746da4001544bf3c777db6c951738fb 100644
+index 970acb0..ed4390f 100644
 --- a/src/WebView.ios.tsx
 +++ b/src/WebView.ios.tsx
-@@ -156,6 +156,9 @@ const WebViewComponent = forwardRef<{}, IOSWebViewProps>(
-           Commands.injectJavaScript(webViewRef.current, data),
-         requestFocus: () =>
-           webViewRef.current && Commands.requestFocus(webViewRef.current),
-+        presentFindNavigator: () =>
-+          webViewRef.current &&
-+          Commands.presentFindNavigator(webViewRef.current),
+@@ -138,6 +138,7 @@ const WebViewComponent = forwardRef<unknown, IOSWebViewProps>(
+         injectJavaScript: (data: string) =>
+           webViewRef.current && Commands.injectJavaScript(webViewRef.current, data),
+         requestFocus: () => webViewRef.current && Commands.requestFocus(webViewRef.current),
++        presentFindNavigator: () => webViewRef.current && Commands.presentFindNavigator(webViewRef.current),
          clearCache: (includeDiskFiles: boolean) =>
-           webViewRef.current &&
-           Commands.clearCache(webViewRef.current, includeDiskFiles),
+           webViewRef.current && Commands.clearCache(webViewRef.current, includeDiskFiles),
+       }),
 diff --git a/src/WebViewTypes.ts b/src/WebViewTypes.ts
-index eca81415ab48676da18fc2be13b84e60fe5cb3f5..a7e9aa155f9117d3853651780913b1d7366e8edd 100644
+index 4e7247f..73f66a5 100644
 --- a/src/WebViewTypes.ts
 +++ b/src/WebViewTypes.ts
 @@ -20,6 +20,7 @@ type WebViewCommands =

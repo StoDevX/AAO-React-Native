@@ -7,6 +7,7 @@ import {
 	StyleSheet,
 	View,
 	useWindowDimensions,
+	type ScrollViewInstance,
 } from 'react-native'
 import {Button, Host, Image} from '@expo/ui/swift-ui'
 import {
@@ -78,13 +79,13 @@ export function ZoomImageViewer({
 	let onSingleTap = React.useCallback(() => setControlsHidden((hidden) => !hidden), [])
 	let controlsShown = !dragging && !controlsHidden
 
-	let scrollView = React.useRef<ScrollView>(null)
+	let scrollView = React.useRef<ScrollViewInstance>(null)
 	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events,
 	// which React Native sends for every frame of a zoom at a throttle of one frame or less.
 	let scale = React.useRef(1)
 
 	let onScroll = React.useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-		scale.current = event.nativeEvent.zoomScale
+		scale.current = event.nativeEvent.zoomScale ?? scale.current
 	}, [])
 
 	// The point arrives in the image's own coordinates, which hold at any scale.
@@ -155,7 +156,7 @@ export function ZoomImageViewer({
 				>
 					<View pointerEvents="box-none" style={styles.buttonRow}>
 						{image ? (
-							<Host style={[styles.buttonHost, styles.shareHost]}>
+							<Host alignment="center" style={[styles.buttonHost, styles.shareHost]}>
 								<Button
 									modifiers={[
 										buttonStyle('plain'),
@@ -168,7 +169,7 @@ export function ZoomImageViewer({
 								</Button>
 							</Host>
 						) : null}
-						<Host style={styles.buttonHost}>
+						<Host alignment="center" style={styles.buttonHost}>
 							<Button
 								modifiers={[
 									buttonStyle('plain'),

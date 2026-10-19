@@ -16,7 +16,7 @@ jest.mock('../../../source/lib/storage', () => ({
 }))
 
 test('hands a link to iOS outside a chaos run', async () => {
-	let openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
+	let openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined)
 	expect(await openUrl('tel:5077863000')).toBe(true)
 	expect(openURL).toHaveBeenCalledWith('tel:5077863000')
 	openURL.mockRestore()
@@ -27,7 +27,7 @@ describe('openUrl, with links set to open in the app', () => {
 
 	beforeEach(() => {
 		jest.mocked(WebBrowser.openBrowserAsync).mockClear()
-		openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
+		openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined)
 	})
 
 	test('opens a web page in the in-app browser', async () => {
