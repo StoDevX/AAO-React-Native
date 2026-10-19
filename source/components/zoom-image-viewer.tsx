@@ -156,7 +156,7 @@ export function ZoomImageViewer({
 				>
 					<View pointerEvents="box-none" style={styles.buttonRow}>
 						{image ? (
-							<Host style={[styles.buttonHost, styles.shareHost]}>
+							<Host alignment="center" style={[styles.buttonHost, styles.shareHost]}>
 								<Button
 									modifiers={[
 										buttonStyle('plain'),
@@ -169,7 +169,7 @@ export function ZoomImageViewer({
 								</Button>
 							</Host>
 						) : null}
-						<Host style={styles.buttonHost}>
+						<Host alignment="center" style={styles.buttonHost}>
 							<Button
 								modifiers={[
 									buttonStyle('plain'),

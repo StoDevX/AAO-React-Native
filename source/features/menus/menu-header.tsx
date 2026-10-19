@@ -216,7 +216,7 @@ export function MenuHeaderHost(): React.ReactNode {
 				    day, the meal and its window -- `Sun • Lunch • 11AM – 1:30PM` --
 				    the longest line the bar holds, so it scales itself down past
 				    this width rather than crowd the buttons either side. */}
-				<Host style={TITLE_HOST_STYLE}>
+				<Host alignment="center" style={TITLE_HOST_STYLE}>
 					{header.meals ? (
 						<MealMenu date={header.date} meals={header.meals} spoken={spoken}>
 							<TitleStack name={header.name} subtitle={subtitle} />

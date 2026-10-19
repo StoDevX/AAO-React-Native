@@ -43,7 +43,7 @@ export function NoticeView({
 	colorScheme,
 }: Props): React.ReactNode {
 	return (
-		<Host colorScheme={colorScheme} style={[styles.host, style]}>
+		<Host alignment="center" colorScheme={colorScheme} style={[styles.host, style]}>
 			<ContentUnavailableView
 				actions={
 					action ? (

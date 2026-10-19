@@ -198,7 +198,7 @@ export function FrontPageScreen(): React.ReactNode {
 					    button reads. An explicit size, as a navigation bar gives its title view none. */}
 					<Stack.Screen options={{title: paper.title}} />
 					<Stack.Title asChild={true}>
-						<Host style={TITLE_HOST_STYLE}>
+						<Host alignment="center" style={TITLE_HOST_STYLE}>
 							<Image assetName={paper.masthead.assetName} modifiers={masthead(paper.title)} />
 						</Host>
 					</Stack.Title>

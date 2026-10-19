@@ -21,7 +21,7 @@ export function LoadingView({
 	colorScheme?: 'light' | 'dark'
 }): React.ReactNode {
 	return (
-		<Host colorScheme={colorScheme} style={[styles.host, style]}>
+		<Host alignment="center" colorScheme={colorScheme} style={[styles.host, style]}>
 			<ProgressView>
 				<Text>{text}</Text>
 			</ProgressView>
