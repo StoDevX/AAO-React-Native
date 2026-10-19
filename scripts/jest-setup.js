@@ -1,7 +1,17 @@
 import {jest} from '@jest/globals'
+import {act} from 'react'
+import {notifyManager} from '@tanstack/react-query'
 import {setTimezone} from '@frogpond/constants'
 
 setTimezone('America/Chicago')
+// React Query tells a component its query changed on a real setTimeout(0), so
+// the re-render can land after the act() a test is in, and React warns that
+// the update was not wrapped. Every notification goes through act() instead,
+// except while Testing Library's waitFor turns the act environment off to
+// poll, when React asks for no act() and warns about one.
+notifyManager.setNotifyFunction((notify) =>
+	globalThis.IS_REACT_ACT_ENVIRONMENT ? act(notify) : notify(),
+)
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
 // @expo/ui draws SwiftUI, which Jest cannot load; every test gets the
 // stand-in, which renders each view as the React Native elements a test can
