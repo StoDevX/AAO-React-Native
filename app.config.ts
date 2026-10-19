@@ -449,6 +449,8 @@ const config: ExpoConfig = {
 		'./plugins/with-app-delegate-customizations',
 		// DebugSwift, in Debug builds only; Release never links it.
 		'./plugins/with-debug-swift',
+		// Anonymous feature requests, through KickstartSignal's board.
+		'./plugins/with-kickstart-sdk',
 		// Every variant bundles every icon but its primary; the campus decides which Customize offers.
 		['./plugins/with-alternate-icons', {primary: variant.primaryIcon}],
 		'./plugins/with-custom-symbols',

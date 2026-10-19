@@ -259,6 +259,12 @@ export default function HomePage(): React.ReactNode {
 						>
 							Feedback
 						</Stack.Toolbar.MenuAction>
+						<Stack.Toolbar.MenuAction
+							icon="lightbulb"
+							onPress={() => router.navigate('/feature-requests')}
+						>
+							Feature Requests
+						</Stack.Toolbar.MenuAction>
 					</Stack.Toolbar.Menu>
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>

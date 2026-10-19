@@ -205,6 +205,7 @@ function RootLayout(): React.ReactNode {
 									<Stack.Screen name="customize" options={DETAIL_SHEET} />
 									<Stack.Screen name="newspaper/customize" options={DETAIL_SHEET} />
 									<Stack.Screen name="report-problem" options={{presentation: 'modal'}} />
+									<Stack.Screen name="feature-requests" options={{headerShown: false}} />
 								</Stack>
 							)}
 						</ChaosGuard>

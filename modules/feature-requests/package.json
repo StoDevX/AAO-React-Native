@@ -1,0 +1,11 @@
+{
+  "name": "@frogpond/feature-requests",
+  "version": "1.0.0",
+  "main": "index.tsx",
+  "types": "index.tsx",
+  "peerDependencies": {
+    "expo": "~57.0.27",
+    "react": "catalog:",
+    "react-native": "catalog:"
+  }
+}

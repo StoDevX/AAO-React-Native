@@ -47,6 +47,10 @@ export default function ContributingPage(): React.ReactNode {
 							onPress={() => router.navigate('/report-problem')}
 							title="Report a Problem"
 						/>
+						<NavigationRow
+							onPress={() => router.navigate('/feature-requests')}
+							title="Feature Requests"
+						/>
 					</SheetSection>
 
 					<SheetSection title="Other questions?">

@@ -108,6 +108,10 @@ export default function SupportPage(): React.ReactNode {
 								onPress={() => router.navigate('/report-problem')}
 								title="Send Feedback"
 							/>
+							<NavigationRow
+								onPress={() => router.navigate('/feature-requests')}
+								title="Feature Requests"
+							/>
 						</Section>
 
 						{helpdesk ? (
