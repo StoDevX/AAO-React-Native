@@ -1,15 +1,14 @@
 import {LogBox} from 'react-native'
 
 /**
- * Removes LogBox from every launch.
+ * Hides LogBox's toasts on every launch.
  *
  * Its toast sits over the bottom of the screen -- a tab bar, the radio's action
  * row -- and a finger aimed at the control under it lands on the toast. Warnings
- * and errors still reach Metro's terminal. Uninstalling leaves LogBox's native
- * warning handler in place, so its toasts are hidden as well.
+ * and errors still reach Metro's terminal, and an uncaught error still gets
+ * LogBox's full error screen: uninstalling LogBox would drop that too.
  */
 export function removeLogBox(): void {
-	LogBox.uninstall()
 	LogBox.ignoreAllLogs(true)
 }
 

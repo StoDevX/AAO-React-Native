@@ -10,13 +10,11 @@ afterEach(() => {
 describe('removeLogBox', () => {
 	// LogBox's toast sits over the bottom of the screen -- a tab bar, the radio's
 	// action row -- and a finger aimed at the control under it lands on the toast.
-	test('uninstalls LogBox and hides its toasts', () => {
-		let uninstall = jest.spyOn(LogBox, 'uninstall').mockReturnValue(undefined)
+	test('hides LogBox toasts', () => {
 		let ignoreAllLogs = jest.spyOn(LogBox, 'ignoreAllLogs').mockReturnValue(undefined)
 
 		removeLogBox()
 
-		expect(uninstall).toHaveBeenCalled()
 		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
 	})
 })
