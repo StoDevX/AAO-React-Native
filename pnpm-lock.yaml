@@ -318,8 +318,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0
       ky:
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 2.2.0
+        version: 2.2.0
       moment:
         specifier: 2.31.0
         version: 2.31.0
@@ -533,8 +533,8 @@ importers:
   modules/api:
     dependencies:
       ky:
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 2.2.0
+        version: 2.2.0
     devDependencies:
       '@jest/globals':
         specifier: 30.5.2
@@ -4493,8 +4493,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  ky@2.1.0:
-    resolution: {integrity: sha512-nIKwelw+7qVqKOlX4Eht6GXfEXlDHcdIjyLWV3s119kYt5s+70ayTnYS+0fRNmtgGRRAfqdeWQbh8YizqkS0ng==}
+  ky@2.2.0:
+    resolution: {integrity: sha512-4+B63kyZt+Y8snQiUGydK1vgY9xYQJZEh9K/nIAIEts+gYJzy1EiAw3BbK8xpWRuWUpN70SNCMjqRGTm75xxIA==}
     engines: {node: '>=22'}
 
   lan-network@0.2.1:
@@ -9283,7 +9283,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  ky@2.1.0: {}
+  ky@2.2.0: {}
 
   lan-network@0.2.1: {}
 
