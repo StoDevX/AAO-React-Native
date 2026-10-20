@@ -89,7 +89,7 @@
     "expo-symbols": "58.0.4",
     "expo-web-browser": "58.0.6",
     "fuzzyfind": "2.1.0",
-    "ky": "2.1.0",
+    "ky": "2.2.0",
     "moment": "2.31.0",
     "moment-timezone": "0.6.5",
     "pretty-bytes": "7.2.0",
