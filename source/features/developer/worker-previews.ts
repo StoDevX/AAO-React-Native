@@ -5,6 +5,10 @@ import type {CampusId} from '../../campuses'
 /**
  * Where ccc-server's Worker lists its open pull requests and the Preview each
  * branch is deployed to.
+ *
+ * TODO: this is frog-pond/ccc-server#1257's own Preview, the only Worker that
+ * answers `/previews` until that pull request merges. Then it becomes
+ * `https://ccc-server.frog-pond-d8f.workers.dev/previews`.
  */
 export const WORKER_PREVIEWS_URL =
 	'https://claude-project-thread-gnjohg-ccc-server.frog-pond-d8f.workers.dev/previews'
