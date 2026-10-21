@@ -1,0 +1,17 @@
+{
+  "name": "@frogpond/legacy-contracts",
+  "version": "1.0.0",
+  "description": "What each shipped 2.x release expects from the requests it makes",
+  "license": "ISC",
+  "author": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@jest/globals": "30.5.2"
+  }
+}
