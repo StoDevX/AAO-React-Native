@@ -1,12 +1,69 @@
 import * as React from 'react'
-import {Section, Text} from '@expo/ui/swift-ui'
-import {foregroundStyle} from '@expo/ui/swift-ui/modifiers'
+import {Button, HStack, Image, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	accessibilityAddTraits,
+	accessibilityLabel,
+	buttonStyle,
+	contentShape,
+	font,
+	foregroundStyle,
+	lineLimit,
+	shapes,
+	truncationMode,
+} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 
 import type {CampusId} from '../../campuses'
-import {ActionRow, DisclosureRow} from '../../components/rows'
-import {previewServerUrl, workerPreviewsOptions} from './worker-previews'
+import {ActionRow} from '../../components/rows'
+import {previewServerUrl, workerPreviewsOptions, type WorkerPreview} from './worker-previews'
+
+type PreviewRowProps = {
+	preview: WorkerPreview
+	selected: boolean
+	onPress: () => void
+}
+
+/**
+ * A preview to pick: its pull request over its branch, with a checkmark on the
+ * one in the Server URL field, as the building hours debug sheet marks its
+ * chosen time.
+ */
+function PreviewRow({preview, selected, onPress}: PreviewRowProps): React.ReactNode {
+	let title = `#${preview.number} ${preview.title}`
+
+	return (
+		<Button
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(`${title}, ${preview.branch}`),
+				...(selected ? [accessibilityAddTraits(['isSelected'])] : []),
+			]}
+			onPress={onPress}
+		>
+			{/* contentShape on the label, not the Button -- see NavigationRow. */}
+			<HStack modifiers={[contentShape(shapes.rectangle())]}>
+				<VStack alignment="leading" spacing={2}>
+					<Text modifiers={[foregroundStyle(c.label), lineLimit(2), truncationMode('tail')]}>
+						{title}
+					</Text>
+					<Text
+						modifiers={[
+							font({textStyle: 'subheadline'}),
+							foregroundStyle(c.secondaryLabel),
+							lineLimit(1),
+							truncationMode('middle'),
+						]}
+					>
+						{preview.branch}
+					</Text>
+				</VStack>
+				<Spacer />
+				{selected ? <Image color={c.systemBlue} systemName="checkmark" /> : null}
+			</HStack>
+		</Button>
+	)
+}
 
 type Props = {
 	/** The campus whose path on a Preview is offered. */
@@ -56,15 +113,11 @@ export const WorkerPreviewsSection = ({
 				</Text>
 			) : null}
 			{previews.map((preview) => (
-				<DisclosureRow
+				<PreviewRow
 					key={preview.number}
-					destination="action"
-					detail={[preview.branch]}
-					detailLines={1}
 					onPress={() => onSelect(preview.url)}
-					tag={currentUrl === preview.url ? {text: 'Selected', color: c.systemGreen} : undefined}
-					title={`#${preview.number} ${preview.title}`}
-					titleLines={2}
+					preview={preview}
+					selected={currentUrl === preview.url}
 				/>
 			))}
 		</Section>
