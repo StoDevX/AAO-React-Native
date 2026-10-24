@@ -24,6 +24,7 @@
     "@frogpond/drag-to-dismiss": "workspace:*",
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
+    "@frogpond/feature-requests": "workspace:*",
     "@frogpond/filter": "workspace:*",
     "@frogpond/food-menu": "workspace:*",
     "@frogpond/html-content": "workspace:*",
