@@ -20,7 +20,7 @@
     "@frogpond/timer": "workspace:*",
     "date-fns": "4.4.0",
     "ical.js": "2.2.1",
-    "zod": "4.6.5"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@jest/globals": "30.5.2",
