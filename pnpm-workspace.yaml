@@ -43,8 +43,8 @@ publicHoistPattern:
 # theoretically, this configures pnpm to avoid installing optionalDependencies for
 # systems other than the current one
 supportedArchitectures:
-  os: [current]
-  cpu: [current]
+  os: [ current ]
+  cpu: [ current ]
 
 # we use mise to manage the pnpm version
 updateNotifier: false
@@ -87,6 +87,8 @@ minimumReleaseAgeExclude:
   - 'expo-router@58.0.23'
   - 'expo@58.0.14'
   - '@expo/ui@58.0.20'
+  # Renovate security update: fast-uri@4.2.3
+  - fast-uri@4.2.3
 
 catalog:
   js-yaml: '5.4.3'
@@ -146,7 +148,7 @@ overrides:
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
-  'fast-uri@3.1': '4.2.1'
+  'fast-uri@3.1': '4.2.3'
   # js-yaml@3.14.2 (via @istanbuljs/load-nyc-config, Jest's coverage
   # instrumentation): quadratic-CPU merge-key bug (GHSA-52cp-r559-cp3m) and
   # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within
