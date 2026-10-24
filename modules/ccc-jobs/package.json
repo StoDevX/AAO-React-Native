@@ -11,7 +11,7 @@
   "dependencies": {
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
-    "zod": "4.6.5"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@jest/globals": "30.5.2",
