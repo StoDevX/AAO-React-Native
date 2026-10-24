@@ -596,11 +596,17 @@ export function List({
 	return <ListSelection.Provider value={context}>{rows}</ListSelection.Provider>
 }
 
-List.ForEach = function ListForEach({
+List.ForEach = function ListForEach<T>({
 	children,
+	data,
+	keyExtractor,
 	onDelete,
 	onMove,
 }: WithModifiers & {
+	data: readonly T[]
+	keyExtractor: (item: T, index: number) => string
+	children: (info: {item: T; index: number}) => React.ReactElement
+	recycling?: boolean
 	onDelete?: (indices: number[]) => void
 	onMove?: (sourceIndices: number[], destination: number) => void
 }): React.ReactNode {
@@ -609,7 +615,9 @@ List.ForEach = function ListForEach({
 	// UI test.
 	return (
 		<ForwardingView onDelete={onDelete} onMove={onMove} testID="for-each">
-			{children}
+			{data.map((item, index) => (
+				<React.Fragment key={keyExtractor(item, index)}>{children({item, index})}</React.Fragment>
+			))}
 		</ForwardingView>
 	)
 }

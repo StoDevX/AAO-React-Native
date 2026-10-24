@@ -7,6 +7,7 @@ import {
 	Text,
 	View,
 	type LayoutChangeEvent,
+	type ScrollViewInstance,
 } from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import type {Moment} from 'moment-timezone'
@@ -139,7 +140,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	{days, selectedDay, onSelectDay, daysWithEvents, now},
 	ref,
 ) {
-	let scrollRef = React.useRef<ScrollView>(null)
+	let scrollRef = React.useRef<ScrollViewInstance>(null)
 	let [containerWidth, setContainerWidth] = React.useState(0)
 
 	let handleLayout = React.useCallback((event: LayoutChangeEvent) => {

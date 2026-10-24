@@ -209,11 +209,7 @@ function StopDot({
 function RailSegment({barColor, isHidden}: {barColor: string; isHidden: boolean}): React.ReactNode {
 	return (
 		<Rectangle
-			modifiers={[
-				frame({width: RAIL_WIDTH, maxHeight: Infinity}),
-				foregroundStyle(barColor),
-				opacity(isHidden ? 0 : 1),
-			]}
+			modifiers={[frame({width: RAIL_WIDTH}), foregroundStyle(barColor), opacity(isHidden ? 0 : 1)]}
 		/>
 	)
 }
@@ -252,7 +248,7 @@ function RowContent(props: Props): React.ReactNode {
 	// The glyph has a zero frame, so nothing measured here depends on where
 	// it is drawn: the height is the text's, and moving the bus cannot change it.
 	let railColumnModifiers = [
-		frame({width: RAIL_COLUMN_WIDTH, maxHeight: Infinity}),
+		frame({width: RAIL_COLUMN_WIDTH}),
 		...(onHeight ? [onGeometryChange(({height}) => onHeight(height))] : []),
 	]
 
@@ -360,13 +356,9 @@ export function CollapsedStopsRow({
 				modifiers={[contentShape(shapes.rectangle()), frame({maxWidth: FILL_WIDTH})]}
 				spacing={ROW_SPACING}
 			>
-				<ZStack modifiers={[frame({width: RAIL_COLUMN_WIDTH, maxHeight: Infinity})]}>
+				<ZStack modifiers={[frame({width: RAIL_COLUMN_WIDTH})]}>
 					<Rectangle
-						modifiers={[
-							frame({width: RAIL_WIDTH, maxHeight: Infinity}),
-							foregroundStyle(barColor),
-							opacity(0.35),
-						]}
+						modifiers={[frame({width: RAIL_WIDTH}), foregroundStyle(barColor), opacity(0.35)]}
 					/>
 				</ZStack>
 

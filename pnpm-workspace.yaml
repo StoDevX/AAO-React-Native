@@ -66,40 +66,27 @@ shellEmulator: true
 trustPolicy: no-downgrade
 # ignore the trust check for versions that were published more than 6 months ago (arbitrary)
 trustPolicyIgnoreAfter: 259200 # 6 months, in minutes
-# Expo is enabling trusted publishing for the 58 series; these 57 releases
-# predate it and read as a trust downgrade.
-trustPolicyExclude:
-  - 'babel-preset-expo@57.0.14'
-  - 'expo@57.0.27'
-  - '@expo/router-server@57.0.12'
-  - 'expo-sqlite@57.0.4'
-  - 'expo-router@57.0.25'
-  - 'expo-linking@57.0.12'
-  - 'expo-image-manipulator@57.0.21'
-  - '@expo/ui@57.0.22'
-  - '@expo/require-utils@57.0.6'
-  - '@expo/prebuild-config@57.0.17'
-  - '@expo/metro-file-map@57.0.4'
-  - '@expo/image-utils@0.11.6'
-  - 'expo-modules-core@57.0.21'
-  - 'expo-modules-autolinking@57.0.14'
-  - 'expo-constants@57.0.21'
-  - 'expo-asset@57.0.19'
-  - '@expo/metro-config@57.0.13'
-  - '@expo/config-plugins@57.0.10'
-  - '@expo/config@57.0.10'
-  - '@expo/cli@57.0.28'
 
 # prevent pnpm from considering new package versions for 3 days, to allow the
 # ecosystem time to find and fix issues. Matches renovate.json's
 # security:minimumReleaseAgeNpm preset, so both tools apply the same gate.
 minimumReleaseAge: 4320 # 3 days, in minutes
 
-# already-pinned versions from the Expo SDK 57 release train, published days
-# apart from each other; excluded so the npm->pnpm migration can reproduce the
-# existing, already-shipped lockfile instead of waiting the gate out.
-# remove after 2026-08-10, once they clear the 3-day window on their own
-minimumReleaseAgeExclude: []
+# the Expo SDK 58 release train, taken before it clears the 3-day window.
+# remove after 2026-10-20, once they clear it on their own
+minimumReleaseAgeExclude:
+  - '@expo/cli@58.1.11'
+  - '@expo/schema-utils@58.0.2'
+  - 'babel-preset-expo@58.0.17'
+  - 'expo-application@58.1.2'
+  - 'expo-build-properties@58.0.11'
+  - 'expo-crypto@58.0.7'
+  - 'expo-glass-effect@58.0.4'
+  - 'expo-modules-core@58.0.22'
+  - 'expo-modules-jsi@58.0.15'
+  - 'expo-router@58.0.23'
+  - 'expo@58.0.14'
+  - '@expo/ui@58.0.20'
 
 catalog:
   js-yaml: '5.4.3'
@@ -109,8 +96,8 @@ catalog:
   # so the tree ends up with two runtimes -- upward unless every module range
   # moves too, and downward always. Naming the version once removes the
   # question.
-  react: '19.2.3'
-  react-native: '0.86.3'
+  react: '19.3.0'
+  react-native: '0.88.0'
 
 # dependency version overrides (used to live in package.json)
 overrides:
@@ -120,47 +107,32 @@ overrides:
   # @expo/metro pins. Expo's metro is the one that bundles the app, and
   # metro-runtime ends up inside that bundle, so these follow Expo rather than
   # react-native.
-  'metro-runtime@': '0.84.5'
-  'metro-source-map@': '0.84.5'
-  'metro-symbolicate@': '0.84.5'
+  'metro-runtime@': '0.87.1'
+  'metro-source-map@': '0.87.1'
+  'metro-symbolicate@': '0.87.1'
   '@react-native/metro-config': '-'
   '@react-native/community-cli-plugin': '-'
-  'babel-plugin-syntax-hermes-parser': '0.36.1'
-  '@react-native/codegen>hermes-parser': '0.36.1'
-  'metro-babel-transformer@0.84>hermes-parser': '0.36.1'
-  'metro@0.84>hermes-parser': '0.36.1'
   # others
   'babel-jest@29': '30.5.2'
   'jest-environment-node@29': '30.5.2'
   '@jest/create-cache-key-function@29': '30.5.1'
-  'pretty-format@29': '30.5.1'
-  # expo's dev HMR client imports pretty-format's default export, which
-  # 30's index.mjs loses under Metro's ESM interop: every Debug build
-  # redboxes at startup on `prettyFormat.default.default`.
-  'expo>pretty-format': '29.7.0'
   'jest-validate@29': '30.5.1'
   'jest-worker@29': '30.5.1'
   'jest-haste-map@30>@parcel/watcher': '-'
   'test-exclude@7': '8.0.0'
-  # some GHSA vulnverability fixes
-  'postcss@': '8.5.29'
   # clis we don't use
   'handlebars>minimist': '-'
   'terser>commander': '-'
   # Peers and transitive ranges a fresh resolve floats past what we pin, and
   # strictPeerDependencies then refuses the result.
-  # test-renderer is a peer of @testing-library/react-native, so autoInstallPeers
-  # picks the newest; 1.3.0 wants react-reconciler 0.34, which wants React 19.3.
-  # We are on 19.2.3. Move it when React moves.
-  'test-renderer': '1.2.0'
-  # @expo/cli ranges ^57.0.9, and a fresh resolve floats to the newest, whose
+  # @expo/cli ranges ^58.0.14, and a fresh resolve floats to the newest, whose
   # expo-constants, expo-font and @expo/metro-runtime peers can outrun the Expo
-  # SDK we hold. 57.0.11 matches it. Move it when the Expo set moves.
-  '@expo/router-server': '57.0.12'
+  # SDK we hold. 58.0.14 matches it. Move it when the Expo set moves.
+  '@expo/router-server': '58.0.14'
   # expo-router carries its own @expo/ui range, which a fresh resolve floats to
   # the newest. expo-router gets the app's copy, and with it the patch, rather
   # than a second one nothing has checked.
-  '@expo/ui': '57.0.22'
+  '@expo/ui': '58.0.20'
   # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
   # (never part of the shipped JS bundle). Each override is scoped to the
   # currently-resolved major/minor so it can't clobber some other, unrelated
@@ -191,11 +163,6 @@ overrides:
   # -- all needed only for their web targets. This app is iOS-only and never
   # renders any of their web variants, so drop it rather than just pinning it.
   'react-dom': '-'
-  # vaul is a react-dom drawer component @expo/ui only needs for its web
-  # target; this app is iOS-only and never renders @expo/ui's web variant.
-  # Pinned to the major version so an @expo/ui SDK bump forces a re-check
-  # that vaul is still unused before silently dropping it again.
-  '@expo/ui@57>vaul': '-'
   # @sentry/cli is a dependency of @sentry/react-native,
   # @sentry/expo-upload-sourcemaps and @sentry/bundler-plugins. Sentry's Xcode
   # build phases do run it, but take it from mise (see [tools.sentry] in
@@ -222,7 +189,10 @@ overrides:
 saveExact: true
 savePrefix: ''
 patchedDependencies:
-  '@expo/ui@57.0.22': patches/@expo__ui@57.0.22.patch
+  '@expo/ui@58.0.20': patches/@expo__ui@58.0.20.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
-  react-native-webview@13.16.1: patches/react-native-webview@13.16.1.patch
-  react-native@0.86.3: patches/react-native@0.86.3.patch
+  react-native-webview@14.0.1: patches/react-native-webview@14.0.1.patch
+  react-native@0.88.0: patches/react-native@0.88.0.patch
+permissions:
+  expo-sqlite:
+    skills: true

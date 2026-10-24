@@ -23,7 +23,9 @@ afterEach(() => {
 
 describe('shareImage', () => {
 	test('downloads a web image to the cache and shares the file, not its address', async () => {
-		let share = jest.spyOn(Share, 'share').mockResolvedValue({action: 'sharedAction'})
+		let share = jest
+			.spyOn(Share, 'share')
+			.mockResolvedValue({action: 'sharedAction', activityType: undefined})
 		mockDownload.mockResolvedValue({uri: 'file:///caches/page.png'})
 
 		await shareImage('https://olafmessenger.com/page.png')
@@ -35,7 +37,9 @@ describe('shareImage', () => {
 	})
 
 	test('shares an image already on the device as it is', async () => {
-		let share = jest.spyOn(Share, 'share').mockResolvedValue({action: 'sharedAction'})
+		let share = jest
+			.spyOn(Share, 'share')
+			.mockResolvedValue({action: 'sharedAction', activityType: undefined})
 
 		await shareImage('file:///photos/page.png')
 

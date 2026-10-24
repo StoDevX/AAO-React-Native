@@ -114,7 +114,7 @@ export function NavigationTitle({
 				{/* An explicit size rather than `matchContents`: a navigation bar
 				    gives its title view no size to match, so a self-sizing host
 				    collapses and takes the title with it. */}
-				<Host style={TITLE_HOST_STYLE}>
+				<Host alignment="center" style={TITLE_HOST_STYLE}>
 					<VStack
 						modifiers={[
 							...readAsOneTitle(spoken, {isButton: false}),
@@ -145,5 +145,9 @@ const styles = StyleSheet.create({
 	},
 })
 
-/** The size of a two-line title's host, for a title drawn by hand around `TitleStack`. */
+/**
+ * The size of a two-line title's host, for a title drawn by hand around `TitleStack`.
+ * Give the host `alignment="center"` too: a `Host` puts content smaller than
+ * itself in its top leading corner.
+ */
 export const TITLE_HOST_STYLE = styles.host

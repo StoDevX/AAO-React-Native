@@ -9,6 +9,6 @@ import {reportOutOfApp} from './findings'
 export function guardLinking(linking: Pick<typeof Linking, 'openURL'>): void {
 	linking.openURL = (url: string) => {
 		reportOutOfApp(url)
-		return Promise.resolve(false)
+		return Promise.resolve()
 	}
 }

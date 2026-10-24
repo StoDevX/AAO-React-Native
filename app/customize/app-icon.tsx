@@ -116,7 +116,7 @@ const IconGrid = React.memo(function IconGrid({
 					{/* A short row keeps every column's room, so a section with two
 					    icons lines its columns up with a section of three. */}
 					{Array.from({length: columns - row.length}, (_, index) => (
-						<Spacer key={`empty-${index}`} modifiers={[frame({maxWidth: Infinity, height: 1})]} />
+						<Spacer key={`empty-${index}`} modifiers={[frame({height: 1})]} />
 					))}
 				</Grid.Row>
 			))}

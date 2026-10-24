@@ -141,7 +141,7 @@ describe('the unsaved-changes guard', () => {
 		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
 		let onPreventRemove = guard.mock.calls.at(-1)?.[1]
 		await act(() => {
-			onPreventRemove?.({data: {action: {type: 'GO_BACK'}}})
+			onPreventRemove?.({data: {action: {type: 'GO_BACK'}}, repeat: jest.fn()})
 		})
 	}
 
@@ -346,10 +346,10 @@ describe('the unsaved-changes guard after Submit Report', () => {
 
 	it('stays on when the email cannot be written', async () => {
 		mockComposeEmail.mockRejectedValueOnce(new Error('no sheet'))
-		jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		let alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
 		await editAndSubmit()
 		expect(guardIsOn()).toBe(true)
-		expect(Alert.alert).toHaveBeenCalledWith(
+		expect(alert).toHaveBeenCalledWith(
 			'Could not write the email',
 			'Please try sending the report again.',
 		)

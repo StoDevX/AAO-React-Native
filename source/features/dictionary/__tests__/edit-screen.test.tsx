@@ -235,7 +235,7 @@ describe("the dictionary edit screen's unsaved-changes guard", () => {
 		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
 		let onPreventRemove = guard.mock.calls.at(-1)?.[1]
 		await act(() => {
-			onPreventRemove?.({data: {action: {type: 'GO_BACK'}}})
+			onPreventRemove?.({data: {action: {type: 'GO_BACK'}}, repeat: jest.fn()})
 		})
 	}
 

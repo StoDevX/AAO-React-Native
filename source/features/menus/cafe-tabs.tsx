@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {NativeTabs} from 'expo-router/unstable-native-tabs'
+import {NativeTabs} from 'expo-router/native-tabs'
 
 import type {CampusId} from '../../campuses'
 import {MenuHeaderHost, MenuHeaderProvider} from './menu-header'

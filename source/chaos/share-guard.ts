@@ -15,6 +15,6 @@ function shareName(content: ShareContent): string {
 export function guardShare(share: Pick<typeof Share, 'share'>): void {
 	share.share = (content) => {
 		reportOutOfApp(`share ${shareName(content)}`)
-		return Promise.resolve({action: Share.dismissedAction})
+		return Promise.resolve({action: Share.dismissedAction, activityType: undefined})
 	}
 }

@@ -7,6 +7,7 @@ import type {CampusDefinition} from '../../campuses'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {serverUrlOptions} from './query'
 import {useServerDiscovery} from './use-server-discovery'
+import {WorkerPreviewsSection} from './worker-previews-section'
 import {ActionRow, NavigationRow} from '../../components/rows'
 
 const isHttpUrl = (value: string): boolean => {
@@ -52,6 +53,11 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 
 	let reload = () => storeServerAddress.mutate()
 
+	const chooseServer = (url: string) => {
+		setServerAddress(url)
+		serverAddressState.set(url)
+	}
+
 	const isUrlValid = isHttpUrl(serverAddress)
 	const isValid = isUrlValid || serverAddress.length === 0
 
@@ -89,15 +95,17 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 					{discoveredServers.map((server) => (
 						<NavigationRow
 							key={server.url}
-							onPress={() => {
-								setServerAddress(server.url)
-								serverAddressState.set(server.url)
-							}}
+							onPress={() => chooseServer(server.url)}
 							title={server.url}
 						/>
 					))}
 				</Section>
 			)}
+			<WorkerPreviewsSection
+				campus={campus.id}
+				currentUrl={serverAddress}
+				onSelect={chooseServer}
+			/>
 		</>
 	)
 }

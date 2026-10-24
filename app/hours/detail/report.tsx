@@ -48,7 +48,6 @@ import {requiresSection} from '../../../source/features/campus/section-gate'
 
 function useBuildingEditor(initialBuilding: BuildingType, campus: CampusId) {
 	let router = useRouter()
-	let navigation = useNavigation()
 
 	let {draft, hasUnsavedChanges, edit, note, setNote} = useBuildingReport()
 	let building = draft ?? initialBuilding
@@ -75,23 +74,31 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: CampusId) {
 	 * the formSheet's own route so a native sheet dismissal is refused too.
 	 * https://reactnavigation.org/docs/preventing-going-back
 	 */
-	usePreventRemove((hasUnsavedChanges || attachments.images.length > 0) && !submitted, ({data}) => {
-		// Before the alert, so it has no field to hand focus back to on Discard.
-		void blurFocusedField().then(() =>
-			Alert.alert(
-				'Discard changes?',
-				'You have made unsaved changes. Are you sure you want to discard them?',
-				[
-					{text: 'Edit', style: 'cancel'},
-					{
-						text: 'Discard',
-						style: 'destructive',
-						onPress: () => navigation.dispatch(data.action),
-					},
-				],
-			),
-		)
-	})
+	// Set alongside `repeat()`, so the hook stops blocking in the same render it lets the exit through.
+	let [discarded, setDiscarded] = React.useState(false)
+	usePreventRemove(
+		(hasUnsavedChanges || attachments.images.length > 0) && !submitted && !discarded,
+		({repeat}) => {
+			// Before the alert, so it has no field to hand focus back to on Discard.
+			void blurFocusedField().then(() =>
+				Alert.alert(
+					'Discard changes?',
+					'You have made unsaved changes. Are you sure you want to discard them?',
+					[
+						{text: 'Edit', style: 'cancel'},
+						{
+							text: 'Discard',
+							style: 'destructive',
+							onPress: () => {
+								setDiscarded(true)
+								repeat()
+							},
+						},
+					],
+				),
+			)
+		},
+	)
 
 	let openEditor = React.useCallback(
 		(scheduleIdx: number, setIdx: number) =>

@@ -96,7 +96,9 @@ function FaqView(): React.ReactNode {
 		<ScrollView
 			contentContainerStyle={styles.container}
 			contentInsetAdjustmentBehavior="automatic"
-			refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
+			refreshControl={
+				<RefreshControl onRefresh={async () => void (await refetch())} refreshing={isRefetching} />
+			}
 			style={styles.scrollView}
 		>
 			<SafeAreaView edges={['left', 'right']}>

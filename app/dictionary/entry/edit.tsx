@@ -52,7 +52,9 @@ function DictionaryEditForm(): React.ReactNode {
 	 * `PreventRemoveProvider`, a drag-down of the sheet itself, including while
 	 * a sense screen sits on top.
 	 */
-	usePreventRemove(changed && !submitted, ({data}) => {
+	// Set alongside `repeat()`, so the hook stops blocking in the same render it lets the exit through.
+	let [discarded, setDiscarded] = React.useState(false)
+	usePreventRemove(changed && !submitted && !discarded, ({repeat}) => {
 		// Before the alert, so it has no field to hand focus back to on Discard.
 		void blurFocusedField().then(() =>
 			Alert.alert(
@@ -60,7 +62,14 @@ function DictionaryEditForm(): React.ReactNode {
 				'You have made unsaved changes. Are you sure you want to discard them?',
 				[
 					{text: 'Edit', style: 'cancel'},
-					{text: 'Discard', style: 'destructive', onPress: () => navigation.dispatch(data.action)},
+					{
+						text: 'Discard',
+						style: 'destructive',
+						onPress: () => {
+							setDiscarded(true)
+							repeat()
+						},
+					},
 				],
 			),
 		)
@@ -190,6 +199,8 @@ function DictionaryEditForm(): React.ReactNode {
 					    has looked at. */}
 					<SheetSection footer={<Text>{footerText}</Text>} title="Senses">
 						<List.ForEach
+							data={draft.senses}
+							keyExtractor={(sense) => sense.id}
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteSense(draft.senses[index].id))
 							}
@@ -198,14 +209,15 @@ function DictionaryEditForm(): React.ReactNode {
 							// before dragging, and a single-row drag is the only gesture
 							// SwiftUI's `onMove` offers without it.
 							onMove={(from, to) => store.moveSense(null, from[0], to)}
+							// A handful of rows, so recycling buys nothing.
+							recycling={false}
 						>
-							{draft.senses.map((sense, index) => (
+							{({item: sense, index}) => (
 								// The definition is the row's own label: no `detail` means
 								// `rowLabel` renders it bare, which is what a reorder test
 								// reads to find where a drag left a sense. The identifier is
 								// how a test addresses the row instead.
 								<DisclosureRow
-									key={sense.id}
 									identifier={`dictionary-sense-row-${index + 1}`}
 									onPress={() =>
 										router.navigate({
@@ -216,7 +228,7 @@ function DictionaryEditForm(): React.ReactNode {
 									title={sense.definition || `Sense ${index + 1}`}
 									titleLines={2}
 								/>
-							))}
+							)}
 						</List.ForEach>
 
 						{/* Adding a sense and opening it are one action: the row it

@@ -87,6 +87,8 @@ export default function DictionarySensePage(): React.ReactNode {
 
 					<SheetSection title="Examples">
 						<List.ForEach
+							data={sense.examples}
+							keyExtractor={(example) => example.id}
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteExample(sense.id, sense.examples[index].id))
 							}
@@ -95,15 +97,17 @@ export default function DictionarySensePage(): React.ReactNode {
 							// before dragging, and a single-row drag is the only gesture
 							// SwiftUI's `onMove` offers without it.
 							onMove={(from, to) => store.moveExample(sense.id, from[0], to)}
+							// Each row holds a text field, whose typing a recycled row would
+							// carry to another example.
+							recycling={false}
 						>
-							{sense.examples.map((example, index) => (
+							{({item: example, index}) => (
 								<ExampleField
-									key={example.id}
 									example={example}
 									index={index}
 									onChange={(text) => store.setExampleText(sense.id, example.id, text)}
 								/>
-							))}
+							)}
 						</List.ForEach>
 						<Button
 							label="Add Example"
