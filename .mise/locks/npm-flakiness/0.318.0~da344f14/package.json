@@ -2,6 +2,6 @@
   "name": "mise-npm-install",
   "private": true,
   "dependencies": {
-    "flakiness": "0.317.0"
+    "flakiness": "0.318.0"
   }
 }
