@@ -546,15 +546,23 @@ jobs:
         id: simulator-device
         run: |
           set -o pipefail
-          # Pick the latest installed iOS runtime on the runner. IPHONEOS_DEPLOYMENT_TARGET
-          # is the minimum we support, not what's actually installed, and the two have
-          # never matched — so resolve the destination from the runner rather than
-          # hardcoding a version the image may not ship.
-          # `simctl list runtimes` reports the full version (e.g. 27.0.1), but `simctl list
-          # devices` keys runtimes as iOS-<major>-<minor> only, so strip the patch component.
-          OS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | map(select(.isAvailable != false)) | sort_by(.version) | last | .version | split(".") | .[0:2] | join(".")')
-          echo "type=iPhone 17e" | tee -a "$GITHUB_OUTPUT"
-          echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
+          # Pick the latest installed iOS runtime that has the device we test on.
+          # IPHONEOS_DEPLOYMENT_TARGET is the minimum we support, not what's actually
+          # installed, and the two have never matched, so resolve the destination from
+          # the runner rather than hardcoding a version the image may not ship. The
+          # newest runtime is not enough: an image can ship one (iOS 27.1) whose only
+          # device is an iPhone Duo, with every other device on the runtime before it.
+          # `simctl list devices` keys runtimes as ...SimRuntime.iOS-<major>-<minor>.
+          SIMULATOR_TYPE="iPhone 17e"
+          OS_VERSION=$(xcrun simctl list devices iOS -j | jq -er --arg type "$SIMULATOR_TYPE" '
+            .devices | to_entries
+            | map(select(.key | test("SimRuntime\\.iOS-"))
+              | select(any(.value[]; .name == $type and .isAvailable != false))
+              | .key | sub(".*iOS-"; ""))
+            | sort_by(split("-") | map(tonumber))
+            | last')
+          echo "type=$SIMULATOR_TYPE" | tee -a "$GITHUB_OUTPUT"
+          echo "os=$OS_VERSION" | tee -a "$GITHUB_OUTPUT"
 
       - name: List available simulators
         id: devices
