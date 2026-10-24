@@ -8,8 +8,8 @@ settings:
 catalogs:
   default:
     js-yaml:
-      specifier: 5.4.3
-      version: 5.4.3
+      specifier: 5.5.0
+      version: 5.5.0
     react:
       specifier: 19.3.0
       version: 19.3.0
@@ -36,8 +36,8 @@ overrides:
   '@expo/ui': 58.0.20
   shell-quote@: 1.12.0
   fast-uri@3.1: 4.2.1
-  js-yaml@3: 5.4.3
-  js-yaml@4: 5.4.3
+  js-yaml@3: 5.5.0
+  js-yaml@4: 5.5.0
   '@babel/core@': 7.29.7
   react-dom: '-'
   '@sentry/cli': '-'
@@ -476,7 +476,7 @@ importers:
         version: 30.5.2(@types/node@26.6.5)(supports-color@8.1.1)
       js-yaml:
         specifier: 'catalog:'
-        version: 5.4.3
+        version: 5.5.0
       oxfmt:
         specifier: 0.72.0
         version: 0.72.0
@@ -3323,8 +3323,8 @@ packages:
   arg@5.0.2:
     resolution: {integrity: sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==}
 
-  argparse@2.0.1:
-    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+  argparse@3.0.3:
+    resolution: {integrity: sha512-Sn98ftV3KfsO8xfLPHG6oT8y+b0yvbrLgZjgPDXsharNY15tTAjqIsIju4S32nl6/iEUNNE4v+yL2Zhm8ooP3w==}
 
   asap@2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
@@ -4454,8 +4454,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@5.4.3:
-    resolution: {integrity: sha512-yzzNtgczwgoVHNigCyKTXcQJU4Y8t/ikU4UxXW0BvrLfHTGWZhsNcOT2s/a7vn81/4KqVnNmHjaUEPlvWnNwVw==}
+  js-yaml@5.5.0:
+    resolution: {integrity: sha512-paNr4LFIFPjeeSmwNYdrb8FafLLG/Cr2Af3GjbsHJ5CxIjH4r0c2emlmRdAtpPAieP1gRVzk6buBbVP5gBMGAg==}
     hasBin: true
 
   jsc-safe-url@0.2.4:
@@ -6692,7 +6692,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.29.7
       chalk: 4.1.2
-      js-yaml: 5.4.3
+      js-yaml: 5.5.0
 
   '@flakiness/flakiness-report@0.36.0(zod@4.6.5)':
     dependencies:
@@ -6736,7 +6736,7 @@ snapshots:
       camelcase: 5.3.1
       find-up: 4.1.0
       get-package-type: 0.1.0
-      js-yaml: 5.4.3
+      js-yaml: 5.5.0
       resolve-from: 5.0.0
 
   '@istanbuljs/schema@0.1.6': {}
@@ -7901,7 +7901,7 @@ snapshots:
 
   arg@5.0.2: {}
 
-  argparse@2.0.1: {}
+  argparse@3.0.3: {}
 
   asap@2.0.6: {}
 
@@ -9257,9 +9257,9 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@5.4.3:
+  js-yaml@5.5.0:
     dependencies:
-      argparse: 2.0.1
+      argparse: 3.0.3
 
   jsc-safe-url@0.2.4: {}
 
