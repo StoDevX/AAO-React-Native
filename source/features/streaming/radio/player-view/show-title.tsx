@@ -20,12 +20,8 @@ export function ShowTitle({
 	let {title, subtitle} = showTitleText(station, current, status)
 	return (
 		<View style={styles.block}>
-			<Text numberOfLines={1} style={[styles.title, palette.styles.primary]}>
-				{title}
-			</Text>
-			<Text numberOfLines={1} style={[styles.subtitle, palette.styles.secondary]}>
-				{subtitle}
-			</Text>
+			<Text style={[styles.title, palette.styles.primary]}>{title}</Text>
+			<Text style={[styles.subtitle, palette.styles.secondary]}>{subtitle}</Text>
 		</View>
 	)
 }

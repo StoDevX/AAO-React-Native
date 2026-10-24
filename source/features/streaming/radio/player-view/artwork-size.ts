@@ -12,15 +12,17 @@ export function artworkSize({
 	viewportHeight,
 	layoutHeight,
 	currentArtwork,
+	minimum = MIN_ARTWORK,
 }: {
 	width: number
 	viewportHeight: number
 	layoutHeight: number
 	currentArtwork: number
+	minimum?: number
 }): number {
 	if (viewportHeight === 0 || layoutHeight === 0) {
 		return width
 	}
 	let rest = layoutHeight - currentArtwork
-	return Math.max(MIN_ARTWORK, Math.min(width, Math.floor(viewportHeight - rest)))
+	return Math.max(minimum, Math.min(width, Math.floor(viewportHeight - rest)))
 }
