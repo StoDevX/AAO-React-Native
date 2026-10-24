@@ -8,6 +8,7 @@ export type Category =
 	| 'admissions'
 	| 'admissions-parking'
 	| 'athletics'
+	| 'bike-rack'
 	| 'bookstore'
 	| 'building'
 	| 'campus-parking'
