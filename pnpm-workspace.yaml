@@ -87,6 +87,8 @@ minimumReleaseAgeExclude:
   - 'expo-router@58.0.23'
   - 'expo@58.0.14'
   - '@expo/ui@58.0.20'
+  # Renovate security update: zod@4.6.6
+  - zod@4.6.6
 
 catalog:
   js-yaml: '5.4.3'
