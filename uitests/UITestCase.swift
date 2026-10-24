@@ -247,6 +247,18 @@ enum MissingFixtures {
 	static func clear() {
 		try? FileManager.default.removeItem(at: file)
 	}
+
+	/// Drops the requests whose key holds `text` from the list, for a test
+	/// that leaves one request unrecorded on purpose. Every other missing
+	/// request still fails it.
+	static func forgive(keysContaining text: String) {
+		guard let listed = try? String(contentsOf: file, encoding: .utf8) else { return }
+		let kept = listed.split(separator: "\n").filter { line in
+			guard let entry = try? JSONDecoder().decode(Entry.self, from: Data(line.utf8)) else { return true }
+			return !entry.key.contains(text)
+		}
+		try? kept.joined(separator: "\n").write(to: file, atomically: true, encoding: .utf8)
+	}
 }
 
 /// Resets a running app and opens a route in it, in place of the cold launch
