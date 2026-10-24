@@ -21,8 +21,6 @@ ruby = "3.4.11"
 # nothing to talk to on the Linux jobs.
 [tools."github:cameroncooke/AXe"]
 version = "1.8.0"
-exe = "axe"
-extract_all = "true"
 os = ["macos"]
 # The release tarball is unsigned, and macOS kills an unsigned arm64 binary on
 # exec -- SIGKILL, exit 137, no message. The homebrew formula ad-hoc signs it
