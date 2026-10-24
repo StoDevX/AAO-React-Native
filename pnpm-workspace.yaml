@@ -43,8 +43,10 @@ publicHoistPattern:
 # theoretically, this configures pnpm to avoid installing optionalDependencies for
 # systems other than the current one
 supportedArchitectures:
-  os: [current]
-  cpu: [current]
+  os:
+    - current
+  cpu:
+    - current
 
 # we use mise to manage the pnpm version
 updateNotifier: false
