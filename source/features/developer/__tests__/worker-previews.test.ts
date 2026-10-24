@@ -21,11 +21,11 @@ describe('previewServerUrl', () => {
 
 describe('parsePreviews', () => {
 	let preview = {
-		number: 1257,
-		title: 'Answer GET /previews',
-		branch: 'claude/project-thread-gnjohg',
-		prUrl: 'https://github.com/frog-pond/ccc-server/pull/1257',
-		previewUrl: 'https://claude-project-thread-gnjohg-ccc-server.frog-pond-d8f.workers.dev',
+		number: 1256,
+		title: 'Update dependency vitest to v5.0.5',
+		branch: 'renovate/vitest-monorepo',
+		prUrl: 'https://github.com/frog-pond/ccc-server/pull/1256',
+		previewUrl: 'https://renovate-vitest-monorepo-ccc-server.frog-pond-d8f.workers.dev',
 	}
 
 	test('keeps previews, including those without a URL', () => {
