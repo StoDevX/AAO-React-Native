@@ -48,72 +48,80 @@ url = "https://github.com/cameroncooke/AXe/releases/download/v1.8.0/AXe-macOS-ho
 url_api = "https://api.github.com/repos/cameroncooke/AXe/releases/assets/483428550"
 
 [[tools.hk]]
-version = "2.6.0"
+version = "2.8.1"
 backend = "packslip:github.com/jdx/hk"
-specifiers = ["2.6.0"]
+specifiers = ["2.8.1"]
 
 [tools.hk."platforms.linux-arm64"]
-checksum = "sha256:bcccd60f962a784bcf602b3a1ee6aac4dc53c76b298bffe38c4f9101725d2fb0"
-url = "https://github.com/jdx/hk/releases/download/v2.6.0/hk-aarch64-unknown-linux-gnu.tar.gz"
+checksum = "sha256:50d7b26988ce8aff77697188a2e1e9d01162de203e7b9ace7ec0d42365c4ea61"
+url = "https://github.com/jdx/hk/releases/download/v2.8.1/hk-aarch64-unknown-linux-gnu.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.linux-arm64-musl"]
-checksum = "sha256:5f6585ebc8deb8ae581c0127693982da6dca6b4eaf52dfd55f882d5bbca398ae"
-url = "https://github.com/jdx/hk/releases/download/v2.6.0/hk-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:5ca76be1457f3d96705c4dbb17c6b929311d3f6d790c6d1facb9682bd9930727"
+url = "https://github.com/jdx/hk/releases/download/v2.8.1/hk-aarch64-unknown-linux-musl.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.linux-x64"]
-checksum = "sha256:dfc2e1140a114c28f42fa6d1b958fac7008de3b96b19bbf74d693c0f86bcff60"
-url = "https://github.com/jdx/hk/releases/download/v2.6.0/hk-x86_64-unknown-linux-gnu.tar.gz"
+checksum = "sha256:8033ca42aaf88412e789c281f7e2766526e60e12f95a16c03574aeb0a2c7a657"
+url = "https://github.com/jdx/hk/releases/download/v2.8.1/hk-x86_64-unknown-linux-gnu.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.linux-x64-musl"]
-checksum = "sha256:cd7d76e014e709f8cac760e3cb6500305ba106915fc3b4764d88aa69a0c3a92d"
-url = "https://github.com/jdx/hk/releases/download/v2.6.0/hk-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:ac8669939ba502cc8d5ba178c22bc0f84ff7b7283fdd05ea4de1296cac262d85"
+url = "https://github.com/jdx/hk/releases/download/v2.8.1/hk-x86_64-unknown-linux-musl.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.macos-arm64"]
-checksum = "sha256:40a336e793397d5940b284aae674477d430b24dc86167be92e080120d80e42f2"
-url = "https://github.com/jdx/hk/releases/download/v2.6.0/hk-aarch64-apple-darwin.tar.gz"
+checksum = "sha256:87d5288c1d19acd45885e35722f655a1e1498a1cb92f42c1490e7f1623aedddd"
+url = "https://github.com/jdx/hk/releases/download/v2.8.1/hk-aarch64-apple-darwin.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
+repository_ids = { repository = "922514152" }
 
 [tools.hk."platforms.windows-x64"]
-checksum = "sha256:5afd28127f09f6b5a5d246413611b4494ad38d30930dd0cd009a8d6aff0f4c3d"
-url = "https://github.com/jdx/hk/releases/download/v2.6.0/hk-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:411cbe34d53764162dd36d69fe5bf7ec39ccd2a8166890c92c3531284355487d"
+url = "https://github.com/jdx/hk/releases/download/v2.8.1/hk-x86_64-pc-windows-msvc.zip"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
+repository_ids = { repository = "922514152" }
 
 [[tools.node]]
-version = "24.21.0"
+version = "24.22.0"
 backend = "core:node"
-specifiers = ["24.21.0"]
+specifiers = ["24.22.0"]
 
 [tools.node."platforms.linux-arm64"]
-checksum = "sha256:724282c3b43aec998aa9527380465b45d229e021b58035f5f4f63095eabfe5d5"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-arm64.tar.gz"
+checksum = "sha256:b7e7991d5407815adfa74a2a9cd4db683552c8ce32ff4a295c22e972849c3f5d"
+url = "https://nodejs.org/dist/v24.22.0/node-v24.22.0-linux-arm64.tar.gz"
 
 [tools.node."platforms.linux-arm64-musl"]
-checksum = "sha256:3048b0811e158ca0d8672b59c839861763e144492980d8d29b369dfee45747e4"
-url = "https://unofficial-builds.nodejs.org/download/release/v24.21.0/node-v24.21.0-linux-arm64-musl.tar.gz"
+checksum = "sha256:9010e34b40beb69ee5eb8c0ee22e08da6a6c7bff16c6f8be7904638970a66c91"
+url = "https://nodejs.org/dist/v24.22.0/node-v24.22.0.tar.gz"
+install = "source"
 
 [tools.node."platforms.linux-x64"]
-checksum = "sha256:6e1db87ef58b8819e5d5402eff1536491b18edd8eb7bee5ef7897876e88dc5ff"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.gz"
+checksum = "sha256:28ea0a438de9a13bd7891fd758eee6c7819ee8af5442dfd8d45bd65e56d4228c"
+url = "https://nodejs.org/dist/v24.22.0/node-v24.22.0-linux-x64.tar.gz"
 
 [tools.node."platforms.linux-x64-musl"]
-checksum = "sha256:01a713e34da98e7b4d2a3191ee7ca3f93dd0384d1a2ef23c379b2161ee6e133a"
-url = "https://unofficial-builds.nodejs.org/download/release/v24.21.0/node-v24.21.0-linux-x64-musl.tar.gz"
+checksum = "sha256:9010e34b40beb69ee5eb8c0ee22e08da6a6c7bff16c6f8be7904638970a66c91"
+url = "https://nodejs.org/dist/v24.22.0/node-v24.22.0.tar.gz"
+install = "source"
 
 [tools.node."platforms.macos-arm64"]
-checksum = "sha256:bed7eea5325e1108f32ce5228ddd6a5f0f08a499ee42aa7442aea583702f6057"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-arm64.tar.gz"
+checksum = "sha256:6a9724d9b50a5f22b4816cded441b5a8d9ddae546191a5e5b7efa5a5e2ee26d5"
+url = "https://nodejs.org/dist/v24.22.0/node-v24.22.0-darwin-arm64.tar.gz"
 
 [tools.node."platforms.macos-x64"]
-checksum = "sha256:1462cb3b3046b815cf8ea436d3da450ec1a9f11dac7e5a46b0ada5305d7e8097"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-x64.tar.gz"
+checksum = "sha256:495e3f273c645f3c4677d438304cdfc701729ea5dec5728f5c8e76a2dece4b91"
+url = "https://nodejs.org/dist/v24.22.0/node-v24.22.0-darwin-x64.tar.gz"
 
 [tools.node."platforms.windows-x64"]
-checksum = "sha256:158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip"
+checksum = "sha256:f9683a19877e12a9b167305c8db71040d812876359de21f0d2e97c3f321f80c3"
+url = "https://nodejs.org/dist/v24.22.0/node-v24.22.0-win-x64.zip"
 
 [[tools."npm:@changesets/cli"]]
 version = "3.0.3"
@@ -122,10 +130,10 @@ backend = "npm:@changesets/cli"
 specifiers = ["3.0.3"]
 
 [[tools."npm:flakiness"]]
-version = "0.312.0"
-aube = { path = ".mise/locks/npm-flakiness/0.312.0~da344f14", digest = "sha256:cfa83e52e74e600efe1353c284a6f29197bbbc113119fa0f14808c0bf1fff03f" }
+version = "0.318.0"
+aube = { path = ".mise/locks/npm-flakiness/0.318.0~da344f14", digest = "sha256:8b5bc291b7e7754d0e4a51b6409cd19940eec3dbcfb46168ae20b92138d634e0" }
 backend = "npm:flakiness"
-specifiers = ["0.312.0"]
+specifiers = ["0.318.0"]
 
 [tools."npm:flakiness".options]
 allow_low_downloads = "true"
@@ -177,50 +185,50 @@ url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-
 url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541679560"
 
 [[tools.pnpm]]
-version = "12.11.2"
+version = "12.15.0"
 backend = "aqua:pnpm/pnpm"
-specifiers = ["12.11.2"]
+specifiers = ["12.15.0"]
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:ad444fa06d7ff344d74ba1e4933f2ed71cc6357cc2d33707a5c60958b7d83085"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613171"
+checksum = "sha256:d7ce93a2c7d847d3a34bd3f559b60c14f578b1320c17cc352a2c5c5fdf956117"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.15.0/pnpm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/662173352"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:abf111d90e1ab8bc1485f853bf83f6e86b028ab5badc393203014e50c4a1cf7d"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-linux-arm64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613170"
+checksum = "sha256:1188ef8a57bfc5786f3f739a98067242e531a4636e3f52e9e9ddc75564ea804d"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.15.0/pnpm-linux-arm64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/662173342"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:358f30541b42371360c0d48a8daddc0c0850a90c36fcbea598032a9850e2c9ab"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613177"
+checksum = "sha256:55b5ed0092bd11176c1669598e231ae52e7cedac59de6efd0d415730f37d0598"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.15.0/pnpm-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/662173360"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:64e35fe0854494dc56c24311d97f13cfe73fcfd8e3cb65b7c0f5c359da6a0fd8"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-linux-x64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613182"
+checksum = "sha256:d33802cc987dcfbe02a991473764ba25ad1b2344189e2097a2570baed66f008a"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.15.0/pnpm-linux-x64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/662173349"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:2f4701dbd4a7b81827789e94225272355fcc17c4eb9f5add08ed26f943003b67"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613178"
+checksum = "sha256:6a41a2877773e97f19832067187cc6fc82e186d8a2cf91fec4b4c1a5fbd6ef27"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.15.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/662173343"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-x64"]
-checksum = "sha256:409f9754f68500719db9b17bd750d091790f1d846f61707b4716c73110f5de52"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-darwin-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613179"
+checksum = "sha256:2d7b336884574aee8a765bee48591212e9caf4fcf985fb3279588c1fb73fb47f"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.15.0/pnpm-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/662173347"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:66cac6b725bfc75fadac959fc435821048558adb50b89c82d0d2d5e57465a1dd"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-win32-x64.zip"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613173"
+checksum = "sha256:84cf69db1be19e95bb4e5bef329291a046f2821b390d87e00f5690809d8a2ed7"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.15.0/pnpm-win32-x64.zip"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/662173351"
 provenance = "github-attestations"
 
 [[tools.ruby]]
@@ -351,48 +359,48 @@ url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellche
 url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056944"
 
 [[tools.zizmor]]
-version = "1.30.1"
+version = "1.31.1"
 backend = "aqua:zizmorcore/zizmor"
-specifiers = ["1.30.1"]
+specifiers = ["1.31.1"]
 
 [tools.zizmor."platforms.linux-arm64"]
-checksum = "sha256:7ff1dce33bdd18fd2a4affe63bdd47efcccca97b2cec1c1863ec26e9e2647540"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067643"
+checksum = "sha256:37eebbd5762a44f262d94875431b14a6d2402991e90a685113ea97b8b41be833"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.31.1/zizmor-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/645467282"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.linux-arm64-musl"]
-checksum = "sha256:7ff1dce33bdd18fd2a4affe63bdd47efcccca97b2cec1c1863ec26e9e2647540"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067643"
+checksum = "sha256:37eebbd5762a44f262d94875431b14a6d2402991e90a685113ea97b8b41be833"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.31.1/zizmor-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/645467282"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.linux-x64"]
-checksum = "sha256:e65324f4430c2717591937edcec90ccbefaf14c174f8ec9415e03ca875b46e1a"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067642"
+checksum = "sha256:d185f726bdaf92df78273217dfdd24ebcd6b0ef48cf3ce776ff5762b6e138c99"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.31.1/zizmor-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/645467284"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.linux-x64-musl"]
-checksum = "sha256:e65324f4430c2717591937edcec90ccbefaf14c174f8ec9415e03ca875b46e1a"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067642"
+checksum = "sha256:d185f726bdaf92df78273217dfdd24ebcd6b0ef48cf3ce776ff5762b6e138c99"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.31.1/zizmor-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/645467284"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.macos-arm64"]
-checksum = "sha256:e28d22b087f9ebb8d99da6e740d348c930f559961c7c3f12badda54f882195a2"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067640"
+checksum = "sha256:ad5aa633cd56215b11e6c51d51f90c7e6b22904a75047d1215abbd422f61d698"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.31.1/zizmor-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/645467283"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.macos-x64"]
-checksum = "sha256:10e6b18b11ea07e515a16f0f0518c7b07527bc9977c1fd5698181ce7f3554202"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067641"
+checksum = "sha256:72ae63bb85b67229c06242f04195cb43927e9fab5f43803c6434dc701a517d61"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.31.1/zizmor-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/645467287"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.windows-x64"]
-checksum = "sha256:b183b1e996eddfab9659f1e9b46e059f1ef1cf984a1f14e5da09f7876a4b3a1c"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067645"
+checksum = "sha256:4de30371c8a3b483aecbcf0dec1fd6a2b6aae65051ca226b4f6527baac6a8c7a"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.31.1/zizmor-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/645467286"
 provenance = "github-attestations"

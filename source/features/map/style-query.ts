@@ -40,7 +40,7 @@ export const manifestMapStyleOptions = (id: string) =>
 export function useMapStyleUrl(
 	campus: CampusId,
 	map: MapSection,
-	scheme: ColorSchemeName | undefined,
+	scheme: ColorSchemeName | null | undefined,
 ): string {
 	let style = basemapScheme(map, scheme) === 'dark' && map.darkStyle ? map.darkStyle : map.style
 	let manifestId = 'manifestId' in style ? style.manifestId : null

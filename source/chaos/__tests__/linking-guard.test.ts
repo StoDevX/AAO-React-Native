@@ -15,7 +15,7 @@ test('replaces openURL with one that reports instead of opening', async () => {
 
 	guardLinking(stub)
 
-	await expect(stub.openURL('maps:?q=Holland')).resolves.toBe(false)
+	await expect(stub.openURL('maps:?q=Holland')).resolves.toBeUndefined()
 	expect(original).not.toHaveBeenCalled()
 
 	let findings = parseLines<{kind: string; message: string}>(file.readLines())

@@ -7,6 +7,7 @@ import {
 	StyleProp,
 	View,
 	ViewStyle,
+	type ViewInstance,
 } from 'react-native'
 import {white} from '@frogpond/colors'
 
@@ -20,7 +21,7 @@ type Props = PropsWithChildren<
 	}
 >
 
-const CustomPressable = forwardRef<View, Props>((props, ref): React.ReactElement => {
+const CustomPressable = forwardRef<ViewInstance, Props>((props, ref): React.ReactElement => {
 	let {
 		children,
 		containerStyle = {},

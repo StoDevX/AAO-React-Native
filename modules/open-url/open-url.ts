@@ -4,10 +4,11 @@ import {isChaos} from '@frogpond/launch-arguments'
 import * as storage from '../../source/lib/storage'
 import {reportOutOfApp} from '../../source/chaos/findings'
 
-/** Hands `url` to iOS, resolving to whether anything opened it. */
+/** Hands `url` to iOS, resolving to whether anything opened it. iOS rejects when nothing does. */
 async function genericOpen(url: string): Promise<boolean> {
 	try {
-		return (await Linking.openURL(url)) !== false
+		await Linking.openURL(url)
+		return true
 	} catch (err) {
 		console.error(err)
 		return false

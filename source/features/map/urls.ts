@@ -10,7 +10,7 @@ export type {MapCredit}
  */
 export function basemapScheme(
 	map: MapSection,
-	scheme: ColorSchemeName | undefined,
+	scheme: ColorSchemeName | null | undefined,
 ): 'light' | 'dark' {
 	return map.darkStyle !== undefined && scheme === 'dark' ? 'dark' : 'light'
 }

@@ -1,7 +1,15 @@
 import * as React from 'react'
-import {ScrollView, type NativeScrollEvent, StyleSheet, Text, View} from 'react-native'
+import {
+	ScrollView,
+	type NativeScrollEvent,
+	type ScrollViewInstance,
+	StyleSheet,
+	Text,
+	View,
+	type ViewProps,
+} from 'react-native'
 import {SymbolView} from 'expo-symbols'
-import MaskedView from '@react-native-masked-view/masked-view'
+import MaskedViewNative from '@react-native-masked-view/masked-view'
 import Animated, {FadeIn, ReduceMotion} from 'react-native-reanimated'
 import {captionStyle, type CaptionsEngineState} from '@frogpond/radio-captions'
 
@@ -11,6 +19,11 @@ import {useRadioDevStore, type CaptionPresentation} from '../dev-settings/store'
 import {captionRows} from './caption-rows'
 import {hasContentAbove, hasContentBelow} from './caption-scroll'
 import type {CaptionsState} from './reduce-captions'
+
+/** The package's own types stop being a valid JSX element under React Native 0.88, so the props it reads are restated. */
+const MaskedView = MaskedViewNative as unknown as React.ComponentType<
+	ViewProps & {maskElement: React.ReactElement}
+>
 
 /** How close to the end the captions must be scrolled for a new line to keep them pinned there. */
 const NEAR_BOTTOM = 80
@@ -182,7 +195,7 @@ export function CaptionsView({
 }): React.ReactNode {
 	// Read once: the style is the viewer's Settings choice and changes only there.
 	let [style] = React.useState(() => captionStyle())
-	let scroll = React.useRef<ScrollView>(null)
+	let scroll = React.useRef<ScrollViewInstance>(null)
 	let pinned = React.useRef(true)
 	// Whether lines have scrolled out of sight above. Set only when it changes.
 	let [fades, setFades] = React.useState({top: false, bottom: false})

@@ -1,5 +1,5 @@
 diff --git a/build/swift-ui/ContentUnavailableView/index.d.ts b/build/swift-ui/ContentUnavailableView/index.d.ts
-index efb96284ff2aa26d454d8422c3bd93a238cdcc96..12cd111c508d58c13b5227229c011065980c6a3c 100644
+index eacb35e..06bd61c 100644
 --- a/build/swift-ui/ContentUnavailableView/index.d.ts
 +++ b/build/swift-ui/ContentUnavailableView/index.d.ts
 @@ -13,6 +13,11 @@ export interface ContentUnavailableViewProps extends CommonViewModifierProps {
@@ -14,9 +14,38 @@ index efb96284ff2aa26d454d8422c3bd93a238cdcc96..12cd111c508d58c13b5227229c011065
  }
  /**
   * Displays a native Swift UI ContentUnavailableView.
-diff --git a/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
+diff --git a/build/swift-ui/ContentUnavailableView/index.js b/build/swift-ui/ContentUnavailableView/index.js
+index cb82ad4..f8ad5d8 100644
+--- a/build/swift-ui/ContentUnavailableView/index.js
++++ b/build/swift-ui/ContentUnavailableView/index.js
+@@ -1,9 +1,10 @@
+ import { jsx as _jsx } from "react/jsx-runtime";
+ import { requireNativeView } from 'expo';
++import { Slot } from '../SlotView';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ const ContentUnavailableViewNativeView = requireNativeView('ExpoUI', 'ContentUnavailableView');
+ function transformContentUnavailableViewProps(props) {
+-    const { modifiers, ...restProps } = props;
++    const { modifiers, actions: _actions, ...restProps } = props;
+     return {
+         modifiers,
+         ...modifiers ? createViewModifierEventListener(modifiers) : undefined,
+@@ -16,7 +17,11 @@ function transformContentUnavailableViewProps(props) {
+  * @platform tvos 17.0+
+  */ export function ContentUnavailableView(props) {
+     return /*#__PURE__*/ _jsx(ContentUnavailableViewNativeView, {
+-        ...transformContentUnavailableViewProps(props)
++        ...transformContentUnavailableViewProps(props),
++        children: props.actions ? /*#__PURE__*/ _jsx(Slot, {
++            name: "actions",
++            children: props.actions
++        }) : null
+     });
+ }
+ 
+diff --git a/b/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..d08232a073aef5a8f011f7ce4e26ceaada54d8d5
+index 0000000..d08232a
 --- /dev/null
 +++ b/build/swift-ui/HangingText/index.d.ts
 @@ -0,0 +1,40 @@
@@ -60,8 +89,45 @@ index 0000000000000000000000000000000000000000..d08232a073aef5a8f011f7ce4e26ceaa
 + * when tapped.
 + */
 +export declare function HangingText({ children, modifiers, ...props }: HangingTextProps): import("react/jsx-runtime").JSX.Element;
+diff --git a/b/build/swift-ui/HangingText/index.js b/build/swift-ui/HangingText/index.js
+new file mode 100644
+index 0000000..ac66d3a
+--- /dev/null
++++ b/build/swift-ui/HangingText/index.js
+@@ -0,0 +1,17 @@
++import { jsx as _jsx } from "react/jsx-runtime";
++import { requireNativeView } from 'expo';
++import { createViewModifierEventListener } from '../modifiers/utils';
++const HangingTextNativeView = requireNativeView('ExpoUI', 'HangingTextView');
++/**
++ * Body text whose wrapped lines sit `hangingIndent` points past its first
++ * line, drawn by a read-only `UITextView` with a paragraph style, which
++ * SwiftUI's `Text` does not have. It follows Dynamic Type, and its links open
++ * when tapped.
++ */ export function HangingText({ children, modifiers, ...props }) {
++    return /*#__PURE__*/ _jsx(HangingTextNativeView, {
++        text: children,
++        modifiers: modifiers,
++        ...modifiers ? createViewModifierEventListener(modifiers) : undefined,
++        ...props
++    });
++}
+diff --git a/build/swift-ui/RNHostView.js b/build/swift-ui/RNHostView.js
+index 4b5e4ec..5a7042f 100644
+--- a/build/swift-ui/RNHostView.js
++++ b/build/swift-ui/RNHostView.js
+@@ -17,7 +17,8 @@ export function RNHostView({ matchContents, ...props }) {
+         layoutRoot: layoutRoot,
+         matchContentsHorizontal: matchContentsHorizontal,
+         matchContentsVertical: matchContentsVertical,
+-        expoInternalSizeFromChildren: matchContentsHorizontal || matchContentsVertical,
++        // expoInternalSizeFromChildren is left off: with it set, ExpoViewShadowNode
++        // measures the hosted content with no width limit (expo/expo#50216).
+         // `matchContents` can only be used once on mount
+         // So we force unmount when it changes to prevent unexpected layout
+         key: `${matchContentsHorizontal}-${matchContentsVertical}`
 diff --git a/build/swift-ui/TabView/index.d.ts b/build/swift-ui/TabView/index.d.ts
-index df528df59b730714a2fc10ab1c7c1a0137b22546..1132e408cd8eb305f412a1d3ab22a7ea53647940 100644
+index 8b5f6db..ae52c4e 100644
 --- a/build/swift-ui/TabView/index.d.ts
 +++ b/build/swift-ui/TabView/index.d.ts
 @@ -15,6 +15,13 @@ export interface TabViewProps extends CommonViewModifierProps {
@@ -78,8 +144,28 @@ index df528df59b730714a2fc10ab1c7c1a0137b22546..1132e408cd8eb305f412a1d3ab22a7ea
      /**
       * `<TabView.Tab>` elements defining the pages.
       */
+diff --git a/build/swift-ui/TabView/index.js b/build/swift-ui/TabView/index.js
+index 0e8cc33..86a9452 100644
+--- a/build/swift-ui/TabView/index.js
++++ b/build/swift-ui/TabView/index.js
+@@ -4,12 +4,13 @@ import { createViewModifierEventListener } from '../modifiers/utils';
+ import { Tab } from './Tab';
+ const TabViewNativeView = requireNativeView('ExpoUI', 'TabView');
+ function TabView(props) {
+-    const { modifiers, onSelectionChange, ...restProps } = props;
++    const { modifiers, onSelectionChange, onPageSettle, ...restProps } = props;
+     return /*#__PURE__*/ _jsx(TabViewNativeView, {
+         modifiers: modifiers,
+         ...modifiers ? createViewModifierEventListener(modifiers) : undefined,
+         ...restProps,
+-        onSelectionChange: onSelectionChange ? ({ nativeEvent: { selection } })=>onSelectionChange(selection) : undefined
++        onSelectionChange: onSelectionChange ? ({ nativeEvent: { selection } })=>onSelectionChange(selection) : undefined,
++        onPageSettle: onPageSettle ? ({ nativeEvent: { selection } })=>onPageSettle(selection) : undefined
+     });
+ }
+ /**
 diff --git a/build/swift-ui/index.d.ts b/build/swift-ui/index.d.ts
-index 07ed2f75612627319f278afc8da9abf29529af3a..e28a06f002b4e7d548302bc312c68b8190876b39 100644
+index abf47ae..63edc5d 100644
 --- a/build/swift-ui/index.d.ts
 +++ b/build/swift-ui/index.d.ts
 @@ -10,6 +10,7 @@ export * from './ControlGroup';
@@ -90,11 +176,23 @@ index 07ed2f75612627319f278afc8da9abf29529af3a..e28a06f002b4e7d548302bc312c68b81
  export * from './DisclosureGroup';
  export * from './Form';
  export * from './Gauge';
+diff --git a/build/swift-ui/index.js b/build/swift-ui/index.js
+index 96ca691..dab6ae3 100644
+--- a/build/swift-ui/index.js
++++ b/build/swift-ui/index.js
+@@ -10,6 +10,7 @@ export * from './ControlGroup';
+ export * from './ContextMenu';
+ export * from './DatePicker';
+ export * from './Divider';
++export * from './HangingText';
+ export * from './DisclosureGroup';
+ export * from './Form';
+ export * from './Gauge';
 diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
-index 0ff3c50ca18ec7105aaa7cb3aa83ebb7480515fb..2c1817692832d82d12c51e962926f81ddc4b9e8a 100644
+index 0de5cd2..b226d5a 100644
 --- a/build/swift-ui/modifiers/index.d.ts
 +++ b/build/swift-ui/modifiers/index.d.ts
-@@ -1099,6 +1099,17 @@ export declare const font: (params: {
+@@ -1113,6 +1113,17 @@ export declare const font: (params: {
       * Dynamic Type setting.
       */
      textStyle?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
@@ -113,7 +211,7 @@ index 0ff3c50ca18ec7105aaa7cb3aa83ebb7480515fb..2c1817692832d82d12c51e962926f81d
  /**
   * A standard size for Dynamic Type, from `xSmall` through the five
 diff --git a/ios/ContentUnavailableView.swift b/ios/ContentUnavailableView.swift
-index 3e07eceecb782b3c924ee9e3d5ec20424ef7f491..190d26a536036f9be84322536ce92d80ea3243e1 100644
+index 3e07ece..190d26a 100644
 --- a/ios/ContentUnavailableView.swift
 +++ b/ios/ContentUnavailableView.swift
 @@ -18,7 +18,21 @@ public struct ContentUnavailableView: ExpoSwiftUI.View {
@@ -140,10 +238,10 @@ index 3e07eceecb782b3c924ee9e3d5ec20424ef7f491..190d26a536036f9be84322536ce92d80
    }
  }
 diff --git a/ios/ExpoUIModule.swift b/ios/ExpoUIModule.swift
-index 1f16b30aeb7776f1b25d4724b1bbac325399298d..d63667cc5ab1343e574766d1a804b4d5603a983b 100644
+index 265f318..542b407 100644
 --- a/ios/ExpoUIModule.swift
 +++ b/ios/ExpoUIModule.swift
-@@ -197,6 +197,7 @@ public final class ExpoUIModule: Module {
+@@ -200,6 +200,7 @@ public final class ExpoUIModule: Module {
      ExpoUIView(CircleView.self)
      ExpoUIView(ConcentricRectangleView.self)
      ExpoUIView(DividerView.self)
@@ -151,9 +249,9 @@ index 1f16b30aeb7776f1b25d4724b1bbac325399298d..d63667cc5ab1343e574766d1a804b4d5
      ExpoUIView(PopoverView.self)
      ExpoUIView(OverlayView.self)
      ExpoUIView(BackgroundView.self)
-diff --git a/ios/HangingTextView.swift b/ios/HangingTextView.swift
+diff --git a/b/ios/HangingTextView.swift b/ios/HangingTextView.swift
 new file mode 100644
-index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c5249bfca635
+index 0000000..2c04f39
 --- /dev/null
 +++ b/ios/HangingTextView.swift
 @@ -0,0 +1,163 @@
@@ -321,7 +419,7 @@ index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c524
 +  }
 +}
 diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
-index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67748e89a8 100644
+index 094cee1..1d0781d 100644
 --- a/ios/Modifiers/FontModifier.swift
 +++ b/ios/Modifiers/FontModifier.swift
 @@ -29,6 +29,20 @@ internal enum FontWeight: String, Enumerable {
@@ -373,7 +471,7 @@ index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67
        let baseSize = size ?? 17
        var font: Font = if let textStyle = textStyle {
 diff --git a/ios/Modifiers/ScrollPositionModifier.swift b/ios/Modifiers/ScrollPositionModifier.swift
-index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a259e6fbc9 100644
+index 2b9e034..9f67337 100644
 --- a/ios/Modifiers/ScrollPositionModifier.swift
 +++ b/ios/Modifiers/ScrollPositionModifier.swift
 @@ -37,16 +37,64 @@ private struct ScrollPositionWrapper<C: View>: View {
@@ -446,7 +544,7 @@ index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a2
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index 66b5317584bf4c4ed6acf48df5fe5c48c05ac7c3..df89e01c876a0f380cfecb332818904e3e2992b7 100644
+index eac8fd5..d91f3ca 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -505,7 +603,7 @@ index 66b5317584bf4c4ed6acf48df5fe5c48c05ac7c3..df89e01c876a0f380cfecb332818904e
  internal struct OnDisappearModifier: ViewModifier, Record {
    var eventDispatcher: EventDispatcher?
  
-@@ -1183,6 +1225,23 @@ internal enum TextLinePattern: String, Enumerable {
+@@ -1187,6 +1229,23 @@ internal enum TextLinePattern: String, Enumerable {
    case dashDotDot
  }
  
@@ -529,7 +627,7 @@ index 66b5317584bf4c4ed6acf48df5fe5c48c05ac7c3..df89e01c876a0f380cfecb332818904e
  internal struct TextUnderLine: ViewModifier, Record {
    @Field var isActive: Bool = false
    @Field var pattern: TextLinePattern = .solid
-@@ -1631,6 +1690,18 @@ public class ViewModifierRegistry {
+@@ -1635,6 +1694,18 @@ public class ViewModifierRegistry {
          return text.foregroundColor(color)
        }
        return text
@@ -548,7 +646,7 @@ index 66b5317584bf4c4ed6acf48df5fe5c48c05ac7c3..df89e01c876a0f380cfecb332818904e
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2484,6 +2555,14 @@ extension ViewModifierRegistry {
+@@ -2496,6 +2567,14 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  
@@ -564,7 +662,7 @@ index 66b5317584bf4c4ed6acf48df5fe5c48c05ac7c3..df89e01c876a0f380cfecb332818904e
        return try MoveDisabledModifier(from: params, appContext: appContext)
      }
 diff --git a/ios/TabView/TabView.swift b/ios/TabView/TabView.swift
-index 94eb3eb83d6c19d5ff9ff58057e6e38c862357b9..efcb138bbd5e26b999ea5b1805fe6218e8c7ebf5 100644
+index 0d6fbf2..1f97609 100644
 --- a/ios/TabView/TabView.swift
 +++ b/ios/TabView/TabView.swift
 @@ -7,6 +7,7 @@ internal final class TabViewProps: UIBaseViewProps {
@@ -593,15 +691,15 @@ index 94eb3eb83d6c19d5ff9ff58057e6e38c862357b9..efcb138bbd5e26b999ea5b1805fe6218
        guard !didApplyDefaultSelection else { return }
        didApplyDefaultSelection = true
        if props.selection == nil {
-@@ -57,6 +62,7 @@ internal struct TabView: ExpoSwiftUI.View {
-           value: tab.props.value
+@@ -58,6 +63,7 @@ internal struct TabView: ExpoSwiftUI.View {
          ) {
+           // The tab's own body does not run here, so publish its zero content origin on its content.
            Self.tabContent(for: tab.props.children ?? [])
 +            .background(PagingScrollViewFinder(tracker: settle))
+             .publishZeroContentOrigin(tab.props.shadowNodeProxy)
          }
  #if !os(tvOS)
-         .badge(Self.badgeText(from: tab.props.modifiers))
-@@ -159,3 +165,84 @@ internal struct TabView: ExpoSwiftUI.View {
+@@ -161,3 +167,84 @@ internal struct TabView: ExpoSwiftUI.View {
      return nil
    }
  }
@@ -686,194 +784,3 @@ index 94eb3eb83d6c19d5ff9ff58057e6e38c862357b9..efcb138bbd5e26b999ea5b1805fe6218
 +    }
 +  }
 +}
-diff --git a/src/swift-ui/ContentUnavailableView/index.tsx b/src/swift-ui/ContentUnavailableView/index.tsx
-index 43ef5c6c6f5c8794d5917276d332d1c9f455298b..f232a240b0c960d073f0fd5a736c4803049cd5f8 100644
---- a/src/swift-ui/ContentUnavailableView/index.tsx
-+++ b/src/swift-ui/ContentUnavailableView/index.tsx
-@@ -1,6 +1,7 @@
- import { requireNativeView } from 'expo';
- import { type SFSymbol } from 'sf-symbols-typescript';
- 
-+import { Slot } from '../SlotView';
- import { createViewModifierEventListener } from '../modifiers/utils';
- import { type CommonViewModifierProps } from '../types';
- 
-@@ -19,15 +20,23 @@ export interface ContentUnavailableViewProps extends CommonViewModifierProps {
-    * Description of why the content is not available.
-    */
-   description?: string;
-+
-+  /**
-+   * Controls the user can act on, drawn under the description -- typically a
-+   * single button that retries.
-+   */
-+  actions?: React.ReactNode;
- }
- 
--const ContentUnavailableViewNativeView: React.ComponentType<ContentUnavailableViewProps> =
-+const ContentUnavailableViewNativeView: React.ComponentType<
-+  Omit<ContentUnavailableViewProps, 'actions'> & { children?: React.ReactNode }
-+> =
-   requireNativeView('ExpoUI', 'ContentUnavailableView');
- 
- function transformContentUnavailableViewProps(
-   props: ContentUnavailableViewProps
--): ContentUnavailableViewProps {
--  const { modifiers, ...restProps } = props;
-+): Omit<ContentUnavailableViewProps, 'actions'> {
-+  const { modifiers, actions: _actions, ...restProps } = props;
-   return {
-     modifiers,
-     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
-@@ -41,5 +50,9 @@ function transformContentUnavailableViewProps(
-  * @platform tvos 17.0+
-  */
- export function ContentUnavailableView(props: ContentUnavailableViewProps) {
--  return <ContentUnavailableViewNativeView {...transformContentUnavailableViewProps(props)} />;
-+  return (
-+    <ContentUnavailableViewNativeView {...transformContentUnavailableViewProps(props)}>
-+      {props.actions ? <Slot name="actions">{props.actions}</Slot> : null}
-+    </ContentUnavailableViewNativeView>
-+  );
- }
-diff --git a/src/swift-ui/HangingText/index.tsx b/src/swift-ui/HangingText/index.tsx
-new file mode 100644
-index 0000000000000000000000000000000000000000..bfba4b327a1542d05ceabe0c74041e40c4cd3913
---- /dev/null
-+++ b/src/swift-ui/HangingText/index.tsx
-@@ -0,0 +1,61 @@
-+import { requireNativeView } from 'expo';
-+import type { ColorValue } from 'react-native';
-+
-+import { createViewModifierEventListener } from '../modifiers/utils';
-+import { type CommonViewModifierProps } from '../types';
-+
-+/**
-+ * `HangingText` is drawn by UIKit, so SwiftUI `font` and `foregroundStyle`
-+ * modifiers do not reach its text: its own `serif`, `color`, `linkColor` and
-+ * `lineSpacing` props set it. Layout modifiers such as `padding` still apply.
-+ */
-+export interface HangingTextProps extends CommonViewModifierProps {
-+  /**
-+   * Inline Markdown: emphasis, strong emphasis and links.
-+   */
-+  children: string;
-+  /**
-+   * How far wrapped continuation lines sit past the first line, in points.
-+   */
-+  hangingIndent: number;
-+  /**
-+   * Extra space between wrapped lines, in points.
-+   */
-+  lineSpacing?: number;
-+  /**
-+   * The text colour.
-+   */
-+  color?: ColorValue;
-+  /**
-+   * The colour of a link's text.
-+   */
-+  linkColor?: ColorValue;
-+  /**
-+   * Sets the body text style in the serif design rather than the system face.
-+   */
-+  serif?: boolean;
-+}
-+
-+type NativeHangingTextProps = Omit<HangingTextProps, 'children'> & { text: string };
-+
-+const HangingTextNativeView: React.ComponentType<NativeHangingTextProps> = requireNativeView(
-+  'ExpoUI',
-+  'HangingTextView'
-+);
-+
-+/**
-+ * Body text whose wrapped lines sit `hangingIndent` points past its first
-+ * line, drawn by a read-only `UITextView` with a paragraph style, which
-+ * SwiftUI's `Text` does not have. It follows Dynamic Type, and its links open
-+ * when tapped.
-+ */
-+export function HangingText({ children, modifiers, ...props }: HangingTextProps) {
-+  return (
-+    <HangingTextNativeView
-+      text={children}
-+      modifiers={modifiers}
-+      {...(modifiers ? createViewModifierEventListener(modifiers) : undefined)}
-+      {...props}
-+    />
-+  );
-+}
-diff --git a/src/swift-ui/RNHostView.tsx b/src/swift-ui/RNHostView.tsx
-index ac281cc21c6e8afe6cfb237d6dc44068555f0805..de71759219ac846a8fdb30d7488abc4f09c5ec5b 100644
---- a/src/swift-ui/RNHostView.tsx
-+++ b/src/swift-ui/RNHostView.tsx
-@@ -32,7 +32,8 @@ export function RNHostView(props: RNHostViewProps) {
-     <RNHostNativeView
-       {...props}
-       layoutRoot={layoutRoot}
--      expoInternalSizeFromChildren={props.matchContents}
-+      // expoInternalSizeFromChildren is left off: with it set, ExpoViewShadowNode
-+      // measures the hosted content with no width limit (expo/expo#50216).
-       // `matchContents` can only be used once on mount
-       // So we force unmount when it changes to prevent unexpected layout
-       key={props.matchContents ? 'matchContents' : 'noMatchContents'}>
-diff --git a/src/swift-ui/TabView/index.tsx b/src/swift-ui/TabView/index.tsx
-index 4bcf654e5230d318362658dd3023d0d6b690225e..78d2c1abdd395a302cddc8bf814e84242e3fd5be 100644
---- a/src/swift-ui/TabView/index.tsx
-+++ b/src/swift-ui/TabView/index.tsx
-@@ -20,14 +20,22 @@ export interface TabViewProps extends CommonViewModifierProps {
-    * Called when the selected tab changes.
-    */
-   onSelectionChange?: (selection: string) => void;
-+  /**
-+   * Called when a page-style pager comes to rest on a page, with the selected
-+   * tab. A swipe reports its new selection while the page is still snapping
-+   * into place; changing the set of pages before this fires can leave the
-+   * pager stopped between two of them.
-+   */
-+  onPageSettle?: (selection: string) => void;
-   /**
-    * `<TabView.Tab>` elements defining the pages.
-    */
-   children: React.ReactElement | React.ReactElement[];
- }
- 
--type NativeTabViewProps = Omit<TabViewProps, 'onSelectionChange'> &
--  ViewEvent<'onSelectionChange', { selection: string }>;
-+type NativeTabViewProps = Omit<TabViewProps, 'onSelectionChange' | 'onPageSettle'> &
-+  ViewEvent<'onSelectionChange', { selection: string }> &
-+  ViewEvent<'onPageSettle', { selection: string }>;
- 
- const TabViewNativeView: React.ComponentType<NativeTabViewProps> = requireNativeView(
-   'ExpoUI',
-@@ -35,7 +43,7 @@ const TabViewNativeView: React.ComponentType<NativeTabViewProps> = requireNative
- );
- 
- function TabView(props: TabViewProps) {
--  const { modifiers, onSelectionChange, ...restProps } = props;
-+  const { modifiers, onSelectionChange, onPageSettle, ...restProps } = props;
-   return (
-     <TabViewNativeView
-       modifiers={modifiers}
-@@ -46,6 +54,9 @@ function TabView(props: TabViewProps) {
-           ? ({ nativeEvent: { selection } }) => onSelectionChange(selection)
-           : undefined
-       }
-+      onPageSettle={
-+        onPageSettle ? ({ nativeEvent: { selection } }) => onPageSettle(selection) : undefined
-+      }
-     />
-   );
- }
-diff --git a/src/swift-ui/index.tsx b/src/swift-ui/index.tsx
-index e140acc24c4cef2a59c280619525cdad0cbf8df2..efd04eb6d1a66af78331ec6516cb368cc2316e5d 100644
---- a/src/swift-ui/index.tsx
-+++ b/src/swift-ui/index.tsx
-@@ -10,6 +10,7 @@ export * from './ControlGroup';
- export * from './ContextMenu';
- export * from './DatePicker';
- export * from './Divider';
-+export * from './HangingText';
- export * from './DisclosureGroup';
- export * from './Form';
- export * from './Gauge';

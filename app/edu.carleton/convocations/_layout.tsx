@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {NativeTabs} from 'expo-router/unstable-native-tabs'
+import {NativeTabs} from 'expo-router/native-tabs'
 
 export default function CarletonConvosLayout(): React.ReactNode {
 	return (

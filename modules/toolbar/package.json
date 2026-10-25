@@ -14,6 +14,6 @@
   "peerDependencies": {
     "react": "catalog:",
     "react-native": "catalog:",
-    "react-native-safe-area-context": "^5.7.0"
+    "react-native-safe-area-context": "^5.10.1"
   }
 }

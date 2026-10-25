@@ -13,8 +13,10 @@ const NUMBER = '+15072224127'
 const CANNOT_CALL = "Apologies, we couldn't call that number"
 
 describe('callPhone', () => {
+	let alert: jest.SpiedFunction<typeof Alert.alert>
+
 	beforeEach(() => {
-		jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
 	})
 
 	afterEach(() => {
@@ -49,7 +51,7 @@ describe('callPhone', () => {
 		await settle()
 
 		expect(openUrl).toHaveBeenCalledWith(`tel:${NUMBER}`)
-		expect(Alert.alert).toHaveBeenCalledTimes(1)
+		expect(alert).toHaveBeenCalledTimes(1)
 	})
 
 	test('does nothing when the prompt is cancelled', async () => {
@@ -67,7 +69,7 @@ describe('callPhone', () => {
 		callPhone(NUMBER, {prompt: false})
 		await settle()
 
-		expect(Alert.alert).not.toHaveBeenCalled()
+		expect(alert).not.toHaveBeenCalled()
 		expect(openUrl).toHaveBeenCalledWith(`tel:${NUMBER}`)
 	})
 })

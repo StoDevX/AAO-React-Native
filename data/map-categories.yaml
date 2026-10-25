@@ -24,6 +24,10 @@ stolaf:
       categories: [parking, campus-parking, accessible-parking, visitor-parking, admissions-parking]
       icon: parkingsign
       gradient: light-blue
+    - label: Bike Racks
+      categories: [bike-rack]
+      icon: bicycle
+      gradient: pink
     - label: Landmarks
       categories: [landmark, memorial]
       icon: building.columns.fill
@@ -32,6 +36,10 @@ stolaf:
       categories: [bookstore, student-center, visitor-center, visitor-information, ev-charging]
       icon: info.circle.fill
       gradient: purple
+    - label: Emergency Services
+      categories: [emergency-services]
+      icon: cross.case.fill
+      gradient: yellow
     - label: Athletics
       categories: [athletics, field]
       icon: figure.run
@@ -55,6 +63,10 @@ stolaf:
     - {categories: [athletics, field], icon: figure.run, gradient: red}
     - {categories: [accessible-parking], icon: figure.roll, gradient: light-blue}
     - {categories: [parking], icon: parkingsign, gradient: light-blue}
+    - {categories: [bike-rack], icon: bicycle, gradient: pink}
+    - {categories: [aed], icon: bolt.heart.fill, gradient: yellow}
+    - {categories: [assembly-point], icon: figure.2.arms.open, gradient: yellow}
+    - {categories: [naloxone], icon: cross.case.fill, gradient: yellow}
     - {categories: [dining], icon: fork.knife, gradient: orange}
     - {categories: [residence-hall, housing], icon: bed.double.fill, gradient: indigo}
     - {categories: [academic], icon: graduationcap.fill, gradient: gold}

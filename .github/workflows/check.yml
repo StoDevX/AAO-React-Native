@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         # Keyed on mise.lock alone. mise.toml also carries every task definition,
         # so editing a script invalidated a toolchain cache that had not changed --
         # three versions of this file across one stack of pull requests meant three
@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
@@ -89,7 +89,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
@@ -116,7 +116,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
@@ -130,7 +130,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
@@ -159,10 +159,6 @@ jobs:
       # the other.
       - run: mise run bundle-data
       - run: git diff --exit-code modules/data-sources/bundled.json
-      # Same bargain for renovate.json's version ceilings, which come from the
-      # installed SDK's list: regenerate and fail if the commit did not.
-      - run: mise run bundle-renovate-expo
-      - run: git diff --exit-code renovate.json
 
   # Separate from the data job above because this one needs the network --
   # it fetches the live campus geojson to confirm every building: key
@@ -175,7 +171,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile

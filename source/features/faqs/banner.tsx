@@ -22,7 +22,6 @@ import {useQuery} from '@tanstack/react-query'
 import {getFaqVersion, useFaqBannerStore} from './store'
 import {useDevBannerStore} from './dev-banner-store'
 import type {Faq, FaqTarget, FaqSeverity} from './types'
-import {FILL_WIDTH} from '../../components/tile-layout'
 
 /** Shared helper to find a matching dev banner by faqId or target */
 export function findDevBanner(
@@ -230,7 +229,7 @@ export function FaqBannerSlot(props: SlotProps): React.ReactNode {
 	}, [])
 
 	return (
-		<VStack modifiers={[frame({maxWidth: FILL_WIDTH, height})]}>
+		<VStack modifiers={[frame({height})]}>
 			<RNHostView matchContents={false}>
 				<View onLayout={onLayout} style={styles.slot}>
 					<FaqBannerGroup {...props} />

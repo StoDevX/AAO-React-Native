@@ -10,6 +10,7 @@ import {Stack, useRouter} from 'expo-router'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {useCampusSection} from '../../source/features/campus/store'
 import {openEmail} from '../../source/features/support/open-email'
+import {FEATURE_REQUESTS} from '../../source/lib/app-identity'
 import {GH_BASE_URL} from '../../source/lib/constants'
 
 const OSM_URL = 'https://www.openstreetmap.org/'
@@ -47,6 +48,12 @@ export default function ContributingPage(): React.ReactNode {
 							onPress={() => router.navigate('/report-problem')}
 							title="Report a Problem"
 						/>
+						{FEATURE_REQUESTS ? (
+							<NavigationRow
+								onPress={() => router.navigate('/feature-requests')}
+								title="Feature Requests"
+							/>
+						) : null}
 					</SheetSection>
 
 					<SheetSection title="Other questions?">

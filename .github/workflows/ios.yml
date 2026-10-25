@@ -55,7 +55,7 @@ jobs:
           restore-keys: |
             jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json') }}
 
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -182,7 +182,7 @@ jobs:
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
 
@@ -425,7 +425,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           # -node: this job only runs scripts.
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
@@ -500,7 +500,7 @@ jobs:
 
       # Only node: the scripts below need nothing else, and installing every
       # tool would cost each shard more than it saves.
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
           install_args: node
@@ -546,15 +546,23 @@ jobs:
         id: simulator-device
         run: |
           set -o pipefail
-          # Pick the latest installed iOS runtime on the runner. IPHONEOS_DEPLOYMENT_TARGET
-          # is the minimum we support, not what's actually installed, and the two have
-          # never matched — so resolve the destination from the runner rather than
-          # hardcoding a version the image may not ship.
-          # `simctl list runtimes` reports the full version (e.g. 27.0.1), but `simctl list
-          # devices` keys runtimes as iOS-<major>-<minor> only, so strip the patch component.
-          OS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | map(select(.isAvailable != false)) | sort_by(.version) | last | .version | split(".") | .[0:2] | join(".")')
-          echo "type=iPhone 17e" | tee -a "$GITHUB_OUTPUT"
-          echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
+          # Pick the latest installed iOS runtime that has the device we test on.
+          # IPHONEOS_DEPLOYMENT_TARGET is the minimum we support, not what's actually
+          # installed, and the two have never matched, so resolve the destination from
+          # the runner rather than hardcoding a version the image may not ship. The
+          # newest runtime is not enough: an image can ship one (iOS 27.1) whose only
+          # device is an iPhone Duo, with every other device on the runtime before it.
+          # `simctl list devices` keys runtimes as ...SimRuntime.iOS-<major>-<minor>.
+          SIMULATOR_TYPE="iPhone 17e"
+          OS_VERSION=$(xcrun simctl list devices iOS -j | jq -er --arg type "$SIMULATOR_TYPE" '
+            .devices | to_entries
+            | map(select(.key | test("SimRuntime\\.iOS-"))
+              | select(any(.value[]; .name == $type and .isAvailable != false))
+              | .key | sub(".*iOS-"; ""))
+            | sort_by(split("-") | map(tonumber))
+            | last')
+          echo "type=$SIMULATOR_TYPE" | tee -a "$GITHUB_OUTPUT"
+          echo "os=$OS_VERSION" | tee -a "$GITHUB_OUTPUT"
 
       - name: List available simulators
         id: devices
@@ -864,7 +872,7 @@ jobs:
           # A pull request's merge commit and its first parent, the master
           # commit it was based on.
           fetch-depth: 2
-      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
         with:
           # -node: this job only runs a script, as pr-report.yml's report job.
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}

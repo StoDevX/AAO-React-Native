@@ -1,4 +1,4 @@
-import {Share, ShareAction} from 'react-native'
+import {Share} from 'react-native'
 
 import type {EventType} from '@frogpond/event-type'
 import {formatDate} from '@frogpond/time-format'
@@ -9,7 +9,9 @@ import {detailTimes} from './times'
 // somewhere a test that cannot load react-native can still reach it.
 export {dedupeKey, eventKey} from './keys'
 
-export function shareEvent(event: EventType): Promise<ShareAction | void> {
+export function shareEvent(
+	event: EventType,
+): Promise<Awaited<ReturnType<typeof Share.share>> | void> {
 	let title = event.title
 	let times = getTimes(event)
 	let location = event.location
