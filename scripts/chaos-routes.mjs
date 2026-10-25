@@ -9,8 +9,11 @@ import {fileURLToPath} from 'node:url'
 const APP_DIR = new URL('../app/', import.meta.url)
 const OUTPUT = new URL('../uitests/Chaos/ChaosRoutes.swift', import.meta.url)
 
-/** Routes the monkey should not open: the canaries' own screens. */
-const SKIPPED = new Set(['chaos-crash', 'chaos-canary-targets'])
+/**
+ * Routes the monkey should not open: the canaries' own screens, and the
+ * feature request board, whose votes and submissions go to a live service.
+ */
+const SKIPPED = new Set(['chaos-crash', 'chaos-canary-targets', 'feature-requests'])
 
 /** Route prefixes the monkey should not open: internal tools no one outside the team sees. */
 const SKIPPED_PREFIXES = ['developer']

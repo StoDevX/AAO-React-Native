@@ -71,6 +71,12 @@ const AAA_SENTRY = {
  * `defaultCampus` is the campus a fresh install opens on; any build can switch
  * in dev mode.
  *
+ * `signalApiKey` is the app's Kickstart Signal key, or null for an app without
+ * a feature request board. Signal verifies each key against the bundle
+ * identifier it was registered for, so a variant takes its own: a `-dev` build
+ * has none until its identifier is registered too. Like a Sentry DSN it ships
+ * in the binary and isn't secret.
+ *
  * Defined inline rather than imported from a helper: Expo's config loader
  * compiles this file on its own, so `import {x} from './somewhere'` throws
  * `Cannot find module` at prebuild time. See __tests__/app.config.test.ts.
@@ -85,6 +91,7 @@ const VARIANTS = {
 		icon: AAO_ICON,
 		primaryIcon: 'windmill',
 		sentry: AAO_SENTRY,
+		signalApiKey: 'ks_live_sOB_c_zZAfsH8dG6CvSS51TYwEpcx-6vmd_SmUrltos',
 	},
 	'aao-dev': {
 		app: 'aao',
@@ -95,6 +102,7 @@ const VARIANTS = {
 		icon: AAO_ICON,
 		primaryIcon: 'windmill',
 		sentry: AAO_SENTRY,
+		signalApiKey: null,
 	},
 	carls: {
 		app: 'carls',
@@ -106,6 +114,7 @@ const VARIANTS = {
 		icon: CARLS_ICON,
 		primaryIcon: 'carls-penguin',
 		sentry: CARLS_SENTRY,
+		signalApiKey: null,
 	},
 	'carls-dev': {
 		app: 'carls',
@@ -116,6 +125,7 @@ const VARIANTS = {
 		icon: CARLS_ICON,
 		primaryIcon: 'carls-penguin',
 		sentry: CARLS_SENTRY,
+		signalApiKey: null,
 	},
 	aaa: {
 		app: 'aaa',
@@ -126,6 +136,7 @@ const VARIANTS = {
 		icon: AAA_ICON,
 		primaryIcon: 'windmill-sky',
 		sentry: AAA_SENTRY,
+		signalApiKey: null,
 	},
 	'aaa-dev': {
 		app: 'aaa',
@@ -136,6 +147,7 @@ const VARIANTS = {
 		icon: AAA_ICON,
 		primaryIcon: 'windmill-sky',
 		sentry: AAA_SENTRY,
+		signalApiKey: null,
 	},
 } as const
 
@@ -376,6 +388,7 @@ const config: ExpoConfig = {
 		defaultCampus: variant.defaultCampus,
 		primaryIcon: variant.primaryIcon,
 		sentry: {dsn: variant.sentry.dsn},
+		featureRequests: variant.signalApiKey !== null,
 	},
 
 	plugins: [
@@ -449,6 +462,8 @@ const config: ExpoConfig = {
 		'./plugins/with-app-delegate-customizations',
 		// DebugSwift, in Debug builds only; Release never links it.
 		'./plugins/with-debug-swift',
+		// Anonymous feature requests, through KickstartSignal's board, in the apps with a key.
+		['./plugins/with-kickstart-sdk', {apiKey: variant.signalApiKey}],
 		// Every variant bundles every icon but its primary; the campus decides which Customize offers.
 		['./plugins/with-alternate-icons', {primary: variant.primaryIcon}],
 		'./plugins/with-custom-symbols',
