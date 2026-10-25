@@ -21,9 +21,13 @@ type RadioStore = {
 	sheetOpen: boolean
 	/** Whether the full schedule is stacked over the Now Playing sheet. */
 	fullScheduleOpen: boolean
+	/** Whether the radio's dev settings are stacked over the Now Playing sheet. */
+	devSettingsOpen: boolean
 
 	/** Whether Home's Now Playing bar shows while nothing is loaded. Persisted. */
 	showOnHome: boolean
+	/** Whether the sheet opens on captions, which runs the caption engine. Kept until the app quits. */
+	captionsOn: boolean
 	/** The logo each station last showed, by its place in the station's logos. Persisted. */
 	logoIndexes: Partial<Record<StationId, number>>
 	/** Whether the saved preferences have been read, or could not be. */
@@ -56,6 +60,9 @@ type RadioStore = {
 	/** Stacks the viewed station's full schedule over the sheet. */
 	openFullSchedule: () => void
 	closeFullSchedule: () => void
+	/** Stacks the radio's dev settings over the sheet. */
+	openDevSettings: () => void
+	closeDevSettings: () => void
 	/** Shows `stationId` in the sheet without touching playback. */
 	browse: (stationId: StationId) => void
 
@@ -64,10 +71,12 @@ type RadioStore = {
 
 	/** Turning it off also stops the radio. */
 	setShowOnHome: (on: boolean) => void
+	/** Selects the captions panel in the sheet, and keeps the choice across launches. */
+	setCaptionsOn: (on: boolean) => void
 }
 
 /** Whether the station is starting or playing, which is when Pause has something to do. */
-function isRunning(playState: RadioPlayState): boolean {
+export function isRunning(playState: RadioPlayState): boolean {
 	return playState === 'starting' || playState === 'playing'
 }
 
@@ -99,7 +108,9 @@ export const useRadioStore = create<RadioStore>()(
 				viewedStationId: STATION_LIST[0].id,
 				sheetOpen: false,
 				fullScheduleOpen: false,
+				devSettingsOpen: false,
 				showOnHome: true,
+				captionsOn: false,
 				logoIndexes: {},
 				hydrated: false,
 
@@ -140,9 +151,11 @@ export const useRadioStore = create<RadioStore>()(
 						sheetOpen: true,
 						viewedStationId: stationId ?? state.stationId ?? offeredOrFirst(state.viewedStationId),
 					})),
-				closeSheet: () => set({sheetOpen: false, fullScheduleOpen: false}),
+				closeSheet: () => set({sheetOpen: false, fullScheduleOpen: false, devSettingsOpen: false}),
 				openFullSchedule: () => set({fullScheduleOpen: true}),
 				closeFullSchedule: () => set({fullScheduleOpen: false}),
+				openDevSettings: () => set({devSettingsOpen: true}),
+				closeDevSettings: () => set({devSettingsOpen: false}),
 				browse: (stationId) => set({viewedStationId: stationId}),
 
 				setLogoIndex: (stationId, index) =>
@@ -152,6 +165,8 @@ export const useRadioStore = create<RadioStore>()(
 					set({showOnHome: on})
 					if (!on) get().stop()
 				},
+				/** Selects the captions panel in the sheet, and keeps the choice across launches. */
+				setCaptionsOn: (on) => set({captionsOn: on}),
 			}
 		},
 		{

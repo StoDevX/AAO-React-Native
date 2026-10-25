@@ -1,16 +1,22 @@
 import * as React from 'react'
-import {Button, Host, Image, Menu} from '@expo/ui/swift-ui'
+import {Button, Divider, Host, Image, Menu} from '@expo/ui/swift-ui'
 import {accessibilityLabel, frame} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 
+import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {track} from '../../../telemetry/track'
 import type {Station} from '../stations'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
 
-/** Full Schedule and Open Website, behind the title's ••• button. */
+/**
+ * Full Schedule and Open Website, behind the title's ••• button; in dev mode
+ * also the radio's dev settings, below a divider.
+ */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
 	let openFullSchedule = useRadioStore((state) => state.openFullSchedule)
+	let openDevSettings = useRadioStore((state) => state.openDevSettings)
+	let isDev = useIsDevMode()
 	return (
 		<Host matchContents={true}>
 			<Menu
@@ -41,6 +47,14 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 					}}
 					systemImage="safari"
 				/>
+				{isDev ? <Divider /> : null}
+				{isDev ? (
+					<Button
+						label="Dev Settings"
+						onPress={openDevSettings}
+						systemImage="slider.horizontal.3"
+					/>
+				) : null}
 			</Menu>
 		</Host>
 	)

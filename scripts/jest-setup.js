@@ -137,6 +137,19 @@ jest.mock('@frogpond/debug-tools', () => ({
 	openDebugSwift: jest.fn(() => Promise.resolve()),
 	setFloatingButtonEnabled: jest.fn(() => Promise.resolve()),
 }))
+// Captions are made by a native module Jest does not have.
+jest.mock('@frogpond/radio-captions', () => ({
+	startCaptions: jest.fn(() => Promise.resolve()),
+	stopCaptions: jest.fn(),
+	captionStyle: jest.fn(() => ({
+		foreground: '#FFFFFFFF',
+		background: '#000000CC',
+		fontFamily: null,
+		fontScale: 1,
+	})),
+	addCaptionListener: jest.fn(() => jest.fn()),
+	addCaptionStateListener: jest.fn(() => jest.fn()),
+}))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({
 	setQuickActions: jest.fn(() => Promise.resolve()),

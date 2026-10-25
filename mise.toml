@@ -379,6 +379,11 @@ description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
 run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "scripts/pr-report/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts" "modules/schedules/*.test.ts"'
 
+[tasks."test:swift"]
+description = "Run the radio caption engine's Swift tests on the Mac"
+dir = "modules/radio-captions"
+run = "swift test"
+
 [tasks."test:claude-mods"]
 description = "Run the Claude Code mods' tests"
 # CI has no claude CLI, so there the task passes without running anything.
