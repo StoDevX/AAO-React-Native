@@ -130,10 +130,10 @@ backend = "npm:@changesets/cli"
 specifiers = ["3.0.3"]
 
 [[tools."npm:flakiness"]]
-version = "0.312.0"
-aube = { path = ".mise/locks/npm-flakiness/0.312.0~da344f14", digest = "sha256:cfa83e52e74e600efe1353c284a6f29197bbbc113119fa0f14808c0bf1fff03f" }
+version = "0.318.0"
+aube = { path = ".mise/locks/npm-flakiness/0.318.0~da344f14", digest = "sha256:8b5bc291b7e7754d0e4a51b6409cd19940eec3dbcfb46168ae20b92138d634e0" }
 backend = "npm:flakiness"
-specifiers = ["0.312.0"]
+specifiers = ["0.318.0"]
 
 [tools."npm:flakiness".options]
 allow_low_downloads = "true"
