@@ -91,6 +91,8 @@ minimumReleaseAgeExclude:
   - '@expo/ui@58.0.20'
   # Renovate security update: zod@4.6.6
   - zod@4.6.6
+  # Renovate security update: fast-uri@4.2.3
+  - fast-uri@4.2.3
 
 catalog:
   js-yaml: '5.5.0'
@@ -150,7 +152,7 @@ overrides:
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
-  'fast-uri@3.1': '4.2.1'
+  'fast-uri@3.1': '4.2.3'
   # js-yaml@3.14.2 (via @istanbuljs/load-nyc-config, Jest's coverage
   # instrumentation): quadratic-CPU merge-key bug (GHSA-52cp-r559-cp3m) and
   # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within
