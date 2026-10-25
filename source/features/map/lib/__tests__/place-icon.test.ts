@@ -44,8 +44,8 @@ describe('placeIcon', () => {
 })
 
 /// Every combination of categories St. Olaf's feed carried on 2026-09-30, plus
-/// the bike racks it gained on 2026-10-24, and the icon the bundled list gives
-/// each. Pins the list's order: a reorder that
+/// the bike racks and emergency services it gained in October 2026, and the
+/// icon the bundled list gives each. Pins the list's order: a reorder that
 /// turned the ponds into trees, or the fields into buildings, fails here.
 const STOLAF_COMBINATIONS: Array<[string[], string]> = [
 	[['parking', 'campus-parking'], 'parkingsign'],
@@ -70,6 +70,9 @@ const STOLAF_COMBINATIONS: Array<[string[], string]> = [
 	[['point-of-interest', 'visitor-information'], 'info.circle.fill'],
 	[['point-of-interest', 'landmark'], 'building.columns.fill'],
 	[['bike-rack'], 'bicycle'],
+	[['emergency-services', 'aed'], 'bolt.heart.fill'],
+	[['emergency-services', 'assembly-point'], 'figure.2.arms.open'],
+	[['emergency-services', 'naloxone', 'fentanyl-test-strips'], 'cross.case.fill'],
 ]
 
 /// The same for Carleton's feed on 2026-09-30.
@@ -99,6 +102,12 @@ const CARLETON_COMBINATIONS: Array<[string[], string]> = [
 ]
 
 describe('the bundled St. Olaf grid', () => {
+	test('gathers the AEDs, naloxone kits and assembly points in one tile', () => {
+		expect(
+			BUNDLED.stolaf.groups.find((group) => group.label === 'Emergency Services'),
+		).toMatchObject({categories: ['emergency-services']})
+	})
+
 	test('gives the bike racks a tile of their own', () => {
 		expect(BUNDLED.stolaf.groups.find((group) => group.label === 'Bike Racks')).toMatchObject({
 			categories: ['bike-rack'],
