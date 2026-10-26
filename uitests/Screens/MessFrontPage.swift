@@ -126,6 +126,13 @@ struct MessFrontPage: Screen {
 		return MessIssueScreen(app: app)
 	}
 
+	/// The grid has its newest issue, so the paper's issues have loaded.
+	@discardableResult
+	func verifyNewestIssueShown() -> Self {
+		XCTAssertTrue(topTile.waitUntilExists(timeout: 30), "the front page should show the newest issue")
+		return self
+	}
+
 	/// The list of stories is up, as Back from a story should leave it.
 	@discardableResult
 	func verifyStoryListShown() -> Self {
