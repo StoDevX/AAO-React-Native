@@ -33,6 +33,39 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// From the open player, show today's schedule and then the full one.
+	@discardableResult
+	func openFullSchedule() -> Self {
+		let ids = TestIdentifiers.StreamingMedia.self
+		let link = app.element(matching: ids.fullScheduleLink)
+		tap(app.buttonLabelled(ids.todaysSchedule), until: link, named: "Today's schedule")
+		tap(link, until: app.element(matching: ids.kmnkShowBell), named: "the Full Schedule link")
+		return self
+	}
+
+	/// Tap the show's bell, and check the app's own sheet asks first: iOS's
+	/// permission dialog must not be the first thing a follow shows.
+	@discardableResult
+	func followShowExpectingReminderSheet() -> Self {
+		let ids = TestIdentifiers.StreamingMedia.self
+		let title = app.elementWithLabel(startingWith: ids.reminderSheetTitle)
+		tap(app.element(matching: ids.kmnkShowBell), until: title, named: "\(ids.kmnkShow)'s bell")
+		let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		XCTAssertFalse(springboard.alerts.firstMatch.exists, "iOS should not ask before the app's sheet does")
+		return self
+	}
+
+	/// Decline the reminder sheet, and check the show stays followed.
+	@discardableResult
+	func declineReminderSheetKeepingFollow() -> Self {
+		let ids = TestIdentifiers.StreamingMedia.self
+		let bell = app.element(matching: ids.kmnkShowBell)
+		app.buttonLabelled(ids.reminderSheetNotNow).tap()
+		checkGone(app.elementWithLabel(startingWith: ids.reminderSheetTitle), named: "The reminder sheet")
+		XCTAssertTrue(bell.waitForLabel(ids.followingLabel, timeout: 10), "\(ids.kmnkShow) should still be followed")
+		return self
+	}
+
 	/// Swipe the sheet away, and check the bar beneath shows `label`.
 	@discardableResult
 	func closeSheet(expectingBar label: String) -> Self {

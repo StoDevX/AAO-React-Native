@@ -33,6 +33,17 @@ class ModuleStreamingMediaTests: UITestCase {
 			.checkShows(ids.idleBar)
 	}
 
+	/// Following a show raises the app's own sheet, explaining reminders,
+	/// before iOS asks anything; Not Now keeps the follow and asks nothing.
+	func testFollowingAShowAsksInTheAppFirst() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		StreamingMediaScreen(app: app)
+			.openSheetFromBar(expecting: ids.playKmnk)
+			.openFullSchedule()
+			.followShowExpectingReminderSheet()
+			.declineReminderSheetKeepingFollow()
+	}
+
 	/// A drag across the record turns it, leaving the logo as it was: the
 	/// scrub must not count as a tap on the logo. Whether the sheet also
 	/// moves is UIKit's, and only a device shows it: a synthetic drag never

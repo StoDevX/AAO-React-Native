@@ -566,6 +566,18 @@ struct TestIdentifiers {
 		/// The logo KMNK shows first, before any tap moves it on: the station's
 		/// name, then the logo's.
 		static let kmnkFirstLogo = "KMNK 91.7, The Peak logo, KMNK 91.7, The Peak"
+		/// The player's button that shows today's schedule in the record's place.
+		static let todaysSchedule = "Today's schedule"
+		/// The link below the player's schedule, in player-view/schedule-list.tsx.
+		static let fullScheduleLink = "radio-full-schedule-link"
+		/// A KMNK show in the fixture's schedule after the frozen time, and its
+		/// bell's identifier and labels, from reminders/follow-controls.tsx.
+		static let kmnkShow = "Late Lift"
+		static let kmnkShowBell = "radio-schedule-bell-Late Lift"
+		static let followingLabel = "Stop reminding me about Late Lift"
+		/// The permission sheet's title and its decline, from reminders/permission-sheet.tsx.
+		static let reminderSheetTitle = "Get Show Reminders"
+		static let reminderSheetNotNow = "Not Now"
 	}
 
 	// MARK: - Quick Actions
