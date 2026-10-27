@@ -120,6 +120,13 @@ export type TelemetryEvent =
 	  }
 	// A published stream failed before any audio, and the shipped one was tried instead.
 	| {name: 'radio.stream.fallback'; attributes: {station: StationId}}
+	| {name: 'radio.reminder.follow'; attributes: {station: StationId}}
+	| {name: 'radio.reminder.unfollow'; attributes: {station: StationId}}
+	// What the person did with the sheet asking for notifications.
+	| {
+			name: 'radio.reminder.permission'
+			attributes: {outcome: 'granted' | 'denied' | 'not_now' | 'settings'}
+	  }
 	| {
 			name: 'api.failure'
 			attributes: {
@@ -153,6 +160,9 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'radio.play.error': 'metric',
 	'radio.play.failure': 'log',
 	'radio.stream.fallback': 'metric',
+	'radio.reminder.follow': 'metric',
+	'radio.reminder.unfollow': 'metric',
+	'radio.reminder.permission': 'metric',
 	'api.failure': 'log',
 }
 
