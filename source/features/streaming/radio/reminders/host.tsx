@@ -33,7 +33,13 @@ function openReminder(response: Notifications.NotificationResponse | null): void
  * Mounted once, beside the radio's host.
  */
 export function ShowRemindersHost(): null {
+	// Until the saved follows have loaded, a sync would read none and cancel
+	// every reminder, and a tapped reminder's station would be overwritten.
+	let hydrated = useRadioStore((state) => state.hydrated)
 	React.useEffect(() => {
+		if (!hydrated) {
+			return
+		}
 		Notifications.setNotificationHandler({
 			handleNotification: (notification) => {
 				let shown = shouldPresentReminder(
@@ -77,6 +83,6 @@ export function ShowRemindersHost(): null {
 			follows()
 			schedules()
 		}
-	}, [])
+	}, [hydrated])
 	return null
 }

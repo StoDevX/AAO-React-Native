@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
+import {Host} from '@expo/ui/swift-ui'
 import type {EventType} from '@frogpond/event-type'
 import {TouchClaimView} from '@frogpond/touch-claim'
 
@@ -111,12 +112,15 @@ export function FullLayout({
 			</View>
 			<VolumeSlider />
 			<StationActionRow onShowSchedule={onToggleSchedule} station={station} />
-			<ScheduleEventSheet
-				event={show}
-				isPresented={showOpen}
-				onClose={() => setShowOpen(false)}
-				station={station}
-			/>
+			{/* A SwiftUI sheet, so it needs a host of its own in this React Native tree. */}
+			<Host pointerEvents="none" style={styles.sheetHost}>
+				<ScheduleEventSheet
+					event={show}
+					isPresented={showOpen}
+					onClose={() => setShowOpen(false)}
+					station={station}
+				/>
+			</Host>
 		</View>
 	)
 }
@@ -176,6 +180,8 @@ const styles = StyleSheet.create({
 		height: 6,
 		borderRadius: 3,
 	},
+	// Nothing to see or touch until the sheet is presented.
+	sheetHost: {position: 'absolute', width: 0, height: 0},
 	airStatusText: {
 		fontSize: 13,
 		fontWeight: '600',
