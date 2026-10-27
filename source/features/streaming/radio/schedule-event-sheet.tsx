@@ -27,6 +27,7 @@ import type {EventType} from '@frogpond/event-type'
 import {addToCalendarEvents} from '../../telemetry/calendar-events'
 import {track} from '../../telemetry/track'
 import {KRLX_POWERED_BY, KSTO_POWERED_BY} from './constants'
+import {FollowButton, ReminderPermissionSheet, useFollowToggle} from './reminders'
 import type {Station} from './stations'
 
 const HEADER_INSET = 20
@@ -47,6 +48,7 @@ export function ScheduleEventSheet({
 	onClose: () => void
 	station: Station
 }): React.ReactNode {
+	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle()
 	return (
 		<BottomSheet
 			isPresented={isPresented}
@@ -91,6 +93,7 @@ export function ScheduleEventSheet({
 								/>
 							</View>
 						</RNHostView>
+						<FollowButton onToggle={toggle} show={{stationId: station.id, title: event.title}} />
 						<AddToCalendar
 							compactMessages={true}
 							event={event}
@@ -117,6 +120,11 @@ export function ScheduleEventSheet({
 						/>
 					</VStack>
 				)}
+				<ReminderPermissionSheet
+					onClose={dismissPrompt}
+					onConfirm={confirmPrompt}
+					prompt={prompt}
+				/>
 			</Group>
 		</BottomSheet>
 	)

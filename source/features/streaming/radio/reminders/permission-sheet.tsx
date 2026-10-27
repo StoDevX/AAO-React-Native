@@ -33,21 +33,20 @@ const COPY: Record<ReminderPrompt, {title: string; body: string; action: string}
 	},
 }
 
+type Props = {
+	prompt: ReminderPrompt | null
+	onConfirm: () => void
+	onClose: () => void
+}
+
 /**
  * Asked after a follow while reminders cannot arrive, in the manner of a
  * What's New screen: what reminders are, and where the button goes next.
  * Each surface with a bell mounts its own, so it stacks over that surface's
- * sheet.
+ * sheet. This one goes inside a SwiftUI tree; `HostedReminderPermissionSheet`
+ * goes in a React Native one.
  */
-export function ReminderPermissionSheet({
-	prompt,
-	onConfirm,
-	onClose,
-}: {
-	prompt: ReminderPrompt | null
-	onConfirm: () => void
-	onClose: () => void
-}): React.ReactNode {
+export function ReminderPermissionSheet({prompt, onConfirm, onClose}: Props): React.ReactNode {
 	// Kept past its closing, so the words do not empty while the sheet slides away.
 	let [shown, setShown] = React.useState<ReminderPrompt>('ask')
 	if (prompt !== null && prompt !== shown) {
@@ -56,43 +55,50 @@ export function ReminderPermissionSheet({
 	let copy = COPY[shown]
 
 	return (
-		<Host pointerEvents="none" style={styles.host}>
-			<BottomSheet
-				isPresented={prompt !== null}
-				onIsPresentedChange={(presented) => {
-					if (!presented) {
-						onClose()
-					}
-				}}
-			>
-				<Group modifiers={[presentationDetents(['medium']), presentationDragIndicator('visible')]}>
-					<VStack
-						modifiers={[accessibilityIdentifier(PERMISSION_SHEET_ID), padding({all: 28})]}
-						spacing={16}
+		<BottomSheet
+			isPresented={prompt !== null}
+			onIsPresentedChange={(presented) => {
+				if (!presented) {
+					onClose()
+				}
+			}}
+		>
+			<Group modifiers={[presentationDetents(['medium']), presentationDragIndicator('visible')]}>
+				<VStack
+					modifiers={[accessibilityIdentifier(PERMISSION_SHEET_ID), padding({all: 28})]}
+					spacing={16}
+				>
+					<Image
+						modifiers={[font({size: 56}), foregroundStyle(c.systemBlue)]}
+						systemName="bell.badge"
+					/>
+					<Text modifiers={[font({textStyle: 'title', weight: 'bold'})]}>{copy.title}</Text>
+					<Text
+						modifiers={[
+							font({textStyle: 'body'}),
+							foregroundStyle(c.secondaryLabel),
+							multilineTextAlignment('center'),
+						]}
 					>
-						<Image
-							modifiers={[font({size: 56}), foregroundStyle(c.systemBlue)]}
-							systemName="bell.badge"
-						/>
-						<Text modifiers={[font({textStyle: 'title', weight: 'bold'})]}>{copy.title}</Text>
-						<Text
-							modifiers={[
-								font({textStyle: 'body'}),
-								foregroundStyle(c.secondaryLabel),
-								multilineTextAlignment('center'),
-							]}
-						>
-							{copy.body}
-						</Text>
-						<Button
-							label={copy.action}
-							modifiers={[buttonStyle('glassProminent'), controlSize('large')]}
-							onPress={onConfirm}
-						/>
-						<Button label="Not Now" modifiers={[buttonStyle('plain')]} onPress={onClose} />
-					</VStack>
-				</Group>
-			</BottomSheet>
+						{copy.body}
+					</Text>
+					<Button
+						label={copy.action}
+						modifiers={[buttonStyle('glassProminent'), controlSize('large')]}
+						onPress={onConfirm}
+					/>
+					<Button label="Not Now" modifiers={[buttonStyle('plain')]} onPress={onClose} />
+				</VStack>
+			</Group>
+		</BottomSheet>
+	)
+}
+
+/** `ReminderPermissionSheet`, for a React Native tree. */
+export function HostedReminderPermissionSheet(props: Props): React.ReactNode {
+	return (
+		<Host pointerEvents="none" style={styles.host}>
+			<ReminderPermissionSheet {...props} />
 		</Host>
 	)
 }
