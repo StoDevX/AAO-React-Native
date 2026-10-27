@@ -5,6 +5,13 @@ import {currentCampus} from '../../campus/store'
 import {STATION_LIST, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
+/** A show someone follows: reminded before each airing of `title` on `stationId`. */
+export type FollowedShow = {stationId: StationId; title: string}
+
+function isSameShow(a: FollowedShow, b: FollowedShow): boolean {
+	return a.stationId === b.stationId && a.title === b.title
+}
+
 type RadioStore = {
 	/** The station the player has loaded; null when nothing is loaded. */
 	stationId: StationId | null
@@ -26,6 +33,8 @@ type RadioStore = {
 	showOnHome: boolean
 	/** The logo each station last showed, by its place in the station's logos. Persisted. */
 	logoIndexes: Partial<Record<StationId, number>>
+	/** The shows reminded before each airing. Persisted. */
+	followedShows: FollowedShow[]
 	/** Whether the saved preferences have been read, or could not be. */
 	hydrated: boolean
 
@@ -64,6 +73,10 @@ type RadioStore = {
 
 	/** Turning it off also stops the radio. */
 	setShowOnHome: (on: boolean) => void
+
+	/** Follows `show`; following one already followed changes nothing. */
+	follow: (show: FollowedShow) => void
+	unfollow: (show: FollowedShow) => void
 }
 
 /** Whether the station is starting or playing, which is when Pause has something to do. */
@@ -73,8 +86,8 @@ function isRunning(playState: RadioPlayState): boolean {
 
 /**
  * The radio that plays across the whole app. Only the Home switch, each
- * station's logo and the station last viewed are persisted: a relaunch should
- * never start audio by itself.
+ * station's logo, the station last viewed and the shows followed are
+ * persisted: a relaunch should never start audio by itself.
  */
 /** `stationId` if the active campus offers it, or else that campus's first station. */
 function offeredOrFirst(stationId: StationId): StationId {
@@ -101,6 +114,7 @@ export const useRadioStore = create<RadioStore>()(
 				fullScheduleOpen: false,
 				showOnHome: true,
 				logoIndexes: {},
+				followedShows: [],
 				hydrated: false,
 
 				play: (stationId) =>
@@ -152,6 +166,15 @@ export const useRadioStore = create<RadioStore>()(
 					set({showOnHome: on})
 					if (!on) get().stop()
 				},
+
+				follow: (show) => {
+					if (get().followedShows.some((each) => isSameShow(each, show))) return
+					set((state) => ({followedShows: [...state.followedShows, show]}))
+				},
+				unfollow: (show) =>
+					set((state) => ({
+						followedShows: state.followedShows.filter((each) => !isSameShow(each, show)),
+					})),
 			}
 		},
 		{
@@ -162,6 +185,7 @@ export const useRadioStore = create<RadioStore>()(
 				showOnHome: state.showOnHome,
 				logoIndexes: state.logoIndexes,
 				viewedStationId: state.viewedStationId,
+				followedShows: state.followedShows,
 			}),
 			// Persist reports a failed read only here, never through its own
 			// `hasHydrated`, so a corrupt value would otherwise leave the app waiting.
@@ -194,4 +218,9 @@ export function useStationPlayback(stationId: StationId): {
 	let playState = useRadioStore((state) => (loaded ? state.playState : 'stopped'))
 	let error = useRadioStore((state) => (loaded ? state.error : null))
 	return {playState, error}
+}
+
+/** Whether `show` is followed. */
+export function useIsFollowing(show: FollowedShow): boolean {
+	return useRadioStore((state) => state.followedShows.some((each) => isSameShow(each, show)))
 }
