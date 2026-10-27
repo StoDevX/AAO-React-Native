@@ -3,13 +3,13 @@ name = "radio-transcribe"
 version = "0.1.0"
 description = "Transcribes speech from live internet radio with an on-device Whisper model"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = "==3.15.2"
 dependencies = [
-	"ai-edge-litert>=2.3.0",
-	"faster-whisper>=1.2.1",
-	"ffmpeg-python>=0.2.0",
-	"numpy>=2.5.4",
+	"ai-edge-litert==2.3.0",
+	"faster-whisper==1.2.1",
+	"ffmpeg-python==0.2.0",
+	"numpy==2.5.4",
 ]
 
 [dependency-groups]
-dev = ["pytest>=9.1.1"]
+dev = ["pytest==9.1.1"]
