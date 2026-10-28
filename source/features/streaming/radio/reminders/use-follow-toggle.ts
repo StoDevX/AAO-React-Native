@@ -11,8 +11,9 @@ import {syncShowReminders} from './sync'
 /**
  * Following and unfollowing shows from a bell. A bell unfollows only a show it
  * shows as reminding; otherwise it follows, and when reminders cannot arrive
- * it raises `prompt`, for the surface to show its permission sheet. The follow
- * is kept whatever the person picks there.
+ * it raises `prompt`, for the surface to show its permission sheet. Not Now,
+ * or iOS refusing, takes the follow back, so no show is followed that its bell
+ * does not show; one sent to Settings is kept, to remind once turned on there.
  */
 export function useFollowToggle(surface: ReminderSurface): {
 	toggle: (show: FollowedShow) => void
@@ -21,6 +22,8 @@ export function useFollowToggle(surface: ReminderSurface): {
 	dismissPrompt: () => void
 } {
 	let [prompt, setPrompt] = React.useState<ReminderPrompt | null>(null)
+	// The show whose follow raised the prompt, taken back if the prompt is declined.
+	let asking = React.useRef<FollowedShow | null>(null)
 
 	let toggle = React.useCallback(
 		(show: FollowedShow) => {
@@ -43,6 +46,7 @@ export function useFollowToggle(surface: ReminderSurface): {
 					anonymous: true,
 					attributes: {station: show.stationId, title, surface, permission},
 				})
+				asking.current = show
 				setPrompt(promptFor(permission))
 			})
 		},
@@ -56,8 +60,12 @@ export function useFollowToggle(surface: ReminderSurface): {
 			void Linking.openSettings()
 			return
 		}
+		let show = asking.current
 		void requestReminderPermission().then((permission) => {
 			useRadioStore.getState().setReminderPermission(permission)
+			if (permission !== 'granted' && show !== null) {
+				useRadioStore.getState().unfollow(show)
+			}
 			let outcome = permission === 'granted' ? ('granted' as const) : ('denied' as const)
 			track({name: 'radio.reminder.permission', attributes: {outcome}})
 			return syncShowReminders()
@@ -68,6 +76,9 @@ export function useFollowToggle(surface: ReminderSurface): {
 	let dismissPrompt = React.useCallback(() => {
 		if (prompt !== null) {
 			track({name: 'radio.reminder.permission', attributes: {outcome: 'not_now'}})
+			if (asking.current !== null) {
+				useRadioStore.getState().unfollow(asking.current)
+			}
 		}
 		setPrompt(null)
 	}, [prompt])

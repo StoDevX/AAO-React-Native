@@ -1,6 +1,7 @@
 import moment, {type Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 
+import {sameShowTitle} from '../show-titles'
 import {STATIONS, type StationId} from '../stations'
 import type {FollowedShow} from '../store'
 
@@ -63,9 +64,13 @@ export function reminderBody(title: string): string {
 	return `${title} is about to start.`
 }
 
+function slotKey(slot: ReminderSlot): string {
+	return `${slot.weekday}|${slot.hour}|${slot.minute}`
+}
+
 function isFollowed(follows: readonly FollowedShow[], reminder: PendingReminder): boolean {
 	return follows.some(
-		(show) => show.stationId === reminder.stationId && show.title === reminder.title,
+		(show) => show.stationId === reminder.stationId && sameShowTitle(show.title, reminder.title),
 	)
 }
 
@@ -124,30 +129,33 @@ export function planReminderChanges(input: {
 	for (let feed of feeds) {
 		let byStart = [...feed.events].sort((a, b) => a.startTime.valueOf() - b.startTime.valueOf())
 		for (let show of follows.filter((each) => each.stationId === feed.stationId)) {
+			// Keyed by slot, as a reminder made before the station restyled the
+			// title has an identifier spelled the old way.
 			let wanted = new Map<string, ReminderRequest>()
-			for (let event of byStart.filter((each) => each.title === show.title)) {
+			for (let event of byStart.filter((each) => sameShowTitle(each.title, show.title))) {
 				let slot = reminderSlot(event.startTime, zone)
-				let identifier = reminderIdentifier(show.stationId, show.title, slot)
-				wanted.set(identifier, {
-					identifier,
+				wanted.set(slotKey(slot), {
+					identifier: reminderIdentifier(show.stationId, show.title, slot),
 					stationId: show.stationId,
 					title: show.title,
 					slot,
 					stationName: feed.stationName,
-					body: reminderBody(show.title),
+					body: reminderBody(event.title),
 				})
 			}
 
 			let mine = pending.filter(
-				(reminder) => reminder.stationId === show.stationId && reminder.title === show.title,
+				(reminder) =>
+					reminder.stationId === show.stationId && sameShowTitle(reminder.title, show.title),
 			)
 			for (let reminder of mine) {
-				if (!wanted.has(reminder.identifier) && feedCovers(feed.events, reminder.slot, zone)) {
+				if (wanted.has(slotKey(reminder.slot))) {
+					wanted.delete(slotKey(reminder.slot))
+				} else if (feedCovers(feed.events, reminder.slot, zone)) {
 					cancel.push(reminder.identifier)
 				}
 			}
-			let scheduled = new Set(mine.map((reminder) => reminder.identifier))
-			schedule.push(...[...wanted.values()].filter((each) => !scheduled.has(each.identifier)))
+			schedule.push(...wanted.values())
 		}
 	}
 	return {schedule, cancel}

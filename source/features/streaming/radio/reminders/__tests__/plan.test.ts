@@ -133,6 +133,26 @@ describe('planReminderChanges', () => {
 		expect(changes.cancel).toStrictEqual([])
 	})
 
+	test('finds a followed show whose title the feed has restyled, saying it as the feed does', () => {
+		let changes = plan({
+			follows: [{stationId: 'ksto', title: 'HOZ'}],
+			feeds: [kstoFeed([show('hoz!', '2026-10-26T21:00')])],
+		})
+		expect(changes.schedule).toHaveLength(1)
+		expect(changes.schedule[0]).toMatchObject({title: 'HOZ', body: 'hoz! is about to start.'})
+	})
+
+	test('keeps a restyled show’s pending reminder', () => {
+		let slot = {weekday: 2, hour: 20, minute: 59}
+		let changes = plan({
+			follows: [{stationId: 'ksto', title: 'hoz'}],
+			feeds: [kstoFeed([show('HOZ', '2026-10-26T21:00')])],
+			pending: [pending('ksto', 'HOZ', slot)],
+		})
+		expect(changes.cancel).toStrictEqual([])
+		expect(changes.schedule).toStrictEqual([])
+	})
+
 	test('schedules a slot once when the feed holds two weeks of it', () => {
 		let feed = kstoFeed([
 			show('Cafecito Hour', '2026-10-26T21:00'),

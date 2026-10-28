@@ -264,6 +264,14 @@ describe('followed shows', () => {
 		expect(useRadioStore.getState().followedShows).toHaveLength(2)
 	})
 
+	test('a show restyled by its station is still the show followed', () => {
+		useRadioStore.getState().follow({stationId: 'krlx', title: 'HOZ'})
+		useRadioStore.getState().follow({stationId: 'krlx', title: 'hoz!'})
+		expect(useRadioStore.getState().followedShows).toHaveLength(1)
+		useRadioStore.getState().unfollow({stationId: 'krlx', title: 'Hoz'})
+		expect(useRadioStore.getState().followedShows).toStrictEqual([])
+	})
+
 	test('unfollowing removes only that show', () => {
 		useRadioStore.getState().follow(CAFECITO)
 		useRadioStore.getState().follow({stationId: 'krlx', title: 'Cafecito Hour'})

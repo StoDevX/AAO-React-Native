@@ -3,6 +3,7 @@ import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
 import {currentCampus} from '../../campus/store'
 import type {ReminderPermission} from './reminders/notifications'
+import {sameShowTitle} from './show-titles'
 import {STATION_LIST, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
@@ -10,7 +11,7 @@ import type {HtmlAudioError, RadioPlayState} from './types'
 export type FollowedShow = {stationId: StationId; title: string}
 
 function isSameShow(a: FollowedShow, b: FollowedShow): boolean {
-	return a.stationId === b.stationId && a.title === b.title
+	return a.stationId === b.stationId && sameShowTitle(a.title, b.title)
 }
 
 type RadioStore = {
