@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/react-native'
-import moment from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 
 import {queryClient} from '../../../../init/tanstack-query'
@@ -50,7 +49,7 @@ async function syncOnce(): Promise<void> {
 	let follows = useRadioStore.getState().followedShows
 	// The zone is guessed afresh, as a phone that crossed one while the app
 	// stayed alive must move its reminders with it.
-	let zone = moment.tz.guess(true)
+	let zone = Intl.DateTimeFormat().resolvedOptions().timeZone
 	// An unfollowed show's reminders go before anything waits on a schedule.
 	await applyReminderChanges(
 		planReminderChanges({

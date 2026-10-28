@@ -1,4 +1,5 @@
-import moment, {type Moment} from 'moment-timezone'
+import {TZDateMini} from '@date-fns/tz'
+import {addDays, startOfDay} from 'date-fns'
 import type {EventType} from '@frogpond/event-type'
 
 import {sameShowTitle} from '../show-titles'
@@ -31,10 +32,13 @@ export type ReminderRequest = PendingReminder & {stationName: string; body: stri
 /** A station's schedule as the app last loaded it. */
 export type StationFeed = {stationId: StationId; stationName: string; events: readonly EventType[]}
 
+/** `REMINDER_LEAD_MINUTES` in milliseconds. */
+const LEAD_MS = REMINDER_LEAD_MINUTES * 60_000
+
 /** The weekly slot of the reminder for a show starting at `start`, in `zone`. */
-export function reminderSlot(start: Moment, zone: string): ReminderSlot {
-	let at = start.clone().tz(zone).subtract(REMINDER_LEAD_MINUTES, 'minutes')
-	return {weekday: at.day() + 1, hour: at.hour(), minute: at.minute()}
+export function reminderSlot(start: Date, zone: string): ReminderSlot {
+	let at = new TZDateMini(start.getTime() - LEAD_MS, zone)
+	return {weekday: at.getDay() + 1, hour: at.getHours(), minute: at.getMinutes()}
 }
 
 /** The identifier of `title`'s reminder on `stationId` at `slot`. The title goes last, as it may hold anything. */
@@ -86,17 +90,24 @@ function feedCovers(events: readonly EventType[], slot: ReminderSlot, zone: stri
 	let first = Math.min(...starts)
 	let last = Math.max(...starts)
 	// A day either side, as the reminder's minute can fall on the day before the show's.
-	let day = moment(first).tz(zone).startOf('day').subtract(1, 'day')
-	let end = moment(last).tz(zone).add(1, 'day')
-	for (; day.isBefore(end); day.add(1, 'day')) {
-		if (day.day() + 1 !== slot.weekday) {
+	let end = addDays(new TZDateMini(last, zone), 1).getTime()
+	for (
+		let day = addDays(startOfDay(new TZDateMini(first, zone)), -1);
+		day.getTime() < end;
+		day = addDays(day, 1)
+	) {
+		if (day.getDay() + 1 !== slot.weekday) {
 			continue
 		}
-		let airing = day
-			.clone()
-			.set({hour: slot.hour, minute: slot.minute, second: 0, millisecond: 0})
-			.add(REMINDER_LEAD_MINUTES, 'minutes')
-			.valueOf()
+		let airing =
+			new TZDateMini(
+				day.getFullYear(),
+				day.getMonth(),
+				day.getDate(),
+				slot.hour,
+				slot.minute,
+				zone,
+			).getTime() + LEAD_MS
 		if (airing >= first && airing <= last) {
 			return true
 		}
@@ -133,7 +144,7 @@ export function planReminderChanges(input: {
 			// title has an identifier spelled the old way.
 			let wanted = new Map<string, ReminderRequest>()
 			for (let event of byStart.filter((each) => sameShowTitle(each.title, show.title))) {
-				let slot = reminderSlot(event.startTime, zone)
+				let slot = reminderSlot(event.startTime.toDate(), zone)
 				wanted.set(slotKey(slot), {
 					identifier: reminderIdentifier(show.stationId, show.title, slot),
 					stationId: show.stationId,

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/runtime": "7.29.10",
+    "@date-fns/tz": "1.5.0",
     "@expo/log-box": "58.0.12",
     "@expo/metro-runtime": "58.0.14",
     "@expo/ui": "58.0.20",

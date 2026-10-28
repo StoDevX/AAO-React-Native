@@ -69,12 +69,12 @@ function slots(requests: ReadonlyArray<{slot: PendingReminder['slot']}>) {
 describe('reminderSlot', () => {
 	test('is a minute before the show, in the zone given', () => {
 		let start = moment.tz('2026-10-27T21:00', CHICAGO)
-		expect(reminderSlot(start, CHICAGO)).toStrictEqual({weekday: 3, hour: 20, minute: 59})
+		expect(reminderSlot(start.toDate(), CHICAGO)).toStrictEqual({weekday: 3, hour: 20, minute: 59})
 	})
 
 	test('follows the device into another zone', () => {
 		let start = moment.tz('2026-10-27T21:00', CHICAGO)
-		expect(reminderSlot(start, 'America/New_York')).toStrictEqual({
+		expect(reminderSlot(start.toDate(), 'America/New_York')).toStrictEqual({
 			weekday: 3,
 			hour: 21,
 			minute: 59,
@@ -83,7 +83,7 @@ describe('reminderSlot', () => {
 
 	test('falls on the day before for a show starting at midnight', () => {
 		let start = moment.tz('2026-10-27T00:00', CHICAGO)
-		expect(reminderSlot(start, CHICAGO)).toStrictEqual({weekday: 2, hour: 23, minute: 59})
+		expect(reminderSlot(start.toDate(), CHICAGO)).toStrictEqual({weekday: 2, hour: 23, minute: 59})
 	})
 })
 
