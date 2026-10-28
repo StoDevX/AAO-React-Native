@@ -161,7 +161,7 @@ export function ShowRemindersSheet(): React.ReactNode {
 						</HStack>
 						{groups.length === 0 ? (
 							<ContentUnavailableView
-								description="Tap the bell beside a show to get a notification a minute before it starts, every week."
+								description="Tap the bell beside a show to get a notification a minute before it starts."
 								systemImage="bell.badge"
 								title="No Show Reminders"
 							/>
