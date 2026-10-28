@@ -22,6 +22,7 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowInsets,
 	multilineTextAlignment,
 	padding,
 	presentationBackground,
@@ -39,6 +40,12 @@ import {bellLabel} from './follow-controls'
 import {requestReminderPermission} from './notifications'
 import {promptFor} from './prompt'
 import {syncShowReminders} from './sync'
+
+/**
+ * A row's insets: the list's own at the sides, none above and below, so the
+ * bell's 44pt target sets the row's height rather than adding to it.
+ */
+const ROW_INSETS = listRowInsets({top: 0, bottom: 0, leading: 20, trailing: 20})
 
 /** The sheet's side margins, which line its title up with the list's rows. */
 const TITLE_INSET = 20
@@ -179,6 +186,9 @@ export function ShowRemindersSheet(): React.ReactNode {
 										<List.ForEach
 											data={shows}
 											keyExtractor={(show) => show.title}
+											// Set on the group, as a recycled row sits in a slot of its
+											// own that a modifier on the row itself never reaches.
+											modifiers={[ROW_INSETS]}
 											onDelete={(indices) => {
 												for (let index of indices) {
 													stopReminding(shows[index])
