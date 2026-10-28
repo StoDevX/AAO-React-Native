@@ -3,6 +3,7 @@ import {Linking, StyleSheet} from 'react-native'
 import {
 	BottomSheet,
 	Button,
+	ContentUnavailableView,
 	Group,
 	HStack,
 	Host,
@@ -23,7 +24,6 @@ import {
 	foregroundStyle,
 	frame,
 	listRowInsets,
-	multilineTextAlignment,
 	padding,
 	presentationBackground,
 	presentationDetents,
@@ -160,15 +160,11 @@ export function ShowRemindersSheet(): React.ReactNode {
 							</Button>
 						</HStack>
 						{groups.length === 0 ? (
-							<VStack modifiers={[padding({all: TITLE_INSET})]}>
-								<Spacer />
-								<Text
-									modifiers={[foregroundStyle(c.secondaryLabel), multilineTextAlignment('center')]}
-								>
-									Tap the bell beside a show to be reminded a minute before it starts, every week.
-								</Text>
-								<Spacer />
-							</VStack>
+							<ContentUnavailableView
+								description="Tap the bell beside a show to get a notification a minute before it starts, every week."
+								systemImage="bell.badge"
+								title="No Show Reminders"
+							/>
 						) : (
 							<List>
 								{prompt === null ? null : (
