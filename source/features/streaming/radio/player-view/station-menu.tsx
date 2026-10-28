@@ -8,9 +8,10 @@ import type {Station} from '../stations'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
 
-/** Full Schedule and Open Website, behind the title's ••• button. */
+/** Full Schedule, Notifications and Open Website, behind the title's ••• button. */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
 	let openFullSchedule = useRadioStore((state) => state.openFullSchedule)
+	let openReminders = useRadioStore((state) => state.openReminders)
 	return (
 		<Host matchContents={true}>
 			<Menu
@@ -32,6 +33,14 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 						openFullSchedule()
 					}}
 					systemImage="calendar"
+				/>
+				<Button
+					label="Notifications"
+					onPress={() => {
+						track({name: 'radio.action', attributes: {action: 'reminders', station: station.id}})
+						openReminders()
+					}}
+					systemImage="bell"
 				/>
 				<Button
 					label="Open Website"

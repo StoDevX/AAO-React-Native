@@ -52,7 +52,7 @@ export type MapGroupLabel = string & {readonly __brand: 'MapGroupLabel'}
 export type QuickActionId = string & {readonly __brand: 'QuickActionId'}
 
 /** Where a show's bell or Remind Me button was pressed. */
-export type ReminderSurface = 'player' | 'full_schedule' | 'show_sheet'
+export type ReminderSurface = 'player' | 'full_schedule' | 'show_sheet' | 'reminders'
 
 /** The calendar feeds an event can come from; `other` for anything unrecognized. */
 export type CalendarSourceId =
@@ -126,7 +126,7 @@ export type TelemetryEvent =
 	| {
 			name: 'radio.action'
 			attributes: {
-				action: 'call' | 'chat' | 'schedule' | 'full_schedule' | 'website'
+				action: 'call' | 'chat' | 'schedule' | 'full_schedule' | 'reminders' | 'website'
 				station: StationId
 			}
 	  }
