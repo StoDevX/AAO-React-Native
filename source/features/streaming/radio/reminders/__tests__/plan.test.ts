@@ -5,6 +5,7 @@ import type {EventType} from '@frogpond/event-type'
 import {
 	parseReminderIdentifier,
 	planReminderChanges,
+	unreadableReminders,
 	reminderBody,
 	reminderIdentifier,
 	reminderSlot,
@@ -103,9 +104,21 @@ describe('reminder identifiers', () => {
 		expect(parseReminderIdentifier('something-else')).toBeNull()
 	})
 
-	test('leave a reminder naming an unknown station alone', () => {
+	test('do not read a reminder naming an unknown station', () => {
 		expect(parseReminderIdentifier('radio-reminder|wxyz|3|20|59|Show')).toBeNull()
 	})
+})
+
+test('unreadableReminders picks out reminders no sync can read, leaving other notifications', () => {
+	let readable = reminderIdentifier('ksto', 'Cafecito Hour', {weekday: 3, hour: 20, minute: 59})
+	expect(
+		unreadableReminders([
+			readable,
+			'radio-reminder|wxyz|3|20|59|Show',
+			'radio-reminder|ksto|x|20|59|Show',
+			'something-else',
+		]),
+	).toStrictEqual(['radio-reminder|wxyz|3|20|59|Show', 'radio-reminder|ksto|x|20|59|Show'])
 })
 
 test('reminderBody says the show is about to start, leaving the station to the title', () => {

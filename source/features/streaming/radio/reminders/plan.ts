@@ -63,6 +63,18 @@ export function parseReminderIdentifier(identifier: string): PendingReminder | n
 	return {identifier, stationId: stationId as StationId, title: title.join('|'), slot}
 }
 
+/**
+ * The reminders among `identifiers` that no sync can read, such as one on a
+ * station a later release dropped. Nothing else could ever cancel them, and
+ * no follow is left to show for them.
+ */
+export function unreadableReminders(identifiers: readonly string[]): string[] {
+	return identifiers.filter(
+		(identifier) =>
+			identifier.startsWith(`${PREFIX}|`) && parseReminderIdentifier(identifier) === null,
+	)
+}
+
 /** What a reminder says. The station is its title, so the body leaves it out. */
 export function reminderBody(title: string): string {
 	return `${title} is about to start.`

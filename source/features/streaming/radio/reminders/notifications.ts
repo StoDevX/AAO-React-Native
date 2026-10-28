@@ -1,6 +1,11 @@
 import * as Notifications from 'expo-notifications'
 
-import {parseReminderIdentifier, type PendingReminder, type ReminderRequest} from './plan'
+import {
+	parseReminderIdentifier,
+	unreadableReminders,
+	type PendingReminder,
+	type ReminderRequest,
+} from './plan'
 import {LISTEN_ACTION} from './present'
 
 /** The category every reminder is scheduled in, which gives it the Listen button. */
@@ -42,10 +47,19 @@ export async function requestReminderPermission(): Promise<ReminderPermission> {
 	)
 }
 
-/** The radio reminders already scheduled; other notifications are left out. */
+/**
+ * The radio reminders already scheduled; other notifications are left out.
+ * A reminder that cannot be read back is cancelled here, as nothing else could.
+ */
 export async function pendingReminders(): Promise<PendingReminder[]> {
 	let scheduled = await Notifications.getAllScheduledNotificationsAsync()
-	return scheduled.flatMap((request) => parseReminderIdentifier(request.identifier) ?? [])
+	let identifiers = scheduled.map((request) => request.identifier)
+	await Promise.all(
+		unreadableReminders(identifiers).map((identifier) =>
+			Notifications.cancelScheduledNotificationAsync(identifier),
+		),
+	)
+	return identifiers.flatMap((identifier) => parseReminderIdentifier(identifier) ?? [])
 }
 
 /** Cancels and schedules reminders as `planReminderChanges` decided. */
