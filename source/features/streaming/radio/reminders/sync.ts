@@ -41,6 +41,12 @@ async function stationFeed(stationId: StationId): Promise<StationFeed | null> {
 }
 
 async function syncOnce(): Promise<void> {
+	// The bells read this, so one turned on or off in Settings shows on return.
+	// It is stored first, as a bell read as off would follow a show it should
+	// unfollow, and the schedules may take a while or never load.
+	let permission = await reminderPermission()
+	useRadioStore.getState().setReminderPermission(permission)
+
 	let follows = useRadioStore.getState().followedShows
 	// The zone is guessed afresh, as a phone that crossed one while the app
 	// stayed alive must move its reminders with it.
@@ -57,13 +63,7 @@ async function syncOnce(): Promise<void> {
 	)
 
 	let stationIds = [...new Set(follows.map((show) => show.stationId))]
-	let [permission, pending, ...feeds] = await Promise.all([
-		reminderPermission(),
-		pendingReminders(),
-		...stationIds.map(stationFeed),
-	])
-	// The bells read this, so one turned on or off in Settings shows on return.
-	useRadioStore.getState().setReminderPermission(permission)
+	let [pending, ...feeds] = await Promise.all([pendingReminders(), ...stationIds.map(stationFeed)])
 	let changes = planReminderChanges({
 		follows,
 		feeds: feeds.filter((feed) => feed !== null),
