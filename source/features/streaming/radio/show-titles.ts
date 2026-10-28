@@ -13,9 +13,10 @@ function titleKey(title: string): string {
 
 /**
  * Whether two titles name the same show, so a follow survives the station
- * restyling its title. A title with nothing left to compare matches nothing.
+ * restyling its title. A title of punctuation alone has nothing left to
+ * compare, so it matches only itself, spelled the same.
  */
 export function sameShowTitle(one: string, two: string): boolean {
 	let key = titleKey(one)
-	return key !== '' && key === titleKey(two)
+	return key === '' ? one === two : key === titleKey(two)
 }
