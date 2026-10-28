@@ -4,7 +4,7 @@ import {createJSONStorage, persist} from 'zustand/middleware'
 import {currentCampus} from '../../campus/store'
 import type {ReminderPermission} from './reminders/notifications'
 import {sameShowTitle} from './show-titles'
-import {STATION_LIST, stationsOffered, type StationId} from './stations'
+import {STATION_LIST, STATIONS, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
 /** A show someone follows: reminded before each airing of `title` on `stationId`. */
@@ -202,6 +202,18 @@ export const useRadioStore = create<RadioStore>()(
 				viewedStationId: state.viewedStationId,
 				followedShows: state.followedShows,
 			}),
+			// A follow on a station a later release dropped has no schedule to read
+			// and no row to unfollow it from, so it is left behind.
+			merge: (persisted, current) => {
+				let saved = (persisted ?? {}) as Partial<RadioStore>
+				return {
+					...current,
+					...saved,
+					followedShows: (saved.followedShows ?? current.followedShows).filter(
+						(show) => show.stationId in STATIONS,
+					),
+				}
+			},
 			// Persist reports a failed read only here, never through its own
 			// `hasHydrated`, so a corrupt value would otherwise leave the app waiting.
 			onRehydrateStorage: () => () => useRadioStore.setState({hydrated: true}),
