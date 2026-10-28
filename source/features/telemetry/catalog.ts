@@ -160,8 +160,8 @@ export type TelemetryEvent =
 			anonymous: true
 			attributes: {station: StationId; title: ShowTitle; surface: ReminderSurface}
 	  }
-	// The player opened from a tapped reminder.
-	| {name: 'radio.reminder.open'; attributes: {station: StationId}}
+	// The player opened from a reminder: tapped, or its Listen button, which also plays.
+	| {name: 'radio.reminder.open'; attributes: {station: StationId; action: 'tap' | 'listen'}}
 	// What the person did with the sheet asking for notifications.
 	| {
 			name: 'radio.reminder.permission'

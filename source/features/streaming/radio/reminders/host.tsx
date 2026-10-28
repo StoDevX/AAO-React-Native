@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {AppState} from 'react-native'
+import * as Sentry from '@sentry/react-native'
 import * as Notifications from 'expo-notifications'
 import {hashKey} from '@tanstack/react-query'
 
@@ -8,7 +9,8 @@ import {track} from '../../../telemetry/track'
 import {STATIONS} from '../stations'
 import {useRadioStore} from '../store'
 import {stationScheduleOptions} from '../use-station-schedule'
-import {reminderStation, shouldPresentReminder} from './present'
+import {registerReminderActions} from './notifications'
+import {reminderResponse, shouldPresentReminder} from './present'
 import {syncShowReminders} from './sync'
 
 /** Whether the query hashed `queryHash` is the schedule of a station with a followed show. */
@@ -20,13 +22,27 @@ function isFollowedSchedule(queryHash: string): boolean {
 	)
 }
 
-/** Opens the player on the station a tapped reminder names. */
+/** Opens the player on the station a reminder names, and plays it when Listen was pressed. */
 function openReminder(response: Notifications.NotificationResponse | null): void {
-	let stationId = reminderStation(response?.notification.request.content.data)
-	if (stationId !== null) {
-		useRadioStore.getState().openSheet(stationId)
-		track({name: 'radio.reminder.open', attributes: {station: stationId}})
+	if (response === null) {
+		return
 	}
+	let opened = reminderResponse(
+		response.notification.request.content.data,
+		response.actionIdentifier,
+	)
+	if (opened === null) {
+		return
+	}
+	let radio = useRadioStore.getState()
+	radio.openSheet(opened.stationId)
+	if (opened.listen) {
+		radio.play(opened.stationId)
+	}
+	track({
+		name: 'radio.reminder.open',
+		attributes: {station: opened.stationId, action: opened.listen ? 'listen' : 'tap'},
+	})
 }
 
 /**
@@ -55,6 +71,9 @@ export function ShowRemindersHost(): null {
 					shouldSetBadge: false,
 				})
 			},
+		})
+		void registerReminderActions().catch((error: unknown) => {
+			Sentry.captureException(error)
 		})
 		openReminder(Notifications.getLastNotificationResponse())
 		let responses = Notifications.addNotificationResponseReceivedListener(openReminder)

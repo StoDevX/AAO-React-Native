@@ -1,6 +1,17 @@
 import * as Notifications from 'expo-notifications'
 
 import {parseReminderIdentifier, type PendingReminder, type ReminderRequest} from './plan'
+import {LISTEN_ACTION} from './present'
+
+/** The category every reminder is scheduled in, which gives it the Listen button. */
+const REMINDER_CATEGORY = 'radio-reminder'
+
+/** Gives reminders their Listen button, which brings the app forward to play. */
+export async function registerReminderActions(): Promise<void> {
+	await Notifications.setNotificationCategoryAsync(REMINDER_CATEGORY, [
+		{identifier: LISTEN_ACTION, buttonTitle: 'Listen', options: {opensAppToForeground: true}},
+	])
+}
 
 /** Whether reminders can reach the person, and if not, whether iOS has asked them yet. */
 export type ReminderPermission = 'granted' | 'undetermined' | 'denied'
@@ -53,6 +64,7 @@ export async function applyReminderChanges(changes: {
 					title: request.stationName,
 					body: request.body,
 					data: {stationId: request.stationId, title: request.title},
+					categoryIdentifier: REMINDER_CATEGORY,
 				},
 				trigger: {type: Notifications.SchedulableTriggerInputTypes.WEEKLY, ...request.slot},
 			}),

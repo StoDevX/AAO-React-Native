@@ -78,6 +78,8 @@ jest.mock('expo-notifications', () => ({
 	scheduleNotificationAsync: jest.fn(() => Promise.resolve('')),
 	cancelScheduledNotificationAsync: jest.fn(() => Promise.resolve()),
 	setNotificationHandler: jest.fn(),
+	setNotificationCategoryAsync: jest.fn(() => Promise.resolve({})),
+	DEFAULT_ACTION_IDENTIFIER: 'expo.modules.notifications.actions.DEFAULT',
 	addNotificationResponseReceivedListener: jest.fn(() => ({remove: jest.fn()})),
 	getLastNotificationResponse: jest.fn(() => null),
 }))
