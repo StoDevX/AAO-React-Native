@@ -1,12 +1,11 @@
 import * as React from 'react'
-import {Linking} from 'react-native'
 
 import {showTitle, type ReminderSurface} from '../../../telemetry/catalog'
 import {track} from '../../../telemetry/track'
 import {isReminding, useRadioStore, type FollowedShow} from '../store'
-import {reminderPermission, requestReminderPermission} from './notifications'
+import {reminderPermission} from './notifications'
 import {promptFor, type ReminderPrompt} from './prompt'
-import {syncShowReminders} from './sync'
+import {turnOnReminders} from './turn-on'
 
 /**
  * Following and unfollowing shows from a bell. A bell unfollows only a show it
@@ -55,20 +54,14 @@ export function useFollowToggle(surface: ReminderSurface): {
 
 	let confirmPrompt = React.useCallback(() => {
 		setPrompt(null)
-		if (prompt === 'settings') {
-			track({name: 'radio.reminder.permission', attributes: {outcome: 'settings'}})
-			void Linking.openSettings()
+		if (prompt === null) {
 			return
 		}
 		let show = asking.current
-		void requestReminderPermission().then((permission) => {
-			useRadioStore.getState().setReminderPermission(permission)
-			if (permission !== 'granted' && show !== null) {
+		void turnOnReminders(prompt).then((permission) => {
+			if (permission !== null && permission !== 'granted' && show !== null) {
 				useRadioStore.getState().unfollow(show)
 			}
-			let outcome = permission === 'granted' ? ('granted' as const) : ('denied' as const)
-			track({name: 'radio.reminder.permission', attributes: {outcome}})
-			return syncShowReminders()
 		})
 	}, [prompt])
 

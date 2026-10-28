@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Linking, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {
 	BottomSheet,
 	Button,
@@ -34,12 +34,12 @@ import * as c from '@frogpond/colors'
 
 import {showTitle} from '../../../telemetry/catalog'
 import {track} from '../../../telemetry/track'
+import {SHEET_BACKGROUND} from '../sheet-background'
 import {useRadioStore, type FollowedShow} from '../store'
 import {remindersByStation} from './by-station'
 import {bellLabel} from './follow-controls'
-import {requestReminderPermission} from './notifications'
 import {promptFor} from './prompt'
-import {syncShowReminders} from './sync'
+import {turnOnReminders} from './turn-on'
 
 /**
  * A row's insets: the list's own at the sides, none above and below, so the
@@ -49,12 +49,6 @@ const ROW_INSETS = listRowInsets({top: 0, bottom: 0, leading: 20, trailing: 20})
 
 /** The sheet's side margins, which line its title up with the list's rows. */
 const TITLE_INSET = 20
-
-// The list is drawn on the grouped background, so the sheet takes it too,
-// leaving no lighter band behind the title. `presentationBackground` is typed
-// for a string, but its colour goes through the same conversion as `tint`'s,
-// which takes a PlatformColor.
-const SHEET_BACKGROUND = c.systemGroupedBackground as unknown as string
 
 function stopReminding(show: FollowedShow): void {
 	useRadioStore.getState().unfollow(show)
@@ -100,18 +94,6 @@ function FollowedShowRow({
 			</Button>
 		</HStack>
 	)
-}
-
-/** Asks iOS for notifications, or opens Settings once iOS will no longer ask. */
-function turnOnReminders(prompt: 'ask' | 'settings'): void {
-	if (prompt === 'settings') {
-		void Linking.openSettings()
-		return
-	}
-	void requestReminderPermission().then((permission) => {
-		useRadioStore.getState().setReminderPermission(permission)
-		return syncShowReminders()
-	})
 }
 
 /**
@@ -173,7 +155,7 @@ export function ShowRemindersSheet(): React.ReactNode {
 									>
 										<Button
 											label={prompt === 'ask' ? 'Allow Notifications' : 'Turn On in Settings'}
-											onPress={() => turnOnReminders(prompt)}
+											onPress={() => void turnOnReminders(prompt)}
 										/>
 									</Section>
 								)}
