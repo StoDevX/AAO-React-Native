@@ -58,9 +58,9 @@ export function parseReminderIdentifier(identifier: string): PendingReminder | n
 	return {identifier, stationId: stationId as StationId, title: title.join('|'), slot}
 }
 
-/** What a reminder says. */
-export function reminderBody(title: string, stationName: string): string {
-	return `${title} is about to start on ${stationName}.`
+/** What a reminder says. The station is its title, so the body leaves it out. */
+export function reminderBody(title: string): string {
+	return `${title} is about to start.`
 }
 
 function isFollowed(follows: readonly FollowedShow[], reminder: PendingReminder): boolean {
@@ -134,7 +134,7 @@ export function planReminderChanges(input: {
 					title: show.title,
 					slot,
 					stationName: feed.stationName,
-					body: reminderBody(show.title, feed.stationName),
+					body: reminderBody(show.title),
 				})
 			}
 

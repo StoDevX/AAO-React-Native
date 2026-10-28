@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react-native'
+import * as Notifications from 'expo-notifications'
 import moment from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 
@@ -48,7 +49,13 @@ describe('ScheduleList', () => {
 	})
 
 	test("tapping a show's bell follows it, and tapping it again unfollows it", async () => {
-		useRadioStore.setState({followedShows: []})
+		useRadioStore.setState({followedShows: [], reminderPermission: 'granted'})
+		jest.mocked(Notifications.getPermissionsAsync).mockResolvedValueOnce({
+			granted: true,
+			canAskAgain: true,
+			expires: 'never',
+			status: Notifications.PermissionStatus.GRANTED,
+		})
 		await render(
 			<ScheduleList
 				onPressShow={noop}
@@ -63,15 +70,37 @@ describe('ScheduleList', () => {
 			{stationId: 'ksto', title: 'Cafecito Hour'},
 		])
 
-		await fireEvent.press(screen.getByLabelText('Stop reminding me about Cafecito Hour'))
+		await fireEvent.press(
+			await waitFor(() => screen.getByLabelText('Stop reminding me about Cafecito Hour')),
+		)
 		expect(useRadioStore.getState().followedShows).toStrictEqual([])
+	})
+
+	test('a followed show whose reminders cannot arrive still offers to remind, and stays followed', async () => {
+		useRadioStore.setState({
+			followedShows: [{stationId: 'ksto', title: 'Cafecito Hour'}],
+			reminderPermission: 'denied',
+		})
+		await render(
+			<ScheduleList
+				onPressShow={noop}
+				station={KSTO}
+				status="ready"
+				upcoming={[show('Cafecito Hour', 21)]}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByLabelText('Remind me about Cafecito Hour'))
+		expect(useRadioStore.getState().followedShows).toStrictEqual([
+			{stationId: 'ksto', title: 'Cafecito Hour'},
+		])
 	})
 
 	test('offers the full schedule below the list and in place of it', async () => {
 		useRadioStore.setState({fullScheduleOpen: false})
 		await render(<ScheduleList onPressShow={noop} station={KSTO} status="ready" upcoming={[]} />)
 
-		await fireEvent.press(screen.getByText('Full Schedule'))
+		await fireEvent.press(screen.getByText('See full schedule'))
 		expect(useRadioStore.getState().fullScheduleOpen).toBe(true)
 	})
 })

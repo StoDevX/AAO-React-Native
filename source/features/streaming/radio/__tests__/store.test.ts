@@ -2,7 +2,7 @@ import {beforeEach, describe, expect, test} from '@jest/globals'
 import {act, renderHook} from '@testing-library/react-native'
 
 import {useCampusStore} from '../../../campus/store'
-import {radioControl, useIsFollowing, useRadioStore, useStationPlayback} from '../store'
+import {radioControl, useIsReminding, useRadioStore, useStationPlayback} from '../store'
 
 const ERROR = {code: 4, message: 'The stream could not be played.'}
 const CAFECITO = {stationId: 'ksto', title: 'Cafecito Hour'} as const
@@ -18,6 +18,7 @@ function reset() {
 		showOnHome: true,
 		logoIndexes: {},
 		followedShows: [],
+		reminderPermission: null,
 	})
 }
 
@@ -272,11 +273,19 @@ describe('followed shows', () => {
 		])
 	})
 
-	test('useIsFollowing follows the store', async () => {
-		let {result} = await renderHook(() => useIsFollowing(CAFECITO))
-		expect(result.current).toBe(false)
+	test('a followed show reminds only once notifications are allowed', async () => {
+		let {result} = await renderHook(() => useIsReminding(CAFECITO))
 		await act(() => useRadioStore.getState().follow(CAFECITO))
+		expect(result.current).toBe(false)
+
+		await act(() => useRadioStore.getState().setReminderPermission('denied'))
+		expect(result.current).toBe(false)
+
+		await act(() => useRadioStore.getState().setReminderPermission('granted'))
 		expect(result.current).toBe(true)
+
+		await act(() => useRadioStore.getState().unfollow(CAFECITO))
+		expect(result.current).toBe(false)
 	})
 })
 

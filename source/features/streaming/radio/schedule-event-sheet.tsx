@@ -16,6 +16,7 @@ import {
 	buttonStyle,
 	disabled as disabledModifier,
 	padding,
+	presentationBackground,
 	presentationDetents,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
@@ -31,6 +32,12 @@ import {FollowButton, ReminderPermissionSheet, useFollowToggle} from './reminder
 import type {Station} from './stations'
 
 const HEADER_INSET = 20
+
+// The event's body is drawn on the grouped background, so the sheet takes it
+// too, leaving no lighter band behind the buttons above and below it.
+// `presentationBackground` is typed for a string, but its colour goes through
+// the same conversion as `tint`'s, which takes a PlatformColor.
+const SHEET_BACKGROUND = c.systemGroupedBackground as unknown as string
 
 /**
  * A show from a station's full schedule, stacked over that schedule. It draws
@@ -48,7 +55,7 @@ export function ScheduleEventSheet({
 	onClose: () => void
 	station: Station
 }): React.ReactNode {
-	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle()
+	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('show_sheet')
 	return (
 		<BottomSheet
 			isPresented={isPresented}
@@ -58,7 +65,13 @@ export function ScheduleEventSheet({
 				}
 			}}
 		>
-			<Group modifiers={[presentationDetents(['large']), presentationDragIndicator('visible')]}>
+			<Group
+				modifiers={[
+					presentationDetents(['large']),
+					presentationDragIndicator('visible'),
+					presentationBackground(SHEET_BACKGROUND),
+				]}
+			>
 				{event === null ? null : (
 					<VStack spacing={0}>
 						<HStack modifiers={[padding({horizontal: HEADER_INSET, top: 20, bottom: 12})]}>

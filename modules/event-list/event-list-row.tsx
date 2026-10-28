@@ -248,7 +248,7 @@ export function EventListRow({
 		return row
 	}
 	return (
-		<HStack spacing={8}>
+		<HStack spacing={4}>
 			{row}
 			{accessory}
 		</HStack>

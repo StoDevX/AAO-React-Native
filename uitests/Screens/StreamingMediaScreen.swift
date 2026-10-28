@@ -39,7 +39,7 @@ struct StreamingMediaScreen: Screen {
 		let ids = TestIdentifiers.StreamingMedia.self
 		let link = app.element(matching: ids.fullScheduleLink)
 		tap(app.buttonLabelled(ids.todaysSchedule), until: link, named: "Today's schedule")
-		tap(link, until: app.element(matching: ids.kmnkShowBell), named: "the Full Schedule link")
+		tap(link, until: app.element(matching: ids.kmnkShowBell), named: "the See full schedule link")
 		return self
 	}
 
@@ -55,14 +55,18 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Decline the reminder sheet, and check the show stays followed.
+	/// Decline the reminder sheet, and check the bell still offers to remind:
+	/// with notifications off, it must not read as reminding.
 	@discardableResult
-	func declineReminderSheetKeepingFollow() -> Self {
+	func declineReminderSheetLeavingBellOff() -> Self {
 		let ids = TestIdentifiers.StreamingMedia.self
 		let bell = app.element(matching: ids.kmnkShowBell)
 		app.buttonLabelled(ids.reminderSheetNotNow).tap()
 		checkGone(app.elementWithLabel(startingWith: ids.reminderSheetTitle), named: "The reminder sheet")
-		XCTAssertTrue(bell.waitForLabel(ids.followingLabel, timeout: 10), "\(ids.kmnkShow) should still be followed")
+		XCTAssertTrue(
+			bell.waitForLabel(ids.notRemindingLabel, timeout: 10),
+			"\(ids.kmnkShow)'s bell should not claim reminders that cannot arrive",
+		)
 		return self
 	}
 

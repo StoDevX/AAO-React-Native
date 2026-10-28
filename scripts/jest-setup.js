@@ -66,6 +66,7 @@ jest.mock('expo-notifications', () => ({
 		PROVISIONAL: 3,
 		EPHEMERAL: 4,
 	},
+	PermissionStatus: {GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined'},
 	SchedulableTriggerInputTypes: {WEEKLY: 'weekly'},
 	getPermissionsAsync: jest.fn(() =>
 		Promise.resolve({granted: false, canAskAgain: true, ios: {status: 0}}),

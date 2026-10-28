@@ -108,10 +108,8 @@ describe('reminder identifiers', () => {
 	})
 })
 
-test('reminderBody says the show is about to start on its station', () => {
-	expect(reminderBody('Cafecito Hour', 'KSTO 93.1 FM')).toBe(
-		'Cafecito Hour is about to start on KSTO 93.1 FM.',
-	)
+test('reminderBody says the show is about to start, leaving the station to the title', () => {
+	expect(reminderBody('Cafecito Hour')).toBe('Cafecito Hour is about to start.')
 })
 
 describe('planReminderChanges', () => {
@@ -130,7 +128,7 @@ describe('planReminderChanges', () => {
 			stationId: 'ksto',
 			title: 'Cafecito Hour',
 			stationName: 'KSTO 93.1 FM',
-			body: 'Cafecito Hour is about to start on KSTO 93.1 FM.',
+			body: 'Cafecito Hour is about to start.',
 		})
 		expect(changes.cancel).toStrictEqual([])
 	})

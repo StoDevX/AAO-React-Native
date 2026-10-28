@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
 import {currentCampus} from '../../campus/store'
+import type {ReminderPermission} from './reminders/notifications'
 import {STATION_LIST, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
@@ -35,6 +36,8 @@ type RadioStore = {
 	logoIndexes: Partial<Record<StationId, number>>
 	/** The shows reminded before each airing. Persisted. */
 	followedShows: FollowedShow[]
+	/** Whether reminders can reach the person, as last read from iOS; null until read. */
+	reminderPermission: ReminderPermission | null
 	/** Whether the saved preferences have been read, or could not be. */
 	hydrated: boolean
 
@@ -77,6 +80,7 @@ type RadioStore = {
 	/** Follows `show`; following one already followed changes nothing. */
 	follow: (show: FollowedShow) => void
 	unfollow: (show: FollowedShow) => void
+	setReminderPermission: (permission: ReminderPermission) => void
 }
 
 /** Whether the station is starting or playing, which is when Pause has something to do. */
@@ -115,6 +119,7 @@ export const useRadioStore = create<RadioStore>()(
 				showOnHome: true,
 				logoIndexes: {},
 				followedShows: [],
+				reminderPermission: null,
 				hydrated: false,
 
 				play: (stationId) =>
@@ -175,6 +180,7 @@ export const useRadioStore = create<RadioStore>()(
 					set((state) => ({
 						followedShows: state.followedShows.filter((each) => !isSameShow(each, show)),
 					})),
+				setReminderPermission: (permission) => set({reminderPermission: permission}),
 			}
 		},
 		{
@@ -220,7 +226,21 @@ export function useStationPlayback(stationId: StationId): {
 	return {playState, error}
 }
 
-/** Whether `show` is followed. */
-export function useIsFollowing(show: FollowedShow): boolean {
-	return useRadioStore((state) => state.followedShows.some((each) => isSameShow(each, show)))
+/**
+ * Whether `show` will be reminded: followed, with notifications allowed. A
+ * follow that cannot reach the person never reads as reminding.
+ */
+export function isReminding(
+	state: Pick<RadioStore, 'followedShows' | 'reminderPermission'>,
+	show: FollowedShow,
+): boolean {
+	return (
+		state.reminderPermission === 'granted' &&
+		state.followedShows.some((each) => isSameShow(each, show))
+	)
+}
+
+/** Whether `show` will be reminded, as `isReminding` decides. */
+export function useIsReminding(show: FollowedShow): boolean {
+	return useRadioStore((state) => isReminding(state, show))
 }

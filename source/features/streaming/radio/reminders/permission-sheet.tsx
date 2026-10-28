@@ -23,7 +23,7 @@ export const PERMISSION_SHEET_ID = 'reminder-permission-sheet'
 const COPY: Record<ReminderPrompt, {title: string; body: string; action: string}> = {
 	ask: {
 		title: 'Get Show Reminders',
-		body: 'Get a notification a minute before each show you follow starts. iOS will ask you to allow notifications next.',
+		body: 'Get a notification a minute before each show you follow starts. You’ll be asked to allow notifications next.',
 		action: 'Continue',
 	},
 	settings: {

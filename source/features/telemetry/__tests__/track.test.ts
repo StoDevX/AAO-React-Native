@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 
-import type {PublicEventTitle, QueryKeyHead} from '../catalog'
+import type {PublicEventTitle, QueryKeyHead, ShowTitle} from '../catalog'
 import {track} from '../track'
 
 jest.mock('@sentry/react-native', () => ({
@@ -53,6 +53,33 @@ describe('track', () => {
 		)
 		expect(Sentry.logger.warn).not.toHaveBeenCalled()
 		expect(Sentry.metrics.count).not.toHaveBeenCalled()
+	})
+
+	it('counts an anonymous metric event on a scope of its own, marked for stripping', () => {
+		let title = 'Cafecito Hour' as ShowTitle
+		track({
+			name: 'radio.reminder.follow',
+			anonymous: true,
+			attributes: {
+				station: 'ksto',
+				title,
+				surface: 'player',
+				permission: 'granted',
+			},
+		})
+
+		let [scope] = jest.mocked(Sentry.Scope).mock.instances
+		expect(Sentry.metrics.count).toHaveBeenCalledWith('radio.reminder.follow', 1, {
+			attributes: {
+				station: 'ksto',
+				title: 'Cafecito Hour',
+				surface: 'player',
+				permission: 'granted',
+				'telemetry.anonymous': true,
+			},
+			scope,
+		})
+		expect(Sentry.logger.info).not.toHaveBeenCalled()
 	})
 
 	it('swallows a failure inside Sentry, so the screen that reported it carries on', () => {

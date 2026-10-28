@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications'
 import {hashKey} from '@tanstack/react-query'
 
 import {queryClient} from '../../../../init/tanstack-query'
+import {track} from '../../../telemetry/track'
 import {STATIONS} from '../stations'
 import {useRadioStore} from '../store'
 import {stationScheduleOptions} from '../use-station-schedule'
@@ -24,6 +25,7 @@ function openReminder(response: Notifications.NotificationResponse | null): void
 	let stationId = reminderStation(response?.notification.request.content.data)
 	if (stationId !== null) {
 		useRadioStore.getState().openSheet(stationId)
+		track({name: 'radio.reminder.open', attributes: {station: stationId}})
 	}
 }
 

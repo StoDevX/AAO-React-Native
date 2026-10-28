@@ -26,6 +26,18 @@ export type QueryKeyHead = string & {readonly __brand: 'QueryKeyHead'}
 export type PublicEventTitle = string & {readonly __brand: 'PublicEventTitle'}
 
 /**
+ * A radio show's title, as its station's published schedule names it. Only
+ * `showTitle()` makes one. It is free text, so like `PublicEventTitle` it may
+ * appear only on an anonymous event: a show is often named after its hosts.
+ */
+export type ShowTitle = string & {readonly __brand: 'ShowTitle'}
+
+/** Brands a title from a station's schedule, for an anonymous event alone. */
+export function showTitle(title: string): ShowTitle {
+	return title as ShowTitle
+}
+
+/**
  * A map category group's label, such as `'Dining'`. Only `groupsFor()` makes
  * one. It is text the project publishes in data/map-categories.yaml, never
  * text someone typed.
@@ -38,6 +50,9 @@ export type MapGroupLabel = string & {readonly __brand: 'MapGroupLabel'}
  * an id that names a destination.
  */
 export type QuickActionId = string & {readonly __brand: 'QuickActionId'}
+
+/** Where a show's bell or Remind Me button was pressed. */
+export type ReminderSurface = 'player' | 'full_schedule' | 'show_sheet'
 
 /** The calendar feeds an event can come from; `other` for anything unrecognized. */
 export type CalendarSourceId =
@@ -53,8 +68,9 @@ export type CalendarSourceId =
 	| 'other'
 
 /**
- * Marks an anonymous log on its way to Sentry, so `beforeSendLog` knows to
- * strip the device ID and span link the SDK adds. Removed before sending.
+ * Marks an anonymous log or metric on its way to Sentry, so `beforeSendLog`
+ * and `beforeSendMetric` know to strip the device ID and span link the SDK
+ * adds. Removed before sending.
  */
 export const ANONYMOUS_MARKER = 'telemetry.anonymous'
 
@@ -84,7 +100,14 @@ export type TelemetryEvent =
 	| {name: 'dictionary.edit.submit'; attributes: Record<string, never>}
 	| {
 			name: 'app.launch'
-			attributes: {icon: AppIconName; links: 'app' | 'safari'; radio: 'on' | 'off'}
+			attributes: {
+				icon: AppIconName
+				links: 'app' | 'safari'
+				radio: 'on' | 'off'
+				// How many radio shows are followed, and whether their reminders can arrive.
+				followed_shows: number
+				reminders: 'granted' | 'undetermined' | 'denied'
+			}
 	  }
 	| {name: 'app_icon.change'; attributes: {icon: AppIconName}}
 	| {name: 'open_links.change'; attributes: {links: 'app' | 'safari'}}
@@ -120,8 +143,25 @@ export type TelemetryEvent =
 	  }
 	// A published stream failed before any audio, and the shipped one was tried instead.
 	| {name: 'radio.stream.fallback'; attributes: {station: StationId}}
-	| {name: 'radio.reminder.follow'; attributes: {station: StationId}}
-	| {name: 'radio.reminder.unfollow'; attributes: {station: StationId}}
+	// Anonymous, as the show's title may name its hosts. `permission` is iOS's
+	// at the follow: a follow without it reaches no one until it is granted.
+	| {
+			name: 'radio.reminder.follow'
+			anonymous: true
+			attributes: {
+				station: StationId
+				title: ShowTitle
+				surface: ReminderSurface
+				permission: 'granted' | 'undetermined' | 'denied'
+			}
+	  }
+	| {
+			name: 'radio.reminder.unfollow'
+			anonymous: true
+			attributes: {station: StationId; title: ShowTitle; surface: ReminderSurface}
+	  }
+	// The player opened from a tapped reminder.
+	| {name: 'radio.reminder.open'; attributes: {station: StationId}}
 	// What the person did with the sheet asking for notifications.
 	| {
 			name: 'radio.reminder.permission'
@@ -162,6 +202,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'radio.stream.fallback': 'metric',
 	'radio.reminder.follow': 'metric',
 	'radio.reminder.unfollow': 'metric',
+	'radio.reminder.open': 'metric',
 	'radio.reminder.permission': 'metric',
 	'api.failure': 'log',
 }
@@ -189,7 +230,11 @@ export type CatalogIsClosed = Expect<IsClosed<TelemetryEvent>>
  */
 type PublicTextKeys<E> = E extends {attributes: infer A}
 	? {
-			[K in keyof A]-?: [A[K]] extends [never] ? never : A[K] extends PublicEventTitle ? K : never
+			[K in keyof A]-?: [A[K]] extends [never]
+				? never
+				: A[K] extends PublicEventTitle | ShowTitle
+					? K
+					: never
 		}[keyof A]
 	: never
 

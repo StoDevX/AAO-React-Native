@@ -48,7 +48,7 @@ export function FullScheduleSheet(): React.ReactNode {
 	// The event is kept past its sheet's closing, so it does not empty while sliding away.
 	let [event, setEvent] = React.useState<EventType | null>(null)
 	let [eventOpen, setEventOpen] = React.useState(false)
-	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle()
+	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('full_schedule')
 	let bell = React.useCallback(
 		(shown: EventType) => (
 			<FollowBell onToggle={toggle} show={{stationId: station.id, title: shown.title}} />

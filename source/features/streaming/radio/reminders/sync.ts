@@ -62,6 +62,8 @@ async function syncOnce(): Promise<void> {
 		pendingReminders(),
 		...stationIds.map(stationFeed),
 	])
+	// The bells read this, so one turned on or off in Settings shows on return.
+	useRadioStore.getState().setReminderPermission(permission)
 	let changes = planReminderChanges({
 		follows,
 		feeds: feeds.filter((feed) => feed !== null),

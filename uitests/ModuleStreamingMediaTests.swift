@@ -41,7 +41,7 @@ class ModuleStreamingMediaTests: UITestCase {
 			.openSheetFromBar(expecting: ids.playKmnk)
 			.openFullSchedule()
 			.followShowExpectingReminderSheet()
-			.declineReminderSheetKeepingFollow()
+			.declineReminderSheetLeavingBellOff()
 	}
 
 	/// A drag across the record turns it, leaving the logo as it was: the

@@ -6,7 +6,7 @@ import {formatCompactTime} from '@frogpond/time-format'
 
 import {bellLabel, HostedReminderPermissionSheet, useFollowToggle} from '../reminders'
 import type {Station} from '../stations'
-import {useIsFollowing, useRadioStore, type FollowedShow} from '../store'
+import {useIsReminding, useRadioStore, type FollowedShow} from '../store'
 import {palette} from './palette'
 import {scheduleNote, type ScheduleStatus} from './schedule-note'
 
@@ -24,10 +24,10 @@ function ReminderBell({
 	show: FollowedShow
 	onToggle: (show: FollowedShow) => void
 }): React.ReactNode {
-	let following = useIsFollowing(show)
+	let reminding = useIsReminding(show)
 	return (
 		<Pressable
-			accessibilityLabel={bellLabel(show, following)}
+			accessibilityLabel={bellLabel(show, reminding)}
 			accessibilityRole="button"
 			hitSlop={8}
 			onPress={() => onToggle(show)}
@@ -37,9 +37,9 @@ function ReminderBell({
 			{({pressed}) => (
 				<View style={pressed ? styles.pressed : undefined}>
 					<SymbolView
-						name={following ? 'bell.fill' : 'bell'}
+						name={reminding ? 'bell.fill' : 'bell'}
 						size={20}
-						tintColor={following ? palette.primary : palette.secondary}
+						tintColor={reminding ? palette.primary : palette.secondary}
 					/>
 				</View>
 			)}
@@ -95,7 +95,7 @@ function FullScheduleLink(): React.ReactNode {
 			style={({pressed}) => [styles.link, pressed && styles.pressed]}
 			testID="radio-full-schedule-link"
 		>
-			<Text style={[styles.linkText, palette.styles.primary]}>Full Schedule</Text>
+			<Text style={[styles.linkText, palette.styles.primary]}>See full schedule</Text>
 		</Pressable>
 	)
 }
@@ -116,7 +116,7 @@ export function ScheduleList({
 	station: Station
 	onPressShow: (show: EventType) => void
 }): React.ReactNode {
-	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle()
+	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('player')
 	let note = scheduleNote(status, upcoming.length)
 
 	let renderShow = React.useCallback(

@@ -574,7 +574,7 @@ struct TestIdentifiers {
 		/// bell's identifier and labels, from reminders/follow-controls.tsx.
 		static let kmnkShow = "Late Lift"
 		static let kmnkShowBell = "radio-schedule-bell-Late Lift"
-		static let followingLabel = "Stop reminding me about Late Lift"
+		static let notRemindingLabel = "Remind me about Late Lift"
 		/// The permission sheet's title and its decline, from reminders/permission-sheet.tsx.
 		static let reminderSheetTitle = "Get Show Reminders"
 		static let reminderSheetNotNow = "Not Now"

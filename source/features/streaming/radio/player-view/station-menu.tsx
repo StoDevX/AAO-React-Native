@@ -21,7 +21,7 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 				]}
 			>
 				<Button
-					label="Full Schedule"
+					label="See full schedule"
 					onPress={() => {
 						// Stacked over the sheet, as the website is: a screen opened
 						// beneath the sheet could not be seen without closing it.
