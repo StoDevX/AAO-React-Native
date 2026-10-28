@@ -75,7 +75,13 @@ export function ShowRemindersHost(): null {
 		void registerReminderActions().catch((error: unknown) => {
 			Sentry.captureException(error)
 		})
-		openReminder(Notifications.getLastNotificationResponse())
+		// Cleared once handled, as expo-notifications keeps it while the app runs, and
+		// a reload of the JavaScript would otherwise open and play it again.
+		let launchedBy = Notifications.getLastNotificationResponse()
+		if (launchedBy !== null) {
+			openReminder(launchedBy)
+			Notifications.clearLastNotificationResponse()
+		}
 		let responses = Notifications.addNotificationResponseReceivedListener(openReminder)
 
 		// The return from Settings is an app-active, which is how a permission

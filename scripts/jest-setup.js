@@ -82,6 +82,7 @@ jest.mock('expo-notifications', () => ({
 	DEFAULT_ACTION_IDENTIFIER: 'expo.modules.notifications.actions.DEFAULT',
 	addNotificationResponseReceivedListener: jest.fn(() => ({remove: jest.fn()})),
 	getLastNotificationResponse: jest.fn(() => null),
+	clearLastNotificationResponse: jest.fn(),
 }))
 jest.mock('expo-image-picker', () => ({
 	launchImageLibraryAsync: jest.fn(() => Promise.resolve({canceled: true, assets: null})),
