@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {audioActivity} from '../audio-activity'
+import {audioActivity, shouldRenderScratch} from '../audio-activity'
 
 const IDLE = {playing: false, isBuffering: false, didJustFinish: false, error: null}
 
@@ -30,5 +30,20 @@ describe('audioActivity', () => {
 			error: 'The stream could not be played.',
 		}
 		expect(audioActivity(status)).toBe('error')
+	})
+})
+
+describe('independent scratch playback', () => {
+	test('keeps its renderer running across AVPlayer startup buffering', () => {
+		expect(shouldRenderScratch('checking', 'waiting')).toBe(true)
+		expect(shouldRenderScratch('playing', 'playing')).toBe(true)
+		expect(shouldRenderScratch('playing', 'waiting')).toBe(true)
+	})
+	test('stops for an explicit pause, interruption, end, or error', () => {
+		expect(shouldRenderScratch('paused', 'playing')).toBe(false)
+		expect(shouldRenderScratch('paused', 'waiting')).toBe(false)
+		for (let activity of ['idle', 'ended', 'error'] as const) {
+			expect(shouldRenderScratch('playing', activity)).toBe(false)
+		}
 	})
 })

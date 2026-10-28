@@ -12,6 +12,7 @@ import {useRadioStore} from '../store'
 jest.mock('../../../../../modules/data-sources/bundled.json', () =>
 	jest.requireActual('./fixtures/bundled-sources.json'),
 )
+jest.mock('@frogpond/radio-scrub', () => ({radioScrub: null}))
 
 // The native module needs a device; its player is a stand-in that records the
 // source it was given.

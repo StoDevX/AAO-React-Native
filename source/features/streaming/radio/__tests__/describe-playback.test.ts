@@ -11,6 +11,10 @@ describe('describePlayback', () => {
 	})
 
 	test('says when the station could not play', () => {
-		expect(describePlayback('stopped', {code: 4, message: 'gone'})).toBe('Couldn’t play')
+		expect(describePlayback('stopped', {code: 4, message: 'gone'})).toBe('Couldn’t play: gone')
+	})
+
+	test('keeps the generic error when the native reason is blank', () => {
+		expect(describePlayback('stopped', {code: 0, message: '  '})).toBe('Couldn’t play')
 	})
 })
