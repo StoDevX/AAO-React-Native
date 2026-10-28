@@ -58,23 +58,23 @@ export function useFollowToggle(surface: ReminderSurface): {
 			return
 		}
 		let show = asking.current
-		void turnOnReminders(prompt).then((permission) => {
+		void turnOnReminders(prompt, surface).then((permission) => {
 			if (permission !== null && permission !== 'granted' && show !== null) {
 				useRadioStore.getState().unfollow(show)
 			}
 		})
-	}, [prompt])
+	}, [prompt, surface])
 
 	// The sheet reports closing after Continue too, by when the prompt is already gone.
 	let dismissPrompt = React.useCallback(() => {
 		if (prompt !== null) {
-			track({name: 'radio.reminder.permission', attributes: {outcome: 'not_now'}})
+			track({name: 'radio.reminder.permission', attributes: {outcome: 'not_now', surface}})
 			if (asking.current !== null) {
 				useRadioStore.getState().unfollow(asking.current)
 			}
 		}
 		setPrompt(null)
-	}, [prompt])
+	}, [prompt, surface])
 
 	return {toggle, prompt, confirmPrompt, dismissPrompt}
 }

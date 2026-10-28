@@ -155,7 +155,7 @@ export function ShowRemindersSheet(): React.ReactNode {
 									>
 										<Button
 											label={prompt === 'ask' ? 'Allow Notifications' : 'Turn On in Settings'}
-											onPress={() => void turnOnReminders(prompt)}
+											onPress={() => void turnOnReminders(prompt, 'reminders')}
 										/>
 									</Section>
 								)}

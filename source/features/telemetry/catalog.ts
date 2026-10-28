@@ -162,10 +162,14 @@ export type TelemetryEvent =
 	  }
 	// The player opened from a reminder: tapped, or its Listen button, which also plays.
 	| {name: 'radio.reminder.open'; attributes: {station: StationId; action: 'tap' | 'listen'}}
-	// What the person did with the sheet asking for notifications.
+	// What the person did when asked to turn notifications on: by a bell's
+	// prompt, or by the Notifications list's button (`reminders`).
 	| {
 			name: 'radio.reminder.permission'
-			attributes: {outcome: 'granted' | 'denied' | 'not_now' | 'settings'}
+			attributes: {
+				outcome: 'granted' | 'denied' | 'not_now' | 'settings'
+				surface: ReminderSurface
+			}
 	  }
 	| {
 			name: 'api.failure'
