@@ -10,6 +10,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 
 import {FullScheduleSheet} from './full-schedule-sheet'
+import {ShowRemindersSheet} from './reminders/show-reminders-sheet'
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
@@ -80,6 +81,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 									station={station}
 								/>
 								<FullScheduleSheet />
+								<ShowRemindersSheet />
 							</ScrollView>
 						</RNHostView>
 					</ZStack>

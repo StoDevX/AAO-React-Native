@@ -13,6 +13,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
+import type {EventType} from '@frogpond/event-type'
 import {NoticeView} from '@frogpond/notice'
 import {EventListRow} from './event-list-row'
 import {FailureNote} from './failure-note'
@@ -43,6 +44,8 @@ type Props = {
 	onRefresh: () => unknown
 	now: Moment
 	onPressEvent: (entry: SourcedEvent) => void
+	/** A control drawn after each row, given that row's event. */
+	rowAccessory?: (event: EventType) => React.ReactNode
 }
 
 /**
@@ -150,6 +153,7 @@ export function EventList(props: Props): React.ReactNode {
 									isLastInSection={index === section.data.length - 1}
 									key={`${entry.sourceId}|${entry.key}`}
 									onPress={() => props.onPressEvent(entry)}
+									accessory={props.rowAccessory?.(entry.event)}
 								/>
 							))}
 						</VStack>

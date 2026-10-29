@@ -31,6 +31,27 @@ describe('hydration', () => {
 		expect(useRadioStore.getState().viewedStationId).toBe('krlx')
 	})
 
+	test('drops a followed show on a station the app no longer has', async () => {
+		await AsyncStorage.setItem(
+			'radio-preferences',
+			JSON.stringify({
+				state: {
+					followedShows: [
+						{stationId: 'ksto', title: 'Cafecito Hour'},
+						{stationId: 'wmbr', title: 'Breakfast of Champions'},
+					],
+				},
+				version: 1,
+			}),
+		)
+
+		await useRadioStore.persist.rehydrate()
+
+		expect(useRadioStore.getState().followedShows).toStrictEqual([
+			{stationId: 'ksto', title: 'Cafecito Hour'},
+		])
+	})
+
 	test('is done when the saved switch is corrupt, keeping the default', async () => {
 		await AsyncStorage.setItem('radio-preferences', '{not json')
 

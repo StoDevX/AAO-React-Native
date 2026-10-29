@@ -35,7 +35,11 @@ import {StatusBar, useColorScheme} from 'react-native'
 import {RootErrorBoundary} from '../source/components/root-error-boundary'
 import {ScreenErrorFallback} from '../source/components/screen-error-boundary'
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
-import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
+import {
+	RadioHost,
+	RadioNowPlayingSheet,
+	ShowRemindersHost,
+} from '../source/features/streaming/radio'
 import {useUITestReset} from '../source/lib/uitest-reset'
 import {useCampusStore} from '../source/features/campus/store'
 import {CampusPicker} from '../source/features/campus/campus-picker'
@@ -121,6 +125,7 @@ function RootLayout(): React.ReactNode {
 							{/* Before the stack, so its hidden player sits beneath every screen. */}
 							<RadioHost />
 							<RadioNowPlayingSheet />
+							<ShowRemindersHost />
 							{/* A screen that fails to render shows ScreenErrorFallback in its own place,
 							    so the stack, its headers, and every other screen carry on. Expo Router
 							    wraps each screen, nested stacks' included, in a boundary of its own. */}

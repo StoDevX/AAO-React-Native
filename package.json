@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/runtime": "7.29.10",
+    "@date-fns/tz": "1.5.0",
     "@expo/log-box": "58.0.12",
     "@expo/metro-runtime": "58.0.14",
     "@expo/ui": "58.0.20",
@@ -85,6 +86,7 @@
     "expo-localization": "58.0.4",
     "expo-mail-composer": "58.0.3",
     "expo-modules-core": "58.0.22",
+    "expo-notifications": "58.1.6",
     "expo-router": "58.0.23",
     "expo-sqlite": "58.0.13",
     "expo-symbols": "58.0.4",

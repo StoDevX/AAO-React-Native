@@ -10,6 +10,8 @@ import type {SourcedEvent} from './sources'
 type Props = {
 	query: UseQueryResult<SourcedEvent[]>
 	onPressEvent: (event: EventType) => void
+	/** A control drawn after each row, given that row's event. */
+	rowAccessory?: (event: EventType) => React.ReactNode
 }
 
 // KSTO's and KRLX's schedules are broadcast schedules, not campus calendars --
@@ -46,6 +48,7 @@ export function ScheduleView(props: Props): React.ReactNode {
 			message={state === 'offline' ? OFFLINE_MESSAGE : undefined}
 			now={now}
 			onPressEvent={(entry) => props.onPressEvent(entry.event)}
+			rowAccessory={props.rowAccessory}
 			onRefresh={refetch}
 			refreshing={isRefetching}
 			sources={SOURCES}

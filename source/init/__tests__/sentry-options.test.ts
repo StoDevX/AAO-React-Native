@@ -84,6 +84,38 @@ describe('privacyOptions', () => {
 		expect(options().beforeSendLog?.(log)).toBe(log)
 	})
 
+	it('strips the device ID from an anonymous metric', () => {
+		let metric = {
+			name: 'radio.reminder.follow',
+			type: 'counter' as const,
+			value: 1,
+			attributes: {
+				station: 'ksto',
+				title: 'Cafecito Hour',
+				'telemetry.anonymous': true,
+				'user.id': 'id-1',
+			},
+		}
+
+		expect(options().beforeSendMetric?.(metric)).toStrictEqual({
+			name: 'radio.reminder.follow',
+			type: 'counter',
+			value: 1,
+			attributes: {station: 'ksto', title: 'Cafecito Hour'},
+		})
+	})
+
+	it('leaves the device ID on an ordinary metric', () => {
+		let metric = {
+			name: 'radio.reminder.open',
+			type: 'counter' as const,
+			value: 1,
+			attributes: {station: 'ksto', 'user.id': 'id-1'},
+		}
+
+		expect(options().beforeSendMetric?.(metric)).toBe(metric)
+	})
+
 	// The scrubbers themselves are tested in scrub.test.ts; these check that
 	// each hook uses one.
 	// The native SDK's own request breadcrumbs carry full URLs that JS never

@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
+import {Host} from '@expo/ui/swift-ui'
 import type {EventType} from '@frogpond/event-type'
 import {TouchClaimView} from '@frogpond/touch-claim'
 
+import {ScheduleEventSheet} from '../schedule-event-sheet'
 import {ScratchableLogo} from '../scratchable-logo'
 import {logoImage, type Station} from '../stations'
 import {useStationPlayback} from '../store'
@@ -61,13 +63,25 @@ export function FullLayout({
 	// without a cover, or none on air, leaves the station's logo.
 	let nowPlaying = useNowPlaying(station)
 	let songArtwork = nowPlaying.isSong && nowPlaying.artworkUri !== logoImage(logo).uri
+	// The show is kept past its sheet's closing, so it does not empty while sliding away.
+	let [show, setShow] = React.useState<EventType | null>(null)
+	let [showOpen, setShowOpen] = React.useState(false)
+	let openShow = React.useCallback((tapped: EventType) => {
+		setShow(tapped)
+		setShowOpen(true)
+	}, [])
 
 	return (
 		<View onLayout={onLayout} style={styles.screen}>
 			<StationPicker />
 			<View style={[styles.artwork, {height: artwork}]}>
 				{showingSchedule ? (
-					<ScheduleList status={schedule.status} upcoming={schedule.upcoming} />
+					<ScheduleList
+						onPressShow={openShow}
+						station={station}
+						status={schedule.status}
+						upcoming={schedule.upcoming}
+					/>
 				) : (
 					<TouchClaimView>
 						<ScratchableLogo
@@ -98,6 +112,15 @@ export function FullLayout({
 			</View>
 			<VolumeSlider />
 			<StationActionRow onShowSchedule={onToggleSchedule} station={station} />
+			{/* A SwiftUI sheet, so it needs a host of its own in this React Native tree. */}
+			<Host pointerEvents="none" style={styles.sheetHost}>
+				<ScheduleEventSheet
+					event={show}
+					isPresented={showOpen}
+					onClose={() => setShowOpen(false)}
+					station={station}
+				/>
+			</Host>
 		</View>
 	)
 }
@@ -157,6 +180,8 @@ const styles = StyleSheet.create({
 		height: 6,
 		borderRadius: 3,
 	},
+	// Nothing to see or touch until the sheet is presented.
+	sheetHost: {position: 'absolute', width: 0, height: 0},
 	airStatusText: {
 		fontSize: 13,
 		fontWeight: '600',

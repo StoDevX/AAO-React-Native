@@ -16,6 +16,7 @@ import {
 	buttonStyle,
 	disabled as disabledModifier,
 	padding,
+	presentationBackground,
 	presentationDetents,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
@@ -27,6 +28,8 @@ import type {EventType} from '@frogpond/event-type'
 import {addToCalendarEvents} from '../../telemetry/calendar-events'
 import {track} from '../../telemetry/track'
 import {KRLX_POWERED_BY, KSTO_POWERED_BY} from './constants'
+import {FollowButton, ReminderPermissionSheet, useFollowToggle} from './reminders'
+import {SHEET_BACKGROUND} from './sheet-background'
 import type {Station} from './stations'
 
 const HEADER_INSET = 20
@@ -47,6 +50,7 @@ export function ScheduleEventSheet({
 	onClose: () => void
 	station: Station
 }): React.ReactNode {
+	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('show_sheet')
 	return (
 		<BottomSheet
 			isPresented={isPresented}
@@ -56,7 +60,13 @@ export function ScheduleEventSheet({
 				}
 			}}
 		>
-			<Group modifiers={[presentationDetents(['large']), presentationDragIndicator('visible')]}>
+			<Group
+				modifiers={[
+					presentationDetents(['large']),
+					presentationDragIndicator('visible'),
+					presentationBackground(SHEET_BACKGROUND),
+				]}
+			>
 				{event === null ? null : (
 					<VStack spacing={0}>
 						<HStack modifiers={[padding({horizontal: HEADER_INSET, top: 20, bottom: 12})]}>
@@ -91,6 +101,7 @@ export function ScheduleEventSheet({
 								/>
 							</View>
 						</RNHostView>
+						<FollowButton onToggle={toggle} show={{stationId: station.id, title: event.title}} />
 						<AddToCalendar
 							compactMessages={true}
 							event={event}
@@ -117,6 +128,11 @@ export function ScheduleEventSheet({
 						/>
 					</VStack>
 				)}
+				<ReminderPermissionSheet
+					onClose={dismissPrompt}
+					onConfirm={confirmPrompt}
+					prompt={prompt}
+				/>
 			</Group>
 		</BottomSheet>
 	)
