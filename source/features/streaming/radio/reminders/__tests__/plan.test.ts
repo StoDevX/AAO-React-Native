@@ -52,13 +52,14 @@ function plan(input: {
 	feeds?: StationFeed[]
 	pending?: PendingReminder[]
 	granted?: boolean
+	zone?: string
 }) {
 	return planReminderChanges({
 		follows: input.follows ?? [CAFECITO],
 		feeds: input.feeds ?? [],
 		pending: input.pending ?? [],
 		granted: input.granted ?? true,
-		zone: CHICAGO,
+		zone: input.zone ?? CHICAGO,
 	})
 }
 
@@ -172,6 +173,37 @@ describe('planReminderChanges', () => {
 			show('Cafecito Hour', '2026-11-02T21:00'),
 		])
 		expect(slots(plan({feeds: [feed]}).schedule)).toStrictEqual([[2, 20, 59]])
+	})
+
+	// Chicago's clocks go back on November 1, 2026, and UTC's never do, so a
+	// phone on UTC sees Monday's 9pm show an hour later from then on.
+	test('schedules a show once when its hour moves on the phone partway through the feed', () => {
+		let feed = kstoFeed([
+			show('Cafecito Hour', '2026-10-26T21:00'),
+			show('Cafecito Hour', '2026-11-02T21:00'),
+		])
+		expect(slots(plan({feeds: [feed], zone: 'UTC'}).schedule)).toStrictEqual([[3, 1, 59]])
+	})
+
+	test('moves a show to its new hour on the phone once the airing before the change has passed', () => {
+		let feed = kstoFeed([
+			show('Cafecito Hour', '2026-11-02T21:00'),
+			show('Cafecito Hour', '2026-11-09T21:00'),
+		])
+		let before = pending('ksto', 'Cafecito Hour', {weekday: 3, hour: 1, minute: 59})
+		let changes = plan({feeds: [feed], pending: [before], zone: 'UTC'})
+		expect(changes.cancel).toStrictEqual([before.identifier])
+		expect(slots(changes.schedule)).toStrictEqual([[3, 2, 59]])
+	})
+
+	test('keeps the reminder of a show off the air for the feed’s first week', () => {
+		let feed = kstoFeed([
+			show('Other', '2026-10-26T10:00'),
+			show('Other', '2026-11-03T10:00'),
+			show('Cafecito Hour', '2026-11-04T21:00'),
+		])
+		let existing = pending('ksto', 'Cafecito Hour', {weekday: 4, hour: 20, minute: 59})
+		expect(plan({feeds: [feed], pending: [existing]})).toStrictEqual({schedule: [], cancel: []})
 	})
 
 	test('schedules nothing without permission', () => {

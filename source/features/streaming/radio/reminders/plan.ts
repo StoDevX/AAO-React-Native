@@ -32,6 +32,9 @@ export type ReminderRequest = PendingReminder & {stationName: string; body: stri
 /** A station's schedule as the app last loaded it. */
 export type StationFeed = {stationId: StationId; stationName: string; events: readonly EventType[]}
 
+/** How far apart a weekly reminder's firings are. */
+const WEEK_MS = 7 * 24 * 60 * 60_000
+
 /** `REMINDER_LEAD_MINUTES` in milliseconds. */
 const LEAD_MS = REMINDER_LEAD_MINUTES * 60_000
 
@@ -155,7 +158,13 @@ export function planReminderChanges(input: {
 			// Keyed by slot, as a reminder made before the station restyled the
 			// title has an identifier spelled the old way.
 			let wanted = new Map<string, ReminderRequest>()
-			for (let event of byStart.filter((each) => sameShowTitle(each.title, show.title))) {
+			let airings = byStart.filter((each) => sameShowTitle(each.title, show.title))
+			// A weekly reminder already repeats each airing, so the show's first week
+			// holds every slot it needs. A later airing can fall at another hour on
+			// the phone, once the station's clocks change and the phone's do not, and
+			// its slot would fire beside the first one from the coming week on.
+			let weekEnd = (airings[0]?.startTime.valueOf() ?? 0) + WEEK_MS
+			for (let event of airings.filter((each) => each.startTime.valueOf() < weekEnd)) {
 				let slot = reminderSlot(event.startTime.toDate(), zone)
 				wanted.set(slotKey(slot), {
 					identifier: reminderIdentifier(show.stationId, show.title, slot),
