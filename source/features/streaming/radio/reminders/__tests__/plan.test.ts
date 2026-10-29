@@ -185,6 +185,16 @@ describe('planReminderChanges', () => {
 		expect(slots(plan({feeds: [feed], zone: 'UTC'}).schedule)).toStrictEqual([[3, 1, 59]])
 	})
 
+	// Chicago's clocks go forward on March 8, 2026, leaving the two airings
+	// 167 hours apart rather than a week.
+	test('schedules a show once when the station’s clocks go forward between two airings', () => {
+		let feed = kstoFeed([
+			show('Cafecito Hour', '2026-03-02T21:00'),
+			show('Cafecito Hour', '2026-03-09T21:00'),
+		])
+		expect(slots(plan({feeds: [feed], zone: 'UTC'}).schedule)).toStrictEqual([[3, 2, 59]])
+	})
+
 	test('moves a show to its new hour on the phone once the airing before the change has passed', () => {
 		let feed = kstoFeed([
 			show('Cafecito Hour', '2026-11-02T21:00'),
