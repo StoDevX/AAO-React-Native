@@ -146,7 +146,7 @@
     "jest": "30.5.2",
     "js-yaml": "catalog:",
     "oxfmt": "0.74.0",
-    "oxlint": "1.87.0",
+    "oxlint": "1.90.0",
     "oxlint-tsgolint": "7.0.2003",
     "sf-symbols-typescript": "2.2.0",
     "typescript": "7.0.2",
