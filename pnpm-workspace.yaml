@@ -102,8 +102,8 @@ catalog:
   # so the tree ends up with two runtimes -- upward unless every module range
   # moves too, and downward always. Naming the version once removes the
   # question.
-  react: '19.3.0'
-  react-native: '0.88.0'
+  react: '19.3.1'
+  react-native: '0.88.1'
 
 # dependency version overrides (used to live in package.json)
 overrides:
@@ -134,11 +134,11 @@ overrides:
   # @expo/cli ranges ^58.0.14, and a fresh resolve floats to the newest, whose
   # expo-constants, expo-font and @expo/metro-runtime peers can outrun the Expo
   # SDK we hold. 58.0.14 matches it. Move it when the Expo set moves.
-  '@expo/router-server': '58.0.14'
+  '@expo/router-server': '58.0.18'
   # expo-router carries its own @expo/ui range, which a fresh resolve floats to
   # the newest. expo-router gets the app's copy, and with it the patch, rather
   # than a second one nothing has checked.
-  '@expo/ui': '58.0.20'
+  '@expo/ui': '58.0.24'
   # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
   # (never part of the shipped JS bundle). Each override is scoped to the
   # currently-resolved major/minor so it can't clobber some other, unrelated

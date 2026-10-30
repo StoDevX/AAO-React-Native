@@ -13,7 +13,7 @@
     "@jest/globals": "30.5.2"
   },
   "peerDependencies": {
-    "expo-localization": "~58.0.4",
+    "expo-localization": "~58.0.5",
     "moment-timezone": "^0.6.5",
     "react-native": "catalog:"
   }

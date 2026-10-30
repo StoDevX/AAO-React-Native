@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@expo/ui": "58.0.20",
+    "@expo/ui": "58.0.24",
     "@frogpond/collections": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
@@ -26,6 +26,6 @@
     "moment-timezone": "^0.6.5",
     "react": "catalog:",
     "react-native": "catalog:",
-    "react-native-safe-area-context": "^5.10.1"
+    "react-native-safe-area-context": "^5.11.0"
   }
 }
