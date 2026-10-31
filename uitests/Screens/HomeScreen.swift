@@ -30,6 +30,33 @@ struct HomeScreen: Screen {
 		verifyLayout(shown: hotlineKeypad, hidden: tileGrid, named: "the hotline keypad")
 	}
 
+	/// Dial `number` on the Phone layout's keypad and press Call, then check the
+	/// call screen names the hotline it reached.
+	@discardableResult
+	func dialHotline(_ number: String, reaching title: String) -> Self {
+		for digit in number {
+			let key = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", String(digit))).firstMatch
+			XCTAssertTrue(key.waitUntilExists(timeout: 10), "The keypad should have a \(digit) key")
+			key.tap()
+		}
+		app.buttons[TestIdentifiers.Hotline.call].tap()
+		let callTitle = app.element(matching: TestIdentifiers.Hotline.callTitle)
+		// The call rings for one full ring before it answers.
+		XCTAssertTrue(callTitle.waitForLabel(title, timeout: 20), "The call should reach \(title)")
+		capture("Hotline call")
+		return self
+	}
+
+	/// End the call, and check the keypad is back to dial from.
+	@discardableResult
+	func endHotlineCall() -> Self {
+		app.buttons[TestIdentifiers.Hotline.endCall].tap()
+		let callTitle = app.element(matching: TestIdentifiers.Hotline.callTitle)
+		XCTAssertTrue(callTitle.waitUntilGone(timeout: 10), "Ending the call should leave the call screen")
+		XCTAssertTrue(app.buttons[TestIdentifiers.Hotline.call].waitUntilExists(timeout: 10), "The keypad should be back")
+		return self
+	}
+
 	private var hotlineKeypad: XCUIElement {
 		app.element(matching: TestIdentifiers.Hotline.keypad)
 	}

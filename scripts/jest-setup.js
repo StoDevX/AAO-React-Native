@@ -146,6 +146,11 @@ jest.mock('@frogpond/telephone-tones', () => ({
 	playCallEnded: jest.fn(() => Promise.resolve()),
 	stopTones: jest.fn(),
 }))
+// The hotline's voice is a native module Jest does not have.
+jest.mock('expo-speech', () => ({
+	speak: jest.fn(),
+	stop: jest.fn(() => Promise.resolve()),
+}))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({
 	setQuickActions: jest.fn(() => Promise.resolve()),

@@ -22,4 +22,14 @@ class ModuleCustomizeTests: UITestCase {
 		home.openCustomize().chooseHomeLayout(ids.tiledLayout).close()
 		home.verifyTiled()
 	}
+
+	/// Dialing 411 on the Phone layout calls the campus's hotline, and ending
+	/// the call goes back to the keypad.
+	func testDialsTheHotline() throws {
+		let home = HomeScreen(app: app).checkHomescreenExists()
+		home.openCustomize().chooseHomeLayout(TestIdentifiers.Customize.phoneLayout).close()
+		home.verifyHotlineKeypad()
+			.dialHotline("411", reaching: "Wiki Monkeys Hotline")
+			.endHotlineCall()
+	}
 }

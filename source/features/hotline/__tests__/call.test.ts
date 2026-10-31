@@ -1,6 +1,15 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {answer, idle, menuPrompt, notInService, press, type CallState, type Key} from '../call'
+import {
+	answer,
+	cannotComplete,
+	idle,
+	menuPrompt,
+	notInService,
+	press,
+	type CallState,
+	type Key,
+} from '../call'
 import type {HotlineMenu} from '../directory'
 
 const menuOf = (title: string, count: number): HotlineMenu => ({
@@ -131,6 +140,13 @@ describe('idle', () => {
 test('notInService hangs up', () => {
 	expect(notInService()).toMatchObject({
 		say: 'The number you have dialed is not in service.',
+		next: 'hang-up',
+	})
+})
+
+test('cannotComplete apologises and hangs up', () => {
+	expect(cannotComplete()).toMatchObject({
+		say: "We're unable to complete your call at this time. Please try again later.",
 		next: 'hang-up',
 	})
 })

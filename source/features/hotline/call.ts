@@ -101,11 +101,17 @@ export function idle(state: CallState): Step {
 	return {state, say: "We didn't receive a selection. Goodbye.", next: 'hang-up'}
 }
 
+/** A call that says `say`, then hangs up, with no tree behind it. */
+function recording(say: string): Step {
+	return {state: {stack: [], idlePrompts: 0}, say, next: 'hang-up'}
+}
+
 /** A call to any number but the hotline's. */
 export function notInService(): Step {
-	return {
-		state: {stack: [], idlePrompts: 0},
-		say: 'The number you have dialed is not in service.',
-		next: 'hang-up',
-	}
+	return recording('The number you have dialed is not in service.')
+}
+
+/** A hotline call whose campus's hours could not be had at all. */
+export function cannotComplete(): Step {
+	return recording("We're unable to complete your call at this time. Please try again later.")
 }
