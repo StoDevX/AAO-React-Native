@@ -1,4 +1,4 @@
-export {contextualStatus, nextOpening} from './contextual-status'
+export {contextualStatus, findCurrentOpen, nextOpening} from './contextual-status'
 export {getShortBuildingStatus} from './get-short-status'
 export {formatBuildingTimes, formatStatusTime} from './format-times'
 export {linkHost} from './link-host'
@@ -15,6 +15,7 @@ export {hasDisplayableHours, firstScheduleNote, schedulesWithContent} from './sc
 export {getDayOfWeek} from './get-day-of-week'
 export {parseHours} from './parse-hours'
 export type {HourPairType} from './find-open-window'
+export {windowOpeningOn} from './find-open-window'
 export {isSetInService} from './is-set-in-service'
 export {blankSchedule} from './blank-schedule'
 export {getAccentBackgroundColor} from './color-helpers'
