@@ -45,6 +45,7 @@ import {
 import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
 import {HomeListRows} from '../source/features/home/list-rows'
+import {homeLayoutShown} from '../source/features/home/layout'
 import {useHomeLayoutStore} from '../source/features/home/store'
 import {HotlineKeypad} from '../source/features/hotline/hotline-keypad'
 import {openUrl} from '@frogpond/open-url'
@@ -213,7 +214,10 @@ export default function HomePage(): React.ReactNode {
 	let isDev = useIsDevMode()
 	let openView = useOpenView()
 	let {fontScale} = useWindowDimensions()
-	let layout = useHomeLayoutStore((state) => state.layout)
+	let layout = homeLayoutShown(
+		useHomeLayoutStore((state) => state.layout),
+		isDev,
+	)
 	// The saved layout loads after the first render. Drawing before then would
 	// draw the default and jump.
 	let layoutHydrated = useHomeLayoutStore((state) => state.hydrated)

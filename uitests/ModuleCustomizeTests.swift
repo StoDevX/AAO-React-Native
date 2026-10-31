@@ -13,10 +13,10 @@ class ModuleCustomizeTests: UITestCase {
 		home.verifyTiled()
 	}
 
-	/// Phone swaps Home's tiles for the hotline's keypad.
+	/// Phone, which dev mode offers, swaps Home's tiles for the hotline's keypad.
 	func testChoosesPhoneLayout() throws {
 		let ids = TestIdentifiers.Customize.self
-		let home = HomeScreen(app: app).checkHomescreenExists().verifyTiled()
+		let home = HomeScreen(app: app).checkHomescreenExists().enableDevMode().verifyTiled()
 		home.openCustomize().chooseHomeLayout(ids.phoneLayout).close()
 		home.verifyHotlineKeypad()
 		home.openCustomize().chooseHomeLayout(ids.tiledLayout).close()
@@ -26,7 +26,7 @@ class ModuleCustomizeTests: UITestCase {
 	/// The Phone layout waits with 411 dialed; calling it reaches the campus's
 	/// hotline, and ending the call leaves 411 ready to call again.
 	func testDialsTheHotline() throws {
-		let home = HomeScreen(app: app).checkHomescreenExists()
+		let home = HomeScreen(app: app).checkHomescreenExists().enableDevMode()
 		home.openCustomize().chooseHomeLayout(TestIdentifiers.Customize.phoneLayout).close()
 		home.verifyHotlineKeypad()
 			.verifyDialed("411")
