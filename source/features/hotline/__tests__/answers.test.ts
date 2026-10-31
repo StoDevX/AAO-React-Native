@@ -88,6 +88,15 @@ describe('specialsAnswer', () => {
 		)
 	})
 
+	test("leaves out the name of a hall's only meal, which may be the hall's own", () => {
+		let cage: ProcessedMealType[] = [
+			{label: 'The Cage', starttime: '0:00', endtime: '23:59', stations: [station('Grill', ['4'])]},
+		]
+		expect(specialsAnswer('The Cage', cage, items, monday('12:00'))).toBe(
+			"Here are today's specials at The Cage. At Grill: black bean burger.",
+		)
+	})
+
 	test('says there are none when there are no meals', () => {
 		expect(specialsAnswer('the Cage', [], items, monday('12:00'))).toBe(
 			'There are no specials at the Cage right now.',

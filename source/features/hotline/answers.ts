@@ -67,8 +67,9 @@ export function specialsAnswer(
 		return none
 	}
 
-	// A café with one all-day meal calls it "Menu", which the sentence leaves out.
-	let mealName = meal.label === 'Menu' ? '' : `${meal.label.toLowerCase()} `
+	// A hall's meal is named only to tell it from the hall's others: a café with
+	// one all-day meal calls it "Menu", or by the café's own name.
+	let mealName = meals.length > 1 ? `${meal.label.toLowerCase()} ` : ''
 	return [`Here are today's ${mealName}specials at ${hall}.`, ...stations].join(' ')
 }
 
