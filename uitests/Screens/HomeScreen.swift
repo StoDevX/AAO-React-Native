@@ -30,18 +30,19 @@ struct HomeScreen: Screen {
 		verifyLayout(shown: hotlineKeypad, hidden: tileGrid, named: "the hotline keypad")
 	}
 
-	/// Dial `number` on the Phone layout's keypad and press Call, then check the
-	/// call screen names the hotline it reached.
+	/// Check the Phone layout's keypad has `number` dialed and ready to call.
 	@discardableResult
-	func dialHotline(_ number: String, reaching title: String) -> Self {
-		for digit in number {
-			let key = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", String(digit))).firstMatch
-			XCTAssertTrue(key.waitUntilExists(timeout: 10), "The keypad should have a \(digit) key")
-			key.tap()
-		}
+	func verifyDialed(_ number: String) -> Self {
+		let dialed = app.element(matching: TestIdentifiers.Hotline.dialed)
+		XCTAssertTrue(dialed.waitForLabel(number, timeout: 10), "The keypad should have \(number) dialed")
+		return self
+	}
+
+	/// Press Call, and check the call screen names the hotline it reached.
+	@discardableResult
+	func callHotline(reaching title: String) -> Self {
 		app.buttons[TestIdentifiers.Hotline.call].tap()
 		let callTitle = app.element(matching: TestIdentifiers.Hotline.callTitle)
-		// The call rings for one full ring before it answers.
 		XCTAssertTrue(callTitle.waitForLabel(title, timeout: 20), "The call should reach \(title)")
 		capture("Hotline call")
 		return self

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {AppState, Pressable, StyleSheet, Text, View} from 'react-native'
+import {Pressable, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
 import {
@@ -11,7 +11,6 @@ import {
 } from '@frogpond/telephone-tones'
 import {now} from '@frogpond/timer'
 import {SymbolView} from 'expo-symbols'
-import {useFocusEffect} from 'expo-router'
 
 import {useCampusSection, useCampusStore} from '../campus/store'
 import {useRadioStore} from '../streaming/radio'
@@ -39,21 +38,9 @@ const MAX_DIGITS = 15
 
 type Phase = 'dialing' | 'ringing' | 'connected'
 
-/** `ms` as a call timer reads it: `0:07`, `12:34`. */
-function callDuration(ms: number): string {
-	let seconds = Math.floor(ms / 1000)
+/** `seconds` as a call timer reads it: `0:07`, `12:34`. */
+function callDuration(seconds: number): string {
 	return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
-}
-
-/** Re-renders each second while `active`, for the call timer. */
-function useTicking(active: boolean): number {
-	let [tick, setTick] = React.useState(() => Date.now())
-	React.useEffect(() => {
-		if (!active) return
-		let id = setInterval(() => setTick(Date.now()), 1000)
-		return () => clearInterval(id)
-	}, [active])
-	return tick
 }
 
 /**
@@ -65,10 +52,16 @@ export function HotlineKeypad(): React.ReactNode {
 	let {appName} = useCampusSection('branding')
 
 	let [phase, setPhase] = React.useState<Phase>('dialing')
-	let [dialed, setDialed] = React.useState('')
+	// The keypad waits with the hotline's number dialed, ready to call.
+	let [dialed, setDialed] = React.useState(HOTLINE_NUMBER)
 	let [pressed, setPressed] = React.useState('')
-	let [connectedAt, setConnectedAt] = React.useState(0)
-	let tick = useTicking(phase === 'connected')
+	// Counted up from the moment the call connects, which the clock is reset to.
+	let [callSeconds, setCallSeconds] = React.useState(0)
+	React.useEffect(() => {
+		if (phase !== 'connected') return
+		let id = setInterval(() => setCallSeconds((seconds) => seconds + 1), 1000)
+		return () => clearInterval(id)
+	}, [phase])
 
 	// Each call gets a number; anything a call left running checks it is still
 	// the current one before it speaks, waits or hangs up.
@@ -81,22 +74,27 @@ export function HotlineKeypad(): React.ReactNode {
 		idleTimer.current = null
 	}, [])
 
+	/** Stops the call where it is: the voice, the tones, and anything it was waiting to do. */
+	let stopCall = React.useCallback(() => {
+		callId.current += 1
+		callState.current = null
+		clearIdle()
+		silence()
+		stopTones()
+	}, [clearIdle])
+
 	/** Ends the call: silences it, and goes back to the keypad, after the beeps when `withTone`. */
 	let hangUp = React.useCallback(
 		async (withTone: boolean) => {
-			callId.current += 1
-			callState.current = null
-			clearIdle()
-			silence()
-			stopTones()
+			stopCall()
 			if (withTone) {
 				await playCallEnded()
 			}
 			setPhase('dialing')
-			setDialed('')
+			setDialed(HOTLINE_NUMBER)
 			setPressed('')
 		},
-		[clearIdle],
+		[stopCall],
 	)
 
 	/** Says what `step` says, then waits for a key or hangs up, as it asks. */
@@ -120,13 +118,15 @@ export function HotlineKeypad(): React.ReactNode {
 	)
 
 	let placeCall = React.useCallback(async () => {
-		if (!dialed) return
+		// Calling with nothing dialed calls the hotline, as its number is the default.
+		let number = dialed || HOTLINE_NUMBER
+		setDialed(number)
 		callId.current += 1
 		let id = callId.current
 		useRadioStore.getState().pause()
 
-		if (dialed !== HOTLINE_NUMBER) {
-			setConnectedAt(Date.now())
+		if (number !== HOTLINE_NUMBER) {
+			setCallSeconds(0)
 			setPhase('connected')
 			void run(notInService(), id)
 			return
@@ -140,7 +140,7 @@ export function HotlineKeypad(): React.ReactNode {
 		])
 		if (id !== callId.current) return
 		stopRingback()
-		setConnectedAt(Date.now())
+		setCallSeconds(0)
 		setPhase('connected')
 		void run(directory ? answer(directory, appName) : cannotComplete(), id)
 	}, [appName, campus, dialed, run])
@@ -163,23 +163,10 @@ export function HotlineKeypad(): React.ReactNode {
 
 	let onDelete = React.useCallback(() => setDialed((number) => number.slice(0, -1)), [])
 
-	// Leaving home, or unmounting, ends the call quietly; so does sending the app to the
-	// background. Inactive is not enough: pulling down Control Center to turn the
-	// volume up makes the app inactive, and must not hang up on the caller.
-	useFocusEffect(
-		React.useCallback(
-			() => () => {
-				void hangUp(false)
-			},
-			[hangUp],
-		),
-	)
-	React.useEffect(() => {
-		let subscription = AppState.addEventListener('change', (next) => {
-			if (next === 'background') void hangUp(false)
-		})
-		return () => subscription.remove()
-	}, [hangUp])
+	// The call carries on behind a sheet, another screen or another app, as a
+	// phone call does, with the app's background audio. Only leaving the Phone
+	// layout, which unmounts the keypad, ends it.
+	React.useEffect(() => stopCall, [stopCall])
 
 	let onCall = phase !== 'dialing'
 	let title = dialed === HOTLINE_NUMBER ? `${appName} Hotline` : dialed
@@ -198,14 +185,19 @@ export function HotlineKeypad(): React.ReactNode {
 							{title}
 						</Text>
 						<Text style={styles.status}>
-							{phase === 'ringing' ? 'calling…' : callDuration(tick - connectedAt)}
+							{phase === 'ringing' ? 'calling…' : callDuration(callSeconds)}
 						</Text>
 						<Text numberOfLines={1} style={styles.pressed}>
 							{pressed}
 						</Text>
 					</>
 				) : (
-					<Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.number}>
+					<Text
+						adjustsFontSizeToFit={true}
+						numberOfLines={1}
+						style={styles.number}
+						testID="hotline-dialed"
+					>
 						{dialed}
 					</Text>
 				)}

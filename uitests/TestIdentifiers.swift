@@ -98,6 +98,8 @@ struct TestIdentifiers {
 	/// Home's Phone layout, in source/features/hotline/hotline-keypad.tsx.
 	enum Hotline {
 		static let keypad = "hotline-keypad"
+		/// The number dialed on the keypad, before a call.
+		static let dialed = "hotline-dialed"
 		/// The "<app name> Hotline" title the call screen shows.
 		static let callTitle = "hotline-call-title"
 		static let call = "Call"
