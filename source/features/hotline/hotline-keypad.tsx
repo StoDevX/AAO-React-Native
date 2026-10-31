@@ -17,6 +17,7 @@ import {useRadioStore} from '../streaming/radio'
 import {
 	answer,
 	cannotComplete,
+	extensionOf,
 	HOTLINE_NUMBER,
 	idle,
 	IDLE_MS,
@@ -28,15 +29,21 @@ import {
 } from './call'
 import {CallButton, Keypad} from './keypad'
 import {loadDirectory} from './load'
-import {silence, speak} from './voice'
+import {prepareVoice, silence, speak} from './voice'
 
 /** One full ring: two seconds on and four off, before the hotline picks up. */
 const RING_MS = 6_000
 
+/**
+ * The most the screen waits on the call-ended beeps, which take a second and a
+ * half, so beeps that never report finishing cannot hold the call screen open.
+ */
+const CALL_ENDED_MS = 2_000
+
 /** Longer than any number worth dialing; the display stops there. */
 const MAX_DIGITS = 15
 
-type Phase = 'dialing' | 'ringing' | 'connected'
+type Phase = 'dialing' | 'ringing' | 'connected' | 'ended'
 
 /** `seconds` as a call timer reads it: `0:07`, `12:34`. */
 function callDuration(seconds: number): string {
@@ -88,7 +95,12 @@ export function HotlineKeypad(): React.ReactNode {
 		async (withTone: boolean) => {
 			stopCall()
 			if (withTone) {
-				await playCallEnded()
+				// The call is over the moment it is hung up: the timer stops while the beeps play.
+				setPhase('ended')
+				await Promise.race([
+					playCallEnded(),
+					new Promise((resolve) => setTimeout(resolve, CALL_ENDED_MS)),
+				])
 			}
 			setPhase('dialing')
 			setDialed(HOTLINE_NUMBER)
@@ -125,7 +137,10 @@ export function HotlineKeypad(): React.ReactNode {
 		let id = callId.current
 		useRadioStore.getState().pause()
 
-		if (number !== HOTLINE_NUMBER) {
+		let extension = extensionOf(number)
+		if (extension === null) {
+			await prepareVoice()
+			if (id !== callId.current) return
 			setCallSeconds(0)
 			setPhase('connected')
 			void run(notInService(), id)
@@ -136,13 +151,14 @@ export function HotlineKeypad(): React.ReactNode {
 		startRingback()
 		let [directory] = await Promise.all([
 			campus ? loadDirectory(campus, now().tz(timezone())) : null,
+			prepareVoice(),
 			new Promise((resolve) => setTimeout(resolve, RING_MS)),
 		])
 		if (id !== callId.current) return
 		stopRingback()
 		setCallSeconds(0)
 		setPhase('connected')
-		void run(directory ? answer(directory, appName) : cannotComplete(), id)
+		void run(directory ? answer(directory, appName, extension) : cannotComplete(), id)
 	}, [appName, campus, dialed, run])
 
 	let onKey = React.useCallback(
@@ -169,7 +185,9 @@ export function HotlineKeypad(): React.ReactNode {
 	React.useEffect(() => stopCall, [stopCall])
 
 	let onCall = phase !== 'dialing'
-	let title = dialed === HOTLINE_NUMBER ? `${appName} Hotline` : dialed
+	// The number, as the Phone app shows one with no contact: the app's name is
+	// already above it, and the hotline says it on answering.
+	let title = dialed
 
 	return (
 		<View style={styles.screen} testID="hotline-keypad">
@@ -185,7 +203,11 @@ export function HotlineKeypad(): React.ReactNode {
 							{title}
 						</Text>
 						<Text style={styles.status}>
-							{phase === 'ringing' ? 'calling…' : callDuration(callSeconds)}
+							{phase === 'ringing'
+								? 'calling…'
+								: phase === 'ended'
+									? 'Call ended'
+									: callDuration(callSeconds)}
 						</Text>
 						<Text numberOfLines={1} style={styles.pressed}>
 							{pressed}
@@ -207,7 +229,13 @@ export function HotlineKeypad(): React.ReactNode {
 				<View style={styles.actionSlot} />
 				<CallButton
 					ending={onCall}
-					onPress={onCall ? () => void hangUp(true) : () => void placeCall()}
+					onPress={
+						phase === 'ended'
+							? undefined
+							: onCall
+								? () => void hangUp(true)
+								: () => void placeCall()
+					}
 				/>
 				<View style={styles.actionSlot}>
 					{!onCall && dialed ? (

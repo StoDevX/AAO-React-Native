@@ -30,7 +30,7 @@ class ModuleCustomizeTests: UITestCase {
 		home.openCustomize().chooseHomeLayout(TestIdentifiers.Customize.phoneLayout).close()
 		home.verifyHotlineKeypad()
 			.verifyDialed("411")
-			.callHotline(reaching: "Wiki Monkeys Hotline")
+			.callHotline(reaching: "411")
 			.endHotlineCall()
 			.verifyDialed("411")
 	}

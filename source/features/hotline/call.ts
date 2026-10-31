@@ -109,9 +109,50 @@ function pressAfterAnswer(state: CallState, heard: string, key: Key): Step {
 	return afterAnswer(state.stack, heard, INVALID)
 }
 
-/** The call picking up: the greeting, then the main menu. */
-export function answer(root: HotlineMenu, appName: string): Step {
-	return offer([{menu: root, page: 0}], `Thank you for calling the ${appName} Hotline.`)
+const KEYS: ReadonlySet<string> = new Set([
+	'1',
+	'2',
+	'3',
+	'4',
+	'5',
+	'6',
+	'7',
+	'8',
+	'9',
+	'0',
+	'*',
+	'#',
+])
+
+const isKey = (key: string): key is Key => KEYS.has(key)
+
+/**
+ * The keys dialed after the hotline's number, which the call presses as soon
+ * as it answers: 41111 is 1 for the specials, then 1 for the first hall. Null
+ * for a number that is not the hotline's.
+ */
+export function extensionOf(number: string): Key[] | null {
+	if (!number.startsWith(HOTLINE_NUMBER)) {
+		return null
+	}
+	let keys = number.slice(HOTLINE_NUMBER.length).split('')
+	return keys.every(isKey) ? keys : null
+}
+
+/**
+ * The call picking up: the greeting, then the main menu. With an extension,
+ * it presses each key in turn instead and says only where they lead, stopping
+ * at the first key that leads nowhere.
+ */
+export function answer(root: HotlineMenu, appName: string, extension: Key[] = []): Step {
+	let step = offer([{menu: root, page: 0}], `Thank you for calling the ${appName} Hotline.`)
+	for (let key of extension) {
+		step = press(step.state, key)
+		if (step.say.startsWith(INVALID)) {
+			break
+		}
+	}
+	return step
 }
 
 /** The caller pressing `key` on the menu they are on. */

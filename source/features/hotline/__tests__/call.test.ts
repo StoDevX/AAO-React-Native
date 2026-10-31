@@ -3,6 +3,7 @@ import {describe, expect, test} from '@jest/globals'
 import {
 	answer,
 	cannotComplete,
+	extensionOf,
 	idle,
 	menuPrompt,
 	notInService,
@@ -178,5 +179,32 @@ test('cannotComplete apologises and hangs up', () => {
 	expect(cannotComplete()).toMatchObject({
 		say: "We're unable to complete your call at this time. Please try again later.",
 		next: 'hang-up',
+	})
+})
+
+describe('extensions', () => {
+	test('reads the keys dialed after 411 as an extension', () => {
+		expect(extensionOf('411')).toEqual([])
+		expect(extensionOf('41111')).toEqual(['1', '1'])
+		expect(extensionOf('4112*')).toEqual(['2', '*'])
+	})
+
+	test('is null for a number that is not the hotline', () => {
+		expect(extensionOf('412')).toBeNull()
+		expect(extensionOf('41')).toBeNull()
+		expect(extensionOf('911')).toBeNull()
+	})
+
+	test('goes straight to where an extension leads, without the greeting', () => {
+		expect(answer(root, 'All About Olaf', ['2']).say).toBe(menuPrompt(ten, 0, true))
+		expect(answer(root, 'All About Olaf', ['1', '9']).say).toBe(`Hall 9 is open today. ${AFTER}`)
+	})
+
+	test('stops at a key the extension cannot follow, on that menu', () => {
+		let step = answer(root, 'All About Olaf', ['2', '9', '7'])
+		expect(step.say).toBe(`Sorry, that is not a valid option. ${menuPrompt(ten, 1, true)}`)
+		expect(answer(root, 'All About Olaf', ['5', '1']).say).toBe(
+			`Sorry, that is not a valid option. ${ROOT_PROMPT}`,
+		)
 	})
 })
