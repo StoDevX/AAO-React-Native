@@ -15,8 +15,10 @@ export type MenuTab = {
 	/**
 	 * A Bon Appétit café drawn from this data by `TabCafeMenu`: its name with Bon
 	 * Appétit, and what the menu says while it loads, one picked at random.
+	 * `ignoreProvidedMenus` groups the items by their own stations rather than
+	 * Bon Appétit's meals, for a café such as The Cage whose meals list too little.
 	 */
-	bonApp?: {cafe: string; loadingMessage: string[]}
+	bonApp?: {cafe: string; loadingMessage: string[]; ignoreProvidedMenus?: boolean}
 }
 
 export type MenusSection = {

@@ -1,37 +1,15 @@
 import * as React from 'react'
-import {BonAppHostedMenu} from '../../source/features/menus/menu-bonapp'
-import {menuTab} from '../../source/features/menus/menu-tabs'
 import {LoadingView} from '@frogpond/notice'
+
+import {TabCafeMenu} from '../../source/features/menus/tab-cafe-menu'
 import {useHasEverBeenFocused} from '../../source/lib/use-has-ever-been-focused'
 
 export default function TheCagePage(): React.ReactNode {
-	let {server} = menuTab('the-cage')
-	// `NativeTabs` builds every tab the moment Menus opens, so a reader who
-	// only wants one cafe pays for all of them. Defer this one until it is
-	// actually asked for.
+	// `NativeTabs` builds every tab the moment Menus opens, so a reader who only
+	// wants one cafe pays for all of them. Defer this one until it is actually
+	// asked for, behind a spinner rather than nothing: `useIsFocused` trails the
+	// native tab switch by a render, and the menu opens on a `LoadingView` of its
+	// own, so the reader sees one continuous spinner instead of a blank flash.
 	let hasBeenFocused = useHasEverBeenFocused()
-
-	if (!hasBeenFocused) {
-		// A spinner rather than nothing: `useIsFocused` trails the native tab
-		// switch by a render, so the tab is already on screen for a frame before
-		// this flips. The menu below opens on a `LoadingView` of its own, so the
-		// reader sees one continuous spinner instead of a blank flash.
-		return <LoadingView />
-	}
-
-	return (
-		<BonAppHostedMenu
-			server={server}
-			cafe="the-cage"
-			ignoreProvidedMenus={true}
-			loadingMessage={[
-				'Checking for vegan cookies…',
-				'Serving up some shakes…',
-				'Waiting for menu screens to change…',
-				'Frying chicken…',
-				'Brewing coffee…',
-			]}
-			name="The Cage"
-		/>
-	)
+	return hasBeenFocused ? <TabCafeMenu name="the-cage" /> : <LoadingView />
 }

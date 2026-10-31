@@ -12,6 +12,7 @@ export function TabCafeMenu({name}: {name: string}): React.ReactNode {
 	return (
 		<BonAppHostedMenu
 			cafe={tab.bonApp.cafe}
+			ignoreProvidedMenus={tab.bonApp.ignoreProvidedMenus}
 			loadingMessage={tab.bonApp.loadingMessage}
 			name={tab.title}
 			server={server}

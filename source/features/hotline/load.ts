@@ -9,6 +9,7 @@ import {cafeTabsOf, menuServerOf} from '../menus/menu-tabs'
 import {bonAppMenuOptions, prepareFood} from '../menus/query'
 import {specialsAnswer, UNAVAILABLE_SPECIALS} from './answers'
 import {buildDirectory, type HotlineMenu} from './directory'
+import {hallsOf, type HotlineHall} from './halls'
 
 /**
  * How long the call waits on the network. Offline, a query pauses rather than
@@ -51,8 +52,7 @@ async function freshOrCached<T>(
 /** One dining hall's specials answer, or the apology when its menu cannot be had. */
 async function hallSpecials(
 	campus: CampusId,
-	cafe: string,
-	title: string,
+	{title, cafe, ignoreProvidedMenus}: HotlineHall,
 	now: Moment,
 ): Promise<{name: string; specials: string}> {
 	let server = menuServerOf(campusById(campus))
@@ -62,7 +62,7 @@ async function hallSpecials(
 		return {name: title, specials: UNAVAILABLE_SPECIALS(title)}
 	}
 	let items = prepareFood(menu)
-	let meals = bonAppMeals(menu, items, {ignoreProvidedMenus: false})
+	let meals = bonAppMeals(menu, items, {ignoreProvidedMenus})
 	return {name: title, specials: specialsAnswer(title, meals, items, now)}
 }
 
@@ -72,9 +72,7 @@ async function hallSpecials(
  * whose menu cannot be had says so in its own answer instead.
  */
 export async function loadDirectory(campus: CampusId, now: Moment): Promise<HotlineMenu | null> {
-	let halls = cafeTabsOf(campus).flatMap((tab) =>
-		tab.bonApp ? [hallSpecials(campus, tab.bonApp.cafe, tab.title, now)] : [],
-	)
+	let halls = hallsOf(cafeTabsOf(campus)).map((hall) => hallSpecials(campus, hall, now))
 	let hours = buildingsOptions(campus)
 	let [buildings, ...specials] = await Promise.all([
 		freshOrCached(() => queryClient.query(hours), hours.queryKey),
