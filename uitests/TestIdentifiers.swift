@@ -93,6 +93,17 @@ struct TestIdentifiers {
 		static let enableDevMode = "Enable dev mode"
 	}
 
+	// MARK: - Hotline
+
+	/// Home's Phone layout, in source/features/hotline/hotline-keypad.tsx.
+	enum Hotline {
+		static let keypad = "hotline-keypad"
+		/// The "<app name> Hotline" title the call screen shows.
+		static let callTitle = "hotline-call-title"
+		static let call = "Call"
+		static let endCall = "End call"
+	}
+
 	enum Navigation {
 		/// The menu at the home screen's top-right corner, which holds Support,
 		/// About, Contributing and Feedback. Mirrors
@@ -616,9 +627,10 @@ struct TestIdentifiers {
 		static let quickActionsRow = "Quick Actions"
 		/// The Layout picker's identifier, set in app/customize/index.tsx.
 		static let homeLayout = "home-layout"
-		/// The Layout menu's names for Home's two layouts.
+		/// The Layout menu's names for Home's layouts.
 		static let tiledLayout = "Tiled"
 		static let listLayout = "List"
+		static let phoneLayout = "Phone"
 		/// The App Icon row's identifier; its label also carries the current icon's name.
 		static let appIconRow = "app-icon-row"
 		/// The gallery's host, set in app/customize/app-icon.tsx.

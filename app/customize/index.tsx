@@ -26,6 +26,7 @@ const LINK_TARGETS = [
 const HOME_LAYOUTS = [
 	['tiled', 'Tiled'],
 	['list', 'List'],
+	['phone', 'Phone'],
 ] as const satisfies ReadonlyArray<readonly [HomeLayout, string]>
 
 /// Settings' own row-icon size, as `rows.tsx` draws a gradient icon.

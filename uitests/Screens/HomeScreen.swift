@@ -24,6 +24,16 @@ struct HomeScreen: Screen {
 		verifyLayout(shown: list, hidden: tileGrid, named: "the list")
 	}
 
+	/// Check Home draws the Phone layout's keypad in place of its tiles.
+	@discardableResult
+	func verifyHotlineKeypad() -> Self {
+		verifyLayout(shown: hotlineKeypad, hidden: tileGrid, named: "the hotline keypad")
+	}
+
+	private var hotlineKeypad: XCUIElement {
+		app.element(matching: TestIdentifiers.Hotline.keypad)
+	}
+
 	private var tileGrid: XCUIElement {
 		app.element(matching: TestIdentifiers.Home.tileGrid)
 	}

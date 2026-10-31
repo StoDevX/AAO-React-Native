@@ -46,6 +46,7 @@ import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
 import {HomeListRows} from '../source/features/home/list-rows'
 import {useHomeLayoutStore} from '../source/features/home/store'
+import {HotlineKeypad} from '../source/features/hotline/hotline-keypad'
 import {openUrl} from '@frogpond/open-url'
 import {setDevModeOverride} from '../source/redux/parts/settings'
 import {FEATURE_REQUESTS} from '../source/lib/app-identity'
@@ -271,76 +272,80 @@ export default function HomePage(): React.ReactNode {
 					</Stack.Toolbar.Menu>
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
-			<Host
-				matchContents={false}
-				modifiers={[accessibilityIdentifier('screen-homescreen')]}
-				style={styles.host}
-			>
-				{!hydrated ? null : layout === 'list' ? (
-					<VStack spacing={0}>
-						{/* Above the list rather than a row in it: a row with nothing
+			{hydrated && layout === 'phone' ? (
+				<HotlineKeypad />
+			) : (
+				<Host
+					matchContents={false}
+					modifiers={[accessibilityIdentifier('screen-homescreen')]}
+					style={styles.host}
+				>
+					{!hydrated ? null : layout === 'list' ? (
+						<VStack spacing={0}>
+							{/* Above the list rather than a row in it: a row with nothing
 						    in it, as when there is no banner, still takes a row's
 						    minimum height. */}
-						<FaqBannerSlot
-							onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
-							style={styles.banner}
-							target={FAQ_TARGETS.HOME}
-						/>
-						<List modifiers={[listStyle('insetGrouped')]}>
-							<HomeListRows
-								footer={
-									<VStack modifiers={NOTICE_FOOTER_MODIFIERS}>
-										<UnofficialAppNotice />
-									</VStack>
-								}
-								onOpen={openView}
-								views={views}
-							/>
-							{/* Room to scroll the last of the list clear of the Now Playing bar. */}
-							{barVisible ? (
-								<Spacer
-									modifiers={[...BARE_ROW_MODIFIERS, frame({height: NOW_PLAYING_BAR_CLEARANCE})]}
-								/>
-							) : null}
-						</List>
-					</VStack>
-				) : (
-					<ScrollView>
-						<VStack
-							modifiers={[
-								padding({all: SCREEN_MARGIN}),
-								// Room to scroll the last of Home clear of the Now Playing bar.
-								padding({bottom: barVisible ? NOW_PLAYING_BAR_CLEARANCE : 0}),
-								frame({maxWidth: FILL_WIDTH}),
-							]}
-							spacing={0}
-						>
-							{/* The banner is its own child, not one of the spaced groups
-						    below: when there is no banner its slot is empty, and
-						    spacing around an empty slot is a gap above the first group. */}
 							<FaqBannerSlot
 								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
-								style={styles.paddedBanner}
+								style={styles.banner}
 								target={FAQ_TARGETS.HOME}
 							/>
-
-							<VStack spacing={TILE_SPACING}>
-								<TileGrid
-									accessibilityId={HOME_GRID_ID}
-									columns={homeColumnsForFontScale(fontScale)}
-									items={views}
-									keyForItem={(view) => view.title}
-									renderItem={(view) => (
-										<HomeScreenButton onPress={() => openView(view)} view={view} />
-									)}
+							<List modifiers={[listStyle('insetGrouped')]}>
+								<HomeListRows
+									footer={
+										<VStack modifiers={NOTICE_FOOTER_MODIFIERS}>
+											<UnofficialAppNotice />
+										</VStack>
+									}
+									onOpen={openView}
+									views={views}
+								/>
+								{/* Room to scroll the last of the list clear of the Now Playing bar. */}
+								{barVisible ? (
+									<Spacer
+										modifiers={[...BARE_ROW_MODIFIERS, frame({height: NOW_PLAYING_BAR_CLEARANCE})]}
+									/>
+								) : null}
+							</List>
+						</VStack>
+					) : (
+						<ScrollView>
+							<VStack
+								modifiers={[
+									padding({all: SCREEN_MARGIN}),
+									// Room to scroll the last of Home clear of the Now Playing bar.
+									padding({bottom: barVisible ? NOW_PLAYING_BAR_CLEARANCE : 0}),
+									frame({maxWidth: FILL_WIDTH}),
+								]}
+								spacing={0}
+							>
+								{/* The banner is its own child, not one of the spaced groups
+						    below: when there is no banner its slot is empty, and
+						    spacing around an empty slot is a gap above the first group. */}
+								<FaqBannerSlot
+									onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
+									style={styles.paddedBanner}
+									target={FAQ_TARGETS.HOME}
 								/>
 
-								<UnofficialAppNotice />
+								<VStack spacing={TILE_SPACING}>
+									<TileGrid
+										accessibilityId={HOME_GRID_ID}
+										columns={homeColumnsForFontScale(fontScale)}
+										items={views}
+										keyForItem={(view) => view.title}
+										renderItem={(view) => (
+											<HomeScreenButton onPress={() => openView(view)} view={view} />
+										)}
+									/>
+
+									<UnofficialAppNotice />
+								</VStack>
 							</VStack>
-						</VStack>
-					</ScrollView>
-				)}
-			</Host>
+						</ScrollView>
+					)}
+				</Host>
+			)}
 			<RadioNowPlayingBar />
 		</>
 	)

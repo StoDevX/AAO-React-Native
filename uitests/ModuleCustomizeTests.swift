@@ -12,4 +12,14 @@ class ModuleCustomizeTests: UITestCase {
 		home.openCustomize().chooseHomeLayout(ids.tiledLayout).close()
 		home.verifyTiled()
 	}
+
+	/// Phone swaps Home's tiles for the hotline's keypad.
+	func testChoosesPhoneLayout() throws {
+		let ids = TestIdentifiers.Customize.self
+		let home = HomeScreen(app: app).checkHomescreenExists().verifyTiled()
+		home.openCustomize().chooseHomeLayout(ids.phoneLayout).close()
+		home.verifyHotlineKeypad()
+		home.openCustomize().chooseHomeLayout(ids.tiledLayout).close()
+		home.verifyTiled()
+	}
 }
