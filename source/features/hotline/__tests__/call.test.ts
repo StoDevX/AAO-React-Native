@@ -55,6 +55,9 @@ describe('answer', () => {
 	})
 })
 
+const BACK = 'To go back, press star.'
+const AFTER = `To hear that again, press 1. ${BACK}`
+
 describe('menuPrompt', () => {
 	test('pages a long menu eight at a time, with 9 for more', () => {
 		expect(menuPrompt(ten, 0)).toBe(
@@ -69,29 +72,52 @@ describe('menuPrompt', () => {
 			Array.from({length: 9}, (_, i) => `For Hall ${i + 1}, press ${i + 1}.`).join(' '),
 		)
 	})
+
+	test('says how to go back, below the main menu', () => {
+		expect(menuPrompt(ten, 1, true)).toBe(`For Office 9, press 1. For Office 10, press 2. ${BACK}`)
+	})
 })
 
 describe('press', () => {
-	test('opens a submenu', () => {
+	test('opens a submenu, which says how to go back', () => {
 		let step = pressAll('2')
 		expect(depth(step.state)).toBe(2)
-		expect(step.say).toBe(menuPrompt(ten, 0))
+		expect(step.say).toBe(menuPrompt(ten, 0, true))
 	})
 
-	test('reads an answer, then offers the same menu again', () => {
-		let step = pressAll('3')
-		expect(step.say).toBe(`Nothing is open right now. ${ROOT_PROMPT}`)
-		expect(depth(step.state)).toBe(1)
+	test('reads an answer, then offers to repeat it or go back', () => {
+		let step = pressAll('2', '1')
+		expect(step.say).toBe(`Office 1 is open today. ${AFTER}`)
 		expect(step.next).toBe('listen')
 	})
 
+	test('1 after an answer reads it again', () => {
+		expect(pressAll('2', '1', '1').say).toBe(`Office 1 is open today. ${AFTER}`)
+		expect(pressAll('2', '1', '1', '1').say).toBe(`Office 1 is open today. ${AFTER}`)
+	})
+
+	test('star after an answer goes back to the menu it came from', () => {
+		let step = pressAll('2', '9', '2', '*')
+		expect(depth(step.state)).toBe(2)
+		expect(step.say).toBe(menuPrompt(ten, 1, true))
+		expect(pressAll('3', '*').say).toBe(ROOT_PROMPT)
+	})
+
+	test('0 after an answer repeats what can be pressed', () => {
+		expect(pressAll('3', '0').say).toBe(AFTER)
+	})
+
+	test('any other key after an answer says so', () => {
+		expect(pressAll('3', '5').say).toBe(`Sorry, that is not a valid option. ${AFTER}`)
+	})
+
 	test('9 selects the ninth item of a menu of nine', () => {
-		expect(pressAll('1', '9').say).toBe(`Hall 9 is open today. ${menuPrompt(nine, 0)}`)
+		expect(pressAll('1', '9').say).toBe(`Hall 9 is open today. ${AFTER}`)
 	})
 
 	test('9 turns the page, and keys then name that page', () => {
-		expect(pressAll('2', '9').say).toBe(menuPrompt(ten, 1))
-		expect(pressAll('2', '9', '2').say).toBe(`Office 10 is open today. ${menuPrompt(ten, 1)}`)
+		expect(pressAll('2', '9').say).toBe(menuPrompt(ten, 1, true))
+		expect(pressAll('2', '9', '2').say).toBe(`Office 10 is open today. ${AFTER}`)
 	})
 
 	test('star goes back a level, from any page', () => {
@@ -105,7 +131,7 @@ describe('press', () => {
 	})
 
 	test('0 repeats the current page', () => {
-		expect(pressAll('2', '9', '0').say).toBe(menuPrompt(ten, 1))
+		expect(pressAll('2', '9', '0').say).toBe(menuPrompt(ten, 1, true))
 	})
 
 	test('a key that names no option says so, then repeats the menu', () => {
@@ -113,7 +139,7 @@ describe('press', () => {
 		expect(pressAll('5').say).toBe(invalid)
 		expect(pressAll('#').say).toBe(invalid)
 		expect(pressAll('2', '9', '3').say).toBe(
-			`Sorry, that is not a valid option. ${menuPrompt(ten, 1)}`,
+			`Sorry, that is not a valid option. ${menuPrompt(ten, 1, true)}`,
 		)
 	})
 
@@ -134,6 +160,10 @@ describe('idle', () => {
 			say: "We didn't receive a selection. Goodbye.",
 			next: 'hang-up',
 		})
+	})
+
+	test('after an answer, repeats what can be pressed rather than the answer', () => {
+		expect(idle(pressAll('3').state).say).toBe(AFTER)
 	})
 })
 

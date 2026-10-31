@@ -3,8 +3,15 @@ import type {HotlineMenu, HotlineOption} from './directory'
 /** A key on the phone's keypad. */
 export type Key = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0' | '*' | '#'
 
-/** Where the caller is in the tree, and how many times the menu has waited on them. */
-export type CallState = {stack: Array<{menu: HotlineMenu; page: number}>; idlePrompts: number}
+/**
+ * Where the caller is in the tree, the answer they have just heard if they are
+ * past one, and how many times the call has waited on them.
+ */
+export type CallState = {
+	stack: Array<{menu: HotlineMenu; page: number}>
+	heard: string | null
+	idlePrompts: number
+}
 
 /** What to say, and whether the call then waits for a key or hangs up. */
 export type Step = {state: CallState; say: string; next: 'listen' | 'hang-up'}
@@ -35,13 +42,27 @@ function pagesOf(menu: HotlineMenu): HotlineOption[][] {
 
 const hasMorePages = (menu: HotlineMenu, page: number) => page < pagesOf(menu).length - 1
 
-/** What the voice offers on `page` of `menu`: "For Stav Hall, press 1. …" */
-export function menuPrompt(menu: HotlineMenu, page: number): string {
+/** How every menu below the main one, and every answer, says the way back. */
+const BACK_PROMPT = 'To go back, press star.'
+
+/** What follows an answer: the choice to hear it again, or to go back. */
+const AFTER_ANSWER_PROMPT = `To hear that again, press 1. ${BACK_PROMPT}`
+
+const INVALID = 'Sorry, that is not a valid option.'
+
+/**
+ * What the voice offers on `page` of `menu`: "For Stav Hall, press 1. …",
+ * ending with the way back when `canGoBack`.
+ */
+export function menuPrompt(menu: HotlineMenu, page: number, canGoBack = false): string {
 	let offers = (pagesOf(menu)[page] ?? []).map(
 		(option, i) => `For ${option.label}, press ${i + 1}.`,
 	)
 	if (hasMorePages(menu, page)) {
 		offers.push(`For more options, press ${MORE_KEY}.`)
+	}
+	if (canGoBack) {
+		offers.push(BACK_PROMPT)
 	}
 	return offers.join(' ')
 }
@@ -54,12 +75,38 @@ function current(state: CallState): {menu: HotlineMenu; page: number} {
 	return top
 }
 
+/** `text`, after `prefix` when there is one. */
+const after = (prefix: string, text: string) => (prefix ? `${prefix} ${text}` : text)
+
 /** Says `prefix` (if any), then the menu the caller is on, and waits for a key. */
 function offer(stack: CallState['stack'], prefix = ''): Step {
-	let state = {stack, idlePrompts: 0}
+	let state = {stack, heard: null, idlePrompts: 0}
 	let {menu, page} = current(state)
-	let prompt = menuPrompt(menu, page)
-	return {state, say: prefix ? `${prefix} ${prompt}` : prompt, next: 'listen'}
+	let prompt = menuPrompt(menu, page, stack.length > 1)
+	return {state, say: after(prefix, prompt), next: 'listen'}
+}
+
+/** Says `prefix` (if any), then what can follow `answer`, and waits for a key. */
+function afterAnswer(stack: CallState['stack'], answer: string, prefix = ''): Step {
+	return {
+		state: {stack, heard: answer, idlePrompts: 0},
+		say: after(prefix, AFTER_ANSWER_PROMPT),
+		next: 'listen',
+	}
+}
+
+/** A key pressed just after an answer: 1 hears it again, star goes back to its menu. */
+function pressAfterAnswer(state: CallState, heard: string, key: Key): Step {
+	if (key === '1') {
+		return afterAnswer(state.stack, heard, heard)
+	}
+	if (key === '*') {
+		return offer(state.stack)
+	}
+	if (key === '0') {
+		return afterAnswer(state.stack, heard)
+	}
+	return afterAnswer(state.stack, heard, INVALID)
 }
 
 /** The call picking up: the greeting, then the main menu. */
@@ -69,6 +116,10 @@ export function answer(root: HotlineMenu, appName: string): Step {
 
 /** The caller pressing `key` on the menu they are on. */
 export function press(state: CallState, key: Key): Step {
+	if (state.heard !== null) {
+		return pressAfterAnswer(state, state.heard, key)
+	}
+
 	let {menu, page} = current(state)
 	let below = state.stack.slice(0, -1)
 
@@ -84,10 +135,10 @@ export function press(state: CallState, key: Key): Step {
 
 	let option = pagesOf(menu)[page]?.[Number(key) - 1]
 	if (key === '#' || !option) {
-		return offer(state.stack, 'Sorry, that is not a valid option.')
+		return offer(state.stack, INVALID)
 	}
 	if ('answer' in option.target) {
-		return offer(state.stack, option.target.answer)
+		return afterAnswer(state.stack, option.target.answer, option.target.answer)
 	}
 	return offer([...state.stack, {menu: option.target, page: 0}])
 }
@@ -95,7 +146,7 @@ export function press(state: CallState, key: Key): Step {
 /** The menu finishing with no key pressed for `IDLE_MS`: once it repeats, then it gives up. */
 export function idle(state: CallState): Step {
 	if (state.idlePrompts === 0) {
-		let step = offer(state.stack)
+		let step = state.heard === null ? offer(state.stack) : afterAnswer(state.stack, state.heard)
 		return {...step, state: {...step.state, idlePrompts: 1}}
 	}
 	return {state, say: "We didn't receive a selection. Goodbye.", next: 'hang-up'}
@@ -103,7 +154,7 @@ export function idle(state: CallState): Step {
 
 /** A call that says `say`, then hangs up, with no tree behind it. */
 function recording(say: string): Step {
-	return {state: {stack: [], idlePrompts: 0}, say, next: 'hang-up'}
+	return {state: {stack: [], heard: null, idlePrompts: 0}, say, next: 'hang-up'}
 }
 
 /** A call to any number but the hotline's. */
