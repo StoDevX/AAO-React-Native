@@ -163,7 +163,9 @@ export function HotlineKeypad(): React.ReactNode {
 
 	let onDelete = React.useCallback(() => setDialed((number) => number.slice(0, -1)), [])
 
-	// Leaving home, or unmounting, ends the call quietly; so does leaving the app.
+	// Leaving home, or unmounting, ends the call quietly; so does sending the app to the
+	// background. Inactive is not enough: pulling down Control Center to turn the
+	// volume up makes the app inactive, and must not hang up on the caller.
 	useFocusEffect(
 		React.useCallback(
 			() => () => {
@@ -174,7 +176,7 @@ export function HotlineKeypad(): React.ReactNode {
 	)
 	React.useEffect(() => {
 		let subscription = AppState.addEventListener('change', (next) => {
-			if (next !== 'active') void hangUp(false)
+			if (next === 'background') void hangUp(false)
 		})
 		return () => subscription.remove()
 	}, [hangUp])
