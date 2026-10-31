@@ -1,5 +1,6 @@
 import type {Moment} from 'moment-timezone'
 import {findMeal} from '@frogpond/food-menu/lib/find-menu'
+import {isFeatured} from '@frogpond/food-menu/lib/is-featured'
 import {mealWindow} from '@frogpond/food-menu/lib/meal-times'
 
 import {
@@ -35,7 +36,8 @@ export const UNAVAILABLE_SPECIALS = (hall: string): string =>
 
 /**
  * The specials of the meal `hall` is serving at `now`, or its next one today,
- * read station by station. After the day's last meal, there are none.
+ * read station by station: what Menus' Only Show Specials toggle lists, its
+ * Specials and Additional Favorites. After the day's last meal, there are none.
  */
 export function specialsAnswer(
 	hall: string,
@@ -57,7 +59,7 @@ export function specialsAnswer(
 	let stations = meal.stations.flatMap((station) => {
 		let specials = station.items
 			.map((id) => items[id])
-			.filter((food) => food?.special)
+			.filter((food) => food !== undefined && isFeatured(food))
 			.map((food) => food.label.toLowerCase())
 		return specials.length > 0 ? [`At ${station.label}: ${spokenList(specials)}.`] : []
 	})
@@ -65,9 +67,9 @@ export function specialsAnswer(
 		return none
 	}
 
-	return [`Here are today's ${meal.label.toLowerCase()} specials at ${hall}.`, ...stations].join(
-		' ',
-	)
+	// A café with one all-day meal calls it "Menu", which the sentence leaves out.
+	let mealName = meal.label === 'Menu' ? '' : `${meal.label.toLowerCase()} `
+	return [`Here are today's ${mealName}specials at ${hall}.`, ...stations].join(' ')
 }
 
 /**

@@ -69,6 +69,25 @@ describe('specialsAnswer', () => {
 		)
 	})
 
+	test('reads what the Specials toggle shows: Specials and Additional Favorites, not extras', () => {
+		let tiered: MenuItemContainerType = {
+			b: {...item('b', 'Cheeseburger', false), tier: 2},
+			w: {...item('w', 'Chicken wrap', true), tier: 1},
+			k: {...item('k', 'Ketchup', false), tier: 3},
+		}
+		let cage: ProcessedMealType[] = [
+			{
+				label: 'Menu',
+				starttime: '0:00',
+				endtime: '23:59',
+				stations: [station('Grill', ['w', 'b', 'k'])],
+			},
+		]
+		expect(specialsAnswer('the Cage', cage, tiered, monday('12:00'))).toBe(
+			"Here are today's specials at the Cage. At Grill: chicken wrap and cheeseburger.",
+		)
+	})
+
 	test('says there are none when there are no meals', () => {
 		expect(specialsAnswer('the Cage', [], items, monday('12:00'))).toBe(
 			'There are no specials at the Cage right now.',
