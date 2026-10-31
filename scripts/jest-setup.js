@@ -137,6 +137,15 @@ jest.mock('@frogpond/debug-tools', () => ({
 	openDebugSwift: jest.fn(() => Promise.resolve()),
 	setFloatingButtonEnabled: jest.fn(() => Promise.resolve()),
 }))
+// The hotline's tones come from a native module Jest does not have, and make
+// no sound there anyway.
+jest.mock('@frogpond/telephone-tones', () => ({
+	playKeyTone: jest.fn(),
+	startRingback: jest.fn(),
+	stopRingback: jest.fn(),
+	playCallEnded: jest.fn(() => Promise.resolve()),
+	stopTones: jest.fn(),
+}))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({
 	setQuickActions: jest.fn(() => Promise.resolve()),

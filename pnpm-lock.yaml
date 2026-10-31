@@ -185,6 +185,9 @@ importers:
       '@frogpond/storage':
         specifier: workspace:*
         version: link:modules/storage
+      '@frogpond/telephone-tones':
+        specifier: workspace:*
+        version: link:modules/telephone-tones
       '@frogpond/time-format':
         specifier: workspace:*
         version: link:modules/time-format
@@ -1153,6 +1156,12 @@ importers:
       '@jest/globals':
         specifier: 30.5.2
         version: 30.5.2(supports-color@8.1.1)
+
+  modules/telephone-tones:
+    dependencies:
+      expo-modules-core:
+        specifier: ~58.0.22
+        version: 58.0.22(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
 
   modules/time-format:
     dependencies:

@@ -45,6 +45,7 @@
     "@frogpond/separator": "workspace:*",
     "@frogpond/sheet-section": "workspace:*",
     "@frogpond/storage": "workspace:*",
+    "@frogpond/telephone-tones": "workspace:*",
     "@frogpond/time-format": "workspace:*",
     "@frogpond/timer": "workspace:*",
     "@frogpond/titlecase": "2.0.4",
