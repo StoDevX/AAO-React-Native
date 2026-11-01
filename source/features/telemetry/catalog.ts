@@ -1,5 +1,6 @@
 import type {AppIconName} from '../../../images/icons'
 import type {CampusId} from '../../campuses'
+import type {ReminderPermission} from '../streaming/radio/reminders/notifications'
 import type {StationId} from '../streaming/radio/stations'
 import type {PlaybackFailureMessage} from '../streaming/radio/playback-diagnostics'
 
@@ -104,9 +105,10 @@ export type TelemetryEvent =
 				icon: AppIconName
 				links: 'app' | 'safari'
 				radio: 'on' | 'off'
-				// How many radio shows are followed, and whether their reminders can arrive.
+				// How many radio shows are followed, and whether their reminders can
+				// arrive: `unknown` when iOS could not be asked.
 				followed_shows: number
-				reminders: 'granted' | 'undetermined' | 'denied'
+				reminders: ReminderPermission | 'unknown'
 			}
 	  }
 	| {name: 'app_icon.change'; attributes: {icon: AppIconName}}
@@ -152,7 +154,7 @@ export type TelemetryEvent =
 				station: StationId
 				title: ShowTitle
 				surface: ReminderSurface
-				permission: 'granted' | 'undetermined' | 'denied'
+				permission: ReminderPermission
 			}
 	  }
 	| {

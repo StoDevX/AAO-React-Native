@@ -37,7 +37,8 @@ export async function reportLaunch(): Promise<void> {
 		let [systemIcon, inApp, reminders] = await Promise.all([
 			getIcon(),
 			storage.getInAppLinkPreference(),
-			reminderPermission(),
+			// A permission that cannot be read must not cost the launch its count.
+			reminderPermission().catch(() => 'unknown' as const),
 			radioHydrated(),
 		])
 		let icon = iconFor(systemIcon)
