@@ -34,7 +34,7 @@ class ModuleStreamingMediaTests: UITestCase {
 	}
 
 	/// Following a show raises the app's own sheet, explaining reminders,
-	/// before iOS asks anything; Not Now keeps the follow and asks nothing.
+	/// before iOS asks anything; Not Now asks nothing and leaves the bell off.
 	func testFollowingAShowAsksInTheAppFirst() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
