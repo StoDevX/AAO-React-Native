@@ -5,7 +5,6 @@ import {
 	Button,
 	Group,
 	HStack,
-	Host,
 	Image,
 	RNHostView,
 	Spacer,
@@ -27,6 +26,7 @@ import {useQuery} from '@tanstack/react-query'
 
 import {FollowBell, ReminderPermissionSheet, useFollowToggle} from './reminders'
 import {ScheduleEventSheet} from './schedule-event-sheet'
+import {SheetHost} from './sheet-host'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 import {stationScheduleOptions} from './use-station-schedule'
@@ -61,7 +61,7 @@ export function FullScheduleSheet(): React.ReactNode {
 	}, [])
 
 	return (
-		<Host pointerEvents="none" style={styles.host}>
+		<SheetHost>
 			<BottomSheet
 				isPresented={open}
 				onIsPresentedChange={(presented) => {
@@ -111,12 +111,10 @@ export function FullScheduleSheet(): React.ReactNode {
 					</VStack>
 				</Group>
 			</BottomSheet>
-		</Host>
+		</SheetHost>
 	)
 }
 
 const styles = StyleSheet.create({
-	// Nothing to see or touch until the sheet is presented.
-	host: {position: 'absolute', width: 0, height: 0},
 	list: {flex: 1},
 })

@@ -573,7 +573,7 @@ struct TestIdentifiers {
 		/// A KMNK show in the fixture's schedule after the frozen time, and its
 		/// bell's identifier and labels, from reminders/follow-controls.tsx.
 		static let kmnkShow = "Late Lift"
-		static let kmnkShowBell = "radio-schedule-bell-Late Lift"
+		static let kmnkShowBell = "radio-full-schedule-bell-Late Lift"
 		static let notRemindingLabel = "Remind me about Late Lift"
 		/// The permission sheet's title and its decline, from reminders/permission-sheet.tsx.
 		static let reminderSheetTitle = "Get Show Reminders"

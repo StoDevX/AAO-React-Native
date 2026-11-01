@@ -1,11 +1,11 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
-import {Host} from '@expo/ui/swift-ui'
 import type {EventType} from '@frogpond/event-type'
 import {TouchClaimView} from '@frogpond/touch-claim'
 
 import {ScheduleEventSheet} from '../schedule-event-sheet'
 import {ScratchableLogo} from '../scratchable-logo'
+import {SheetHost} from '../sheet-host'
 import {logoImage, type Station} from '../stations'
 import {useStationPlayback} from '../store'
 import {useNowPlaying} from '../use-now-playing'
@@ -112,15 +112,14 @@ export function FullLayout({
 			</View>
 			<VolumeSlider />
 			<StationActionRow onShowSchedule={onToggleSchedule} station={station} />
-			{/* A SwiftUI sheet, so it needs a host of its own in this React Native tree. */}
-			<Host pointerEvents="none" style={styles.sheetHost}>
+			<SheetHost>
 				<ScheduleEventSheet
 					event={show}
 					isPresented={showOpen}
 					onClose={() => setShowOpen(false)}
 					station={station}
 				/>
-			</Host>
+			</SheetHost>
 		</View>
 	)
 }
@@ -180,8 +179,6 @@ const styles = StyleSheet.create({
 		height: 6,
 		borderRadius: 3,
 	},
-	// Nothing to see or touch until the sheet is presented.
-	sheetHost: {position: 'absolute', width: 0, height: 0},
 	airStatusText: {
 		fontSize: 13,
 		fontWeight: '600',

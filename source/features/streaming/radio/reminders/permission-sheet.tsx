@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
-import {BottomSheet, Button, Group, Host, Image, Text, VStack} from '@expo/ui/swift-ui'
+import {BottomSheet, Button, Group, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	buttonStyle,
@@ -14,6 +13,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
+import {SheetHost} from '../sheet-host'
 import type {ReminderPrompt} from './prompt'
 
 /** What UI tests find the sheet by. */
@@ -97,13 +97,8 @@ export function ReminderPermissionSheet({prompt, onConfirm, onClose}: Props): Re
 /** `ReminderPermissionSheet`, for a React Native tree. */
 export function HostedReminderPermissionSheet(props: Props): React.ReactNode {
 	return (
-		<Host pointerEvents="none" style={styles.host}>
+		<SheetHost>
 			<ReminderPermissionSheet {...props} />
-		</Host>
+		</SheetHost>
 	)
 }
-
-const styles = StyleSheet.create({
-	// Nothing to see or touch until the sheet is presented.
-	host: {position: 'absolute', width: 0, height: 0},
-})

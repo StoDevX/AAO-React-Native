@@ -19,7 +19,25 @@ export function bellLabel(show: FollowedShow, reminding: boolean): string {
 	return reminding ? `Stop reminding me about ${show.title}` : `Remind me about ${show.title}`
 }
 
-/** A row's bell in a SwiftUI list: follows or unfollows `show`. */
+/**
+ * A bell in a SwiftUI list row, filled and tinted only while reminders will
+ * arrive. The glyph sits at the trailing edge of its 44pt target, hard by the
+ * row's edge rather than floating in the middle of the box.
+ */
+export function BellGlyph({filled}: {filled: boolean}): React.ReactNode {
+	return (
+		<Image
+			modifiers={[
+				foregroundStyle(filled ? c.systemBlue : c.secondaryLabel),
+				frame({width: 44, height: 44, alignment: 'trailing'}),
+				contentShape(shapes.rectangle()),
+			]}
+			systemName={filled ? 'bell.fill' : 'bell'}
+		/>
+	)
+}
+
+/** A full schedule row's bell: follows or unfollows `show`. */
 export function FollowBell({
 	show,
 	onToggle,
@@ -33,20 +51,11 @@ export function FollowBell({
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(bellLabel(show, reminding)),
-				accessibilityIdentifier(`radio-schedule-bell-${show.title}`),
+				accessibilityIdentifier(`radio-full-schedule-bell-${show.title}`),
 			]}
 			onPress={() => onToggle(show)}
 		>
-			<Image
-				modifiers={[
-					foregroundStyle(reminding ? c.systemBlue : c.secondaryLabel),
-					// The glyph sits at the trailing edge of its 44pt target, hard by
-					// the row's edge rather than floating in the middle of the box.
-					frame({width: 44, height: 44, alignment: 'trailing'}),
-					contentShape(shapes.rectangle()),
-				]}
-				systemName={reminding ? 'bell.fill' : 'bell'}
-			/>
+			<BellGlyph filled={reminding} />
 		</Button>
 	)
 }

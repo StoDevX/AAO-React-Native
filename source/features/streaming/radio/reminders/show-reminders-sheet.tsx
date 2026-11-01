@@ -1,12 +1,10 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
 import {
 	BottomSheet,
 	Button,
 	ContentUnavailableView,
 	Group,
 	HStack,
-	Host,
 	Image,
 	List,
 	Section,
@@ -19,25 +17,21 @@ import {
 	accessibilityLabel,
 	buttonBorderShape,
 	buttonStyle,
-	contentShape,
 	font,
-	foregroundStyle,
-	frame,
 	listRowInsets,
 	padding,
 	presentationBackground,
 	presentationDetents,
 	presentationDragIndicator,
-	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import * as c from '@frogpond/colors'
 
 import {showTitle} from '../../../telemetry/catalog'
 import {track} from '../../../telemetry/track'
 import {SHEET_BACKGROUND} from '../sheet-background'
+import {SheetHost} from '../sheet-host'
 import {useRadioStore, type FollowedShow} from '../store'
 import {remindersByStation} from './by-station'
-import {bellLabel} from './follow-controls'
+import {BellGlyph, bellLabel} from './follow-controls'
 import {promptFor} from './prompt'
 import {turnOnReminders} from './turn-on'
 
@@ -83,14 +77,7 @@ function FollowedShowRow({
 				]}
 				onPress={() => stopReminding(show)}
 			>
-				<Image
-					modifiers={[
-						foregroundStyle(reminding ? c.systemBlue : c.secondaryLabel),
-						frame({width: 44, height: 44, alignment: 'trailing'}),
-						contentShape(shapes.rectangle()),
-					]}
-					systemName={reminding ? 'bell.fill' : 'bell'}
-				/>
+				<BellGlyph filled={reminding} />
 			</Button>
 		</HStack>
 	)
@@ -110,7 +97,7 @@ export function ShowRemindersSheet(): React.ReactNode {
 	let prompt = permission === null ? null : promptFor(permission)
 
 	return (
-		<Host pointerEvents="none" style={styles.host}>
+		<SheetHost>
 			<BottomSheet
 				isPresented={open}
 				onIsPresentedChange={(presented) => {
@@ -184,11 +171,6 @@ export function ShowRemindersSheet(): React.ReactNode {
 					</VStack>
 				</Group>
 			</BottomSheet>
-		</Host>
+		</SheetHost>
 	)
 }
-
-const styles = StyleSheet.create({
-	// Nothing to see or touch until the sheet is presented.
-	host: {position: 'absolute', width: 0, height: 0},
-})
