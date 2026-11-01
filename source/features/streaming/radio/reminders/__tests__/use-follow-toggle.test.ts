@@ -6,6 +6,7 @@ import {useRadioStore} from '../../store'
 import {useFollowToggle} from '../use-follow-toggle'
 
 const HOZ = {stationId: 'krlx', title: 'HOZ'} as const
+const LATE_LIFT = {stationId: 'ksto', title: 'Late Lift'} as const
 
 /** What iOS reports, in the shape expo-notifications returns it. */
 function answer(status: 'undetermined' | 'denied' | 'granted') {
@@ -31,6 +32,13 @@ describe('useFollowToggle', () => {
 
 	test('Not Now takes the follow back, leaving no follow the bell does not show', async () => {
 		let {result} = await followHoz()
+		await act(() => result.current.dismissPrompt())
+		expect(useRadioStore.getState().followedShows).toStrictEqual([])
+	})
+
+	test('Not Now takes back every follow made while the sheet was asking', async () => {
+		let {result} = await followHoz()
+		await act(() => result.current.toggle(LATE_LIFT))
 		await act(() => result.current.dismissPrompt())
 		expect(useRadioStore.getState().followedShows).toStrictEqual([])
 	})

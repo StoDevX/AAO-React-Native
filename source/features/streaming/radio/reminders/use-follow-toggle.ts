@@ -11,8 +11,8 @@ import {turnOnReminders} from './turn-on'
  * Following and unfollowing shows from a bell. A bell unfollows only a show it
  * shows as reminding; otherwise it follows, and when reminders cannot arrive
  * it raises `prompt`, for the surface to show its permission sheet. Not Now,
- * or iOS refusing, takes the follow back, so no show is followed that its bell
- * does not show; one sent to Settings is kept, to remind once turned on there.
+ * or iOS refusing, takes back every follow made while it asked, so no show is
+ * followed that its bell does not show; one sent to Settings is kept, to remind once turned on there.
  */
 export function useFollowToggle(surface: ReminderSurface): {
 	toggle: (show: FollowedShow) => void
@@ -21,8 +21,8 @@ export function useFollowToggle(surface: ReminderSurface): {
 	dismissPrompt: () => void
 } {
 	let [prompt, setPrompt] = React.useState<ReminderPrompt | null>(null)
-	// The show whose follow raised the prompt, taken back if the prompt is declined.
-	let asking = React.useRef<FollowedShow | null>(null)
+	// The shows followed while the prompt asks, all taken back if it is declined.
+	let asking = React.useRef<FollowedShow[]>([])
 
 	let toggle = React.useCallback(
 		(show: FollowedShow) => {
@@ -45,36 +45,39 @@ export function useFollowToggle(surface: ReminderSurface): {
 					anonymous: true,
 					attributes: {station: show.stationId, title, surface, permission},
 				})
-				asking.current = show
-				setPrompt(promptFor(permission))
+				let next = promptFor(permission)
+				if (next !== null) {
+					asking.current.push(show)
+				}
+				setPrompt(next)
 			})
 		},
 		[surface],
 	)
+
+	let takeAsking = React.useCallback(() => asking.current.splice(0), [])
 
 	let confirmPrompt = React.useCallback(() => {
 		setPrompt(null)
 		if (prompt === null) {
 			return
 		}
-		let show = asking.current
+		let shows = takeAsking()
 		void turnOnReminders(prompt, surface).then((permission) => {
-			if (permission !== null && permission !== 'granted' && show !== null) {
-				useRadioStore.getState().unfollow(show)
+			if (permission !== null && permission !== 'granted') {
+				shows.forEach(useRadioStore.getState().unfollow)
 			}
 		})
-	}, [prompt, surface])
+	}, [prompt, surface, takeAsking])
 
 	// The sheet reports closing after Continue too, by when the prompt is already gone.
 	let dismissPrompt = React.useCallback(() => {
 		if (prompt !== null) {
 			track({name: 'radio.reminder.permission', attributes: {outcome: 'not_now', surface}})
-			if (asking.current !== null) {
-				useRadioStore.getState().unfollow(asking.current)
-			}
+			takeAsking().forEach(useRadioStore.getState().unfollow)
 		}
 		setPrompt(null)
-	}, [prompt, surface])
+	}, [prompt, surface, takeAsking])
 
 	return {toggle, prompt, confirmPrompt, dismissPrompt}
 }
