@@ -11,7 +11,7 @@ import {useRadioStore} from '../store'
 import {stationScheduleOptions} from '../use-station-schedule'
 import {registerReminderActions} from './notifications'
 import {reminderResponse, shouldPresentReminder} from './present'
-import {syncShowReminders} from './sync'
+import {isSyncFetching, syncShowReminders} from './sync'
 
 /** Whether the query hashed `queryHash` is the schedule of a station with a followed show. */
 function isFollowedSchedule(queryHash: string): boolean {
@@ -97,7 +97,8 @@ export function ShowRemindersHost(): null {
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'success' &&
-				isFollowedSchedule(event.query.queryHash)
+				isFollowedSchedule(event.query.queryHash) &&
+				!isSyncFetching(event.query.queryHash)
 			) {
 				void syncShowReminders()
 			}

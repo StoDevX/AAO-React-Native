@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import type {EventType} from '@frogpond/event-type'
+import {hashKey} from '@tanstack/react-query'
 
 import {queryClient} from '../../../../init/tanstack-query'
 import {STATIONS, type StationId} from '../stations'
@@ -10,6 +11,18 @@ import {planReminderChanges, type StationFeed} from './plan'
 
 /** How old a loaded schedule may be before a sync asks for it again. */
 const SCHEDULE_FRESH_MS = 15 * 60_000
+
+/** The schedules a sync is fetching, by their queries' hashes. */
+let fetching = new Set<string>()
+
+/**
+ * Whether the query hashed `queryHash` is being fetched by a sync, which
+ * plans from what that fetch brings. Its success is reported while the fetch
+ * is still under way, so a sync need not start again for it.
+ */
+export function isSyncFetching(queryHash: string): boolean {
+	return fetching.has(queryHash)
+}
 
 /**
  * `stationId`'s schedule, from the cache while fresh. Offline, or when the
@@ -22,6 +35,8 @@ async function stationFeed(stationId: StationId): Promise<StationFeed | null> {
 		return null
 	}
 	let feed = (events: EventType[]) => ({stationId, stationName: station.stationName, events})
+	let hash = hashKey(options.queryKey)
+	fetching.add(hash)
 	try {
 		// 'always', so a fetch made offline fails at once rather than pausing
 		// until the network returns, holding every later sync behind it.
@@ -36,6 +51,8 @@ async function stationFeed(stationId: StationId): Promise<StationFeed | null> {
 		let sourced = cached === undefined ? undefined : options.select?.(cached)
 		// A station whose schedule cannot load keeps the reminders it has.
 		return sourced === undefined ? null : feed(sourced.map((each) => each.event))
+	} finally {
+		fetching.delete(hash)
 	}
 }
 
@@ -50,23 +67,20 @@ async function syncOnce(): Promise<void> {
 	// The zone is guessed afresh, as a phone that crossed one while the app
 	// stayed alive must move its reminders with it.
 	let zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+	let pending = await pendingReminders()
 	// An unfollowed show's reminders go before anything waits on a schedule.
-	await applyReminderChanges(
-		planReminderChanges({
-			follows,
-			feeds: [],
-			pending: await pendingReminders(),
-			granted: false,
-			zone,
-		}),
-	)
+	let unfollowed = planReminderChanges({follows, feeds: [], pending, granted: false, zone})
+	await applyReminderChanges(unfollowed)
+	// Only syncs schedule or cancel reminders, and never two at once, so what
+	// is pending now is what was, less what was just cancelled.
+	let cancelled = new Set(unfollowed.cancel)
 
 	let stationIds = [...new Set(follows.map((show) => show.stationId))]
-	let [pending, ...feeds] = await Promise.all([pendingReminders(), ...stationIds.map(stationFeed)])
+	let feeds = await Promise.all(stationIds.map(stationFeed))
 	let changes = planReminderChanges({
 		follows,
 		feeds: feeds.filter((feed) => feed !== null),
-		pending,
+		pending: pending.filter((reminder) => !cancelled.has(reminder.identifier)),
 		granted: permission === 'granted',
 		zone,
 	})
