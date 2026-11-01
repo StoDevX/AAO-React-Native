@@ -2,7 +2,7 @@ import * as React from 'react'
 import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native'
 import {SymbolView} from 'expo-symbols'
 import type {EventType} from '@frogpond/event-type'
-import {formatCompactTime} from '@frogpond/time-format'
+import {formatCompactTime, formatTime} from '@frogpond/time-format'
 
 import {bellLabel, HostedReminderPermissionSheet, useFollowToggle} from '../reminders'
 import type {Station} from '../stations'
@@ -61,6 +61,7 @@ const ScheduleRow = React.memo(function ScheduleRow({
 	return (
 		<View style={styles.row}>
 			<Pressable
+				accessibilityLabel={`${show.title}, ${formatTime(show.startTime)}`}
 				accessibilityRole="button"
 				onPress={() => onPress(show)}
 				style={({pressed}) => [styles.rowText, pressed && styles.pressed]}
@@ -90,6 +91,7 @@ function FullScheduleLink(): React.ReactNode {
 	let openFullSchedule = useRadioStore((state) => state.openFullSchedule)
 	return (
 		<Pressable
+			accessibilityLabel="See full schedule"
 			accessibilityRole="button"
 			onPress={openFullSchedule}
 			style={({pressed}) => [styles.link, pressed && styles.pressed]}
