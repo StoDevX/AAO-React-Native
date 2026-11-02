@@ -138,7 +138,7 @@ run = "expo start"
 # the main checkout, which a linked worktree is not: git's common directory
 # is the main checkout's .git for a clone and a worktree alike.
 [tasks."start:with-server"]
-description = "Start ccc-server for St. Olaf and Metro together"
+description = "Start ccc-server's Worker and Metro together"
 run = '''
 #!/usr/bin/env bash
 if test -z "${CCC_SERVER_DIR:-}"; then
@@ -151,7 +151,7 @@ if test ! -f "$CCC_SERVER_DIR/.config/mise.toml"; then
 fi
 
 set -m
-mise --cd "$CCC_SERVER_DIR" run stolaf-college:mdns &
+mise --cd "$CCC_SERVER_DIR" run dev &
 server=$!
 trap 'kill -- -"$server" 2>/dev/null' EXIT
 
