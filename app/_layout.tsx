@@ -98,7 +98,7 @@ function RootLayout(): React.ReactNode {
 	React.useEffect(() => startQuickActionSync(), [])
 	React.useEffect(() => startFloatingButtonSync(), [])
 	React.useEffect(() => {
-		reportLaunch()
+		void reportLaunch()
 	}, [])
 
 	React.useEffect(() => {

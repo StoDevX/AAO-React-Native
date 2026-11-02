@@ -46,7 +46,7 @@ describe('DisclosureRow', () => {
 		let onPress = jest.fn()
 		await render(<DisclosureRow onPress={onPress} title="Shuttle" />)
 
-		fireEvent.press(screen.getByLabelText('Shuttle'))
+		await fireEvent.press(screen.getByLabelText('Shuttle'))
 
 		expect(onPress).toHaveBeenCalledTimes(1)
 	})
@@ -279,7 +279,7 @@ describe('DetailRow', () => {
 		let onPress = jest.fn()
 		await render(<DetailRow label="Email" onPress={onPress} value="ole@stolaf.edu" />)
 
-		fireEvent.press(screen.getByLabelText('Email, ole@stolaf.edu'))
+		await fireEvent.press(screen.getByLabelText('Email, ole@stolaf.edu'))
 
 		expect(onPress).toHaveBeenCalledTimes(1)
 	})
@@ -297,7 +297,7 @@ describe('ActionRow', () => {
 		let onPress = jest.fn()
 		await render(<ActionRow onPress={onPress} title="Print" />)
 
-		fireEvent.press(screen.getByLabelText('Print'))
+		await fireEvent.press(screen.getByLabelText('Print'))
 
 		expect(onPress).toHaveBeenCalledTimes(1)
 	})
@@ -306,7 +306,7 @@ describe('ActionRow', () => {
 		let onPress = jest.fn()
 		await render(<ActionRow disabled={true} onPress={onPress} title="Print" />)
 
-		fireEvent.press(screen.getByLabelText('Print'))
+		await fireEvent.press(screen.getByLabelText('Print'))
 
 		expect(onPress).not.toHaveBeenCalled()
 	})

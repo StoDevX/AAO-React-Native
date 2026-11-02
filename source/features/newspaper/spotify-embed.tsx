@@ -18,13 +18,13 @@ type OpenWindowEvent = Parameters<NonNullable<WebViewProps['onOpenWindow']>>[0]
 /** Keeps the player's own loads in it, and sends a page the reader is leaving for to `openUrl`. */
 function keepPlayerLoads(request: LoadRequest): boolean {
 	if (loadsInPlayer(request)) return true
-	openUrl(request.url)
+	void openUrl(request.url)
 	return false
 }
 
 /** A link the player opens in a new window, such as "Open in Spotify", goes to `openUrl` too. */
 function openNewWindow(event: OpenWindowEvent): void {
-	openUrl(event.nativeEvent.targetUrl)
+	void openUrl(event.nativeEvent.targetUrl)
 }
 
 type Props = {spotify: SpotifyRef; width: number}

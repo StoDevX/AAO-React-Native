@@ -25,8 +25,9 @@ const INCOMING = 'file:///docs/course-catalog.next.db'
 
 /**
  * Files on disk, by uri, and every uri deleted. A stand-in `File` behaves as
- * expo-file-system 57's does: `exists` reads the disk, and moving one points
- * that same object at its destination.
+ * expo-file-system 58's does: `exists` reads the disk, `write` lands the bytes
+ * only after the caller's next await, and moving one points that same object
+ * at its destination.
  */
 const mockDisk = {files: new Set<string>(), deleted: [] as string[]}
 function mockFile(start: string) {
@@ -39,8 +40,10 @@ function mockFile(start: string) {
 			mockDisk.files.delete(file.uri)
 			mockDisk.deleted.push(file.uri)
 		}),
-		write: jest.fn((_bytes: Uint8Array) => {
+		write: jest.fn(async (_bytes: Uint8Array) => {
+			await Promise.resolve()
 			mockDisk.files.add(file.uri)
+			mockSteps.push('written')
 		}),
 		moveSync: jest.fn((destination: {uri: string}, _options?: unknown) => {
 			mockDisk.files.delete(file.uri)
@@ -214,6 +217,17 @@ describe('refreshCatalog', () => {
 		let attached = mockSteps.findIndex((step) => step.includes('attach database ? as catalog'))
 		expect(moved).toBeGreaterThanOrEqual(0)
 		expect(attached).toBeGreaterThan(moved)
+	})
+
+	// SQLite opens a path that holds nothing yet as a new, empty database, which
+	// then fails the check as having no tables.
+	test('attaches the download only once it is written', async () => {
+		publishedEtag('new')
+		await refreshCatalog()
+		let written = mockSteps.indexOf('written')
+		let attached = mockSteps.findIndex((step) => step.includes('attach database ? as incoming'))
+		expect(written).toBeGreaterThanOrEqual(0)
+		expect(attached).toBeGreaterThan(written)
 	})
 
 	test('replaces the old file in a single move', async () => {

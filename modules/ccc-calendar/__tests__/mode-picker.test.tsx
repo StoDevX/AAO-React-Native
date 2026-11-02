@@ -18,7 +18,7 @@ test('choosing the other mode reports it', async () => {
 	let onSelectMode = jest.fn()
 	await render(<CalendarModePicker mode="day" onSelectMode={onSelectMode} />)
 
-	fireEvent.press(screen.getByText('Upcoming'))
+	await fireEvent.press(screen.getByText('Upcoming'))
 
 	expect(onSelectMode).toHaveBeenCalledWith('upcoming')
 })
@@ -27,7 +27,7 @@ test('choosing the mode already in use reports it anyway', async () => {
 	let onSelectMode = jest.fn()
 	await render(<CalendarModePicker mode="day" onSelectMode={onSelectMode} />)
 
-	fireEvent.press(screen.getByText('Day'))
+	await fireEvent.press(screen.getByText('Day'))
 
 	expect(onSelectMode).toHaveBeenCalledWith('day')
 })

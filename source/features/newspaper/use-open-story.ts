@@ -18,7 +18,7 @@ export function useOpenStory(): (story: MessStory) => void {
 		if (story.layout.kind === 'puzzle') {
 			// Opening a story counts towards its issue's stains, however it is opened.
 			recordOpened(story.id)
-			openUrl(puzzleUrl(story.layout.puzzle, story.link))
+			void openUrl(puzzleUrl(story.layout.puzzle, story.link))
 			return
 		}
 		router.navigate({pathname: NEWSPAPER_ROUTES.story, params: {campus, id: String(story.id)}})

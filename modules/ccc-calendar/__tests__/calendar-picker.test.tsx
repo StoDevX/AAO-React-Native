@@ -53,7 +53,7 @@ test('choosing an unselected organisation filters on it', async () => {
 	let onSelectFilter = jest.fn()
 	await render(picker({onSelectFilter}))
 
-	fireEvent.press(screen.getByText('Wellness Center (2)'))
+	await fireEvent.press(screen.getByText('Wellness Center (2)'))
 
 	expect(onSelectFilter).toHaveBeenCalledWith({axis: 'organization', value: 'Wellness Center'})
 })
@@ -67,7 +67,7 @@ test('Reset Filters clears whichever axis is filtered', async () => {
 	let onSelectFilter = jest.fn()
 	await render(picker({filter: {axis: 'organization', value: 'Wellness Center'}, onSelectFilter}))
 
-	fireEvent.press(screen.getByText('Reset Filters'))
+	await fireEvent.press(screen.getByText('Reset Filters'))
 
 	expect(onSelectFilter).toHaveBeenCalledWith(null)
 })

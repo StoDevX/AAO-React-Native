@@ -106,7 +106,7 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 	let incoming = incomingCatalogFile()
 	try {
 		if (incoming.exists) incoming.delete()
-		incoming.write(new Uint8Array(await response.arrayBuffer()))
+		await incoming.write(new Uint8Array(await response.arrayBuffer()))
 
 		runner.run({sql: 'attach database ? as incoming', params: [filePath(incoming)]})
 		try {

@@ -131,9 +131,7 @@ describe('BuildingDetailSwiftUI', () => {
 		let building = makeBuilding({image: 'cage'})
 
 		let {getByTestId, queryByTestId} = await renderDetail(building)
-		await act(() => {
-			fireEvent(getByTestId('building-photo'), 'error')
-		})
+		await fireEvent(getByTestId('building-photo'), 'error')
 
 		expect(queryByTestId('building-photo')).toBeNull()
 	})

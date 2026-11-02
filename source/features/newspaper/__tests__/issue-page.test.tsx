@@ -302,7 +302,7 @@ describe('IssuePage', () => {
 			Promise.resolve(href.includes('/categories') ? categoriesJson : posts),
 		)
 		await act(async () => {
-			fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
+			await fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
 			// `find` matches the whole key, so it names this issue's range exactly.
 			await queryClient.getQueryCache().find({queryKey: messKeys.issue(served)})?.promise
 			await flushQueryNotifications()

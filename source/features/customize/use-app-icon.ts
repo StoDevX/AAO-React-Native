@@ -58,7 +58,7 @@ export function useAppIcon(): {
 		// `reload` awaits getIcon() before setting state, so nothing is set
 		// synchronously in the effect.
 		// oxlint-disable-next-line react/set-state-in-effect
-		reload()
+		void reload()
 	}, [reload])
 
 	let apply = React.useCallback(

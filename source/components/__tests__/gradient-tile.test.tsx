@@ -84,7 +84,7 @@ describe('GradientTile', () => {
 				title="Faith"
 			/>,
 		)
-		fireEvent.press(screen.getByLabelText('Faith'))
+		await fireEvent.press(screen.getByLabelText('Faith'))
 		expect(onPress).toHaveBeenCalledTimes(1)
 	})
 })

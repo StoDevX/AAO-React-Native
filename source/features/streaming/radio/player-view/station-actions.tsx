@@ -39,7 +39,7 @@ export function StationActionRow({
 					chatUrl
 						? () => {
 								track({name: 'radio.action', attributes: {action: 'chat', station: station.id}})
-								openUrl(chatUrl)
+								void openUrl(chatUrl)
 							}
 						: undefined
 				}

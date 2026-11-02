@@ -121,7 +121,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 
 	let exportYaml = () => {
 		let yaml = buildYamlEntry(currentFaq)
-		Share.share({
+		void Share.share({
 			message: yaml,
 			title: 'FAQ Banner YAML',
 		})

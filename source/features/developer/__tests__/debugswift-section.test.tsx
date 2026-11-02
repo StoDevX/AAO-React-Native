@@ -75,7 +75,7 @@ test('offers the tools while DebugSwift is on', async () => {
 test('turns DebugSwift on from its switch', async () => {
 	await renderSection()
 	await act(async () => {
-		fireEvent.press(screen.getByText('Enable DebugSwift'))
+		await fireEvent.press(screen.getByText('Enable DebugSwift'))
 		await settle()
 	})
 	expect(setDebugSwiftEnabled).toHaveBeenCalledWith(true)
@@ -87,7 +87,7 @@ test('brings the floating button back when DebugSwift is turned on', async () =>
 	useDeveloperStore.setState({floatingButtonEnabled: true})
 	await renderSection()
 	await act(async () => {
-		fireEvent.press(screen.getByText('Enable DebugSwift'))
+		await fireEvent.press(screen.getByText('Enable DebugSwift'))
 		await settle()
 	})
 	expect(setFloatingButtonEnabled).toHaveBeenLastCalledWith(true, {
@@ -103,7 +103,7 @@ test('says when DebugSwift stays on until the app restarts', async () => {
 	await renderSection()
 	expect(screen.queryByText(/until the app restarts/u)).toBeNull()
 	await act(async () => {
-		fireEvent.press(screen.getByText('Enable DebugSwift'))
+		await fireEvent.press(screen.getByText('Enable DebugSwift'))
 		await settle()
 	})
 	expect(setDebugSwiftEnabled).toHaveBeenCalledWith(false)

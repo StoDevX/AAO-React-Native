@@ -15,7 +15,7 @@ type Props = {
 export const StreamThumbnail = (props: Props): React.ReactNode => {
 	let handlePress = () => {
 		let {name, pageUrl} = props.webcam
-		trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
+		void trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
 	}
 
 	let {viewportWidth, webcam} = props
