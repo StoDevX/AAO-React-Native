@@ -345,7 +345,7 @@ simulator, or validate it in the SF Symbols app.
 
 ### Local Server Discovery
 
-In dev mode (turned on from the long-press menu on Home's notice; it starts off in every build), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.
+In dev mode (turned on from the long-press menu on Home's notice; it starts off in every build), the Developer → Server URL screen will automatically discover a `ccc-server` Worker running on the same network via mDNS, one server per campus. Discovered servers appear as tappable cells; tapping one fills the URL field.
 
 To use this:
 1. Start `ccc-server`'s Worker: `mise run start:with-server` runs it with `wrangler dev` beside Metro, from a `ccc-server` checkout next to this one (set `CCC_SERVER_DIR` for one elsewhere), and advertises one server per campus. Metro keeps the terminal, and Ctrl-C stops both. To run the Worker alone, `mise run dev` in the `ccc-server` repo

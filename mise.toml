@@ -131,12 +131,13 @@ run = "expo start"
 
 # ccc-server runs in the background so Metro keeps the terminal, and with it the
 # keys that reload the app and open the debugger; under `depends` both would
-# lose the TTY. The server advertises itself over mDNS, so a device finds it in
-# Settings -> Server URL. It runs in its own process group (`set -m`) so the
-# trap can stop mise and the server it spawned together; Ctrl-C then reaches
-# only Metro, and the trap stops the server. ccc-server is looked for beside
-# the main checkout, which a linked worktree is not: git's common directory
-# is the main checkout's .git for a clone and a worktree alike.
+# lose the TTY. The Worker advertises one server per campus over mDNS, so a
+# device finds them in Developer -> Server URL. It runs in its own process
+# group (`set -m`) so the trap can stop mise and the server it spawned
+# together; Ctrl-C then reaches only Metro, and the trap stops the server.
+# ccc-server is looked for beside the main checkout, which a linked worktree is
+# not: git's common directory is the main checkout's .git for a clone and a
+# worktree alike.
 [tasks."start:with-server"]
 description = "Start ccc-server's Worker and Metro together"
 run = '''
