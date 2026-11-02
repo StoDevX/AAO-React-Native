@@ -15,7 +15,7 @@ export function useOpenLinksIn(): [LinkTarget, (target: LinkTarget) => Promise<v
 
 	React.useEffect(() => {
 		let cancelled = false
-		storage.getInAppLinkPreference().then((inApp) => {
+		void storage.getInAppLinkPreference().then((inApp) => {
 			if (!cancelled) {
 				setTarget(inApp ? 'app' : 'safari')
 			}

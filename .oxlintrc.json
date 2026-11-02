@@ -190,11 +190,15 @@
     // Off: the codebase has ~140 places where an async function is passed
     // directly to a handler expecting a void return (`onPress={async () =>
     // ...}` and similar) -- a widespread, deliberate pattern, not bugs.
-    // Enabling these three rules is a legitimate goal, but a large, separate
+    // Enabling these two rules is a legitimate goal, but a large, separate
     // cleanup on its own.
     "typescript/no-misused-promises": "off",
     "typescript/restrict-template-expressions": "off",
-    "typescript/no-floating-promises": "off",
+    // A call whose promise nobody awaits finishes after the code that relies
+    // on it: Expo SDK 58 made File.write asynchronous, and the course catalog
+    // was attached before its download reached the disk. A call left running
+    // on purpose says so with `void`.
+    "typescript/no-floating-promises": "error",
     "typescript/return-await": "error",
 
     // React Hooks rules
@@ -393,6 +397,23 @@
         // so narrowing it only adds ceremony between the arrangement and the
         // assertion.
         "unicorn/prefer-at": "off"
+      }
+    },
+    {
+      // node:test's `describe` and `it` return promises its runner tracks
+      // itself. Jest's tests all sit under `__tests__/`, and node:test's never
+      // do, so the next override turns the rule back on for Jest's.
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.test.mjs"],
+      "rules": {
+        "typescript/no-floating-promises": "off"
+      }
+    },
+    {
+      // A Jest test that does not await `fireEvent` asserts before the event
+      // has been handled.
+      "files": ["**/__tests__/**"],
+      "rules": {
+        "typescript/no-floating-promises": "error"
       }
     },
     {

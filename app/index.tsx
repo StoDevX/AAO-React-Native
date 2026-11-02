@@ -159,7 +159,7 @@ function UnofficialAppNotice(): React.ReactNode {
 								label={option.name}
 								onIsOnChange={() => {
 									setCampus(option.id)
-									switchIconForCampus(option)
+									void switchIconForCampus(option)
 								}}
 							/>
 						))}
@@ -194,7 +194,7 @@ function useOpenView(): (view: ViewType) => void {
 	return React.useCallback(
 		(view: ViewType) => {
 			if (view.type === 'url') {
-				openUrl(view.url)
+				void openUrl(view.url)
 			} else if (view.type === 'view') {
 				router.navigate(view.view)
 			} else if (view.type === 'radio') {

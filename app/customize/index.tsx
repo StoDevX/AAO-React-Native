@@ -46,7 +46,7 @@ export default function CustomizePage(): React.ReactNode {
 	// The gallery pushed from here changes the icon, so read it again on return.
 	useFocusEffect(
 		React.useCallback(() => {
-			reload()
+			void reload()
 		}, [reload]),
 	)
 	let [linkTarget, setLinkTarget] = useOpenLinksIn()

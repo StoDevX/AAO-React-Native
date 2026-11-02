@@ -91,7 +91,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 	let onPress = (): void => {
 		let {phoneNumber, buttonText, buttonLink} = contact
 		if (buttonLink) {
-			openUrl(buttonLink)
+			void openUrl(buttonLink)
 		} else if (phoneNumber) {
 			callPhone(phoneNumber, {title: buttonText})
 		}

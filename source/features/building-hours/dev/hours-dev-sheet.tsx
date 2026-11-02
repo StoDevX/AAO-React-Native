@@ -68,15 +68,15 @@ export function HoursDevSheet({campus, isPresented, onIsPresentedChange}: Props)
 	let refetch = () => queryClient.invalidateQueries({queryKey: keys.all(campus)})
 	let toggleSource = (next: boolean) => {
 		setForced(next)
-		refetch()
+		void refetch()
 	}
 	let jumpTo = (m: moment.Moment) => {
 		freeze(m)
-		refetch()
+		void refetch()
 	}
 	let backToNow = () => {
 		clear()
-		refetch()
+		void refetch()
 	}
 
 	// The same answer the moved clock reads its hours from, so opening the sheet

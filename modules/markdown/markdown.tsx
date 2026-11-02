@@ -66,7 +66,7 @@ function mergeMarkdownStyle(base: MarkdownStyle, override: MarkdownStyle): Markd
 }
 
 function handleLinkPress(event: LinkPressEvent): void {
-	openUrl(event.url)
+	void openUrl(event.url)
 }
 
 export type MarkdownProps = {

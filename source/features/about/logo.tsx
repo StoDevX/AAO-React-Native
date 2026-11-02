@@ -24,7 +24,7 @@ export let AppLogo = (props: Props): React.ReactNode => {
 	let [icon, setIcon] = React.useState(DEFAULT_ICON)
 
 	React.useEffect(() => {
-		getIcon().then((name: string) => {
+		void getIcon().then((name: string) => {
 			setIcon(iconFor(name))
 		})
 	}, [])
