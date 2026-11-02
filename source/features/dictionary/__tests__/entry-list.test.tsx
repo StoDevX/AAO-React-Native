@@ -74,7 +74,7 @@ describe('EntryList', () => {
 		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
 
 		let settled = false
-		refresh().then(() => {
+		void refresh().then(() => {
 			settled = true
 		})
 

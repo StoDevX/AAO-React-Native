@@ -203,7 +203,7 @@ describe('the dictionary edit screen', () => {
 		useDictionaryDraftStore.getState().addSense()
 		await render(<EditScreen />)
 
-		fireEvent(screen.getByTestId('for-each'), 'onDelete', [0])
+		await fireEvent(screen.getByTestId('for-each'), 'onDelete', [0])
 
 		// Asserting only the surviving length would still pass a handler that
 		// deleted the wrong sense -- assert which one is left.
@@ -222,7 +222,7 @@ describe('the dictionary edit screen', () => {
 		let idsBefore = useDictionaryDraftStore.getState().draft?.senses.map((sense) => sense.id)
 		await render(<EditScreen />)
 
-		fireEvent(screen.getByTestId('for-each'), 'onMove', [0], 2)
+		await fireEvent(screen.getByTestId('for-each'), 'onMove', [0], 2)
 
 		let idsAfter = useDictionaryDraftStore.getState().draft?.senses.map((sense) => sense.id)
 		expect(idsAfter).toEqual([idsBefore?.[1], idsBefore?.[0], idsBefore?.[2]])
@@ -329,7 +329,7 @@ describe('the dictionary sense screen', () => {
 		useDictionaryDraftStore.getState().addExample('1')
 		await render(<SenseScreen />)
 
-		fireEvent(screen.getByTestId('for-each'), 'onDelete', [0])
+		await fireEvent(screen.getByTestId('for-each'), 'onDelete', [0])
 
 		expect(useDictionaryDraftStore.getState().draft?.senses[0].examples).toHaveLength(0)
 	})
@@ -347,7 +347,7 @@ describe('the dictionary sense screen', () => {
 			.draft?.senses[0].examples.map((example) => example.id)
 		await render(<SenseScreen />)
 
-		fireEvent(screen.getByTestId('for-each'), 'onMove', [0], 2)
+		await fireEvent(screen.getByTestId('for-each'), 'onMove', [0], 2)
 
 		let idsAfter = useDictionaryDraftStore
 			.getState()

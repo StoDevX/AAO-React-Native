@@ -140,7 +140,7 @@ describe('EventDetail', () => {
 		)
 		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
 
-		fireEvent.press(await screen.findByTestId('event-featured-image'))
+		await fireEvent.press(await screen.findByTestId('event-featured-image'))
 
 		expect(await screen.findByRole('button', {name: 'Share'})).toBeTruthy()
 	})

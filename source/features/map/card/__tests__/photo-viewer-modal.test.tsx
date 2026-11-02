@@ -38,7 +38,7 @@ describe('PhotoViewerModal', () => {
 			/>,
 		)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Share'}))
 
 		expect(mockShareImage).toHaveBeenCalledWith(PHOTO)
 	})

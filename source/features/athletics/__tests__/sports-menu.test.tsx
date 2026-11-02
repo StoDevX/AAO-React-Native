@@ -33,7 +33,7 @@ test('toggling a sport hands back its full name', async () => {
 	let onToggleSport = jest.fn()
 	await render(menu({onToggleSport}))
 
-	fireEvent.press(screen.getByText('Soccer'))
+	await fireEvent.press(screen.getByText('Soccer'))
 
 	expect(onToggleSport).toHaveBeenCalledWith("Women's Soccer")
 })
@@ -47,7 +47,7 @@ test('Reset Filters is offered once a sport is chosen, and resets', async () => 
 	let onReset = jest.fn()
 	await render(menu({onReset, selectedSports: ['Volleyball']}))
 
-	fireEvent.press(screen.getByText('Reset Filters'))
+	await fireEvent.press(screen.getByText('Reset Filters'))
 
 	expect(onReset).toHaveBeenCalled()
 })

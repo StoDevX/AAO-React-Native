@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {act, fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen} from '@testing-library/react-native'
 import {openUrl} from '@frogpond/open-url'
 
 import {remoteImage} from '../../../lib/remote-images'
@@ -44,7 +44,7 @@ describe('NewsList', () => {
 	test('opens a story in the browser when the app has no reader for it', async () => {
 		await renderList()
 
-		fireEvent.press(screen.getByText('A College story'))
+		await fireEvent.press(screen.getByText('A College story'))
 
 		expect(openUrl).toHaveBeenCalledWith('https://wp.stolaf.edu/news/a-story/')
 	})
@@ -53,7 +53,7 @@ describe('NewsList', () => {
 		let onPressStory = jest.fn()
 		await renderList(onPressStory)
 
-		fireEvent.press(screen.getByText('A College story'))
+		await fireEvent.press(screen.getByText('A College story'))
 
 		expect(onPressStory).toHaveBeenCalledWith(STORY)
 		expect(openUrl).not.toHaveBeenCalled()
@@ -88,9 +88,7 @@ describe('NewsList', () => {
 		await renderList(undefined, remoteImage('news-sources', 'stolaf'))
 		expect(screen.getByTestId('news-thumbnail')).toBeTruthy()
 
-		await act(() => {
-			fireEvent(screen.getByTestId('news-thumbnail'), 'error')
-		})
+		await fireEvent(screen.getByTestId('news-thumbnail'), 'error')
 
 		expect(screen.queryByTestId('news-thumbnail')).toBeNull()
 	})

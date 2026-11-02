@@ -67,7 +67,7 @@ describe('DayPickerStrip', () => {
 			/>,
 		)
 
-		fireEvent.press(screen.getByText('24'))
+		await fireEvent.press(screen.getByText('24'))
 
 		expect(onSelectDay).toHaveBeenCalledTimes(1)
 		let selectedDay = onSelectDay.mock.calls[0][0] as moment.Moment
@@ -88,7 +88,7 @@ describe('DayPickerStrip', () => {
 			/>,
 		)
 
-		fireEvent.press(screen.getByText('22'))
+		await fireEvent.press(screen.getByText('22'))
 
 		expect(onSelectDay).toHaveBeenCalledTimes(1)
 		let selectedDay = onSelectDay.mock.calls[0][0] as moment.Moment

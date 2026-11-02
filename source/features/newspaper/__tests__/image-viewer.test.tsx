@@ -271,7 +271,7 @@ describe('ImageViewer', () => {
 	test('closes on Close', async () => {
 		await renderViewer(36819)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Close'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
 
 		expect(mockGoBack).toHaveBeenCalledTimes(1)
 	})
@@ -280,7 +280,7 @@ describe('ImageViewer', () => {
 		await renderViewer(36819)
 
 		// The gesture is handled by the page, so it closes from anywhere in the viewer.
-		fireEvent(
+		await fireEvent(
 			screen.getByRole('image', {name: 'Mouse Friends: sunsets of life, by Juliet Stouffer'}),
 			'accessibilityEscape',
 		)
@@ -292,7 +292,7 @@ describe('ImageViewer', () => {
 		await renderViewer(36819)
 
 		// The drag is the page's, so it closes from anywhere in the viewer.
-		fireEvent(
+		await fireEvent(
 			screen.getByRole('image', {name: 'Mouse Friends: sunsets of life, by Juliet Stouffer'}),
 			'dismiss',
 		)
@@ -464,7 +464,7 @@ describe('ImageViewer', () => {
 		mockShareImage.mockResolvedValue(undefined)
 		await renderViewer(33129, 1)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Share'}))
 
 		expect(mockShareImage).toHaveBeenCalledWith(LARGE_CUP)
 	})
@@ -538,7 +538,7 @@ describe('ImageViewer', () => {
 		mockShareImage.mockResolvedValue(undefined)
 		await renderViewer(36859, undefined, FIGURE.url)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Share'}))
 
 		expect(mockShareImage).toHaveBeenCalledWith(LARGE_FIGURE)
 	})

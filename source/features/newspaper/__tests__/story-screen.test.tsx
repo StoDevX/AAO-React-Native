@@ -681,7 +681,7 @@ describe('StoryScreen', () => {
 		await renderStory(36950)
 		expect(screen.getByText('Spring Sketches')).toBeTruthy()
 
-		fireEvent.press(screen.getByText('Read on olafmessenger.com'))
+		await fireEvent.press(screen.getByText('Read on olafmessenger.com'))
 
 		expect(openUrl).toHaveBeenCalledWith('https://olafmessenger.com/36950/')
 	})
@@ -705,7 +705,7 @@ describe('StoryScreen', () => {
 		queryClient.setQueryData(messKeys.series(COMIC.id), {title: '', stories: []})
 		await renderStory(36819)
 
-		fireEvent.press(
+		await fireEvent.press(
 			screen.getByRole('button', {
 				name: 'Mouse Friends: sunsets of life, by Ashlyn Wuench and Kenzie Nguyen',
 			}),
@@ -856,7 +856,7 @@ describe('StoryScreen', () => {
 	test('draws a Crossword post with a button that opens its puzzle, then its text', async () => {
 		await renderStory(36814)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Solve the crossword'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Solve the crossword'}))
 
 		expect(openUrl).toHaveBeenCalledWith(
 			'https://puzzleme.amuselabs.com/pmm/crossword?id=af644d78&set=c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4&embed=1',
@@ -868,7 +868,7 @@ describe('StoryScreen', () => {
 	test("draws a Playlist post as a button to Spotify and Spotify's player, then its text", async () => {
 		await renderStory(30713)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Open in Spotify'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Open in Spotify'}))
 
 		// Handed to iOS, never the in-app sheet, which cannot pass a link on to the Spotify app.
 		expect(openInIOS).toHaveBeenCalledWith(
@@ -937,7 +937,7 @@ describe('StoryScreen', () => {
 		serve(() => '<html><body><p>No player here.</p></body></html>')
 		await renderStory(36532)
 
-		fireEvent.press(await screen.findByRole('button', {name: 'Open on the Mess'}))
+		await fireEvent.press(await screen.findByRole('button', {name: 'Open on the Mess'}))
 
 		expect(openUrl).toHaveBeenCalledWith(PAGE_PLAYLIST.link)
 		expect(screen.queryByRole('button', {name: 'Open in Spotify'})).toBeNull()

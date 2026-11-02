@@ -19,7 +19,7 @@ describe('the campus picker', () => {
 		await render(<CampusPicker />)
 
 		expect(screen.getByRole('button', {name: 'St. Olaf College'})).toBeTruthy()
-		fireEvent.press(screen.getByRole('button', {name: 'Carleton College'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Carleton College'}))
 
 		expect(useCampusStore.getState().campus).toBe('edu.carleton')
 	})

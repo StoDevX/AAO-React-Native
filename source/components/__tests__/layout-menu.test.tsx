@@ -25,7 +25,7 @@ describe('LayoutMenu', () => {
 		let onChange = jest.fn()
 		await render(<LayoutMenu layout="grid" onChange={onChange} />)
 
-		fireEvent.press(menuItem('List'))
+		await fireEvent.press(menuItem('List'))
 
 		expect(onChange).toHaveBeenCalledWith('list')
 	})

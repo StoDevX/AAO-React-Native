@@ -102,7 +102,9 @@ describe('ImageView', () => {
 	test('opens the image in the viewer', async () => {
 		await renderWithClient(<ImageView columnWidth={300} image={IMAGE} story={COMIC} />)
 
-		fireEvent.press(screen.getByRole('button', {name: /^Mouse Friends: sunsets of life, by/u}))
+		await fireEvent.press(
+			screen.getByRole('button', {name: /^Mouse Friends: sunsets of life, by/u}),
+		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/newspaper/image',

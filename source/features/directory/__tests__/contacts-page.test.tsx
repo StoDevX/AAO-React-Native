@@ -28,7 +28,7 @@ describe('the Contacts screen', () => {
 		useCampusStore.setState({campus: 'edu.carleton'})
 		await renderPage()
 
-		fireEvent.press(screen.getByRole('button', {name: 'Open the Directory'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Open the Directory'}))
 
 		expect(openUrl).toHaveBeenCalledWith('https://www.carleton.edu/directory/')
 	})

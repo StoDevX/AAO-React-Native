@@ -285,7 +285,9 @@ describe('IssueGrid', () => {
 	test('opens the issue a tile shows', async () => {
 		await renderGrid()
 
-		fireEvent.press(screen.getByRole('button', {name: 'April 29, 2026, Hunger Free Campus grant'}))
+		await fireEvent.press(
+			screen.getByRole('button', {name: 'April 29, 2026, Hunger Free Campus grant'}),
+		)
 
 		expect(onOpen.mock.lastCall?.[0]).toMatchObject({day: '2026-04-29'})
 	})

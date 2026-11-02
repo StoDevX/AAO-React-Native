@@ -48,7 +48,7 @@ describe('Balances page', () => {
 	test('records the agreement when I Agree is pressed', async () => {
 		await render(<BalancesPage />)
 
-		fireEvent.press(screen.getByRole('button', {name: 'I Agree'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'I Agree'}))
 
 		expect(mockDispatch).toHaveBeenCalledWith(acknowledgeAcknowledgement(true))
 	})
