@@ -18,7 +18,7 @@ export function documentLineFile(name: string): LineFile {
 			if (!file.exists) {
 				file.create()
 			}
-			file.write(`${line}\n`, {append: true})
+			file.writeSync(`${line}\n`, {append: true})
 		},
 		readLines() {
 			return file.exists ? file.textSync().split('\n') : []

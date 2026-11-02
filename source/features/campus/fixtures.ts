@@ -109,7 +109,7 @@ function append(entry: {key: string} & CampusRecording): void {
 	if (!file.exists) {
 		file.create()
 	}
-	file.write(`${JSON.stringify(entry)}\n`, {append: true})
+	file.writeSync(`${JSON.stringify(entry)}\n`, {append: true})
 }
 
 /** Whether `id` names a campus answered from its fixtures. */
