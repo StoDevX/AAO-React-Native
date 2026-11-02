@@ -40,7 +40,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 	let serverUrlQuery = useQuery(urlOptions)
 	let {isLoading} = serverUrlQuery
 
-	const discoveredServers = useServerDiscovery()
+	const discoveredServers = useServerDiscovery(campus.id)
 
 	React.useEffect(() => {
 		if (serverUrlQuery.data !== undefined) {
