@@ -12,7 +12,6 @@ import {sectionServer} from '../campus/section-server'
 import {BuildingType} from './types'
 import {FAVORITES_TITLE} from './lib/listed-sections'
 import {withBreakInEffect} from './lib/break-in-effect'
-import {useForceBundledData} from './dev/data-source-store'
 
 export const keys = {
 	/** Campus first, so it namespaces by campus -- two campuses' cached
@@ -54,13 +53,6 @@ export const uneditedHoursOptions = (campus: CampusId) =>
 function fetchBuildings(campus: CampusId) {
 	return async ({signal}: {signal: AbortSignal}): Promise<BuildingType[]> => {
 		let hours = campusById(campus).hours
-		// The dev override reads this repository's copy rather than the deployed
-		// one, so a `building` key added here can be tried before it merges. A
-		// campus with no bundled copy still comes over the wire.
-		let forced = useForceBundledData.getState().forced
-		if (forced && hours?.bundled) {
-			return [...hours.bundled]
-		}
 
 		// The server answers for today, with any break's hours already in place
 		// of the usual ones. A clock moved in the dev sheet applies the break of
@@ -83,6 +75,9 @@ export const buildingsOptions = (campus: CampusId) =>
 	queryOptions({
 		queryKey: keys.all(campus),
 		queryFn: fetchBuildings(campus),
+		// Nothing is bundled, so a refresh that fails offline must not drop the
+		// stored copy.
+		meta: {persistAfterFailure: true},
 	})
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types

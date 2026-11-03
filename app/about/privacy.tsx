@@ -4,7 +4,10 @@ import {ScrollView, StyleSheet} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
-import privacyData from '../../docs/privacy.json'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
+import {useQuery} from '@tanstack/react-query'
+import {useCampus} from '../../source/features/campus/store'
+import {privacyOptions, privacyScreenState} from '../../source/features/about/privacy-query'
 
 const styles = StyleSheet.create({
 	scrollView: {
@@ -14,16 +17,33 @@ const styles = StyleSheet.create({
 	},
 })
 
+function PrivacyPolicy(): React.ReactNode {
+	let campus = useCampus()
+	let {data, error, isLoading, refetch} = useQuery(privacyOptions(campus.id))
+	let state = privacyScreenState({data, isLoading})
+
+	if (state === 'loading') {
+		return <LoadingView />
+	}
+
+	if (state === 'error' || data === undefined) {
+		return <LoadErrorView error={error} onRetry={refetch} />
+	}
+
+	return (
+		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
+			<SafeAreaView edges={['left', 'right']}>
+				<Markdown source={data} />
+			</SafeAreaView>
+		</ScrollView>
+	)
+}
+
 export default function PrivacyPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Privacy</Stack.Title>
-
-			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
-				<SafeAreaView edges={['left', 'right']}>
-					<Markdown source={privacyData.text} />
-				</SafeAreaView>
-			</ScrollView>
+			<PrivacyPolicy />
 		</>
 	)
 }

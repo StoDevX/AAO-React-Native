@@ -22,7 +22,6 @@ import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer, useNowOverride} from '@frogpond/timer'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {HoursDevSheet} from '../../source/features/building-hours/dev/hours-dev-sheet'
-import {useForceBundledData} from '../../source/features/building-hours/dev/data-source-store'
 import {requiresSection} from '../../source/features/campus/section-gate'
 
 type Props = {
@@ -47,8 +46,7 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 	let isDevMode = useIsDevMode()
 	let [devSheetPresented, setDevSheetPresented] = React.useState(false)
 	let frozen = useNowOverride((state) => state.frozen)
-	let forcedData = useForceBundledData((state) => state.forced)
-	let overriding = Boolean(frozen) || forcedData
+	let overriding = Boolean(frozen)
 
 	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings(campus)
 

@@ -1,5 +1,4 @@
 import type {CampusId} from '../../campuses/ids'
-import type {BuildingDirectory} from './directory/types'
 
 /**
  * A basemap style: a map-style source in the sources manifest, by its id
@@ -32,9 +31,6 @@ export type MapSection = {
 	photoRoot?: string
 	/** Whether this campus's Hours venues carry `building` keys, which join them to map places. */
 	venuesByBuilding?: true
-	/** Each building's floor directory, read from `spaces/directory`. */
-	buildingDirectory?: {
-		/** This repository's copy, read by the dev override. */
-		bundled?: ReadonlyArray<BuildingDirectory>
-	}
+	/** Whether this campus has each building's floor directory, read from `spaces/directory`. */
+	buildingDirectory?: true
 }

@@ -13,7 +13,6 @@ import {
 	Section,
 	Spacer,
 	Text,
-	Toggle,
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
@@ -32,7 +31,6 @@ import type {CampusId} from '../../../campuses/ids'
 import {keys, uneditedHoursOptions} from '../query'
 import {TIME_JUMPS, type TimeJump} from './time-jumps'
 import {breakJumps} from './break-jumps'
-import {useForceBundledData} from './data-source-store'
 
 type Props = {
 	campus: CampusId
@@ -54,8 +52,6 @@ export function HoursDevSheet({campus, isPresented, onIsPresentedChange}: Props)
 	let frozen = useNowOverride((state) => state.frozen)
 	let freeze = useNowOverride((state) => state.freeze)
 	let clear = useNowOverride((state) => state.clear)
-	let forced = useForceBundledData((state) => state.forced)
-	let setForced = useForceBundledData((state) => state.setForced)
 	let queryClient = useQueryClient()
 
 	let sheetModifiers = [
@@ -66,10 +62,6 @@ export function HoursDevSheet({campus, isPresented, onIsPresentedChange}: Props)
 	// React Query has already cached the server's answer, so nothing refetches
 	// on its own when the source or the date changes underneath it.
 	let refetch = () => queryClient.invalidateQueries({queryKey: keys.all(campus)})
-	let toggleSource = (next: boolean) => {
-		setForced(next)
-		void refetch()
-	}
 	let jumpTo = (m: moment.Moment) => {
 		freeze(m)
 		void refetch()
@@ -147,14 +139,6 @@ export function HoursDevSheet({campus, isPresented, onIsPresentedChange}: Props)
 								))}
 							</Section>
 						) : null}
-
-						<Section title="">
-							<Toggle
-								isOn={forced}
-								label="St. Olaf hours from this checkout"
-								onIsOnChange={toggleSource}
-							/>
-						</Section>
 					</List>
 				</Group>
 			</BottomSheet>

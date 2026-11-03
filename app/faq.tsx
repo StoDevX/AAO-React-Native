@@ -6,7 +6,7 @@ import {Markdown} from '@frogpond/markdown'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {accent} from '../source/lib/theme'
 import {Stack, useLocalSearchParams} from 'expo-router'
-import {faqsOptionsFor, emptyFaqDataFor} from '../source/features/faqs/query'
+import {faqsOptionsFor, NO_FAQS} from '../source/features/faqs/query'
 import {useCampus} from '../source/features/campus/store'
 import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from '../source/features/faqs/types'
@@ -69,7 +69,7 @@ function FaqView(): React.ReactNode {
 	let {faqId: highlightId} = useLocalSearchParams<{faqId?: string}>()
 	let campus = useCampus()
 	let {data, error, isLoading, isError, isRefetching, refetch} = useQuery(faqsOptionsFor(campus))
-	let faqData: FaqQueryData = data ?? emptyFaqDataFor(campus)
+	let faqData: FaqQueryData = data ?? NO_FAQS
 	let hasFaqs = faqData.faqs.length > 0
 	let hasLegacy = Boolean(faqData.legacyText && !hasFaqs)
 

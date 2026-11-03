@@ -42,9 +42,14 @@ describe('one notices list for both apps', () => {
 		expect(faqsFor(LIST, carleton).legacyText).toBe('')
 	})
 
-	test("falls back on the bundled copy's notices when the server sends none for the campus", () => {
+	test('shows no notices when the server sends none for the campus', () => {
 		let answer = {faqs: [notice('olaf-only', {campus: 'edu.stolaf'})]}
-		expect(faqsFor(answer, carleton)).toEqual(faqsFor(null, carleton))
+		expect(faqsFor(answer, carleton)).toEqual({faqs: [], legacyText: ''})
+	})
+
+	test('shows nothing from an answer that is not a notices list', () => {
+		expect(faqsFor(null, stolaf)).toEqual({faqs: [], legacyText: ''})
+		expect(faqsFor({faqs: []}, stolaf)).toEqual({faqs: [], legacyText: ''})
 	})
 })
 
