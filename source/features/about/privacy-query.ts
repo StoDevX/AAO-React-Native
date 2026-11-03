@@ -27,15 +27,3 @@ export const privacyOptions = (campus: CampusId) =>
 		// stored copy.
 		meta: {persistAfterFailure: true},
 	})
-
-/**
- * What the privacy screen shows. A policy it already has wins over a failed
- * refresh, so the screen keeps working offline from its cached copy.
- */
-export function privacyScreenState(query: {
-	data: string | undefined
-	isLoading: boolean
-}): 'policy' | 'loading' | 'error' {
-	if (query.data !== undefined) return 'policy'
-	return query.isLoading ? 'loading' : 'error'
-}

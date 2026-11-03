@@ -7,6 +7,7 @@ import {timezone} from '@frogpond/constants'
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {BuildingDetailSwiftUI} from '../../../source/features/building-hours/detail/building-detail'
 import {buildingByNameOptions} from '../../../source/features/building-hours/query'
+import {queryScreenState} from '../../../source/lib/query-screen-state'
 import {useCampusParam} from '../../../source/features/campus/campus-param'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
@@ -23,7 +24,14 @@ function HoursDetailPage(): React.ReactNode {
 
 	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
 	let campus = useCampusParam(campusParam)
-	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
+	let {
+		data: building,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	} = useQuery(buildingByNameOptions(campus, name))
+	let state = queryScreenState({data: building, isLoading, isError})
 
 	let favorites = useAppSelector(selectFavoriteBuildings)
 
@@ -64,7 +72,7 @@ function HoursDetailPage(): React.ReactNode {
 		</>
 	)
 
-	if (isLoading) {
+	if (state === 'loading') {
 		return (
 			<>
 				{screen}
@@ -73,7 +81,7 @@ function HoursDetailPage(): React.ReactNode {
 		)
 	}
 
-	if (error) {
+	if (state === 'error') {
 		return (
 			<>
 				{screen}

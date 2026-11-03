@@ -17,6 +17,7 @@ import {
 
 import {timezone} from '@frogpond/constants'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
+import {queryScreenState} from '../../source/lib/query-screen-state'
 import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer, useNowOverride} from '@frogpond/timer'
@@ -48,7 +49,9 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 	let frozen = useNowOverride((state) => state.frozen)
 	let overriding = Boolean(frozen)
 
-	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings(campus)
+	let grouped = useGroupedBuildings(campus)
+	let {data = [], error, refetch, isLoading} = grouped
+	let state = queryScreenState(grouped)
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
@@ -118,7 +121,7 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 		</>
 	)
 
-	if (isError) {
+	if (state === 'error') {
 		return (
 			<>
 				{chrome}
@@ -127,7 +130,7 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 		)
 	}
 
-	if (isLoading) {
+	if (state === 'loading') {
 		return (
 			<>
 				{chrome}

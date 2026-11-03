@@ -7,7 +7,8 @@ import {Markdown} from '@frogpond/markdown'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {useQuery} from '@tanstack/react-query'
 import {useCampus} from '../../source/features/campus/store'
-import {privacyOptions, privacyScreenState} from '../../source/features/about/privacy-query'
+import {privacyOptions} from '../../source/features/about/privacy-query'
+import {queryScreenState} from '../../source/lib/query-screen-state'
 
 const styles = StyleSheet.create({
 	scrollView: {
@@ -19,8 +20,8 @@ const styles = StyleSheet.create({
 
 function PrivacyPolicy(): React.ReactNode {
 	let campus = useCampus()
-	let {data, error, isLoading, refetch} = useQuery(privacyOptions(campus.id))
-	let state = privacyScreenState({data, isLoading})
+	let {data, error, isLoading, isError, refetch} = useQuery(privacyOptions(campus.id))
+	let state = queryScreenState({data, isLoading, isError})
 
 	if (state === 'loading') {
 		return <LoadingView />

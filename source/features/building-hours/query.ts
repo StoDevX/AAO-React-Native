@@ -83,10 +83,10 @@ export const buildingsOptions = (campus: CampusId) =>
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const buildingByNameOptions = (campus: CampusId, name: string) =>
 	queryOptions({
-		// Shares buildingsOptions' key on purpose: the detail sheet reads the
-		// list query's warm cache instead of showing its own spinner.
-		queryKey: keys.all(campus),
-		queryFn: fetchBuildings(campus),
+		// The list query itself, so the detail sheet reads its warm cache instead
+		// of showing its own spinner, and a refetch from here keeps the list's
+		// meta (a query takes the options of whichever reader fetched it last).
+		...buildingsOptions(campus),
 		select: (buildings) => buildings.find((b) => b.name === name),
 	})
 

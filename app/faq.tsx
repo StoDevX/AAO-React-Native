@@ -7,6 +7,7 @@ import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {accent} from '../source/lib/theme'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {faqsOptionsFor, NO_FAQS} from '../source/features/faqs/query'
+import {queryScreenState} from '../source/lib/query-screen-state'
 import {useCampus} from '../source/features/campus/store'
 import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from '../source/features/faqs/types'
@@ -72,12 +73,13 @@ function FaqView(): React.ReactNode {
 	let faqData: FaqQueryData = data ?? NO_FAQS
 	let hasFaqs = faqData.faqs.length > 0
 	let hasLegacy = Boolean(faqData.legacyText && !hasFaqs)
+	let state = queryScreenState({data, isLoading, isError})
 
-	if (isLoading) {
+	if (state === 'loading') {
 		return <LoadingView />
 	}
 
-	if (isError) {
+	if (state === 'error') {
 		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
