@@ -171,6 +171,7 @@ describe("Carleton's Home tiles", () => {
 			['Student Orgs', 'https://www.carleton.edu/student-organizations/'],
 			['Moodle', 'https://moodle.carleton.edu/'],
 			['Carleton News', '/news'],
+			['Stalkernet', 'https://www.carleton.edu/directory/'],
 			['Developer', '/developer'],
 		])
 	})
@@ -204,6 +205,16 @@ describe('opensInBrowser for a station', () => {
 	test('is false, since a station opens the Now Playing sheet', () => {
 		let krlx = carletonView((v) => v.type === 'radio')
 		expect(opensInBrowser(krlx)).toBe(false)
+	})
+
+	test('is true for a web link like Stalkernet', () => {
+		let stalkernet = carletonView((v) => v.title === 'Stalkernet')
+		expect(stalkernet).toMatchObject({
+			type: 'url',
+			url: 'https://www.carleton.edu/directory/',
+			icon: 'person.fill',
+		})
+		expect(opensInBrowser(stalkernet)).toBe(true)
 	})
 })
 

@@ -127,5 +127,12 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 		icon: 'megaphone.fill',
 		gradient: c.indigoGradient,
 	},
+	{
+		type: 'url',
+		url: 'https://www.carleton.edu/directory/',
+		title: 'Stalkernet',
+		icon: 'person.fill',
+		gradient: c.redGradient,
+	},
 	developerTile,
 ]
