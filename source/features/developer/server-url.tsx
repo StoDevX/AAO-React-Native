@@ -1,6 +1,13 @@
 import * as React from 'react'
 import {Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
-import {disabled, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
+import {
+	autocorrectionDisabled,
+	disabled,
+	keyboardType,
+	onSubmit,
+	submitLabel,
+	textInputAutocapitalization,
+} from '@expo/ui/swift-ui/modifiers'
 import {Restart} from 'react-native-restart-newarch'
 import * as storage from '../../lib/storage'
 import type {CampusDefinition} from '../../campuses'
@@ -33,7 +40,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 	let serverUrlQuery = useQuery(urlOptions)
 	let {isLoading} = serverUrlQuery
 
-	const discoveredServers = useServerDiscovery()
+	const discoveredServers = useServerDiscovery(campus.id)
 
 	React.useEffect(() => {
 		if (serverUrlQuery.data !== undefined) {
@@ -74,6 +81,9 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 					<>
 						<TextField
 							modifiers={[
+								keyboardType('url'),
+								textInputAutocapitalization('never'),
+								autocorrectionDisabled(),
 								submitLabel('done'),
 								onSubmit(reload),
 								disabled(storeServerAddress.isPending),
