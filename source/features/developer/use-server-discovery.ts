@@ -21,7 +21,24 @@ const formatHost = ({addresses, host}: Pick<ResolvedService, 'addresses' | 'host
 	return rawHost.includes(':') ? `[${rawHost}]` : rawHost
 }
 
-export const useServerDiscovery = (): DiscoveredServer[] => {
+/**
+ * The server a resolved advert offers a campus, or undefined when the advert
+ * names another campus. An advert that names no campus is offered to every one.
+ */
+export const discoveredServer = (
+	service: ResolvedService,
+	campusId: string,
+): DiscoveredServer | undefined => {
+	const campus = service.txt?.campus
+	if (campus && campus !== campusId) {
+		return undefined
+	}
+	const path = service.txt?.path && service.txt.path !== '' ? service.txt.path : '/v1/'
+	return {name: service.name, url: `http://${formatHost(service)}:${service.port}${path}`}
+}
+
+/** The local servers discovered over mDNS that serve `campusId`. */
+export const useServerDiscovery = (campusId: string): DiscoveredServer[] => {
 	const isDevMode = useIsDevMode()
 	const [servers, setServers] = React.useState<DiscoveredServer[]>([])
 
@@ -39,12 +56,12 @@ export const useServerDiscovery = (): DiscoveredServer[] => {
 		const zeroconf = new Zeroconf()
 
 		const onResolved = (service: ResolvedService) => {
-			const path = service.txt?.path && service.txt.path !== '' ? service.txt.path : '/v1/'
-			const url = `http://${formatHost(service)}:${service.port}${path}`
+			const server = discoveredServer(service, campusId)
+			if (!server) return
 			setServers((prev) => {
-				const already = prev.some((s) => s.url === url)
+				const already = prev.some((s) => s.url === server.url)
 				if (already) return prev
-				return [...prev, {name: service.name, url}]
+				return [...prev, server]
 			})
 		}
 
@@ -62,7 +79,7 @@ export const useServerDiscovery = (): DiscoveredServer[] => {
 			zeroconf.stop()
 			zeroconf.removeDeviceListeners()
 		}
-	}, [isDevMode])
+	}, [isDevMode, campusId])
 
 	return servers
 }
