@@ -1,6 +1,6 @@
 import {renderHook, act} from '@testing-library/react-native'
 import {NativeModules} from 'react-native'
-import {useServerDiscovery} from '../use-server-discovery'
+import {discoveredServer, useServerDiscovery} from '../use-server-discovery'
 
 const mockUseIsDevMode = jest.fn(() => true)
 
@@ -52,7 +52,7 @@ describe('useServerDiscovery', () => {
 	})
 
 	it('builds discovered server URLs from address and default /v1/ path', async () => {
-		let {result} = await renderHook(() => useServerDiscovery())
+		let {result} = await renderHook(() => useServerDiscovery('edu.stolaf'))
 
 		await act(() => {
 			handlers.resolved?.({
@@ -68,7 +68,7 @@ describe('useServerDiscovery', () => {
 	})
 
 	it('removes only the matching discovered server', async () => {
-		let {result} = await renderHook(() => useServerDiscovery())
+		let {result} = await renderHook(() => useServerDiscovery('edu.stolaf'))
 
 		await act(() => {
 			handlers.resolved?.({
@@ -93,7 +93,7 @@ describe('useServerDiscovery', () => {
 	})
 
 	it('cleans up listeners on unmount', async () => {
-		let {unmount} = await renderHook(() => useServerDiscovery())
+		let {unmount} = await renderHook(() => useServerDiscovery('edu.stolaf'))
 
 		await unmount()
 
@@ -101,5 +101,40 @@ describe('useServerDiscovery', () => {
 		expect(mockRemoveAllListeners).toHaveBeenCalledWith('remove')
 		expect(mockStop).toHaveBeenCalledTimes(1)
 		expect(mockRemoveDeviceListeners).toHaveBeenCalledTimes(1)
+	})
+})
+
+describe('discoveredServer', () => {
+	const worker = (campus: string): Service => ({
+		name: `ccc-server ${campus} (Gecko)`,
+		host: 'Gecko.local.',
+		port: 8787,
+		addresses: ['192.168.0.10'],
+		txt: {campus, path: `/${campus}/v1/`},
+	})
+
+	it("offers a campus's own server", () => {
+		expect(discoveredServer(worker('edu.stolaf'), 'edu.stolaf')).toEqual({
+			name: 'ccc-server edu.stolaf (Gecko)',
+			url: 'http://192.168.0.10:8787/edu.stolaf/v1/',
+		})
+	})
+
+	it("leaves out another campus's server", () => {
+		expect(discoveredServer(worker('edu.carleton'), 'edu.stolaf')).toBeUndefined()
+	})
+
+	it('offers a server that names no campus to every campus', () => {
+		let nodeServer: Service = {
+			name: 'ccc-server (Gecko)',
+			host: 'Gecko.local.',
+			port: 3000,
+			addresses: ['192.168.0.10'],
+			txt: {institution: 'stolaf-college', path: '/v1/'},
+		}
+		expect(discoveredServer(nodeServer, 'edu.carleton')).toEqual({
+			name: 'ccc-server (Gecko)',
+			url: 'http://192.168.0.10:3000/v1/',
+		})
 	})
 })
