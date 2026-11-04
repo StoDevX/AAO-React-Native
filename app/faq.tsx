@@ -69,11 +69,13 @@ const FaqCard = ({faq, isHighlighted}: CardProps): React.ReactNode => {
 function FaqView(): React.ReactNode {
 	let {faqId: highlightId} = useLocalSearchParams<{faqId?: string}>()
 	let campus = useCampus()
-	let {data, error, isLoading, isError, isRefetching, refetch} = useQuery(faqsOptionsFor(campus))
+	let {data, error, isPending, fetchStatus, isError, isRefetching, refetch} = useQuery(
+		faqsOptionsFor(campus),
+	)
 	let faqData: FaqQueryData = data ?? NO_FAQS
 	let hasFaqs = faqData.faqs.length > 0
 	let hasLegacy = Boolean(faqData.legacyText && !hasFaqs)
-	let state = queryScreenState({data, isLoading, isError})
+	let state = queryScreenState({data, isPending, fetchStatus, isError})
 
 	if (state === 'loading') {
 		return <LoadingView />

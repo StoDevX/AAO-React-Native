@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
 
 function PrivacyPolicy(): React.ReactNode {
 	let campus = useCampus()
-	let {data, error, isLoading, isError, refetch} = useQuery(privacyOptions(campus.id))
-	let state = queryScreenState({data, isLoading, isError})
+	let {data, error, isPending, fetchStatus, isError, refetch} = useQuery(privacyOptions(campus.id))
+	let state = queryScreenState({data, isPending, fetchStatus, isError})
 
 	if (state === 'loading') {
 		return <LoadingView />

@@ -467,12 +467,13 @@ function HoursProblemReportLoader(): React.ReactNode {
 	let campus = useCampusParam(campusParam)
 	let {
 		data: building,
-		isLoading,
+		isPending,
+		fetchStatus,
 		isError,
 		error,
 		refetch,
 	} = useQuery(buildingByNameOptions(campus, name))
-	let state = queryScreenState({data: building, isLoading, isError})
+	let state = queryScreenState({data: building, isPending, fetchStatus, isError})
 
 	if (state === 'loading') {
 		return <LoadingView />
