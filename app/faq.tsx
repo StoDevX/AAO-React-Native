@@ -6,7 +6,8 @@ import {Markdown} from '@frogpond/markdown'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {accent} from '../source/lib/theme'
 import {Stack, useLocalSearchParams} from 'expo-router'
-import {faqsOptionsFor, emptyFaqDataFor} from '../source/features/faqs/query'
+import {faqsOptionsFor, NO_FAQS} from '../source/features/faqs/query'
+import {queryScreenState} from '../source/lib/query-screen-state'
 import {useCampus} from '../source/features/campus/store'
 import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from '../source/features/faqs/types'
@@ -68,16 +69,19 @@ const FaqCard = ({faq, isHighlighted}: CardProps): React.ReactNode => {
 function FaqView(): React.ReactNode {
 	let {faqId: highlightId} = useLocalSearchParams<{faqId?: string}>()
 	let campus = useCampus()
-	let {data, error, isLoading, isError, isRefetching, refetch} = useQuery(faqsOptionsFor(campus))
-	let faqData: FaqQueryData = data ?? emptyFaqDataFor(campus)
+	let {data, error, isPending, fetchStatus, isError, isRefetching, refetch} = useQuery(
+		faqsOptionsFor(campus),
+	)
+	let faqData: FaqQueryData = data ?? NO_FAQS
 	let hasFaqs = faqData.faqs.length > 0
 	let hasLegacy = Boolean(faqData.legacyText && !hasFaqs)
+	let state = queryScreenState({data, isPending, fetchStatus, isError})
 
-	if (isLoading) {
+	if (state === 'loading') {
 		return <LoadingView />
 	}
 
-	if (isError) {
+	if (state === 'error') {
 		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 

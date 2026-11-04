@@ -1,5 +1,4 @@
 import type {CampusId} from '../../campuses/ids'
-import type {BuildingType} from './types'
 
 /** A campus's building hours: the Hours screens, and the venues the map's cards show. */
 export type HoursSection = {
@@ -21,10 +20,4 @@ export type HoursSection = {
 	 * never looks its keys up.
 	 */
 	photos?: true
-	/**
-	 * This repository's copy of the venues, read in place of the server's by
-	 * the dev override: a field added here
-	 * reaches the server only once it merges.
-	 */
-	bundled?: ReadonlyArray<BuildingType>
 }

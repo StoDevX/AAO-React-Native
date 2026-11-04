@@ -1,7 +1,6 @@
 import {eventMapper} from '../features/streaming/radio/constants'
 import type {CampusDefinition} from './definition'
 import {stolafAbout} from './edu-stolaf/about'
-import {BUNDLED_DIRECTORIES, BUNDLED_HOURS} from './edu-stolaf/bundled'
 import {stolafHomeTiles} from './edu-stolaf/home-tiles'
 import {menus} from './edu-stolaf/menus'
 import {MESSENGER} from './edu-stolaf/paper'
@@ -50,7 +49,7 @@ export const stolaf = {
 		darkStyle: {manifestId: 'stolaf-dark'},
 		buildingLabelsLayer: 'campus_labels_buildings',
 		venuesByBuilding: true,
-		buildingDirectory: {bundled: BUNDLED_DIRECTORIES},
+		buildingDirectory: true,
 	},
 	hours: {
 		title: 'Hours',
@@ -58,7 +57,6 @@ export const stolaf = {
 		// St. Olaf's map has a home tile of its own.
 		showsMapButton: false,
 		photos: true,
-		bundled: BUNDLED_HOURS,
 	},
 	menus,
 	transit: {},

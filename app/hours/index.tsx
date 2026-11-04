@@ -17,12 +17,12 @@ import {
 
 import {timezone} from '@frogpond/constants'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
+import {queryScreenState} from '../../source/lib/query-screen-state'
 import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer, useNowOverride} from '@frogpond/timer'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {HoursDevSheet} from '../../source/features/building-hours/dev/hours-dev-sheet'
-import {useForceBundledData} from '../../source/features/building-hours/dev/data-source-store'
 import {requiresSection} from '../../source/features/campus/section-gate'
 
 type Props = {
@@ -47,10 +47,11 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 	let isDevMode = useIsDevMode()
 	let [devSheetPresented, setDevSheetPresented] = React.useState(false)
 	let frozen = useNowOverride((state) => state.frozen)
-	let forcedData = useForceBundledData((state) => state.forced)
-	let overriding = Boolean(frozen) || forcedData
+	let overriding = Boolean(frozen)
 
-	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings(campus)
+	let grouped = useGroupedBuildings(campus)
+	let {data = [], error, refetch, isLoading} = grouped
+	let state = queryScreenState(grouped)
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
@@ -120,7 +121,7 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 		</>
 	)
 
-	if (isError) {
+	if (state === 'error') {
 		return (
 			<>
 				{chrome}
@@ -129,7 +130,7 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 		)
 	}
 
-	if (isLoading) {
+	if (state === 'loading') {
 		return (
 			<>
 				{chrome}
