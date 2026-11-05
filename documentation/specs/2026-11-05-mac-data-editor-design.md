@@ -20,7 +20,7 @@ copy of All About Olaf, and opens a pull request, without help.
 | v1 scope | Building hours only, end to end |
 | Fidelity | The app runs the real `bundle-data` and the real ccc-server, so a preview is what production would serve |
 | Campus | St. Olaf only (Carleton's data lives in another repo) |
-| Platform | macOS 15 or later, Apple Silicon only |
+| Platform | macOS 27 or later (matching Radio), Apple Silicon only |
 | Distribution | Developer ID signed and notarized, published on GitHub Releases, updated through Sparkle. Kept sandbox-compatible so a TestFlight build can follow |
 
 ## How data reaches the app today
