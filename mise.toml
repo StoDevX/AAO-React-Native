@@ -3,6 +3,14 @@
 # dropping what format 3 records (the forge repository IDs among it).
 min_version = "2026.9.16"
 
+# `mise install` without this rewrites mise.lock whenever the local mise
+# resolves a tool differently from the committed lock, so every contributor
+# on another mise version or host would see the file change. Locked, install
+# uses the lock as it is and fails rather than edit it; `mise lock` still
+# regenerates it on purpose.
+[settings]
+locked = true
+
 [tools]
 node = "24.22.0"
 pnpm = "12.15.0"
