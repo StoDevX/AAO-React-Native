@@ -1,8 +1,8 @@
-# mise.lock is written by mise 2026.11.2, the oldest mise that writes it as
+# mise.lock is written by mise 2026.11.1, the oldest mise that writes it as
 # the project wants: 2026.10.2 stopped recording owner IDs, and 2026.10.20
 # stopped keeping platforms an `os` option excludes. An older mise rewrites
 # the lock on its next write, so contributors on one would see it change.
-min_version = "2026.11.2"
+min_version = "2026.11.1"
 
 [tools]
 node = "24.22.0"
