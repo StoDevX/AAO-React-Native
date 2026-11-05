@@ -1,6 +1,5 @@
 import {clientFor} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import bundledFaqs from '../../../docs/faqs.json'
 import type {CampusDefinition, CampusId} from '../../campuses'
 import {defaultConditionContext, evaluateConditions} from './conditions'
 import {parseFaqMetadata} from './schema'
@@ -26,6 +25,9 @@ const optionsFor = (campus: CampusDefinition) =>
 		queryFn: ({signal}) => clientFor(serverFor(campus)).get('faqs', {signal}).json(),
 		select: (raw) => faqsFor(raw, campus),
 		enabled: campus.faqs !== undefined,
+		// Nothing is bundled, so a refresh that fails offline must not drop the
+		// stored copy.
+		meta: {persistAfterFailure: true},
 	})
 
 // Built once per campus, so `select` keeps its identity and runs only when the data changes.
@@ -41,18 +43,13 @@ export function faqsOptionsFor(campus: CampusDefinition): ReturnType<typeof opti
 	return options
 }
 
-/** What `campus`'s FAQ screen shows before its data arrives: the copy bundled with the app. */
-export function emptyFaqDataFor(campus: CampusDefinition): FaqQueryData {
-	return faqsFor(bundledFaqs, campus)
-}
+/** No notices and no free-form text: what a screen shows before the data arrives. */
+export const NO_FAQS: FaqQueryData = {faqs: [], legacyText: ''}
 
-/** The notices in `raw` that `campus`'s app shows, falling back on the bundled copy's. */
+/** The notices in `raw` that `campus`'s app shows. */
 export function faqsFor(raw: unknown, campus: CampusDefinition): FaqQueryData {
-	if (!campus.faqs) {
-		return {faqs: [], legacyText: ''}
-	}
-	if (!isRecord(raw)) {
-		return emptyFaqDataFor(campus)
+	if (!campus.faqs || !isRecord(raw)) {
+		return NO_FAQS
 	}
 
 	let context = {...defaultConditionContext(), campus: campus.id}
@@ -63,14 +60,10 @@ export function faqsFor(raw: unknown, campus: CampusDefinition): FaqQueryData {
 				.filter((faq) => evaluateConditions(faq.conditions, context))
 		: []
 
-	if (faqs.length === 0 && raw !== bundledFaqs) {
-		faqs = emptyFaqDataFor(campus).faqs
-	}
-
 	// The free-form text predates the list, and only a campus that asks shows it.
 	let legacyText = ''
 	if (campus.faqs.showsLegacyText) {
-		legacyText = typeof raw.text === 'string' ? raw.text : bundledFaqs.text
+		legacyText = typeof raw.text === 'string' ? raw.text : ''
 	}
 
 	return {faqs, legacyText}

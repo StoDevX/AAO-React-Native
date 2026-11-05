@@ -1,0 +1,10 @@
+status: 200
+contentType: application/json; charset=utf-8
+key: GET {server:example.college}/privacy/aao
+json:
+  text: |-
+    # Privacy at Wiki Monkeys
+
+    The troop keeps no notes on you. The app asks the college's server for
+    menus, hours and the rest, and remembers what it was told so it still
+    works on the far side of the ridge.

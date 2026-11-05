@@ -56,7 +56,7 @@ export const exampleCollege = {
 		// Medium, the pins' usual face, and a label in a face it lacks draws no pin at all.
 		labelFont: 'Open Sans Semibold',
 		venuesByBuilding: true,
-		buildingDirectory: {},
+		buildingDirectory: true,
 	},
 	// Valley Map has a home tile of its own, as St. Olaf's map does.
 	hours: {title: 'Building Hours', reportLabel: 'Wiki Monkeys', showsMapButton: false},

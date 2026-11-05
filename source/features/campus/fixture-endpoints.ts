@@ -62,6 +62,11 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	{pattern: 'GET {server}/food/named/menu/:id', schema: 'food-menu'},
 	{pattern: 'GET {server}/map/categories', schema: 'map-categories'},
 	{pattern: 'GET {server}/map/geojson', schema: 'map-geojson'},
+	{
+		pattern: 'GET {server}/privacy/:app',
+		schema: 'privacy',
+		live: ['https://stolaf.frogpond.tech/v1/privacy/aao'],
+	},
 	{pattern: 'GET {server}/spaces/directory', schema: 'spaces-directory'},
 	{pattern: 'GET {server}/spaces/hours', schema: 'spaces-hours'},
 	{

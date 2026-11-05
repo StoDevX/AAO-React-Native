@@ -28,6 +28,7 @@ import {
 	buildingByNameOptions,
 	buildingsOptions,
 } from '../../../source/features/building-hours/query'
+import {queryScreenState} from '../../../source/lib/query-screen-state'
 import {campusById, type CampusId} from '../../../source/campuses'
 import {useCampusParam} from '../../../source/features/campus/campus-param'
 import type {
@@ -464,13 +465,21 @@ const TimesRow = ({set, now, onPress, zone}: TimesRowProps) => (
 function HoursProblemReportLoader(): React.ReactNode {
 	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
 	let campus = useCampusParam(campusParam)
-	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
+	let {
+		data: building,
+		isPending,
+		fetchStatus,
+		isError,
+		error,
+		refetch,
+	} = useQuery(buildingByNameOptions(campus, name))
+	let state = queryScreenState({data: building, isPending, fetchStatus, isError})
 
-	if (isLoading) {
+	if (state === 'loading') {
 		return <LoadingView />
 	}
 
-	if (error) {
+	if (state === 'error') {
 		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 

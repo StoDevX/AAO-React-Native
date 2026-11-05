@@ -39,4 +39,7 @@ export const cardDirectoryOptions = (campus: CampusId) => ({
 	queryFn: ({signal}: {signal: AbortSignal}) => fetchDirectories(campus, signal),
 	enabled: campusById(campus).map?.buildingDirectory !== undefined,
 	staleTime: CARD_STALE_TIME,
+	// Nothing is bundled, so a refresh that fails offline must not drop the
+	// stored copy.
+	meta: {persistAfterFailure: true},
 })
