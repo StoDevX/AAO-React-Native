@@ -50,7 +50,7 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	{
 		type: 'view',
 		view: '/contacts',
-		title: 'Directory',
+		title: 'Contacts',
 		icon: 'phone.fill',
 		gradient: c.orangeGradient,
 	},
@@ -130,7 +130,7 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	{
 		type: 'url',
 		url: 'https://www.carleton.edu/directory/',
-		title: 'Stalkernet',
+		title: 'Directory',
 		icon: 'person.fill',
 		gradient: c.redGradient,
 	},

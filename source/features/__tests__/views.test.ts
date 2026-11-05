@@ -160,7 +160,7 @@ describe("Carleton's Home tiles", () => {
 			['OneCard', 'https://get.cbord.com/carletonstolaf/full/prelogin.php'],
 			['Building Hours', '/hours?campus=edu.carleton'],
 			['Calendar', '/calendar'],
-			['Directory', '/contacts'],
+			['Contacts', '/contacts'],
 			['KRLX', 'radio:krlx'],
 			['SUMO', '/schedule/sumo'],
 			['The Carletonian', '/newspaper'],
@@ -171,7 +171,7 @@ describe("Carleton's Home tiles", () => {
 			['Student Orgs', 'https://www.carleton.edu/student-organizations/'],
 			['Moodle', 'https://moodle.carleton.edu/'],
 			['Carleton News', '/news'],
-			['Stalkernet', 'https://www.carleton.edu/directory/'],
+			['Directory', 'https://www.carleton.edu/directory/'],
 			['Developer', '/developer'],
 		])
 	})
@@ -207,14 +207,16 @@ describe('opensInBrowser for a station', () => {
 		expect(opensInBrowser(krlx)).toBe(false)
 	})
 
-	test('is true for a web link like Stalkernet', () => {
-		let stalkernet = carletonView((v) => v.title === 'Stalkernet')
-		expect(stalkernet).toMatchObject({
+	test('is true for the Directory web link', () => {
+		let directoryLink = carletonView(
+			(v) => v.type === 'url' && v.url === 'https://www.carleton.edu/directory/',
+		)
+		expect(directoryLink).toMatchObject({
 			type: 'url',
 			url: 'https://www.carleton.edu/directory/',
 			icon: 'person.fill',
 		})
-		expect(opensInBrowser(stalkernet)).toBe(true)
+		expect(opensInBrowser(directoryLink)).toBe(true)
 	})
 })
 
