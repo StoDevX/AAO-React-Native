@@ -157,7 +157,6 @@ describe("Carleton's Home tiles", () => {
 		expect(carleton().map((view) => [view.title, viewTarget(view)])).toEqual([
 			['Menus', '/menus'],
 			['Workday', 'https://www.carleton.edu/workday/'],
-			['OneCard', 'https://get.cbord.com/carletonstolaf/full/prelogin.php'],
 			['Building Hours', '/hours?campus=edu.carleton'],
 			['Calendar', '/calendar'],
 			['Contacts', '/contacts'],
