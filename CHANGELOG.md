@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.10.0
+
+### Minor Changes
+
+- 62bcf06: Feature Requests lets you suggest, vote on and discuss ideas for the app anonymously. Find it under Feedback on Home, in Support and in Contributing.
+
+### Patch Changes
+
+- 1130866: The Course Catalog loads again, instead of saying the published course catalog was already rejected.
+
 ## 2.9.1
 
 ### Patch Changes
