@@ -422,6 +422,10 @@ const config: ExpoConfig = {
 		// is already declared above, so the plugin adds only what it cannot skip;
 		// `false` drops the microphone usage string it would otherwise write.
 		['expo-audio', {microphonePermission: false}],
+		// Radio show reminders are local notifications, which need no push. The
+		// plugin applies itself even when unlisted and adds the aps-environment
+		// entitlement, which every variant's App ID would then have to carry.
+		['expo-notifications', {enableRemoteNotifications: false}],
 		// Adding an event goes through the system editor, which needs no
 		// calendar access, but the module links EventKit, and App Store Connect
 		// rejects an upload that does so without a calendar usage string
