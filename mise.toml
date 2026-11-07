@@ -1,7 +1,16 @@
-# mise.lock is written in lockfile format 3, which mise 2026.9.16 introduced.
-# An older mise rewrites it as format 2 whenever it touches the lockfile,
-# dropping what format 3 records (the forge repository IDs among it).
-min_version = "2026.9.16"
+# mise.lock is written by mise 2026.11.1, the oldest mise that writes it as
+# the project wants: 2026.10.2 stopped recording owner IDs, and 2026.10.20
+# stopped keeping platforms an `os` option excludes. An older mise rewrites
+# the lock on its next write, so contributors on one would see it change.
+min_version = "2026.11.1"
+
+# `mise install` without this rewrites mise.lock whenever the local mise
+# resolves a tool differently from the committed lock, so every contributor
+# on another mise version or host would see the file change. Locked, install
+# uses the lock as it is and fails rather than edit it; `mise lock` still
+# regenerates it on purpose.
+[settings]
+locked = true
 
 [tools]
 node = "24.22.0"

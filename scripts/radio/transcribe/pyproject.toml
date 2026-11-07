@@ -3,7 +3,7 @@ name = "radio-transcribe"
 version = "0.1.0"
 description = "Transcribes speech from live internet radio with an on-device Whisper model"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = "==3.14.*"
 dependencies = [
 	"ai-edge-litert>=2.3.0",
 	"faster-whisper>=1.2.1",
