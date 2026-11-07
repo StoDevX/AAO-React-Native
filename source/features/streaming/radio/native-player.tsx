@@ -1,11 +1,14 @@
 import * as React from 'react'
 import {setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus} from 'expo-audio'
 
-import {audioActivity, type AudioActivity} from './audio-activity'
+import {audioActivity, shouldRenderScratch, type AudioActivity} from './audio-activity'
 import type {NowPlayingPresentation} from './now-playing'
 import type {HtmlAudioError, PlayState} from './types'
+import type {Station} from './stations'
+import {customRendererOwnsOutput, useRadioScrub} from './use-radio-scrub'
 
 type Props = {
+	station: Pick<Station, 'id' | 'stationName'>
 	playState: PlayState
 	onWaiting?: () => unknown
 	onEnded?: () => unknown
@@ -48,6 +51,10 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 	let player = useAudioPlayer(streamSourceUrl)
 	let status = useAudioPlayerStatus(player)
 	let activity = audioActivity(status)
+	// The scratch renderer has its own network queue. AVPlayer buffering must
+	// not repeatedly pause that independent audio engine during startup.
+	let renderRequested = shouldRenderScratch(playState, activity)
+	let delayed = useRadioScrub(player, props.station.id, renderRequested, streamSourceUrl)
 	// The latest callbacks, so an event reaches the current ones without the
 	// effect below running again each time they change.
 	let callbacks = React.useRef(props)
@@ -80,14 +87,19 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 	// screen; asking it to as well would fail, as it is already gone.
 	let activated = React.useRef(false)
 	React.useEffect(() => {
-		let metadata = {title, artist, albumTitle, artworkUrl: artworkUri}
+		let metadata = {
+			title: delayed ? props.station.stationName : title,
+			artist: delayed ? 'Delayed broadcast' : artist,
+			albumTitle: delayed ? undefined : albumTitle,
+			artworkUrl: delayed ? undefined : artworkUri,
+		}
 		if (activated.current) {
 			player.updateLockScreenMetadata(metadata)
 			return
 		}
 		activated.current = true
 		player.setActiveForLockScreen(true, metadata, {isLiveStream: true})
-	}, [player, title, artist, albumTitle, artworkUri])
+	}, [player, title, artist, albumTitle, artworkUri, delayed, props.station.stationName])
 
 	// A paused station keeps its player, and with it the lock screen's entry, but
 	// a live stream has nowhere to resume from. So when Control Center plays the
@@ -126,7 +138,7 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 			reloadTimer.current = setTimeout(endReload, RELOAD_TIMEOUT_MS)
 			player.replace(streamSourceUrl)
 			// oxlint-disable-next-line react/immutability
-			player.muted = false
+			player.muted = customRendererOwnsOutput(callbacks.current.station.id)
 			player.play()
 			callbacks.current.onResume?.()
 		}

@@ -14,7 +14,6 @@ import Animated, {
 	useAnimatedStyle,
 	useReducedMotion,
 	useSharedValue,
-	withDecay,
 	withRepeat,
 	withSpring,
 	withTiming,
@@ -30,6 +29,8 @@ import {
 	turnBetween,
 	type ScratchSample,
 } from './scratch-gesture'
+import {recordMomentum} from './record-momentum'
+import {DEGREES_PER_SECOND, MS_PER_TURN} from './record-speed'
 
 /** How far a pressed logo shrinks: about 4pt across a 268pt logo. */
 const PRESSED_SCALE = 0.985
@@ -39,10 +40,6 @@ const PLAYING_SCALE = 1.06
 
 /** The centre label's share of the record's width, near a 7-inch single's. */
 const LABEL_SIZE = 0.55
-
-/** 33⅓ rpm, an LP's speed: one turn every 1.8 seconds. */
-const MS_PER_TURN = 60_000 / (100 / 3)
-const DEGREES_PER_SECOND = 360 / (MS_PER_TURN / 1000)
 
 type Props = {
 	/** The logo, drawn on the record's centre label. */
@@ -55,7 +52,11 @@ type Props = {
 	accessibilityLabel: string
 	/** Turns the record on its own, unless Reduce Motion is on. */
 	playing: boolean
+	playbackRate?: number
 	onTap?: () => void
+	onScratchStart?: () => void
+	onScratchMove?: (degreesPerSecond: number) => void
+	onScratchEnd?: (degreesPerSecond: number) => void
 }
 
 /**
@@ -65,10 +66,10 @@ type Props = {
  * stream plays.
  */
 export function ScratchableLogo(props: Props): React.ReactNode {
-	let {image, labelColor, labelScale, size, accessibilityLabel, playing} = props
+	let {image, labelColor, labelScale, size, accessibilityLabel, playing, playbackRate = 1} = props
 	// A logo that cannot be fetched leaves the label bare, and the record turning.
 	let [logoFailed, onLogoError] = useImageFailure(image.uri)
-	let {onTap} = props
+	let {onTap, onScratchStart, onScratchMove, onScratchEnd} = props
 	let reduceMotion = useReducedMotion()
 	let spins = playing && !reduceMotion
 
@@ -86,15 +87,21 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 	// Null until the touch has moved far enough to be a scratch.
 	let lastAngle = useRef<number | null>(null)
 	let samples = useRef<ScratchSample[]>([])
+	useEffect(() => () => onScratchEnd?.(0), [onScratchEnd])
 
 	let startSpinning = useCallback(() => {
 		if (!spins) {
 			return
 		}
+		if (lastAngle.current !== null) return
+		cancelAnimation(spin)
 		spin.set(
-			withRepeat(withTiming(spin.get() + 360, {duration: MS_PER_TURN, easing: Easing.linear}), -1),
+			withRepeat(
+				withTiming(spin.get() + 360, {duration: MS_PER_TURN / playbackRate, easing: Easing.linear}),
+				-1,
+			),
 		)
-	}, [spin, spins])
+	}, [spin, spins, playbackRate])
 
 	useEffect(() => {
 		let target = playing ? PLAYING_SCALE : 1
@@ -105,9 +112,10 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 		startSpinning()
 		return () => {
 			cancelAnimation(spin)
-			cancelAnimation(scratched)
 		}
-	}, [scratched, spin, startSpinning])
+	}, [spin, startSpinning])
+
+	useEffect(() => () => cancelAnimation(scratched), [scratched])
 
 	let handleGrant = (event: GestureResponderEvent) => {
 		scale.set(withSpring(PRESSED_SCALE, {duration: 150}))
@@ -132,6 +140,7 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 				return
 			}
 			cancelAnimation(spin)
+			onScratchStart?.()
 			scale.set(withSpring(1, {duration: 250}))
 			lastAngle.current = angleAround(centre.current, start.current)
 			samples.current.push({angle: lastAngle.current, time: start.current.time})
@@ -141,6 +150,7 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 		scratched.set((value) => value + turn)
 		lastAngle.current = angle
 		samples.current.push({angle, time: event.nativeEvent.timestamp})
+		onScratchMove?.(releaseVelocity(samples.current, event.nativeEvent.timestamp))
 	}
 
 	let handleRelease = (event: GestureResponderEvent) => {
@@ -150,10 +160,8 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			return
 		}
 
+		lastAngle.current = null
 		startSpinning()
-		if (reduceMotion) {
-			return
-		}
 		// Where the finger lifted counts too: touches can arrive sparsely, and
 		// the last move may be well before the lift.
 		samples.current.push({
@@ -163,7 +171,17 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 		// The spin supplies its own speed, so the scratch coasts on only what
 		// the fling adds beyond it.
 		let velocity = releaseVelocity(samples.current, event.nativeEvent.timestamp)
-		scratched.set(withDecay({velocity: spins ? velocity - DEGREES_PER_SECOND : velocity}))
+		onScratchEnd?.(velocity)
+		if (reduceMotion) return
+		let momentum = recordMomentum(velocity, spins ? DEGREES_PER_SECOND * playbackRate : 0)
+		if (momentum) {
+			scratched.set(
+				withTiming(scratched.get() + momentum.rotation, {
+					duration: momentum.duration,
+					easing: momentum.easing,
+				}),
+			)
+		}
 	}
 
 	let turned = useAnimatedStyle(() => ({
@@ -185,6 +203,8 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onResponderMove={handleMove}
 			onResponderRelease={handleRelease}
 			onResponderTerminate={() => {
+				onScratchEnd?.(0)
+				lastAngle.current = null
 				scale.set(withSpring(1, {duration: 250}))
 				startSpinning()
 			}}
@@ -194,7 +214,11 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onStartShouldSetResponder={() => true}
 		>
 			<Animated.View style={[{width: size, height: size}, turned]}>
-				<Image source={vinyl} style={styles.disc} />
+				<View style={styles.disc}>
+					<View style={styles.discSurface}>
+						<Image source={vinyl} style={styles.discTexture} />
+					</View>
+				</View>
 				<View style={[styles.label, {backgroundColor: labelColor}]}>
 					{logoFailed ? null : (
 						<Image
@@ -226,10 +250,23 @@ const styles = StyleSheet.create({
 	// Dark Mode's background. The size is explicit because an image source
 	// carries its own, which would otherwise win over the fill.
 	disc: {
+		backgroundColor: c.black,
 		width: '100%',
 		height: '100%',
 		borderRadius: 9999,
 		borderColor: c.systemGray4,
 		borderWidth: 1,
+	},
+	// Bring out the grooves at phone sizes without brightening the label or rim.
+	discSurface: {
+		width: '100%',
+		height: '100%',
+		borderRadius: 9999,
+		filter: [{brightness: 1.8}],
+	},
+	discTexture: {
+		width: '100%',
+		height: '100%',
+		borderRadius: 9999,
 	},
 })

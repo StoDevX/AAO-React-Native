@@ -8,6 +8,8 @@ const ERROR = {code: 4, message: 'The stream could not be played.'}
 
 function reset() {
 	useRadioStore.setState({
+		djMode: false,
+		visualizationMode: 'waveform',
 		stationId: null,
 		playState: 'stopped',
 		error: null,
@@ -21,6 +23,18 @@ function reset() {
 
 describe('playback', () => {
 	beforeEach(reset)
+
+	test('keeps the visualization while browsing stations and resets it when DJ mode ends', () => {
+		let store = useRadioStore.getState()
+		store.setDJMode(true)
+		store.setVisualizationMode('spectrum')
+		store.play('krlx')
+		store.play('ksto')
+		expect(useRadioStore.getState().visualizationMode).toBe('spectrum')
+		store.setDJMode(false)
+		store.setDJMode(true)
+		expect(useRadioStore.getState().visualizationMode).toBe('waveform')
+	})
 
 	test('loads nothing until a station is played', () => {
 		expect(useRadioStore.getState()).toMatchObject({stationId: null, playState: 'stopped'})
@@ -279,5 +293,26 @@ describe('radioControl', () => {
 
 	test('offers Stop to a station that failed, as the only way to unload it', () => {
 		expect(radioControl('stopped', ERROR)).toBe('stop')
+	})
+})
+
+describe('DJ Mode', () => {
+	beforeEach(reset)
+
+	test('starts off and survives sheet dismissal and station browsing within the session', () => {
+		expect(useRadioStore.getState().djMode).toBe(false)
+		useRadioStore.getState().setDJMode(true)
+		useRadioStore.getState().openSheet('krlx')
+		useRadioStore.getState().closeSheet()
+		useRadioStore.getState().browse('ksto')
+		expect(useRadioStore.getState().djMode).toBe(true)
+		useRadioStore.getState().setDJMode(false)
+		expect(useRadioStore.getState().djMode).toBe(false)
+	})
+
+	test('never persists the session mode', () => {
+		useRadioStore.getState().setDJMode(true)
+		let saved = useRadioStore.persist.getOptions().partialize?.(useRadioStore.getState())
+		expect(saved).not.toHaveProperty('djMode')
 	})
 })

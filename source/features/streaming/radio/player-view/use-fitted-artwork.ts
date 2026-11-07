@@ -12,14 +12,17 @@ import {artworkSize} from './artwork-size'
 export function useFittedArtwork({
 	width,
 	viewportHeight,
+	minimum = 160,
 }: {
 	width: number
 	viewportHeight: number
+	minimum?: number
 }): {artwork: number; onLayout: (event: LayoutChangeEvent) => void} {
 	let [measured, setMeasured] = React.useState<{layoutHeight: number; artwork: number} | null>(null)
 	let artwork = measured
 		? artworkSize({
 				width,
+				minimum,
 				viewportHeight,
 				layoutHeight: measured.layoutHeight,
 				currentArtwork: measured.artwork,
@@ -27,6 +30,13 @@ export function useFittedArtwork({
 		: width
 	return {
 		artwork,
-		onLayout: (event) => setMeasured({layoutHeight: event.nativeEvent.layout.height, artwork}),
+		onLayout: (event) => {
+			let layoutHeight = event.nativeEvent.layout.height
+			setMeasured((current) =>
+				current?.layoutHeight === layoutHeight && current.artwork === artwork
+					? current
+					: {layoutHeight, artwork},
+			)
+		},
 	}
 }
