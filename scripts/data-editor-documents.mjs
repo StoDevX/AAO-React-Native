@@ -42,10 +42,10 @@ export function inside(root, file) {
 }
 
 /** `text` parsed and written back, which for a file in the repo's style is `text` again. */
-export async function roundTrip(file, text) {
+export function roundTrip(file, text) {
 	let doc = parseDocument(text)
 	if (doc.errors.length > 0) throw new Error(doc.errors[0].message)
-	return await written(file, doc)
+	return written(file, doc)
 }
 
 /** A node for `value` styled like the data files: flow rows, quoted times. */
