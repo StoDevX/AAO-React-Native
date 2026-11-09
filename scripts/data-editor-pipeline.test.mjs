@@ -7,6 +7,7 @@ import {DATA_BASE} from './paths.mjs'
 import {
 	build,
 	keysOf,
+	lastError,
 	listBuildings,
 	problemsFrom,
 	pruneBuilds,
@@ -166,5 +167,34 @@ describe('build', () => {
 		await pruneBuilds(outDir, second.dir)
 		assert.notEqual(first.dir, second.dir)
 		assert.deepEqual(readdirSync(outDir), [path.basename(second.dir)])
+	})
+})
+
+describe('lastError', () => {
+	it("reads Node's own error line, not its version banner", () => {
+		let stderr = [
+			'node:internal/modules/run_main:123',
+			'    triggerUncaughtException(',
+			'    ^',
+			'',
+			"Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'x' imported from /ws/scripts/bundle-data.mjs",
+			'    at packageResolve (node:internal/modules/esm/resolve:873:9) {',
+			"  code: 'ERR_MODULE_NOT_FOUND'",
+			'}',
+			'',
+			'Node.js v24.22.0',
+		].join('\n')
+		assert.equal(
+			lastError(stderr),
+			"Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'x' imported from /ws/scripts/bundle-data.mjs",
+		)
+	})
+	it('reads a validation error as its message alone', () => {
+		assert.equal(
+			lastError(
+				'\nError: /ws/data/breaks.yaml/breaks must be object\n    at x\n\nNode.js v24.22.0\n',
+			),
+			'/ws/data/breaks.yaml/breaks must be object',
+		)
 	})
 })

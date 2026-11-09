@@ -108,11 +108,21 @@ export function readCalendar(dataDir: string): Calendar {
 	return {breaks, templates: Object.keys(asRecord(data['templates']))}
 }
 
-/** What a failed `bundle-data` said last: its error's message, or its last line. */
+/**
+ * What a failed `bundle-data` said: a thrown error's message (validation
+ * errors are plain `Error`s, whose message names the file), Node's own error
+ * line for anything else, or else its last line before Node's version banner.
+ */
 export function lastError(stderr: string): string {
 	let thrown = /^(?:\w*Error|YAMLException): (.*)$/mu.exec(stderr)
 	if (thrown?.[1]) return thrown[1]
-	return stderr.trim().split('\n').at(-1) ?? 'bundle-data failed'
+	let coded = /^\w*Error \[\w+\]: .*$/mu.exec(stderr)
+	if (coded) return coded[0]
+	let lines = stderr
+		.trim()
+		.split('\n')
+		.filter((line) => line.trim() !== '' && !line.startsWith('Node.js v'))
+	return lines.at(-1) ?? 'bundle-data failed'
 }
 
 function run(command: string, args: string[]): Promise<{code: number; stderr: string}> {
