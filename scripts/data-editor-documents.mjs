@@ -1,4 +1,4 @@
-import {readFile, rename, writeFile} from 'node:fs/promises'
+import {readFile, rename, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {format} from 'oxfmt'
 import {isMap, isScalar, isSeq, parseDocument, visit} from 'yaml'
@@ -39,6 +39,14 @@ export function inside(root, file) {
 		throw new Error(`${file} is outside the workspace`)
 	}
 	return resolved
+}
+
+/**
+ * Where an edit is written before it replaces `filename`: beside it, under a
+ * `_` name every data script skips, so one left by a crash is never read as data.
+ */
+export function tempFileFor(filename) {
+	return path.join(path.dirname(filename), `_${path.basename(filename)}.next`)
 }
 
 /** `text` parsed and written back, which for a file in the repo's style is `text` again. */
@@ -111,9 +119,13 @@ export class DocumentStore {
 		let {filename, doc} = await this.#parse(file)
 		for (let op of ops) apply(doc, op)
 		// a reader never sees half a file
-		let next = `${filename}.next`
-		await writeFile(next, await written(file, doc))
-		await rename(next, filename)
+		let next = tempFileFor(filename)
+		try {
+			await writeFile(next, await written(file, doc))
+			await rename(next, filename)
+		} finally {
+			await rm(next, {force: true})
+		}
 		return doc.toJS()
 	}
 }

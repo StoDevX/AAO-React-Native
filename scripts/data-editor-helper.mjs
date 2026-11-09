@@ -7,13 +7,15 @@ import path from 'node:path'
 import {createInterface} from 'node:readline'
 import {parseArgs} from 'node:util'
 import {DocumentStore} from './data-editor-documents.mjs'
-import {build, listBuildings, readCalendar, validate} from './data-editor-pipeline.ts'
+import {build, listBuildings, pruneBuilds, readCalendar, validate} from './data-editor-pipeline.ts'
 import {serve} from './data-editor-serve.mjs'
 
 /** The protocol's methods over one data directory and its build folder. */
 export function createHandlers({dataDir, outDir, bundleData}) {
 	let store = new DocumentStore(dataDir)
 	let server
+	/** The folder of the newest good build, which the server serves. */
+	let current
 	return {
 		list: () => listBuildings(dataDir),
 		calendar: () => readCalendar(dataDir),
@@ -22,9 +24,16 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 			value: await store.edit(file, ops),
 			problems: validate(dataDir, file),
 		}),
-		build: () => build({bundleData, dataDir, outDir}),
+		// The new build is served from the moment it is whole; older ones go after.
+		build: async () => {
+			let result = await build({bundleData, dataDir, outDir})
+			if (!result.ok) return result
+			current = result.dir
+			await pruneBuilds(outDir, current)
+			return {ok: true}
+		},
 		serve: async ({port}) => {
-			server ??= await serve({root: outDir, port})
+			server ??= await serve({root: () => current, port})
 			return {port: server.address().port}
 		},
 		close: () => server?.close(),

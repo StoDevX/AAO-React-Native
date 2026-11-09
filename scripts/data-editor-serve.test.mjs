@@ -1,5 +1,6 @@
+/* oxlint-disable eslint/no-await-in-loop -- these tests swap builds and send requests one at a time, on purpose */
 import assert from 'node:assert/strict'
-import {mkdir, mkdtemp, writeFile} from 'node:fs/promises'
+import {mkdir, mkdtemp, rename, rm, writeFile} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
 import path from 'node:path'
 import {after, before, describe, it} from 'node:test'
@@ -42,5 +43,77 @@ describe('serve', () => {
 	})
 	it('answers 405 for a POST', async () => {
 		assert.equal((await fetch(`${base}/bus-times.json`, {method: 'POST'})).status, 405)
+	})
+})
+
+/** A folder holding one file, `hours.json`, saying which build it is. */
+async function buildFolder(parent, n) {
+	let dir = path.join(parent, `build-${n}`)
+	await mkdir(dir, {recursive: true})
+	await writeFile(
+		path.join(dir, 'hours.json'),
+		JSON.stringify({build: n, pad: 'x'.repeat(200_000)}),
+	)
+	return dir
+}
+
+describe('serve while builds change', () => {
+	it('survives a build swapped in under a request', async (t) => {
+		let parent = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		let out = path.join(parent, 'out')
+		await rename(await buildFolder(parent, 0), out)
+		let server = await serve({root: out, port: 0, host: '127.0.0.1'})
+		t.after(() => server.close())
+		let base = `http://127.0.0.1:${server.address().port}`
+		let stop = new AbortController()
+		let swaps = (async () => {
+			for (let n = 1; !stop.signal.aborted; n++) {
+				let next = await buildFolder(parent, n)
+				await rename(out, `${out}.old`)
+				await rename(next, out)
+				await rm(`${out}.old`, {recursive: true, force: true})
+			}
+		})()
+		for (let i = 0; i < 300; i++) {
+			await fetch(`${base}/hours.json`).then(
+				(r) => r.arrayBuffer(),
+				() => undefined,
+			)
+		}
+		stop.abort()
+		await swaps
+		assert.equal((await fetch(`${base}/hours.json`)).status, 200)
+	})
+
+	it('serves whichever build is current, with no gap between them', async (t) => {
+		let parent = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		let current = await buildFolder(parent, 0)
+		let server = await serve({root: () => current, port: 0, host: '127.0.0.1'})
+		t.after(() => server.close())
+		let base = `http://127.0.0.1:${server.address().port}`
+		let stop = new AbortController()
+		let swaps = (async () => {
+			for (let n = 1; !stop.signal.aborted; n++) {
+				let previous = current
+				current = await buildFolder(parent, n)
+				await rm(previous, {recursive: true, force: true})
+			}
+		})()
+		let statuses = new Set()
+		for (let i = 0; i < 300; i++) {
+			let response = await fetch(`${base}/hours.json`)
+			statuses.add(response.status)
+			let body = await response.json()
+			assert.equal(typeof body.build, 'number')
+		}
+		stop.abort()
+		await swaps
+		assert.deepEqual([...statuses], [200])
+	})
+
+	it('answers 404 before there is any build', async (t) => {
+		let server = await serve({root: () => undefined, port: 0, host: '127.0.0.1'})
+		t.after(() => server.close())
+		assert.equal((await fetch(`http://127.0.0.1:${server.address().port}/hours.json`)).status, 404)
 	})
 })

@@ -6,7 +6,13 @@ import path from 'node:path'
 import {describe, it} from 'node:test'
 import {isDataEntry} from './data-entries.mjs'
 import {DATA_BASE} from './paths.mjs'
-import {DocumentStore, FORMAT_OPTIONS, inside, roundTrip} from './data-editor-documents.mjs'
+import {
+	DocumentStore,
+	FORMAT_OPTIONS,
+	inside,
+	roundTrip,
+	tempFileFor,
+} from './data-editor-documents.mjs'
 
 const FIXTURE = `# The Cage's hours, checked 2026-10-01.
 name: The Cage
@@ -145,5 +151,13 @@ describe('inside', () => {
 	})
 	it('refuses a sibling whose name starts with the root', () => {
 		assert.throws(() => inside('/ws/data', '../data-old/x.yaml'), /outside the workspace/u)
+	})
+})
+
+describe('tempFileFor', () => {
+	it('names a file next to its subject that the data scripts skip', () => {
+		let temp = tempFileFor('/ws/data/building-hours/1-1-cage.yaml')
+		assert.equal(path.dirname(temp), '/ws/data/building-hours')
+		assert.equal(isDataEntry(path.basename(temp)), false)
 	})
 })

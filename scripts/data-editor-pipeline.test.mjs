@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import {existsSync} from 'node:fs'
+import {existsSync, readdirSync} from 'node:fs'
 import {readFile, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {describe, it} from 'node:test'
@@ -9,6 +9,7 @@ import {
 	keysOf,
 	listBuildings,
 	problemsFrom,
+	pruneBuilds,
 	readCalendar,
 	validate,
 } from './data-editor-pipeline.ts'
@@ -56,6 +57,19 @@ describe('problemsFrom', () => {
 		let [problem] = problemsFrom(error, dataDir)
 		assert.deepEqual(problem.path, ['breakSchedule', 'fall', 'schedule', 0, 'notes'])
 		assert.equal(problem.message, 'break closure messages must not end with a period')
+	})
+	it('places an error in a workspace whose path has a space', () => {
+		let spaced = '/Users/ole/Library/Application Support/DataEditor/workspace/data'
+		let error = new Error(
+			`${spaced}/building-hours/cage.yaml/schedule/0/to must match pattern "^x$"`,
+		)
+		assert.deepEqual(problemsFrom(error, spaced), [
+			{
+				file: 'building-hours/cage.yaml',
+				message: 'must match pattern "^x$"',
+				path: ['schedule', 0, 'to'],
+			},
+		])
 	})
 	it('keeps an error it cannot place', () => {
 		assert.deepEqual(problemsFrom(new Error('something else'), dataDir), [
@@ -117,28 +131,40 @@ describe('readCalendar', () => {
 const BUNDLE_DATA = path.join(import.meta.dirname, 'bundle-data.mjs')
 
 describe('build', () => {
-	it('writes a whole build into outDir', async () => {
+	it('writes a whole build into a fresh folder under outDir', async () => {
 		let {root, dataDir} = await scratchData()
 		let outDir = path.join(root, 'out')
-		assert.deepEqual(await build({bundleData: BUNDLE_DATA, dataDir, outDir}), {ok: true})
-		assert.ok(existsSync(path.join(outDir, 'building-hours.json')))
-		assert.ok(existsSync(path.join(outDir, 'breaks.json')))
+		let result = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
+		assert.equal(result.ok, true, JSON.stringify(result))
+		assert.equal(path.dirname(result.dir), outDir)
+		assert.ok(existsSync(path.join(result.dir, 'building-hours.json')))
+		assert.ok(existsSync(path.join(result.dir, 'breaks.json')))
 	})
 
-	it('keeps the last good build when the data is broken', async () => {
+	it('leaves the last good build alone when the data is broken', async () => {
 		let {root, dataDir} = await scratchData()
 		let outDir = path.join(root, 'out')
-		await build({bundleData: BUNDLE_DATA, dataDir, outDir})
-		let before = await readFile(path.join(outDir, 'building-hours.json'), 'utf8')
+		let good = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
+		let before = await readFile(path.join(good.dir, 'building-hours.json'), 'utf8')
 		let file = path.join(dataDir, 'building-hours/1-1-cage.yaml')
 		await writeFile(file, (await readFile(file, 'utf8')).replace("from: '7:30am'", "from: '7:30'"))
 		let result = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
 		assert.equal(result.ok, false)
 		assert.ok(
-			result.problems.some((p) => p.file === 'building-hours/1-1-cage.yaml'),
+			result.problems.some((p) => p.file === 'building-hours/1-1-cage.yaml' && p.path !== null),
 			JSON.stringify(result),
 		)
-		assert.equal(await readFile(path.join(outDir, 'building-hours.json'), 'utf8'), before)
-		assert.ok(!existsSync(`${outDir}.next`))
+		assert.equal(await readFile(path.join(good.dir, 'building-hours.json'), 'utf8'), before)
+		assert.deepEqual(readdirSync(outDir), [path.basename(good.dir)])
+	})
+
+	it('removes every build but the one it keeps', async () => {
+		let {root, dataDir} = await scratchData()
+		let outDir = path.join(root, 'out')
+		let first = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
+		let second = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
+		await pruneBuilds(outDir, second.dir)
+		assert.notEqual(first.dir, second.dir)
+		assert.deepEqual(readdirSync(outDir), [path.basename(second.dir)])
 	})
 })

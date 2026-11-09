@@ -1,6 +1,6 @@
 import {spawn} from 'node:child_process'
-import {existsSync, readFileSync, readdirSync} from 'node:fs'
-import {rename, rm} from 'node:fs/promises'
+import {readFileSync, readdirSync} from 'node:fs'
+import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
 import {load} from 'js-yaml'
 import {isDataEntry} from './data-entries.mjs'
@@ -36,16 +36,22 @@ export function keysOf(rest: string): Key[] {
 	)
 }
 
-/** The problems in an error from `loadScheduleData`, each tied to the file whose label begins it. */
+/**
+ * The problems in an error from `loadScheduleData`, each tied to the file whose
+ * label begins it. Labels are absolute paths under `dataDir`, which may hold
+ * spaces (`~/Library/Application Support`), so that prefix is taken off first.
+ */
 export function problemsFrom(error: unknown, dataDir: string): Problem[] {
 	let text = error instanceof Error ? error.message : String(error)
+	let prefix = path.resolve(dataDir) + path.sep
 	return text.split('; ').map((part) => {
-		let match = /^(\S+?\.ya?ml)([^\s:]*):?\s+(.*)$/su.exec(part)
-		let label = match?.[1]
+		let relative = part.startsWith(prefix) ? part.slice(prefix.length) : undefined
+		let match = relative === undefined ? null : /^(\S+?\.ya?ml)([^\s:]*):?\s+(.*)$/su.exec(relative)
+		let file = match?.[1]
 		let rest = match?.[2] ?? ''
 		let message = match?.[3]
-		if (label === undefined || message === undefined) return {file: null, message: part, path: null}
-		return {file: path.relative(dataDir, label), message, path: rest === '' ? null : keysOf(rest)}
+		if (file === undefined || message === undefined) return {file: null, message: part, path: null}
+		return {file, message, path: rest === '' ? null : keysOf(rest)}
 	})
 }
 
@@ -125,8 +131,10 @@ function run(command: string, args: string[]): Promise<{code: number; stderr: st
 }
 
 /**
- * Runs `bundle-data` into a fresh folder and swaps it in for `outDir`, so the
- * data server only ever serves a whole build. A failure leaves `outDir` alone.
+ * Runs `bundle-data` into a fresh folder under `outDir` and returns it. The
+ * caller serves it from then on and removes the older ones with
+ * `pruneBuilds`, so a build being served is never written to or moved. A
+ * failure removes its own folder and leaves the others alone.
  */
 export async function build({
 	bundleData,
@@ -136,18 +144,21 @@ export async function build({
 	bundleData: string
 	dataDir: string
 	outDir: string
-}): Promise<{ok: true} | {ok: false; problems: Problem[]}> {
-	let next = `${outDir}.next`
-	let old = `${outDir}.old`
-	await rm(next, {recursive: true, force: true})
-	let {code, stderr} = await run(process.execPath, [bundleData, dataDir, next])
+}): Promise<{ok: true; dir: string} | {ok: false; problems: Problem[]}> {
+	await mkdir(outDir, {recursive: true})
+	let dir = await mkdtemp(path.join(outDir, 'build-'))
+	let {code, stderr} = await run(process.execPath, [bundleData, dataDir, dir])
 	if (code !== 0) {
-		await rm(next, {recursive: true, force: true})
+		await rm(dir, {recursive: true, force: true})
 		return {ok: false, problems: problemsFrom(new Error(lastError(stderr)), dataDir)}
 	}
-	await rm(old, {recursive: true, force: true})
-	if (existsSync(outDir)) await rename(outDir, old)
-	await rename(next, outDir)
-	await rm(old, {recursive: true, force: true})
-	return {ok: true}
+	return {ok: true, dir}
+}
+
+/** Removes every build under `outDir` except `keep`. */
+export async function pruneBuilds(outDir: string, keep: string): Promise<void> {
+	let others = (await readdir(outDir)).filter((entry) => entry !== path.basename(keep))
+	await Promise.all(
+		others.map((entry) => rm(path.join(outDir, entry), {recursive: true, force: true})),
+	)
 }
