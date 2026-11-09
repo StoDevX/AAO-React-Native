@@ -335,10 +335,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 						<NavigationRow onPress={addLink} title="Add Link" />
 					</SheetSection>
 
-					<SheetSection
-						footer={<Text>Anything the fields above cannot say.</Text>}
-						title="What's Wrong?"
-					>
+					<SheetSection title="What's Wrong?">
 						<SyncedTextField
 							autocapitalization="sentences"
 							multiline={true}
