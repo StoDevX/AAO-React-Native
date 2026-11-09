@@ -30,12 +30,7 @@ export function ImageAttachmentsSection({title, attachments}: Props): React.Reac
 	}
 
 	return (
-		<SheetSection
-			footer={
-				<Text>{`Screenshots or photos help show the problem. Up to ${MAX_ATTACHMENTS}.`}</Text>
-			}
-			title={title}
-		>
+		<SheetSection footer={<Text>{`Up to ${MAX_ATTACHMENTS}.`}</Text>} title={title}>
 			{/* Swipe actions per row rather than `List.ForEach`, whose `.onMove`
 			    would offer to reorder images whose order means nothing. */}
 			{images.map((image, index) => (

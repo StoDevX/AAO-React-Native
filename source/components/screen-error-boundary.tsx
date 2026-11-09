@@ -52,7 +52,7 @@ export function ScreenErrorFallback({error, retry}: ErrorBoundaryProps): React.R
 	return (
 		<ErrorFallback
 			actions={actions}
-			message="This screen hit an error. Trying again often clears it, and the rest of the app still works."
+			message="This screen hit an error."
 			testID={isChaos ? FATAL_BOUNDARY_ID : undefined}
 		/>
 	)

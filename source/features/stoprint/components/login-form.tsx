@@ -55,12 +55,7 @@ export function StoPrintLoginForm(): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<Form>
-				<Section
-					footer={
-						<Text>Sign in with your St. Olaf account to see and release your print jobs.</Text>
-					}
-					title="St. Olaf Login"
-				>
+				<Section title="St. Olaf Login">
 					<TextField
 						ref={usernameInputRef}
 						modifiers={[

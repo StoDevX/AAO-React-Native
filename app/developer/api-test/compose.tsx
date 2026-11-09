@@ -215,7 +215,7 @@ export default function APITestComposePage(): React.ReactNode {
 					) : null}
 
 					{hasBody ? (
-						<Section footer={<Text>{problem ?? 'Sent as JSON.'}</Text>} title="Body (JSON)">
+						<Section footer={problem ? <Text>{problem}</Text> : undefined} title="Body (JSON)">
 							<SyncedTextField
 								autocapitalization="never"
 								multiline={true}

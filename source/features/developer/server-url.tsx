@@ -101,7 +101,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 				)}
 			</Section>
 			{discoveredServers.length > 0 && (
-				<Section footer={<Text>Tap a server to use it.</Text>} title="Local Servers">
+				<Section title="Local Servers">
 					{discoveredServers.map((server) => (
 						<NavigationRow
 							key={server.url}
