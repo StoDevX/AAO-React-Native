@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict'
+import {existsSync} from 'node:fs'
 import {readFile, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {describe, it} from 'node:test'
 import {DATA_BASE} from './paths.mjs'
 import {
+	build,
 	keysOf,
 	listBuildings,
 	problemsFrom,
@@ -109,5 +111,34 @@ describe('readCalendar', () => {
 			calendar.breaks.some((b) => b.key === 'weekOne' && b.name === 'New Student Orientation'),
 		)
 		assert.ok(calendar.templates.includes('library-fall-closed'))
+	})
+})
+
+const BUNDLE_DATA = path.join(import.meta.dirname, 'bundle-data.mjs')
+
+describe('build', () => {
+	it('writes a whole build into outDir', async () => {
+		let {root, dataDir} = await scratchData()
+		let outDir = path.join(root, 'out')
+		assert.deepEqual(await build({bundleData: BUNDLE_DATA, dataDir, outDir}), {ok: true})
+		assert.ok(existsSync(path.join(outDir, 'building-hours.json')))
+		assert.ok(existsSync(path.join(outDir, 'breaks.json')))
+	})
+
+	it('keeps the last good build when the data is broken', async () => {
+		let {root, dataDir} = await scratchData()
+		let outDir = path.join(root, 'out')
+		await build({bundleData: BUNDLE_DATA, dataDir, outDir})
+		let before = await readFile(path.join(outDir, 'building-hours.json'), 'utf8')
+		let file = path.join(dataDir, 'building-hours/1-1-cage.yaml')
+		await writeFile(file, (await readFile(file, 'utf8')).replace("from: '7:30am'", "from: '7:30'"))
+		let result = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
+		assert.equal(result.ok, false)
+		assert.ok(
+			result.problems.some((p) => p.file === 'building-hours/1-1-cage.yaml'),
+			JSON.stringify(result),
+		)
+		assert.equal(await readFile(path.join(outDir, 'building-hours.json'), 'utf8'), before)
+		assert.ok(!existsSync(`${outDir}.next`))
 	})
 })

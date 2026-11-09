@@ -1,4 +1,6 @@
-import {readFileSync, readdirSync} from 'node:fs'
+import {spawn} from 'node:child_process'
+import {existsSync, readFileSync, readdirSync} from 'node:fs'
+import {rename, rm} from 'node:fs/promises'
 import path from 'node:path'
 import {load} from 'js-yaml'
 import {isDataEntry} from './data-entries.mjs'
@@ -98,4 +100,54 @@ export function readCalendar(dataDir: string): Calendar {
 		}
 	})
 	return {breaks, templates: Object.keys(asRecord(data['templates']))}
+}
+
+/** What a failed `bundle-data` said last: its error's message, or its last line. */
+export function lastError(stderr: string): string {
+	let thrown = /^(?:\w*Error|YAMLException): (.*)$/mu.exec(stderr)
+	if (thrown?.[1]) return thrown[1]
+	return stderr.trim().split('\n').at(-1) ?? 'bundle-data failed'
+}
+
+function run(command: string, args: string[]): Promise<{code: number; stderr: string}> {
+	return new Promise((resolve, reject) => {
+		let child = spawn(command, args, {stdio: ['ignore', 'ignore', 'pipe']})
+		let stderr = ''
+		child.stderr.setEncoding('utf8')
+		child.stderr.on('data', (chunk: string) => {
+			stderr += chunk
+		})
+		child.once('error', reject)
+		child.once('close', (code) => {
+			resolve({code: code ?? 1, stderr})
+		})
+	})
+}
+
+/**
+ * Runs `bundle-data` into a fresh folder and swaps it in for `outDir`, so the
+ * data server only ever serves a whole build. A failure leaves `outDir` alone.
+ */
+export async function build({
+	bundleData,
+	dataDir,
+	outDir,
+}: {
+	bundleData: string
+	dataDir: string
+	outDir: string
+}): Promise<{ok: true} | {ok: false; problems: Problem[]}> {
+	let next = `${outDir}.next`
+	let old = `${outDir}.old`
+	await rm(next, {recursive: true, force: true})
+	let {code, stderr} = await run(process.execPath, [bundleData, dataDir, next])
+	if (code !== 0) {
+		await rm(next, {recursive: true, force: true})
+		return {ok: false, problems: problemsFrom(new Error(lastError(stderr)), dataDir)}
+	}
+	await rm(old, {recursive: true, force: true})
+	if (existsSync(outDir)) await rename(outDir, old)
+	await rename(next, outDir)
+	await rm(old, {recursive: true, force: true})
+	return {ok: true}
 }
