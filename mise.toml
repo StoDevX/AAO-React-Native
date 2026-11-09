@@ -403,6 +403,11 @@ description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
 
+[tasks."data-editor:helper"]
+description = "Bundle the Mac data editor's pipeline helper"
+wait_for = ["pnpm:install:*"]
+run = "node scripts/build-data-editor-helper.mjs"
+
 [tasks.docs]
 description = "Build the DocC site from documentation/ into docs/documentation/"
 run = "scripts/build-docs.sh"
