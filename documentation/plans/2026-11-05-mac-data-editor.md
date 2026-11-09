@@ -30,6 +30,28 @@
 4. **A revoked or expired GitHub token.** A 401 must clear the stored token and ask for sign-in, not fail with a raw error every time. The test is in Task 10.
 5. **A download that fails partway.** Losing the network during the first download or an update must leave the workspace and its base commit as they were. The test is in Task 8, along with the tests for keeping edits across an update.
 
+## Execution notes (Parts A and B, done 2026-11-09)
+
+Parts A and B (Tasks 1–7) are built: ccc-server PR frog-pond/ccc-server#1265 (branch `data-editor-origin`) and this branch's `scripts/data-editor-*`. **The committed code supersedes the Task 1–7 listings below where they differ.** What changed, and what Tasks 8–16 must know:
+
+- **The Cage's file is `data/building-hours/1-1-cage.yaml`.** The plan originally guessed `the-cage.yaml`; every reference below now uses the real name.
+- **Edited files go through oxfmt.** `yaml` alone could not reproduce two hours files that oxfmt wraps; `yaml` followed by oxfmt's `format()` (with `.oxfmtrc.json`'s options, pinned by a test) is byte-identical on all 52 files and keeps PRs passing `oxfmt --check`. So the helper bundle ships `helper/node_modules/` (oxfmt, its native `@oxfmt/binding-*`, tinypool). Task 15 keeps that folder (it copies `build/helper` whole) and its signing script already signs `*.node`. **A release build must run on an arm64 Mac** so the binding is `@oxfmt/binding-darwin-arm64`; add a check for that folder to `embed-runtime.sh`.
+- **The bundle defines `import.meta.main` as false** and starts the helper through its exported `main()`, because esbuild inlines every module and their own CLI guards would otherwise run.
+- **Builds go to fresh `out/build-*` folders.** The helper serves the newest good one and prunes the rest; the protocol's `build` reply is still `{ok}` or `{ok: false, problems}`. Nothing in Swift reads `out/` (Task 8's `outDirectory` is only passed to the helper).
+- **Edits are written via `_<name>.next`**, a name every data script skips, and removed if the write fails.
+- **Problems are placed correctly under paths with spaces** (`~/Library/Application Support`). The tests' scratch folders all have a space; keep one in any new fixture path.
+- **ccc in dev-origin mode sends `Cache-Control: no-store`** for hours, breaks and the redirects, so a refresh on the phone always reaches the Mac.
+- **ccc-server's dev script uses `--ip ::`,** which needs IPv6; on a Mac that is always present.
+- **Check on a device (Task 15 Step 5)** that the phone follows a redirect to `http://<name>.local:8790/…`. ATS should allow `.local` hosts, but the app's ATS exceptions name only `localhost`.
+- **Deferred minors from the review**, worth folding in when their task comes up:
+  - `listBuildings` fails whole if one file won't parse.
+  - An edit index past a list's end fills holes with `null`.
+  - A bad time yields two problems at one path.
+  - `process.exit(0)` right after the last reply can truncate it.
+  - A request without an `id` gets a reply without one.
+  - `helper-stamp.json` ignores a dirty checkout.
+  - The override is guarded only by its absence from `wrangler.jsonc`.
+
 ---
 
 ## File map
@@ -66,7 +88,7 @@
 One JSON object per line on stdin; one reply per line on stdout. Requests are handled one at a time, in order.
 
 ```text
-→ {"id":1,"method":"load","params":{"file":"building-hours/the-cage.yaml"}}
+→ {"id":1,"method":"load","params":{"file":"building-hours/1-1-cage.yaml"}}
 ← {"id":1,"result":{"value":{…},"problems":[]}}
 ← {"id":2,"error":{"message":"building-hours/x.yaml is outside the workspace"}}
 ```
@@ -826,16 +848,16 @@ describe('problemsFrom', () => {
 describe('validate', () => {
 	it('finds nothing wrong with the repo data', async () => {
 		let {dataDir} = await scratchData()
-		assert.deepEqual(validate(dataDir, 'building-hours/the-cage.yaml'), [])
+		assert.deepEqual(validate(dataDir, 'building-hours/1-1-cage.yaml'), [])
 	})
 	it('places a bad time', async () => {
 		let {dataDir} = await scratchData()
-		let file = path.join(dataDir, 'building-hours/the-cage.yaml')
+		let file = path.join(dataDir, 'building-hours/1-1-cage.yaml')
 		await writeFile(file, (await readFile(file, 'utf8')).replace("from: '7:30am'", "from: '7:30'"))
-		let problems = validate(dataDir, 'building-hours/the-cage.yaml')
+		let problems = validate(dataDir, 'building-hours/1-1-cage.yaml')
 		assert.ok(
 			problems.some(
-				(p) => p.file === 'building-hours/the-cage.yaml' && p.path?.slice(0, 4).join('/') === 'schedule/0/hours/0',
+				(p) => p.file === 'building-hours/1-1-cage.yaml' && p.path?.slice(0, 4).join('/') === 'schedule/0/hours/0',
 			),
 			JSON.stringify(problems),
 		)
@@ -845,7 +867,7 @@ describe('validate', () => {
 describe('listBuildings', () => {
 	it('lists every hours file with its name and category, in order', () => {
 		let buildings = listBuildings(DATA_BASE)
-		assert.ok(buildings.some((b) => b.file === 'building-hours/the-cage.yaml' && b.name === 'The Cage' && b.category === 'Food'))
+		assert.ok(buildings.some((b) => b.file === 'building-hours/1-1-cage.yaml' && b.name === 'The Cage' && b.category === 'Food'))
 		let keys = buildings.map((b) => `${b.category}\u0000${b.name}`)
 		assert.deepEqual(keys, [...keys].sort((a, b) => a.localeCompare(b)))
 	})
@@ -1013,11 +1035,11 @@ describe('build', () => {
 		let outDir = path.join(root, 'out')
 		await build({bundleData: BUNDLE_DATA, dataDir, outDir})
 		let before = await readFile(path.join(outDir, 'building-hours.json'), 'utf8')
-		let file = path.join(dataDir, 'building-hours/the-cage.yaml')
+		let file = path.join(dataDir, 'building-hours/1-1-cage.yaml')
 		await writeFile(file, (await readFile(file, 'utf8')).replace("from: '7:30am'", "from: '7:30'"))
 		let result = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
 		assert.equal(result.ok, false)
-		assert.ok(result.problems.some((p) => p.file === 'building-hours/the-cage.yaml'), JSON.stringify(result))
+		assert.ok(result.problems.some((p) => p.file === 'building-hours/1-1-cage.yaml'), JSON.stringify(result))
 		assert.equal(await readFile(path.join(outDir, 'building-hours.json'), 'utf8'), before)
 		assert.ok(!existsSync(`${outDir}.next`))
 	})
@@ -1244,7 +1266,7 @@ async function handlers() {
 
 describe('handle', () => {
 	it('answers a method with its result', async () => {
-		let reply = await handle(await handlers(), JSON.stringify({id: 1, method: 'load', params: {file: 'building-hours/the-cage.yaml'}}))
+		let reply = await handle(await handlers(), JSON.stringify({id: 1, method: 'load', params: {file: 'building-hours/1-1-cage.yaml'}}))
 		assert.equal(reply.id, 1)
 		assert.equal(reply.result.value.name, 'The Cage')
 		assert.deepEqual(reply.result.problems, [])
@@ -1255,7 +1277,7 @@ describe('handle', () => {
 			JSON.stringify({
 				id: 2,
 				method: 'edit',
-				params: {file: 'building-hours/the-cage.yaml', ops: [{path: ['schedule', 0, 'hours', 0, 'from'], value: 'noon'}]},
+				params: {file: 'building-hours/1-1-cage.yaml', ops: [{path: ['schedule', 0, 'hours', 0, 'from'], value: 'noon'}]},
 			}),
 		)
 		assert.ok(reply.result.problems.length > 0)
@@ -1673,9 +1695,9 @@ private struct Echo: Decodable, Sendable { let echo: JSONValue }
 struct HelperClientTests {
     @Test func returnsTheResultForItsRequest() async throws {
         let client = try await fakeHelper()
-        let reply: Echo = try await client.call("load", ["file": "building-hours/the-cage.yaml"])
+        let reply: Echo = try await client.call("load", ["file": "building-hours/1-1-cage.yaml"])
         #expect(reply.echo["method"] == .string("load"))
-        #expect(reply.echo["params"]?["file"] == .string("building-hours/the-cage.yaml"))
+        #expect(reply.echo["params"]?["file"] == .string("building-hours/1-1-cage.yaml"))
     }
 
     @Test func throwsTheHelpersError() async throws {
@@ -1727,10 +1749,10 @@ private func stubRepo(commit: String = "c1", failing failPath: String? = nil, ca
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/\(commit)":
             return (200, body(#"{"tree":[{"path":"data","type":"tree","sha":"tdata"},{"path":"images","type":"tree","sha":"timages"},{"path":"scripts","type":"tree","sha":"tscripts"},{"path":"modules","type":"tree","sha":"tmodules"}]}"#))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tdata?recursive=1":
-            return (200, body(#"{"truncated":false,"tree":[{"path":"building-hours","type":"tree","sha":"x"},{"path":"building-hours/the-cage.yaml","type":"blob","sha":"a"}]}"#))
+            return (200, body(#"{"truncated":false,"tree":[{"path":"building-hours","type":"tree","sha":"x"},{"path":"building-hours/1-1-cage.yaml","type":"blob","sha":"a"}]}"#))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/timages?recursive=1":
             return (200, body(#"{"truncated":false,"tree":[{"path":"groups.json","type":"blob","sha":"g"},{"path":"spaces/cage.webp","type":"blob","sha":"w"},{"path":"spaces/source/cage.jpg","type":"blob","sha":"j"}]}"#))
-        case "https://raw.githubusercontent.com/StoDevX/AAO-React-Native/\(commit)/data/building-hours/the-cage.yaml":
+        case "https://raw.githubusercontent.com/StoDevX/AAO-React-Native/\(commit)/data/building-hours/1-1-cage.yaml":
             return (200, body(cageHours))
         case "https://raw.githubusercontent.com/StoDevX/AAO-React-Native/\(commit)/images/groups.json":
             return (200, body(#"["spaces"]"#))
@@ -1753,7 +1775,7 @@ struct WorkspaceTests {
         let snapshot = try await workspace.download(commit: try await workspace.latestCommit())
         #expect(snapshot == Snapshot(commit: "c1", scriptsTree: "tscripts", modulesTree: "tmodules"))
         #expect(workspace.snapshot == snapshot)
-        #expect(try workspace.contents(of: "building-hours/the-cage.yaml") == body("name: The Cage\n"))
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage\n"))
         #expect(FileManager.default.fileExists(atPath: workspace.root.appending(path: "images/spaces/cage.webp").path))
         // the source photos are not published, so not fetched
         #expect(!stub.requests.contains { $0.url!.path.hasSuffix("cage.jpg") })
@@ -1764,9 +1786,9 @@ struct WorkspaceTests {
         let workspace = Workspace(root: temporaryRoot(), session: session)
         _ = try await workspace.download(commit: "c1")
         #expect(try workspace.changedFiles() == [])
-        try body("name: The Cage Grill\n").write(to: workspace.dataDirectory.appending(path: "building-hours/the-cage.yaml"))
-        #expect(try workspace.changedFiles() == ["building-hours/the-cage.yaml"])
-        try workspace.revert("building-hours/the-cage.yaml")
+        try body("name: The Cage Grill\n").write(to: workspace.dataDirectory.appending(path: "building-hours/1-1-cage.yaml"))
+        #expect(try workspace.changedFiles() == ["building-hours/1-1-cage.yaml"])
+        try workspace.revert("building-hours/1-1-cage.yaml")
         #expect(try workspace.changedFiles() == [])
     }
 
@@ -1778,7 +1800,7 @@ struct WorkspaceTests {
         let workspace = Workspace(root: root, session: failing)
         await #expect(throws: URLError.self) { _ = try await workspace.download(commit: "c1") }
         #expect(workspace.snapshot?.commit == "c1")
-        #expect(try workspace.contents(of: "building-hours/the-cage.yaml") == body("name: The Cage\n"))
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage\n"))
         #expect(try workspace.changedFiles() == [])
     }
 
@@ -1786,34 +1808,34 @@ struct WorkspaceTests {
         let root = temporaryRoot()
         let (c1, _) = stubRepo()
         _ = try await Workspace(root: root, session: c1).download(commit: "c1")
-        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/the-cage.yaml"))
+        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/1-1-cage.yaml"))
         let (c2, _) = stubRepo(commit: "c2")
         let workspace = Workspace(root: root, session: c2)
         #expect(try await workspace.update(to: "c2") == [])
         #expect(workspace.snapshot?.commit == "c2")
-        #expect(try workspace.contents(of: "building-hours/the-cage.yaml") == body("name: The Cage Grill\n"))
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
     }
 
     @Test func setsAsideAnEditThatMasterAlsoChanged() async throws {
         let root = temporaryRoot()
         let (c1, _) = stubRepo()
         _ = try await Workspace(root: root, session: c1).download(commit: "c1")
-        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/the-cage.yaml"))
+        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/1-1-cage.yaml"))
         let (c2, _) = stubRepo(commit: "c2", cageHours: "name: The Cage at Buntrock\n")
         let workspace = Workspace(root: root, session: c2)
-        #expect(try await workspace.update(to: "c2") == ["building-hours/the-cage.yaml"])
-        #expect(workspace.conflicts == ["building-hours/the-cage.yaml"])
-        #expect(try workspace.contents(of: "building-hours/the-cage.yaml") == body("name: The Cage at Buntrock\n"))
-        try workspace.keepMine("building-hours/the-cage.yaml")
+        #expect(try await workspace.update(to: "c2") == ["building-hours/1-1-cage.yaml"])
+        #expect(workspace.conflicts == ["building-hours/1-1-cage.yaml"])
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage at Buntrock\n"))
+        try workspace.keepMine("building-hours/1-1-cage.yaml")
         #expect(workspace.conflicts == [])
-        #expect(try workspace.contents(of: "building-hours/the-cage.yaml") == body("name: The Cage Grill\n"))
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
     }
 
     @Test func treatsAMergedEditAsNoConflict() async throws {
         let root = temporaryRoot()
         let (c1, _) = stubRepo()
         _ = try await Workspace(root: root, session: c1).download(commit: "c1")
-        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/the-cage.yaml"))
+        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/1-1-cage.yaml"))
         let (c2, _) = stubRepo(commit: "c2", cageHours: "name: The Cage Grill\n")
         let workspace = Workspace(root: root, session: c2)
         #expect(try await workspace.update(to: "c2") == [])
@@ -2708,7 +2730,7 @@ private func submitter(_ session: URLSession, token: String? = "tok") -> (GitHub
     return (GitHubSubmitter(tokens: tokens, session: session, sleep: { _ in }), tokens)
 }
 
-private let change = Change(path: "data/building-hours/the-cage.yaml", contents: Data("name: The Cage\n".utf8))
+private let change = Change(path: "data/building-hours/1-1-cage.yaml", contents: Data("name: The Cage\n".utf8))
 
 struct GitHubSubmitterTests {
     @Test func opensAPullRequestFromAForkBranch() async throws {
@@ -2722,7 +2744,7 @@ struct GitHubSubmitterTests {
         let requests = stub.requests
         let tree = json(requests.first { $0.url!.path.hasSuffix("/git/trees") }!)
         #expect(tree["base_tree"] == .string("tree0"))
-        #expect(tree["tree"]?[0]?["path"] == .string("data/building-hours/the-cage.yaml"))
+        #expect(tree["tree"]?[0]?["path"] == .string("data/building-hours/1-1-cage.yaml"))
         #expect(tree["tree"]?[0]?["sha"] == .string("blob1"))
         let commit = json(requests.first { $0.url!.path.hasSuffix("/git/commits") && $0.httpMethod == "POST" }!)
         #expect(commit["parents"] == .array([.string("base1")]))
@@ -4002,7 +4024,7 @@ final class HoursEditorUITests: XCTestCase {
         app.menuItems["9:00pm"].click()
 
         app.buttons["Changes"].click()
-        XCTAssertTrue(app.staticTexts["building-hours/the-cage.yaml"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["building-hours/1-1-cage.yaml"].waitForExistence(timeout: 5))
     }
 
     func testAddingARowAddsItToTheTimeline() throws {
@@ -4476,10 +4498,10 @@ final class ChangesUITests: XCTestCase {
         app.menuItems["9:00pm"].click()
 
         app.buttons["Changes"].click()
-        let file = app.staticTexts["building-hours/the-cage.yaml"]
+        let file = app.staticTexts["building-hours/1-1-cage.yaml"]
         XCTAssertTrue(file.waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["+       - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '9:00pm'}"].exists)
-        app.buttons["revert-building-hours/the-cage.yaml"].click()
+        app.buttons["revert-building-hours/1-1-cage.yaml"].click()
         XCTAssertTrue(app.staticTexts["No changes yet"].waitForExistence(timeout: 5))
     }
 }
@@ -4842,7 +4864,7 @@ describe('previewing an edit through ccc-server', {skip: !CCC_ROOT && 'CCC_ROOT 
 
 	it('serves the edited hours', async () => {
 		let {problems} = await call('edit', {
-			file: 'building-hours/the-cage.yaml',
+			file: 'building-hours/1-1-cage.yaml',
 			ops: [{path: ['schedule', 0, 'hours', 0, 'to'], value: '11:45pm'}],
 		})
 		assert.deepEqual(problems, [])
