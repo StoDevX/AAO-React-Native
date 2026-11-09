@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import {spawn} from 'node:child_process'
+import {readdirSync} from 'node:fs'
 import {cp, mkdtemp, readFile} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
 import path from 'node:path'
@@ -13,7 +14,13 @@ describe('the bundled helper', () => {
 		let ws = await mkdtemp(path.join(tmpdir(), 'data-editor-ws-'))
 		await buildHelper({outDir: path.join(ws, 'scripts')})
 		await cp(DATA_BASE, path.join(ws, 'data'), {recursive: true})
-		await cp(path.join(REPO_ROOT, 'images'), path.join(ws, 'images'), {recursive: true})
+		// what the app downloads: the image groups and their published WebP files,
+		// not the originals under each group's source/
+		await cp(path.join(REPO_ROOT, 'images'), path.join(ws, 'images'), {
+			recursive: true,
+			filter: (from) => !from.split(path.sep).includes('source'),
+		})
+		let published = readdirSync(path.join(ws, 'images/spaces')).filter((f) => f.endsWith('.webp'))
 		let child = spawn(process.execPath, [
 			path.join(ws, 'scripts/data-editor-helper.mjs'),
 			'--data',
@@ -27,6 +34,11 @@ describe('the bundled helper', () => {
 		child.stdin.write('{"id":1,"method":"build"}\n')
 		let reply = JSON.parse((await lines.next()).value)
 		assert.deepEqual(reply, {id: 1, result: {ok: true}})
+		// the build must not convert or remove the workspace's images
+		assert.deepEqual(
+			readdirSync(path.join(ws, 'images/spaces')).filter((f) => f.endsWith('.webp')),
+			published,
+		)
 		// an edit runs the formatter, whose native binding ships beside the bundle
 		let url = `https://example.com/${'a'.repeat(100)}`
 		child.stdin.write(
