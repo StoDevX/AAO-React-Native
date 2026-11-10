@@ -12,12 +12,16 @@ public actor CccRunner {
         public let arguments: [String]
         public let workingDirectory: URL
         public let environment: [String: String]
+        /// Where the runner records the process group it started, so a later
+        /// start can end one an app that quit without stopping it left behind.
+        public let pidFile: URL?
 
-        public init(executable: URL, arguments: [String], workingDirectory: URL, environment: [String: String]) {
+        public init(executable: URL, arguments: [String], workingDirectory: URL, environment: [String: String], pidFile: URL? = nil) {
             self.executable = executable
             self.arguments = arguments
             self.workingDirectory = workingDirectory
             self.environment = environment
+            self.pidFile = pidFile
         }
 
         /// The bundled ccc, serving St. Olaf's data from `pagesOrigin`, with its state under `state`.
@@ -33,7 +37,8 @@ public actor CccRunner {
                     "WRANGLER_SEND_METRICS": "false",
                     "PAGES_ORIGIN_OVERRIDE": pagesOrigin,
                     "CCC_PERSIST_TO": state.appending(path: "wrangler-state").path,
-                ]
+                ],
+                pidFile: state.appending(path: "ccc.pid")
             )
         }
     }
@@ -47,7 +52,7 @@ public actor CccRunner {
     private let stopGracePeriod: Duration
     private let readinessAttempts: Int
     private let readinessInterval: Duration
-    private var process: Process?
+    private var process: GroupProcess?
     private var reachedRunning = false
     private var outputDrained = false
     private var restarts = 0
@@ -98,45 +103,72 @@ public actor CccRunner {
         launch()
     }
 
-    /// Returns once the process has exited, killing it if it ignores the request to end.
+    /// Returns once the process has exited, killing its group if it ignores
+    /// the request to end. Whatever of the group outlives it is killed too.
     public func stop() async {
         stopping = true
         guard let launched = process else { return }
-        launched.terminate()
+        launched.signalGroup(SIGTERM)
         let deadline = ContinuousClock.now + stopGracePeriod
         var killed = false
         while process === launched {
             if !killed && ContinuousClock.now >= deadline {
-                kill(launched.processIdentifier, SIGKILL)
+                launched.signalGroup(SIGKILL)
                 killed = true
             }
             try? await Task.sleep(for: .milliseconds(20))
         }
+        launched.signalGroup(SIGKILL)
+        if let pidFile = configuration.pidFile, (try? String(contentsOf: pidFile, encoding: .utf8)) == record(of: launched) {
+            try? FileManager.default.removeItem(at: pidFile)
+        }
+    }
+
+    /// What the pid file says of `launched`: its group and when its leader started.
+    private func record(of launched: GroupProcess) -> String {
+        "\(launched.processIdentifier) \(launched.started)"
+    }
+
+    /// Kills the group the pid file names: one an app that quit without stopping
+    /// ccc left holding the port. A group whose leader is alive but started at
+    /// another time is not ccc's, since its id was reused, and is left alone.
+    private func killLeftoverGroup() {
+        guard let pidFile = configuration.pidFile, let text = try? String(contentsOf: pidFile, encoding: .utf8) else { return }
+        let fields = text.split(separator: " ")
+        if fields.count == 2, let group = pid_t(fields[0]), group > 1, group != getpgrp() {
+            let leaderStart = startTime(of: group)
+            if leaderStart == nil || leaderStart == String(fields[1]) { kill(-group, SIGKILL) }
+        }
+        try? FileManager.default.removeItem(at: pidFile)
     }
 
     private func launch() {
         reachedRunning = false
         outputDrained = false
         status = .starting
-        let process = Process()
-        process.executableURL = configuration.executable
-        process.arguments = configuration.arguments
-        process.currentDirectoryURL = configuration.workingDirectory
-        process.environment = configuration.environment
+        killLeftoverGroup()
         let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-        process.terminationHandler = { finished in
-            Task { await self.exited(finished) }
-        }
+        let process: GroupProcess
         do {
-            try process.run()
+            process = try GroupProcess(
+                executable: configuration.executable, arguments: configuration.arguments,
+                workingDirectory: configuration.workingDirectory, environment: configuration.environment,
+                output: pipe.fileHandleForWriting
+            ) { finished in
+                Task { await self.exited(finished) }
+            }
         } catch {
             append("could not start ccc: \(error.localizedDescription)")
             status = .crashed(-1)
             return
         }
+        // the group holds the only write end, so the reader ends when the group does
+        try? pipe.fileHandleForWriting.close()
         self.process = process
+        if let pidFile = configuration.pidFile {
+            try? FileManager.default.createDirectory(at: pidFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try? Data(record(of: process).utf8).write(to: pidFile, options: .atomic)
+        }
         Task {
             do {
                 for try await line in pipe.fileHandleForReading.bytes.lines { self.append(line) }
@@ -148,7 +180,7 @@ public actor CccRunner {
         Task { await waitUntilReady(process) }
     }
 
-    private func waitUntilReady(_ launched: Process) async {
+    private func waitUntilReady(_ launched: GroupProcess) async {
         for _ in 0..<readinessAttempts {
             guard process === launched, status == .starting else { return }
             if await ready() {
@@ -163,7 +195,7 @@ public actor CccRunner {
         }
         guard process === launched, status == .starting else { return }
         append("ccc did not answer in time")
-        launched.terminate()
+        launched.signalGroup(SIGTERM)
     }
 
     private func append(_ line: String) {
@@ -171,7 +203,7 @@ public actor CccRunner {
         if log.count > 500 { log.removeFirst(log.count - 500) }
     }
 
-    private func exited(_ finished: Process) async {
+    private func exited(_ finished: GroupProcess) async {
         // a newer process may have replaced this one
         guard process === finished else { return }
         // the reader may still be draining the pipe, which a grandchild can hold open

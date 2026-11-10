@@ -3965,6 +3965,8 @@ struct DataEditorApp: App {
 
 Until Tasks 13–14 add them, stub `ContentView` and `DataBrowserView` as `Text("…")` views in `ContentView.swift`, so the target compiles.
 
+Quitting must stop ccc first: an app delegate's `applicationShouldTerminate` returns `.terminateLater`, awaits `runner.stop()`, then calls `reply(toApplicationShouldTerminate: true)`. Without it, quitting leaves ccc's group holding port 8787 until the next launch kills it through the pid file.
+
 - [ ] **Step 7: Run the test and build**
 
 Run: `xcodebuild test -project macos/DataEditor/DataEditor.xcodeproj -scheme DataEditor -destination 'platform=macOS,arch=arm64' -only-testing:DataEditorTests/RuntimeTests`
