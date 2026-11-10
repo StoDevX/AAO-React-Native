@@ -134,9 +134,10 @@ public final class Workspace: Sendable {
         let previous = root.appending(path: "previous")
         try? fm.removeItem(at: previous)
         try fm.createDirectory(at: previous, withIntermediateDirectories: true)
+        let existed = names.filter { fm.fileExists(atPath: root.appending(path: $0).path) }
         var setAside: [String] = []
         do {
-            for name in names where fm.fileExists(atPath: root.appending(path: name).path) {
+            for name in existed {
                 try fm.moveItem(at: root.appending(path: name), to: previous.appending(path: name))
                 setAside.append(name)
             }
@@ -146,7 +147,10 @@ public final class Workspace: Sendable {
             try fm.moveItem(at: staging.appending(path: "images"), to: root.appending(path: "images"))
             try JSONEncoder().encode(snapshot).write(to: snapshotFile, options: .atomic)
         } catch {
-            for name in names { try? fm.removeItem(at: root.appending(path: name)) }
+            // an original whose move failed is still in place, so only what this call made goes
+            for name in names where setAside.contains(name) || !existed.contains(name) {
+                try? fm.removeItem(at: root.appending(path: name))
+            }
             for name in setAside { try? fm.moveItem(at: previous.appending(path: name), to: root.appending(path: name)) }
             try? fm.removeItem(at: previous)
             throw error
@@ -167,10 +171,17 @@ public final class Workspace: Sendable {
     }
 
     /// The data files that differ from the base commit: changed, added or removed.
+    /// A name that starts with `.` or `_` is not data (the helper's `isDataEntry`):
+    /// Finder's `.DS_Store`, or a `_<file>.next` the helper left half written.
     public func changedFiles() throws -> [String] {
         let current = relativeFiles(in: dataDirectory)
         let base = relativeFiles(in: baseDataDirectory)
-        return current.union(base).filter { try! contents(of: $0) != baseContents(of: $0) }.sorted()
+        return current.union(base)
+            .filter { file in
+                let name = file.split(separator: "/").last ?? ""
+                return !name.hasPrefix(".") && !name.hasPrefix("_")
+            }
+            .filter { try! contents(of: $0) != baseContents(of: $0) }.sorted()
     }
 
     /// A data file's contents now, or nil if it was removed.
@@ -216,6 +227,21 @@ public final class Workspace: Sendable {
         }
     }
 
+    /// Whether `data/` still holds every edit `replay/` saved. A conflict's
+    /// saved copy came from `conflicts/`, not `data/`, so it is not compared.
+    private func dataHoldsSavedEdits() -> Bool {
+        let fm = FileManager.default
+        let mine = replayDirectory.appending(path: "mine")
+        let isConflict = { (file: String) in fm.fileExists(atPath: self.replayDirectory.appending(path: "conflicted/\(file)").path) }
+        for file in relativeFiles(in: mine) where !isConflict(file) {
+            if (try? Data(contentsOf: mine.appending(path: file))) != (try? contents(of: file)) { return false }
+        }
+        for file in relativeFiles(in: replayDirectory.appending(path: "deleted")) where !isConflict(file) {
+            if (try? contents(of: file)) != nil { return false }
+        }
+        return true
+    }
+
     /// Downloads `commit` and puts the contributor's edits back on top. An
     /// edit master already has (it was merged) is dropped. A file master also
     /// changed is a conflict: master's version stays in `data/`, the
@@ -230,7 +256,7 @@ public final class Workspace: Sendable {
         do {
             try await download(commit: commit)
         } catch {
-            try? fm.removeItem(at: replayDirectory)
+            if dataHoldsSavedEdits() { try? fm.removeItem(at: replayDirectory) }
             throw error
         }
         try? fm.removeItem(at: conflictsDirectory)
