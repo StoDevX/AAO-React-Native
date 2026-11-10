@@ -66,9 +66,11 @@ struct DeviceFlowTests {
             _ = polls.next()
             return (200, body(#"{"error":"authorization_pending"}"#))
         }
-        // cancelled while it waits, as when the contributor closes the sign-in sheet
+        // cancelled while it waits, as when the contributor closes the sign-in sheet;
+        // the poll runs in a task of its own, so the test's task is not the one cancelled
         let flow = DeviceFlow(clientID: "client", session: session, sleep: { _ in withUnsafeCurrentTask { $0?.cancel() } })
-        await #expect(throws: CancellationError.self) { _ = try await flow.token(for: code) }
+        let polling = Task { try await flow.token(for: code) }
+        await #expect(throws: CancellationError.self) { _ = try await polling.value }
         #expect(polls.next() == 1)
     }
 
