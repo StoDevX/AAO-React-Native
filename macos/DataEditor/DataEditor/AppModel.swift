@@ -10,6 +10,25 @@ final class AppModel {
     enum Phase: Equatable {
         case starting, downloading, ready, needsAppUpdate
         case failed(String)
+
+        /// Whether `launch()` may start: before the first launch, and again
+        /// after a failure. Once started it runs to `ready` or a dead end.
+        var allowsLaunch: Bool {
+            switch self {
+            case .starting, .failed: true
+            case .downloading, .ready, .needsAppUpdate: false
+            }
+        }
+    }
+
+    enum Refusal: LocalizedError {
+        case updating
+
+        var errorDescription: String? {
+            switch self {
+            case .updating: "The data is being updated. Submit again once the update finishes."
+            }
+        }
     }
 
     var phase: Phase = .starting
@@ -31,6 +50,14 @@ final class AppModel {
     /// Set while `updateWorkspace` runs. The update saves the edits before it
     /// downloads, so anything written into `data/` meanwhile would be lost.
     private(set) var updating = false
+    /// Why the last update failed. The workspace is left as it was, so editing goes on.
+    private(set) var updateError: String?
+    /// Set while `submit` runs, which reads `data/` that an update would replace underneath it.
+    private(set) var submitting = false
+    /// Set while `launch()` runs, so a second call does not start a second helper and ccc.
+    private var launching = false
+    /// Set once quitting has begun, so a launch still under way starts nothing more.
+    private var shuttingDown = false
 
     let tokens = KeychainTokenStore()
     private let runtime: Runtime
@@ -66,7 +93,14 @@ final class AppModel {
     /// Editing it would replace the copy they set aside, so it is not editable until they choose.
     func isConflicted(_ file: String) -> Bool { conflicts.contains(file) }
 
+    /// Downloads the workspace if need be and starts the helper and ccc. Does
+    /// nothing while a launch runs or once one has succeeded; after a failure
+    /// it starts again, first stopping whatever the failed attempt started.
     func launch() async {
+        guard !launching, !shuttingDown, phase.allowsLaunch else { return }
+        launching = true
+        defer { launching = false }
+        await stopProcesses()
         do {
             if workspace.snapshot == nil {
                 phase = .downloading
@@ -84,6 +118,7 @@ final class AppModel {
                 try runtime.installHelper(into: workspace.root)
                 (node, script) = (runtime.node, workspace.root.appending(path: "scripts/data-editor-helper.mjs"))
             }
+            if shuttingDown { return }
             let helper = try HelperClient(executable: node, arguments: [
                 script.path, "--data", workspace.dataDirectory.path, "--out", workspace.outDirectory.path,
             ])
@@ -95,6 +130,7 @@ final class AppModel {
                 let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
                 pagesOrigin = origin
                 let ccc = CccRunner(configuration: .bundled(node: runtime.node, cccRoot: runtime.cccRoot, pagesOrigin: origin, state: support.appending(path: "ccc")))
+                if shuttingDown { return }
                 self.ccc = ccc
                 Task { for await status in await ccc.statuses() { self.cccStatus = status; self.cccLog = await ccc.log } }
                 await ccc.start()
@@ -104,6 +140,7 @@ final class AppModel {
             changedFiles = try workspace.changedFiles()
             conflicts = workspace.conflicts
             phase = .ready
+            if let selection { await select(selection) }
             if testHelper == nil {
                 await refreshSubmission()
                 let latest = try? await workspace.latestCommit()
@@ -118,17 +155,27 @@ final class AppModel {
 
     /// Stops ccc's whole process group and the helper, so quitting leaves nothing holding a port.
     func shutdown() async {
+        shuttingDown = true
+        await stopProcesses()
+    }
+
+    private func stopProcesses() async {
         await ccc?.stop()
+        ccc = nil
         await helper?.stop()
+        helper = nil
     }
 
     func select(_ file: String) async {
         guard let helper else { return }
         do {
             let loaded = try await helper.load(file)
+            // a later selection's load owns the document now
+            guard selection == file else { return }
             document = HoursDocument(value: loaded.value)
             problems = loaded.problems
         } catch {
+            guard selection == file else { return }
             document = nil
             problems = [Problem(file: file, message: error.localizedDescription, path: nil)]
         }
@@ -170,9 +217,14 @@ final class AppModel {
         return lineDiff(old: text(try? workspace.baseContents(of: file)), new: text(try? workspace.contents(of: file)))
     }
 
-    /// Opens a pull request, or adds a commit to the open one.
+    /// Opens a pull request, or adds a commit to the open one. Refuses during
+    /// an update, which may have removed a file it has not yet put back, and
+    /// would send that file as deleted.
     func submit(summary: String) async throws {
+        if updating { throw Refusal.updating }
         guard let base = baseCommit else { return }
+        submitting = true
+        defer { submitting = false }
         let submitter = GitHubSubmitter(tokens: tokens)
         let changes = changedFiles.map { Change(path: "data/\($0)", contents: try? workspace.contents(of: $0)) }
         if let submission, submissionState == .open || submissionState == .changesRequested {
@@ -190,14 +242,20 @@ final class AppModel {
 
     /// Moves to master's newest commit, keeping the contributor's edits. A
     /// merged pull request's edits are on master by then, so it is forgotten.
+    /// Does nothing while a submission is being sent from `data/`. A failed
+    /// update leaves the workspace as it was, so it reports in `updateError`
+    /// and editing goes on.
     func updateWorkspace() async {
-        guard !updating else { return }
+        guard !updating, !submitting else { return }
         updating = true
+        updateError = nil
         do {
             conflicts = try await workspace.update(to: try await workspace.latestCommit())
         } catch {
             updating = false
-            phase = .failed(error.localizedDescription)
+            updateError = error.localizedDescription
+            conflicts = workspace.conflicts
+            await afterFilesChanged()
             return
         }
         updating = false
