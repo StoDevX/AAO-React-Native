@@ -6,19 +6,22 @@ import {load} from 'js-yaml'
 /// The app ships a copy of the manifest as its offline fallback. Nothing else
 /// in `data/` is embedded in the binary, so this is generated here rather than
 /// copied by hand — `mise run bundle-data` keeps the two in step.
-const BUNDLED_COPY = 'modules/data-sources/bundled.json'
+const BUNDLED_COPY = path.join(import.meta.dirname, '..', 'modules/data-sources/bundled.json')
 
 // The manifest is a JRD document (RFC 7033 §4.4), which must be the root
 // object. convertDataFile would wrap it in {data: …}, so it gets a builder.
-export function buildSources({sourceFile, outputFile}) {
+// `bundledCopy` names where the app's copy goes; without one, none is written.
+export function buildSources({sourceFile, outputFile, bundledCopy}) {
 	let manifest = load(fs.readFileSync(sourceFile, 'utf-8'))
 	let serialized = JSON.stringify(manifest) + '\n'
 
 	fs.mkdirSync(path.dirname(outputFile), {recursive: true})
 	fs.writeFileSync(outputFile, serialized)
 
-	fs.mkdirSync(path.dirname(BUNDLED_COPY), {recursive: true})
-	fs.writeFileSync(BUNDLED_COPY, serialized)
+	if (bundledCopy) {
+		fs.mkdirSync(path.dirname(bundledCopy), {recursive: true})
+		fs.writeFileSync(bundledCopy, serialized)
+	}
 }
 
 if (import.meta.main) {
@@ -28,5 +31,5 @@ if (import.meta.main) {
 		process.exit(1)
 	}
 
-	buildSources({sourceFile, outputFile})
+	buildSources({sourceFile, outputFile, bundledCopy: BUNDLED_COPY})
 }

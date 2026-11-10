@@ -18,15 +18,30 @@ const findDirsIn = (pth) => readDir(pth).filter((entry) => isDir(path.join(pth, 
 
 const findFilesIn = (pth) => readDir(pth).filter((entry) => isFile(path.join(pth, entry)))
 
+/// `file` with its own extension replaced. Only the last segment is touched:
+/// the folders above it may hold dots (`/Users/some.name/…`), and the file's
+/// extension begins at its first dot (`a.b.yaml` becomes `a.json`).
+const withExtension = (file, extension) => {
+	let {dir, base} = path.parse(file)
+	return path.join(dir, base.replace(/\..*$/u, extension))
+}
+
 const args = process.argv.slice(2)
 const flags = args.filter((arg) => arg.startsWith('--'))
 const [fromDir, toDir] = args.filter((arg) => !arg.startsWith('--'))
 if (!fromDir || !toDir || flags.includes('--help')) {
-	console.error('usage: node bundle-data.js [--verbose] <from-dir> <to-dir>')
+	console.error('usage: node bundle-data.js [--verbose] [--bundle-into-app] <from-dir> <to-dir>')
 	process.exit(1)
 }
 
 const verbose = flags.includes('--verbose')
+
+// The app's offline copy of the manifest lives in this repo, so only the
+// repo's own `mise run bundle-data` asks for it. The data editor builds in a
+// workspace of its own and has no repo to write into.
+const bundledCopy = flags.includes('--bundle-into-app')
+	? path.join(import.meta.dirname, '..', 'modules/data-sources/bundled.json')
+	: undefined
 
 // Naming and timing every file is a few hundred lines of output, and this
 // script runs ahead of tsc, jest, and so every pre-commit hook -- enough noise
@@ -88,11 +103,11 @@ const files = findFilesIn(fromDir).filter(
 files.forEach((file) => {
 	// Get the absolute paths to the input and output files
 	let input = path.join(fromDir, file)
-	let output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
+	let output = withExtension(path.join(toDir, file), '.json')
 	step(`convert-data-file ${input} ${output}`, () => {
 		convertDataFile({fromFile: input, toFile: output})
 		if (file.endsWith('.css')) {
-			let dest = output.replace(/\.json/u, '.css')
+			let dest = withExtension(output, '.css')
 			convertDataFile({fromFile: input, toFile: dest, toFileType: 'css'})
 		}
 	})
@@ -105,9 +120,9 @@ for (let [file, builder] of specialFiles.entries()) {
 		continue
 	}
 
-	let output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
+	let output = withExtension(path.join(toDir, file), '.json')
 	step(`${builder.name} ${source} ${output}`, () =>
-		builder({sourceFile: source, outputFile: output}),
+		builder({sourceFile: source, outputFile: output, bundledCopy}),
 	)
 	built += 1
 }

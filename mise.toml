@@ -401,7 +401,7 @@ claude plugin test .claude/skills/test-writing-reminder
 [tasks."bundle-data"]
 description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
-run = "node scripts/bundle-data.mjs data/ docs/"
+run = "node scripts/bundle-data.mjs --bundle-into-app data/ docs/"
 
 [tasks."data-editor:helper"]
 description = "Bundle the Mac data editor's pipeline helper"
