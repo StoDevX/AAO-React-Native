@@ -9,7 +9,17 @@ public struct DeviceFlow: Sendable {
         public let interval: Int
     }
 
-    public enum Failure: Error, Equatable, Sendable { case denied, expired, unexpected(String) }
+    public enum Failure: LocalizedError, Equatable, Sendable {
+        case denied, expired, unexpected(String)
+
+        public var errorDescription: String? {
+            switch self {
+            case .denied: "GitHub sign-in was turned down."
+            case .expired: "The sign-in code expired. Start again for a new one."
+            case .unexpected(let message): message
+            }
+        }
+    }
 
     private let clientID: String
     private let session: URLSession
@@ -49,6 +59,8 @@ public struct DeviceFlow: Sendable {
         var interval = code.interval
         while true {
             await sleep(.seconds(interval))
+            // the injected sleep returns early when cancelled; stop before asking GitHub again
+            try Task.checkCancellation()
             let reply = try await post("/login/oauth/access_token", [
                 "client_id": clientID, "device_code": code.deviceCode,
                 "grant_type": "urn:ietf:params:oauth:grant-type:device_code",

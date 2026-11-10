@@ -42,7 +42,45 @@ struct DeviceFlowTests {
         let code = try await flow.start()
         await #expect(throws: DeviceFlow.Failure.denied) { _ = try await flow.token(for: code) }
     }
+
+    @Test func stopsWhenTheCodeExpires() async throws {
+        let (session, _) = StubProtocol.session { _ in (200, body(#"{"error":"expired_token"}"#)) }
+        let flow = DeviceFlow(clientID: "client", session: session, sleep: { _ in })
+        await #expect(throws: DeviceFlow.Failure.expired) { _ = try await flow.token(for: code) }
+    }
+
+    @Test func slowsDownByFiveSecondsWhenGitHubGivesNoInterval() async throws {
+        let polls = Counter()
+        let waits = SleepLog()
+        let (session, _) = StubProtocol.session { _ in
+            polls.next() == 1 ? (200, body(#"{"error":"slow_down"}"#)) : (200, body(#"{"access_token":"tok"}"#))
+        }
+        let flow = DeviceFlow(clientID: "client", session: session, sleep: waits.record)
+        #expect(try await flow.token(for: code) == "tok")
+        #expect(waits.durations == [.seconds(5), .seconds(10)])
+    }
+
+    @Test func stopsPollingOnceCancelled() async throws {
+        let polls = Counter()
+        let (session, _) = StubProtocol.session { _ in
+            _ = polls.next()
+            return (200, body(#"{"error":"authorization_pending"}"#))
+        }
+        // cancelled while it waits, as when the contributor closes the sign-in sheet
+        let flow = DeviceFlow(clientID: "client", session: session, sleep: { _ in withUnsafeCurrentTask { $0?.cancel() } })
+        await #expect(throws: CancellationError.self) { _ = try await flow.token(for: code) }
+        #expect(polls.next() == 1)
+    }
+
+    @Test func describesEachFailureForTheContributor() {
+        #expect(DeviceFlow.Failure.unexpected("bad client").localizedDescription.contains("bad client"))
+        #expect(DeviceFlow.Failure.denied.errorDescription != nil)
+        #expect(DeviceFlow.Failure.expired.errorDescription != nil)
+    }
 }
+
+/// A code GitHub handed out, polled every five seconds.
+private let code = DeviceFlow.DeviceCode(deviceCode: "dev", userCode: "A", verificationURL: URL(string: "https://github.com/login/device")!, interval: 5)
 
 final class SleepLog: @unchecked Sendable {
     private let lock = NSLock()

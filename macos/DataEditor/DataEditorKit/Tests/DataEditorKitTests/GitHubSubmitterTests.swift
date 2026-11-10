@@ -24,6 +24,8 @@ private func github(status401 paths: Set<String> = []) -> (URLSession, StubProto
         case ("POST", "/repos/StoDevX/AAO-React-Native/pulls"): return (201, body(#"{"number":42,"html_url":"https://github.com/StoDevX/AAO-React-Native/pull/42"}"#))
         case ("GET", "/repos/StoDevX/AAO-React-Native/pulls/42"): return (200, body(#"{"state":"open","merged_at":null}"#))
         case ("GET", "/repos/StoDevX/AAO-React-Native/pulls/42/reviews"): return (200, body(#"[{"user":{"login":"drew"},"state":"COMMENTED"},{"user":{"login":"drew"},"state":"CHANGES_REQUESTED"}]"#))
+        case ("GET", "/repos/ole/AAO-React-Native/contents/data/building-hours/1-3-stav.yaml") where request.url!.query == "ref=base1":
+            return (200, body(#"{"sha":"stavbase"}"#))
         default: return (404, body(#"{"message":"Not Found"}"#))
         }
     }
@@ -40,6 +42,23 @@ private func submitter(_ session: URLSession, token: String? = "tok") -> (GitHub
 
 private let change = Change(path: "data/building-hours/1-1-cage.yaml", contents: Data("name: The Cage\n".utf8))
 
+/// Pull request 42, opened from `base1`, which has touched `paths`.
+private func openSubmission(paths: [String] = ["data/building-hours/1-1-cage.yaml"]) -> Submission {
+    Submission(number: 42, url: URL(string: "https://github.com/StoDevX/AAO-React-Native/pull/42")!, owner: "ole", branch: "data-editor/x",
+               base: "base1", paths: paths)
+}
+
+/// GitHub answering a pull request's state with `pull`, and no reviews.
+private func pullRequest(_ pull: String) -> URLSession {
+    StubProtocol.session { request in
+        switch request.url!.path {
+        case "/repos/StoDevX/AAO-React-Native/pulls/42": return (200, body(pull))
+        case "/repos/StoDevX/AAO-React-Native/pulls/42/reviews": return (200, body("[]"))
+        default: return (404, body(#"{"message":"Not Found"}"#))
+        }
+    }.0
+}
+
 struct GitHubSubmitterTests {
     @Test func opensAPullRequestFromAForkBranch() async throws {
         let (session, stub) = github()
@@ -48,6 +67,8 @@ struct GitHubSubmitterTests {
         #expect(submission.number == 42)
         #expect(submission.owner == "ole")
         #expect(submission.branch.hasPrefix("data-editor/close-the-cage-early-on-fridays-"))
+        #expect(submission.base == "base1")
+        #expect(submission.paths == ["data/building-hours/1-1-cage.yaml"])
 
         let requests = stub.requests
         let tree = json(requests.first { $0.url!.path.hasSuffix("/git/trees") }!)
@@ -66,8 +87,8 @@ struct GitHubSubmitterTests {
     @Test func addsACommitToAnOpenPullRequest() async throws {
         let (session, stub) = github()
         let (submitter, _) = submitter(session)
-        let open = Submission(number: 42, url: URL(string: "https://github.com/StoDevX/AAO-React-Native/pull/42")!, owner: "ole", branch: "data-editor/x")
-        try await submitter.update(open, changes: [change], summary: "Fix the Friday close")
+        let open = openSubmission()
+        _ = try await submitter.update(open, changes: [change], summary: "Fix the Friday close")
         let requests = stub.requests
         #expect(!requests.contains { $0.url!.path.hasSuffix("/pulls") && $0.httpMethod == "POST" })
         #expect(json(requests.first { $0.url!.path.hasSuffix("/git/trees") }!)["base_tree"] == .string("tree1"))
@@ -75,6 +96,58 @@ struct GitHubSubmitterTests {
         #expect(commit["parents"] == .array([.string("head1")]))
         let patch = requests.first { $0.httpMethod == "PATCH" }!
         #expect(json(patch)["sha"] == .string("commit2"))
+    }
+
+    @Test func restoresTheBaseOfAFileNoLongerChanged() async throws {
+        let (session, stub) = github()
+        let (submitter, _) = submitter(session)
+        let stav = "data/building-hours/1-3-stav.yaml"
+        let pause = "data/building-hours/2-1-pause.yaml"
+        let open = openSubmission(paths: [change.path, stav, pause])
+        let updated = try await submitter.update(open, changes: [change], summary: "Only The Cage")
+        let entries = json(stub.requests.first { $0.url!.path.hasSuffix("/git/trees") }!)["tree"]?.array ?? []
+        let shas = Dictionary(uniqueKeysWithValues: entries.map { ($0["path"]!.string!, $0["sha"]!) })
+        #expect(shas == [change.path: .string("blob1"), stav: .string("stavbase"), pause: .null])
+        #expect(updated.paths == [change.path, stav, pause])
+        #expect(updated.base == "base1")
+    }
+
+    @Test func recordsEveryPathAnUpdateTouches() async throws {
+        let (session, _) = github()
+        let (submitter, _) = submitter(session)
+        let pause = Change(path: "data/building-hours/2-1-pause.yaml", contents: Data("name: The Pause\n".utf8))
+        let updated = try await submitter.update(openSubmission(), changes: [change, pause], summary: "x")
+        #expect(updated.paths == [change.path, pause.path])
+    }
+
+    @Test func saysWhenTheForkLacksTheBaseCommit() async {
+        let (session, _) = github()
+        let (submitter, _) = submitter(session)
+        await #expect(throws: SubmitError.missingBaseCommit) {
+            _ = try await submitter.submit(changes: [change], base: "unknown", summary: "x", appVersion: "1.0")
+        }
+    }
+
+    @Test func readsAMergedPullRequest() async throws {
+        let (submitter, _) = submitter(pullRequest(#"{"state":"closed","merged_at":"2026-11-05T12:00:00Z"}"#))
+        #expect(try await submitter.state(of: openSubmission()) == .merged)
+    }
+
+    @Test func readsAClosedPullRequest() async throws {
+        let (submitter, _) = submitter(pullRequest(#"{"state":"closed","merged_at":null}"#))
+        #expect(try await submitter.state(of: openSubmission()) == .closed)
+    }
+
+    @Test func readsAnOpenPullRequest() async throws {
+        let (submitter, _) = submitter(pullRequest(#"{"state":"open","merged_at":null}"#))
+        #expect(try await submitter.state(of: openSubmission()) == .open)
+    }
+
+    @Test func describesEachErrorForTheContributor() {
+        #expect(SubmitError.github(422, "Validation Failed").localizedDescription.contains("Validation Failed"))
+        #expect(SubmitError.signInRequired.errorDescription != nil)
+        #expect(SubmitError.missingBaseCommit.errorDescription != nil)
+        #expect(SubmitError.github(500, "").errorDescription != nil)
     }
 
     @Test func forgetsARejectedToken() async {
@@ -98,7 +171,7 @@ struct GitHubSubmitterTests {
     @Test func readsChangesRequested() async throws {
         let (session, _) = github()
         let (submitter, _) = submitter(session)
-        let open = Submission(number: 42, url: URL(string: "https://github.com/StoDevX/AAO-React-Native/pull/42")!, owner: "ole", branch: "data-editor/x")
+        let open = openSubmission()
         #expect(try await submitter.state(of: open) == .changesRequested)
     }
 

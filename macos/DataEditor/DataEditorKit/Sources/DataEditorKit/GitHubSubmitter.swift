@@ -59,8 +59,21 @@ public struct GitHubSubmitter: ChangeSubmitter {
         return (owner, fullName)
     }
 
-    /// A commit of `changes` on top of `parent` in `fork`.
-    private func commit(_ changes: [Change], parent: String, message: String, in fork: String) async throws -> String {
+    /// The blob `path` had at `commit` in `fork`, or null if the file is new since.
+    private func blob(of path: String, at commit: String, in fork: String) async throws -> JSONValue {
+        let file: JSONValue
+        do {
+            file = try await send("GET", "/repos/\(fork)/contents/\(path)?ref=\(commit)")
+        } catch SubmitError.github(404, _) {
+            return .null
+        }
+        guard let sha = file["sha"], sha != .null else { throw SubmitError.github(0, "GitHub did not give the base of \(path)") }
+        return sha
+    }
+
+    /// A commit of `changes`, and of each `restored` path set to the blob given, on top of `parent` in `fork`.
+    private func commit(_ changes: [Change], restoring restored: [(path: String, sha: JSONValue)] = [],
+                        parent: String, message: String, in fork: String) async throws -> String {
         let parentCommit: JSONValue
         do {
             parentCommit = try await send("GET", "/repos/\(fork)/git/commits/\(parent)")
@@ -78,6 +91,9 @@ public struct GitHubSubmitter: ChangeSubmitter {
                 sha = blob["sha"] ?? .null
             }
             entries.append(.object(["path": .string(change.path), "mode": .string("100644"), "type": .string("blob"), "sha": sha]))
+        }
+        for (path, sha) in restored {
+            entries.append(.object(["path": .string(path), "mode": .string("100644"), "type": .string("blob"), "sha": sha]))
         }
         let tree = try await send("POST", "/repos/\(fork)/git/trees", .object(["base_tree": .string(baseTree), "tree": .array(entries)]))
         let commit = try await send("POST", "/repos/\(fork)/git/commits", .object([
@@ -103,15 +119,23 @@ public struct GitHubSubmitter: ChangeSubmitter {
         guard case .number(let number)? = pull["number"], let url = pull["html_url"]?.string.flatMap(URL.init(string:)) else {
             throw SubmitError.github(0, "GitHub did not return the pull request")
         }
-        return Submission(number: Int(number), url: url, owner: owner, branch: branch)
+        return Submission(number: Int(number), url: url, owner: owner, branch: branch, base: base, paths: changes.map(\.path))
     }
 
-    public func update(_ submission: Submission, changes: [Change], summary: String) async throws {
+    public func update(_ submission: Submission, changes: [Change], summary: String) async throws -> Submission {
         let fullName = "\(submission.owner)/\(repo.name)"
         let ref = try await send("GET", "/repos/\(fullName)/git/ref/heads/\(submission.branch)")
         guard let head = ref["object"]?["sha"]?.string else { throw SubmitError.github(0, "The pull request's branch is gone") }
-        let sha = try await commit(changes, parent: head, message: summary, in: fullName)
+        // a file the pull request changed before, and the contributor has since reverted, goes back to the base
+        var restored: [(path: String, sha: JSONValue)] = []
+        for path in submission.paths where !changes.contains(where: { $0.path == path }) {
+            restored.append((path, try await blob(of: path, at: submission.base, in: fullName)))
+        }
+        let sha = try await commit(changes, restoring: restored, parent: head, message: summary, in: fullName)
         _ = try await send("PATCH", "/repos/\(fullName)/git/refs/heads/\(submission.branch)", .object(["sha": .string(sha)]))
+        let touched = changes.map(\.path).filter { !submission.paths.contains($0) }
+        return Submission(number: submission.number, url: submission.url, owner: submission.owner, branch: submission.branch,
+                          base: submission.base, paths: submission.paths + touched)
     }
 
     public func state(of submission: Submission) async throws -> SubmissionState {
