@@ -64,6 +64,18 @@ export async function handle(handlers, line) {
 	}
 }
 
+/**
+ * Runs each step after the one before. A step that throws is passed to
+ * `onError` and the next step still runs, so one bad reply never stops the rest.
+ */
+export function inOrder(onError) {
+	let tail = Promise.resolve()
+	return (step) => {
+		tail = tail.then(step).catch(onError)
+		return tail
+	}
+}
+
 /** Reads requests from stdin until it closes. `args` are the command line's. */
 export function main(args = process.argv.slice(2)) {
 	let {values} = parseArgs({
@@ -83,16 +95,16 @@ export function main(args = process.argv.slice(2)) {
 		outDir: path.resolve(values.out),
 		bundleData: values['bundle-data'],
 	})
-	let queue = Promise.resolve()
+	let run = inOrder((error) => console.error(error))
 	let lines = createInterface({input: process.stdin})
 	lines.on('line', (line) => {
-		queue = queue.then(async () => {
+		void run(async () => {
 			process.stdout.write(`${JSON.stringify(await handle(handlers, line))}\n`)
 		})
 	})
 	// the app closing stdin is the one way to stop
 	lines.on('close', () => {
-		void queue.then(() => {
+		void run(() => {
 			handlers.close()
 			process.exit(0)
 		})

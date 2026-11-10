@@ -134,6 +134,17 @@ describe('DocumentStore.edit', () => {
 		assert.match(await read(), /name: The Cage Café\ncategory: Dining\n/u)
 	})
 
+	it('quotes a time written over a plain scalar', async () => {
+		let {store, read} = await storeWithFixture()
+		await store.edit('cage.yaml', [{path: ['schedule', 0, 'notes'], value: '8:00pm'}])
+		assert.match(await read(), /\n {4}notes: '8:00pm'\n/u)
+	})
+
+	it('refuses an edit with no value', async () => {
+		let {store} = await storeWithFixture()
+		await assert.rejects(store.edit('cage.yaml', [{path: ['name']}]), /needs a value/u)
+	})
+
 	it('refuses an edit with no path', async () => {
 		let {store} = await storeWithFixture()
 		await assert.rejects(store.edit('cage.yaml', [{path: [], value: 1}]), /needs a path/u)

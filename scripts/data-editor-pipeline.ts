@@ -44,7 +44,13 @@ export function keysOf(rest: string): Key[] {
 export function problemsFrom(error: unknown, dataDir: string): Problem[] {
 	let text = error instanceof Error ? error.message : String(error)
 	let prefix = path.resolve(dataDir) + path.sep
-	return text.split('; ').map((part) => {
+	// a new problem starts only where a file label does, so a message holding "; " stays whole
+	let parts: string[] = []
+	for (let piece of text.split('; ')) {
+		if (parts.length > 0 && !piece.startsWith(prefix)) parts[parts.length - 1] += `; ${piece}`
+		else parts.push(piece)
+	}
+	return parts.map((part) => {
 		let relative = part.startsWith(prefix) ? part.slice(prefix.length) : undefined
 		let match = relative === undefined ? null : /^(\S+?\.ya?ml)([^\s:]*):?\s+(.*)$/su.exec(relative)
 		let file = match?.[1]
@@ -165,9 +171,11 @@ export async function build({
 	return {ok: true, dir}
 }
 
-/** Removes every build under `outDir` except `keep`. */
+/** Removes every build under `outDir` except `keep`. Only `build-` folders are builds. */
 export async function pruneBuilds(outDir: string, keep: string): Promise<void> {
-	let others = (await readdir(outDir)).filter((entry) => entry !== path.basename(keep))
+	let others = (await readdir(outDir)).filter(
+		(entry) => entry.startsWith('build-') && entry !== path.basename(keep),
+	)
 	await Promise.all(
 		others.map((entry) => rm(path.join(outDir, entry), {recursive: true, force: true})),
 	)

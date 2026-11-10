@@ -82,9 +82,11 @@ function apply(doc, op) {
 		doc.deleteIn(op.path)
 		return
 	}
+	if (!Object.hasOwn(op, 'value')) throw new Error('an edit needs a value or delete')
 	let existing = doc.getIn(op.path, true)
 	if (isScalar(existing) && (op.value === null || typeof op.value !== 'object')) {
 		existing.value = op.value
+		if (typeof op.value === 'string' && TIME.test(op.value)) existing.type = 'QUOTE_SINGLE'
 		return
 	}
 	doc.setIn(op.path, styled(doc, op.path.slice(0, -1), op.value))

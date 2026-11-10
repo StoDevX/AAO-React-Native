@@ -3,7 +3,7 @@ import {spawn} from 'node:child_process'
 import path from 'node:path'
 import {createInterface} from 'node:readline'
 import {describe, it} from 'node:test'
-import {createHandlers, handle} from './data-editor-helper.mjs'
+import {createHandlers, handle, inOrder} from './data-editor-helper.mjs'
 import {scratchData} from './data-editor-test-support.mjs'
 
 const BUNDLE_DATA = path.join(import.meta.dirname, 'bundle-data.mjs')
@@ -12,6 +12,24 @@ async function handlers() {
 	let {root, dataDir} = await scratchData()
 	return createHandlers({dataDir, outDir: path.join(root, 'out'), bundleData: BUNDLE_DATA})
 }
+
+describe('inOrder', () => {
+	it('runs steps one after another and carries on after one throws', async () => {
+		let ran = []
+		let failures = []
+		let run = inOrder((error) => failures.push(error.message))
+		run(async () => {
+			await new Promise((resolve) => setTimeout(resolve, 10))
+			ran.push(1)
+		})
+		run(() => {
+			throw new Error('cannot write')
+		})
+		await run(() => ran.push(3))
+		assert.deepEqual(ran, [1, 3])
+		assert.deepEqual(failures, ['cannot write'])
+	})
+})
 
 describe('handle', () => {
 	it('answers a method with its result', async () => {

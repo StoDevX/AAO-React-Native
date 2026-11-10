@@ -59,6 +59,15 @@ describe('problemsFrom', () => {
 		assert.deepEqual(problem.path, ['breakSchedule', 'fall', 'schedule', 0, 'notes'])
 		assert.equal(problem.message, 'break closure messages must not end with a period')
 	})
+	it('keeps a message that itself holds "; " in one problem', () => {
+		let error = new Error(
+			'/ws/data/breaks.yaml/breaks must be object; see the schema; /ws/data/breaks.yaml/timezone must be string',
+		)
+		assert.deepEqual(
+			problemsFrom(error, dataDir).map((p) => p.message),
+			['must be object; see the schema', 'must be string'],
+		)
+	})
 	it('places an error in a workspace whose path has a space', () => {
 		let spaced = '/Users/ole/Library/Application Support/DataEditor/workspace/data'
 		let error = new Error(
@@ -167,6 +176,15 @@ describe('build', () => {
 		await pruneBuilds(outDir, second.dir)
 		assert.notEqual(first.dir, second.dir)
 		assert.deepEqual(readdirSync(outDir), [path.basename(second.dir)])
+	})
+
+	it('leaves alone anything under outDir that is not a build', async () => {
+		let {root, dataDir} = await scratchData()
+		let outDir = path.join(root, 'out')
+		let kept = await build({bundleData: BUNDLE_DATA, dataDir, outDir})
+		await writeFile(path.join(outDir, 'notes.txt'), 'mine')
+		await pruneBuilds(outDir, kept.dir)
+		assert.deepEqual(readdirSync(outDir).sort(), [path.basename(kept.dir), 'notes.txt'].sort())
 	})
 })
 
