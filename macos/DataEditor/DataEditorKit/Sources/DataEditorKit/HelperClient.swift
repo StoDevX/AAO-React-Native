@@ -2,8 +2,9 @@ import Foundation
 
 /// The pipeline helper, a child process spoken to in JSON lines.
 public actor HelperClient {
-    public struct Failure: Error, Equatable, Sendable {
+    public struct Failure: LocalizedError, Equatable, Sendable {
         public let message: String
+        public var errorDescription: String? { message }
     }
 
     private struct Request<P: Encodable>: Encodable {
@@ -37,6 +38,8 @@ public actor HelperClient {
         process.standardError = FileHandle.standardError
         try process.run()
         input = stdin.fileHandleForWriting
+        // a write to a helper that has died fails with EPIPE instead of killing the app
+        _ = fcntl(input.fileDescriptor, F_SETNOSIGPIPE, 1)
         output = stdout.fileHandleForReading
     }
 
@@ -45,20 +48,37 @@ public actor HelperClient {
         Task { await listen() }
     }
 
+    /// Reads replies until the helper's output closes. Replies end at "\n"
+    /// alone: a value may hold U+2028, U+2029 or U+0085, which Node writes raw.
     private func listen() async {
+        var reason = "The helper stopped"
+        var line = Data()
         do {
-            for try await line in output.bytes.lines {
-                receive(Data(line.utf8))
+            for try await byte in output.bytes {
+                if byte == UInt8(ascii: "\n") {
+                    receive(line)
+                    line.removeAll(keepingCapacity: true)
+                } else {
+                    line.append(byte)
+                }
             }
-        } catch {}
+        } catch {
+            reason = "The helper stopped: \(error.localizedDescription)"
+        }
         stopped = true
-        for continuation in pending.values { continuation.resume(throwing: Failure(message: "The helper stopped")) }
+        for continuation in pending.values { continuation.resume(throwing: Failure(message: reason)) }
         pending.removeAll()
     }
 
+    /// Resumes the call `line` answers. The helper replies in order, so a line
+    /// that will not decode belongs to the oldest call still waiting.
     private func receive(_ line: Data) {
-        guard let reply = try? JSONDecoder().decode(Reply.self, from: line),
-              let id = reply.id, let continuation = pending.removeValue(forKey: id) else { return }
+        guard let reply = try? JSONDecoder().decode(Reply.self, from: line) else {
+            guard let oldest = pending.keys.min(), let continuation = pending.removeValue(forKey: oldest) else { return }
+            continuation.resume(throwing: Failure(message: "The helper sent a reply that is not JSON: \(String(decoding: line, as: UTF8.self))"))
+            return
+        }
+        guard let id = reply.id, let continuation = pending.removeValue(forKey: id) else { return }
         if let error = reply.error {
             continuation.resume(throwing: Failure(message: error.message))
         } else {

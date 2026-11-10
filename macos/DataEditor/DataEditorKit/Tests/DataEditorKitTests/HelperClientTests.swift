@@ -34,6 +34,10 @@ struct HelperClientTests {
         }
     }
 
+    @Test func describesAFailureByTheHelpersMessage() {
+        #expect(HelperClient.Failure(message: "x is outside the workspace").localizedDescription == "x is outside the workspace")
+    }
+
     @Test func matchesConcurrentRepliesToTheirRequests() async throws {
         try await withFakeHelper { client in
             async let a: Echo = client.call("a", [String: String]())
@@ -44,11 +48,39 @@ struct HelperClientTests {
         }
     }
 
+    @Test func keepsUnicodeLineSeparatorsInsideAValue() async throws {
+        try await withFakeHelper { client in
+            let value = "one\u{2028}two\u{2029}three\u{85}four"
+            let reply: Echo = try await client.call("load", ["file": value])
+            #expect(reply.echo["params"]?["file"] == .string(value))
+        }
+    }
+
+    @Test func failsTheOldestRequestWhenAReplyWillNotDecode() async throws {
+        try await withFakeHelper { client in
+            await #expect(throws: HelperClient.Failure.self) {
+                let _: Echo = try await client.call("garbage", [String: String]())
+            }
+            let reply: Echo = try await client.call("load", ["file": "after"])
+            #expect(reply.echo["params"]?["file"] == .string("after"))
+        }
+    }
+
     @Test func failsWaitingRequestsWhenTheHelperStops() async throws {
         try await withFakeHelper { client in
             await #expect(throws: HelperClient.Failure(message: "The helper stopped")) {
                 let _: Echo = try await client.call("exit", [String: String]())
             }
+        }
+    }
+
+    /// The client is never started, so it cannot learn the helper stopped
+    /// before it writes; the write must fail rather than raise SIGPIPE.
+    @Test func throwsWhenWritingToAHelperThatHasExited() async throws {
+        let client = try HelperClient(executable: URL(filePath: "/bin/sh"), arguments: ["-c", "exit 0"])
+        try await Task.sleep(for: .milliseconds(500))
+        await #expect(throws: (any Error).self) {
+            let _: Echo = try await client.call("load", ["file": "x"])
         }
     }
 
