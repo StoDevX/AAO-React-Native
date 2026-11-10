@@ -139,6 +139,13 @@ struct MapScreen: Screen {
 		tap(searchField, until: cancelButton, named: "the map's search field")
 	}
 
+	/// Tap the search field until the keyboard is up. An iPad's search offers
+	/// no Close button for `focusSearch` to wait on; the keyboard comes up on both.
+	@discardableResult
+	func focusSearchForTyping() -> Self {
+		tap(searchField, until: app.keyboards.firstMatch, named: "the map's search field")
+	}
+
 	@discardableResult
 	func cancelSearch() -> Self {
 		XCTAssertTrue(cancelButton.waitUntilExists(timeout: 10), "The search field should offer Close")
