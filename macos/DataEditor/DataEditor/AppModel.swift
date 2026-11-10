@@ -23,10 +23,12 @@ final class AppModel {
 
     enum Refusal: LocalizedError {
         case updating
+        case buildProblems
 
         var errorDescription: String? {
             switch self {
             case .updating: "The data is being updated. Submit again once the update finishes."
+            case .buildProblems: "The data has problems that stop it building. Fix the ones listed, then submit again."
             }
         }
     }
@@ -54,8 +56,10 @@ final class AppModel {
     private(set) var updateError: String?
     /// Set while `submit` runs, which reads `data/` that an update would replace underneath it.
     private(set) var submitting = false
-    /// Set while `launch()` runs, so a second call does not start a second helper and ccc.
+    /// Set while `launch()` runs, so a second call does not start a second helper.
     private var launching = false
+    /// Set while `startPreview()` waits for the server, so a second call does not start a second ccc.
+    private var startingPreview = false
     /// Set once quitting has begun, so a launch still under way starts nothing more.
     private var shuttingDown = false
 
@@ -67,6 +71,8 @@ final class AppModel {
     private let workspace: Workspace
     private var helper: HelperClient?
     private var ccc: CccRunner?
+    /// Copies ccc's statuses into `cccStatus`. Its stream never ends, so stopping the preview cancels it.
+    private var cccWatch: Task<Void, Never>?
     private let builds = Debouncer(delay: .milliseconds(500))
 
     static let port = 8790
@@ -93,7 +99,8 @@ final class AppModel {
     /// Editing it would replace the copy they set aside, so it is not editable until they choose.
     func isConflicted(_ file: String) -> Bool { conflicts.contains(file) }
 
-    /// Downloads the workspace if need be and starts the helper and ccc. Does
+    /// Downloads the workspace if need be and starts the helper. The first
+    /// build waits for the preview or a submission, so editing opens quickly. Does
     /// nothing while a launch runs or once one has succeeded; after a failure
     /// it starts again, first stopping whatever the failed attempt started.
     func launch() async {
@@ -124,17 +131,6 @@ final class AppModel {
             ])
             await helper.start()
             self.helper = helper
-            buildProblems = try await helper.build().problems
-            if testHelper == nil {
-                let port = try await helper.serve(port: Self.port)
-                let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
-                pagesOrigin = origin
-                let ccc = CccRunner(configuration: .bundled(node: runtime.node, cccRoot: runtime.cccRoot, pagesOrigin: origin, state: support.appending(path: "ccc")))
-                if shuttingDown { return }
-                self.ccc = ccc
-                Task { for await status in await ccc.statuses() { self.cccStatus = status; self.cccLog = await ccc.log } }
-                await ccc.start()
-            }
             buildings = try await helper.buildings()
             calendar = try await helper.calendar()
             changedFiles = try workspace.changedFiles()
@@ -151,7 +147,45 @@ final class AppModel {
         }
     }
 
-    func restartCcc() async { await ccc?.start() }
+    /// Starts the phone preview: builds, serves the newest good build and runs
+    /// ccc on it. A build with problems lists them and the preview starts
+    /// anyway, serving the last good build if there is one.
+    /// After a crash or a refused port it starts the same ccc again. Does
+    /// nothing while it starts or runs, during an update or quitting, or
+    /// under UI tests, which have no bundled ccc to run.
+    func startPreview() async {
+        guard testHelper == nil, !shuttingDown, !updating, !startingPreview, let helper else { return }
+        if let ccc {
+            await rebuild()
+            await ccc.start()
+            return
+        }
+        startingPreview = true
+        defer { startingPreview = false }
+        await rebuild()
+        do {
+            let port = try await helper.serve(port: Self.port)
+            let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
+            pagesOrigin = origin
+            if shuttingDown { return }
+            let ccc = CccRunner(configuration: .bundled(node: runtime.node, cccRoot: runtime.cccRoot, pagesOrigin: origin, state: support.appending(path: "ccc")))
+            self.ccc = ccc
+            cccWatch = Task { for await status in await ccc.statuses() { self.cccStatus = status; self.cccLog = await ccc.log } }
+            await ccc.start()
+        } catch {
+            cccLog = [error.localizedDescription]
+            cccStatus = .crashed(1)
+        }
+    }
+
+    /// Stops ccc and lets it go. The helper keeps serving the build, which costs nothing and the next start reuses.
+    func stopPreview() async {
+        cccWatch?.cancel()
+        cccWatch = nil
+        await ccc?.stop()
+        ccc = nil
+        cccStatus = .stopped
+    }
 
     /// Stops ccc's whole process group and the helper, so quitting leaves nothing holding a port.
     func shutdown() async {
@@ -160,8 +194,7 @@ final class AppModel {
     }
 
     private func stopProcesses() async {
-        await ccc?.stop()
-        ccc = nil
+        await stopPreview()
         await helper?.stop()
         helper = nil
     }
@@ -219,12 +252,15 @@ final class AppModel {
 
     /// Opens a pull request, or adds a commit to the open one. Refuses during
     /// an update, which may have removed a file it has not yet put back, and
-    /// would send that file as deleted.
+    /// would send that file as deleted. Builds first and refuses data that
+    /// does not build, since nothing else may have built it this session.
     func submit(summary: String) async throws {
         if updating { throw Refusal.updating }
-        guard let base = baseCommit else { return }
+        guard let base = baseCommit, let helper else { return }
         submitting = true
         defer { submitting = false }
+        buildProblems = try await helper.build().problems
+        if !buildProblems.isEmpty { throw Refusal.buildProblems }
         let submitter = GitHubSubmitter(tokens: tokens)
         let changes = changedFiles.map { Change(path: "data/\($0)", contents: try? workspace.contents(of: $0)) }
         if let submission, submissionState == .open || submissionState == .changesRequested {
