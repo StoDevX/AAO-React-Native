@@ -53,26 +53,3 @@ struct ContentView: View {
         }
     }
 }
-
-/// The Data Browser window. Stands in until the browser is written.
-struct DataBrowserView: View {
-    var body: some View { Text("Data Browser") }
-}
-
-/// The edited files. Stands in until the review sheet, with its diffs and submitting, is written.
-struct ChangesView: View {
-    @Environment(AppModel.self) private var model
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            List(model.changedFiles, id: \.self) { Text($0) }
-            HStack {
-                Spacer()
-                Button("Done") { dismiss() }.keyboardShortcut(.defaultAction)
-            }
-        }
-        .padding()
-        .frame(minWidth: 360, minHeight: 240)
-    }
-}

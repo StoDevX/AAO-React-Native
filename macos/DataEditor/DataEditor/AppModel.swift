@@ -400,6 +400,9 @@ final class AppModel {
         await afterFilesChanged()
     }
 
+    /// Clears a failed update's message once the contributor has read it.
+    func dismissUpdateError() { updateError = nil }
+
     func keepMine(_ file: String) async {
         guard !updating else { return }
         try? workspace.keepMine(file)
