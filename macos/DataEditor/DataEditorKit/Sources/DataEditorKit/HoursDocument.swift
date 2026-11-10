@@ -57,10 +57,12 @@ public struct HoursRow: Hashable, Sendable {
         self.toText = toText
     }
 
-    /// The stretches of each day this row covers. A close at or before the open
-    /// runs past midnight into the next day; midnight to midnight is all day.
+    /// The stretches of each day this row covers, as the app reads them
+    /// (`find-open-window.ts`): a close before the open runs past midnight into
+    /// the next day, a close of midnight ends the day, and a close equal to the
+    /// open is no window at all.
     public func segments() -> [Segment] {
-        guard let from, let to else { return [] }
+        guard let from, let to, to != from else { return [] }
         return days.flatMap { day -> [Segment] in
             if to.minutes > from.minutes { return [Segment(day: day, start: from.minutes, end: to.minutes)] }
             if to.minutes == 0 { return [Segment(day: day, start: from.minutes, end: 1440)] }

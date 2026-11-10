@@ -57,9 +57,16 @@ struct HoursDocumentTests {
         ])
     }
 
-    @Test func treatsMidnightToMidnightAsAllDay() {
-        let row = HoursRow(days: [.Su], fromText: "12:00am", toText: "12:00am")
-        #expect(row.segments() == [HoursRow.Segment(day: .Su, start: 0, end: 1440)])
+    /// The app moves a close to the next day only when it is before the open,
+    /// so a close equal to the open is a window of no length: closed.
+    @Test(arguments: ["12:00am", "8:00am"])
+    func drawsNothingWhenTheCloseIsTheOpen(time: String) {
+        #expect(HoursRow(days: [.Su], fromText: time, toText: time).segments() == [])
+    }
+
+    @Test func endsAtMidnightWhenTheCloseIsMidnight() {
+        let row = HoursRow(days: [.Fr], fromText: "8:00pm", toText: "12:00am")
+        #expect(row.segments() == [HoursRow.Segment(day: .Fr, start: 1200, end: 1440)])
     }
 
     @Test func wrapsSundayIntoMonday() {
@@ -77,6 +84,37 @@ struct HoursDocumentTests {
         ))
         #expect(editor.setNotes(service: 0, nil) == .delete(["exceptions", 0, "schedule", 0, "notes"]))
         #expect(editor.setDays(service: 0, row: 0, [.We, .Mo]) == .set(["exceptions", 0, "schedule", 0, "hours", 0, "days"], .array([.string("Mo"), .string("We")])))
+    }
+
+    @Test func appendsRowsAndServicesAfterTheLastOne() {
+        let editor = ScheduleEditor(base: ["schedule"], services: HoursDocument(value: cage).services)
+        #expect(editor.addRow(service: 0) == .set(
+            ["schedule", 0, "hours", 2],
+            .object(["days": .array(["Mo", "Tu", "We", "Th", "Fr"].map(JSONValue.string)), "from": .string("9:00am"), "to": .string("5:00pm")])
+        ))
+        #expect(editor.addService(title: "Grill") == .set(["schedule", 1], .object([
+            "title": .string("Grill"),
+            "hours": .array([.object(["days": .array([.string("Mo")]), "from": .string("9:00am"), "to": .string("5:00pm")])]),
+        ])))
+    }
+
+    @Test func removesARowAndRenamesAService() {
+        let editor = ScheduleEditor(base: ["schedule"], services: HoursDocument(value: cage).services)
+        #expect(editor.removeRow(service: 0, row: 1) == .delete(["schedule", 0, "hours", 1]))
+        #expect(editor.setTitle(service: 0, "Grill") == .set(["schedule", 0, "title"], .string("Grill")))
+    }
+
+    @Test func marksAServiceClosedAndOpenAgain() {
+        let editor = ScheduleEditor(base: ["exceptions", 0, "schedule"], services: HoursDocument(value: cage).exceptions[0].services)
+        #expect(editor.setClosed(service: 0, true) == [
+            .set(["exceptions", 0, "schedule", 0, "hours"], .array([])),
+            .set(["exceptions", 0, "schedule", 0, "isPhysicallyOpen"], .bool(false)),
+        ])
+        #expect(editor.setClosed(service: 0, false) == [
+            .delete(["exceptions", 0, "schedule", 0, "isPhysicallyOpen"]),
+            .set(["exceptions", 0, "schedule", 0, "hours", 0],
+                 .object(["days": .array(["Mo", "Tu", "We", "Th", "Fr"].map(JSONValue.string)), "from": .string("9:00am"), "to": .string("5:00pm")])),
+        ])
     }
 
     @Test func refusesToRemoveTheLastService() {
