@@ -47,7 +47,8 @@ struct HoursDetailView: View {
                             Button("Remove this exception", role: .destructive) {
                                 if !isRepeatClick() { Task { await model.apply([.delete(["exceptions", .index(index)])]) } }
                             }
-                                .disabled(model.editing)
+                                // removing an exception moves the place a later one's draft is saved to
+                                .disabled(model.editing || !model.unsavedDrafts.isEmpty)
                         }
                         .disabled(locked)
                     }
@@ -132,7 +133,8 @@ private struct BreaksSection: View {
                         Text("Hours of its own").tag("custom")
                         if case .other? = entry { Text("Set in the file").tag("other") }
                     }
-                    .disabled(model.editing)
+                    // leaving hours of its own takes away fields that may hold a draft
+                    .disabled(model.editing || !model.unsavedDrafts.isEmpty)
                     if case .custom(let services)? = entry {
                         ScheduleSection(title: nil, editor: ScheduleEditor(base: path, services: services))
                     }

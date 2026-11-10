@@ -14,9 +14,13 @@ struct ScheduleSection: View {
         let file = model.documentFile ?? ""
         ForEach(Array(editor.services.enumerated()), id: \.offset) { s, service in
             Section {
-                DraftField(label: "Title", file: file, value: service.title) { file, text in Task { await model.apply([editor.setTitle(service: s, text)], to: file) } }
+                DraftField(label: "Title", file: file, value: service.title) { file, text, expected in
+                    await model.applyDraft(editor.setTitle(service: s, text), to: file, replacing: expected)
+                }
                     .accessibilityIdentifier("service-title-\(s)")
-                DraftField(label: "Notes", file: file, value: service.notes ?? "", axis: .vertical) { file, text in Task { await model.apply([editor.setNotes(service: s, text)], to: file) } }
+                DraftField(label: "Notes", file: file, value: service.notes ?? "", axis: .vertical) { file, text, expected in
+                    await model.applyDraft(editor.setNotes(service: s, text), to: file, replacing: expected)
+                }
                 Group {
                     Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
                                                   set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
@@ -30,6 +34,10 @@ struct ScheduleSection: View {
                         Spacer()
                         if let remove = editor.removeService(s) {
                             Button("Remove This Service", role: .destructive) { if !isRepeatClick() { apply(remove) } }
+                                // removing a service moves the place a later service's draft is saved to
+                                .disabled(!model.unsavedDrafts.isEmpty)
+                                .help(model.unsavedDrafts.isEmpty ? "" : "Press Return to save what you typed first.")
+                                .accessibilityIdentifier("remove-service-\(s)")
                         }
                     }
                 }
@@ -48,28 +56,44 @@ struct ScheduleSection: View {
 /// when it loses focus, or when it goes. An edit per keystroke would race its
 /// own replies, and a late reply would put back text already typed over.
 ///
-/// The draft remembers the file it was typed for. Choosing another building
-/// can swap the document under a field that keeps focus, and the draft must
-/// still land in the file it was typed for, not the one now on screen.
+/// The draft remembers the file it was typed for and the text it began from.
+/// Choosing another building can swap the document under a field that keeps
+/// focus, and the draft must still land in its own file. Until the helper
+/// takes the text the field keeps it: nothing reloads over it, and it is sent
+/// again on Return or when focus leaves.
 private struct DraftField: View {
+    @Environment(AppModel.self) private var model
     let label: String
     /// the file on screen
     let file: String
     /// what that file holds
     let value: String
     var axis: Axis = .horizontal
-    let commit: (_ file: String, _ text: String) -> Void
+    /// saves `text` in `file` if it still holds `expected`; returns whether it did
+    let commit: (_ file: String, _ text: String, _ expected: String) async -> Bool
     @State private var draft = ""
     /// the file `draft` was typed for
     @State private var draftFile = ""
-    /// what that file held when the draft began, so an untouched draft is not sent
+    /// what that file held when the draft began; the draft is unsaved while it differs
     @State private var base = ""
+    @State private var id = UUID()
+    /// Set while a commit waits for the helper. One at a time, so each
+    /// commit's `expected` is the text the one before it saved.
+    @State private var committing = false
     @FocusState private var focused: Bool
 
     private func commitIfChanged() {
-        guard draft != base else { return }
-        commit(draftFile, draft)
-        base = draft
+        guard draft != base, !committing else { return }
+        committing = true
+        let (file, text, expected) = (draftFile, draft, base)
+        Task {
+            let saved = await commit(file, text, expected)
+            committing = false
+            guard saved, draftFile == file else { return }
+            base = text
+            // what was typed while this one waited
+            commitIfChanged()
+        }
     }
 
     private func load() {
@@ -82,15 +106,23 @@ private struct DraftField: View {
         TextField(label, text: $draft, axis: axis)
             .focused($focused)
             .onSubmit(commitIfChanged)
-            .onChange(of: focused) { _, isFocused in if !isFocused { commitIfChanged() } }
+            .onChange(of: focused) { _, isFocused in
+                guard !isFocused else { return }
+                // with nothing typed, catch up with a file changed while focused (a revert)
+                if draft == base, value != draft { load() } else { commitIfChanged() }
+            }
             .onAppear(perform: load)
-            .onDisappear(perform: commitIfChanged)
+            .onDisappear {
+                commitIfChanged()
+                model.noteDraft(id, unsaved: false)
+            }
             .onChange(of: file) {
                 commitIfChanged()
                 load()
             }
-            // the same file changed: this field's own edit, or another
-            .onChange(of: value) { if file == draftFile, !focused { load() } }
+            // the same file changed, by this field's edit or another; unsaved text stays
+            .onChange(of: value) { if file == draftFile, !focused, draft == base { load() } }
+            .onChange(of: draft != base) { _, unsaved in model.noteDraft(id, unsaved: unsaved) }
     }
 }
 
@@ -170,8 +202,11 @@ private struct TimePicker: View {
 /// Whether the click being handled is the second or later of a double-click.
 /// The first click's edit has often landed by then, so the button under the
 /// pointer belongs to the next row, which the contributor never meant to remove.
-func isRepeatClick() -> Bool {
-    (NSApp.currentEvent?.clickCount ?? 1) > 1
+/// A key press or an accessibility press is never a repeat; only a mouse event
+/// has a click count, and asking another kind for one raises.
+func isRepeatClick(_ event: NSEvent? = NSApp.currentEvent) -> Bool {
+    guard let event, event.type == .leftMouseDown || event.type == .leftMouseUp else { return false }
+    return event.clickCount > 1
 }
 
 /// The days of a row as a person reads them: `Mon–Fri`, `Sat, Sun`, `Mon, Wed–Fri`.

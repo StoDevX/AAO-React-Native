@@ -137,6 +137,21 @@ final class HoursEditorUITests: XCTestCase {
         XCTAssertTrue(app.popUpButtons["row-time-from-0-0"].exists)
     }
 
+    func testRemovingAServiceWaitsForATitleBeingTyped() throws {
+        let app = try launch()
+        selectTheCage(in: app)
+        let title = app.textFields["service-title-1"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        let remove = app.buttons["remove-service-0"]
+        XCTAssertTrue(remove.isEnabled)
+        title.click()
+        title.typeText(" swipe")
+        // removing the first service would move the second, whose title is still a draft
+        XCTAssertTrue(remove.wait(until: NSPredicate(format: "isEnabled == false"), timeout: 5))
+        title.typeKey(.return, modifierFlags: [])
+        XCTAssertTrue(remove.wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
+    }
+
     func testAConflictedFileCannotBeEdited() throws {
         let app = try launch(conflicted: "building-hours/1-1-cage.yaml")
         selectTheCage(in: app)

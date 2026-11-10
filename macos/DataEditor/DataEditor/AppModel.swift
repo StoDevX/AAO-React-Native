@@ -170,6 +170,8 @@ final class AppModel {
         // starting now, which also turns away a second call meanwhile
         cccStatus = .starting
         await rebuild()
+        // Stop pressed meanwhile
+        guard cccStatus == .starting else { return }
         if let ccc {
             await ccc.start()
             return
@@ -178,7 +180,7 @@ final class AppModel {
             let port = try await helper.serve(port: Self.port)
             let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
             pagesOrigin = origin
-            if shuttingDown { return }
+            if shuttingDown || cccStatus != .starting { return }
             let ccc = CccRunner(configuration: .bundled(node: runtime.node, cccRoot: runtime.cccRoot, pagesOrigin: origin, state: support.appending(path: "ccc")))
             self.ccc = ccc
             cccWatch = Task { for await status in await ccc.statuses() { self.cccStatus = status; self.cccLog = await ccc.log } }
@@ -228,34 +230,72 @@ final class AppModel {
     }
 
     /// Edits the file on screen. See `apply(_:to:)`.
-    func apply(_ ops: [EditOp]) async {
-        guard let file = documentFile else { return }
-        await apply(ops, to: file)
+    @discardableResult
+    func apply(_ ops: [EditOp]) async -> Bool {
+        guard let file = documentFile else { return false }
+        return await apply(ops, to: file)
     }
 
     /// Edits `file`, which a text field still holding a draft names after the
     /// selection has moved on. The document follows only an edit to the
     /// selected file. Does nothing during an update, to a file with
     /// an open conflict, whose set-aside copy the edit would replace, or while
-    /// another edit waits for its reply.
-    func apply(_ ops: [EditOp], to file: String) async {
-        guard !updating, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return }
+    /// another edit waits for its reply. Returns whether the helper took the edit.
+    @discardableResult
+    func apply(_ ops: [EditOp], to file: String) async -> Bool {
+        guard !updating, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
         editing = true
         defer { editing = false }
+        let edited: Loaded
         do {
-            let edited = try await helper.edit(file, ops)
-            changedFiles = try workspace.changedFiles()
-            if file == selection {
-                document = HoursDocument(value: edited.value)
-                documentFile = file
-                problems = edited.problems
-            }
-            if edited.problems.isEmpty {
-                await builds.schedule { await self.rebuild() }
-            }
+            edited = try await helper.edit(file, ops)
         } catch {
             if file == selection { problems = [Problem(file: file, message: error.localizedDescription, path: nil)] }
+            return false
         }
+        changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        if file == selection {
+            document = HoursDocument(value: edited.value)
+            documentFile = file
+            problems = edited.problems
+        }
+        if edited.problems.isEmpty {
+            await builds.schedule { await self.rebuild() }
+        }
+        return true
+    }
+
+    /// Saves a text field's draft, `op` setting the text at its path in
+    /// `file`. Waits for an edit or an update in flight, then writes only if
+    /// the file still holds `expected` there: a draft whose service has moved
+    /// or gone since it began is never written into another. Returns whether
+    /// the helper took it.
+    func applyDraft(_ op: EditOp, to file: String, replacing expected: String) async -> Bool {
+        while true {
+            // a short wait: an edit takes one helper round trip, an update a download
+            while editing || updating {
+                if shuttingDown { return false }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+            guard let helper, let current = try? await helper.load(file).value else { return false }
+            guard (current[path: op.path]?.string ?? "") == expected else {
+                if file == selection {
+                    problems.append(Problem(file: file, message: "What you typed was not saved, as its service moved first. Type it again.", path: op.path))
+                }
+                return false
+            }
+            if await apply([op], to: file) { return true }
+            // refused for good: a conflict, or the helper failed
+            if !editing && !updating { return false }
+        }
+    }
+
+    /// Text fields holding text not yet in their file. Removing a service or
+    /// an exception waits for them, since it moves the place a draft is saved to.
+    private(set) var unsavedDrafts: Set<UUID> = []
+
+    func noteDraft(_ id: UUID, unsaved: Bool) {
+        if unsaved { unsavedDrafts.insert(id) } else { unsavedDrafts.remove(id) }
     }
 
     /// Builds the data into `out/`. Skipped during an update, which reloads

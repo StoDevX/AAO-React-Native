@@ -39,6 +39,16 @@ public enum JSONValue: Codable, Hashable, Sendable {
         if case .array(let array) = self, array.indices.contains(index) { array[index] } else { nil }
     }
 
+    /// The value an edit's path names, or nil where the path leaves the file.
+    public subscript(path path: [PathKey]) -> JSONValue? {
+        path.reduce(Optional(self)) { value, step in
+            switch step {
+            case .key(let key): value?[key]
+            case .index(let index): value?[index]
+            }
+        }
+    }
+
     public var string: String? { if case .string(let value) = self { value } else { nil } }
     public var array: [JSONValue]? { if case .array(let value) = self { value } else { nil } }
     public var bool: Bool? { if case .bool(let value) = self { value } else { nil } }
