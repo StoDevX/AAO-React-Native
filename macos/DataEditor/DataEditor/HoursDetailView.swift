@@ -9,7 +9,7 @@ struct HoursDetailView: View {
     /// Why the file cannot be edited right now, if it cannot. `AppModel.apply` refuses these edits too.
     private var lockReason: String? {
         if model.updating { return "Editing waits while the data updates." }
-        if let file = model.selection, model.isConflicted(file) { return "Choose which copy to keep in Changes to edit this file." }
+        if let file = model.documentFile, model.isConflicted(file) { return "Choose which copy to keep in Changes to edit this file." }
         return nil
     }
 
@@ -17,7 +17,7 @@ struct HoursDetailView: View {
         let locked = lockReason != nil
         Form {
             if let lockReason {
-                Section { Label(lockReason, systemImage: "lock") }
+                Section { Label(lockReason, systemImage: "lock").accessibilityIdentifier("edit-lock") }
             }
 
             if !model.problems.isEmpty || !model.buildProblems.isEmpty {
@@ -44,13 +44,16 @@ struct HoursDetailView: View {
                     DisclosureGroup(exception.date) {
                         Group {
                             ScheduleSection(title: nil, editor: ScheduleEditor(base: ["exceptions", .index(index), "schedule"], services: exception.services))
-                            Button("Remove this exception", role: .destructive) { Task { await model.apply([.delete(["exceptions", .index(index)])]) } }
+                            Button("Remove this exception", role: .destructive) {
+                                if !isRepeatClick() { Task { await model.apply([.delete(["exceptions", .index(index)])]) } }
+                            }
+                                .disabled(model.editing)
                         }
                         .disabled(locked)
                     }
                 }
                 AddExceptionButton(count: document.exceptions.count)
-                    .disabled(locked)
+                    .disabled(locked || model.editing)
             }
 
             BreaksSection(document: document)
@@ -91,6 +94,13 @@ private struct BreaksSection: View {
     @Environment(AppModel.self) private var model
     let document: HoursDocument
 
+    /// The break's own templates, then every other in breaks.yaml, each once.
+    private func templates(for item: BreakCalendar.Break) -> [String] {
+        (item.templates + (model.calendar?.templates ?? [])).reduce(into: []) { names, name in
+            if !names.contains(name) { names.append(name) }
+        }
+    }
+
     var body: some View {
         Section("Breaks") {
             ForEach(model.calendar?.breaks ?? []) { item in
@@ -118,10 +128,11 @@ private struct BreaksSection: View {
                         }
                     )) {
                         Text("The break's default").tag("usual")
-                        ForEach(item.templates + (model.calendar?.templates ?? []), id: \.self) { name in Text(name).tag("template:\(name)") }
+                        ForEach(templates(for: item), id: \.self) { name in Text(name).tag("template:\(name)") }
                         Text("Hours of its own").tag("custom")
                         if case .other? = entry { Text("Set in the file").tag("other") }
                     }
+                    .disabled(model.editing)
                     if case .custom(let services)? = entry {
                         ScheduleSection(title: nil, editor: ScheduleEditor(base: path, services: services))
                     }

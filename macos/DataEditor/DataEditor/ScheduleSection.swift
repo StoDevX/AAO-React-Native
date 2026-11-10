@@ -1,3 +1,4 @@
+import AppKit
 import DataEditorKit
 import SwiftUI
 
@@ -10,28 +11,86 @@ struct ScheduleSection: View {
     private func apply(_ ops: EditOp...) { Task { await model.apply(ops) } }
 
     var body: some View {
+        let file = model.documentFile ?? ""
         ForEach(Array(editor.services.enumerated()), id: \.offset) { s, service in
             Section {
-                TextField("Title", text: Binding(get: { service.title }, set: { apply(editor.setTitle(service: s, $0)) }))
-                TextField("Notes", text: Binding(get: { service.notes ?? "" }, set: { apply(editor.setNotes(service: s, $0)) }), axis: .vertical)
-                Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
-                                              set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
-                ForEach(Array(service.rows.enumerated()), id: \.offset) { r, row in
-                    RowEditor(row: row, service: s, index: r, editor: editor)
-                }
-                HStack {
-                    Button("Add hours", systemImage: "plus") { apply(editor.addRow(service: s)) }
-                        .accessibilityIdentifier("add-row-\(s)")
-                    Spacer()
-                    if let remove = editor.removeService(s) {
-                        Button("Remove \(service.title.isEmpty ? "service" : service.title)", role: .destructive) { apply(remove) }
+                DraftField(label: "Title", file: file, value: service.title) { file, text in Task { await model.apply([editor.setTitle(service: s, text)], to: file) } }
+                    .accessibilityIdentifier("service-title-\(s)")
+                DraftField(label: "Notes", file: file, value: service.notes ?? "", axis: .vertical) { file, text in Task { await model.apply([editor.setNotes(service: s, text)], to: file) } }
+                Group {
+                    Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
+                                                  set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
+                        .accessibilityIdentifier("closed-\(s)")
+                    ForEach(Array(service.rows.enumerated()), id: \.offset) { r, row in
+                        RowEditor(row: row, service: s, index: r, editor: editor)
+                    }
+                    HStack {
+                        Button("Add hours", systemImage: "plus") { apply(editor.addRow(service: s)) }
+                            .accessibilityIdentifier("add-row-\(s)")
+                        Spacer()
+                        if let remove = editor.removeService(s) {
+                            Button("Remove This Service", role: .destructive) { if !isRepeatClick() { apply(remove) } }
+                        }
                     }
                 }
+                // each of these edits names a row or service by its place, which the edit in flight may move
+                .disabled(model.editing)
             } header: {
                 Text(s == 0 ? (title ?? service.title) : service.title)
             }
         }
         Button("Add a service", systemImage: "plus.rectangle.on.rectangle") { apply(editor.addService(title: "New service")) }
+            .disabled(model.editing)
+    }
+}
+
+/// A text field that edits the file once the contributor is done: on Return,
+/// when it loses focus, or when it goes. An edit per keystroke would race its
+/// own replies, and a late reply would put back text already typed over.
+///
+/// The draft remembers the file it was typed for. Choosing another building
+/// can swap the document under a field that keeps focus, and the draft must
+/// still land in the file it was typed for, not the one now on screen.
+private struct DraftField: View {
+    let label: String
+    /// the file on screen
+    let file: String
+    /// what that file holds
+    let value: String
+    var axis: Axis = .horizontal
+    let commit: (_ file: String, _ text: String) -> Void
+    @State private var draft = ""
+    /// the file `draft` was typed for
+    @State private var draftFile = ""
+    /// what that file held when the draft began, so an untouched draft is not sent
+    @State private var base = ""
+    @FocusState private var focused: Bool
+
+    private func commitIfChanged() {
+        guard draft != base else { return }
+        commit(draftFile, draft)
+        base = draft
+    }
+
+    private func load() {
+        draft = value
+        draftFile = file
+        base = value
+    }
+
+    var body: some View {
+        TextField(label, text: $draft, axis: axis)
+            .focused($focused)
+            .onSubmit(commitIfChanged)
+            .onChange(of: focused) { _, isFocused in if !isFocused { commitIfChanged() } }
+            .onAppear(perform: load)
+            .onDisappear(perform: commitIfChanged)
+            .onChange(of: file) {
+                commitIfChanged()
+                load()
+            }
+            // the same file changed: this field's own edit, or another
+            .onChange(of: value) { if file == draftFile, !focused { load() } }
     }
 }
 
@@ -63,26 +122,32 @@ private struct RowEditor: View {
                     }
                 ))
                 .toggleStyle(.button)
+                .accessibilityIdentifier("day-\(service)-\(index)-\(day.rawValue)")
             }
             Spacer()
-            TimePicker(text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
+            TimePicker(label: "Opens", text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
                 Task { await model.apply([editor.setTime(service: service, row: index, end: .from, time)]) }
             }
             Text("to")
-            TimePicker(text: row.toText, identifier: "row-time-to-\(service)-\(index)") { time in
+            TimePicker(label: "Closes", text: row.toText, identifier: "row-time-to-\(service)-\(index)") { time in
                 Task { await model.apply([editor.setTime(service: service, row: index, end: .to, time)]) }
             }
             if closesNextDay {
                 Text("next day").font(.caption).foregroundStyle(.secondary)
             }
-            Button("Remove", systemImage: "minus.circle") { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
+            Button("Remove \(daySummary(row.days)) \(row.fromText) to \(row.toText)", systemImage: "minus.circle") {
+                if !isRepeatClick() { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
+            }
                 .labelStyle(.iconOnly)
+                .accessibilityIdentifier("remove-row-\(service)-\(index)")
         }
     }
 }
 
 /// Every quarter hour, plus the file's own value if it is between them.
 private struct TimePicker: View {
+    /// read by VoiceOver; the row shows no label
+    let label: String
     let text: String
     let identifier: String
     let set: @MainActor @Sendable (ClockTime) -> Void
@@ -93,11 +158,34 @@ private struct TimePicker: View {
     }
 
     var body: some View {
-        Picker("", selection: Binding(get: { ClockTime(text) ?? ClockTime(minutes: 0) }, set: set)) {
+        Picker(label, selection: Binding(get: { ClockTime(text) ?? ClockTime(minutes: 0) }, set: set)) {
             ForEach(options, id: \.self) { Text($0.text).tag($0) }
         }
         .labelsHidden()
         .fixedSize()
         .accessibilityIdentifier(identifier)
     }
+}
+
+/// Whether the click being handled is the second or later of a double-click.
+/// The first click's edit has often landed by then, so the button under the
+/// pointer belongs to the next row, which the contributor never meant to remove.
+func isRepeatClick() -> Bool {
+    (NSApp.currentEvent?.clickCount ?? 1) > 1
+}
+
+/// The days of a row as a person reads them: `Mon–Fri`, `Sat, Sun`, `Mon, Wed–Fri`.
+/// A run of three or more days is named by its ends, a shorter one day by day.
+func daySummary(_ days: [Weekday]) -> String {
+    var runs: [[Weekday]] = []
+    for day in Weekday.allCases where days.contains(day) {
+        if let last = runs.last?.last, last.next == day {
+            runs[runs.count - 1].append(day)
+        } else {
+            runs.append([day])
+        }
+    }
+    return runs.flatMap { run in
+        run.count >= 3 ? ["\(run.first!.label)–\(run.last!.label)"] : run.map(\.label)
+    }.joined(separator: ", ")
 }

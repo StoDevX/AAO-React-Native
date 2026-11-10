@@ -38,6 +38,9 @@ final class AppModel {
     var calendar: BreakCalendar?
     var selection: String? { didSet { if let selection, selection != oldValue { Task { await select(selection) } } } }
     var document: HoursDocument?
+    /// The file `document` was read from. `selection` changes first, while the
+    /// new file loads, so an edit drawn from the document on screen names this.
+    private(set) var documentFile: String?
     var problems: [Problem] = []
     var buildProblems: [Problem] = []
     var changedFiles: [String] = []
@@ -54,12 +57,14 @@ final class AppModel {
     private(set) var updating = false
     /// Why the last update failed. The workspace is left as it was, so editing goes on.
     private(set) var updateError: String?
+    /// Set while an edit waits for the helper's reply. Edits made meanwhile
+    /// are dropped: they were built from the document before the reply, so a
+    /// second click on Remove would name a row that has since moved.
+    private(set) var editing = false
     /// Set while `submit` runs, which reads `data/` that an update would replace underneath it.
     private(set) var submitting = false
     /// Set while `launch()` runs, so a second call does not start a second helper.
     private var launching = false
-    /// Set while `startPreview()` waits for the server, so a second call does not start a second ccc.
-    private var startingPreview = false
     /// Set once quitting has begun, so a launch still under way starts nothing more.
     private var shuttingDown = false
 
@@ -131,10 +136,12 @@ final class AppModel {
             ])
             await helper.start()
             self.helper = helper
-            buildings = try await helper.buildings()
+            // the list appears with the phase that enables it, so no row shows unclickable
+            let listed = try await helper.buildings()
             calendar = try await helper.calendar()
             changedFiles = try workspace.changedFiles()
             conflicts = workspace.conflicts
+            buildings = listed
             phase = .ready
             if let selection { await select(selection) }
             if testHelper == nil {
@@ -154,15 +161,19 @@ final class AppModel {
     /// nothing while it starts or runs, during an update or quitting, or
     /// under UI tests, which have no bundled ccc to run.
     func startPreview() async {
-        guard testHelper == nil, !shuttingDown, !updating, !startingPreview, let helper else { return }
+        guard testHelper == nil, !shuttingDown, !updating, let helper else { return }
+        switch cccStatus {
+        case .starting, .running: return
+        case .stopped, .portInUse, .crashed: break
+        }
+        // the build and the server come before ccc says anything, so say it is
+        // starting now, which also turns away a second call meanwhile
+        cccStatus = .starting
+        await rebuild()
         if let ccc {
-            await rebuild()
             await ccc.start()
             return
         }
-        startingPreview = true
-        defer { startingPreview = false }
-        await rebuild()
         do {
             let port = try await helper.serve(port: Self.port)
             let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
@@ -206,28 +217,44 @@ final class AppModel {
             // a later selection's load owns the document now
             guard selection == file else { return }
             document = HoursDocument(value: loaded.value)
+            documentFile = file
             problems = loaded.problems
         } catch {
             guard selection == file else { return }
             document = nil
+            documentFile = nil
             problems = [Problem(file: file, message: error.localizedDescription, path: nil)]
         }
     }
 
-    /// Edits the selected file. Does nothing during an update, or to a file
-    /// with an open conflict, whose set-aside copy the edit would replace.
+    /// Edits the file on screen. See `apply(_:to:)`.
     func apply(_ ops: [EditOp]) async {
-        guard !updating, let helper, let file = selection, !isConflicted(file), !ops.isEmpty else { return }
+        guard let file = documentFile else { return }
+        await apply(ops, to: file)
+    }
+
+    /// Edits `file`, which a text field still holding a draft names after the
+    /// selection has moved on. The document follows only an edit to the
+    /// selected file. Does nothing during an update, to a file with
+    /// an open conflict, whose set-aside copy the edit would replace, or while
+    /// another edit waits for its reply.
+    func apply(_ ops: [EditOp], to file: String) async {
+        guard !updating, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return }
+        editing = true
+        defer { editing = false }
         do {
             let edited = try await helper.edit(file, ops)
-            document = HoursDocument(value: edited.value)
-            problems = edited.problems
             changedFiles = try workspace.changedFiles()
+            if file == selection {
+                document = HoursDocument(value: edited.value)
+                documentFile = file
+                problems = edited.problems
+            }
             if edited.problems.isEmpty {
                 await builds.schedule { await self.rebuild() }
             }
         } catch {
-            problems = [Problem(file: file, message: error.localizedDescription, path: nil)]
+            if file == selection { problems = [Problem(file: file, message: error.localizedDescription, path: nil)] }
         }
     }
 
