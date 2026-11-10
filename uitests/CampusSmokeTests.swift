@@ -173,7 +173,7 @@ final class CarletonSmokeTests: CampusSmokeTests {
 			building: "Burton",
 			mapRoute: "/map?campus=edu.carleton",
 			mapPlace: "Boliou Hall",
-			contactsTitle: "Directory",
+			contactsTitle: "Contacts",
 			contact: "Security Services",
 			word: "A & I",
 			transitTitle: "Transportation",

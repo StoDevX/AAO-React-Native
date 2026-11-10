@@ -24,14 +24,6 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 		icon: 'briefcase.fill',
 		gradient: c.goldGradient,
 	},
-	// The CARLS app's Balances tile; the OneCard site shows them, and the card's other uses.
-	{
-		type: 'url',
-		url: 'https://get.cbord.com/carletonstolaf/full/prelogin.php',
-		title: 'OneCard',
-		icon: 'creditcard.fill',
-		gradient: c.mintGradient,
-	},
 	{
 		type: 'view',
 		view: '/hours?campus=edu.carleton',
@@ -50,7 +42,7 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 	{
 		type: 'view',
 		view: '/contacts',
-		title: 'Directory',
+		title: 'Contacts',
 		icon: 'phone.fill',
 		gradient: c.orangeGradient,
 	},
@@ -126,6 +118,13 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 		title: 'Carleton News',
 		icon: 'megaphone.fill',
 		gradient: c.indigoGradient,
+	},
+	{
+		type: 'url',
+		url: 'https://www.carleton.edu/directory/',
+		title: 'Directory',
+		icon: 'person.fill',
+		gradient: c.redGradient,
 	},
 	developerTile,
 ]

@@ -87,7 +87,7 @@ describe('on Carleton', () => {
 			'Menus',
 			'Building Hours',
 			'Calendar',
-			'Directory',
+			'Contacts',
 			'SUMO',
 			'The Carletonian',
 			'Transportation',

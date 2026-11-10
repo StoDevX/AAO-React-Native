@@ -62,7 +62,7 @@ describe('Carleton', () => {
 	})
 
 	test('titles its contacts as its tile does, and leads from them to its own directory', () => {
-		expect(carleton.contacts?.title).toBe('Directory')
+		expect(carleton.contacts?.title).toBe('Contacts')
 		expect(carleton.contacts?.directoryUrl).toBe('https://www.carleton.edu/directory/')
 	})
 })
