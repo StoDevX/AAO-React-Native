@@ -105,9 +105,11 @@ public final class Workspace: Sendable {
         return (data + images, Snapshot(commit: commit, scriptsTree: try sha("scripts"), modulesTree: try sha("modules")))
     }
 
-    /// Downloads `commit` into a staging folder, then swaps it in whole. A
-    /// failure partway leaves the workspace as it was. Local edits are dropped;
-    /// the caller keeps any it means to replay.
+    /// Downloads `commit` into a staging folder, then swaps it in. The old
+    /// `data/`, `images/` and `base/` wait in `previous/` until the new ones and
+    /// the snapshot are in place; a failure at any point puts them back, so the
+    /// workspace and its snapshot always agree. Local edits are dropped; the
+    /// caller keeps any it means to replay.
     @discardableResult
     public func download(commit: String) async throws -> Snapshot {
         let (paths, snapshot) = try await files(at: commit)
@@ -128,14 +130,29 @@ public final class Workspace: Sendable {
                 group.addTask { try await self.fetch(raw.appending(path: path), to: staging.appending(path: path)) }
             }
         }
-        try fm.createDirectory(at: root, withIntermediateDirectories: true)
-        for name in ["data", "images", "base"] { try? fm.removeItem(at: root.appending(path: name)) }
-        try fm.createDirectory(at: root.appending(path: "base"), withIntermediateDirectories: true)
-        try fm.copyItem(at: staging.appending(path: "data"), to: baseDataDirectory)
-        try fm.moveItem(at: staging.appending(path: "data"), to: dataDirectory)
-        try fm.moveItem(at: staging.appending(path: "images"), to: root.appending(path: "images"))
-        try fm.removeItem(at: staging)
-        try JSONEncoder().encode(snapshot).write(to: snapshotFile)
+        let names = ["data", "images", "base"]
+        let previous = root.appending(path: "previous")
+        try? fm.removeItem(at: previous)
+        try fm.createDirectory(at: previous, withIntermediateDirectories: true)
+        var setAside: [String] = []
+        do {
+            for name in names where fm.fileExists(atPath: root.appending(path: name).path) {
+                try fm.moveItem(at: root.appending(path: name), to: previous.appending(path: name))
+                setAside.append(name)
+            }
+            try fm.createDirectory(at: root.appending(path: "base"), withIntermediateDirectories: true)
+            try fm.copyItem(at: staging.appending(path: "data"), to: baseDataDirectory)
+            try fm.moveItem(at: staging.appending(path: "data"), to: dataDirectory)
+            try fm.moveItem(at: staging.appending(path: "images"), to: root.appending(path: "images"))
+            try JSONEncoder().encode(snapshot).write(to: snapshotFile, options: .atomic)
+        } catch {
+            for name in names { try? fm.removeItem(at: root.appending(path: name)) }
+            for name in setAside { try? fm.moveItem(at: previous.appending(path: name), to: root.appending(path: name)) }
+            try? fm.removeItem(at: previous)
+            throw error
+        }
+        try? fm.removeItem(at: previous)
+        try? fm.removeItem(at: staging)
         return snapshot
     }
 
@@ -167,53 +184,102 @@ public final class Workspace: Sendable {
     }
 
     private var conflictsDirectory: URL { root.appending(path: "conflicts") }
+    /// Conflicts where the contributor deleted the file, kept as empty markers.
+    private var deletedConflictsDirectory: URL { root.appending(path: "conflicts-deleted") }
+    /// The contributor's edits, on disk while an update downloads and replays them.
+    private var replayDirectory: URL { root.appending(path: "replay") }
+
+    private func write(_ data: Data, to url: URL) throws {
+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try data.write(to: url)
+    }
+
+    /// Writes the contributor's edits, and any conflicts still open, to
+    /// `replay/`: `mine/` holds their version, `deleted/` marks a file they
+    /// deleted, `base/` holds the base they started from, and `conflicted/`
+    /// marks a file that must stay a conflict until master matches it.
+    private func saveEdits() throws {
+        let fm = FileManager.default
+        try? fm.removeItem(at: replayDirectory)
+        try fm.createDirectory(at: replayDirectory, withIntermediateDirectories: true)
+        func save(_ file: String, mine: Data?, conflicted: Bool) throws {
+            if let mine { try write(mine, to: replayDirectory.appending(path: "mine/\(file)")) }
+            else { try write(Data(), to: replayDirectory.appending(path: "deleted/\(file)")) }
+            if let base = try baseContents(of: file) { try write(base, to: replayDirectory.appending(path: "base/\(file)")) }
+            if conflicted { try write(Data(), to: replayDirectory.appending(path: "conflicted/\(file)")) }
+        }
+        let changed = try changedFiles()
+        for file in changed { try save(file, mine: try contents(of: file), conflicted: false) }
+        for file in conflicts where !changed.contains(file) {
+            let kept = try? Data(contentsOf: conflictsDirectory.appending(path: file))
+            try save(file, mine: kept, conflicted: true)
+        }
+    }
 
     /// Downloads `commit` and puts the contributor's edits back on top. An
     /// edit master already has (it was merged) is dropped. A file master also
     /// changed is a conflict: master's version stays in `data/`, the
     /// contributor's is kept aside until they choose with `keepMine` or
-    /// `keepLatest`. Returns the conflicts.
+    /// `keepLatest`, and stays a conflict through later updates until master
+    /// matches it. The edits are written to `replay/` before the download and
+    /// removed once replayed, so a failed download leaves the workspace as it
+    /// was and a failed replay leaves the edits on disk. Returns the conflicts.
     public func update(to commit: String) async throws -> [String] {
-        let edits = try changedFiles().map { (file: $0, oldBase: try baseContents(of: $0), mine: try contents(of: $0)) }
-        try await download(commit: commit)
         let fm = FileManager.default
+        try saveEdits()
+        do {
+            try await download(commit: commit)
+        } catch {
+            try? fm.removeItem(at: replayDirectory)
+            throw error
+        }
         try? fm.removeItem(at: conflictsDirectory)
-        var conflicts: [String] = []
-        for edit in edits {
-            let newBase = try baseContents(of: edit.file)
-            if newBase == edit.mine { continue }
-            if newBase == edit.oldBase {
-                let target = dataDirectory.appending(path: edit.file)
-                if let mine = edit.mine {
-                    try fm.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
-                    try mine.write(to: target)
-                } else {
-                    try? fm.removeItem(at: target)
-                }
+        try? fm.removeItem(at: deletedConflictsDirectory)
+        let files = relativeFiles(in: replayDirectory.appending(path: "mine")).union(relativeFiles(in: replayDirectory.appending(path: "deleted")))
+        for file in files.sorted() {
+            let mine = try? Data(contentsOf: replayDirectory.appending(path: "mine/\(file)"))
+            let oldBase = try? Data(contentsOf: replayDirectory.appending(path: "base/\(file)"))
+            let conflicted = fm.fileExists(atPath: replayDirectory.appending(path: "conflicted/\(file)").path)
+            let newBase = try baseContents(of: file)
+            if newBase == mine { continue }
+            if !conflicted && newBase == oldBase {
+                let target = dataDirectory.appending(path: file)
+                if let mine { try write(mine, to: target) } else { try? fm.removeItem(at: target) }
+            } else if let mine {
+                try write(mine, to: conflictsDirectory.appending(path: file))
             } else {
-                conflicts.append(edit.file)
-                let kept = conflictsDirectory.appending(path: edit.file)
-                try fm.createDirectory(at: kept.deletingLastPathComponent(), withIntermediateDirectories: true)
-                try (edit.mine ?? Data()).write(to: kept)
+                try write(Data(), to: deletedConflictsDirectory.appending(path: file))
             }
         }
+        try? fm.removeItem(at: replayDirectory)
         return conflicts
     }
 
     /// The files set aside by the last update, waiting for a choice.
-    public var conflicts: [String] { relativeFiles(in: conflictsDirectory).sorted() }
+    public var conflicts: [String] {
+        relativeFiles(in: conflictsDirectory).union(relativeFiles(in: deletedConflictsDirectory)).sorted()
+    }
 
     /// Resolves a conflict with the contributor's version.
     public func keepMine(_ file: String) throws {
+        let fm = FileManager.default
         let kept = conflictsDirectory.appending(path: file)
         let target = dataDirectory.appending(path: file)
-        try? FileManager.default.removeItem(at: target)
-        try FileManager.default.moveItem(at: kept, to: target)
+        if fm.fileExists(atPath: kept.path) {
+            try fm.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try? fm.removeItem(at: target)
+            try fm.moveItem(at: kept, to: target)
+        } else {
+            try? fm.removeItem(at: target)
+            try fm.removeItem(at: deletedConflictsDirectory.appending(path: file))
+        }
     }
 
     /// Resolves a conflict with master's version.
     public func keepLatest(_ file: String) throws {
-        try FileManager.default.removeItem(at: conflictsDirectory.appending(path: file))
+        let fm = FileManager.default
+        let kept = conflictsDirectory.appending(path: file)
+        try fm.removeItem(at: fm.fileExists(atPath: kept.path) ? kept : deletedConflictsDirectory.appending(path: file))
     }
 
     /// Puts a data file back as it was at the base commit.

@@ -33,6 +33,14 @@ private func temporaryRoot() -> URL {
     FileManager.default.temporaryDirectory.appending(path: "workspace \(UUID().uuidString)")
 }
 
+/// Set from a stub's response closure, which runs off the test's task.
+private final class Flag: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value = false
+    func set() { lock.withLock { value = true } }
+    var isSet: Bool { lock.withLock { value } }
+}
+
 struct WorkspaceTests {
     @Test func downloadsTheDataAndThePublishedImages() async throws {
         let (session, stub) = stubRepo()
@@ -105,6 +113,66 @@ struct WorkspaceTests {
         let workspace = Workspace(root: root, session: c2)
         #expect(try await workspace.update(to: "c2") == [])
         #expect(try workspace.changedFiles() == [])
+    }
+
+    @Test func keepsAnOpenConflictThroughAnotherUpdate() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).download(commit: "c1")
+        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/1-1-cage.yaml"))
+        let (c2, _) = stubRepo(commit: "c2", cageHours: "name: The Cage at Buntrock\n")
+        _ = try await Workspace(root: root, session: c2).update(to: "c2")
+        let (c3, _) = stubRepo(commit: "c3", cageHours: "name: The Cage at Buntrock\n")
+        let workspace = Workspace(root: root, session: c3)
+        #expect(try await workspace.update(to: "c3") == ["building-hours/1-1-cage.yaml"])
+        try workspace.keepMine("building-hours/1-1-cage.yaml")
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
+    }
+
+    @Test func keepsADeletionThatMasterAlsoChanged() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).download(commit: "c1")
+        try FileManager.default.removeItem(at: root.appending(path: "data/building-hours/1-1-cage.yaml"))
+        let (c2, _) = stubRepo(commit: "c2", cageHours: "name: The Cage at Buntrock\n")
+        let workspace = Workspace(root: root, session: c2)
+        #expect(try await workspace.update(to: "c2") == ["building-hours/1-1-cage.yaml"])
+        #expect(workspace.conflicts == ["building-hours/1-1-cage.yaml"])
+        try workspace.keepMine("building-hours/1-1-cage.yaml")
+        #expect(workspace.conflicts == [])
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == nil)
+    }
+
+    @Test func writesEditsToDiskBeforeDownloading() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).download(commit: "c1")
+        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/1-1-cage.yaml"))
+        let saved = Flag()
+        let (c2, _) = StubProtocol.session { request in
+            let saveFile = root.appending(path: "replay/mine/building-hours/1-1-cage.yaml")
+            if FileManager.default.fileExists(atPath: saveFile.path) { saved.set() }
+            return (404, Data())
+        }
+        await #expect(throws: URLError.self) { _ = try await Workspace(root: root, session: c2).update(to: "c2") }
+        #expect(saved.isSet)
+        #expect(try Workspace(root: root, session: c2).contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
+    }
+
+    @Test func putsTheOldFilesBackWhenTheSwapFails() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).download(commit: "c1")
+        // a folder where the snapshot goes makes the last step of the swap fail
+        let snapshotFile = root.appending(path: "snapshot.json")
+        try FileManager.default.removeItem(at: snapshotFile)
+        try FileManager.default.createDirectory(at: snapshotFile, withIntermediateDirectories: true)
+        let (c2, _) = stubRepo(commit: "c2", cageHours: "name: Newer\n")
+        let workspace = Workspace(root: root, session: c2)
+        await #expect(throws: (any Error).self) { _ = try await workspace.download(commit: "c2") }
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage\n"))
+        #expect(try workspace.baseContents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage\n"))
+        #expect(FileManager.default.fileExists(atPath: root.appending(path: "images/spaces/cage.webp").path))
     }
 
     @Test func comparesTreesWithTheBundledHelper() {
