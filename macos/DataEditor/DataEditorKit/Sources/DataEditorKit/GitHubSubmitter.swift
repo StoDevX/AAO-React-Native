@@ -45,11 +45,15 @@ public struct GitHubSubmitter: ChangeSubmitter {
         guard let fullName = created["full_name"]?.string, let owner = created["owner"]?["login"]?.string else {
             throw SubmitError.github(0, "GitHub did not say where the fork is")
         }
-        // forking finishes in the background
+        // forking finishes in the background; only a 404 means it is not there yet
         for attempt in 0..<30 {
-            if (try? await send("GET", "/repos/\(fullName)")) != nil { break }
-            if attempt == 29 { throw SubmitError.github(0, "The fork was not ready in time") }
-            await sleep(.seconds(1))
+            do {
+                _ = try await send("GET", "/repos/\(fullName)")
+                break
+            } catch SubmitError.github(404, _) {
+                if attempt == 29 { throw SubmitError.github(0, "The fork was not ready in time") }
+                await sleep(.seconds(1))
+            }
         }
         _ = try? await send("POST", "/repos/\(fullName)/merge-upstream", .object(["branch": .string(repo.branch)]))
         return (owner, fullName)

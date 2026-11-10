@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import DataEditorKit
 
-private final class Counter: @unchecked Sendable {
+final class Counter: @unchecked Sendable {
     private let lock = NSLock()
     private var value = 0
     func next() -> Int { lock.withLock { value += 1; return value } }
