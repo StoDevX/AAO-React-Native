@@ -21,6 +21,7 @@ struct ScheduleSection: View {
                 DraftField(label: "Notes", file: file, value: service.notes ?? "", axis: .vertical) { file, text, expected in
                     await model.applyDraft(editor.setNotes(service: s, text), to: file, replacing: expected)
                 }
+                .accessibilityIdentifier("service-notes-\(s)")
                 Group {
                     Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
                                                   set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
@@ -69,8 +70,8 @@ private struct DraftField: View {
     /// what that file holds
     let value: String
     var axis: Axis = .horizontal
-    /// saves `text` in `file` if it still holds `expected`; returns whether it did
-    let commit: (_ file: String, _ text: String, _ expected: String) async -> Bool
+    /// saves `text` in `file` if it still holds `expected`
+    let commit: (_ file: String, _ text: String, _ expected: String) async -> AppModel.DraftOutcome
     @State private var draft = ""
     /// the file `draft` was typed for
     @State private var draftFile = ""
@@ -87,12 +88,21 @@ private struct DraftField: View {
         committing = true
         let (file, text, expected) = (draftFile, draft, base)
         Task {
-            let saved = await commit(file, text, expected)
+            let outcome = await commit(file, text, expected)
             committing = false
-            guard saved, draftFile == file else { return }
-            base = text
-            // what was typed while this one waited
-            commitIfChanged()
+            guard draftFile == file else { return }
+            switch outcome {
+            case .saved:
+                base = text
+                // what was typed while this one waited
+                commitIfChanged()
+            case .letGo(let current):
+                // the problems quote the typed text; the field starts afresh from the file
+                draft = current
+                base = current
+            case .notSaved:
+                break
+            }
         }
     }
 

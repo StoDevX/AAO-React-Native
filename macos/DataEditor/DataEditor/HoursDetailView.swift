@@ -25,7 +25,8 @@ struct HoursDetailView: View {
                     ForEach(Array((model.problems + model.buildProblems).enumerated()), id: \.offset) { _, problem in
                         Label {
                             VStack(alignment: .leading) {
-                                Text(problem.message)
+                                // selectable, so a draft the file refused can be copied back
+                                Text(problem.message).textSelection(.enabled)
                                 if let path = problem.path { Text(path.map(\.description).joined(separator: " › ")).font(.caption).foregroundStyle(.secondary) }
                             }
                         } icon: { Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange) }

@@ -2,12 +2,16 @@ import XCTest
 
 @MainActor
 final class HoursEditorUITests: XCTestCase {
+    /// The running app's data folder, for a test that changes a file under it.
+    private var data: URL?
+
     /// A workspace with the repo's data, as if downloaded, and the repo's helper.
     /// A `conflicted` file is set aside as a conflict, as an update leaves one.
     private func launch(conflicted: String? = nil) throws -> XCUIApplication {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let support = FileManager.default.temporaryDirectory.appending(path: "ui \(UUID().uuidString)")
         let workspace = support.appending(path: "workspace")
+        data = workspace.appending(path: "data")
         try FileManager.default.createDirectory(at: workspace.appending(path: "base"), withIntermediateDirectories: true)
         try FileManager.default.copyItem(at: repo.appending(path: "data"), to: workspace.appending(path: "data"))
         try FileManager.default.copyItem(at: repo.appending(path: "data"), to: workspace.appending(path: "base/data"))
@@ -150,6 +154,50 @@ final class HoursEditorUITests: XCTestCase {
         XCTAssertTrue(remove.wait(until: NSPredicate(format: "isEnabled == false"), timeout: 5))
         title.typeKey(.return, modifierFlags: [])
         XCTAssertTrue(remove.wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
+    }
+
+    func testATitleWhoseFileChangedIsLetGoAndKeptInSight() throws {
+        let app = try launch()
+        selectTheCage(in: app)
+        let title = app.textFields["service-title-0"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        title.click()
+        // a click in the right-aligned field puts the caret before the text
+        title.typeKey(.rightArrow, modifierFlags: .command)
+        title.typeText(" today")
+
+        // the file changes under the draft, as an update can change it
+        let cage = try XCTUnwrap(data).appending(path: "building-hours/1-1-cage.yaml")
+        let yaml = try String(contentsOf: cage, encoding: .utf8)
+        XCTAssertTrue(yaml.contains("  - title: Hours\n"))
+        try yaml.replacingOccurrences(of: "  - title: Hours\n", with: "  - title: Open\n").write(to: cage, atomically: true, encoding: .utf8)
+        title.typeKey(.return, modifierFlags: [])
+
+        XCTAssertTrue(title.wait(until: NSPredicate(format: "value == %@", "Open"), timeout: 5))
+        let kept = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "Hours today", "Hours today")
+        XCTAssertTrue(app.descendants(matching: .any).matching(kept).firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["remove-service-0"].wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
+        attachScreenshot(of: app.windows.firstMatch, named: "Title let go after its file changed")
+
+        // the field takes new text again
+        title.click()
+        title.typeKey(.rightArrow, modifierFlags: .command)
+        title.typeText(" late\r")
+        XCTAssertTrue(app.buttons["remove-service-0"].wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
+        XCTAssertTrue(title.wait(until: NSPredicate(format: "value == %@", "Open late"), timeout: 5))
+    }
+
+    func testReturnSavesANote() throws {
+        let app = try launch()
+        selectTheCage(in: app)
+        let notes = app.textFields["service-notes-0"]
+        XCTAssertTrue(notes.waitForExistence(timeout: 10))
+        notes.click()
+        notes.typeKey("a", modifierFlags: .command)
+        notes.typeText("Cash only\r")
+        // saved: a removal that waits for drafts is allowed again, and the note has no new line
+        XCTAssertTrue(app.buttons["remove-service-0"].wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
+        XCTAssertEqual(notes.value as? String, "Cash only")
     }
 
     func testAConflictedFileCannotBeEdited() throws {

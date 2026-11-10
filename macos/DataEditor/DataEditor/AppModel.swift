@@ -78,6 +78,10 @@ final class AppModel {
     private var ccc: CccRunner?
     /// Copies ccc's statuses into `cccStatus`. Its stream never ends, so stopping the preview cancels it.
     private var cccWatch: Task<Void, Never>?
+    /// Counts starts and stops of the preview. A `startPreview` whose number
+    /// is no longer the newest gives up after each wait, so a Stop holds and
+    /// a Stop then Start makes one ccc, not two.
+    private var previewGeneration = 0
     private let builds = Debouncer(delay: .milliseconds(500))
 
     static let port = 8790
@@ -169,9 +173,11 @@ final class AppModel {
         // the build and the server come before ccc says anything, so say it is
         // starting now, which also turns away a second call meanwhile
         cccStatus = .starting
+        previewGeneration += 1
+        let generation = previewGeneration
         await rebuild()
-        // Stop pressed meanwhile
-        guard cccStatus == .starting else { return }
+        // a Stop, or a Stop and a newer start, came meanwhile
+        guard generation == previewGeneration else { return }
         if let ccc {
             await ccc.start()
             return
@@ -180,12 +186,13 @@ final class AppModel {
             let port = try await helper.serve(port: Self.port)
             let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
             pagesOrigin = origin
-            if shuttingDown || cccStatus != .starting { return }
+            if shuttingDown || generation != previewGeneration { return }
             let ccc = CccRunner(configuration: .bundled(node: runtime.node, cccRoot: runtime.cccRoot, pagesOrigin: origin, state: support.appending(path: "ccc")))
             self.ccc = ccc
             cccWatch = Task { for await status in await ccc.statuses() { self.cccStatus = status; self.cccLog = await ccc.log } }
             await ccc.start()
         } catch {
+            guard generation == previewGeneration else { return }
             cccLog = [error.localizedDescription]
             cccStatus = .crashed(1)
         }
@@ -193,6 +200,7 @@ final class AppModel {
 
     /// Stops ccc and lets it go. The helper keeps serving the build, which costs nothing and the next start reuses.
     func stopPreview() async {
+        previewGeneration += 1
         cccWatch?.cancel()
         cccWatch = nil
         await ccc?.stop()
@@ -265,28 +273,41 @@ final class AppModel {
         return true
     }
 
+    /// What became of a text field's draft.
+    enum DraftOutcome: Equatable {
+        case saved
+        /// refused for good, by a conflict or a helper failure; the field keeps the text
+        case notSaved
+        /// The file no longer held the text the draft began from: an update
+        /// changed it, or the service moved. The field takes `current`, and the
+        /// typed text stays in sight in the problems.
+        case letGo(current: String)
+    }
+
     /// Saves a text field's draft, `op` setting the text at its path in
     /// `file`. Waits for an edit or an update in flight, then writes only if
     /// the file still holds `expected` there: a draft whose service has moved
-    /// or gone since it began is never written into another. Returns whether
-    /// the helper took it.
-    func applyDraft(_ op: EditOp, to file: String, replacing expected: String) async -> Bool {
+    /// or gone since it began is never written into another.
+    func applyDraft(_ op: EditOp, to file: String, replacing expected: String) async -> DraftOutcome {
         while true {
             // a short wait: an edit takes one helper round trip, an update a download
             while editing || updating {
-                if shuttingDown { return false }
+                if shuttingDown { return .notSaved }
                 try? await Task.sleep(for: .milliseconds(50))
             }
-            guard let helper, let current = try? await helper.load(file).value else { return false }
-            guard (current[path: op.path]?.string ?? "") == expected else {
+            guard let helper, let current = try? await helper.load(file).value else { return .notSaved }
+            let held = current[path: op.path]?.string ?? ""
+            guard held == expected else {
                 if file == selection {
-                    problems.append(Problem(file: file, message: "What you typed was not saved, as its service moved first. Type it again.", path: op.path))
+                    await select(file)
+                    let typed = op.value?.string ?? ""
+                    problems.append(Problem(file: file, message: "“\(typed)” was not saved: the file changed there while you typed. Copy it from here if you still want it.", path: op.path))
                 }
-                return false
+                return .letGo(current: held)
             }
-            if await apply([op], to: file) { return true }
+            if await apply([op], to: file) { return .saved }
             // refused for good: a conflict, or the helper failed
-            if !editing && !updating { return false }
+            if !editing && !updating { return .notSaved }
         }
     }
 
