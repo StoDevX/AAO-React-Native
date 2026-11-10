@@ -171,7 +171,7 @@ public actor CccRunner {
         }
         Task {
             do {
-                for try await line in pipe.fileHandleForReading.bytes.lines { self.append(line) }
+                for try await line in lines(of: pipe.fileHandleForReading) { self.append(String(decoding: line, as: UTF8.self)) }
             } catch {
                 self.append("could not read ccc's output: \(error.localizedDescription)")
             }

@@ -52,16 +52,8 @@ public actor HelperClient {
     /// alone: a value may hold U+2028, U+2029 or U+0085, which Node writes raw.
     private func listen() async {
         var reason = "The helper stopped"
-        var line = Data()
         do {
-            for try await byte in output.bytes {
-                if byte == UInt8(ascii: "\n") {
-                    receive(line)
-                    line.removeAll(keepingCapacity: true)
-                } else {
-                    line.append(byte)
-                }
-            }
+            for try await line in lines(of: output) { receive(line) }
         } catch {
             reason = "The helper stopped: \(error.localizedDescription)"
         }

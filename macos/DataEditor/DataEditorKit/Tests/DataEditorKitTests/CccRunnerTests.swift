@@ -9,7 +9,7 @@ private func temporaryPidFile() -> URL {
     return folder.appending(path: "ccc.pid")
 }
 
-private func fixture(_ name: String, pidFile: URL = temporaryPidFile()) -> CccRunner.Configuration {
+func fixture(_ name: String, pidFile: URL = temporaryPidFile()) -> CccRunner.Configuration {
     let script = Bundle.module.url(forResource: name, withExtension: "sh", subdirectory: "Fixtures")!
     return CccRunner.Configuration(
         executable: URL(filePath: "/bin/sh"),
@@ -43,7 +43,7 @@ private func group(in pidFile: URL) -> pid_t? {
     (try? String(contentsOf: pidFile, encoding: .utf8))?.split(separator: " ").first.flatMap { pid_t($0) }
 }
 
-private func waitFor(_ runner: CccRunner, _ wanted: CccRunner.Status) async -> Bool {
+func waitFor(_ runner: CccRunner, _ wanted: CccRunner.Status) async -> Bool {
     for await status in await runner.statuses() where status == wanted { return true }
     return false
 }

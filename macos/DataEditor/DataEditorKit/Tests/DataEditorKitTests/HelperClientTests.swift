@@ -84,6 +84,31 @@ struct HelperClientTests {
         }
     }
 
+    /// The app runs ccc beside the helper, and ccc can go quiet for minutes.
+    @Test func answersWhileCccWritesNothing() async throws {
+        let runner = CccRunner(configuration: fixture("ccc quiet"), restartLimit: 0, ready: { true })
+        await runner.start()
+        #expect(await waitFor(runner, .running))
+        try await withFakeHelper { client in
+            let answeredInTime = await withTaskGroup(of: Bool.self) { group in
+                group.addTask {
+                    let reply: Echo? = try? await client.call("load", ["file": "x"])
+                    return reply != nil
+                }
+                group.addTask {
+                    try? await Task.sleep(for: .seconds(2))
+                    return false
+                }
+                let first = await group.next() ?? false
+                // ends ccc's output, which frees a call held up behind its reader
+                await runner.stop()
+                group.cancelAll()
+                return first
+            }
+            #expect(answeredInTime)
+        }
+    }
+
     @Test func encodesEditOps() throws {
         let ops: [EditOp] = [.set(["schedule", 0, "to"], .string("9:00pm")), .delete(["links", 1])]
         let json = String(decoding: try JSONEncoder.sorted.encode(ops), as: UTF8.self)
