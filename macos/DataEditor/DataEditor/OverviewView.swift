@@ -238,8 +238,7 @@ private struct SubmissionBanner: View {
                 Button(model.updating ? "Updating…" : "Get the Latest Data") { Task { await model.updateWorkspace() } }
                     .disabled(model.updating)
             case .gone:
-                Label("GitHub can't show pull request #\(number). It may have been deleted.",
-                      systemImage: "questionmark.circle")
+                Label("Pull request #\(number) no longer exists on GitHub.", systemImage: "questionmark.circle")
                 Spacer()
                 // every submission asks after it first, so it would stop each one
                 Button("Forget This Pull Request") { model.forgetSubmission(submission.number) }
