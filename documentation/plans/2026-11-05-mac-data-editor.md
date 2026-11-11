@@ -43,6 +43,8 @@ Parts A and B (Tasks 1–7) are built: ccc-server PR frog-pond/ccc-server#1265 (
 - **ccc in dev-origin mode sends `Cache-Control: no-store`** for hours, breaks and the redirects, so a refresh on the phone always reaches the Mac.
 - **ccc-server's dev script uses `--ip ::`,** which needs IPv6; on a Mac that is always present.
 - **Check on a device (Task 15 Step 5)** that the phone follows a redirect to `http://<name>.local:8790/…`. ATS should allow `.local` hosts, but the app's ATS exceptions name only `localhost`.
+- **xcodegen generates `DataEditor.xcodeproj` from `macos/DataEditor/project.yml`** (`mise run xcodegen`); the project is gitignored, so a task below that says to create or `git add` it means to edit `project.yml` instead.
+- **The GitHub OAuth App's client ID is committed** in `project.yml` as `DATA_EDITOR_GITHUB_CLIENT_ID`; it is not a secret.
 - **Deferred minors from the review**, worth folding in when their task comes up:
   - `listBuildings` fails whole if one file won't parse.
   - An edit index past a list's end fills holes with `null`.
@@ -78,7 +80,7 @@ Parts A and B (Tasks 1–7) are built: ccc-server PR frog-pond/ccc-server#1265 (
 | `scripts/data-editor-helper.mjs` | The JSON-lines stdio protocol over the three modules above |
 | `scripts/build-data-editor-helper.mjs` | esbuild bundle of the helper and `bundle-data`, plus the tree-hash stamp |
 | `macos/DataEditor/DataEditorKit/` | Swift package: JSON values, helper client, workspace, ccc runner, GitHub submitter, hours model, diff, debouncer |
-| `macos/DataEditor/DataEditor.xcodeproj`, `macos/DataEditor/DataEditor/` | The app: model and views |
+| `macos/DataEditor/project.yml`, `macos/DataEditor/DataEditor/` | The app: model and views |
 | `macos/DataEditor/scripts/` | Embed the runtime; sign and notarize |
 | `macos/DataEditor/e2e/preview.test.mjs` | Helper + ccc end-to-end |
 | `.github/workflows/data-editor.yml` | Tests, and releases on `data-editor-v*` tags |

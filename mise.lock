@@ -358,6 +358,23 @@ checksum = "sha256:8a4e35ab0b331c85d73567b12f2a444df187f483e5079ceffa6bda1faa2e7
 url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.zip"
 url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056944"
 
+[[tools.xcodegen]]
+version = "2.46.0"
+backend = "aqua:yonaskolb/XcodeGen"
+specifiers = ["2.46.0"]
+
+[tools.xcodegen."platforms.macos-arm64"]
+checksum = "sha256:4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806"
+checksum_source = "mise-versions"
+url = "https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip"
+url_api = "https://api.github.com/repos/yonaskolb/XcodeGen/releases/assets/478866069"
+
+[tools.xcodegen."platforms.macos-x64"]
+checksum = "sha256:4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806"
+checksum_source = "mise-versions"
+url = "https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip"
+url_api = "https://api.github.com/repos/yonaskolb/XcodeGen/releases/assets/478866069"
+
 [[tools.zizmor]]
 version = "1.31.1"
 backend = "aqua:zizmorcore/zizmor"

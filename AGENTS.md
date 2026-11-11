@@ -157,6 +157,7 @@ mise run test:jest    # Jest: app, source, modules
 mise run test:node    # node:test: scripts/, plugins/
 mise run tsc          # Type check
 APP_VARIANT=aao mise run prebuild   # Generate ios/ from app.config.ts, and install pods
+mise run xcodegen     # Generate each Mac app's gitignored .xcodeproj from macos/*/project.yml
 ```
 
 ### App Variants
