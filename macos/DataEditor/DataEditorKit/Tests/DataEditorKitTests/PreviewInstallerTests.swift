@@ -120,6 +120,15 @@ struct PreviewInstallerTests {
         #expect(!installer.isReady)
     }
 
+    /// A Stop that lands before tar or npm starts must stop it from starting, not crash ending it.
+    @Test func stopsAProgramThatHasNotStarted() async throws {
+        let task = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            try await PreviewInstaller.run(URL(filePath: "/bin/sleep"), ["5"], in: FileManager.default.temporaryDirectory, environment: [:])
+        }
+        await #expect(throws: CancellationError.self) { try await task.value }
+    }
+
     @Test func reusesWhatIsInstalled() async throws {
         let root = temporaryRoot()
         try await PreviewInstaller(root: root, node: release(), cccCommit: "cda256d", session: session(), runNpm: fakeNpm).install()

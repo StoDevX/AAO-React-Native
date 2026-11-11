@@ -112,7 +112,7 @@ public struct PreviewInstaller: Sendable {
     }
 
     /// Runs `executable`, ending it if the task is cancelled, and fails with its last lines of output.
-    private static func run(_ executable: URL, _ arguments: [String], in folder: URL, environment: [String: String]) async throws {
+    static func run(_ executable: URL, _ arguments: [String], in folder: URL, environment: [String: String]) async throws {
         let process = Process()
         let output = Pipe()
         process.executableURL = executable
@@ -123,19 +123,47 @@ public struct PreviewInstaller: Sendable {
         process.standardError = output
         let collected = Collected()
         output.fileHandleForReading.readabilityHandler = { collected.append($0.availableData) }
+        let launch = Launch(process)
         try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
                 process.terminationHandler = { _ in continuation.resume() }
-                do { try process.run() } catch { continuation.resume(throwing: error) }
+                do { try launch.start() } catch { continuation.resume(throwing: error) }
             }
         } onCancel: {
-            process.terminate()
+            launch.stop()
         }
         output.fileHandleForReading.readabilityHandler = nil
         try Task.checkCancellation()
         guard process.terminationStatus == 0 else {
             let lines = String(decoding: collected.data, as: UTF8.self).split(separator: "\n").suffix(20).joined(separator: "\n")
             throw Failure(message: "\(executable.lastPathComponent) exited with status \(process.terminationStatus)\n\(lines)")
+        }
+    }
+}
+
+/// Starts a process unless a Stop came first, and ends it if one comes
+/// after. Ending a process that never started raises an exception, and a
+/// Stop can land at any moment, so the two are decided under one lock.
+private final class Launch: @unchecked Sendable {
+    private let lock = NSLock()
+    private let process: Process
+    private var started = false
+    private var stopped = false
+
+    init(_ process: Process) { self.process = process }
+
+    func start() throws {
+        try lock.withLock {
+            if stopped { throw CancellationError() }
+            try process.run()
+            started = true
+        }
+    }
+
+    func stop() {
+        lock.withLock {
+            stopped = true
+            if started { process.terminate() }
         }
     }
 }
