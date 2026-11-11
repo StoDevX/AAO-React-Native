@@ -24,7 +24,7 @@ private let needs: [String: String] = [
     "title": "Needs a title.", "name": "Needs a name.", "date": "Needs a date.",
     "from": "Needs an opening time.", "to": "Needs a closing time.",
     "days": "Needs at least one day.", "hours": "Needs at least one row of hours.",
-    "schedule": "Needs at least one service.",
+    "schedule": "Needs at least one schedule.",
 ]
 
 /// A schema or schedule-check message as a sentence, or nil for one a contributor cannot reach.
@@ -49,7 +49,7 @@ private func plainMessage(_ message: String, path: [PathKey]?) -> String? {
         return "Names the same day twice."
     }
     if message == "a schedule must contain at least one service" || message == "a replacement must contain at least one service" {
-        return "Needs at least one service."
+        return "Needs at least one schedule."
     }
     if let match = message.wholeMatch(of: /duplicate exception date (.+)/) {
         return "Another exception is already on \(match.1)."
@@ -92,7 +92,7 @@ func plainProblems(_ problems: [Problem]) -> [Problem] {
 }
 
 /// Where `path` points in an hours file, as the editor's sections name it:
-/// `Usual hours › service 1 › title`. `breakNames` names a break by its key.
+/// `Usual hours › schedule 1 › title`. `breakNames` names a break by its key.
 func plainPlace(_ path: [PathKey], breakNames: [String: String] = [:]) -> String {
     var words: [String] = []
     var keys = path[...]
@@ -102,9 +102,9 @@ func plainPlace(_ path: [PathKey], breakNames: [String: String] = [:]) -> String
         switch key {
         case .key("schedule") where words.isEmpty:
             words.append("Usual hours")
-            counting = "service"
+            counting = "schedule"
         case .key("schedule"):
-            counting = "service"
+            counting = "schedule"
         case .key("exceptions") where words.isEmpty:
             if case .index(let index)? = keys.first {
                 keys.removeFirst()
@@ -116,7 +116,7 @@ func plainPlace(_ path: [PathKey], breakNames: [String: String] = [:]) -> String
             if case .key(let name)? = keys.first {
                 keys.removeFirst()
                 words.append(breakNames[name] ?? name)
-                counting = "service"
+                counting = "schedule"
             } else {
                 words.append("Breaks")
             }

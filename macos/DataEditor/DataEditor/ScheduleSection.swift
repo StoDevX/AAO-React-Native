@@ -34,7 +34,7 @@ struct ScheduleSection: View {
                             .accessibilityIdentifier("add-row-\(s)")
                         Spacer()
                         if let remove = editor.removeService(s) {
-                            Button("Remove This Service", role: .destructive) { if !isRepeatClick() { apply(remove) } }
+                            Button("Remove This Schedule", role: .destructive) { if !isRepeatClick() { apply(remove) } }
                                 // removing a service moves the place a later service's draft is saved to
                                 .disabled(!model.unsavedDrafts.isEmpty)
                                 .help(model.unsavedDrafts.isEmpty ? "" : "Press Return to save what you typed first.")
@@ -48,7 +48,7 @@ struct ScheduleSection: View {
                 Text(s == 0 ? (title ?? service.title) : service.title)
             }
         }
-        Button("Add a service", systemImage: "plus.rectangle.on.rectangle") { apply(editor.addService(title: "New service")) }
+        Button("Add a schedule", systemImage: "plus.rectangle.on.rectangle") { apply(editor.addService(title: "New schedule")) }
             .disabled(model.editing)
     }
 }
@@ -167,18 +167,10 @@ private struct RowEditor: View {
 
     var body: some View {
         HStack {
-            ForEach(Weekday.allCases, id: \.self) { day in
-                Toggle(day.label, isOn: Binding(
-                    get: { row.days.contains(day) },
-                    set: { on in
-                        let days = on ? row.days + [day] : row.days.filter { $0 != day }
-                        // a row needs at least one day
-                        if !days.isEmpty { Task { await model.apply([editor.setDays(service: service, row: index, days)]) } }
-                    }
-                ))
-                .toggleStyle(.button)
-                .accessibilityIdentifier("day-\(service)-\(index)-\(day.rawValue)")
+            DayPicker(week: model.week, days: row.days) { days in
+                Task { await model.apply([editor.setDays(service: service, row: index, days)]) }
             }
+            .accessibilityIdentifier("days-\(service)-\(index)")
             Spacer()
             TimePicker(label: "Opens", text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
                 Task { await model.apply([editor.setTime(service: service, row: index, end: .from, time)]) }
@@ -190,7 +182,7 @@ private struct RowEditor: View {
             if closesNextDay {
                 Text("next day").font(.caption).foregroundStyle(.secondary)
             }
-            Button("Remove \(daySummary(row.days)) \(row.fromText) to \(row.toText)", systemImage: "minus.circle") {
+            Button("Remove \(daySummary(row.days, week: model.week)) \(row.fromText) to \(row.toText)", systemImage: "minus.circle") {
                 if !isRepeatClick() { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
             }
                 .labelStyle(.iconOnly)
@@ -234,10 +226,11 @@ func isRepeatClick(_ event: NSEvent? = NSApp.currentEvent) -> Bool {
 
 /// The days of a row as a person reads them: `Mon–Fri`, `Sat, Sun`, `Mon, Wed–Fri`.
 /// A run of three or more days is named by its ends, a shorter one day by day.
-func daySummary(_ days: [Weekday]) -> String {
+/// Days follow `week`, so a run never crosses the week's end.
+func daySummary(_ days: [Weekday], week: [Weekday] = Weekday.allCases) -> String {
     var runs: [[Weekday]] = []
-    for day in Weekday.allCases where days.contains(day) {
-        if let last = runs.last?.last, last.next == day {
+    for (position, day) in week.enumerated() where days.contains(day) {
+        if let last = runs.last?.last, position > 0, week[position - 1] == last {
             runs[runs.count - 1].append(day)
         } else {
             runs.append([day])

@@ -6,6 +6,14 @@ public enum Weekday: String, CaseIterable, Sendable, Hashable {
 
     public var next: Weekday { Self.allCases[(Self.allCases.firstIndex(of: self)! + 1) % 7] }
 
+    /// The week starting on `firstWeekday`, counted as `Calendar.firstWeekday`
+    /// counts it: 1 is Sunday, 2 Monday, through 7, Saturday.
+    public static func inWeekOrder(firstWeekday: Int) -> [Weekday] {
+        // allCases starts on Monday, Calendar's day 2
+        let start = (firstWeekday + 5) % 7
+        return (0..<7).map { allCases[(start + $0) % 7] }
+    }
+
     public var label: String {
         ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][Self.allCases.firstIndex(of: self)!]
     }

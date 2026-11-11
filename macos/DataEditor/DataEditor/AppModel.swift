@@ -445,6 +445,9 @@ final class AppModel {
         return (open + build).filter { $0.file == file && seen.insert($0).inserted }
     }
 
+    /// The days of the week in the order this Mac's region starts them.
+    var week: [Weekday] { Weekday.inWeekOrder(firstWeekday: Calendar.current.firstWeekday) }
+
     /// Whether a build has run since launch, so the Overview can say how the preview stands.
     private(set) var hasBuilt = false
 

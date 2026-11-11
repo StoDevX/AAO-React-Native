@@ -131,10 +131,15 @@ final class HoursEditorUITests: XCTestCase {
     func testTogglingADayMovesItOnTheTimeline() throws {
         let app = try launch()
         selectTheCage(in: app)
-        let saturday = currentChanges(in: app).descendants(matching: .any)["day-0-0-Sa"].firstMatch
-        XCTAssertTrue(saturday.waitForExistence(timeout: 10))
-        saturday.click()
-        XCTAssertTrue(currentChanges(in: app).descendants(matching: .any)["day-0-0-Sa"].firstMatch.wait(until: NSPredicate(format: "value == 1"), timeout: 5))
+        let days = currentChanges(in: app).segmentedControls["days-0-0"]
+        XCTAssertTrue(days.waitForExistence(timeout: 10))
+        days.buttons["Sat"].click()
+        // the weekday row now holds Saturday too
+        let cage = try XCTUnwrap(data).appending(path: "building-hours/1-1-cage.yaml")
+        let saved = NSPredicate { _, _ in
+            (try? String(contentsOf: cage, encoding: .utf8))?.contains("days: [Mo, Tu, We, Th, Fr, Sa]") == true
+        }
+        XCTAssertEqual(XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: saved, object: nil)], timeout: 5), .completed)
         attachScreenshot(of: currentChanges(in: app), named: "Saturday added to the weekday row")
     }
 

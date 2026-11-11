@@ -1,14 +1,15 @@
 import DataEditorKit
 import SwiftUI
 
-/// The week at a glance: one line per day, one lane per service.
+/// The week at a glance: one line per day, from the day the week starts on here, one lane per schedule.
 struct WeekTimeline: View {
+    @Environment(AppModel.self) private var model
     let services: [Service]
     private let colors: [Color] = [.accentColor, .orange, .green, .purple, .pink, .teal]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            ForEach(Weekday.allCases, id: \.self) { day in
+            ForEach(model.week, id: \.self) { day in
                 HStack(spacing: 8) {
                     Text(day.label).font(.caption.monospaced()).frame(width: 32, alignment: .leading)
                     GeometryReader { geometry in

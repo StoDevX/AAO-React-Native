@@ -39,8 +39,8 @@ struct ProblemWordingTests {
         #expect(plain(problem("must have required property 'to'", ["schedule", 0, "hours", 0])) == ["Needs a closing time."])
         #expect(plain(problem("must have required property 'days'", ["schedule", 0, "hours", 0])) == ["Needs at least one day."])
         #expect(plain(problem("must NOT have fewer than 1 items", ["schedule", 0, "hours", 0, "days"])) == ["Needs at least one day."])
-        #expect(plain(problem("must NOT have fewer than 1 items", ["schedule"])) == ["Needs at least one service."])
-        #expect(plain(problem("a schedule must contain at least one service", ["schedule"])) == ["Needs at least one service."])
+        #expect(plain(problem("must NOT have fewer than 1 items", ["schedule"])) == ["Needs at least one schedule."])
+        #expect(plain(problem("a schedule must contain at least one service", ["schedule"])) == ["Needs at least one schedule."])
         #expect(plain(problem("must NOT have duplicate items (items ## 1 and 0 are identical)", ["schedule", 0, "hours", 0, "days"])) == ["Names the same day twice."])
     }
 
@@ -73,12 +73,12 @@ struct ProblemWordingTests {
     }
 
     @Test func wordsThePlaceInTheFile() {
-        #expect(plainPlace(["schedule", 0, "title"]) == "Usual hours › service 1 › title")
-        #expect(plainPlace(["schedule", 1, "hours", 0, "to"]) == "Usual hours › service 2 › row 1 › closing time")
+        #expect(plainPlace(["schedule", 0, "title"]) == "Usual hours › schedule 1 › title")
+        #expect(plainPlace(["schedule", 1, "hours", 0, "to"]) == "Usual hours › schedule 2 › row 1 › closing time")
         #expect(plainPlace(["exceptions", 2, "date"]) == "Exception 3 › date")
-        #expect(plainPlace(["exceptions", 0, "schedule", 0, "notes"]) == "Exception 1 › service 1 › note")
-        #expect(plainPlace(["breakSchedule", "fall", "schedule", 0, "notes"], breakNames: ["fall": "Fall Break"]) == "Fall Break › service 1 › note")
-        #expect(plainPlace(["breakSchedule", "fall", 0, "title"]) == "fall › service 1 › title")
+        #expect(plainPlace(["exceptions", 0, "schedule", 0, "notes"]) == "Exception 1 › schedule 1 › note")
+        #expect(plainPlace(["breakSchedule", "fall", "schedule", 0, "notes"], breakNames: ["fall": "Fall Break"]) == "Fall Break › schedule 1 › note")
+        #expect(plainPlace(["breakSchedule", "fall", 0, "title"]) == "fall › schedule 1 › title")
     }
 
     @Test func namesAFileByItsBuilding() {
