@@ -4,9 +4,10 @@ import Testing
 
 /// Answers for a repo at `commit` with one data file, the image groups and
 /// one image, and for Pages with the helper published from `scriptCommit`
-/// (`commit` unless given) speaking `helperProtocol`.
+/// (`commit` unless given) speaking `helperProtocol`, its scripts holding `script`.
 private func repoResponse(commit: String = "c1", failing failPath: String? = nil, cageHours: String = "name: The Cage\n",
-                          scriptCommit: String? = nil, helperProtocol: Int = HelperRuntime.protocolVersion) -> @Sendable (URLRequest) -> (Int, Data) {
+                          scriptCommit: String? = nil, helperProtocol: Int = HelperRuntime.protocolVersion,
+                          script: String = ";") -> @Sendable (URLRequest) -> (Int, Data) {
     { request in
         let url = request.url!.absoluteString
         if let failPath, url.hasSuffix(failPath) { return (-1, Data()) }
@@ -15,7 +16,7 @@ private func repoResponse(commit: String = "c1", failing failPath: String? = nil
             return (200, body(#"{"commit":"\#(commit)","protocol":\#(helperProtocol)}"#))
         case "https://stolaf.dev/AAO-React-Native/data-editor/helper.js",
              "https://stolaf.dev/AAO-React-Native/data-editor/bundle-data.js":
-            return (200, body("// data-editor commit \(scriptCommit ?? commit)\n;"))
+            return (200, body("// data-editor commit \(scriptCommit ?? commit)\n\(script)"))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/\(commit)":
             return (200, body(#"{"tree":[{"path":"data","type":"tree","sha":"tdata"},{"path":"images","type":"tree","sha":"timages"}]}"#))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tdata?recursive=1":
@@ -35,8 +36,15 @@ private func repoResponse(commit: String = "c1", failing failPath: String? = nil
 }
 
 private func stubRepo(commit: String = "c1", failing failPath: String? = nil, cageHours: String = "name: The Cage\n",
-                      scriptCommit: String? = nil, helperProtocol: Int = HelperRuntime.protocolVersion) -> (URLSession, StubProtocol.Stub) {
-    StubProtocol.session(repoResponse(commit: commit, failing: failPath, cageHours: cageHours, scriptCommit: scriptCommit, helperProtocol: helperProtocol))
+                      scriptCommit: String? = nil, helperProtocol: Int = HelperRuntime.protocolVersion,
+                      script: String = ";") -> (URLSession, StubProtocol.Stub) {
+    StubProtocol.session(repoResponse(commit: commit, failing: failPath, cageHours: cageHours, scriptCommit: scriptCommit,
+                                      helperProtocol: helperProtocol, script: script))
+}
+
+/// A helper script that loads and speaks `protocol`.
+private func helperScript(protocol version: Int = HelperRuntime.protocolVersion) -> String {
+    "globalThis.dataEditorHelper = {PROTOCOL: \(version), createHandlers: () => ({})}"
 }
 
 /// The real workspace lives under Application Support, so the folder name has a space.
@@ -313,6 +321,51 @@ struct WorkspaceTests {
         let workspace = Workspace(root: root, session: c2)
         await #expect(throws: Workspace.NeedsNewerApp()) { _ = try await workspace.updateToLatest() }
         // nothing was downloaded, so the data being edited stays as it was
+        #expect(workspace.snapshot == Snapshot(commit: "c1"))
+    }
+
+    /// An app updated for a newer protocol must not stay stuck on the helper its workspace holds.
+    @Test func replacesAHelperThatSpeaksAnotherProtocol() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo(script: helperScript(protocol: HelperRuntime.protocolVersion - 1))
+        _ = try await Workspace(root: root, session: c1).downloadLatest()
+        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/1-1-cage.yaml"))
+        let (c2, _) = stubRepo(commit: "c2", script: helperScript())
+        let workspace = Workspace(root: root, session: c2)
+        let helper = try await workspace.loadHelper(oxfmt: URL(filePath: "/usr/bin/false"))
+        #expect(helper.helperProtocol == HelperRuntime.protocolVersion)
+        #expect(workspace.snapshot == Snapshot(commit: "c2"))
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
+    }
+
+    /// A broken helper is fixed by publishing a working one, which the next launch fetches.
+    @Test func replacesAHelperThatWillNotLoad() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo(script: "throw new Error('broken')")
+        _ = try await Workspace(root: root, session: c1).downloadLatest()
+        let (c2, _) = stubRepo(commit: "c2", script: helperScript())
+        let workspace = Workspace(root: root, session: c2)
+        #expect(try await workspace.loadHelper(oxfmt: URL(filePath: "/usr/bin/false")).helperProtocol == HelperRuntime.protocolVersion)
+        #expect(workspace.snapshot == Snapshot(commit: "c2"))
+    }
+
+    @Test func loadsAGoodHelperWithoutAskingPages() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo(script: helperScript())
+        _ = try await Workspace(root: root, session: c1).downloadLatest()
+        let (offline, stub) = StubProtocol.session { _ in (-1, Data()) }
+        let workspace = Workspace(root: root, session: offline)
+        #expect(try await workspace.loadHelper(oxfmt: URL(filePath: "/usr/bin/false")).helperProtocol == HelperRuntime.protocolVersion)
+        #expect(stub.requests.isEmpty)
+    }
+
+    @Test func saysAnUpdateIsNeededWhenMastersHelperSpeaksAnotherProtocolToo() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo(script: helperScript(protocol: HelperRuntime.protocolVersion + 1))
+        _ = try await Workspace(root: root, session: c1).downloadLatest()
+        let (c2, _) = stubRepo(commit: "c2", helperProtocol: HelperRuntime.protocolVersion + 1)
+        let workspace = Workspace(root: root, session: c2)
+        await #expect(throws: Workspace.NeedsNewerApp()) { _ = try await workspace.loadHelper(oxfmt: URL(filePath: "/usr/bin/false")) }
         #expect(workspace.snapshot == Snapshot(commit: "c1"))
     }
 }

@@ -91,6 +91,22 @@ public final class Workspace: Sendable {
     /// Moves to master's published commit, keeping the edits, as `update(to:)` does.
     public func updateToLatest() async throws -> [String] { try await atLatest { try await self.update(to: $0) } }
 
+    /// The helper this workspace holds, writing data files with `oxfmt`. One
+    /// that will not load, or speaks another protocol than this app, gives
+    /// way to master's published helper, fetched with its data and keeping
+    /// the edits; `NeedsNewerApp` if that one speaks another protocol too.
+    public func loadHelper(oxfmt: URL) async throws -> HelperClient {
+        if let helper = try? helper(oxfmt: oxfmt), helper.helperProtocol == HelperRuntime.protocolVersion { return helper }
+        _ = try await updateToLatest()
+        let helper = try helper(oxfmt: oxfmt)
+        guard helper.helperProtocol == HelperRuntime.protocolVersion else { throw NeedsNewerApp() }
+        return helper
+    }
+
+    private func helper(oxfmt: URL) throws -> HelperClient {
+        HelperClient(runtime: try HelperRuntime(scripts: scriptsDirectory, data: dataDirectory, out: outDirectory, oxfmt: oxfmt))
+    }
+
     /// Runs `body` at the published commit, after refusing a helper this app
     /// cannot speak to. A deploy that lands meanwhile makes `body` throw
     /// `Moved`, so it runs again at the newer commit, up to three times.

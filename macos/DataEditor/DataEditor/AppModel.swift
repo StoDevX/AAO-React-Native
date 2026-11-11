@@ -167,12 +167,8 @@ final class AppModel {
                 try await workspace.downloadLatest()
             }
             if shuttingDown { return }
-            let helper = try makeHelper()
-            // a workspace downloaded by an older app can hold a helper this one cannot speak to
-            guard helper.helperProtocol == HelperRuntime.protocolVersion else {
-                phase = .needsAppUpdate
-                return
-            }
+            // a helper that will not load, or that an older app downloaded, gives way to master's
+            let helper = try await workspace.loadHelper(oxfmt: testOxfmt ?? runtime.oxfmt)
             self.helper = helper
             // the list appears with the phase that enables it, so no row shows unclickable
             let listed = try await helper.buildings()
@@ -190,12 +186,6 @@ final class AppModel {
         } catch {
             phase = .failed(error.localizedDescription)
         }
-    }
-
-    /// The helper the workspace holds, over its data, writing files with the bundled oxfmt.
-    private func makeHelper() throws -> HelperClient {
-        HelperClient(runtime: try HelperRuntime(scripts: workspace.scriptsDirectory, data: workspace.dataDirectory,
-                                                out: workspace.outDirectory, oxfmt: testOxfmt ?? runtime.oxfmt))
     }
 
     /// Builds into `out/`, and serves the build from now on if it is good.
@@ -698,7 +688,10 @@ final class AppModel {
         newerCommit = nil
         // the update brought the helper published with the new data
         do {
-            helper = try makeHelper()
+            helper = try await workspace.loadHelper(oxfmt: testOxfmt ?? runtime.oxfmt)
+        } catch is Workspace.NeedsNewerApp {
+            phase = .needsAppUpdate
+            return
         } catch {
             phase = .failed(error.localizedDescription)
             return
