@@ -559,3 +559,46 @@ The detail switch keeps the launch phases; for `.ready` it draws, by `(model.cha
 - [ ] **Step 4: Export the screenshots** — `xcrun xcresulttool export attachments --path <xcresult> --output-path .superpowers/sdd/2026-11-10-data-editor-changesets/screenshots` — open each, and check: three columns; the Overview's parts in order; "No changes" centred in the detail column; a past pull request's diff; nothing clipped.
 
 - [ ] **Step 5: Commit** — "Test the data editor's three columns".
+
+---
+
+## Revision (2026-11-10): two windows in place of three columns
+
+Tasks 1–5 are built. Wren then chose a Changesets window plus one two-panel
+window per changeset (spec, "Windows"). Task 6 as written above is replaced by
+Tasks 6R and 7R; its UI-test edits carry over where they still hold.
+
+### Task 6R: The Changesets window and a window per changeset
+
+**Files:**
+- Modify: `DataEditor/Changeset.swift` (`Changeset: Codable`), `AppModel.swift`, `DataEditorApp.swift`, `ContentView.swift` (becomes `ChangesetWindow`), `ChangesetList.swift`, `BuildingList.swift`, `HoursDetailView.swift`, `OverviewView.swift`, `PullRequestDetailView.swift`
+- Create: `DataEditor/ChangesetsWindow.swift`
+- Test: `DataEditorTests/SelectionTests.swift`
+
+**Interfaces:**
+- `enum Changeset: Hashable, Codable`
+- `AppModel` loses `changeset` and `choose(_ changeset:)`; keeps `item` and `choose(_ item: ChangesetItem)` for the Current changes window (text is typed only there).
+- `struct ChangesetsWindow: View` — `NavigationSplitView` of `ChangesetList(selection:)` and, by phase, the launch states or the chosen changeset's Overview (`OverviewView()` or `PullRequestDetailView(number:)`). Runs `model.launch()` in `.task`. Toolbar Open button; double-click and Return open.
+- `struct ChangesetWindow: View` (from `ContentView`) — `let changeset: Changeset`; `NavigationSplitView` of `BuildingList(changeset:selection:)` and the detail. Under `.current` the selection is `model.item` through `choose(_:)`; under a pull request it is the view's own `@State`. Title "Current changes" or the summary. Toolbar: preview control, Data Browser, "Changesets" (`openWindow(id: "changesets")`).
+- `DataEditorApp`: `Window("Changesets", id: "changesets") { ChangesetsWindow() }` first, with `.keyboardShortcut("0")` via a `CommandGroup`; `WindowGroup("Changeset", for: Changeset.self) { $value in ChangesetWindow(changeset: value ?? .current) }`; the Data Browser window as now.
+- A view environment action `showBuilding(_ file: String)`: `openWindow(value: Changeset.current)` then `await model.choose(ChangesetItem.building(file:))`. The Overview's "Show {building}" and problem rows call it; "Choose a Version…" calls `model.choose(.overview)`.
+
+- [ ] **Step 1: Failing tests.** In `SelectionTests`, drop the two tests of `choose(Changeset)`; keep `choosingABuildingOpensItsFile`; rewrite `aDraftThatWontSaveKeepsTheEditorOnScreen` and `theNewestChoiceWins` with two `ChangesetItem` choices; add `changesetsRoundTripAsWindowValues`: `Changeset.pullRequest(number: 7)` encodes and decodes to itself (it restores a window). Run: they fail to compile against `Codable`.
+- [ ] **Step 2: Implement** the interfaces above. `PullRequestDetailView` and `PullRequestFileView` call `model.loadDiffs(of:)` in `.task(id: number)`.
+- [ ] **Step 3: Run all unit tests**; no warnings from our code.
+- [ ] **Step 4: Commit** — "Open changesets from a window of their own".
+
+### Task 7R: UI tests and screenshots
+
+**Files:** `DataEditorUITests/RepoDataLaunch.swift`, `OverviewUITests.swift`, `HoursEditorUITests.swift`, `PullRequestUITests.swift`
+
+- [ ] **Step 1: Helpers.** `openCurrentChanges(in:)` double-clicks "Current changes" in the Changesets window's list and waits for the window titled "Current changes"; `selectTheCage` and `openOverview` act within that window (`app.windows["Current changes"]`). Editor tests open it first.
+- [ ] **Step 2: Tests,** each with a window screenshot:
+  - `testLaunchShowsTheChangesetsWindow` — the list has Current changes, no Submitted; the Overview shows "No changes".
+  - `testOpeningCurrentChangesBringsItsWindow` — its left panel starts with Overview, then The Cage.
+  - the Overview tests already edited for Task 6 (a change and Revert; a conflict beside a change; the conflict alone; submit with no client ID), run in the Current changes window.
+  - `testAProblemInAnotherBuildingNamesThatBuilding` — Stav Hall's editor shows none of The Cage's problems; the Overview lists it. Its first run, on the three-column code, failed both checks (line 89: The Cage's problem still showed on Stav Hall; line 94: the Overview lacked it or the Submit reason). Cause not yet found: debug it before changing the test.
+  - `testAPastPullRequestOpensReadOnly` — planted records; double-click #9002 opens its window: only Stav Hall and The Cage listed, The Cage's diff read-only, no editor.
+  - `testShowBuildingFromTheChangesetsWindow` — a problem in The Cage; "Show The Cage" in the Changesets window brings the Current changes window at The Cage.
+- [ ] **Step 3: Run the whole app suite**, then export the screenshots to `.superpowers/sdd/2026-11-10-data-editor-changesets/screenshots` and check each by eye: both windows, the Overview's order, "No changes" centred, a past pull request read-only, nothing clipped.
+- [ ] **Step 4: Commit** — "Test the changeset windows".

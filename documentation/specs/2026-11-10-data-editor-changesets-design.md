@@ -5,9 +5,10 @@
 The data editor's state about a change is scattered: build problems from one
 file show inside another file's editor, the Changes sheet hides behind an
 icon-only toolbar button, and submitted pull requests sit in a list at the foot
-of the sidebar. This design gives the window three columns: the changesets, the
-buildings, and the detail. All of a changeset's state lives on one page, its
-Overview.
+of the sidebar. This design gives the app a Changesets window, listing the
+changesets with the chosen one's Overview, from which each changeset opens in a
+two-panel window of its own: its buildings, and the detail. All of a
+changeset's state lives on one page, its Overview.
 
 It refines the submit and errors parts of
 [the data editor's design](2026-11-05-mac-data-editor-design.md); everything
@@ -19,46 +20,59 @@ else there stands.
 |---|---|
 | What a changeset is | One working set at a time: Current changes, plus the pull requests already submitted, read-only. Several working sets at once is a later follow-up |
 | The Changes sheet | Replaced by the Overview; the Changes toolbar button goes |
+| Windows | A Changesets window opens at launch and stays open; each changeset opens in its own two-panel window, the Overview its first row |
 | What the Overview holds | The whole changeset: its pull request, newer data, conflicts, preview build, problems, changed buildings and Submit. The preview server's control stays in the toolbar, since it belongs to the Mac |
 | Where a past pull request's diffs come from | Saved at each submit, refreshed from GitHub when the pull request is picked, the saved copy kept when GitHub can't be reached |
 
-## Columns
+## Windows
 
-The window is a three-column `NavigationSplitView`.
+### The Changesets window
 
-### Column 1: changesets
+Opens at launch; ⌘0 (Window menu) and a toolbar button in each changeset
+window bring it back. It stays open beside the others.
 
-- **Current changes**, always first, with the number of changed files and a
-  warning mark when a problem, a conflict or a failed build blocks it.
-- **Submitted**, one row per pull request, newest first: the summary,
-  `#number` and a state icon (open, changes requested, merged, closed,
-  unknown). No section while there are none.
+- **Left: the list.** **Current changes**, always first, with the number of
+  changed files and a warning mark when a problem, a conflict or a failed
+  build blocks it; then **Submitted**, one row per pull request, newest first:
+  the summary, `#number` and a state icon (open, changes requested, merged,
+  closed, unknown). No Submitted section while there are none.
+- **Right: the chosen changeset's Overview** (below). Choosing a pull request
+  asks GitHub for its diffs.
+- **Opening.** Double-clicking a row, pressing Return, or Open in the toolbar
+  opens that changeset's window, or brings it forward if open.
+- **Launch.** Until the data is ready the right side shows how the launch is
+  going (downloading, an update needed, a failure with Try Again) and the list
+  is empty.
 
 An open pull request shows both ways: Current changes is what the contributor
 is editing, its row is what they last sent.
 
-### Column 2: buildings
+### A changeset's window
 
-An **Overview** row, always first.
+One per changeset, two panels, titled "Current changes" or the pull request's
+summary. The toolbar keeps the preview control and the Data Browser, and adds
+a button that shows the Changesets window.
 
-- Under Current changes: every building, grouped by category in the phone
-  app's order. A changed building carries a dot, a building with a problem a
-  warning mark.
-- Under a past pull request: only the buildings it changed.
+- **Left:** an **Overview** row, always first, then the buildings.
+  - Under Current changes: every building, grouped by category in the phone
+    app's order. A changed building carries a dot, a building with a problem a
+    warning mark.
+  - Under a past pull request: only the buildings it changed.
+- **Right:**
+  - **Overview:** the changeset's page (below).
+  - **A building under Current changes:** today's editor, showing only that
+    file's own problems.
+  - **A building under a past pull request:** that file's saved diff,
+    read-only.
 
-### Column 3: detail
+### Between windows
 
-- **Overview:** the changeset's page (below).
-- **A building under Current changes:** today's editor, showing only that
-  file's own problems.
-- **A building under a past pull request:** that file's saved diff, read-only.
-
-### Selection
-
-Changing the selection in any column first saves text still being typed, as
-the toolbar buttons do now. If that save fails, the selection stays put, so
-the field and its text stay in sight. Picking Current changes or a pull
-request selects its Overview.
+- The Overview's "Show {building}" and a problem's building open the Current
+  changes window at that building, from whichever window they are in.
+- A locked file's "Choose a Version…" selects its own window's Overview row.
+- Changing the selection in the Current changes window first saves text still
+  being typed. If that save fails, the selection stays put, so the field and
+  its text stay in sight. Only that window edits, so only it holds typed text.
 
 ## The Overview
 
@@ -124,10 +138,12 @@ file it changed, the diff as lines: added, removed or unchanged.
   draft fails to save.
 - **Kit tests:** the files fetch against `URLProtocol` stubs, as
   `GitHubSubmitter`'s are.
-- **UI tests:** moving through the three columns; the Overview showing a
-  planted conflict and a change; a past pull request from a planted record,
-  read-only, with no network under UI tests.
-- **Screenshots** of each column state, the Overview with and without changes,
+- **UI tests:** launch shows the Changesets window; opening Current changes
+  brings its window; the Overview works in both; a past pull request's window
+  is read-only and lists only its buildings; "Show {building}" from the
+  Changesets window opens the editor there; the Overview showing a planted
+  conflict and a change, with no network under UI tests.
+- **Screenshots** of each window, the Overview with and without changes,
   and a past pull request, posted on the pull request.
 
 ## Order of work
