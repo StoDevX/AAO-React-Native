@@ -72,8 +72,15 @@ public final class Workspace: Sendable {
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
         request.setValue(accept, forHTTPHeaderField: "Accept")
         let (data, response) = try await session.data(for: request)
-        guard let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status) else {
-            throw URLError(.badServerResponse, userInfo: [NSURLErrorFailingURLErrorKey: url])
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        guard (200..<300).contains(status) else {
+            // named without its query, which only gets past Pages' cache
+            var named = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            named?.query = nil
+            throw URLError(.badServerResponse, userInfo: [
+                NSURLErrorFailingURLErrorKey: url,
+                NSLocalizedDescriptionKey: "Couldn't download \(named?.url?.absoluteString ?? url.absoluteString) (HTTP \(status)).",
+            ])
         }
         return data
     }

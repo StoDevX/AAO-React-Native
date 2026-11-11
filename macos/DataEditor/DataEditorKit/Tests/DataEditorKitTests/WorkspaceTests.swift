@@ -381,4 +381,12 @@ struct WorkspaceTests {
         let published = pages.filter { $0.url!.path.hasSuffix("helper.json") }.map(\.url!.query)
         #expect(published.count == 1 && published[0]?.isEmpty == false)
     }
+
+    /// Before the first deploy, or after a failed one, Pages has no helper.json; the startup screen says which file and why.
+    @Test func namesTheFileItCouldNotDownload() async throws {
+        let (session, _) = StubProtocol.session { _ in (404, Data()) }
+        let workspace = Workspace(root: temporaryRoot(), session: session)
+        let error = await #expect(throws: URLError.self) { _ = try await workspace.downloadLatest() }
+        #expect(error?.localizedDescription == "Couldn't download https://stolaf.dev/AAO-React-Native/data-editor/helper.json (HTTP 404).")
+    }
 }

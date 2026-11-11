@@ -130,7 +130,13 @@ final class AppModel {
             ?? Self.supportFolder(in: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0],
                                   bundleIdentifier: Bundle.main.bundleIdentifier)
         testOxfmt = defaults.string(forKey: "UITestOxfmt").map { URL(filePath: $0) }
-        workspace = Workspace(root: self.support.appending(path: "workspace"))
+        // Checking a branch whose helper no deploy has published: serve a folder
+        // holding data-editor/ from `node scripts/build-data-editor-helper.mjs
+        // --out <folder>/data-editor --commit <a pushed commit>`, and point
+        // `defaults write <bundle id> DataEditorPages http://localhost:<port>/` at it.
+        let root = self.support.appending(path: "workspace")
+        workspace = defaults.string(forKey: "DataEditorPages").flatMap { URL(string: $0) }
+            .map { Workspace(root: root, pages: $0) } ?? Workspace(root: root)
         // a file this build cannot read is copied aside before anything saves over it
         submissions = SubmissionHistory.load(from: self.support.appending(path: "submissions.json")).history
     }
