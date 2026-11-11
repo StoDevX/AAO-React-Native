@@ -119,7 +119,7 @@ public final class HelperRuntime: @unchecked Sendable {
         func define(_ name: String, _ block: Any) { host.setObject(block, forKeyedSubscript: name as NSString) }
         define("readFile", { (path: String) -> Any in (try? String(contentsOfFile: path, encoding: .utf8)) ?? NSNull() } as @convention(block) (String) -> Any)
         define("writeFile", { (path: String, text: String) in
-            try? text.write(toFile: path, atomically: true, encoding: .utf8)
+            failing("open", path) { try Data(text.utf8).write(to: URL(filePath: path)) }
         } as @convention(block) (String, String) -> Void)
         define("readdir", { (path: String) -> Any in (try? fm.contentsOfDirectory(atPath: path)) ?? NSNull() } as @convention(block) (String) -> Any)
         define("stat", { (path: String) -> Any in
@@ -129,16 +129,22 @@ public final class HelperRuntime: @unchecked Sendable {
             return ["isDirectory": isDirectory.boolValue, "size": (attributes[.size] as? NSNumber) ?? 0, "mtimeMs": modified * 1000]
         } as @convention(block) (String) -> Any)
         define("mkdir", { (path: String, recursive: Bool) in
-            try? fm.createDirectory(atPath: path, withIntermediateDirectories: recursive)
+            failing("mkdir", path) { try fm.createDirectory(atPath: path, withIntermediateDirectories: recursive) }
         } as @convention(block) (String, Bool) -> Void)
-        define("rm", { (path: String) in try? fm.removeItem(atPath: path) } as @convention(block) (String) -> Void)
+        // force, as Node's rmSync takes it: a missing path is no error
+        define("rm", { (path: String, force: Bool) in
+            if force && !fm.fileExists(atPath: path) { return }
+            failing("rm", path) { try fm.removeItem(atPath: path) }
+        } as @convention(block) (String, Bool) -> Void)
+        // rename(2) replaces the destination in one step, as Node's does
         define("rename", { (from: String, to: String) in
-            try? fm.removeItem(atPath: to)
-            try? fm.moveItem(atPath: from, toPath: to)
+            if Darwin.rename(from, to) != 0 { throwInJavaScript(errno: errno, "rename", from) }
         } as @convention(block) (String, String) -> Void)
         define("copyFile", { (from: String, to: String) in
-            try? fm.removeItem(atPath: to)
-            try? fm.copyItem(atPath: from, toPath: to)
+            failing("copyfile", from) {
+                if fm.fileExists(atPath: to) { try fm.removeItem(atPath: to) }
+                try fm.copyItem(atPath: from, toPath: to)
+            }
         } as @convention(block) (String, String) -> Void)
         define("realpath", { (path: String) -> String in URL(filePath: path).resolvingSymlinksInPath().path } as @convention(block) (String) -> String)
         define("mkdtemp", { (prefix: String) -> String in
@@ -218,6 +224,38 @@ public final class HelperRuntime: @unchecked Sendable {
             return ["code": source, "errors": [["message": error.localizedDescription]]]
         }
     }
+}
+
+/// Runs a file call for the scripts, and throws its failure in JavaScript as Node would.
+private func failing(_ syscall: String, _ path: String, _ body: () throws -> Void) {
+    do { try body() } catch { throwInJavaScript(errno: errno(of: error as NSError), syscall, path) }
+}
+
+/// The POSIX error behind a Foundation file error.
+private func errno(of error: NSError) -> Int32 {
+    if error.domain == NSPOSIXErrorDomain { return Int32(error.code) }
+    if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError, underlying.domain == NSPOSIXErrorDomain { return Int32(underlying.code) }
+    switch error.code {
+    case NSFileNoSuchFileError, NSFileReadNoSuchFileError: return ENOENT
+    case NSFileWriteFileExistsError: return EEXIST
+    case NSFileWriteNoPermissionError, NSFileReadNoPermissionError: return EACCES
+    case NSFileWriteOutOfSpaceError: return ENOSPC
+    case NSFileWriteVolumeReadOnlyError: return EROFS
+    default: return EIO
+    }
+}
+
+/// Throws in the calling script an error shaped like Node's: "ENOENT: no such
+/// file or directory, open '<path>'", with the name as its `code`.
+private func throwInJavaScript(errno number: Int32, _ syscall: String, _ path: String) {
+    guard let context = JSContext.current() else { return }
+    let names: [Int32: String] = [ENOENT: "ENOENT", EEXIST: "EEXIST", EACCES: "EACCES", EPERM: "EPERM", ENOTDIR: "ENOTDIR",
+                                  EISDIR: "EISDIR", ENOTEMPTY: "ENOTEMPTY", ENOSPC: "ENOSPC", EROFS: "EROFS", EXDEV: "EXDEV"]
+    let code = names[number] ?? "EIO"
+    let description = String(cString: strerror(number))
+    let error = JSValue(newErrorFromMessage: "\(code): \(description.prefix(1).lowercased() + description.dropFirst()), \(syscall) '\(path)'", in: context)!
+    error.setObject(code, forKeyedSubscript: "code" as NSString)
+    context.exception = error
 }
 
 /// The timers one context has set, run in the order they fall due.

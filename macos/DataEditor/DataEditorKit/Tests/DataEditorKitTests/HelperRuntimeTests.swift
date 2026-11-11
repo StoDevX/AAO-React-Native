@@ -123,4 +123,42 @@ struct HelperRuntimeTests {
         #expect(try await format(try runtime(folder, oxfmt: try fakeOxfmt(output: "", exitCode: 1)))
             == Formatted(code: "a:   1", errors: [.init(message: "oxfmt said no\n")]))
     }
+
+    /// A write Node would refuse must be refused, not reported done.
+    @Test func failsAWriteAsNodeDoes() async throws {
+        let folder = try scripts(handlers: """
+            write: async () => {
+                let file = __scriptDir + '/../missing/a.yaml'
+                try { __host.writeFile(file, 'a') } catch (error) { return {code: error.code, message: error.message, file} }
+                return 'written'
+            },
+            remove: async () => {
+                __host.rm(__scriptDir + '/../gone', true)
+                try { __host.rm(__scriptDir + '/../gone', false) } catch (error) { return error.code }
+                return 'removed'
+            },
+            """)
+        let helper = try runtime(folder)
+        let written = try JSONSerialization.jsonObject(with: Data(try await helper.call("write", paramsJSON: "{}").utf8)) as! [String: String]
+        #expect(written["code"] == "ENOENT")
+        #expect(written["message"] == "ENOENT: no such file or directory, open '\(written["file"]!)'")
+        #expect(try await helper.call("remove", paramsJSON: "{}") == #""ENOENT""#)
+    }
+
+    /// The scripts save a data file by renaming a finished copy over it, which must never leave neither.
+    @Test func renamesOverAFileInOneStep() async throws {
+        let folder = try scripts(handlers: """
+            rename: async () => {
+                let dir = __scriptDir + '/..'
+                __host.writeFile(dir + '/a.yaml', 'old')
+                __host.writeFile(dir + '/_a.yaml.next', 'new')
+                __host.rename(dir + '/_a.yaml.next', dir + '/a.yaml')
+                let replaced = __host.readFile(dir + '/a.yaml')
+                let code = null
+                try { __host.rename(dir + '/_missing.next', dir + '/a.yaml') } catch (error) { code = error.code }
+                return {replaced, code, kept: __host.readFile(dir + '/a.yaml')}
+            },
+            """)
+        #expect(try await runtime(folder).call("rename", paramsJSON: "{}") == #"{"replaced":"new","code":"ENOENT","kept":"new"}"#)
+    }
 }

@@ -78,8 +78,8 @@ export function mkdirSync(directory, options) {
 	host().mkdir(String(directory), Boolean(options?.recursive))
 }
 
-export function rmSync(file) {
-	host().rm(String(file))
+export function rmSync(file, options) {
+	host().rm(String(file), Boolean(options?.force))
 }
 
 export function renameSync(from, to) {
