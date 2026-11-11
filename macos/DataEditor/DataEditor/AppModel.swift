@@ -227,6 +227,8 @@ final class AppModel {
                 let install = Task { try await installer.install() }
                 self.install = install
                 try await install.value
+                // a Stop, or a Stop and a newer start, came meanwhile and owns these now
+                guard generation == previewGeneration else { return }
                 previewInstalling = false
                 self.install = nil
             }
