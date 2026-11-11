@@ -1,4 +1,4 @@
-# Data Editor: download Node and the preview server when first needed
+# Data Editor: download the helper, Node and the preview server
 
 ## Why
 
@@ -8,9 +8,17 @@ Browser's "This Mac" column use it. Node is 117 MB, and the first launch
 already needs the network to download the data. Most contributors edit, check
 and submit, and never start the preview.
 
+The helper the app carries is built from the scripts on the branch the app
+was built from, so it falls behind master as soon as one of its scripts
+changes there, and the app then refuses to edit until a new release.
+
 ## What changes
 
-- The app bundles only the helper: about 35 MB in all.
+- The app bundles only oxfmt's package, whose native binding the helper
+  loads: about 20 MB in all.
+- Master's data deploy publishes the bundled helper to GitHub Pages beside
+  the data. Each launch downloads the helper and the data at the commit that
+  deploy was built from, so the helper always matches the data it edits.
 - The first launch downloads Node, with its npm, alongside the data, and
   checks it against the SHA-256 the app carries. Later launches reuse it.
 - The first **Start Preview** downloads ccc-server's source at the commit in
@@ -20,6 +28,12 @@ and submit, and never start the preview.
   downloads it when first needed, then removes the copies of other versions.
 
 ## What the contributor sees
+
+- **Each launch:** as today, the startup screen says "Downloading…" while it
+  fetches a newer commit. The helper (about 1.3 MB) comes with it.
+- **An app too old for master's helper:** "An update is needed to edit this
+  data", as today; it now appears only when the app and the helper stop
+  understanding each other (see Protocol), not when a script changes.
 
 - **First launch:** the startup screen's "Downloading…" covers Node too
   (about 45 MB more). A failure shows the screen's error and Try Again, as a
@@ -39,7 +53,34 @@ and submit, and never start the preview.
 ## How it works
 
 Everything downloaded lives under `~/Library/Application Support/<bundle id>/`:
-`node/<version>/` and `ccc/<commit>/`.
+the workspace (data, and the helper in its `scripts/`), `node/<version>/` and
+`ccc/<commit>/`.
+
+### The helper
+
+- **Published:** `deploy-data.yml` builds the helper with
+  `scripts/build-data-editor-helper.mjs` into `docs/data-editor/`:
+  `data-editor-helper.mjs`, `bundle-data.mjs` and `helper.json`, which names
+  the commit (`GITHUB_SHA`) and the protocol (below). oxfmt stays external
+  and is not published: the runner's binding is Linux's.
+- **Fetched:** the app reads `data-editor/helper.json` from Pages first and
+  downloads the data at that commit, not at master's newest. Then it
+  downloads the two scripts into the workspace's `scripts/`, beside the
+  app's own copy of oxfmt's package as `node_modules`. If `helper.json`
+  names another commit by the time the scripts arrive, a deploy landed
+  meanwhile, and the app starts the download again.
+- **Newer data:** the check for a newer commit reads `helper.json` too, so it
+  offers an update once Pages has one, a few minutes after the merge.
+- **Offline:** the workspace keeps the helper with the data it was fetched
+  with.
+
+### Protocol
+
+`data-editor-helper.mjs` exports `PROTOCOL`, a whole number, and
+`helper.json` repeats it. The app holds the number it speaks, and refuses a
+helper with another one ("An update is needed…"). Changing a request's or a
+reply's shape bumps both, in the change that makes it. This replaces the
+comparison of the helper's files with master's.
 
 ### Node
 
@@ -84,8 +125,10 @@ staging folders beside them are removed.
 
 ## Build
 
-- `embed-runtime.sh` builds only the helper, and writes `node.json` and
-  `ccc-server.ref` beside it.
+- `embed-runtime.sh` copies oxfmt's package (with this Mac's binding), and
+  writes `node.json` and `ccc-server.ref` beside it.
+- `deploy-data.yml` gains a step that builds the helper into
+  `docs/data-editor/` after the data is bundled.
 - The Embed Runtime phase copies that folder, as now.
 - The e2e test (`macos/DataEditor/e2e/preview.test.mjs`) is unchanged; it
   takes a ccc-server checkout from `CCC_ROOT` as before.
@@ -101,7 +144,11 @@ staging folders beside them are removed.
 
 ## Testing
 
-- **Kit unit tests:** where Node and an install live for a version; that an
+- **node:test:** the helper build writes `helper.json` with the commit it is
+  given and `PROTOCOL`, and leaves oxfmt out of `docs/data-editor/`.
+- **Kit unit tests:** downloading the data and the helper at `helper.json`'s
+  commit; starting again when the commit changes mid-download; refusing a
+  helper whose protocol differs; where Node and an install live for a version; that an
   archive whose SHA-256 differs is refused and leaves nothing behind; that a
   staging folder is never taken for a ready copy; which folders the cleanup
   removes; reading `node.json`; the preview control's title and click for
@@ -117,4 +164,4 @@ staging folders beside them are removed.
 
 ## Out of scope
 
-Shrinking ccc-server's own dependencies; downloading the helper.
+Shrinking ccc-server's own dependencies; publishing oxfmt's binding.
