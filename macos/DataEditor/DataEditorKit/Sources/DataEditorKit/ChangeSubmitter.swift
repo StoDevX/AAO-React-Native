@@ -31,12 +31,28 @@ public enum SubmitError: LocalizedError, Equatable, Sendable {
     case missingBaseCommit
     case github(Int, String)
 
+    /// Whether GitHub says what was asked for no longer exists. Only 404 and
+    /// 410 say so: a 403 on a public read is nearly always the rate limit, for
+    /// something that is still there.
+    public var isGone: Bool {
+        if case .github(let status, _) = self { status == 404 || status == 410 } else { false }
+    }
+
+    /// Whether GitHub refused for sending too many requests, which a wait
+    /// fixes. GitHub answers 403 or 429 and says so in the message, in
+    /// both its primary and its secondary limit.
+    public var isRateLimited: Bool {
+        guard case .github(let status, let message) = self, status == 403 || status == 429 else { return false }
+        return message.localizedCaseInsensitiveContains("rate limit")
+    }
+
     public var errorDescription: String? {
+        if isRateLimited { return "GitHub is limiting requests right now. Try again in a few minutes." }
         switch self {
-        case .signInRequired: "Sign in to GitHub to submit your changes."
-        case .missingBaseCommit: "GitHub is still setting up your copy of the data. Try again in a minute."
-        case .github(let status, let message) where message.isEmpty: "GitHub answered with status \(status)."
-        case .github(_, let message): message
+        case .signInRequired: return "Sign in to GitHub to submit your changes."
+        case .missingBaseCommit: return "GitHub is still setting up your copy of the data. Try again in a minute."
+        case .github(let status, let message) where message.isEmpty: return "GitHub answered with status \(status)."
+        case .github(_, let message): return message
         }
     }
 }

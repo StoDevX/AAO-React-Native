@@ -53,9 +53,10 @@ final class AppModel {
     static func isPortInUse(_ message: String) -> Bool { message.contains("EADDRINUSE") }
 
     /// Whether GitHub refuses to show a pull request for good: it was
-    /// deleted, or the contributor can no longer see it.
+    /// deleted. A rate limit is not that: the pull request is still there, and
+    /// forgetting it would let the next submission open a duplicate.
     static func isUnreadable(_ error: any Error) -> Bool {
-        if case SubmitError.github(let status, _) = error { status == 404 || status == 403 } else { false }
+        (error as? SubmitError)?.isGone == true
     }
 
     var phase: Phase = .starting

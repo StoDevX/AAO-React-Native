@@ -287,7 +287,7 @@ private struct SubmissionBanner: View {
                 Spacer()
                 Link("Open on GitHub", destination: submission.url)
             case nil where model.submissionUnreadable:
-                Label("GitHub can't show pull request #\(submission.number). It may have been deleted, or you can no longer see it.",
+                Label("GitHub can't show pull request #\(submission.number). It may have been deleted.",
                       systemImage: "questionmark.circle")
                 Spacer()
                 // every submission asks after it first, so it would stop each one

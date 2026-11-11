@@ -56,7 +56,11 @@ struct SubmitControlTests {
     /// is remembered every submission asks after it first.
     @Test func offersToForgetAPullRequestGitHubWillNotShow() {
         #expect(AppModel.isUnreadable(SubmitError.github(404, "Not Found")))
-        #expect(AppModel.isUnreadable(SubmitError.github(403, "Forbidden")))
+        #expect(AppModel.isUnreadable(SubmitError.github(410, "Gone")))
+        // a public pull request answers 403 only when GitHub is rate limiting, and it still exists
+        #expect(!AppModel.isUnreadable(SubmitError.github(403, "API rate limit exceeded for user ID 1.")))
+        #expect(!AppModel.isUnreadable(SubmitError.github(403, "You have exceeded a secondary rate limit.")))
+        #expect(!AppModel.isUnreadable(SubmitError.github(403, "Forbidden")))
         #expect(!AppModel.isUnreadable(SubmitError.github(500, "")))
         #expect(!AppModel.isUnreadable(SubmitError.signInRequired))
         #expect(!AppModel.isUnreadable(URLError(.notConnectedToInternet)))

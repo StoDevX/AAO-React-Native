@@ -151,6 +151,28 @@ struct GitHubSubmitterTests {
         #expect(SubmitError.github(500, "").errorDescription != nil)
     }
 
+    /// A 403 on a public read is nearly always the rate limit, for a pull
+    /// request that still exists, so only 404 and 410 mean it is gone.
+    @Test func tellsAGonePullRequestFromARateLimit() {
+        #expect(SubmitError.github(404, "Not Found").isGone)
+        #expect(SubmitError.github(410, "Gone").isGone)
+        #expect(!SubmitError.github(403, "Forbidden").isGone)
+        #expect(!SubmitError.github(500, "").isGone)
+        #expect(!SubmitError.signInRequired.isGone)
+
+        let primary = SubmitError.github(403, "API rate limit exceeded for user ID 1.")
+        let secondary = SubmitError.github(403, "You have exceeded a secondary rate limit. Please wait a few minutes.")
+        let tooMany = SubmitError.github(429, "Too many requests, slow down: rate limit")
+        for error in [primary, secondary, tooMany] {
+            #expect(error.isRateLimited)
+            #expect(!error.isGone)
+            #expect(error.errorDescription == "GitHub is limiting requests right now. Try again in a few minutes.")
+        }
+        #expect(!SubmitError.github(403, "Resource not accessible by integration").isRateLimited)
+        #expect(SubmitError.github(403, "Resource not accessible by integration").errorDescription == "Resource not accessible by integration")
+        #expect(!SubmitError.github(404, "rate limit").isRateLimited)
+    }
+
     @Test func forgetsARejectedToken() async {
         let (session, _) = github(status401: ["/user"])
         let (submitter, tokens) = submitter(session)
