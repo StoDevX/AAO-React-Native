@@ -9,7 +9,8 @@ private func repoResponse(commit: String = "c1", failing failPath: String? = nil
                           scriptCommit: String? = nil, helperProtocol: Int = HelperRuntime.protocolVersion,
                           script: String = ";") -> @Sendable (URLRequest) -> (Int, Data) {
     { request in
-        let url = request.url!.absoluteString
+        // Pages is asked with a query that gets past its cache
+        let url = request.url!.host == "stolaf.dev" ? request.url!.absoluteString.split(separator: "?")[0].description : request.url!.absoluteString
         if let failPath, url.hasSuffix(failPath) { return (-1, Data()) }
         switch url {
         case "https://stolaf.dev/AAO-React-Native/data-editor/helper.json":
@@ -367,5 +368,17 @@ struct WorkspaceTests {
         let workspace = Workspace(root: root, session: c2)
         await #expect(throws: Workspace.NeedsNewerApp()) { _ = try await workspace.loadHelper(oxfmt: URL(filePath: "/usr/bin/false")) }
         #expect(workspace.snapshot == Snapshot(commit: "c1"))
+    }
+
+    /// Pages' cache keeps a file up to ten minutes, which would hand back the
+    /// same mismatched script on every try after a deploy.
+    @Test func asksPagesPastItsCache() async throws {
+        let (session, stub) = stubRepo()
+        _ = try await Workspace(root: temporaryRoot(), session: session).downloadLatest()
+        let pages = stub.requests.filter { $0.url!.host == "stolaf.dev" }
+        #expect(pages.allSatisfy { $0.cachePolicy == .reloadIgnoringLocalCacheData })
+        #expect(pages.filter { $0.url!.path.hasSuffix(".js") }.map(\.url!.query) == ["c1", "c1"])
+        let published = pages.filter { $0.url!.path.hasSuffix("helper.json") }.map(\.url!.query)
+        #expect(published.count == 1 && published[0]?.isEmpty == false)
     }
 }

@@ -68,7 +68,8 @@ public final class Workspace: Sendable {
     }
 
     private func get(_ url: URL, accept: String = "application/vnd.github+json") async throws -> Data {
-        var request = URLRequest(url: url)
+        // a cached copy could hold a file from before a deploy
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
         request.setValue(accept, forHTTPHeaderField: "Accept")
         let (data, response) = try await session.data(for: request)
         guard let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status) else {
@@ -81,7 +82,10 @@ public final class Workspace: Sendable {
 
     /// What master's data deploy last published, which the data and helper are downloaded at.
     public func latestPublished() async throws -> Published {
-        try JSONDecoder().decode(Published.self, from: try await get(pages.appending(path: "data-editor/helper.json"), accept: "application/json"))
+        // a query of its own each time gets past Pages' cache, which keeps a file for ten minutes
+        var url = pages.appending(path: "data-editor/helper.json")
+        url.append(queryItems: [URLQueryItem(name: "fresh", value: UUID().uuidString)])
+        return try JSONDecoder().decode(Published.self, from: try await get(url, accept: "application/json"))
     }
 
     /// Downloads master's published commit, starting again while a deploy lands meanwhile.
@@ -175,7 +179,10 @@ public final class Workspace: Sendable {
         // the helper published with this commit, each script named by the commit it came from
         for script in ["helper.js", "bundle-data.js"] {
             let file = staging.appending(path: "scripts/\(script)")
-            try await fetch(pages.appending(path: "data-editor/\(script)"), to: file)
+            // asked by commit, so Pages' cache holds one copy per deploy
+            var url = URLComponents(url: pages.appending(path: "data-editor/\(script)"), resolvingAgainstBaseURL: false)!
+            url.percentEncodedQuery = commit
+            try await fetch(url.url!, to: file)
             let first = String(decoding: try Data(contentsOf: file).prefix(200), as: UTF8.self).split(separator: "\n", maxSplits: 1).first
             guard first == "// data-editor commit \(commit)" else { throw Moved() }
         }
