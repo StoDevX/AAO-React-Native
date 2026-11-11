@@ -98,6 +98,25 @@ targets:
           - Info.plist
     dependencies:
       - package: DataEditorKit
+    # Node, the helper and ccc-server, from `mise run data-editor:runtime`.
+    # A Debug build goes without them, since tests and the UI tests bring their
+    # own Node and helper; a Release build is what ships, so it stops instead.
+    postBuildScripts:
+      - name: Embed Runtime
+        inputFiles: ['$(SRCROOT)/build/runtime/node']
+        outputFiles: ['$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Runtime/node']
+        script: |
+          set -euo pipefail
+          runtime="$SRCROOT/build/runtime"
+          if [ ! -x "$runtime/node" ]; then
+            if [ "$CONFIGURATION" = Release ]; then
+              echo "error: run \`mise run data-editor:runtime\` first" >&2
+              exit 1
+            fi
+            echo "warning: no runtime in this build; run \`mise run data-editor:runtime\` to run the app on its own"
+            exit 0
+          fi
+          rsync -a --delete "$runtime/" "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Runtime/"
     settings:
       base:
         CODE_SIGN_ENTITLEMENTS: DataEditor/DataEditor.entitlements

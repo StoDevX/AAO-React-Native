@@ -426,6 +426,11 @@ description = "Bundle the Mac data editor's pipeline helper"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/build-data-editor-helper.mjs"
 
+[tasks."data-editor:runtime"]
+description = "Build the Mac data editor's bundled Node, helper and ccc-server"
+wait_for = ["pnpm:install:*"]
+run = "macos/DataEditor/scripts/embed-runtime.sh"
+
 [tasks.docs]
 description = "Build the DocC site from documentation/ into docs/documentation/"
 run = "scripts/build-docs.sh"
