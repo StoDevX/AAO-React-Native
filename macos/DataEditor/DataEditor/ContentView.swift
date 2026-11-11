@@ -8,6 +8,12 @@ struct ContentView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var showingChanges = false
 
+    /// What the Changes button's badge counts: every edited file, and every
+    /// file waiting for the contributor to choose between their copy and GitHub's.
+    static func changeCount(changedFiles: [String], conflicts: [String]) -> Int {
+        Set(changedFiles).union(conflicts).count
+    }
+
     var body: some View {
         let ready = model.phase == .ready
         NavigationSplitView {
@@ -21,8 +27,14 @@ struct ContentView: View {
         .toolbar {
             ToolbarItem { ServerStatusView().disabled(!ready) }
             ToolbarItem {
-                Button("Changes", systemImage: "doc.badge.ellipsis") { showingChanges = true }
-                    .badge(model.changedFiles.count)
+                Button("Changes", systemImage: "doc.badge.ellipsis") {
+                    // the sheet shows the text being typed in a field, which no toolbar click saves
+                    Task {
+                        _ = await model.commitPendingDrafts()
+                        showingChanges = true
+                    }
+                }
+                    .badge(Self.changeCount(changedFiles: model.changedFiles, conflicts: model.conflicts))
                     .disabled(!ready)
             }
             ToolbarItem { Button("Data Browser", systemImage: "curlybraces") { openWindow(id: "browser") }.disabled(!ready) }
@@ -37,7 +49,7 @@ struct ContentView: View {
             ProgressView(model.phase == .downloading ? "Downloading the app's data…" : "Starting…")
         case .needsAppUpdate:
             ContentUnavailableView("An update is needed to edit this data", systemImage: "arrow.down.app",
-                                   description: Text("The data now expects newer scripts than this copy of the Data Editor has. Choose Check for Updates… in the app menu."))
+                                   description: Text("The data now expects newer scripts than this copy of the Data Editor has. Download the newest Data Editor, then open it again."))
         case .failed(let message):
             ContentUnavailableView {
                 Label("The Data Editor could not start", systemImage: "exclamationmark.triangle")

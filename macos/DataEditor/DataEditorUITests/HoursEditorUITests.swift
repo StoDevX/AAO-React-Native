@@ -67,7 +67,61 @@ final class HoursEditorUITests: XCTestCase {
         title.typeKey(.delete, modifierFlags: [])
         title.typeKey(.return, modifierFlags: [])
         XCTAssertTrue(app.descendants(matching: .any)["problems"].firstMatch.waitForExistence(timeout: 5))
-        attachScreenshot(of: app.windows.firstMatch, named: "Title emptied shows a problem")
+        XCTAssertTrue(app.staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Usual hours › service 1 › title"].exists)
+        attachScreenshot(of: app.windows.firstMatch, named: "Title emptied reads in plain words")
+    }
+
+    func testAProblemInAnotherBuildingNamesThatBuilding() throws {
+        let app = try launch()
+        selectTheCage(in: app)
+        let title = app.textFields["service-title-0"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        title.click()
+        title.typeKey("a", modifierFlags: .command)
+        title.typeKey(.delete, modifierFlags: [])
+        title.typeKey(.return, modifierFlags: [])
+        XCTAssertTrue(app.staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
+
+        // Stav Hall's file is fine, but the check covers every building
+        app.outlines["building-list"].staticTexts["Stav Hall"].click()
+        XCTAssertTrue(app.staticTexts["The Cage: The title can't be empty."].waitForExistence(timeout: 10))
+        attachScreenshot(of: app.windows.firstMatch, named: "Problem from The Cage named on Stav Hall")
+
+        // Changes lists it too, where the contributor goes to submit
+        app.buttons["Changes"].click()
+        let sheet = app.sheets.firstMatch
+        XCTAssertTrue(sheet.staticTexts["The Cage: The title can't be empty."].waitForExistence(timeout: 5))
+        XCTAssertTrue(sheet.staticTexts["Fix the problems listed above before submitting."].exists)
+        attachScreenshot(of: app.windows.firstMatch, named: "Changes lists the problem before Submit")
+    }
+
+    func testATitleBeingTypedIsSavedBeforeChangesOpens() throws {
+        let app = try launch()
+        selectTheCage(in: app)
+        let title = app.textFields["service-title-0"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        title.click()
+        title.typeKey(.rightArrow, modifierFlags: .command)
+        // no Return, and the toolbar button does not take focus from the field
+        title.typeText(" today")
+        app.buttons["Changes"].click()
+        let saved = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "title: Hours today", "title: Hours today")
+        XCTAssertTrue(app.sheets.firstMatch.descendants(matching: .any).matching(saved).firstMatch.waitForExistence(timeout: 10))
+    }
+
+    func testQuittingSavesATitleBeingTyped() throws {
+        let app = try launch()
+        selectTheCage(in: app)
+        let title = app.textFields["service-title-0"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        title.click()
+        title.typeKey(.rightArrow, modifierFlags: .command)
+        title.typeText(" today")
+        app.typeKey("q", modifierFlags: .command)
+        XCTAssertTrue(app.wait(for: .notRunning, timeout: 20))
+        let cage = try XCTUnwrap(data).appending(path: "building-hours/1-1-cage.yaml")
+        XCTAssertTrue(try String(contentsOf: cage, encoding: .utf8).contains("  - title: Hours today\n"))
     }
 
     func testTogglingADayMovesItOnTheTimeline() throws {

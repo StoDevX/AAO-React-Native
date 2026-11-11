@@ -54,8 +54,9 @@ struct ScheduleSection: View {
 }
 
 /// A text field that edits the file once the contributor is done: on Return,
-/// when it loses focus, or when it goes. An edit per keystroke would race its
-/// own replies, and a late reply would put back text already typed over.
+/// when it loses focus, when it goes, or when the model asks before Changes,
+/// Submit or quitting. An edit per keystroke would race its own replies, and
+/// a late reply would put back text already typed over.
 ///
 /// The draft remembers the file it was typed for and the text it began from.
 /// Choosing another building can swap the document under a field that keeps
@@ -78,18 +79,17 @@ private struct DraftField: View {
     /// what that file held when the draft began; the draft is unsaved while it differs
     @State private var base = ""
     @State private var id = UUID()
-    /// Set while a commit waits for the helper. One at a time, so each
+    /// The commit waiting for the helper, if any. One at a time, so each
     /// commit's `expected` is the text the one before it saved.
-    @State private var committing = false
+    @State private var committing: Task<Void, Never>?
     @FocusState private var focused: Bool
 
     private func commitIfChanged() {
-        guard draft != base, !committing else { return }
-        committing = true
+        guard draft != base, committing == nil else { return }
         let (file, text, expected) = (draftFile, draft, base)
-        Task {
+        committing = Task {
             let outcome = await commit(file, text, expected)
-            committing = false
+            committing = nil
             guard draftFile == file else { return }
             switch outcome {
             case .saved:
@@ -104,6 +104,15 @@ private struct DraftField: View {
                 break
             }
         }
+    }
+
+    /// Saves the draft now, after any commit under way, and returns whether
+    /// nothing typed is left unsaved. Text let go is in a notice, not lost.
+    private func save() async -> Bool {
+        while let commit = committing { await commit.value }
+        commitIfChanged()
+        while let commit = committing { await commit.value }
+        return draft == base
     }
 
     private func load() {
@@ -121,10 +130,14 @@ private struct DraftField: View {
                 // with nothing typed, catch up with a file changed while focused (a revert)
                 if draft == base, value != draft { load() } else { commitIfChanged() }
             }
-            .onAppear(perform: load)
+            .onAppear {
+                load()
+                model.registerDraftSaver(id) { await save() }
+            }
             .onDisappear {
                 commitIfChanged()
                 model.noteDraft(id, unsaved: false)
+                model.unregisterDraftSaver(id)
             }
             .onChange(of: file) {
                 commitIfChanged()

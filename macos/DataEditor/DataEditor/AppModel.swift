@@ -25,14 +25,37 @@ final class AppModel {
         case updating
         case buildProblems
         case notReady
+        case unsavedText
 
         var errorDescription: String? {
             switch self {
             case .notReady: "The data has not finished loading. Submit again once it has."
             case .updating: "The data is being updated. Submit again once the update finishes."
             case .buildProblems: "The data has problems that stop it building. Fix the ones listed, then submit again."
+            case .unsavedText: "Some text you typed could not be saved. Press Return in that field to try again, then submit again."
             }
         }
+    }
+
+    /// Why the window offers Try Again once the helper has gone. The edits
+    /// made so far are in their files, so starting it again loses nothing.
+    static let helperStoppedMessage = "The editor's helper stopped. Your edits so far are saved; Try Again starts it again."
+
+    /// The phase an error from the helper leaves the app in: failed once the
+    /// helper has gone, since every later edit would fail too, and nil for a
+    /// refusal of one request, which leaves it running.
+    static func failurePhase(after error: any Error) -> Phase? {
+        (error as? HelperClient.Failure)?.helperStopped == true ? .failed(helperStoppedMessage) : nil
+    }
+
+    /// Whether the helper could not serve the data because its port is taken,
+    /// by a second copy of the app or anything else.
+    static func isPortInUse(_ message: String) -> Bool { message.contains("EADDRINUSE") }
+
+    /// Whether GitHub refuses to show a pull request for good: it was
+    /// deleted, or the contributor can no longer see it.
+    static func isUnreadable(_ error: any Error) -> Bool {
+        if case SubmitError.github(let status, _) = error { status == 404 || status == 403 } else { false }
     }
 
     var phase: Phase = .starting
@@ -51,6 +74,12 @@ final class AppModel {
     var pagesOrigin: String?
     var submission: Submission? { didSet { saveSubmission() } }
     var submissionState: SubmissionState?
+    /// Set when GitHub would not show the pull request opened before (see
+    /// `isUnreadable`). Every submission asks after it first, so only
+    /// forgetting it lets the contributor submit again.
+    private(set) var submissionUnreadable = false
+    /// Set when the preview stopped because the helper could not serve the data on `port`.
+    private(set) var servePortInUse = false
     /// master's newest commit, when it is not the one being edited
     var newerCommit: String?
     var conflicts: [String] = []
@@ -129,6 +158,8 @@ final class AppModel {
         guard !launching, !shuttingDown, phase.allowsLaunch else { return }
         launching = true
         defer { launching = false }
+        // a retry after a failure must not show that failure, and its Try Again, while it runs
+        phase = .starting
         await stopProcesses()
         do {
             if workspace.snapshot == nil {
@@ -161,11 +192,9 @@ final class AppModel {
             buildings = listed
             phase = .ready
             if let selection { await select(selection) }
-            if testHelper == nil {
-                await refreshSubmission()
-                let latest = try? await workspace.latestCommit()
-                newerCommit = latest == workspace.snapshot?.commit ? nil : latest
-            }
+            // UI tests reach no server
+            if testHelper == nil { await refreshSubmission() }
+            await refreshNewerCommit()
         } catch {
             phase = .failed(error.localizedDescription)
         }
@@ -186,6 +215,7 @@ final class AppModel {
         // the build and the server come before ccc says anything, so say it is
         // starting now, which also turns away a second call meanwhile
         cccStatus = .starting
+        servePortInUse = false
         previewGeneration += 1
         let generation = previewGeneration
         await rebuild()
@@ -207,6 +237,7 @@ final class AppModel {
         } catch {
             guard generation == previewGeneration else { return }
             cccLog = [error.localizedDescription]
+            servePortInUse = Self.isPortInUse(error.localizedDescription)
             cccStatus = .crashed(1)
         }
     }
@@ -219,12 +250,32 @@ final class AppModel {
         await ccc?.stop()
         ccc = nil
         cccStatus = .stopped
+        servePortInUse = false
     }
 
-    /// Stops ccc's whole process group and the helper, so quitting leaves nothing holding a port.
+    /// Readies the app to quit: lets an update or a submission in flight
+    /// finish, for up to 30 seconds, saves what is typed in the text fields,
+    /// then stops ccc's whole process group and the helper, so quitting
+    /// leaves nothing holding a port. An update stopped partway can leave
+    /// `data/` missing or the edits stranded in `replay/`, and a submission
+    /// stopped between opening the pull request and recording it opens a
+    /// second one next time.
     func shutdown() async {
+        let deadline = ContinuousClock.now + .seconds(30)
+        while updating || submitting, ContinuousClock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(50))
+        }
+        // a draft waits for an update to finish, which this one has not
+        if !updating { _ = await commitPendingDrafts() }
         shuttingDown = true
         await stopProcesses()
+    }
+
+    /// Fails the launch once the helper has gone, so the window offers Try
+    /// Again. Not while a launch or quitting stops the helper on purpose.
+    private func noteFailure(_ error: any Error) {
+        guard !launching, !shuttingDown, phase == .ready, let failed = Self.failurePhase(after: error) else { return }
+        phase = failed
     }
 
     private func stopProcesses() async {
@@ -243,6 +294,7 @@ final class AppModel {
             documentFile = file
             problems = loaded.problems
         } catch {
+            noteFailure(error)
             guard selection == file else { return }
             document = nil
             documentFile = nil
@@ -271,6 +323,7 @@ final class AppModel {
         do {
             edited = try await helper.edit(file, ops)
         } catch {
+            noteFailure(error)
             if file == selection { problems = [Problem(file: file, message: error.localizedDescription, path: nil)] }
             return false
         }
@@ -308,7 +361,14 @@ final class AppModel {
                 if shuttingDown { return .notSaved }
                 try? await Task.sleep(for: .milliseconds(50))
             }
-            guard let helper, let current = try? await helper.load(file).value else { return .notSaved }
+            guard let helper else { return .notSaved }
+            let current: JSONValue
+            do {
+                current = try await helper.load(file).value
+            } catch {
+                noteFailure(error)
+                return .notSaved
+            }
             let held = current[path: op.path]?.string ?? ""
             guard held == expected else {
                 if file == selection { await select(file) }
@@ -330,13 +390,41 @@ final class AppModel {
         if unsaved { unsavedDrafts.insert(id) } else { unsavedDrafts.remove(id) }
     }
 
+    /// Each text field's way to save its draft now, by the field's id. A
+    /// toolbar button or quitting takes no focus from the field, so nothing
+    /// else would tell it the contributor is done.
+    private var draftSavers: [UUID: @MainActor () async -> Bool] = [:]
+
+    /// Lets `commitPendingDrafts` save the field `id`'s draft through `save`,
+    /// which returns whether nothing typed there is left unsaved.
+    func registerDraftSaver(_ id: UUID, _ save: @escaping @MainActor () async -> Bool) { draftSavers[id] = save }
+
+    func unregisterDraftSaver(_ id: UUID) { draftSavers[id] = nil }
+
+    /// Saves what is typed in every text field, and returns whether all of it
+    /// was saved. Changes and Submit call it first, so they show and send the
+    /// text, and so does quitting, so the text is not lost.
+    func commitPendingDrafts() async -> Bool {
+        var saved = true
+        for save in Array(draftSavers.values) where await !save() { saved = false }
+        return saved
+    }
+
     /// Builds the data into `out/`. Skipped during an update, which reloads
     /// everything and builds once it is done.
     private func rebuild() async {
         guard !updating, let helper else { return }
-        buildProblems = (try? await helper.build().problems) ?? [Problem(file: nil, message: "The build did not run", path: nil)]
+        do {
+            buildProblems = try await helper.build().problems
+        } catch {
+            buildProblems = [Problem(file: nil, message: "The build did not run", path: nil)]
+            noteFailure(error)
+        }
         cccLog = await ccc?.log ?? []
     }
+
+    /// The open file's problems and the last build's, as a contributor reads them.
+    var shownProblems: [Problem] { plainProblems(problems + buildProblems) }
 
     func revert(_ file: String) async {
         guard !updating else { return }
@@ -344,9 +432,25 @@ final class AppModel {
         await afterFilesChanged()
     }
 
+    private static func text(_ data: Data?) -> String { data.map { String(decoding: $0, as: UTF8.self) } ?? "" }
+
     func diff(for file: String) -> [DiffLine] {
-        let text = { (data: Data?) in data.map { String(decoding: $0, as: UTF8.self) } ?? "" }
-        return lineDiff(old: text(try? workspace.baseContents(of: file)), new: text(try? workspace.contents(of: file)))
+        lineDiff(old: Self.text(try? workspace.baseContents(of: file)), new: Self.text(try? workspace.contents(of: file)))
+    }
+
+    /// The contributor's version of a conflicted file compared with GitHub's
+    /// (`github`, nil once GitHub removed it), or nil if they deleted it.
+    static func conflictDiff(github: Data?, mine: Workspace.ConflictCopy) -> [DiffLine]? {
+        guard case .kept(let kept) = mine else { return nil }
+        return lineDiff(old: text(github), new: text(kept))
+    }
+
+    /// What the contributor has in a conflicted `file`, set aside while GitHub's version sits in `data/`.
+    func conflictCopy(of file: String) -> Workspace.ConflictCopy? { workspace.conflictCopy(of: file) }
+
+    /// See `conflictDiff(github:mine:)`.
+    func conflictDiff(for file: String) -> [DiffLine]? {
+        conflictCopy(of: file).flatMap { Self.conflictDiff(github: try? workspace.contents(of: file), mine: $0) }
     }
 
     /// Whether a submission after a pull request in `state` opens a new one:
@@ -364,6 +468,8 @@ final class AppModel {
     func submit(summary: String) async throws {
         if updating { throw Refusal.updating }
         guard let base = baseCommit, let helper else { throw Refusal.notReady }
+        // what is typed in a field goes with the rest
+        if await !commitPendingDrafts() { throw Refusal.unsavedText }
         submitting = true
         defer { submitting = false }
         buildProblems = try await helper.build().problems
@@ -371,7 +477,13 @@ final class AppModel {
         let submitter = GitHubSubmitter(tokens: tokens)
         let changes = changedFiles.map { Change(path: "data/\($0)", contents: try? workspace.contents(of: $0)) }
         if let submission {
-            let state = try await submitter.state(of: submission)
+            let state: SubmissionState
+            do {
+                state = try await submitter.state(of: submission)
+            } catch {
+                submissionUnreadable = Self.isUnreadable(error)
+                throw error
+            }
             submissionState = state
             if !Self.opensNewPullRequest(after: state) {
                 self.submission = try await submitter.update(submission, changes: changes, summary: summary)
@@ -384,8 +496,32 @@ final class AppModel {
     }
 
     func refreshSubmission() async {
-        guard let submission else { submissionState = nil; return }
-        submissionState = try? await GitHubSubmitter(tokens: tokens).state(of: submission)
+        guard let submission else {
+            submissionState = nil
+            submissionUnreadable = false
+            return
+        }
+        do {
+            submissionState = try await GitHubSubmitter(tokens: tokens).state(of: submission)
+            submissionUnreadable = false
+        } catch {
+            submissionState = nil
+            submissionUnreadable = Self.isUnreadable(error)
+        }
+    }
+
+    /// Lets go of a pull request GitHub will not show, so the next submission opens a new one.
+    func forgetSubmission() {
+        submission = nil
+        submissionState = nil
+        submissionUnreadable = false
+    }
+
+    /// Asks GitHub whether master has moved past the data being edited, so
+    /// a session left open for days is offered the newer data. UI tests reach no server.
+    func refreshNewerCommit() async {
+        guard testHelper == nil, let latest = try? await workspace.latestCommit() else { return }
+        newerCommit = latest == workspace.snapshot?.commit ? nil : latest
     }
 
     /// Moves to master's newest commit, keeping the contributor's edits. A
@@ -397,6 +533,8 @@ final class AppModel {
         guard !updating, !submitting else { return }
         updating = true
         updateError = nil
+        // an edit already sent writes into data/ when its reply comes, after the update has saved the edits
+        while editing { try? await Task.sleep(for: .milliseconds(50)) }
         do {
             conflicts = try await workspace.update(to: try await workspace.latestCommit())
         } catch {

@@ -11,7 +11,8 @@ struct SubmitControl: Equatable {
     /// - Parameters:
     ///   - hasSubmission: whether a pull request was opened before
     ///   - state: that pull request's state, nil while unknown
-    ///   - hasProblems: whether the open file or the last build has problems, which the review would only send back
+    ///   - hasProblems: whether the open file or the last build has problems, which the review would only send
+    ///     back; the sheet lists them above the button
     init(hasSubmission: Bool, state: SubmissionState?, hasChanges: Bool, hasConflicts: Bool, hasProblems: Bool) {
         // a pull request whose state is unknown may still be open; submitting checks before choosing
         let updates = hasSubmission && !(state.map(AppModel.opensNewPullRequest(after:)) ?? false)
@@ -23,7 +24,7 @@ struct SubmitControl: Equatable {
         } else if hasConflicts {
             "Choose which copy to keep of each conflicting file before submitting."
         } else if hasProblems {
-            "Fix the problems the editor lists before submitting."
+            "Fix the problems listed above before submitting."
         } else {
             nil
         }
@@ -70,7 +71,7 @@ struct ChangesView: View {
     var body: some View {
         let control = SubmitControl(hasSubmission: model.submission != nil, state: model.submissionState,
                                     hasChanges: !model.changedFiles.isEmpty, hasConflicts: !model.conflicts.isEmpty,
-                                    hasProblems: !model.problems.isEmpty || !model.buildProblems.isEmpty)
+                                    hasProblems: !model.shownProblems.isEmpty)
         VStack(alignment: .leading) {
             if let submission = model.submission {
                 SubmissionBanner(submission: submission)
@@ -98,15 +99,7 @@ struct ChangesView: View {
                 .padding(.horizontal)
             }
             ForEach(model.conflicts, id: \.self) { file in
-                HStack {
-                    Label("\(file) changed on GitHub too. Which version should stay?", systemImage: "exclamationmark.2")
-                    Spacer()
-                    Button("Mine") { Task { await model.keepMine(file) } }
-                        .accessibilityLabel("Keep my version of \(file)")
-                    Button("GitHub's") { Task { await model.keepLatest(file) } }
-                        .accessibilityLabel("Keep GitHub's version of \(file)")
-                }
-                .padding(.horizontal)
+                ConflictRow(file: file)
             }
             if model.changedFiles.isEmpty {
                 ContentUnavailableView("No changes yet", systemImage: "checkmark.circle")
@@ -117,15 +110,37 @@ struct ChangesView: View {
                             DiffView(rows: diffRows(model.diff(for: file)))
                         } header: {
                             HStack {
-                                Text(file)
+                                VStack(alignment: .leading) {
+                                    Text(buildingName(of: file, in: model.buildings))
+                                    Text(file).font(.caption).foregroundStyle(.secondary)
+                                }
                                 Spacer()
                                 Button("Revert", role: .destructive) { reverting = file }
-                                    .accessibilityLabel("Revert \(file)")
+                                    .accessibilityLabel("Revert \(buildingName(of: file, in: model.buildings))")
                                     .accessibilityIdentifier("revert-\(file)")
                             }
                         }
                     }
                 }
+            }
+            let problems = model.shownProblems
+            if !problems.isEmpty {
+                VStack(alignment: .leading) {
+                    Text("Problems").font(.headline)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 6) {
+                            ForEach(Array(problems.enumerated()), id: \.offset) { _, problem in
+                                // no file is on screen here, so each names its building
+                                ProblemLabel(problem: problem, fileOnScreen: nil, systemImage: "exclamationmark.triangle.fill")
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxHeight: 120)
+                }
+                .padding(.horizontal)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("changes-problems")
             }
             HStack {
                 Button("Close") { dismiss() }.keyboardShortcut(.cancelAction)
@@ -152,7 +167,58 @@ struct ChangesView: View {
             Text("Your changes to this file will be lost.")
         }
         .sheet(isPresented: $submitting) { SubmitSheet() }
-        .task { await model.refreshSubmission() }
+        .task {
+            await model.refreshSubmission()
+            await model.refreshNewerCommit()
+        }
+    }
+}
+
+/// A file changed both on GitHub and by the contributor, with the two
+/// versions to compare before choosing which stays.
+private struct ConflictRow: View {
+    @Environment(AppModel.self) private var model
+    let file: String
+    @State private var showingDifferences = false
+
+    var body: some View {
+        let name = buildingName(of: file, in: model.buildings)
+        let deleted = model.conflictCopy(of: file) == .deleted
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Label {
+                    VStack(alignment: .leading) {
+                        Text("\(name) changed on GitHub too. Which version should stay?")
+                        Text(file).font(.caption).foregroundStyle(.secondary)
+                    }
+                } icon: { Image(systemName: "exclamationmark.2") }
+                Spacer()
+                Button(showingDifferences ? "Hide Differences" : "Show Differences") { showingDifferences.toggle() }
+                    .accessibilityIdentifier("show-differences-\(file)")
+            }
+            if showingDifferences {
+                if let diff = model.conflictDiff(for: file) {
+                    Text("Your version compared with GitHub's").font(.caption).foregroundStyle(.secondary)
+                    ScrollView { DiffView(rows: diffRows(diff)).frame(maxWidth: .infinity, alignment: .leading) }
+                        .frame(maxHeight: 200)
+                } else if deleted {
+                    Text("You removed this file, and GitHub changed it.")
+                }
+            }
+            HStack {
+                Text(deleted ? "Keeping yours removes the file, with GitHub's changes to it."
+                             : "Keeping yours replaces the whole file, including GitHub's changes to it.")
+                    .font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Button("Use GitHub's Version") { Task { await model.keepLatest(file) } }
+                    .accessibilityLabel("Use GitHub's version of \(name)")
+                    .accessibilityIdentifier("keep-latest-\(file)")
+                Button("Keep My Version") { Task { await model.keepMine(file) } }
+                    .accessibilityLabel("Keep my version of \(name)")
+                    .accessibilityIdentifier("keep-mine-\(file)")
+            }
+        }
+        .padding(.horizontal)
     }
 }
 
@@ -206,7 +272,8 @@ private struct SubmissionBanner: View {
             case .merged?:
                 Label("Pull request #\(submission.number) was merged.", systemImage: "checkmark.seal.fill").foregroundStyle(.green)
                 Spacer()
-                Button("Get the Latest Data") { Task { await model.updateWorkspace() } }
+                Button(model.updating ? "Updating…" : "Get the Latest Data") { Task { await model.updateWorkspace() } }
+                    .disabled(model.updating)
             case .changesRequested?:
                 Label("A reviewer asked for changes on #\(submission.number).", systemImage: "text.bubble")
                 Spacer()
@@ -219,6 +286,12 @@ private struct SubmissionBanner: View {
                 Label("Pull request #\(submission.number) is waiting for review.", systemImage: "clock")
                 Spacer()
                 Link("Open on GitHub", destination: submission.url)
+            case nil where model.submissionUnreadable:
+                Label("GitHub can't show pull request #\(submission.number). It may have been deleted, or you can no longer see it.",
+                      systemImage: "questionmark.circle")
+                Spacer()
+                // every submission asks after it first, so it would stop each one
+                Button("Forget This Pull Request") { model.forgetSubmission() }
             case nil:
                 Label("Could not check pull request #\(submission.number) on GitHub.", systemImage: "questionmark.circle")
                 Spacer()

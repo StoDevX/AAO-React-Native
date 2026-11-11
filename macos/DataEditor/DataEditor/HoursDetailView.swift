@@ -20,10 +20,11 @@ struct HoursDetailView: View {
                 Section { Label(lockReason, systemImage: "lock").accessibilityIdentifier("edit-lock") }
             }
 
-            if !model.problems.isEmpty || !model.buildProblems.isEmpty {
+            let problems = model.shownProblems
+            if !problems.isEmpty {
                 Section {
-                    ForEach(Array((model.problems + model.buildProblems).enumerated()), id: \.offset) { _, problem in
-                        ProblemLabel(problem: problem, systemImage: "exclamationmark.triangle.fill")
+                    ForEach(Array(problems.enumerated()), id: \.offset) { _, problem in
+                        ProblemLabel(problem: problem, fileOnScreen: model.documentFile, systemImage: "exclamationmark.triangle.fill")
                     }
                 } header: { Text("Problems") }
                 .accessibilityIdentifier("problems")
@@ -34,7 +35,7 @@ struct HoursDetailView: View {
                 Section {
                     ForEach(Array(notices.enumerated()), id: \.offset) { index, notice in
                         HStack {
-                            ProblemLabel(problem: notice, systemImage: "text.badge.xmark")
+                            ProblemLabel(problem: notice, fileOnScreen: model.documentFile, systemImage: "text.badge.xmark")
                             Spacer()
                             Button("Dismiss", systemImage: "xmark") { model.dismissDraftNotice(notice) }
                                 .labelStyle(.iconOnly)
@@ -157,16 +158,23 @@ private struct BreaksSection: View {
 }
 
 /// A problem's message, selectable so a draft the file refused can be copied
-/// back, with the place in the file it concerns.
-private struct ProblemLabel: View {
+/// back, with the place in the file it concerns. A problem in a file other
+/// than `fileOnScreen` (nil when none is) names the building it is in.
+struct ProblemLabel: View {
+    @Environment(AppModel.self) private var model
     let problem: Problem
+    let fileOnScreen: String?
     let systemImage: String
+
+    private var breakNames: [String: String] {
+        Dictionary((model.calendar?.breaks ?? []).map { ($0.key, $0.name) }, uniquingKeysWith: { first, _ in first })
+    }
 
     var body: some View {
         Label {
             VStack(alignment: .leading) {
-                Text(problem.message).textSelection(.enabled)
-                if let path = problem.path { Text(path.map(\.description).joined(separator: " › ")).font(.caption).foregroundStyle(.secondary) }
+                Text(problemLine(problem, fileOnScreen: fileOnScreen, buildings: model.buildings)).textSelection(.enabled)
+                if let path = problem.path { Text(plainPlace(path, breakNames: breakNames)).font(.caption).foregroundStyle(.secondary) }
             }
         } icon: { Image(systemName: systemImage).foregroundStyle(.orange) }
     }

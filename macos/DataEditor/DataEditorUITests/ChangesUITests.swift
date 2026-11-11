@@ -83,6 +83,34 @@ final class ChangesUITests: XCTestCase {
         XCTAssertTrue(dismiss.wait(until: NSPredicate(format: "exists == false"), timeout: 5))
     }
 
+    func testAConflictShowsBothVersionsBeforeAsking() throws {
+        let file = "building-hours/1-1-cage.yaml"
+        let (app, data) = try launchWithRepoData(conflicted: file)
+        // the contributor's copy, set aside by the update, closes at 9pm
+        let kept = data.deletingLastPathComponent().appending(path: "conflicts/\(file)")
+        let yaml = try String(contentsOf: kept, encoding: .utf8)
+        let weekdays = "      - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '8:00pm'}"
+        XCTAssertTrue(yaml.contains(weekdays))
+        try yaml.replacingOccurrences(of: weekdays, with: "      - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '9:00pm'}")
+            .write(to: kept, atomically: true, encoding: .utf8)
+
+        let changes = app.buttons["Changes"]
+        XCTAssertTrue(changes.wait(until: NSPredicate(format: "isEnabled == true"), timeout: 20))
+        attachScreenshot(of: app.windows.firstMatch, named: "Changes badge and sidebar mark for a conflict")
+        changes.click()
+
+        let sheet = app.sheets.firstMatch
+        XCTAssertTrue(sheet.staticTexts["The Cage changed on GitHub too. Which version should stay?"].waitForExistence(timeout: 5))
+        sheet.buttons["show-differences-\(file)"].click()
+        XCTAssertTrue(sheet.staticTexts["- \(weekdays)"].waitForExistence(timeout: 5))
+        XCTAssertTrue(sheet.staticTexts["+       - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '9:00pm'}"].exists)
+        attachScreenshot(of: app.windows.firstMatch, named: "Conflict with its differences shown")
+
+        sheet.buttons["keep-mine-\(file)"].click()
+        XCTAssertTrue(sheet.buttons["revert-\(file)"].waitForExistence(timeout: 5))
+        XCTAssertFalse(sheet.buttons["keep-mine-\(file)"].exists)
+    }
+
     func testTheDataBrowserAsksForThePreviewWhileItIsOff() throws {
         let app = try launchWithRepoData().app
         let browse = app.buttons["Data Browser"]

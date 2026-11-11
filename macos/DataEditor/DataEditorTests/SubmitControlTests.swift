@@ -1,4 +1,5 @@
 import DataEditorKit
+import Foundation
 import Testing
 @testable import DataEditor
 
@@ -34,7 +35,7 @@ struct SubmitControlTests {
         // the empty list already says there is nothing to submit
         #expect(control(changes: false).reason == nil)
         #expect(control(conflicts: true).reason == "Choose which copy to keep of each conflicting file before submitting.")
-        #expect(control(problems: true).reason == "Fix the problems the editor lists before submitting.")
+        #expect(control(problems: true).reason == "Fix the problems listed above before submitting.")
     }
 
     @Test func aFinishedPullRequestTakesNoMoreCommits() {
@@ -49,5 +50,15 @@ struct SubmitControlTests {
         #expect(!SubmitSheet.canSubmit(summary: " \n ", working: false, clientID: "abc"))
         #expect(!SubmitSheet.canSubmit(summary: "Close at 9", working: true, clientID: "abc"))
         #expect(!SubmitSheet.canSubmit(summary: "Close at 9", working: false, clientID: ""))
+    }
+
+    /// A pull request GitHub will not show may be gone for good, and while it
+    /// is remembered every submission asks after it first.
+    @Test func offersToForgetAPullRequestGitHubWillNotShow() {
+        #expect(AppModel.isUnreadable(SubmitError.github(404, "Not Found")))
+        #expect(AppModel.isUnreadable(SubmitError.github(403, "Forbidden")))
+        #expect(!AppModel.isUnreadable(SubmitError.github(500, "")))
+        #expect(!AppModel.isUnreadable(SubmitError.signInRequired))
+        #expect(!AppModel.isUnreadable(URLError(.notConnectedToInternet)))
     }
 }

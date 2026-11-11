@@ -16,9 +16,9 @@ struct DataEditorApp: App {
 }
 
 /// Owns the model, launches it once per run of the app however many windows
-/// open, and makes quitting wait for it to stop ccc and the helper. Without
-/// that wait, ccc's process group keeps port 8787 until the next launch ends
-/// it through the pid file.
+/// open, and makes quitting wait for it to save what is typed and stop ccc and
+/// the helper. Without that wait, the typed text is lost, and ccc's process
+/// group keeps port 8787 until the next launch ends it through the pid file.
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let model = AppModel()
 

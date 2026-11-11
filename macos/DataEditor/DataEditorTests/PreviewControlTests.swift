@@ -33,4 +33,13 @@ struct PreviewControlTests {
         #expect(PreviewControl(.portInUse).title == "Port 8787 is in use")
         #expect(PreviewControl(.crashed(1)).title == "Preview stopped")
     }
+
+    /// The helper serves the data on 8790, which a second copy of the app may hold.
+    @Test func saysWhenTheDataPortIsInUse() {
+        #expect(AppModel.isPortInUse("listen EADDRINUSE: address already in use :::8790"))
+        #expect(!AppModel.isPortInUse("The helper stopped"))
+        let control = PreviewControl(.crashed(1), servePortInUse: true)
+        #expect(control.title == "Port 8790 is in use")
+        #expect(control.offersStartAgain)
+    }
 }

@@ -16,13 +16,14 @@ struct PreviewControl: Equatable {
     /// after a crash or a refused port, which ccc does not recover from by itself
     let offersStartAgain: Bool
 
-    init(_ status: CccRunner.Status) {
+    /// - Parameter servePortInUse: whether the helper could not serve the data on its own port
+    init(_ status: CccRunner.Status, servePortInUse: Bool = false) {
         switch status {
         case .stopped: (title, click, offersStop, offersStartAgain) = ("Start Preview", .start, false, false)
         case .starting: (title, click, offersStop, offersStartAgain) = ("Starting preview…", .showStatus, true, false)
         case .running: (title, click, offersStop, offersStartAgain) = ("Preview on", .showStatus, true, false)
         case .portInUse: (title, click, offersStop, offersStartAgain) = ("Port 8787 is in use", .showStatus, true, true)
-        case .crashed: (title, click, offersStop, offersStartAgain) = ("Preview stopped", .showStatus, true, true)
+        case .crashed: (title, click, offersStop, offersStartAgain) = (servePortInUse ? "Port \(AppModel.port) is in use" : "Preview stopped", .showStatus, true, true)
         }
     }
 }
@@ -42,7 +43,7 @@ struct ServerStatusView: View {
     }
 
     var body: some View {
-        let control = PreviewControl(model.cccStatus)
+        let control = PreviewControl(model.cccStatus, servePortInUse: model.servePortInUse)
         Button {
             switch control.click {
             case .start: Task { await model.startPreview() }
@@ -69,6 +70,9 @@ struct ServerStatusView: View {
                 """)
                 if model.cccStatus == .portInUse {
                     Text("Something else on this Mac is using port 8787, probably another copy of ccc-server. Quit it, then start the preview again.").foregroundStyle(.red)
+                }
+                if model.servePortInUse {
+                    Text("Something else on this Mac is using port \(AppModel.port), which the preview serves the data from, probably another copy of the Data Editor. Quit it, then start the preview again.").foregroundStyle(.red)
                 }
                 HStack {
                     if control.offersStartAgain {
