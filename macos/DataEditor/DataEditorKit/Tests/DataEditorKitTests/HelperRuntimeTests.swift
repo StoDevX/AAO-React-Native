@@ -175,4 +175,17 @@ struct HelperRuntimeTests {
         let helper = try runtime(try scripts(handlers: "nothing: async () => {},"))
         #expect(try await helper.call("nothing", paramsJSON: "{}") == "null")
     }
+
+    /// A call waiting on a far-off timer must give up, not hold every later call behind it.
+    @Test func givesUpOnACallThatWaitsTooLong() async throws {
+        let folder = try scripts(handlers: "slow: () => new Promise((resolve) => setTimeout(resolve, 5000)),")
+        let workspace = folder.deletingLastPathComponent()
+        let helper = try HelperRuntime(scripts: folder, data: workspace.appending(path: "data"), out: workspace.appending(path: "out"),
+                                       oxfmt: URL(filePath: "/usr/bin/false"), callLimit: .milliseconds(200))
+        let started = ContinuousClock.now
+        await #expect(throws: HelperRuntime.Failure(message: "The helper's slow did not finish in time")) {
+            try await helper.call("slow", paramsJSON: "{}")
+        }
+        #expect(ContinuousClock.now - started < .seconds(2))
+    }
 }

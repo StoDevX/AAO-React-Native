@@ -27,11 +27,13 @@ public final class HelperRuntime: @unchecked Sendable {
     private let timers: TimerLoop
 
     /// Loads `scripts/helper.js` and makes its handlers over `data` and `out`.
-    public init(scripts: URL, data: URL, out: URL, oxfmt: URL) throws {
+    /// A call still waiting on its timers after `callLimit` fails, so it does
+    /// not hold up the calls behind it.
+    public init(scripts: URL, data: URL, out: URL, oxfmt: URL, callLimit: Duration = .seconds(60)) throws {
         let helperFile = scripts.appending(path: "helper.js")
         let source = try String(contentsOf: helperFile, encoding: .utf8)
         let queue = DispatchQueue(label: "com.drewvolz.allaboutolaf-data-editor.helper")
-        let timers = TimerLoop()
+        let timers = TimerLoop(limit: callLimit)
         let (context, handlers, helperProtocol) = try queue.sync { () throws -> (JSContext, JSValue, Int) in
             let machine = JSVirtualMachine()!
             let context = JSContext(virtualMachine: machine)!
@@ -73,7 +75,9 @@ public final class HelperRuntime: @unchecked Sendable {
         let params = json.invokeMethod("parse", withArguments: [paramsJSON])!
         let box = context.objectForKeyedSubscript("__invoke").call(withArguments: [handler, params])!
         timers.drain { box.forProperty("done").toBool() }
-        guard box.forProperty("done").toBool() else { throw Failure(message: "The helper's \(method) never finished") }
+        guard box.forProperty("done").toBool() else {
+            throw Failure(message: timers.isEmpty ? "The helper's \(method) never finished" : "The helper's \(method) did not finish in time")
+        }
         if let error = box.forProperty("error"), error.isString { throw Failure(message: error.toString()) }
         // a handler that resolves to nothing answers null, which JSON.stringify would leave out
         guard let value = box.forProperty("value"), !value.isUndefined else { return "null" }
@@ -89,9 +93,10 @@ public final class HelperRuntime: @unchecked Sendable {
 
     /// Runs `path` in a fresh context with `args`, as Node would run it in a
     /// process of its own, and returns its exit code and error output.
-    private static func runScript(_ path: String, args: [String], scripts: URL, oxfmt: URL, machine: JSVirtualMachine) -> [String: Any] {
+    private static func runScript(_ path: String, args: [String], scripts: URL, oxfmt: URL, machine: JSVirtualMachine,
+                                  limit: Duration) -> [String: Any] {
         let context = JSContext(virtualMachine: machine)!
-        let timers = TimerLoop()
+        let timers = TimerLoop(limit: limit)
         var errors = ""
         var code: Int32 = 0
         install(in: context, argv: ["node", path] + args, timers: timers, scripts: scripts, oxfmt: oxfmt, machine: machine) { errors += $0 }
@@ -159,7 +164,7 @@ public final class HelperRuntime: @unchecked Sendable {
         } as @convention(block) (String) -> String)
         define("cwd", { fm.currentDirectoryPath } as @convention(block) () -> String)
         define("runScript", { (path: String, args: [String]) -> Any in
-            runScript(path, args: args, scripts: scripts, oxfmt: oxfmt, machine: machine)
+            runScript(path, args: args, scripts: scripts, oxfmt: oxfmt, machine: machine, limit: timers.limit)
         } as @convention(block) (String, [String]) -> Any)
         define("oxfmt", { (file: String, source: String, options: String) -> Any in
             format(file: file, source: source, options: options, oxfmt: oxfmt)
@@ -268,6 +273,8 @@ private func throwInJavaScript(errno number: Int32, _ syscall: String, _ path: S
 
 /// The timers one context has set, run in the order they fall due.
 private final class TimerLoop {
+    /// How long one drain waits on timers before it gives up.
+    let limit: Duration
     private var timers: [(id: Int, due: Date, callback: JSValue)] = []
     private var next = 1
 
@@ -278,11 +285,20 @@ private final class TimerLoop {
         return id
     }
 
+    init(limit: Duration) { self.limit = limit }
+
+    var isEmpty: Bool { timers.isEmpty }
+
     func cancel(_ id: Int) { timers.removeAll { $0.id == id } }
 
-    /// Runs timers in the order they fall due, waiting for each, until `done` holds or none is left.
+    /// Runs timers in the order they fall due, waiting for each, until `done`
+    /// holds, none is left, or the next falls due after `limit` from now. A
+    /// timer left over runs in a later drain.
     func drain(until done: () -> Bool) {
+        let components = limit.components
+        let deadline = Date.now.addingTimeInterval(Double(components.seconds) + Double(components.attoseconds) / 1e18)
         while !done(), let index = timers.indices.min(by: { timers[$0].due < timers[$1].due }) {
+            guard timers[index].due <= deadline else { return }
             let timer = timers.remove(at: index)
             let wait = timer.due.timeIntervalSinceNow
             if wait > 0 { Thread.sleep(forTimeInterval: wait) }
