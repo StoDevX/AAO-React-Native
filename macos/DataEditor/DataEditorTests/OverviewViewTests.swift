@@ -4,15 +4,15 @@ import Testing
 @testable import DataEditor
 
 @MainActor
-struct ChangesViewTests {
+struct OverviewViewTests {
     private func same(_ text: String) -> DiffLine { DiffLine(kind: .same, text: text) }
 
     @Test func asksAboutARevertByTheBuildingsName() {
-        #expect(ChangesView.revertQuestion(file: "building-hours/1-1-cage.yaml", name: "The Cage") == "Revert The Cage?")
-        #expect(ChangesView.revertQuestion(file: "building-hours/1-1-cage.yaml", name: nil) == "Revert building-hours/1-1-cage.yaml?")
+        #expect(OverviewView.revertQuestion(file: "building-hours/1-1-cage.yaml", name: "The Cage") == "Revert The Cage?")
+        #expect(OverviewView.revertQuestion(file: "building-hours/1-1-cage.yaml", name: nil) == "Revert building-hours/1-1-cage.yaml?")
     }
 
-    /// A file waiting for a choice needs the contributor in Changes as much as an edit does.
+    /// A file waiting for a choice needs the contributor on the Overview as much as an edit does.
     @Test func countsConflictsInTheBadge() {
         #expect(ContentView.changeCount(changedFiles: [], conflicts: []) == 0)
         #expect(ContentView.changeCount(changedFiles: [], conflicts: ["a.yaml"]) == 1)

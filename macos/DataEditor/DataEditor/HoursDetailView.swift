@@ -9,7 +9,7 @@ struct HoursDetailView: View {
     /// Why the file cannot be edited right now, if it cannot. `AppModel.apply` refuses these edits too.
     private var lockReason: String? {
         if model.updating { return "Editing waits while the data updates." }
-        if let file = model.documentFile, model.isConflicted(file) { return "Choose which copy to keep in Changes to edit this file." }
+        if let file = model.documentFile, model.isConflicted(file) { return "This file changed on GitHub too." }
         return nil
     }
 
@@ -17,7 +17,15 @@ struct HoursDetailView: View {
         let locked = lockReason != nil
         Form {
             if let lockReason {
-                Section { Label(lockReason, systemImage: "lock").accessibilityIdentifier("edit-lock") }
+                Section {
+                    HStack {
+                        Label(lockReason, systemImage: "lock").accessibilityIdentifier("edit-lock")
+                        if let file = model.documentFile, model.isConflicted(file) {
+                            Spacer()
+                            Button("Choose a Version…") { Task { await model.choose(ChangesetItem.overview) } }
+                        }
+                    }
+                }
             }
 
             let problems = model.shownProblems
