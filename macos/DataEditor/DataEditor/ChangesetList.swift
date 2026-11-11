@@ -1,19 +1,25 @@
 import DataEditorKit
 import SwiftUI
 
-/// The first column: the edits in hand, then each pull request submitted from this app.
+/// The Changesets window's list: the edits in hand, then each pull request
+/// submitted from this app. Double-clicking one, or Return, opens it.
 struct ChangesetList: View {
     @Environment(AppModel.self) private var model
+    @Binding var selection: Changeset?
+    let open: (Changeset) -> Void
+
+    /// What Current changes' badge counts: every edited file, and every file
+    /// waiting for the contributor to choose between their copy and GitHub's.
+    static func changeCount(changedFiles: [String], conflicts: [String]) -> Int {
+        Set(changedFiles).union(conflicts).count
+    }
 
     var body: some View {
-        let selection = Binding<Changeset?>(get: { model.changeset }, set: { changeset in
-            Task { await model.choose(changeset ?? .current) }
-        })
         let parts = OverviewParts.make(history: model.submissions, newerCommit: model.newerCommit, conflicts: model.conflicts,
                                        changedFiles: model.changedFiles, buildProblems: model.buildProblems, hasBuilt: model.hasBuilt)
         // something stands between these edits and a review, or the phone
         let blocked = !parts.problems.isEmpty || !parts.conflicts.isEmpty || (parts.preview.map { $0 != .upToDate } ?? false)
-        List(selection: selection) {
+        List(selection: $selection) {
             Label {
                 HStack {
                     Text("Current changes")
@@ -23,7 +29,7 @@ struct ChangesetList: View {
                     }
                 }
             } icon: { Image(systemName: "pencil.and.list.clipboard") }
-                .badge(ContentView.changeCount(changedFiles: model.changedFiles, conflicts: model.conflicts))
+                .badge(Self.changeCount(changedFiles: model.changedFiles, conflicts: model.conflicts))
                 .tag(Changeset.current)
                 .accessibilityIdentifier("changeset-current")
             // like Mail's, it is not there until there is something in it
@@ -36,8 +42,11 @@ struct ChangesetList: View {
                 }
             }
         }
+        .contextMenu(forSelectionType: Changeset.self) { _ in } primaryAction: { chosen in
+            if let changeset = chosen.first { open(changeset) }
+        }
         .accessibilityIdentifier("changeset-list")
-        .navigationSplitViewColumnWidth(min: 200, ideal: 220)
+        .navigationSplitViewColumnWidth(min: 220, ideal: 260)
     }
 }
 

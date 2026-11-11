@@ -6,8 +6,13 @@ struct DataEditorApp: App {
     @NSApplicationDelegateAdaptor private var delegate: AppDelegate
 
     var body: some Scene {
-        WindowGroup("Data Editor") {
-            ContentView().environment(delegate.model)
+        // first, so it is the window the app opens with
+        Window("Changesets", id: "changesets") {
+            ChangesetsWindow().environment(delegate.model)
+        }
+        .keyboardShortcut("0")
+        WindowGroup("Changeset", for: Changeset.self) { $changeset in
+            ChangesetWindow(changeset: changeset ?? .current).environment(delegate.model)
         }
         Window("Data Browser", id: "browser") {
             DataBrowserView().environment(delegate.model)

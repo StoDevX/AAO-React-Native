@@ -35,6 +35,7 @@ struct SubmitControl: Equatable {
 /// data, conflicts, the preview, problems, each changed building's diff, and Submit.
 struct OverviewView: View {
     @Environment(AppModel.self) private var model
+    @Environment(\.openWindow) private var openWindow
     @State private var submitting = false
     /// The file whose Revert waits for the contributor to confirm it.
     @State private var reverting: String?
@@ -160,18 +161,22 @@ struct OverviewView: View {
                   systemImage: preview == .upToDate ? "iphone" : "exclamationmark.triangle.fill")
             Spacer()
             if case .stopsAt(let file) = preview {
-                Button("Show \(buildingName(of: file, in: model.buildings))") {
-                    Task { await model.choose(ChangesetItem.building(file: file)) }
-                }
+                Button("Show \(buildingName(of: file, in: model.buildings))") { show(file) }
             }
         }
+    }
+
+    /// Opens `file` for editing in the Current changes window, from whichever window this page is in.
+    private func show(_ file: String) {
+        openWindow(value: Changeset.current)
+        Task { await model.choose(ChangesetItem.building(file: file)) }
     }
 
     /// A problem that names its building opens it; one that names none only reads.
     @ViewBuilder private func problemRow(_ problem: Problem) -> some View {
         let label = ProblemLabel(problem: problem, fileOnScreen: nil, systemImage: "exclamationmark.triangle.fill")
         if let file = problem.file {
-            Button { Task { await model.choose(ChangesetItem.building(file: file)) } } label: { label }
+            Button { show(file) } label: { label }
                 .buttonStyle(.plain)
         } else {
             label

@@ -559,15 +559,10 @@ final class AppModel {
     func forgetSubmission(_ number: Int) {
         submissions.forget(number)
         checkFailures.clear(number)
-        if changeset == .pullRequest(number: number) {
-            changeset = .current
-            item = .overview
-        }
     }
 
-    /// The changeset the first column shows.
-    private(set) var changeset: Changeset = .current
-    /// What of `changeset` the second column shows.
+    /// What the Current changes window shows. A pull request's window keeps
+    /// its own, since only Current changes has text fields to save.
     private(set) var item: ChangesetItem = .overview
 
     /// Counts choices, so one that waited for the text fields to save gives
@@ -584,21 +579,12 @@ final class AppModel {
         return saved && choice == choices
     }
 
-    /// Shows `changeset`, starting at its Overview. A pull request's diffs are
-    /// asked of GitHub as it opens.
-    func choose(_ changeset: Changeset) async {
-        guard await mayChoose() else { return }
-        self.changeset = changeset
-        item = .overview
-        if case .pullRequest(let number) = changeset { await loadDiffs(of: number) }
-    }
-
-    /// Shows `item` of the changeset on screen. Under Current changes a
-    /// building's file opens for editing, unless it is already open.
+    /// Shows `item` in the Current changes window. A building's file opens
+    /// for editing, unless it is already open.
     func choose(_ item: ChangesetItem) async {
         guard await mayChoose() else { return }
         self.item = item
-        if changeset == .current, case .building(let file) = item { selection = file }
+        if case .building(let file) = item { selection = file }
     }
 
     /// Asks GitHub whether master has moved past the data being edited, so

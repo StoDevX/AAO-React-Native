@@ -14,9 +14,9 @@ struct OverviewViewTests {
 
     /// A file waiting for a choice needs the contributor on the Overview as much as an edit does.
     @Test func countsConflictsInTheBadge() {
-        #expect(ContentView.changeCount(changedFiles: [], conflicts: []) == 0)
-        #expect(ContentView.changeCount(changedFiles: [], conflicts: ["a.yaml"]) == 1)
-        #expect(ContentView.changeCount(changedFiles: ["a.yaml", "b.yaml"], conflicts: ["a.yaml", "c.yaml"]) == 3)
+        #expect(ChangesetList.changeCount(changedFiles: [], conflicts: []) == 0)
+        #expect(ChangesetList.changeCount(changedFiles: [], conflicts: ["a.yaml"]) == 1)
+        #expect(ChangesetList.changeCount(changedFiles: ["a.yaml", "b.yaml"], conflicts: ["a.yaml", "c.yaml"]) == 3)
     }
 
     @Test func comparesTheContributorsVersionWithGitHubs() {

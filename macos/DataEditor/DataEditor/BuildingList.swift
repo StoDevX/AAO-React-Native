@@ -1,10 +1,12 @@
 import DataEditorKit
 import SwiftUI
 
-/// The second column: the changeset's Overview, then its buildings by
+/// A changeset window's list: its Overview, then its buildings by
 /// category, marking those edited and those with problems.
 struct BuildingList: View {
     @Environment(AppModel.self) private var model
+    let changeset: Changeset
+    @Binding var selection: ChangesetItem?
 
     /// The buildings by category, as the phone app's hours list shows them:
     /// each category where its first building comes, the buildings in the
@@ -26,16 +28,15 @@ struct BuildingList: View {
     /// Under Current changes, a conflict first: the file cannot be edited until
     /// the contributor chooses on the Overview. Under a pull request, its files read only.
     private func icon(for file: String) -> String {
-        guard model.changeset == .current else { return "doc.text" }
+        guard changeset == .current else { return "doc.text" }
         if model.isConflicted(file) { return "exclamationmark.2" }
         return model.changedFiles.contains(file) ? "pencil.circle.fill" : "building.2"
     }
 
     var body: some View {
-        let selection = Binding<ChangesetItem?>(get: { model.item }, set: { item in Task { await model.choose(item ?? .overview) } })
-        let shown = changesetBuildings(model.changeset, all: model.buildings, history: model.submissions)
-        let blocking = model.changeset == .current ? Set(model.buildProblems.compactMap(\.file)) : []
-        List(selection: selection) {
+        let shown = changesetBuildings(changeset, all: model.buildings, history: model.submissions)
+        let blocking = changeset == .current ? Set(model.buildProblems.compactMap(\.file)) : []
+        List(selection: $selection) {
             Label("Overview", systemImage: "list.bullet.rectangle")
                 .tag(ChangesetItem.overview)
                 .accessibilityIdentifier("overview")

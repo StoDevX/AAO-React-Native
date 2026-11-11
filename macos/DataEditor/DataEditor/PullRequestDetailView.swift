@@ -46,6 +46,7 @@ struct PullRequestDetailView: View {
             }
             .formStyle(.grouped)
             .accessibilityIdentifier("pull-request-detail")
+            .task(id: number) { await model.loadDiffs(of: number) }
         } else {
             ContentUnavailableView("No pull request", systemImage: "questionmark.circle")
         }
@@ -73,6 +74,7 @@ struct PullRequestFileView: View {
             }
             .formStyle(.grouped)
             .accessibilityIdentifier("pull-request-file")
+            .task(id: number) { await model.loadDiffs(of: number) }
         }
     }
 }

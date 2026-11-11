@@ -24,22 +24,12 @@ struct SelectionTests {
         #expect(model.selection == cage)
     }
 
-    @Test func choosingAChangesetOpensItsOverview() async {
-        let model = model()
-        await model.choose(ChangesetItem.building(file: cage))
-        await model.choose(Changeset.pullRequest(number: 7))
-        #expect(model.changeset == .pullRequest(number: 7))
-        #expect(model.item == .overview)
-    }
-
-    /// Either column would take the text field's place, and its text with it.
+    /// The Overview would take the text field's place, and its text with it.
     @Test func aDraftThatWontSaveKeepsTheEditorOnScreen() async {
         let saves = DraftSaves()
         let model = model(saves)
         await model.choose(ChangesetItem.building(file: cage))
         saves.succeed = false
-        await model.choose(Changeset.pullRequest(number: 7))
-        #expect(model.changeset == .current)
         await model.choose(ChangesetItem.overview)
         #expect(model.item == .building(file: cage))
     }
@@ -51,10 +41,10 @@ struct SelectionTests {
             try? await Task.sleep(for: .milliseconds(200))
             return true
         }
-        async let first: Void = model.choose(Changeset.pullRequest(number: 7))
+        async let first: Void = model.choose(ChangesetItem.building(file: cage))
         try? await Task.sleep(for: .milliseconds(20))
-        await model.choose(Changeset.current)
+        await model.choose(ChangesetItem.overview)
         await first
-        #expect(model.changeset == .current)
+        #expect(model.item == .overview)
     }
 }
