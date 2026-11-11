@@ -33,6 +33,8 @@ final class ActivityUITests: XCTestCase {
         XCTAssertTrue(app.textFields["service-title-0"].waitForExistence(timeout: 10))
         // Activity is below every building
         for _ in 0..<20 where !newer.isHittable { list.scroll(byDeltaX: 0, deltaY: -500) }
+        // the header the test with no history looks for, and finds missing
+        XCTAssertTrue(list.staticTexts["Activity"].exists)
 
         newer.click()
         let detail = app.descendants(matching: .any)["pull-request-detail"]

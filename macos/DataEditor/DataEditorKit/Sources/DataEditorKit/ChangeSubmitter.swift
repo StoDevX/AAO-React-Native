@@ -32,7 +32,12 @@ public struct Submission: Codable, Hashable, Sendable {
     }
 }
 
-public enum SubmissionState: String, Codable, Sendable, Equatable { case open, changesRequested, merged, closed }
+public enum SubmissionState: String, Codable, Sendable, Equatable {
+    case open, changesRequested, merged, closed
+
+    /// Whether the pull request takes no more commits, so its state no longer changes.
+    public var isFinished: Bool { self == .merged || self == .closed }
+}
 
 public enum SubmitError: LocalizedError, Equatable, Sendable {
     case signInRequired

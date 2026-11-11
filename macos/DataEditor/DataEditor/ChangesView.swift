@@ -261,8 +261,7 @@ private struct DiffView: View {
     }
 }
 
-/// Where the current pull request stands, with what to do next. A merged or
-/// closed one is no longer current, and the Activity section shows it.
+/// Where the current pull request stands, with what to do next.
 private struct SubmissionBanner: View {
     @Environment(AppModel.self) private var model
     let record: SubmissionRecord
@@ -270,26 +269,38 @@ private struct SubmissionBanner: View {
     /// The number as GitHub writes it: a number in a label's text would be grouped, as in #8,123.
     private var number: String { String(submission.number) }
 
+    /// What the banner says. A failed check comes first: the state on record may no longer be true.
+    private enum Standing { case gone, unchecked, changesRequested, open }
+
+    private var standing: Standing {
+        if model.submissionUnreadable { return .gone }
+        if model.checkFailures.unanswered.contains(record.id) { return .unchecked }
+        // the current pull request is never merged or closed
+        switch record.state {
+        case .changesRequested?: return .changesRequested
+        case .open?: return .open
+        case .merged?, .closed?, nil: return .unchecked
+        }
+    }
+
     var body: some View {
         HStack {
-            switch record.state {
-            case .merged?, .closed?:
-                EmptyView()
-            case .changesRequested?:
+            switch standing {
+            case .changesRequested:
                 Label("A reviewer asked for changes on #\(number).", systemImage: "text.bubble")
                 Spacer()
                 Link("Read the review", destination: submission.url)
-            case .open?:
+            case .open:
                 Label("Pull request #\(number) is waiting for review.", systemImage: "clock")
                 Spacer()
                 Link("Open on GitHub", destination: submission.url)
-            case nil where model.submissionUnreadable:
+            case .gone:
                 Label("GitHub can't show pull request #\(number). It may have been deleted.",
                       systemImage: "questionmark.circle")
                 Spacer()
                 // every submission asks after it first, so it would stop each one
                 Button("Forget This Pull Request") { model.forgetSubmission(submission.number) }
-            case nil:
+            case .unchecked:
                 Label("Could not check pull request #\(number) on GitHub.", systemImage: "questionmark.circle")
                 Spacer()
                 Link("Open on GitHub", destination: submission.url)

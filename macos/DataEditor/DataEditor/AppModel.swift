@@ -52,13 +52,6 @@ final class AppModel {
     /// by a second copy of the app or anything else.
     static func isPortInUse(_ message: String) -> Bool { message.contains("EADDRINUSE") }
 
-    /// Whether GitHub refuses to show a pull request for good: it was
-    /// deleted. A rate limit is not that: the pull request is still there, and
-    /// forgetting it would let the next submission open a duplicate.
-    static func isUnreadable(_ error: any Error) -> Bool {
-        (error as? SubmitError)?.isGone == true
-    }
-
     var phase: Phase = .starting
     var buildings: [BuildingSummary] = []
     var calendar: BreakCalendar?
@@ -77,10 +70,12 @@ final class AppModel {
     private(set) var submissions = SubmissionHistory() { didSet { submissions.save(to: support.appending(path: "submissions.json")) } }
     /// The pull request a new submission adds a commit to, if there is one.
     var currentSubmission: SubmissionRecord? { submissions.current }
-    /// Set when GitHub would not show the current pull request (see
-    /// `isUnreadable`). Every submission asks after it first, so only
+    /// The pull requests whose last check GitHub did not answer.
+    private(set) var checkFailures = CheckFailures()
+    /// Whether GitHub would not show the current pull request (see
+    /// `CheckFailures.isUnreadable`). Every submission asks after it first, so only
     /// forgetting it lets the contributor submit again.
-    private(set) var submissionUnreadable = false
+    var submissionUnreadable: Bool { currentSubmission.map { checkFailures.gone.contains($0.id) } ?? false }
     /// The pull request whose details the window shows in place of the selected building's hours.
     private(set) var shownPullRequest: Int?
     /// Set when the preview stopped because the helper could not serve the data on `port`.
@@ -126,18 +121,20 @@ final class AppModel {
 
     static let port = 8790
 
-    init(runtime: Runtime = .bundled) {
+    /// - Parameter support: the folder for the workspace and the history, where unit tests give their own
+    init(runtime: Runtime = .bundled, support: URL? = nil) {
         self.runtime = runtime
         let defaults = UserDefaults.standard
-        support = defaults.string(forKey: "UITestWorkspace").map { URL(filePath: $0) }
+        self.support = support ?? defaults.string(forKey: "UITestWorkspace").map { URL(filePath: $0) }
             ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appending(path: "DataEditor")
         if let node = defaults.string(forKey: "UITestNode"), let scripts = defaults.string(forKey: "UITestHelper") {
             testHelper = (URL(filePath: node), URL(filePath: scripts))
         } else {
             testHelper = nil
         }
-        workspace = Workspace(root: support.appending(path: "workspace"))
-        submissions = SubmissionHistory(contentsOf: support.appending(path: "submissions.json"))
+        workspace = Workspace(root: self.support.appending(path: "workspace"))
+        // a file this build cannot read is copied aside before anything saves over it
+        submissions = SubmissionHistory.load(from: self.support.appending(path: "submissions.json")).history
     }
 
     /// The GitHub OAuth app's client ID. UI tests set their own, so a test of
@@ -460,9 +457,7 @@ final class AppModel {
 
     /// Whether a submission after a pull request in `state` opens a new one:
     /// a merged or closed pull request takes no more commits.
-    static func opensNewPullRequest(after state: SubmissionState) -> Bool {
-        state == .merged || state == .closed
-    }
+    static func opensNewPullRequest(after state: SubmissionState) -> Bool { state.isFinished }
 
     /// Opens a pull request, or adds a commit to the open one. Refuses during
     /// an update, which may have removed a file it has not yet put back, and
@@ -486,10 +481,10 @@ final class AppModel {
             do {
                 state = try await submitter.state(of: current.submission)
             } catch {
-                submissionUnreadable = Self.isUnreadable(error)
+                submissions.take(.failure(error), for: current.id, failures: &checkFailures)
                 throw error
             }
-            submissions.record(state, for: current.id)
+            submissions.take(.success(state), for: current.id, failures: &checkFailures)
             if !Self.opensNewPullRequest(after: state) {
                 submissions.replace(try await submitter.update(current.submission, changes: changes, summary: summary))
                 await refreshSubmissions()
@@ -502,28 +497,26 @@ final class AppModel {
     }
 
     /// Asks GitHub after each pull request not yet merged or closed. A
-    /// finished one cannot change, so it is not asked after. UI tests reach no server.
+    /// finished one cannot change, so it is not asked after. A failed check
+    /// keeps the state GitHub last gave. UI tests reach no server.
     func refreshSubmissions() async {
         guard testHelper == nil else { return }
         let submitter = GitHubSubmitter(tokens: tokens)
-        var unreadable = false
         for record in submissions.needingCheck {
-            let state: SubmissionState?
+            let result: Result<SubmissionState, any Error>
             do {
-                state = try await submitter.state(of: record.submission)
+                result = .success(try await submitter.state(of: record.submission))
             } catch {
-                state = nil
-                if record.id == currentSubmission?.id { unreadable = Self.isUnreadable(error) }
+                result = .failure(error)
             }
-            submissions.record(state, for: record.id)
+            submissions.take(result, for: record.id, failures: &checkFailures)
         }
-        submissionUnreadable = unreadable
     }
 
     /// Lets go of pull request `number`, which GitHub will not show, so the next submission opens a new one.
     func forgetSubmission(_ number: Int) {
         submissions.forget(number)
-        submissionUnreadable = false
+        checkFailures.clear(number)
         if shownPullRequest == number { shownPullRequest = nil }
     }
 
@@ -544,8 +537,8 @@ final class AppModel {
 
     /// Shows `item`. A building's file loads unless it is the one already
     /// open. A pull request takes the hours' place, so what is typed in their
-    /// fields is saved first, as before Changes; the selected building stays
-    /// loaded for coming back to.
+    /// fields is saved first, and if any of it cannot be, the building stays,
+    /// with the text in sight. The selected building stays loaded for coming back to.
     func choose(_ item: SidebarItem?) async {
         latestChoice = item
         switch item {
@@ -553,8 +546,8 @@ final class AppModel {
             shownPullRequest = nil
             selection = file
         case .pullRequest(let number)?:
-            _ = await commitPendingDrafts()
-            guard latestChoice == item else { return }
+            let saved = await commitPendingDrafts()
+            guard saved, latestChoice == item else { return }
             shownPullRequest = number
         case nil:
             shownPullRequest = nil

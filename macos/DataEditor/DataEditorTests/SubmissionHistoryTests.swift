@@ -20,6 +20,14 @@ struct SubmissionHistoryTests {
         return history
     }
 
+    /// A fresh folder for a history file, removed when `body` returns.
+    private func inFolder(_ body: (URL) throws -> Void) throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "history \(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        try body(folder)
+    }
+
     @Test func listsTheNewestFirst() {
         #expect(history(record(1, .merged), record(2, .open)).records.map(\.id) == [2, 1])
     }
@@ -28,7 +36,7 @@ struct SubmissionHistoryTests {
     @Test func theCurrentRecordIsTheNewestNotYetMergedOrClosed() {
         #expect(history(record(1, .merged), record(2, .open)).current?.id == 2)
         #expect(history(record(1, .merged), record(2, .changesRequested)).current?.id == 2)
-        // a pull request whose state is unknown may still be open
+        // a pull request not yet checked may still be open
         #expect(history(record(1, .closed), record(2, nil)).current?.id == 2)
     }
 
@@ -43,13 +51,43 @@ struct SubmissionHistoryTests {
         #expect(checked.needingCheck.map(\.id) == [5, 4, 3])
     }
 
-    @Test func recordsAStateForOneRecordOnly() {
+    @Test func takesGitHubsAnswerForOneRecordOnly() {
         var records = history(record(1, .open), record(2, .open))
-        records.record(.merged, for: 1)
+        var failures = CheckFailures()
+        records.take(.success(.merged), for: 1, failures: &failures)
         #expect(records.records.map(\.state) == [.open, .merged])
-        // a failed check leaves the state unknown
-        records.record(nil, for: 2)
-        #expect(records.records.map(\.state) == [nil, .merged])
+        #expect(failures == CheckFailures())
+    }
+
+    /// Offline or rate-limited, the record keeps what GitHub last said, and the failure is noted beside it.
+    @Test func aFailedCheckKeepsTheLastKnownState() {
+        var records = history(record(1, .changesRequested))
+        var failures = CheckFailures()
+        records.take(.failure(URLError(.notConnectedToInternet)), for: 1, failures: &failures)
+        #expect(records.records[0].state == .changesRequested)
+        #expect(failures.unanswered == [1])
+        #expect(failures.gone.isEmpty)
+    }
+
+    /// Only a pull request GitHub says is gone may be forgotten, so that is noted apart.
+    @Test func notesAPullRequestGitHubSaysIsGone() {
+        var records = history(record(1, .open))
+        var failures = CheckFailures()
+        records.take(.failure(SubmitError.github(404, "Not Found")), for: 1, failures: &failures)
+        #expect(failures.gone == [1])
+        // a rate limit next time says nothing about whether it is there
+        records.take(.failure(SubmitError.github(403, "API rate limit exceeded")), for: 1, failures: &failures)
+        #expect(failures.gone.isEmpty)
+        #expect(failures.unanswered == [1])
+    }
+
+    @Test func anAnswerClearsTheFailuresNoted() {
+        var records = history(record(1, .open))
+        var failures = CheckFailures()
+        records.take(.failure(SubmitError.github(404, "Not Found")), for: 1, failures: &failures)
+        records.take(.success(.closed), for: 1, failures: &failures)
+        #expect(records.records[0].state == .closed)
+        #expect(failures == CheckFailures())
     }
 
     @Test func replacesASubmissionWithItsUpdate() {
@@ -69,23 +107,63 @@ struct SubmissionHistoryTests {
     }
 
     @Test func savesAndLoadsTheRecords() throws {
-        let folder = FileManager.default.temporaryDirectory.appending(path: "history \(UUID().uuidString)")
-        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: folder) }
-        let file = folder.appending(path: "submissions.json")
-        let saved = history(record(1, .merged), record(2, .changesRequested), record(3, nil))
-        saved.save(to: file)
-        #expect(SubmissionHistory(contentsOf: file) == saved)
+        try inFolder { folder in
+            let file = folder.appending(path: "submissions.json")
+            let saved = history(record(1, .merged), record(2, .changesRequested), record(3, nil))
+            saved.save(to: file)
+            let loaded = SubmissionHistory.load(from: file)
+            #expect(loaded.history == saved)
+            #expect(loaded.setAside == nil)
+        }
     }
 
-    @Test func loadsNothingFromAMissingOrUnreadableFile() throws {
-        let folder = FileManager.default.temporaryDirectory.appending(path: "history \(UUID().uuidString)")
-        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: folder) }
-        let file = folder.appending(path: "submissions.json")
-        #expect(SubmissionHistory(contentsOf: file).records.isEmpty)
-        try Data("not json".utf8).write(to: file)
-        #expect(SubmissionHistory(contentsOf: file).records.isEmpty)
+    @Test func loadsNothingFromAMissingFile() throws {
+        try inFolder { folder in
+            let loaded = SubmissionHistory.load(from: folder.appending(path: "submissions.json"))
+            #expect(loaded.history.records.isEmpty)
+            #expect(loaded.setAside == nil)
+        }
+    }
+
+    /// A record a later build wrote, or a file cut short, must not take the
+    /// readable records with it, nor be lost when the history is next saved.
+    @Test func keepsTheReadableRecordsAndSetsTheFileAside() throws {
+        try inFolder { folder in
+            let file = folder.appending(path: "submissions.json")
+            history(record(1, .merged), record(2, .open)).save(to: file)
+            let text = try String(contentsOf: file, encoding: .utf8).replacingOccurrences(of: "\"merged\"", with: "\"draft\"")
+            try Data(text.utf8).write(to: file)
+
+            let loaded = SubmissionHistory.load(from: file)
+            #expect(loaded.history.records.map(\.id) == [2])
+            let aside = try #require(loaded.setAside)
+            loaded.history.save(to: file)
+            #expect(try String(contentsOf: aside, encoding: .utf8) == text)
+        }
+    }
+
+    @Test func setsAnUnreadableFileAside() throws {
+        try inFolder { folder in
+            let file = folder.appending(path: "submissions.json")
+            try Data("[{\"submission\":".utf8).write(to: file)
+            let loaded = SubmissionHistory.load(from: file)
+            #expect(loaded.history.records.isEmpty)
+            let aside = try #require(loaded.setAside)
+            #expect(try Data(contentsOf: aside) == Data("[{\"submission\":".utf8))
+        }
+    }
+
+    /// Two bad files in a row each keep their own copy.
+    @Test func neverSetsAFileAsideOverAnother() throws {
+        try inFolder { folder in
+            let file = folder.appending(path: "submissions.json")
+            try Data("first".utf8).write(to: file)
+            let first = try #require(SubmissionHistory.load(from: file).setAside)
+            try Data("second".utf8).write(to: file)
+            let second = try #require(SubmissionHistory.load(from: file).setAside)
+            #expect(first != second)
+            #expect(try Data(contentsOf: first) == Data("first".utf8))
+        }
     }
 
     @Test func namesTheChangedFilesAsTheDataFolderDoes() {
