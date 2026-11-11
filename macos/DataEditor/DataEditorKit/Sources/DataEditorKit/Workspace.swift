@@ -100,15 +100,20 @@ public final class Workspace: Sendable {
     /// way to master's published helper, fetched with its data and keeping
     /// the edits; `NeedsNewerApp` if that one speaks another protocol too.
     public func loadHelper(oxfmt: URL) async throws -> HelperClient {
-        if let helper = try? helper(oxfmt: oxfmt), helper.helperProtocol == HelperRuntime.protocolVersion { return helper }
+        if let helper = try? await helper(oxfmt: oxfmt), helper.helperProtocol == HelperRuntime.protocolVersion { return helper }
         _ = try await updateToLatest()
-        let helper = try helper(oxfmt: oxfmt)
+        let helper = try await helper(oxfmt: oxfmt)
         guard helper.helperProtocol == HelperRuntime.protocolVersion else { throw NeedsNewerApp() }
         return helper
     }
 
-    private func helper(oxfmt: URL) throws -> HelperClient {
-        HelperClient(runtime: try HelperRuntime(scripts: scriptsDirectory, data: dataDirectory, out: outDirectory, oxfmt: oxfmt))
+    /// Loads the helper away from the caller, which may be the main actor: it
+    /// evaluates over a megabyte of script.
+    private func helper(oxfmt: URL) async throws -> HelperClient {
+        let (scripts, data, out) = (scriptsDirectory, dataDirectory, outDirectory)
+        return HelperClient(runtime: try await Task.detached {
+            try HelperRuntime(scripts: scripts, data: data, out: out, oxfmt: oxfmt)
+        }.value)
     }
 
     /// Runs `body` at the published commit, after refusing a helper this app
