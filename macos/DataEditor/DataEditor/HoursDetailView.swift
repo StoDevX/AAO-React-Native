@@ -57,14 +57,14 @@ struct HoursDetailView: View {
 
             Section("This week") { WeekTimeline(services: document.services) }
 
-            ScheduleSection(title: "Usual hours", editor: ScheduleEditor(base: ["schedule"], services: document.services))
+            ScheduleSection(title: "Usual hours", document: document, editor: ScheduleEditor(base: ["schedule"], services: document.services))
                 .disabled(locked)
 
             Section("Exceptions") {
                 ForEach(Array(document.exceptions.enumerated()), id: \.offset) { index, exception in
                     DisclosureGroup(exception.date) {
                         Group {
-                            ScheduleSection(title: nil, editor: ScheduleEditor(base: ["exceptions", .index(index), "schedule"], services: exception.services))
+                            ScheduleSection(title: nil, document: document, editor: ScheduleEditor(base: ["exceptions", .index(index), "schedule"], services: exception.services))
                             Button("Remove this exception", role: .destructive) {
                                 if !isRepeatClick() { Task { await model.apply([.delete(["exceptions", .index(index)])]) } }
                             }
@@ -157,7 +157,7 @@ private struct BreaksSection: View {
                     // leaving hours of its own takes away fields that may hold a draft
                     .disabled(model.editing || !model.unsavedDrafts.isEmpty)
                     if case .custom(let services)? = entry {
-                        ScheduleSection(title: nil, editor: ScheduleEditor(base: path, services: services))
+                        ScheduleSection(title: nil, document: document, editor: ScheduleEditor(base: path, services: services))
                     }
                 }
             }

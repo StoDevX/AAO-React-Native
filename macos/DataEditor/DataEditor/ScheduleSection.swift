@@ -6,12 +6,14 @@ import SwiftUI
 struct ScheduleSection: View {
     @Environment(AppModel.self) private var model
     let title: String?
+    /// the file on screen, as its parent read it, so the section never pairs one file with another's services
+    let document: HoursDocument
     let editor: ScheduleEditor
 
     private func apply(_ ops: EditOp...) { Task { await model.apply(ops) } }
 
     /// What service `s` holds in the file on screen.
-    private func schedule(_ s: Int) -> JSONValue? { model.document?.value[path: editor.servicePath(s)] }
+    private func schedule(_ s: Int) -> JSONValue? { document.value[path: editor.servicePath(s)] }
 
     var body: some View {
         let file = model.documentFile ?? ""
