@@ -170,10 +170,11 @@ export async function build({
 	return {ok: true, dir}
 }
 
-/** Removes every build under `outDir` except `keep`. Only `build-` folders are builds. */
-export async function pruneBuilds(outDir: string, keep: string): Promise<void> {
+/** Removes every build under `outDir` except those in `keep`. Only `build-` folders are builds. */
+export async function pruneBuilds(outDir: string, ...keep: (string | undefined)[]): Promise<void> {
+	let kept = new Set(keep.filter((dir) => dir !== undefined).map((dir) => path.basename(dir)))
 	let others = (await readdir(outDir)).filter(
-		(entry) => entry.startsWith('build-') && entry !== path.basename(keep),
+		(entry) => entry.startsWith('build-') && !kept.has(entry),
 	)
 	await Promise.all(
 		others.map((entry) => rm(path.join(outDir, entry), {recursive: true, force: true})),

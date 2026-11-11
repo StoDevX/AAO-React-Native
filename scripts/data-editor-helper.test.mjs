@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import {spawn} from 'node:child_process'
+import {readdirSync} from 'node:fs'
 import path from 'node:path'
 import {createInterface} from 'node:readline'
 import {describe, it} from 'node:test'
@@ -12,6 +13,27 @@ async function handlers() {
 	let {root, dataDir} = await scratchData()
 	return createHandlers({dataDir, outDir: path.join(root, 'out'), bundleData: BUNDLE_DATA})
 }
+
+describe('build', () => {
+	/// The Mac app moves its server to a new build once the reply reaches it,
+	/// so the build it serves until then must still be there.
+	it('keeps the build before the newest until the next one', async () => {
+		let {root, dataDir} = await scratchData()
+		let outDir = path.join(root, 'out')
+		let helper = createHandlers({dataDir, outDir, bundleData: BUNDLE_DATA})
+		let first = await helper.build()
+		let second = await helper.build()
+		assert.deepEqual(
+			readdirSync(outDir).sort(),
+			[path.basename(first.dir), path.basename(second.dir)].sort(),
+		)
+		let third = await helper.build()
+		assert.deepEqual(
+			readdirSync(outDir).sort(),
+			[path.basename(second.dir), path.basename(third.dir)].sort(),
+		)
+	})
+})
 
 describe('inOrder', () => {
 	it('runs steps one after another and carries on after one throws', async () => {

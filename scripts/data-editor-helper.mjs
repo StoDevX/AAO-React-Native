@@ -31,12 +31,15 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 			value: await store.edit(file, ops),
 			problems: validate(dataDir, file),
 		}),
-		// The new build is served from the moment it is whole; older ones go after.
+		// The new build is served from the moment it is whole; older ones go
+		// after. The one before stays until the next build, since the Mac app
+		// moves its server to the new one only once this reply reaches it.
 		build: async () => {
 			let result = await build({bundleData, dataDir, outDir})
 			if (!result.ok) return result
+			let previous = current
 			current = result.dir
-			await pruneBuilds(outDir, current)
+			await pruneBuilds(outDir, current, previous)
 			// the folder to serve, which the app's own server reads
 			return {ok: true, dir: current}
 		},
