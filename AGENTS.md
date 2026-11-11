@@ -207,6 +207,13 @@ NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
 different matter: that bundle identifier would need its own App Store Connect
 record, which this config does not create.
 
+### Mac Apps
+
+The Mac radio's Xcode project is not committed. `mise run xcodegen` writes
+`macos/Radio/Radio.xcodeproj` from `macos/Radio/project.yml`; change targets,
+files and build settings there, then run the task again. Xcode Cloud runs the
+same task from `macos/Radio/ci_scripts/ci_post_clone.sh`.
+
 ### App Icons
 
 The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in

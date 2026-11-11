@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {format} from 'date-fns'
 
@@ -41,7 +41,7 @@ export default function ArchivedConvosPage(): React.ReactNode {
 				{data.length === 0 ? (
 					<ContentUnavailableView systemImage="waveform" title="No recordings found." />
 				) : (
-					<Section footer={<Text>Recordings open in your browser.</Text>}>
+					<Section>
 						{data.map((convo) => (
 							<DisclosureRow
 								key={convo.recordingUrl}

@@ -8,22 +8,27 @@ backend = "aqua:mgdm/htmlq"
 specifiers = ["0.4.0"]
 
 [tools."aqua:mgdm/htmlq"."platforms.linux-x64"]
+checksum = "sha256:4f63c8d9d835aa1f18f472da2eb5fc88295ede6aebcc7949fd428403707fc74a"
 url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
 url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128274"
 
 [tools."aqua:mgdm/htmlq"."platforms.linux-x64-musl"]
+checksum = "sha256:4f63c8d9d835aa1f18f472da2eb5fc88295ede6aebcc7949fd428403707fc74a"
 url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
 url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128274"
 
 [tools."aqua:mgdm/htmlq"."platforms.macos-arm64"]
+checksum = "sha256:2df22ac78faa315388855b1341974f84265f283ef409d2b40ce04f222513addf"
 url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-darwin.tar.gz"
 url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128388"
 
 [tools."aqua:mgdm/htmlq"."platforms.macos-x64"]
+checksum = "sha256:2df22ac78faa315388855b1341974f84265f283ef409d2b40ce04f222513addf"
 url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-darwin.tar.gz"
 url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128388"
 
 [tools."aqua:mgdm/htmlq"."platforms.windows-x64"]
+checksum = "sha256:58b9bb55279da2a58acd1465e0448cc9556e280f8208f60a5f669b2bd4617005"
 url = "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-windows.zip"
 url_api = "https://api.github.com/repos/mgdm/htmlq/releases/assets/53128332"
 
@@ -149,26 +154,6 @@ version = "10.2.1"
 backend = "aqua:oxipng/oxipng"
 specifiers = ["10.2.1"]
 
-[tools.oxipng."platforms.linux-arm64"]
-checksum = "sha256:f51bb7c9836202da52a8181549641940662aa87ec2e3ae68115d822d893015b3"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541677736"
-
-[tools.oxipng."platforms.linux-arm64-musl"]
-checksum = "sha256:ff21aa2a005b324c8dfbdf13cd2f469fb6728b27dacded82635824ecd12e3b35"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541678486"
-
-[tools.oxipng."platforms.linux-x64"]
-checksum = "sha256:46e3c4beb9aae57290ad809dd3374b07153579d3322a3778c53900633618b7c6"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541676037"
-
-[tools.oxipng."platforms.linux-x64-musl"]
-checksum = "sha256:1813750ef592c5350ca79c88f98b2c0876d05c826dc7156245256d4255c1ad17"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541676949"
-
 [tools.oxipng."platforms.macos-arm64"]
 checksum = "sha256:7039fcfc78e8aa1ed2b57d848057a0296f082e92b3e1807ac65402d10d926764"
 url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-aarch64-apple-darwin.tar.gz"
@@ -178,11 +163,6 @@ url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541682884"
 checksum = "sha256:111883bbe42b25e01cb1ca41f39f8094e4830b173f0e42be342ecc4ca48f3131"
 url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-apple-darwin.tar.gz"
 url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541682093"
-
-[tools.oxipng."platforms.windows-x64"]
-checksum = "sha256:7e940f83ee46874b73f53031f96a15834cb70b220af27391fb06fe7b4dd798e1"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541679560"
 
 [[tools.pnpm]]
 version = "12.15.0"
@@ -236,15 +216,6 @@ version = "3.4.11"
 backend = "core:ruby"
 specifiers = ["3.4.11"]
 
-[tools.ruby."platforms.windows-x64"]
-checksum = "sha256:a9aca84326a90422c0905bcb47be629b687a881dcad96149604c2cb074d03154"
-url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.11-1/rubyinstaller-3.4.11-1-x64.7z"
-
-[[tools.ruby]]
-version = "3.4.11"
-backend = "core:ruby"
-specifiers = ["3.4.11"]
-
 [tools.ruby.options]
 compile = "false"
 precompiled_url = "jdx/ruby"
@@ -278,30 +249,19 @@ provenance = "github-attestations"
 checksum = "sha256:5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d3de"
 url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz"
 
+[[tools.ruby]]
+version = "3.4.11"
+backend = "core:ruby"
+specifiers = ["3.4.11"]
+
+[tools.ruby."platforms.windows-x64"]
+checksum = "sha256:a9aca84326a90422c0905bcb47be629b687a881dcad96149604c2cb074d03154"
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.11-1/rubyinstaller-3.4.11-1-x64.7z"
+
 [[tools.sentry]]
 version = "3.8.0"
 backend = "aqua:getsentry/sentry-cli"
 specifiers = ["3.8.0"]
-
-[tools.sentry."platforms.linux-arm64"]
-checksum = "sha256:eaea24b5b47b61a96d9a2e353268ea41fd9a8c5b7979694330df614d4af672bf"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-aarch64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158248"
-
-[tools.sentry."platforms.linux-arm64-musl"]
-checksum = "sha256:eaea24b5b47b61a96d9a2e353268ea41fd9a8c5b7979694330df614d4af672bf"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-aarch64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158248"
-
-[tools.sentry."platforms.linux-x64"]
-checksum = "sha256:13f8cb34ae01a6a272d7d7c22e277a105286615b4020de900ea95a8de47cdbb6"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-x86_64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158243"
-
-[tools.sentry."platforms.linux-x64-musl"]
-checksum = "sha256:13f8cb34ae01a6a272d7d7c22e277a105286615b4020de900ea95a8de47cdbb6"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-x86_64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158243"
 
 [tools.sentry."platforms.macos-arm64"]
 checksum = "sha256:1dda212b0e168b9c4dc48d7d3aa24c1c37de9c6edf786e6ae661236e529969cd"
@@ -312,11 +272,6 @@ url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568
 checksum = "sha256:279c795b15de7a76106d30b6611b7942b1a97323307327bafc18335f10384c4d"
 url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Darwin-x86_64"
 url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158237"
-
-[tools.sentry."platforms.windows-x64"]
-checksum = "sha256:2257cf6805a616f5c3ee291a549ebbba021190048b646adc006beb4e8cdef7fd"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Windows-x86_64.exe"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158249"
 
 [[tools.shellcheck]]
 version = "0.11.0"

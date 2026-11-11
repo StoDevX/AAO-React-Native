@@ -107,10 +107,16 @@
       "schedule": ["before 9am on monday"]
     },
     {
-      "description": "hold the radio transcriber's Python below 3.15: ai-edge-litert publishes wheels for cp313 and cp314 only, so uv cannot install it on a newer Python. Lift this once it ships cp315 wheels.",
-      "matchFileNames": ["scripts/radio/transcribe/.python-version"],
+      "description": "a new Python minor or major is a decision, not a routine PR: native wheels (ai-edge-litert's, for the radio transcriber) often lag a release, so wait on the dependency dashboard until someone approves it",
       "matchDepNames": ["python"],
-      "allowedVersions": "<3.15"
+      "matchUpdateTypes": ["minor", "major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "requires-python is a range of supported interpreters, so never pin it to one release; when a new minor is approved, replace the range rather than pinning or widening it",
+      "matchManagers": ["pep621"],
+      "matchDepTypes": ["requires-python"],
+      "rangeStrategy": "replace"
     }
   ],
   "prConcurrentLimit": 4
