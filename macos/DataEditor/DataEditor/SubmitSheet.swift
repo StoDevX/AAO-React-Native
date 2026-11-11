@@ -14,6 +14,9 @@ struct SubmitSheet: View {
     /// branch or pull request half made, so the sheet cannot be closed.
     @State private var sendingToGitHub = false
     @State private var error: String?
+    /// The on-device model writing a summary, if it is
+    @State private var suggesting: Task<Void, Never>?
+    @State private var suggestionFailed = false
 
     /// Whether Submit may be clicked: a summary to title the pull request, no
     /// submission already under way, and a build that can sign in to GitHub.
@@ -30,6 +33,14 @@ struct SubmitSheet: View {
             }
             TextField("What changed?", text: $summary, prompt: Text("e.g. Close The Cage at 9 p.m. on Fridays"))
                 .accessibilityIdentifier("submit-summary")
+            if canSuggestSummary {
+                Button(suggesting == nil ? "Suggest" : "Suggesting…", systemImage: "sparkles") { suggesting = Task { await suggest() } }
+                    .disabled(suggesting != nil || working)
+                    .accessibilityIdentifier("submit-suggest")
+                if suggestionFailed {
+                    Text("Couldn't suggest a summary.").foregroundStyle(.secondary)
+                }
+            }
             if let code {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Sign in to GitHub").font(.headline)
@@ -54,7 +65,24 @@ struct SubmitSheet: View {
         }
         .interactiveDismissDisabled(sendingToGitHub)
         // stops waiting for a sign-in nobody will finish; the sheet stays open while sending
-        .onDisappear { sending?.cancel() }
+        .onDisappear {
+            sending?.cancel()
+            suggesting?.cancel()
+        }
+    }
+
+    /// Replaces the summary with the on-device model's, or says it could not write one.
+    private func suggest() async {
+        defer { suggesting = nil }
+        suggestionFailed = false
+        let files = model.changedFiles.map { ChangedFile(building: buildingName(of: $0, in: model.buildings), diff: model.diff(for: $0)) }
+        do {
+            let suggestion = try await suggestSummary(for: files)
+            guard !Task.isCancelled else { return }
+            if suggestion.isEmpty { suggestionFailed = true } else { summary = suggestion }
+        } catch {
+            if !Task.isCancelled { suggestionFailed = true }
+        }
     }
 
     private func submit() async {
