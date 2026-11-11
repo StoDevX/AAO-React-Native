@@ -66,6 +66,10 @@ final class AppModel {
     var submissionUnreadable: Bool { currentSubmission.map { checkFailures.gone.contains($0.id) } ?? false }
     /// Set when the preview stopped because the helper could not serve the data on `port`.
     private(set) var servePortInUse = false
+    /// Set while the first start downloads and installs Node and ccc-server.
+    private(set) var previewInstalling = false
+    /// Set when that download or install failed, which the preview's popover says.
+    private(set) var previewInstallFailed = false
     /// master's newest commit, when it is not the one being edited
     var newerCommit: String?
     var conflicts: [String] = []
@@ -100,6 +104,8 @@ final class AppModel {
     /// The newest good build, which the build server reads on each request.
     private let currentBuild = OSAllocatedUnfairLock<URL?>(initialState: nil)
     private var ccc: CccRunner?
+    /// The first start's download and install of Node and ccc-server, which a Stop cancels.
+    private var install: Task<Void, any Error>?
     /// Copies ccc's statuses into `cccStatus`. Its stream never ends, so stopping the preview cancels it.
     private var cccWatch: Task<Void, Never>?
     /// Counts starts and stops of the preview. A `startPreview` whose number
@@ -201,10 +207,11 @@ final class AppModel {
 
     /// Starts the phone preview: builds, serves the newest good build and runs
     /// ccc on it. A build with problems lists them and the preview starts
-    /// anyway, serving the last good build if there is one.
+    /// anyway, serving the last good build if there is one. The first start
+    /// downloads Node and ccc-server, as `PreviewInstaller` says.
     /// After a crash or a refused port it starts the same ccc again. Does
     /// nothing while it starts or runs, during an update or quitting, or
-    /// under UI tests, which have no bundled ccc to run.
+    /// under UI tests, which run no ccc.
     func startPreview() async {
         guard testOxfmt == nil, !shuttingDown, !updating, helper != nil else { return }
         switch cccStatus {
@@ -215,10 +222,34 @@ final class AppModel {
         // starting now, which also turns away a second call meanwhile
         cccStatus = .starting
         servePortInUse = false
+        previewInstallFailed = false
         previewGeneration += 1
         let generation = previewGeneration
         await rebuild()
         // a Stop, or a Stop and a newer start, came meanwhile
+        guard generation == previewGeneration else { return }
+        let installer: PreviewInstaller
+        do {
+            // not support/ccc, which holds ccc's own state
+            installer = try PreviewInstaller(root: support.appending(path: "preview"), node: runtime.nodeRelease(), cccCommit: runtime.cccCommit())
+            if !installer.isReady {
+                previewInstalling = true
+                let install = Task { try await installer.install() }
+                self.install = install
+                try await install.value
+                previewInstalling = false
+                self.install = nil
+            }
+        } catch {
+            // a Stop cancelled the install, and says what the preview is now
+            guard generation == previewGeneration else { return }
+            previewInstalling = false
+            install = nil
+            cccLog = error.localizedDescription.split(separator: "\n").map(String.init)
+            previewInstallFailed = true
+            cccStatus = .crashed(1)
+            return
+        }
         guard generation == previewGeneration else { return }
         if let ccc {
             await ccc.start()
@@ -234,7 +265,7 @@ final class AppModel {
             let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
             pagesOrigin = origin
             if shuttingDown || generation != previewGeneration { return }
-            let ccc = CccRunner(configuration: .bundled(node: runtime.node, cccRoot: runtime.cccRoot, pagesOrigin: origin, state: support.appending(path: "ccc")))
+            let ccc = CccRunner(configuration: .bundled(node: installer.nodeExecutable, cccRoot: installer.cccRoot, pagesOrigin: origin, state: support.appending(path: "ccc")))
             self.ccc = ccc
             cccWatch = Task { for await status in await ccc.statuses() { self.cccStatus = status; self.cccLog = await ccc.log } }
             await ccc.start()
@@ -248,6 +279,10 @@ final class AppModel {
 
     /// Stops ccc and lets it go. The build server keeps serving the build, which costs nothing and the next start reuses.
     func stopPreview() async {
+        install?.cancel()
+        install = nil
+        previewInstalling = false
+        previewInstallFailed = false
         previewGeneration += 1
         cccWatch?.cancel()
         cccWatch = nil

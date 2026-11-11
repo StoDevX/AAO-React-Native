@@ -17,10 +17,11 @@ struct PreviewControl: Equatable {
     let offersStartAgain: Bool
 
     /// - Parameter servePortInUse: whether the app could not serve the data on its own port
-    init(_ status: CccRunner.Status, servePortInUse: Bool = false) {
+    /// - Parameter installing: whether the first start is downloading Node and ccc-server
+    init(_ status: CccRunner.Status, servePortInUse: Bool = false, installing: Bool = false) {
         switch status {
         case .stopped: (title, click, offersStop, offersStartAgain) = ("Start Preview", .start, false, false)
-        case .starting: (title, click, offersStop, offersStartAgain) = ("Starting preview…", .showStatus, true, false)
+        case .starting: (title, click, offersStop, offersStartAgain) = (installing ? "Downloading preview…" : "Starting preview…", .showStatus, true, false)
         case .running: (title, click, offersStop, offersStartAgain) = ("Preview on", .showStatus, true, false)
         case .portInUse: (title, click, offersStop, offersStartAgain) = ("Port 8787 is in use", .showStatus, true, true)
         case .crashed: (title, click, offersStop, offersStartAgain) = (servePortInUse ? "Port \(AppModel.port) is in use" : "Preview stopped", .showStatus, true, true)
@@ -43,7 +44,7 @@ struct ServerStatusView: View {
     }
 
     var body: some View {
-        let control = PreviewControl(model.cccStatus, servePortInUse: model.servePortInUse)
+        let control = PreviewControl(model.cccStatus, servePortInUse: model.servePortInUse, installing: model.previewInstalling)
         Button {
             switch control.click {
             case .start: Task { await model.startPreview() }
@@ -68,6 +69,13 @@ struct ServerStatusView: View {
                 3. Go to Developer → Server URL and choose “ccc-server edu.stolaf (\(Host.current().localizedName ?? "this Mac"))”.
                 4. Pull to refresh the hours.
                 """)
+                if model.previewInstalling {
+                    Text("Getting the preview server ready. This happens once.")
+                }
+                if model.previewInstallFailed {
+                    Text("Couldn't download the preview server.").foregroundStyle(.red)
+                    Text(model.cccLog.suffix(5).joined(separator: "\n")).font(.caption.monospaced()).textSelection(.enabled)
+                }
                 if model.cccStatus == .portInUse {
                     Text("Another program is using port 8787, probably another copy of ccc-server. Quit it first.").foregroundStyle(.red)
                 }

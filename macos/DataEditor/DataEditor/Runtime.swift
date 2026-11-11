@@ -1,14 +1,11 @@
 import DataEditorKit
 import Foundation
 
-/// What the app bundles under `Contents/Resources/Runtime`.
+/// What the app bundles under `Contents/Resources/Runtime`: oxfmt, and the Node and ccc-server the preview downloads.
 nonisolated struct Runtime {
     let root: URL
 
     static let bundled = Runtime(root: Bundle.main.resourceURL!.appending(path: "Runtime"))
-
-    var node: URL { root.appending(path: "node") }
-    var cccRoot: URL { root.appending(path: "ccc") }
 
     /// oxfmt's standalone binary, which the helper runs to write the data in the repo's style.
     var oxfmt: URL { root.appending(path: "oxfmt") }

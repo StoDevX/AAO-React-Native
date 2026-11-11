@@ -427,7 +427,7 @@ wait_for = ["pnpm:install:*"]
 run = "node scripts/build-data-editor-helper.mjs"
 
 [tasks."data-editor:runtime"]
-description = "Build the Mac data editor's bundled Node, helper and ccc-server"
+description = "Build what the Mac data editor bundles: oxfmt, and the preview's Node and ccc-server pins"
 wait_for = ["pnpm:install:*"]
 run = "macos/DataEditor/scripts/embed-runtime.sh"
 

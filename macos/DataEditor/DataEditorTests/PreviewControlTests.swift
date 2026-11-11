@@ -40,4 +40,13 @@ struct PreviewControlTests {
         #expect(control.title == "Port 8790 is in use")
         #expect(control.offersStartAgain)
     }
+
+    /// The first start downloads Node and ccc-server before anything runs.
+    @Test func saysThePreviewIsDownloadingAtItsFirstStart() {
+        let control = PreviewControl(.starting, installing: true)
+        #expect(control.title == "Downloading preview…")
+        #expect(control.click == .showStatus)
+        #expect(control.offersStop)
+        #expect(!control.offersStartAgain)
+    }
 }
