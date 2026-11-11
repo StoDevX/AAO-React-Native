@@ -76,8 +76,6 @@ final class AppModel {
     /// `CheckFailures.isUnreadable`). Every submission asks after it first, so only
     /// forgetting it lets the contributor submit again.
     var submissionUnreadable: Bool { currentSubmission.map { checkFailures.gone.contains($0.id) } ?? false }
-    /// The pull request whose details the window shows in place of the selected building's hours.
-    private(set) var shownPullRequest: Int?
     /// Set when the preview stopped because the helper could not serve the data on `port`.
     private(set) var servePortInUse = false
     /// master's newest commit, when it is not the one being edited
@@ -549,42 +547,46 @@ final class AppModel {
     func forgetSubmission(_ number: Int) {
         submissions.forget(number)
         checkFailures.clear(number)
-        if shownPullRequest == number { shownPullRequest = nil }
-    }
-
-    /// What the sidebar has selected.
-    enum SidebarItem: Hashable {
-        case building(file: String)
-        case pullRequest(number: Int)
-    }
-
-    var sidebarSelection: SidebarItem? {
-        if let shownPullRequest { return .pullRequest(number: shownPullRequest) }
-        return selection.map { .building(file: $0) }
-    }
-
-    /// The sidebar's newest choice, so a pull request chosen while the drafts
-    /// saved does not replace a building chosen after it.
-    private var latestChoice: SidebarItem?
-
-    /// Shows `item`. A building's file loads unless it is the one already
-    /// open. A pull request takes the hours' place, so what is typed in their
-    /// fields is saved first, and if any of it cannot be, the building stays,
-    /// with the text in sight. The selected building stays loaded for coming back to.
-    func choose(_ item: SidebarItem?) async {
-        latestChoice = item
-        switch item {
-        case .building(let file)?:
-            shownPullRequest = nil
-            selection = file
-        case .pullRequest(let number)?:
-            let saved = await commitPendingDrafts()
-            guard saved, latestChoice == item else { return }
-            shownPullRequest = number
-        case nil:
-            shownPullRequest = nil
-            selection = nil
+        if changeset == .pullRequest(number: number) {
+            changeset = .current
+            item = .overview
         }
+    }
+
+    /// The changeset the first column shows.
+    private(set) var changeset: Changeset = .current
+    /// What of `changeset` the second column shows.
+    private(set) var item: ChangesetItem = .overview
+
+    /// Counts choices, so one that waited for the text fields to save gives
+    /// way to any made meanwhile.
+    private var choices = 0
+
+    /// Saves what is typed in the text fields, which the choice may take off
+    /// screen, and reports whether the choice may go ahead: all of it saved,
+    /// so none leaves the screen unsaved, and no newer choice made meanwhile.
+    private func mayChoose() async -> Bool {
+        choices += 1
+        let choice = choices
+        let saved = await commitPendingDrafts()
+        return saved && choice == choices
+    }
+
+    /// Shows `changeset`, starting at its Overview. A pull request's diffs are
+    /// asked of GitHub as it opens.
+    func choose(_ changeset: Changeset) async {
+        guard await mayChoose() else { return }
+        self.changeset = changeset
+        item = .overview
+        if case .pullRequest(let number) = changeset { await loadDiffs(of: number) }
+    }
+
+    /// Shows `item` of the changeset on screen. Under Current changes a
+    /// building's file opens for editing, unless it is already open.
+    func choose(_ item: ChangesetItem) async {
+        guard await mayChoose() else { return }
+        self.item = item
+        if changeset == .current, case .building(let file) = item { selection = file }
     }
 
     /// Asks GitHub whether master has moved past the data being edited, so

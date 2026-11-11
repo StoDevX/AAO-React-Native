@@ -30,22 +30,13 @@ struct BuildingList: View {
     }
 
     var body: some View {
-        let selection = Binding(get: { model.sidebarSelection }, set: { item in Task { await model.choose(item) } })
+        let selection = Binding<ChangesetItem?>(get: { model.item }, set: { item in Task { await model.choose(item ?? .overview) } })
         List(selection: selection) {
             ForEach(Self.sections(of: model.buildings), id: \.title) { section in
                 Section(section.title) {
                     ForEach(section.buildings) { building in
                         Label(building.name, systemImage: icon(for: building.file))
-                            .tag(AppModel.SidebarItem.building(file: building.file))
-                    }
-                }
-            }
-            // like Mail's, it is not there until there is something in it
-            if !model.submissions.records.isEmpty {
-                Section("Activity") {
-                    ForEach(model.submissions.records) { record in
-                        ActivityRow(record: record)
-                            .tag(AppModel.SidebarItem.pullRequest(number: record.id))
+                            .tag(ChangesetItem.building(file: building.file))
                     }
                 }
             }

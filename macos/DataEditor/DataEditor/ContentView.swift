@@ -57,7 +57,7 @@ struct ContentView: View {
                 Button("Try Again") { Task { await model.launch() } }
             }
         case .ready:
-            if let record = model.submissions.records.first(where: { $0.id == model.shownPullRequest }) {
+            if case .pullRequest(let number) = model.changeset, let record = model.submissions.records.first(where: { $0.id == number }) {
                 PullRequestDetailView(record: record)
             } else if let document = model.document {
                 HoursDetailView(document: document)
