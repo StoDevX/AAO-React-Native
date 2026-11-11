@@ -37,7 +37,7 @@ final class HoursEditorUITests: XCTestCase {
         add.click()
         XCTAssertTrue(currentChanges(in: app).popUpButtons["row-time-from-0-2"].waitForExistence(timeout: 5))
         XCTAssertEqual(before, 0)
-        attachScreenshot(of: currentChanges(in: app), named: "Row added to the first service")
+        attachScreenshot(of: currentChanges(in: app), named: "Row added to the first schedule")
     }
 
     func testATitleTypedBeforeChoosingAnotherBuildingStaysWithItsOwn() throws {
@@ -68,7 +68,7 @@ final class HoursEditorUITests: XCTestCase {
         title.typeKey(.return, modifierFlags: [])
         XCTAssertTrue(currentChanges(in: app).descendants(matching: .any)["problems"].firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(currentChanges(in: app).staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
-        XCTAssertTrue(currentChanges(in: app).staticTexts["Usual hours › service 1 › title"].exists)
+        XCTAssertTrue(currentChanges(in: app).staticTexts["Usual hours › schedule 1 › title"].exists)
         attachScreenshot(of: currentChanges(in: app), named: "Title emptied reads in plain words")
     }
 
@@ -131,9 +131,10 @@ final class HoursEditorUITests: XCTestCase {
     func testTogglingADayMovesItOnTheTimeline() throws {
         let app = try launch()
         selectTheCage(in: app)
-        let days = currentChanges(in: app).segmentedControls["days-0-0"]
+        // a segmented control that takes any number of days reads as a group of checkboxes
+        let days = currentChanges(in: app).groups["days-0-0"]
         XCTAssertTrue(days.waitForExistence(timeout: 10))
-        days.buttons["Sat"].click()
+        days.checkBoxes["Sat"].click()
         // the weekday row now holds Saturday too
         let cage = try XCTUnwrap(data).appending(path: "building-hours/1-1-cage.yaml")
         let saved = NSPredicate { _, _ in
