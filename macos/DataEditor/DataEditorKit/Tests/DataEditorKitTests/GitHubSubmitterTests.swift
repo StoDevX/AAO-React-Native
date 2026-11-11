@@ -146,7 +146,8 @@ struct GitHubSubmitterTests {
     @Test func describesEachErrorForTheContributor() {
         #expect(SubmitError.github(422, "Validation Failed").localizedDescription.contains("Validation Failed"))
         #expect(SubmitError.signInRequired.errorDescription != nil)
-        #expect(SubmitError.missingBaseCommit.errorDescription != nil)
+        // a contributor never asked for a fork, so the word means nothing to them
+        #expect(SubmitError.missingBaseCommit.errorDescription == "GitHub is still setting up your copy of the data. Try again in a minute.")
         #expect(SubmitError.github(500, "").errorDescription != nil)
     }
 

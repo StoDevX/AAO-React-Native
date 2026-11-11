@@ -36,6 +36,8 @@ struct HelperClientTests {
 
     @Test func describesAFailureByTheHelpersMessage() {
         #expect(HelperClient.Failure(message: "x is outside the workspace").localizedDescription == "x is outside the workspace")
+        // the helper's own refusal is not its death
+        #expect(!HelperClient.Failure(message: "x is outside the workspace").helperStopped)
     }
 
     @Test func matchesConcurrentRepliesToTheirRequests() async throws {
@@ -68,9 +70,15 @@ struct HelperClientTests {
 
     @Test func failsWaitingRequestsWhenTheHelperStops() async throws {
         try await withFakeHelper { client in
-            await #expect(throws: HelperClient.Failure(message: "The helper stopped")) {
+            let failure = await #expect(throws: HelperClient.Failure(message: "The helper stopped")) {
                 let _: Echo = try await client.call("exit", [String: String]())
             }
+            #expect(failure?.helperStopped == true)
+            // a call after it stopped says so too, rather than waiting forever
+            let later = await #expect(throws: HelperClient.Failure.self) {
+                let _: Echo = try await client.call("load", [String: String]())
+            }
+            #expect(later?.helperStopped == true)
         }
     }
 

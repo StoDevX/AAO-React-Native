@@ -34,7 +34,7 @@ public enum SubmitError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .signInRequired: "Sign in to GitHub to submit your changes."
-        case .missingBaseCommit: "Your fork on GitHub does not have the data's commit yet. Try again in a minute."
+        case .missingBaseCommit: "GitHub is still setting up your copy of the data. Try again in a minute."
         case .github(let status, let message) where message.isEmpty: "GitHub answered with status \(status)."
         case .github(_, let message): message
         }

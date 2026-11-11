@@ -286,6 +286,21 @@ public final class Workspace: Sendable {
         relativeFiles(in: conflictsDirectory).union(relativeFiles(in: deletedConflictsDirectory)).sorted()
     }
 
+    /// The contributor's side of an open conflict.
+    public enum ConflictCopy: Equatable, Sendable {
+        /// their version of the file, set aside while master's sits in `data/`
+        case kept(Data)
+        /// they deleted the file
+        case deleted
+    }
+
+    /// What the contributor had in `file`, which waits for them to choose
+    /// between it and master's version, or nil if `file` has no open conflict.
+    public func conflictCopy(of file: String) -> ConflictCopy? {
+        if let kept = try? Data(contentsOf: conflictsDirectory.appending(path: file)) { return .kept(kept) }
+        return FileManager.default.fileExists(atPath: deletedConflictsDirectory.appending(path: file).path) ? .deleted : nil
+    }
+
     /// Resolves a conflict with the contributor's version.
     public func keepMine(_ file: String) throws {
         let fm = FileManager.default

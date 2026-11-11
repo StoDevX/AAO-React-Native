@@ -99,6 +99,7 @@ struct WorkspaceTests {
         #expect(try await workspace.update(to: "c2") == ["building-hours/1-1-cage.yaml"])
         #expect(workspace.conflicts == ["building-hours/1-1-cage.yaml"])
         #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage at Buntrock\n"))
+        #expect(workspace.conflictCopy(of: "building-hours/1-1-cage.yaml") == .kept(body("name: The Cage Grill\n")))
         try workspace.keepMine("building-hours/1-1-cage.yaml")
         #expect(workspace.conflicts == [])
         #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
@@ -138,8 +139,10 @@ struct WorkspaceTests {
         let workspace = Workspace(root: root, session: c2)
         #expect(try await workspace.update(to: "c2") == ["building-hours/1-1-cage.yaml"])
         #expect(workspace.conflicts == ["building-hours/1-1-cage.yaml"])
+        #expect(workspace.conflictCopy(of: "building-hours/1-1-cage.yaml") == .deleted)
         try workspace.keepMine("building-hours/1-1-cage.yaml")
         #expect(workspace.conflicts == [])
+        #expect(workspace.conflictCopy(of: "building-hours/1-1-cage.yaml") == nil)
         #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == nil)
     }
 

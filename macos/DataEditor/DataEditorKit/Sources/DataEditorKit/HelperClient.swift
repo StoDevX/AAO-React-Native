@@ -5,7 +5,17 @@ public actor HelperClient {
     public struct Failure: LocalizedError, Equatable, Sendable {
         public let message: String
         public var errorDescription: String? { message }
+        /// Whether the helper process has gone, so no later call can succeed
+        /// either, rather than refusing this one request.
+        public var helperStopped: Bool { message.hasPrefix(HelperClient.stoppedMessage) }
+
+        public init(message: String) {
+            self.message = message
+        }
     }
+
+    /// How a call failed because the helper is no longer running.
+    static let stoppedMessage = "The helper stopped"
 
     private struct Request<P: Encodable>: Encodable {
         let id: Int
@@ -51,11 +61,11 @@ public actor HelperClient {
     /// Reads replies until the helper's output closes. Replies end at "\n"
     /// alone: a value may hold U+2028, U+2029 or U+0085, which Node writes raw.
     private func listen() async {
-        var reason = "The helper stopped"
+        var reason = Self.stoppedMessage
         do {
             for try await line in lines(of: output) { receive(line) }
         } catch {
-            reason = "The helper stopped: \(error.localizedDescription)"
+            reason = "\(Self.stoppedMessage): \(error.localizedDescription)"
         }
         stopped = true
         for continuation in pending.values { continuation.resume(throwing: Failure(message: reason)) }
@@ -80,7 +90,7 @@ public actor HelperClient {
 
     /// Sends `method` and decodes its result as `R`.
     public func call<R: Decodable & Sendable>(_ method: String, _ params: some Encodable & Sendable) async throws -> R {
-        if stopped { throw Failure(message: "The helper stopped") }
+        if stopped { throw Failure(message: Self.stoppedMessage) }
         let id = nextID
         nextID += 1
         let line = try JSONEncoder.sorted.encode(Request(id: id, method: method, params: params)) + Data("\n".utf8)

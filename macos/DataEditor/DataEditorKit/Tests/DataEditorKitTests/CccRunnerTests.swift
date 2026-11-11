@@ -208,6 +208,6 @@ struct CccRunnerTests {
     }
 
     @Test func pagesOriginUsesTheBonjourName() {
-        #expect(pagesOrigin(localHostName: "Hawkens-MacBook-Pro", port: 8790) == "http://Hawkens-MacBook-Pro.local:8790/")
+        #expect(pagesOrigin(localHostName: "Editor-Mac", port: 8790) == "http://Editor-Mac.local:8790/")
     }
 }
