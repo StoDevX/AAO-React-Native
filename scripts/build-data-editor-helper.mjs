@@ -1,90 +1,110 @@
 #!/usr/bin/env node
-// Bundles the data editor's helper and bundle-data, each into one file with
-// its dependencies, for the Mac app to run on its own Node. The app copies
-// them into its workspace's `scripts/` folder, so the paths they work out
-// from their own location (`../data`, `../images`) land in the workspace.
-// oxfmt, which writes the data files in the repo's style, formats through a
-// native binding that cannot be bundled: its package folder (with the binding
-// installed for this machine) ships beside the bundle as node_modules.
+// Bundles the data editor's helper and bundle-data for JavaScriptCore, each
+// into one plain script, with Node's built-ins swapped for the stand-ins in
+// data-editor-jsc/, which reach the Mac app's Swift host. Master's data
+// deploy publishes them to GitHub Pages beside the data, with helper.json
+// naming the commit they came from and the protocol the helper speaks. A
+// Node built-in with no stand-in fails the build, so the app never meets it.
 
 import {execFileSync} from 'node:child_process'
-import {realpathSync} from 'node:fs'
-import {cp, mkdir, rm, writeFile} from 'node:fs/promises'
+import {mkdir, readFile, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
+import {parseArgs} from 'node:util'
 import {build} from 'esbuild'
+import {PROTOCOL} from './data-editor-helper.mjs'
 import {REPO_ROOT} from './paths.mjs'
 
-/**
- * The committed blob of each of the repo's `files`, which the app compares
- * with master's: only a change to code the helper runs makes it refuse.
- */
-function blobsOf(files) {
-	let lines = execFileSync('git', ['ls-tree', 'HEAD', '--', ...files], {
-		cwd: REPO_ROOT,
-		encoding: 'utf8',
-	})
-	// "<mode> blob <sha>\t<path>"
-	return Object.fromEntries(
-		lines
-			.trim()
-			.split('\n')
-			.map((line) => {
-				let [meta, file] = line.split('\t')
-				return [file, meta.split(' ')[2]]
-			}),
-	)
+const STAND_INS = path.join(import.meta.dirname, 'data-editor-jsc')
+
+/** Each module the scripts import that JavaScriptCore lacks, by its stand-in. */
+const STAND_IN_FOR = {
+	fs: 'fs.js',
+	'fs/promises': 'fs-promises.js',
+	path: 'path.js',
+	url: 'url.js',
+	util: 'util.js',
+	module: 'module.js',
+	child_process: 'child-process.js',
+	http: 'unavailable.js',
+	readline: 'unavailable.js',
+	buffer: 'unavailable.js',
+	process: 'process.js',
+	oxfmt: 'oxfmt.js',
+	'react-native': 'react-native.js',
 }
 
-/** The repo's own files among a build's inputs, leaving out the dependencies. */
-const repoInputs = (metafile) =>
-	Object.keys(metafile.inputs).filter((file) => !file.includes('node_modules'))
+const standIns = {
+	name: 'data-editor-jsc',
+	setup(builder) {
+		builder.onResolve(
+			{
+				// esbuild reads the filter as a Go regular expression, which takes no flags
+				filter:
+					// oxlint-disable-next-line eslint/require-unicode-regexp
+					/^(?:react-native|oxfmt|(?:node:)?(?:fs|fs\/promises|path|url|util|module|child_process|http|readline|buffer|process))$/,
+			},
+			(args) => ({path: path.join(STAND_INS, STAND_IN_FOR[args.path.replace(/^node:/u, '')])}),
+		)
+	},
+}
+
+const headCommit = () =>
+	execFileSync('git', ['rev-parse', 'HEAD'], {cwd: REPO_ROOT, encoding: 'utf8'}).trim()
 
 export async function buildHelper({
 	outDir = path.join(REPO_ROOT, 'macos/DataEditor/build/helper'),
+	commit = headCommit(),
 } = {}) {
+	await rm(outDir, {recursive: true, force: true})
 	await mkdir(outDir, {recursive: true})
 	let shared = {
 		bundle: true,
-		platform: 'node',
-		format: 'esm',
-		target: 'node24',
+		format: 'iife',
+		platform: 'neutral',
+		target: 'es2022',
+		mainFields: ['module', 'main'],
+		conditions: ['import', 'default'],
 		logLevel: 'warning',
-		external: ['oxfmt'],
-		// One file holds every module, so each inlined module's own
-		// `import.meta.main` CLI guard (build-faqs and others) would be true.
-		define: {'import.meta.main': 'false'},
-		// the CommonJS dependencies (Ajv) require Node's builtins
-		banner: {
-			js: "import {createRequire as __createRequire} from 'node:module'; const require = __createRequire(import.meta.url);",
+		plugins: [standIns],
+		inject: [path.join(STAND_INS, 'globals.js')],
+		define: {
+			// one file holds every module, so each one's CLI guard would be true
+			'import.meta.main': 'false',
+			// the scripts find ../data and ../images from their own folder,
+			// which the app says is the workspace's scripts/
+			'import.meta.dirname': 'globalThis.__scriptDir',
+			'import.meta.url': 'globalThis.__scriptURL',
 		},
 	}
-	let helper = await build({
+	await build({
 		...shared,
-		metafile: true,
-		stdin: {
-			contents: "import {main} from './data-editor-helper.mjs'\nmain()\n",
-			resolveDir: path.join(REPO_ROOT, 'scripts'),
-			sourcefile: 'data-editor-helper-entry.mjs',
-		},
-		outfile: path.join(outDir, 'data-editor-helper.mjs'),
+		entryPoints: [path.join(STAND_INS, 'entry.mjs')],
+		outfile: path.join(outDir, 'helper.js'),
 	})
-	let bundleData = await build({
+	await build({
 		...shared,
-		metafile: true,
 		entryPoints: [path.join(REPO_ROOT, 'scripts/bundle-data.mjs')],
-		outfile: path.join(outDir, 'bundle-data.mjs'),
+		outfile: path.join(outDir, 'bundle-data.js'),
 	})
-	let modules = path.join(outDir, 'node_modules')
-	await rm(modules, {recursive: true, force: true})
-	let oxfmt = realpathSync(path.join(REPO_ROOT, 'node_modules/oxfmt'))
-	await cp(path.dirname(oxfmt), modules, {recursive: true, dereference: true})
+	// The first line names the commit, which the app checks each script against
+	// the data's, since Pages' cache may serve each file from another deploy. It
+	// replaces bundle-data's shebang, which esbuild keeps first.
+	await Promise.all(
+		['helper.js', 'bundle-data.js'].map(async (script) => {
+			let file = path.join(outDir, script)
+			let text = (await readFile(file, 'utf8')).replace(/^#!.*\n/u, '')
+			await writeFile(file, `// data-editor commit ${commit}\n${text}`)
+		}),
+	)
 	await writeFile(
-		path.join(outDir, 'helper-stamp.json'),
-		`${JSON.stringify({files: blobsOf([...new Set([...repoInputs(helper.metafile), ...repoInputs(bundleData.metafile)])].toSorted())})}\n`,
+		path.join(outDir, 'helper.json'),
+		`${JSON.stringify({commit, protocol: PROTOCOL})}\n`,
 	)
 	return outDir
 }
 
 if (import.meta.main) {
-	console.log(`data editor helper -> ${await buildHelper()}`)
+	let {values} = parseArgs({options: {out: {type: 'string'}, commit: {type: 'string'}}})
+	let outDir = values.out === undefined ? undefined : path.resolve(values.out)
+	console.log(`data editor helper -> ${await buildHelper({outDir, commit: values.commit})}`)
 }

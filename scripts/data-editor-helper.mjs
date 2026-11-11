@@ -10,6 +10,13 @@ import {DocumentStore} from './data-editor-documents.mjs'
 import {build, listBuildings, pruneBuilds, readCalendar, validate} from './data-editor-pipeline.ts'
 import {serve} from './data-editor-serve.mjs'
 
+/**
+ * The version of the handlers' parameters and replies. The Mac app holds the
+ * one it speaks (`HelperRuntime.protocolVersion`) and refuses a helper with
+ * another. Changing a handler's parameters or its reply's shape bumps both.
+ */
+export const PROTOCOL = 1
+
 /** The protocol's methods over one data directory and its build folder. */
 export function createHandlers({dataDir, outDir, bundleData}) {
 	let store = new DocumentStore(dataDir)
@@ -30,7 +37,8 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 			if (!result.ok) return result
 			current = result.dir
 			await pruneBuilds(outDir, current)
-			return {ok: true}
+			// the folder to serve, which the app's own server reads
+			return {ok: true, dir: current}
 		},
 		serve: async ({port}) => {
 			server ??= await serve({root: () => current, port})

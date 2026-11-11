@@ -1,71 +1,42 @@
 import assert from 'node:assert/strict'
-import {execFileSync, spawn} from 'node:child_process'
-import {readdirSync} from 'node:fs'
-import {cp, mkdtemp, readFile} from 'node:fs/promises'
+import {mkdtemp, readFile} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
 import path from 'node:path'
-import {createInterface} from 'node:readline'
 import {describe, it} from 'node:test'
+import vm from 'node:vm'
 import {buildHelper} from './build-data-editor-helper.mjs'
-import {DATA_BASE, REPO_ROOT} from './paths.mjs'
+import {PROTOCOL} from './data-editor-helper.mjs'
 
-describe('the bundled helper', () => {
-	it('builds the data from a workspace that has no repo around it', async (t) => {
-		let ws = await mkdtemp(path.join(tmpdir(), 'data-editor-ws-'))
-		await buildHelper({outDir: path.join(ws, 'scripts')})
-		await cp(DATA_BASE, path.join(ws, 'data'), {recursive: true})
-		// what the app downloads: the image groups and their published WebP files,
-		// not the originals under each group's source/
-		await cp(path.join(REPO_ROOT, 'images'), path.join(ws, 'images'), {
-			recursive: true,
-			filter: (from) => !from.split(path.sep).includes('source'),
-		})
-		let published = readdirSync(path.join(ws, 'images/spaces')).filter((f) => f.endsWith('.webp'))
-		let child = spawn(process.execPath, [
-			path.join(ws, 'scripts/data-editor-helper.mjs'),
-			'--data',
-			path.join(ws, 'data'),
-			'--out',
-			path.join(ws, 'out'),
-		])
-		// a failed assertion must not leave the helper waiting on stdin
-		t.after(() => child.kill())
-		let lines = createInterface({input: child.stdout})[Symbol.asyncIterator]()
-		child.stdin.write('{"id":1,"method":"build"}\n')
-		let reply = JSON.parse((await lines.next()).value)
-		assert.deepEqual(reply, {id: 1, result: {ok: true}})
-		// the build must not convert or remove the workspace's images
-		assert.deepEqual(
-			readdirSync(path.join(ws, 'images/spaces')).filter((f) => f.endsWith('.webp')),
-			published,
+describe('the helper built for JavaScriptCore', () => {
+	it('names the commit it was built from and the protocol it speaks', async () => {
+		let out = await mkdtemp(path.join(tmpdir(), 'data-editor-helper-'))
+		await buildHelper({outDir: out, commit: 'abc123'})
+		let published = JSON.parse(await readFile(path.join(out, 'helper.json'), 'utf8'))
+		assert.deepEqual(published, {commit: 'abc123', protocol: PROTOCOL})
+		// Pages' cache may hold each file at a different deploy, so each names its own commit
+		let firstLines = await Promise.all(
+			['helper.js', 'bundle-data.js'].map(
+				async (script) => (await readFile(path.join(out, script), 'utf8')).split('\n', 1)[0],
+			),
 		)
-		// an edit runs the formatter, whose native binding ships beside the bundle
-		let url = `https://example.com/${'a'.repeat(100)}`
-		child.stdin.write(
-			`${JSON.stringify({id: 2, method: 'edit', params: {file: 'building-hours/1-1-cage.yaml', ops: [{path: ['links', 0, 'url'], value: url}]}})}\n`,
-		)
-		let edited = JSON.parse((await lines.next()).value)
-		child.stdin.end()
-		assert.deepEqual(edited.result?.problems, [], JSON.stringify(edited))
-		let written = await readFile(path.join(ws, 'data/building-hours/1-1-cage.yaml'), 'utf8')
-		assert.match(written, new RegExp(`\\n {6}url: '${url}',\\n {4}\\}`, 'u'))
+		assert.deepEqual(firstLines, ['// data-editor commit abc123', '// data-editor commit abc123'])
 	})
 
-	/// The app compares these with master's, so only a change to code the helper runs makes it refuse.
-	it('stamps the files the bundle was built from with their committed blobs', async () => {
-		let ws = await mkdtemp(path.join(tmpdir(), 'data-editor-stamp-'))
-		await buildHelper({outDir: ws})
-		let {files} = JSON.parse(await readFile(path.join(ws, 'helper-stamp.json'), 'utf8'))
-		let blob = (file) =>
-			execFileSync('git', ['rev-parse', `HEAD:${file}`], {cwd: REPO_ROOT, encoding: 'utf8'}).trim()
-		assert.equal(files['scripts/data-editor-helper.mjs'], blob('scripts/data-editor-helper.mjs'))
-		assert.equal(files['scripts/bundle-data.mjs'], blob('scripts/bundle-data.mjs'))
-		assert.equal(files['modules/schedules/index.ts'], blob('modules/schedules/index.ts'))
-		// a script the helper never runs, and the dependencies, are left out
-		assert.equal(files['scripts/scrape-bonapp.mjs'], undefined)
-		assert.deepEqual(
-			Object.keys(files).filter((file) => file.includes('node_modules')),
-			[],
-		)
+	/// JavaScriptCore has no Node: the bundle must load with only what the
+	/// Mac app's host gives it, no require and no Node modules, and offer the
+	/// helper's handlers.
+	it("loads with only what the Mac app's host gives it", async () => {
+		let out = await mkdtemp(path.join(tmpdir(), 'data-editor-helper-'))
+		await buildHelper({outDir: out, commit: 'abc123'})
+		let context = vm.createContext({
+			process: {argv: ['node', 'helper.js'], env: {}},
+			console,
+			setTimeout,
+			clearTimeout,
+		})
+		vm.runInContext(await readFile(path.join(out, 'helper.js'), 'utf8'), context)
+		let helper = vm.runInContext('globalThis.dataEditorHelper', context)
+		assert.equal(helper.PROTOCOL, PROTOCOL)
+		assert.equal(typeof helper.createHandlers, 'function')
 	})
 })
