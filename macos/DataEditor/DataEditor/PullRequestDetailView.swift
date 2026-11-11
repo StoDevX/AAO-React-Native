@@ -38,16 +38,18 @@ struct PullRequestDetailView: View {
                     Text(record.summary).font(.title2).textSelection(.enabled)
                 }
                 PullRequestLoadStatus(record: record)
-                ForEach(record.diffs.map { Array($0.keys).sorted() } ?? [], id: \.self) { file in
-                    Section(buildingName(of: file, in: model.buildings)) {
-                        PullRequestFileDiff(record: record, file: file)
+                // named as the list beside names them, a file the data no longer lists by its file name
+                ForEach(changesetBuildings(.pullRequest(number: number), all: model.buildings, history: model.submissions)
+                    .filter { record.diffs?[$0.file] != nil || record.tooLarge.contains($0.file) }) { building in
+                    Section(building.name) {
+                        PullRequestFileDiff(record: record, file: building.file)
                     }
                 }
             }
             .formStyle(.grouped)
             .accessibilityIdentifier("pull-request-detail")
         } else {
-            ContentUnavailableView("No pull request", systemImage: "questionmark.circle")
+            ContentUnavailableView("This pull request is no longer listed", systemImage: "questionmark.circle")
         }
     }
 }
@@ -60,12 +62,14 @@ struct PullRequestFileView: View {
 
     var body: some View {
         if let record = model.submissions.records.first(where: { $0.id == number }) {
+            let name = changesetBuildings(.pullRequest(number: number), all: model.buildings, history: model.submissions)
+                .first { $0.file == file }?.name ?? file
             Form {
                 Section {
                     PullRequestFileDiff(record: record, file: file)
                 } header: {
                     VStack(alignment: .leading) {
-                        Text(buildingName(of: file, in: model.buildings)).font(.title2)
+                        Text(name).font(.title2)
                         Text(file).font(.caption).foregroundStyle(.secondary)
                     }
                 }

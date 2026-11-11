@@ -51,7 +51,7 @@ struct OverviewView: View {
         let parts = model.overviewParts
         let control = SubmitControl(hasSubmission: model.currentSubmission != nil, state: model.currentSubmission?.state,
                                     hasChanges: !parts.changed.isEmpty, hasConflicts: !parts.conflicts.isEmpty,
-                                    hasProblems: !(model.problems + parts.problems).isEmpty)
+                                    hasProblems: !parts.problems.isEmpty)
         Form {
             if let record = parts.pullRequest {
                 Section { SubmissionBanner(record: record) }
@@ -133,8 +133,14 @@ struct OverviewView: View {
             await model.refreshSubmissions()
             await model.refreshNewerCommit()
         }
+        // the page stays on screen, so it looks again each time its window comes forward
         .onChange(of: appearsActive) { _, active in
-            if active { Task { _ = await model.commitPendingDrafts() } }
+            guard active else { return }
+            Task {
+                _ = await model.commitPendingDrafts()
+                await model.refreshSubmissions()
+                await model.refreshNewerCommit()
+            }
         }
     }
 
@@ -228,8 +234,9 @@ private struct SubmissionBanner: View {
                 Label(standing == .merged ? "Pull request #\(number) was merged." : "Pull request #\(number) was closed.",
                       systemImage: standing == .merged ? "checkmark.seal.fill" : "xmark.circle")
                 Spacer()
-                // the newer-data part beneath offers Get the Latest Data
                 Link("Open on GitHub", destination: submission.url)
+                Button(model.updating ? "Updating…" : "Get the Latest Data") { Task { await model.updateWorkspace() } }
+                    .disabled(model.updating)
             case .gone:
                 Label("GitHub can't show pull request #\(number). It may have been deleted.",
                       systemImage: "questionmark.circle")

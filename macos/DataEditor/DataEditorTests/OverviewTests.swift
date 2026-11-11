@@ -37,6 +37,26 @@ struct OverviewTests {
         #expect(parts(history: history(record(6, .merged), record(7, .open))).pullRequest?.id == 7)
     }
 
+    /// Its banner offers the next step itself, even before GitHub says master moved; the newer-data part would repeat it.
+    @Test func aFinishedPullRequestOffersTheLatestDataItself() {
+        let merged = parts(history: history(record(7, .merged)), newerCommit: "abc")
+        #expect(merged.offersLatestData)
+        #expect(!merged.newerData)
+        #expect(parts(history: history(record(7, .closed))).offersLatestData)
+        let open = parts(history: history(record(7, .open)), newerCommit: "abc")
+        #expect(!open.offersLatestData)
+        #expect(open.newerData)
+    }
+
+    /// A pull request forgotten while chosen gives way to Current changes.
+    @Test func aForgottenPullRequestGivesWayToCurrentChanges() {
+        let records = history(record(7, .open)).records
+        #expect(stillListed(.pullRequest(number: 8), in: records) == .current)
+        #expect(stillListed(.pullRequest(number: 7), in: records) == .pullRequest(number: 7))
+        #expect(stillListed(.current, in: records) == .current)
+        #expect(stillListed(nil, in: records) == nil)
+    }
+
     @Test func noPullRequestBeforeTheFirst() {
         #expect(parts().pullRequest == nil)
     }

@@ -19,6 +19,8 @@ struct SubmissionRecord: Codable, Hashable, Identifiable {
     var checked: Date?
     /// Whether `diffs` came from GitHub after the pull request finished, so they cannot change again
     var isFinal = false
+    /// When `diffs` were last saved at a submission, so a fetch begun before then cannot put back older ones
+    var savedAt: Date?
 
     var id: Int { submission.number }
 
@@ -38,7 +40,7 @@ struct SubmissionRecord: Codable, Hashable, Identifiable {
 }
 
 extension SubmissionRecord {
-    private enum CodingKeys: String, CodingKey { case submission, summary, submitted, state, diffs, tooLarge, checked, isFinal }
+    private enum CodingKeys: String, CodingKey { case submission, summary, submitted, state, diffs, tooLarge, checked, isFinal, savedAt }
 
     /// Reads a record written before records kept their diffs, as one with none saved.
     init(from decoder: any Decoder) throws {
@@ -51,6 +53,7 @@ extension SubmissionRecord {
         tooLarge = try container.decodeIfPresent(Set<String>.self, forKey: .tooLarge) ?? []
         checked = try container.decodeIfPresent(Date.self, forKey: .checked)
         isFinal = try container.decodeIfPresent(Bool.self, forKey: .isFinal) ?? false
+        savedAt = try container.decodeIfPresent(Date.self, forKey: .savedAt)
     }
 }
 
@@ -156,19 +159,22 @@ struct SubmissionHistory: Equatable {
 
     mutating func forget(_ number: Int) { records.removeAll { $0.id == number } }
 
-    /// Keeps `diffs`, what pull request `number` was just sent, in place of
-    /// whatever was kept before; GitHub has not shown them yet.
-    mutating func saveDiffs(_ diffs: [String: [DiffRow]], for number: Int) {
+    /// Keeps `diffs`, what pull request `number` was sent at `saved`, in
+    /// place of whatever was kept before; GitHub has not shown them yet.
+    mutating func saveDiffs(_ diffs: [String: [DiffRow]], saved: Date, for number: Int) {
         guard let index = records.firstIndex(where: { $0.id == number }) else { return }
         records[index].diffs = diffs
+        records[index].savedAt = saved
         records[index].tooLarge = []
         records[index].checked = nil
     }
 
-    /// Keeps the files GitHub showed for pull request `number` at `fetched`.
-    /// Once it has finished, these are its last.
-    mutating func take(files: [PullRequestFile], fetched: Date, for number: Int) {
+    /// Keeps the files GitHub showed for pull request `number`, asked at
+    /// `begun`. Once it has finished, these are its last. A fetch begun
+    /// before the last submission saved its diffs shows less than they do, so it is dropped.
+    mutating func take(files: [PullRequestFile], begun: Date, for number: Int) {
         guard let index = records.firstIndex(where: { $0.id == number }) else { return }
+        if let saved = records[index].savedAt, saved > begun { return }
         var diffs: [String: [DiffRow]] = [:]
         var tooLarge: Set<String> = []
         for file in files {
@@ -178,7 +184,7 @@ struct SubmissionHistory: Equatable {
         }
         records[index].diffs = diffs
         records[index].tooLarge = tooLarge
-        records[index].checked = fetched
+        records[index].checked = begun
         records[index].isFinal = records[index].isFinished
     }
 }

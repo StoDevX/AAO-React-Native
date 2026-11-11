@@ -42,6 +42,10 @@ struct OverviewParts: Equatable {
     var problems: [Problem]
     var changed: [String]
 
+    /// Whether the pull request part offers Get the Latest Data itself: its
+    /// pull request finished, so the next step is the data it went into.
+    var offersLatestData: Bool { pullRequest?.isFinished ?? false }
+
     /// The files with a problem, which the building list marks.
     var problemFiles: Set<String> { Set(problems.compactMap(\.file)) }
 
@@ -67,7 +71,9 @@ struct OverviewParts: Equatable {
         } else {
             nil
         }
-        return OverviewParts(pullRequest: pullRequest, newerData: newerCommit != nil, conflicts: conflicts, preview: preview,
+        // a finished pull request's banner offers the same button, so the newer-data part steps aside
+        let newerData = newerCommit != nil && !(pullRequest?.isFinished ?? false)
+        return OverviewParts(pullRequest: pullRequest, newerData: newerData, conflicts: conflicts, preview: preview,
                              problems: problems, changed: changedFiles)
     }
 }
@@ -81,4 +87,10 @@ func changesetBuildings(_ changeset: Changeset, all: [BuildingSummary], history:
     return files.map { file in
         all.first { $0.file == file } ?? BuildingSummary(file: file, name: (file as NSString).lastPathComponent, category: "")
     }
+}
+
+/// `changeset`, or Current changes once the pull request it names is no longer listed.
+func stillListed(_ changeset: Changeset?, in records: [SubmissionRecord]) -> Changeset? {
+    guard case .pullRequest(let number)? = changeset, !records.contains(where: { $0.id == number }) else { return changeset }
+    return .current
 }

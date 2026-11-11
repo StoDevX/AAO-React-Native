@@ -21,6 +21,8 @@ struct ChangesetsWindow: View {
             detail
         }
         .frame(minWidth: 800, minHeight: 500)
+        // a pull request forgotten while chosen gives way to Current changes
+        .onChange(of: model.submissions.records.map(\.id)) { selection = stillListed(selection, in: model.submissions.records) }
         // asked once as it is chosen, not again on each look
         .task(id: selection) { if case .pullRequest(let number)? = selection { await model.loadDiffs(of: number) } }
         .toolbar {

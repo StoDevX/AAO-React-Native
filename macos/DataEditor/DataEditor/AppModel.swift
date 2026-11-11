@@ -524,14 +524,14 @@ final class AppModel {
             submissions.take(.success(state), for: current.id, failures: &checkFailures)
             if !Self.opensNewPullRequest(after: state) {
                 submissions.replace(try await submitter.update(current.submission, changes: changes, summary: summary))
-                submissions.saveDiffs(sent, for: current.id)
+                submissions.saveDiffs(sent, saved: .now, for: current.id)
                 await refreshSubmissions()
                 return
             }
         }
         let opened = try await submitter.submit(changes: changes, base: base, summary: summary, appVersion: appVersion)
         submissions.add(SubmissionRecord(submission: opened, summary: summary, submitted: .now, state: nil))
-        submissions.saveDiffs(sent, for: opened.number)
+        submissions.saveDiffs(sent, saved: .now, for: opened.number)
         await refreshSubmissions()
     }
 
@@ -571,9 +571,10 @@ final class AppModel {
         guard !runsUnderUITests, diffLoad[number] != .loading,
               let record = submissions.records.first(where: { $0.id == number }), record.needsFetch else { return }
         diffLoad[number] = .loading
+        let begun = Date.now
         do {
             let files = try await GitHubSubmitter(tokens: tokens).files(of: record.submission)
-            submissions.take(files: files, fetched: .now, for: number)
+            submissions.take(files: files, begun: begun, for: number)
             diffLoad[number] = nil
         } catch {
             diffLoad[number] = (error as? SubmitError)?.isGone == true ? .gone : .failed

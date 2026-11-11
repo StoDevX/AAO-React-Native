@@ -11,6 +11,8 @@ struct DataEditorApp: App {
             ChangesetsWindow().environment(delegate.model)
         }
         .keyboardShortcut("0")
+        // opens at every launch, even when it was closed at the last quit and others are restored
+        .defaultLaunchBehavior(.presented)
         WindowGroup("Changeset", for: Changeset.self) { $changeset in
             ChangesetWindow(changeset: changeset ?? .current).environment(delegate.model)
         }
