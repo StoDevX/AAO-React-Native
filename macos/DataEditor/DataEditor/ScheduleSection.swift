@@ -10,16 +10,19 @@ struct ScheduleSection: View {
 
     private func apply(_ ops: EditOp...) { Task { await model.apply(ops) } }
 
+    /// What service `s` holds in the file on screen.
+    private func schedule(_ s: Int) -> JSONValue? { model.document?.value[path: editor.servicePath(s)] }
+
     var body: some View {
         let file = model.documentFile ?? ""
         ForEach(Array(editor.services.enumerated()), id: \.offset) { s, service in
             Section {
-                DraftField(label: "Title", file: file, value: service.title) { file, text, expected in
-                    await model.applyDraft(editor.setTitle(service: s, text), to: file, replacing: expected)
+                DraftField(label: "Title", file: file, value: service.title, schedule: schedule(s)) { file, text, expected, schedule in
+                    await model.applyDraft(editor.setTitle(service: s, text), to: file, replacing: expected, schedule: schedule)
                 }
                     .accessibilityIdentifier("service-title-\(s)")
-                DraftField(label: "Notes", file: file, value: service.notes ?? "", axis: .vertical) { file, text, expected in
-                    await model.applyDraft(editor.setNotes(service: s, text), to: file, replacing: expected)
+                DraftField(label: "Notes", file: file, value: service.notes ?? "", schedule: schedule(s), axis: .vertical) { file, text, expected, schedule in
+                    await model.applyDraft(editor.setNotes(service: s, text), to: file, replacing: expected, schedule: schedule)
                 }
                 .accessibilityIdentifier("service-notes-\(s)")
                 Group {
@@ -70,14 +73,18 @@ private struct DraftField: View {
     let file: String
     /// what that file holds
     let value: String
+    /// what the field's schedule holds in that file
+    let schedule: JSONValue?
     var axis: Axis = .horizontal
-    /// saves `text` in `file` if it still holds `expected`
-    let commit: (_ file: String, _ text: String, _ expected: String) async -> AppModel.DraftOutcome
+    /// saves `text` in `file`, in the schedule that held `schedule` when the draft began and `expected` in this field
+    let commit: (_ file: String, _ text: String, _ expected: String, _ schedule: JSONValue?) async -> AppModel.DraftOutcome
     @State private var draft = ""
     /// the file `draft` was typed for
     @State private var draftFile = ""
     /// what that file held when the draft began; the draft is unsaved while it differs
     @State private var base = ""
+    /// what the field's schedule held when the draft began, to find it by if it moves
+    @State private var scheduleAtStart: JSONValue?
     @State private var id = UUID()
     /// The commit waiting for the helper, if any. One at a time, so each
     /// commit's `expected` is the text the one before it saved.
@@ -86,9 +93,9 @@ private struct DraftField: View {
 
     private func commitIfChanged() {
         guard draft != base, committing == nil else { return }
-        let (file, text, expected) = (draftFile, draft, base)
+        let (file, text, expected, schedule) = (draftFile, draft, base, scheduleAtStart)
         committing = Task {
-            let outcome = await commit(file, text, expected)
+            let outcome = await commit(file, text, expected, schedule)
             committing = nil
             guard draftFile == file else { return }
             switch outcome {
@@ -96,8 +103,8 @@ private struct DraftField: View {
                 base = text
                 // what was typed while this one waited
                 commitIfChanged()
-            case .letGo(let current):
-                // a notice quotes the typed text; the field starts afresh from the file
+            case .letGo(let current), .savedElsewhere(let current):
+                // the text is in its schedule's new place, or quoted in a notice; the field starts afresh from the file
                 draft = current
                 base = current
             case .notSaved:
@@ -125,6 +132,9 @@ private struct DraftField: View {
         TextField(label, text: $draft, axis: axis)
             .focused($focused)
             .onSubmit(commitIfChanged)
+            .onChange(of: draft) { old, _ in
+                if old == base { scheduleAtStart = schedule }
+            }
             .onChange(of: focused) { _, isFocused in
                 guard !isFocused else { return }
                 // with nothing typed, catch up with a file changed while focused (a revert)

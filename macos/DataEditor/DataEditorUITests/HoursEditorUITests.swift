@@ -182,7 +182,7 @@ final class HoursEditorUITests: XCTestCase {
         XCTAssertTrue(remove.wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
     }
 
-    func testATitleWhoseFileChangedIsLetGoAndKeptInSight() throws {
+    func testATitleWhoseScheduleChangedIsLetGoAndKeptInSight() throws {
         let app = try launch()
         selectTheCage(in: app)
         let title = currentChanges(in: app).textFields["service-title-0"]
@@ -192,18 +192,20 @@ final class HoursEditorUITests: XCTestCase {
         title.typeKey(.rightArrow, modifierFlags: .command)
         title.typeText(" today")
 
-        // the file changes under the draft, as an update can change it
+        // an update changes the draft's schedule beyond its title, so no schedule is the one it was typed for
         let cage = try XCTUnwrap(data).appending(path: "building-hours/1-1-cage.yaml")
         let yaml = try String(contentsOf: cage, encoding: .utf8)
-        XCTAssertTrue(yaml.contains("  - title: Hours\n"))
-        try yaml.replacingOccurrences(of: "  - title: Hours\n", with: "  - title: Open\n").write(to: cage, atomically: true, encoding: .utf8)
+        XCTAssertTrue(yaml.contains("  - title: Hours\n    notes: The kitchen stops cooking at 8 p.m.\n"))
+        try yaml.replacingOccurrences(of: "  - title: Hours\n    notes: The kitchen stops cooking at 8 p.m.\n",
+                                      with: "  - title: Open\n    notes: The kitchen stops cooking at 9 p.m.\n")
+            .write(to: cage, atomically: true, encoding: .utf8)
         title.typeKey(.return, modifierFlags: [])
 
         XCTAssertTrue(title.wait(until: NSPredicate(format: "value == %@", "Open"), timeout: 5))
         let kept = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "Hours today", "Hours today")
         XCTAssertTrue(currentChanges(in: app).descendants(matching: .any).matching(kept).firstMatch.waitForExistence(timeout: 5))
         XCTAssertTrue(currentChanges(in: app).buttons["remove-service-0"].wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
-        attachScreenshot(of: currentChanges(in: app), named: "Title let go after its file changed")
+        attachScreenshot(of: currentChanges(in: app), named: "Title let go after its schedule changed")
 
         // the field takes new text again
         title.click()
@@ -211,6 +213,40 @@ final class HoursEditorUITests: XCTestCase {
         title.typeText(" late\r")
         XCTAssertTrue(currentChanges(in: app).buttons["remove-service-0"].wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
         XCTAssertTrue(title.wait(until: NSPredicate(format: "value == %@", "Open late"), timeout: 5))
+    }
+
+    func testATitleWhoseScheduleMovedIsSavedWhereItWent() throws {
+        let app = try launch()
+        selectTheCage(in: app)
+        let title = currentChanges(in: app).textFields["service-title-0"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        title.click()
+        title.typeKey(.rightArrow, modifierFlags: .command)
+        title.typeText(" today")
+
+        // an update renames the draft's schedule and puts another above it
+        let cage = try XCTUnwrap(data).appending(path: "building-hours/1-1-cage.yaml")
+        let yaml = try String(contentsOf: cage, encoding: .utf8)
+        XCTAssertTrue(yaml.contains("schedule:\n  - title: Hours\n"))
+        try yaml.replacingOccurrences(of: "schedule:\n  - title: Hours\n", with: """
+            schedule:
+              - title: Brunch
+                hours:
+                  - {days: [Su], from: '10:00am', to: '1:00pm'}
+
+              - title: Open
+
+            """).write(to: cage, atomically: true, encoding: .utf8)
+        title.typeKey(.return, modifierFlags: [])
+
+        // what was typed replaces the new title, in the schedule's new place, without a notice
+        XCTAssertTrue(currentChanges(in: app).textFields["service-title-1"].wait(until: NSPredicate(format: "value == %@", "Hours today"), timeout: 5))
+        XCTAssertTrue(title.wait(until: NSPredicate(format: "value == %@", "Brunch"), timeout: 5))
+        XCTAssertFalse(currentChanges(in: app).buttons["dismiss-draft-notice-0"].exists)
+        let saved = try String(contentsOf: cage, encoding: .utf8)
+        XCTAssertTrue(saved.contains("  - title: Brunch\n"))
+        XCTAssertTrue(saved.contains("  - title: Hours today\n"))
+        attachScreenshot(of: currentChanges(in: app), named: "Title saved in its schedule after it moved")
     }
 
     func testReturnSavesANote() throws {

@@ -67,10 +67,12 @@ final class OverviewUITests: XCTestCase {
         title.click()
         title.typeKey(.rightArrow, modifierFlags: .command)
         title.typeText(" today")
-        // the file changes under the draft, so the draft is let go with a notice
+        // the draft's schedule changes beyond its title, so the draft is let go with a notice
         let cage = data.appending(path: "building-hours/1-1-cage.yaml")
         let yaml = try String(contentsOf: cage, encoding: .utf8)
-        try yaml.replacingOccurrences(of: "  - title: Hours\n", with: "  - title: Open\n").write(to: cage, atomically: true, encoding: .utf8)
+        try yaml.replacingOccurrences(of: "  - title: Hours\n    notes: The kitchen stops cooking at 8 p.m.\n",
+                                      with: "  - title: Open\n    notes: The kitchen stops cooking at 9 p.m.\n")
+            .write(to: cage, atomically: true, encoding: .utf8)
         title.typeKey(.return, modifierFlags: [])
         let dismiss = currentChanges(in: app).buttons["dismiss-draft-notice-0"]
         XCTAssertTrue(dismiss.waitForExistence(timeout: 5))

@@ -96,6 +96,9 @@ public struct EditOp: Encodable, Hashable, Sendable {
     public static func set(_ path: [PathKey], _ value: JSONValue) -> EditOp { EditOp(path: path, value: value, delete: false) }
     public static func delete(_ path: [PathKey]) -> EditOp { EditOp(path: path, value: nil, delete: true) }
 
+    /// The same edit at `path`.
+    public func moved(to path: [PathKey]) -> EditOp { EditOp(path: path, value: value, delete: delete) }
+
     private enum CodingKeys: String, CodingKey { case path, value, delete }
 
     public func encode(to encoder: any Encoder) throws {

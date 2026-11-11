@@ -150,6 +150,9 @@ public struct ScheduleEditor: Sendable {
 
     private func path(_ service: Int, _ rest: PathKey...) -> [PathKey] { base + [.index(service)] + rest }
 
+    /// Where `service` sits in the file.
+    public func servicePath(_ service: Int) -> [PathKey] { path(service) }
+
     public func setTitle(service: Int, _ title: String) -> EditOp { .set(path(service, "title"), .string(title)) }
 
     public func setNotes(service: Int, _ notes: String?) -> EditOp {

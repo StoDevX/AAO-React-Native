@@ -353,17 +353,40 @@ final class AppModel {
         case saved
         /// refused for good, by a conflict or a helper failure; the field keeps the text
         case notSaved
-        /// The file no longer held the text the draft began from: an update
-        /// changed it, or the service moved. The field takes `current`, and the
-        /// typed text stays in sight in `draftNotices`.
+        /// saved in its schedule, which has moved; the field, still in the old
+        /// place, takes `current`, what that place now holds
+        case savedElsewhere(current: String)
+        /// The draft's schedule changed beyond the drafted text, or is gone,
+        /// so no schedule is surely the one it was typed for. The field takes
+        /// `current`, and the typed text stays in sight in `draftNotices`.
         case letGo(current: String)
     }
 
+    /// Where a draft at `path` belongs in `current`: the one schedule that
+    /// still holds what `schedule` held besides the drafted field, wherever
+    /// it has moved. Nil when none does, or more than one, so a draft is
+    /// never written into a schedule it was not typed for.
+    static func draftPath(_ path: [PathKey], schedule: JSONValue, in current: JSONValue) -> [PathKey]? {
+        guard path.count >= 2, case .key(let field)? = path.last,
+              case .array(let schedules)? = current[path: Array(path.dropLast(2))] else { return nil }
+        func withoutField(_ value: JSONValue) -> JSONValue? {
+            guard case .object(var object) = value else { return nil }
+            object[field] = nil
+            return .object(object)
+        }
+        let wanted = withoutField(schedule)
+        let matches = schedules.indices.filter { withoutField(schedules[$0]) == wanted }
+        guard matches.count == 1 else { return nil }
+        return path.dropLast(2) + [.index(matches[0]), .key(field)]
+    }
+
     /// Saves a text field's draft, `op` setting the text at its path in
-    /// `file`. Waits for an edit or an update in flight, then writes only if
-    /// the file still holds `expected` there: a draft whose service has moved
-    /// or gone since it began is never written into another.
-    func applyDraft(_ op: EditOp, to file: String, replacing expected: String) async -> DraftOutcome {
+    /// `file`. Waits for an edit or an update in flight, then writes into the
+    /// schedule the draft was typed for, `schedule` being what it held when
+    /// the draft began, wherever it has moved and whatever its drafted text
+    /// became: what was typed is the newest word. A draft is never written
+    /// into a schedule that cannot be told for its own.
+    func applyDraft(_ op: EditOp, to file: String, replacing expected: String, schedule: JSONValue?) async -> DraftOutcome {
         while true {
             // a short wait: an edit takes one helper round trip, an update a download
             while editing || updating {
@@ -379,13 +402,18 @@ final class AppModel {
                 return .notSaved
             }
             let held = current[path: op.path]?.string ?? ""
-            guard held == expected else {
+            // the file unchanged at the draft's place keeps it there, though
+            // the contributor's own edits to the schedule since make it unlike `schedule`
+            guard let target = schedule.flatMap({ Self.draftPath(op.path, schedule: $0, in: current) })
+                ?? (held == expected ? op.path : nil) else {
                 if file == selection { await select(file) }
                 let typed = op.value?.string ?? ""
-                draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because the file changed while you typed.", path: op.path))
+                draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because its schedule changed while you typed.", path: op.path))
                 return .letGo(current: held)
             }
-            if await apply([op], to: file) { return .saved }
+            if await apply([op.moved(to: target)], to: file) {
+                return target == op.path ? .saved : .savedElsewhere(current: held)
+            }
             // refused for good: a conflict, or the helper failed
             if !editing && !updating { return .notSaved }
         }
