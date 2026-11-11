@@ -15,8 +15,7 @@ struct ChangesetList: View {
     }
 
     var body: some View {
-        let parts = OverviewParts.make(history: model.submissions, newerCommit: model.newerCommit, conflicts: model.conflicts,
-                                       changedFiles: model.changedFiles, buildProblems: model.buildProblems, hasBuilt: model.hasBuilt)
+        let parts = model.overviewParts
         // something stands between these edits and a review, or the phone
         let blocked = !parts.problems.isEmpty || !parts.conflicts.isEmpty || (parts.preview.map { $0 != .upToDate } ?? false)
         List(selection: $selection) {

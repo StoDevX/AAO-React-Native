@@ -46,8 +46,7 @@ struct OverviewView: View {
     }
 
     var body: some View {
-        let parts = OverviewParts.make(history: model.submissions, newerCommit: model.newerCommit, conflicts: model.conflicts,
-                                       changedFiles: model.changedFiles, buildProblems: model.buildProblems, hasBuilt: model.hasBuilt)
+        let parts = model.overviewParts
         let control = SubmitControl(hasSubmission: model.currentSubmission != nil, state: model.currentSubmission?.state,
                                     hasChanges: !parts.changed.isEmpty, hasConflicts: !parts.conflicts.isEmpty,
                                     hasProblems: !(model.problems + parts.problems).isEmpty)

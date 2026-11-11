@@ -10,9 +10,10 @@ struct OverviewTests {
     private let stav = BuildingSummary(file: "building-hours/1-3-stav.yaml", name: "Stav Hall", category: "Food")
 
     private func parts(history: SubmissionHistory = SubmissionHistory(), newerCommit: String? = nil, conflicts: [String] = [],
-                       changedFiles: [String] = [], buildProblems: [Problem] = [], hasBuilt: Bool = true) -> OverviewParts {
+                       changedFiles: [String] = [], checkProblems: [Problem] = [], buildProblems: [Problem] = [],
+                       hasBuilt: Bool = true) -> OverviewParts {
         OverviewParts.make(history: history, newerCommit: newerCommit, conflicts: conflicts, changedFiles: changedFiles,
-                           buildProblems: buildProblems, hasBuilt: hasBuilt)
+                           checkProblems: checkProblems, buildProblems: buildProblems, hasBuilt: hasBuilt)
     }
 
     /// The screen once said "No changes yet" beneath a conflict.
@@ -47,6 +48,19 @@ struct OverviewTests {
         #expect(parts.preview?.text(buildings: []) == "The preview stops at building-hours/1-1-cage.yaml")
     }
 
+    /// The list marks a building whose file has a problem, from a check or a build.
+    @Test func namesTheFilesWithProblems() {
+        let parts = parts(checkProblems: [Problem(file: cageFile, message: "bad", path: nil)],
+                          buildProblems: [Problem(file: nil, message: "The build did not run", path: nil)])
+        #expect(parts.problemFiles == [cageFile])
+    }
+
+    /// An invalid file builds nothing, so the phone keeps the last good build, without the edit.
+    @Test func aFailedCheckStopsThePreviewToo() {
+        let parts = parts(checkProblems: [Problem(file: cageFile, message: "bad", path: nil)])
+        #expect(parts.preview == .stopsAt(file: cageFile))
+    }
+
     /// A build that never ran names no file.
     @Test func aBuildThatDidNotRunSaysSo() {
         let parts = parts(buildProblems: [Problem(file: nil, message: "The build did not run", path: nil)])
@@ -74,9 +88,17 @@ struct OverviewTests {
     }
 
     /// The editor shows its own file's problems; the Overview shows the rest.
+    /// A check of one file reports every file's, since it walks the whole schedule graph.
     @Test func theEditorShowsOnlyItsOwnFilesProblems() {
         let mine = Problem(file: cageFile, message: "bad", path: nil)
         let other = Problem(file: stav.file, message: "bad", path: nil)
-        #expect(AppModel.editorProblems(of: cageFile, open: [mine], build: [mine, other]) == [mine])
+        #expect(AppModel.editorProblems(of: cageFile, open: [mine, other], build: [mine, other]) == [mine])
+    }
+
+    /// An edit that fails its check builds nothing, so the check's problems must reach the Overview themselves.
+    @Test func theOverviewListsTheLastChecksProblemsAndTheBuildsOnce() {
+        let checked = Problem(file: cageFile, message: "bad", path: nil)
+        let built = Problem(file: stav.file, message: "worse", path: nil)
+        #expect(parts(checkProblems: [checked, built], buildProblems: [built]).problems == [checked, built])
     }
 }

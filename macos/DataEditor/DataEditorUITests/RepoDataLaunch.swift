@@ -32,17 +32,57 @@ extension XCTestCase {
             try FileManager.default.removeItem(at: support)
         }
         let node = try XCTUnwrap(ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"], "run with TEST_RUNNER_DATA_EDITOR_NODE=$(mise which node)")
-        app.launchArguments = ["-UITestWorkspace", support.path, "-UITestNode", node, "-UITestHelper", repo.appending(path: "scripts").path] + arguments
+        // each test starts from the Changesets window alone, not the windows an earlier test left open
+        app.launchArguments = ["-UITestWorkspace", support.path, "-UITestNode", node, "-UITestHelper", repo.appending(path: "scripts").path,
+                               "-ApplePersistenceIgnoreState", "YES"] + arguments
         app.launch()
         return (app, workspace.appending(path: "data"))
     }
 
-    /// Opens The Cage's hours, once the launch has listed the buildings.
+    /// Opens the Current changes window from the Changesets window, once the
+    /// launch has listed the changesets. The Changesets window stays open and
+    /// shows the same Overview, so a test looks for the Overview's controls in
+    /// the window this returns.
+    @MainActor @discardableResult
+    func openCurrentChanges(in app: XCUIApplication) -> XCUIElement {
+        let current = app.windows["Changesets"].outlines["changeset-list"].staticTexts["Current changes"]
+        XCTAssertTrue(current.waitForExistence(timeout: 20))
+        current.doubleClick()
+        let window = currentChangesWindow(in: app)
+        XCTAssertTrue(window.waitForExistence(timeout: 5))
+        return window
+    }
+
+    /// The Current changes window, found by its list of every building: its
+    /// title follows the building chosen.
+    @MainActor
+    func currentChangesWindow(in app: XCUIApplication) -> XCUIElement {
+        app.windows.containing(.outline, identifier: "building-list").firstMatch
+    }
+
+    /// The Current changes window, opened if it is not.
+    @MainActor
+    func currentChanges(in app: XCUIApplication) -> XCUIElement {
+        let window = currentChangesWindow(in: app)
+        return window.exists ? window : openCurrentChanges(in: app)
+    }
+
+    /// Opens The Cage's hours in the Current changes window.
     @MainActor
     func selectTheCage(in app: XCUIApplication) {
-        let cage = app.outlines["building-list"].staticTexts["The Cage"]
+        let cage = currentChanges(in: app).outlines["building-list"].staticTexts["The Cage"]
         XCTAssertTrue(cage.waitForExistence(timeout: 20))
         cage.click()
+    }
+
+    /// Opens Current changes' Overview, where the edits, conflicts, problems and Submit are.
+    @MainActor
+    func openOverview(in app: XCUIApplication) {
+        let window = currentChanges(in: app)
+        let overview = window.outlines["building-list"].staticTexts["Overview"]
+        XCTAssertTrue(overview.waitForExistence(timeout: 5))
+        overview.click()
+        XCTAssertTrue(window.descendants(matching: .any)["overview-page"].firstMatch.waitForExistence(timeout: 5))
     }
 
     /// Keeps a screenshot of one element with the run, for a person to check by eye.

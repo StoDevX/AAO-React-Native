@@ -35,7 +35,9 @@ struct BuildingList: View {
 
     var body: some View {
         let shown = changesetBuildings(changeset, all: model.buildings, history: model.submissions)
-        let blocking = changeset == .current ? Set(model.buildProblems.compactMap(\.file)) : []
+        let blocking = changeset == .current
+            ? model.overviewParts.problemFiles
+            : []
         List(selection: $selection) {
             Label("Overview", systemImage: "list.bullet.rectangle")
                 .tag(ChangesetItem.overview)
@@ -56,7 +58,8 @@ struct BuildingList: View {
                 }
             }
         }
-        .accessibilityIdentifier("building-list")
+        // tells Current changes' window from a pull request's, whose titles follow the building chosen
+        .accessibilityIdentifier(changeset == .current ? "building-list" : "pull-request-building-list")
         .navigationSplitViewColumnWidth(min: 220, ideal: 260)
     }
 }

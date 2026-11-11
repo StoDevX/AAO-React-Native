@@ -431,19 +431,26 @@ final class AppModel {
         cccLog = await ccc?.log ?? []
     }
 
-    /// The open file's problems, as a contributor reads them. Another file's
-    /// problems show on the Overview, not in this file's editor.
+    /// The open file's own problems, as a contributor reads them. Another
+    /// file's problems show on the Overview, not in this file's editor.
     var shownProblems: [Problem] { plainProblems(Self.editorProblems(of: documentFile, open: problems, build: buildProblems)) }
 
-    /// The problems an editor of `file` shows: its own, from its last edit
-    /// and from the last build, each once.
+    /// The problems an editor of `file` shows: its own, from the last check
+    /// and the last build, each once. A check walks the whole schedule graph,
+    /// so it reports other files' problems too, which the Overview lists.
     static func editorProblems(of file: String?, open: [Problem], build: [Problem]) -> [Problem] {
         var seen = Set<Problem>()
-        return (open + build.filter { $0.file == file }).filter { seen.insert($0).inserted }
+        return (open + build).filter { $0.file == file && seen.insert($0).inserted }
     }
 
     /// Whether a build has run since launch, so the Overview can say how the preview stands.
     private(set) var hasBuilt = false
+
+    /// What Current changes' Overview shows, and what its list and the Changesets window mark.
+    var overviewParts: OverviewParts {
+        OverviewParts.make(history: submissions, newerCommit: newerCommit, conflicts: conflicts, changedFiles: changedFiles,
+                           checkProblems: problems, buildProblems: buildProblems, hasBuilt: hasBuilt)
+    }
 
     func revert(_ file: String) async {
         guard !updating else { return }

@@ -42,23 +42,33 @@ struct OverviewParts: Equatable {
     var problems: [Problem]
     var changed: [String]
 
+    /// The files with a problem, which the building list marks.
+    var problemFiles: Set<String> { Set(problems.compactMap(\.file)) }
+
     /// Whether "No changes" stands in for the conflicts and the changed files.
     /// A conflict is a change: the contributor still has to choose.
     var isEmpty: Bool { conflicts.isEmpty && changed.isEmpty }
 
+    /// - Parameters:
+    ///   - checkProblems: what the last load or edit's check found, in every file: it walks the whole schedule graph
+    ///   - buildProblems: what the last build found
     static func make(history: SubmissionHistory, newerCommit: String?, conflicts: [String], changedFiles: [String],
-                     buildProblems: [Problem], hasBuilt: Bool) -> OverviewParts {
+                     checkProblems: [Problem], buildProblems: [Problem], hasBuilt: Bool) -> OverviewParts {
         // a finished one stays until a new one opens, so its Merged and Get the Latest Data show
         let pullRequest = history.current ?? history.records.first
-        let preview: PreviewLine? = if !hasBuilt {
-            nil
-        } else if let first = buildProblems.first {
+        // a failed check builds nothing, so its problems come here themselves; each once
+        var seen = Set<Problem>()
+        let problems = (checkProblems + buildProblems).filter { seen.insert($0).inserted }
+        // any problem stops the build, so the phone keeps the last good one, without the newest edits
+        let preview: PreviewLine? = if let first = problems.first {
             first.file.map { .stopsAt(file: $0) } ?? .failed
-        } else {
+        } else if hasBuilt {
             .upToDate
+        } else {
+            nil
         }
         return OverviewParts(pullRequest: pullRequest, newerData: newerCommit != nil, conflicts: conflicts, preview: preview,
-                             problems: buildProblems, changed: changedFiles)
+                             problems: problems, changed: changedFiles)
     }
 }
 
