@@ -69,14 +69,14 @@ struct ChangesView: View {
     }
 
     var body: some View {
-        let control = SubmitControl(hasSubmission: model.submission != nil, state: model.submissionState,
+        let control = SubmitControl(hasSubmission: model.currentSubmission != nil, state: model.currentSubmission?.state,
                                     hasChanges: !model.changedFiles.isEmpty, hasConflicts: !model.conflicts.isEmpty,
                                     hasProblems: !model.shownProblems.isEmpty)
         VStack(alignment: .leading) {
-            if let submission = model.submission {
-                SubmissionBanner(submission: submission)
+            if let current = model.currentSubmission {
+                SubmissionBanner(record: current)
             }
-            if model.newerCommit != nil, model.submissionState != .merged {
+            if model.newerCommit != nil {
                 HStack {
                     Label("Newer data is available. Your edits will be kept.", systemImage: "arrow.down.circle")
                     Spacer()
@@ -168,7 +168,7 @@ struct ChangesView: View {
         }
         .sheet(isPresented: $submitting) { SubmitSheet() }
         .task {
-            await model.refreshSubmission()
+            await model.refreshSubmissions()
             await model.refreshNewerCommit()
         }
     }
@@ -261,39 +261,36 @@ private struct DiffView: View {
     }
 }
 
-/// Where the pull request opened before stands, with what to do next.
+/// Where the current pull request stands, with what to do next. A merged or
+/// closed one is no longer current, and the Activity section shows it.
 private struct SubmissionBanner: View {
     @Environment(AppModel.self) private var model
-    let submission: Submission
+    let record: SubmissionRecord
+    private var submission: Submission { record.submission }
+    /// The number as GitHub writes it: a number in a label's text would be grouped, as in #8,123.
+    private var number: String { String(submission.number) }
 
     var body: some View {
         HStack {
-            switch model.submissionState {
-            case .merged?:
-                Label("Pull request #\(submission.number) was merged.", systemImage: "checkmark.seal.fill").foregroundStyle(.green)
-                Spacer()
-                Button(model.updating ? "Updating…" : "Get the Latest Data") { Task { await model.updateWorkspace() } }
-                    .disabled(model.updating)
+            switch record.state {
+            case .merged?, .closed?:
+                EmptyView()
             case .changesRequested?:
-                Label("A reviewer asked for changes on #\(submission.number).", systemImage: "text.bubble")
+                Label("A reviewer asked for changes on #\(number).", systemImage: "text.bubble")
                 Spacer()
                 Link("Read the review", destination: submission.url)
-            case .closed?:
-                Label("Pull request #\(submission.number) was closed without merging.", systemImage: "xmark.circle")
-                Spacer()
-                Link("See why", destination: submission.url)
             case .open?:
-                Label("Pull request #\(submission.number) is waiting for review.", systemImage: "clock")
+                Label("Pull request #\(number) is waiting for review.", systemImage: "clock")
                 Spacer()
                 Link("Open on GitHub", destination: submission.url)
             case nil where model.submissionUnreadable:
-                Label("GitHub can't show pull request #\(submission.number). It may have been deleted.",
+                Label("GitHub can't show pull request #\(number). It may have been deleted.",
                       systemImage: "questionmark.circle")
                 Spacer()
                 // every submission asks after it first, so it would stop each one
-                Button("Forget This Pull Request") { model.forgetSubmission() }
+                Button("Forget This Pull Request") { model.forgetSubmission(submission.number) }
             case nil:
-                Label("Could not check pull request #\(submission.number) on GitHub.", systemImage: "questionmark.circle")
+                Label("Could not check pull request #\(number) on GitHub.", systemImage: "questionmark.circle")
                 Spacer()
                 Link("Open on GitHub", destination: submission.url)
             }

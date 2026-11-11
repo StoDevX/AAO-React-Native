@@ -57,7 +57,9 @@ struct ContentView: View {
                 Button("Try Again") { Task { await model.launch() } }
             }
         case .ready:
-            if let document = model.document {
+            if let record = model.submissions.records.first(where: { $0.id == model.shownPullRequest }) {
+                PullRequestDetailView(record: record)
+            } else if let document = model.document {
                 HoursDetailView(document: document)
             } else {
                 ContentUnavailableView("Choose a building", systemImage: "clock")

@@ -21,9 +21,18 @@ public struct Submission: Codable, Hashable, Sendable {
     public let base: String
     /// every path the pull request has touched, so an update can put back one no longer changed
     public let paths: [String]
+
+    public init(number: Int, url: URL, owner: String, branch: String, base: String, paths: [String]) {
+        self.number = number
+        self.url = url
+        self.owner = owner
+        self.branch = branch
+        self.base = base
+        self.paths = paths
+    }
 }
 
-public enum SubmissionState: Sendable, Equatable { case open, changesRequested, merged, closed }
+public enum SubmissionState: String, Codable, Sendable, Equatable { case open, changesRequested, merged, closed }
 
 public enum SubmitError: LocalizedError, Equatable, Sendable {
     case signInRequired

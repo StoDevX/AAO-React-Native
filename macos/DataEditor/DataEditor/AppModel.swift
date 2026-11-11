@@ -73,12 +73,16 @@ final class AppModel {
     var cccStatus: CccRunner.Status = .stopped
     var cccLog: [String] = []
     var pagesOrigin: String?
-    var submission: Submission? { didSet { saveSubmission() } }
-    var submissionState: SubmissionState?
-    /// Set when GitHub would not show the pull request opened before (see
+    /// Every pull request submitted from this app, kept in `submissions.json`.
+    private(set) var submissions = SubmissionHistory() { didSet { submissions.save(to: support.appending(path: "submissions.json")) } }
+    /// The pull request a new submission adds a commit to, if there is one.
+    var currentSubmission: SubmissionRecord? { submissions.current }
+    /// Set when GitHub would not show the current pull request (see
     /// `isUnreadable`). Every submission asks after it first, so only
     /// forgetting it lets the contributor submit again.
     private(set) var submissionUnreadable = false
+    /// The pull request whose details the window shows in place of the selected building's hours.
+    private(set) var shownPullRequest: Int?
     /// Set when the preview stopped because the helper could not serve the data on `port`.
     private(set) var servePortInUse = false
     /// master's newest commit, when it is not the one being edited
@@ -133,7 +137,7 @@ final class AppModel {
             testHelper = nil
         }
         workspace = Workspace(root: support.appending(path: "workspace"))
-        submission = (try? Data(contentsOf: support.appending(path: "submission.json"))).flatMap { try? JSONDecoder().decode(Submission.self, from: $0) }
+        submissions = SubmissionHistory(contentsOf: support.appending(path: "submissions.json"))
     }
 
     /// The GitHub OAuth app's client ID. UI tests set their own, so a test of
@@ -193,8 +197,8 @@ final class AppModel {
             buildings = listed
             phase = .ready
             if let selection { await select(selection) }
-            // UI tests reach no server
-            if testHelper == nil { await refreshSubmission() }
+            // the list is usable meanwhile, so the launch need not wait for GitHub
+            Task { await refreshSubmissions() }
             await refreshNewerCommit()
         } catch {
             phase = .failed(error.localizedDescription)
@@ -477,45 +481,85 @@ final class AppModel {
         if !buildProblems.isEmpty { throw Refusal.buildProblems }
         let submitter = GitHubSubmitter(tokens: tokens)
         let changes = changedFiles.map { Change(path: "data/\($0)", contents: try? workspace.contents(of: $0)) }
-        if let submission {
+        if let current = currentSubmission {
             let state: SubmissionState
             do {
-                state = try await submitter.state(of: submission)
+                state = try await submitter.state(of: current.submission)
             } catch {
                 submissionUnreadable = Self.isUnreadable(error)
                 throw error
             }
-            submissionState = state
+            submissions.record(state, for: current.id)
             if !Self.opensNewPullRequest(after: state) {
-                self.submission = try await submitter.update(submission, changes: changes, summary: summary)
-                await refreshSubmission()
+                submissions.replace(try await submitter.update(current.submission, changes: changes, summary: summary))
+                await refreshSubmissions()
                 return
             }
         }
-        submission = try await submitter.submit(changes: changes, base: base, summary: summary, appVersion: appVersion)
-        await refreshSubmission()
+        let opened = try await submitter.submit(changes: changes, base: base, summary: summary, appVersion: appVersion)
+        submissions.add(SubmissionRecord(submission: opened, summary: summary, submitted: .now, state: nil))
+        await refreshSubmissions()
     }
 
-    func refreshSubmission() async {
-        guard let submission else {
-            submissionState = nil
-            submissionUnreadable = false
-            return
+    /// Asks GitHub after each pull request not yet merged or closed. A
+    /// finished one cannot change, so it is not asked after. UI tests reach no server.
+    func refreshSubmissions() async {
+        guard testHelper == nil else { return }
+        let submitter = GitHubSubmitter(tokens: tokens)
+        var unreadable = false
+        for record in submissions.needingCheck {
+            let state: SubmissionState?
+            do {
+                state = try await submitter.state(of: record.submission)
+            } catch {
+                state = nil
+                if record.id == currentSubmission?.id { unreadable = Self.isUnreadable(error) }
+            }
+            submissions.record(state, for: record.id)
         }
-        do {
-            submissionState = try await GitHubSubmitter(tokens: tokens).state(of: submission)
-            submissionUnreadable = false
-        } catch {
-            submissionState = nil
-            submissionUnreadable = Self.isUnreadable(error)
-        }
+        submissionUnreadable = unreadable
     }
 
-    /// Lets go of a pull request GitHub will not show, so the next submission opens a new one.
-    func forgetSubmission() {
-        submission = nil
-        submissionState = nil
+    /// Lets go of pull request `number`, which GitHub will not show, so the next submission opens a new one.
+    func forgetSubmission(_ number: Int) {
+        submissions.forget(number)
         submissionUnreadable = false
+        if shownPullRequest == number { shownPullRequest = nil }
+    }
+
+    /// What the sidebar has selected.
+    enum SidebarItem: Hashable {
+        case building(file: String)
+        case pullRequest(number: Int)
+    }
+
+    var sidebarSelection: SidebarItem? {
+        if let shownPullRequest { return .pullRequest(number: shownPullRequest) }
+        return selection.map { .building(file: $0) }
+    }
+
+    /// The sidebar's newest choice, so a pull request chosen while the drafts
+    /// saved does not replace a building chosen after it.
+    private var latestChoice: SidebarItem?
+
+    /// Shows `item`. A building's file loads unless it is the one already
+    /// open. A pull request takes the hours' place, so what is typed in their
+    /// fields is saved first, as before Changes; the selected building stays
+    /// loaded for coming back to.
+    func choose(_ item: SidebarItem?) async {
+        latestChoice = item
+        switch item {
+        case .building(let file)?:
+            shownPullRequest = nil
+            selection = file
+        case .pullRequest(let number)?:
+            _ = await commitPendingDrafts()
+            guard latestChoice == item else { return }
+            shownPullRequest = number
+        case nil:
+            shownPullRequest = nil
+            selection = nil
+        }
     }
 
     /// Asks GitHub whether master has moved past the data being edited, so
@@ -525,8 +569,7 @@ final class AppModel {
         newerCommit = latest == workspace.snapshot?.commit ? nil : latest
     }
 
-    /// Moves to master's newest commit, keeping the contributor's edits. A
-    /// merged pull request's edits are on master by then, so it is forgotten.
+    /// Moves to master's newest commit, keeping the contributor's edits.
     /// Does nothing while a submission is being sent from `data/`. A failed
     /// update leaves the workspace as it was, so it reports in `updateError`
     /// and editing goes on.
@@ -547,10 +590,6 @@ final class AppModel {
         }
         updating = false
         newerCommit = nil
-        if submissionState == .merged || submissionState == .closed {
-            submission = nil
-            submissionState = nil
-        }
         do {
             if testHelper == nil, let snapshot = workspace.snapshot, !snapshot.isCompatible(with: try runtime.stamp()) {
                 phase = .needsAppUpdate
@@ -590,12 +629,6 @@ final class AppModel {
         calendar = (try? await helper?.calendar()) ?? calendar
         if let selection { await select(selection) }
         await rebuild()
-    }
-
-    private func saveSubmission() {
-        let file = support.appending(path: "submission.json")
-        if let submission, let data = try? JSONEncoder().encode(submission) { try? data.write(to: file) }
-        else { try? FileManager.default.removeItem(at: file) }
     }
 
     /// The Mac's Bonjour name (Sharing → Local hostname), without `.local`.

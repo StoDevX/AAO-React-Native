@@ -3,10 +3,12 @@ import XCTest
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
     /// and the repo's helper. A `conflicted` file is set aside as a conflict,
-    /// as an update leaves one, and `arguments` follow the workspace's. Returns
+    /// as an update leaves one, `submissions` is planted as the pull requests
+    /// submitted before, and `arguments` follow the workspace's. Returns
     /// the app and its data folder, for a test that changes a file under it.
     @MainActor
-    func launchWithRepoData(conflicted: String? = nil, arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
+    func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil,
+                            arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let support = FileManager.default.temporaryDirectory.appending(path: "ui \(UUID().uuidString)")
         let workspace = support.appending(path: "workspace")
@@ -19,6 +21,9 @@ extension XCTestCase {
             let kept = workspace.appending(path: "conflicts/\(conflicted)")
             try FileManager.default.createDirectory(at: kept.deletingLastPathComponent(), withIntermediateDirectories: true)
             try FileManager.default.copyItem(at: repo.appending(path: "data/\(conflicted)"), to: kept)
+        }
+        if let submissions {
+            try Data(submissions.utf8).write(to: support.appending(path: "submissions.json"))
         }
         let app = XCUIApplication()
         // the app quits first, so nothing writes into the folder as it goes
