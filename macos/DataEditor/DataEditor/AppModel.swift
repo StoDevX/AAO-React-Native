@@ -119,12 +119,19 @@ final class AppModel {
 
     static let port = 8790
 
+    /// The app's folder in `applicationSupport`, named by its bundle
+    /// identifier so no other app shares it.
+    static func supportFolder(in applicationSupport: URL, bundleIdentifier: String?) -> URL {
+        applicationSupport.appending(path: bundleIdentifier ?? "com.drewvolz.allaboutolaf-data-editor")
+    }
+
     /// - Parameter support: the folder for the workspace and the history, where unit tests give their own
     init(runtime: Runtime = .bundled, support: URL? = nil) {
         self.runtime = runtime
         let defaults = UserDefaults.standard
         self.support = support ?? defaults.string(forKey: "UITestWorkspace").map { URL(filePath: $0) }
-            ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appending(path: "DataEditor")
+            ?? Self.supportFolder(in: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0],
+                                  bundleIdentifier: Bundle.main.bundleIdentifier)
         if let node = defaults.string(forKey: "UITestNode"), let scripts = defaults.string(forKey: "UITestHelper") {
             testHelper = (URL(filePath: node), URL(filePath: scripts))
         } else {
