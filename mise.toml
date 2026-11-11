@@ -59,6 +59,11 @@ os = ["macos"]
 version = "10.2.1"
 os = ["macos"]
 
+# Writes the Mac radio's Xcode project from macos/Radio/project.yml.
+[tools.xcodegen]
+version = "2.46.0"
+os = ["macos"]
+
 [env]
 _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"
@@ -314,6 +319,10 @@ run = [
 		"{{usage.device}}",
 	] },
 ]
+
+[tasks.xcodegen]
+description = "Generate the Mac apps' Xcode projects from their project.yml"
+run = 'for spec in macos/*/project.yml; do xcodegen generate --spec "$spec"; done'
 
 # --- Code quality ---
 
