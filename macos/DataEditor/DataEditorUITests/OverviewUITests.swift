@@ -140,6 +140,34 @@ final class OverviewUITests: XCTestCase {
         attachScreenshot(of: window, named: "Current changes window on its Overview")
     }
 
+    /// Text still being typed in Current changes shows on the Changesets window's Overview too.
+    func testTheChangesetsOverviewShowsTextBeingTyped() throws {
+        let app = try launchWithRepoData().app
+        let window = openCurrentChanges(in: app)
+        window.outlines["building-list"].staticTexts["The Cage"].click()
+        let title = window.textFields["service-title-0"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        title.click()
+        title.typeKey(.rightArrow, modifierFlags: .command)
+        // no Return
+        title.typeText(" today")
+        app.typeKey("0", modifierFlags: .command)
+        let changesets = app.windows["Changesets"]
+        let typed = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "title: Hours today", "title: Hours today")
+        XCTAssertTrue(changesets.descendants(matching: .any).matching(typed).firstMatch.waitForExistence(timeout: 10))
+        attachScreenshot(of: changesets, named: "Changesets window showing text typed in Current changes")
+    }
+
+    /// Return opens the chosen changeset, as a double-click does, and Submit does not take it.
+    func testReturnInTheChangesetsListOpensTheChangeset() throws {
+        let app = try launchWithRepoData().app
+        let current = app.windows["Changesets"].outlines["changeset-list"].staticTexts["Current changes"]
+        XCTAssertTrue(current.waitForExistence(timeout: 20))
+        current.click()
+        app.typeKey(.return, modifierFlags: [])
+        XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 5))
+    }
+
     /// A problem in The Cage, followed from the Changesets window, opens The Cage to edit.
     func testShowingABuildingFromTheChangesetsWindow() throws {
         let app = try launchWithRepoData().app

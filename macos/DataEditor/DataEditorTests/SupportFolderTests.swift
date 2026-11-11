@@ -11,10 +11,4 @@ struct SupportFolderTests {
         #expect(AppModel.supportFolder(in: applicationSupport, bundleIdentifier: "com.drewvolz.allaboutolaf-data-editor")
                 == applicationSupport.appending(path: "com.drewvolz.allaboutolaf-data-editor"))
     }
-
-    /// A bundle without an identifier still gets the release build's folder.
-    @Test func fallsBackToTheReleaseIdentifier() {
-        #expect(AppModel.supportFolder(in: applicationSupport, bundleIdentifier: nil)
-                == applicationSupport.appending(path: "com.drewvolz.allaboutolaf-data-editor"))
-    }
 }

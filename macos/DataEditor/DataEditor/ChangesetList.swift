@@ -2,7 +2,7 @@ import DataEditorKit
 import SwiftUI
 
 /// The Changesets window's list: the edits in hand, then each pull request
-/// submitted from this app. Double-clicking one, or Return, opens it.
+/// submitted from this app. Double-clicking one opens it; Return is the window's Open.
 struct ChangesetList: View {
     @Environment(AppModel.self) private var model
     @Binding var selection: Changeset?

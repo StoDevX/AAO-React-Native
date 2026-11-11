@@ -21,18 +21,40 @@ struct ChangesetsWindow: View {
             detail
         }
         .frame(minWidth: 800, minHeight: 500)
+        // asked once as it is chosen, not again on each look
+        .task(id: selection) { if case .pullRequest(let number)? = selection { await model.loadDiffs(of: number) } }
         .toolbar {
             ToolbarItem {
                 Button("Open", systemImage: "macwindow") { if let selection { openWindow(value: selection) } }
                     .disabled(!ready || selection == nil)
+                    // Return opens the chosen changeset
+                    .keyboardShortcut(.defaultAction)
             }
         }
     }
 
     /// The chosen changeset's Overview once the data is ready, and until then how the launch is going.
     @ViewBuilder private var detail: some View {
+        if model.phase == .ready {
+            switch selection {
+            case .current?: OverviewView()
+            case .pullRequest(let number)?: PullRequestDetailView(number: number)
+            case nil: ContentUnavailableView("Choose a changeset", systemImage: "list.bullet.rectangle.portrait")
+            }
+        } else {
+            LaunchStatusView()
+        }
+    }
+}
+
+/// How the launch is going, until the data is ready: in every window, so
+/// one left open from before never waits on a spinner that cannot end.
+struct LaunchStatusView: View {
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
         switch model.phase {
-        case .starting, .downloading:
+        case .starting, .downloading, .ready:
             ProgressView(model.phase == .downloading ? "Downloading the app's data…" : "Starting…")
         case .needsAppUpdate:
             ContentUnavailableView("An update is needed to edit this data", systemImage: "arrow.down.app",
@@ -42,12 +64,6 @@ struct ChangesetsWindow: View {
                 Label("The Data Editor could not start", systemImage: "exclamationmark.triangle")
             } description: { Text(message) } actions: {
                 Button("Try Again") { Task { await model.launch() } }
-            }
-        case .ready:
-            switch selection {
-            case .current?: OverviewView()
-            case .pullRequest(let number)?: PullRequestDetailView(number: number)
-            case nil: ContentUnavailableView("Choose a changeset", systemImage: "list.bullet.rectangle.portrait")
             }
         }
     }

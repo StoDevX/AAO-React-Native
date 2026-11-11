@@ -22,6 +22,7 @@ final class AppModel {
     }
 
     enum Refusal: LocalizedError {
+        case submitting
         case updating
         case buildProblems
         case notReady
@@ -29,6 +30,7 @@ final class AppModel {
 
         var errorDescription: String? {
             switch self {
+            case .submitting: "Your changes are already being submitted."
             case .notReady: "The data is still loading."
             case .updating: "The data is still updating."
             case .buildProblems: "Fix the problems listed first."
@@ -489,8 +491,17 @@ final class AppModel {
     /// does not build, since nothing else may have built it this session.
     /// Asks GitHub for the earlier pull request's state first, and stops if
     /// it cannot tell, since guessing "none" would open a second one.
+    /// Why a submission may not start: an update may have removed a file it
+    /// would send as deleted, and a second submission while one runs could
+    /// open a second pull request, since each window's Overview has a Submit.
+    static func submitRefusal(updating: Bool, submitting: Bool) -> Refusal? {
+        if submitting { return .submitting }
+        if updating { return .updating }
+        return nil
+    }
+
     func submit(summary: String) async throws {
-        if updating { throw Refusal.updating }
+        if let refusal = Self.submitRefusal(updating: updating, submitting: submitting) { throw refusal }
         guard let base = baseCommit, let helper else { throw Refusal.notReady }
         // what is typed in a field goes with the rest
         if await !commitPendingDrafts() { throw Refusal.unsavedText }

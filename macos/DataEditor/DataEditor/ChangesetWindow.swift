@@ -20,9 +20,11 @@ struct ChangesetWindow: View {
             BuildingList(changeset: changeset, selection: selection)
                 .disabled(!ready)
         } detail: {
-            if ready { detail(selection.wrappedValue ?? .overview) } else { ProgressView() }
+            if ready { detail(selection.wrappedValue ?? .overview) } else { LaunchStatusView() }
         }
         .navigationTitle(title)
+        // asked once as the window opens, not again on each row chosen in it
+        .task(id: changeset) { if case .pullRequest(let number) = changeset { await model.loadDiffs(of: number) } }
         // room for a row of hours below the week, which a window saved smaller would hide
         .frame(minWidth: 900, minHeight: 600)
         .toolbar {

@@ -46,7 +46,6 @@ struct PullRequestDetailView: View {
             }
             .formStyle(.grouped)
             .accessibilityIdentifier("pull-request-detail")
-            .task(id: number) { await model.loadDiffs(of: number) }
         } else {
             ContentUnavailableView("No pull request", systemImage: "questionmark.circle")
         }
@@ -74,7 +73,6 @@ struct PullRequestFileView: View {
             }
             .formStyle(.grouped)
             .accessibilityIdentifier("pull-request-file")
-            .task(id: number) { await model.loadDiffs(of: number) }
         }
     }
 }
@@ -100,16 +98,39 @@ private struct PullRequestFileDiff: View {
     }
 }
 
+/// What a past pull request's page says of its diffs against GitHub's.
+enum PullRequestLoadLine: Equatable {
+    /// GitHub's answer is shown, or will replace the diffs on screen
+    case none
+    /// nothing to show until GitHub answers
+    case loading
+    /// GitHub could not be reached; the diffs kept are from this date, or nil for the copy saved at submission
+    case lastChecked(Date?)
+    /// GitHub could not be reached and nothing was kept
+    case tryAgain
+    /// GitHub says the pull request no longer exists
+    case gone
+
+    static func make(load: AppModel.DiffLoad?, hasDiffs: Bool, checked: Date?) -> PullRequestLoadLine {
+        switch load {
+        case .loading?: hasDiffs ? .none : .loading
+        case .failed?: hasDiffs ? .lastChecked(checked) : .tryAgain
+        case .gone?: .gone
+        case nil: .none
+        }
+    }
+}
+
 /// How the shown diffs stand against GitHub's: loading, last checked, gone, or not loaded at all.
 private struct PullRequestLoadStatus: View {
     @Environment(AppModel.self) private var model
     let record: SubmissionRecord
 
     var body: some View {
-        switch model.diffLoad[record.id] {
-        case .loading? where record.diffs == nil:
+        switch PullRequestLoadLine.make(load: model.diffLoad[record.id], hasDiffs: record.diffs != nil, checked: record.checked) {
+        case .loading:
             Section { ProgressView().frame(maxWidth: .infinity) }
-        case .failed? where record.diffs == nil:
+        case .tryAgain:
             Section {
                 HStack {
                     Text("Couldn't load this pull request's changes.")
@@ -117,16 +138,16 @@ private struct PullRequestLoadStatus: View {
                     Button("Try Again") { Task { await model.loadDiffs(of: record.id) } }
                 }
             }
-        case .failed?:
+        case .lastChecked(let checked):
             Section {
-                if let checked = record.checked {
+                if let checked {
                     Text("Last checked \(checked, format: .dateTime.day().month().year().hour().minute())")
                 } else {
                     Text("Last checked when you submitted it")
                 }
             }
             .foregroundStyle(.secondary)
-        case .gone?:
+        case .gone:
             Section {
                 HStack {
                     Text("This pull request no longer exists on GitHub.")
@@ -134,7 +155,7 @@ private struct PullRequestLoadStatus: View {
                     Button("Forget This Pull Request") { model.forgetSubmission(record.id) }
                 }
             }
-        case .loading?, nil:
+        case .none:
             EmptyView()
         }
     }

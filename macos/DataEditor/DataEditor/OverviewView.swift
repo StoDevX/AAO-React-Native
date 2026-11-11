@@ -18,11 +18,12 @@ struct SubmitControl: Equatable {
         let updates = hasSubmission && !(state.map(AppModel.opensNewPullRequest(after:)) ?? false)
         title = updates ? "Update Pull Request…" : "Submit for Review…"
         isEnabled = hasChanges && !hasConflicts && !hasProblems
-        reason = if !hasChanges {
-            // the page says so
-            nil
-        } else if hasConflicts {
+        reason = if hasConflicts {
+            // a conflict alone is a change the page shows, so it needs its reason
             "Choose which copy to keep of each conflicting file before submitting."
+        } else if !hasChanges {
+            // the page says "No changes"
+            nil
         } else if hasProblems {
             "Fix the problems listed above before submitting."
         } else {
@@ -36,6 +37,7 @@ struct SubmitControl: Equatable {
 struct OverviewView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.appearsActive) private var appearsActive
     @State private var submitting = false
     /// The file whose Revert waits for the contributor to confirm it.
     @State private var reverting: String?
@@ -105,9 +107,9 @@ struct OverviewView: View {
                     Text(reason).foregroundStyle(.secondary)
                 }
                 Spacer()
+                // no Return key: in the Changesets window Return opens the chosen changeset
                 Button(control.title) { submitting = true }
                     .disabled(!control.isEnabled)
-                    .keyboardShortcut(.defaultAction)
             }
             .padding()
             .background(.bar)
@@ -126,8 +128,13 @@ struct OverviewView: View {
         }
         .sheet(isPresented: $submitting) { SubmitSheet() }
         .task {
+            // text still being typed in the Current changes window belongs in this page and its Submit
+            _ = await model.commitPendingDrafts()
             await model.refreshSubmissions()
             await model.refreshNewerCommit()
+        }
+        .onChange(of: appearsActive) { _, active in
+            if active { Task { _ = await model.commitPendingDrafts() } }
         }
     }
 

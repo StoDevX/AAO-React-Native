@@ -36,6 +36,15 @@ struct SubmitControlTests {
         #expect(control(changes: false).reason == nil)
         #expect(control(conflicts: true).reason == "Choose which copy to keep of each conflicting file before submitting.")
         #expect(control(problems: true).reason == "Fix the problems listed above before submitting.")
+        // a conflict counts as a change, so the page shows it rather than "No changes"
+        #expect(control(changes: false, conflicts: true).reason == "Choose which copy to keep of each conflicting file before submitting.")
+    }
+
+    /// Each window's Overview has its own Submit, and two submissions at once could open two pull requests.
+    @Test func refusesASecondSubmissionWhileOneRuns() {
+        #expect(AppModel.submitRefusal(updating: false, submitting: true) == .submitting)
+        #expect(AppModel.submitRefusal(updating: true, submitting: false) == .updating)
+        #expect(AppModel.submitRefusal(updating: false, submitting: false) == nil)
     }
 
     @Test func aFinishedPullRequestTakesNoMoreCommits() {

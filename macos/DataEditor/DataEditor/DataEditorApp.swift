@@ -14,6 +14,8 @@ struct DataEditorApp: App {
         WindowGroup("Changeset", for: Changeset.self) { $changeset in
             ChangesetWindow(changeset: changeset ?? .current).environment(delegate.model)
         }
+        // a changeset opens from the Changesets window; New Window would make a second Current changes
+        .commands { CommandGroup(replacing: .newItem) {} }
         Window("Data Browser", id: "browser") {
             DataBrowserView().environment(delegate.model)
         }
