@@ -129,7 +129,7 @@ struct HelperRuntimeTests {
         let folder = try scripts(handlers: """
             write: async () => {
                 let file = __scriptDir + '/../missing/a.yaml'
-                try { __host.writeFile(file, 'a') } catch (error) { return {code: error.code, message: error.message, file} }
+                try { __host.writeFile(file, 'a') } catch (error) { return {code: error.code, message: error.message, file, errno: String(error.errno), syscall: error.syscall, path: error.path} }
                 return 'written'
             },
             remove: async () => {
@@ -141,6 +141,7 @@ struct HelperRuntimeTests {
         let helper = try runtime(folder)
         let written = try JSONSerialization.jsonObject(with: Data(try await helper.call("write", paramsJSON: "{}").utf8)) as! [String: String]
         #expect(written["code"] == "ENOENT")
+        #expect(written["errno"] == "-2" && written["syscall"] == "open" && written["path"] == written["file"])
         #expect(written["message"] == "ENOENT: no such file or directory, open '\(written["file"]!)'")
         #expect(try await helper.call("remove", paramsJSON: "{}") == #""ENOENT""#)
     }

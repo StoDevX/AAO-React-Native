@@ -3,13 +3,18 @@
 
 const host = () => globalThis.__host
 
-/** An error shaped like Node's, which the scripts tell apart by `code`. */
-const missing = (file) =>
-	Object.assign(new Error(`ENOENT: no such file or directory, open '${file}'`), {code: 'ENOENT'})
+/** A missing path's error as Node throws it from `syscall`, which the scripts tell apart by `code`. */
+const missing = (file, syscall) =>
+	Object.assign(new Error(`ENOENT: no such file or directory, ${syscall} '${file}'`), {
+		errno: -2,
+		code: 'ENOENT',
+		syscall,
+		path: file,
+	})
 
-function stats(file) {
+function stats(file, syscall) {
 	let found = host().stat(file)
-	if (!found) throw missing(file)
+	if (!found) throw missing(file, syscall)
 	return {
 		isDirectory: () => found.isDirectory,
 		isFile: () => !found.isDirectory,
@@ -22,7 +27,7 @@ function stats(file) {
 /** The file's text; the data scripts read only text. */
 export function readFileSync(file) {
 	let text = host().readFile(String(file))
-	if (text === null || text === undefined) throw missing(file)
+	if (text === null || text === undefined) throw missing(file, 'open')
 	return text
 }
 
@@ -36,15 +41,18 @@ export function existsSync(file) {
 
 export function statSync(file, options) {
 	if (options?.throwIfNoEntry === false && !host().stat(String(file))) return
-	return stats(String(file))
+	return stats(String(file), 'stat')
 }
 
-export const lstatSync = statSync
+export function lstatSync(file, options) {
+	if (options?.throwIfNoEntry === false && !host().stat(String(file))) return
+	return stats(String(file), 'lstat')
+}
 
 export function readdirSync(directory, options) {
 	directory = String(directory)
 	let names = host().readdir(directory)
-	if (names === null || names === undefined) throw missing(directory)
+	if (names === null || names === undefined) throw missing(directory, 'scandir')
 	names = [...names].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
 	if (options?.recursive) {
 		if (options.withFileTypes) {

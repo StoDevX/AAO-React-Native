@@ -246,7 +246,7 @@ private func errno(of error: NSError) -> Int32 {
 }
 
 /// Throws in the calling script an error shaped like Node's: "ENOENT: no such
-/// file or directory, open '<path>'", with the name as its `code`.
+/// file or directory, open '<path>'", with its `errno`, `code`, `syscall` and `path`.
 private func throwInJavaScript(errno number: Int32, _ syscall: String, _ path: String) {
     guard let context = JSContext.current() else { return }
     let names: [Int32: String] = [ENOENT: "ENOENT", EEXIST: "EEXIST", EACCES: "EACCES", EPERM: "EPERM", ENOTDIR: "ENOTDIR",
@@ -254,7 +254,10 @@ private func throwInJavaScript(errno number: Int32, _ syscall: String, _ path: S
     let code = names[number] ?? "EIO"
     let description = String(cString: strerror(number))
     let error = JSValue(newErrorFromMessage: "\(code): \(description.prefix(1).lowercased() + description.dropFirst()), \(syscall) '\(path)'", in: context)!
+    error.setObject(-Int(number), forKeyedSubscript: "errno" as NSString)
     error.setObject(code, forKeyedSubscript: "code" as NSString)
+    error.setObject(syscall, forKeyedSubscript: "syscall" as NSString)
+    error.setObject(path, forKeyedSubscript: "path" as NSString)
     context.exception = error
 }
 
