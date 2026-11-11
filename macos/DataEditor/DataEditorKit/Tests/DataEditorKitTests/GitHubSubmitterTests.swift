@@ -250,4 +250,35 @@ struct GitHubSubmitterTests {
         #expect(GitHubSubmitter.slug("Close The Cage — early on Fridays!") == "close-the-cage-early-on-fridays")
         #expect(GitHubSubmitter.slug(String(repeating: "a", count: 80)).count == 40)
     }
+
+    /// GitHub answering pull request 42's files with `files`, or `status` when not 200.
+    private func pullRequestFiles(_ files: String, status: Int = 200) -> (URLSession, StubProtocol.Stub) {
+        StubProtocol.session { request in
+            guard request.url!.path == "/repos/StoDevX/AAO-React-Native/pulls/42/files" else { return (404, body(#"{"message":"Not Found"}"#)) }
+            return (status, body(files))
+        }
+    }
+
+    @Test func readsAPullRequestsFiles() async throws {
+        let (session, stub) = pullRequestFiles(#"[{"filename":"data/building-hours/1-1-cage.yaml","patch":"@@ -1 +1 @@\n-a\n+b"},{"filename":"data/building-hours/2-1-big.yaml"}]"#)
+        let files = try await submitter(session).0.files(of: openSubmission())
+        #expect(files == [
+            PullRequestFile(path: "data/building-hours/1-1-cage.yaml", rows: [.line(DiffLine(kind: .removed, text: "a")), .line(DiffLine(kind: .added, text: "b"))]),
+            PullRequestFile(path: "data/building-hours/2-1-big.yaml", rows: nil),
+        ])
+        #expect(stub.requests.first?.url?.query == "per_page=100")
+    }
+
+    @Test func readsFilesWithoutSigningIn() async throws {
+        let (session, stub) = pullRequestFiles("[]")
+        _ = try await submitter(session, token: nil).0.files(of: openSubmission())
+        #expect(stub.requests.count == 1)
+        #expect(stub.requests.first?.value(forHTTPHeaderField: "Authorization") == nil)
+    }
+
+    @Test func saysWhenAPullRequestsFilesAreGone() async throws {
+        let (session, _) = pullRequestFiles(#"{"message":"Not Found"}"#, status: 404)
+        let error = await #expect(throws: SubmitError.self) { try await submitter(session).0.files(of: openSubmission()) }
+        #expect(error?.isGone == true)
+    }
 }

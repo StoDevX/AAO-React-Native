@@ -79,4 +79,18 @@ public protocol ChangeSubmitter: Sendable {
     /// submission with the paths it now touches.
     func update(_ submission: Submission, changes: [Change], summary: String) async throws -> Submission
     func state(of submission: Submission) async throws -> SubmissionState
+    /// The files the pull request changes, as GitHub shows them now.
+    func files(of submission: Submission) async throws -> [PullRequestFile]
+}
+
+/// A file a pull request changes, with its diff; `rows` is nil when GitHub
+/// sent no patch, as it does for a file too large to show.
+public struct PullRequestFile: Hashable, Sendable {
+    public let path: String
+    public let rows: [DiffRow]?
+
+    public init(path: String, rows: [DiffRow]?) {
+        self.path = path
+        self.rows = rows
+    }
 }

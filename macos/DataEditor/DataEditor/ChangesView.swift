@@ -31,29 +31,6 @@ struct SubmitControl: Equatable {
     }
 }
 
-/// A row of a file's diff: a line, or the unchanged lines left out between two changes.
-enum DiffRow: Hashable {
-    case line(DiffLine)
-    case gap
-}
-
-/// The changed lines of a diff with up to `context` unchanged lines around
-/// each, so a reader can tell which service a line belongs to.
-func diffRows(_ lines: [DiffLine], context: Int = 2) -> [DiffRow] {
-    var kept = Set<Int>()
-    for index in lines.indices where lines[index].kind != .same {
-        kept.formUnion(max(0, index - context)...min(lines.count - 1, index + context))
-    }
-    var rows: [DiffRow] = []
-    var previous: Int?
-    for index in kept.sorted() {
-        if let previous, index > previous + 1 { rows.append(.gap) }
-        rows.append(.line(lines[index]))
-        previous = index
-    }
-    return rows
-}
-
 /// The edited files with their diffs, where the contributor reverts a file,
 /// settles a conflict, takes newer data and submits for review.
 struct ChangesView: View {

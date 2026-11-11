@@ -21,11 +21,15 @@ public struct GitHubSubmitter: ChangeSubmitter {
         return String(words.joined(separator: "-").prefix(40)).trimmingCharacters(in: CharacterSet(charactersIn: "-"))
     }
 
-    private func send(_ method: String, _ path: String, _ payload: JSONValue? = nil) async throws -> JSONValue {
-        guard let token = tokens.read() else { throw SubmitError.signInRequired }
+    /// - Parameter anonymous: whether the request may go without a token, as a
+    ///   read of the public repository may; a token is still sent when there is
+    ///   one, since it raises GitHub's limit on requests
+    private func send(_ method: String, _ path: String, _ payload: JSONValue? = nil, anonymous: Bool = false) async throws -> JSONValue {
+        let token = tokens.read()
+        if token == nil && !anonymous { throw SubmitError.signInRequired }
         var request = URLRequest(url: URL(string: "https://api.github.com\(path)")!)
         request.httpMethod = method
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        if let token { request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         if let payload { request.httpBody = try JSONEncoder().encode(payload) }
         let (data, response) = try await session.data(for: request)
@@ -148,5 +152,15 @@ public struct GitHubSubmitter: ChangeSubmitter {
             if let user = review["user"]?["login"]?.string, let state = review["state"]?.string, state != "COMMENTED" { latest[user] = state }
         }
         return latest.values.contains("CHANGES_REQUESTED") ? .changesRequested : .open
+    }
+
+    /// The files a pull request changes, with GitHub's patch of each. Needs
+    /// no sign-in: the repository is public.
+    public func files(of submission: Submission) async throws -> [PullRequestFile] {
+        let value = try await send("GET", "/repos/\(repo.fullName)/pulls/\(submission.number)/files?per_page=100", anonymous: true)
+        return (value.array ?? []).compactMap { file in
+            guard let path = file["filename"]?.string else { return nil }
+            return PullRequestFile(path: path, rows: file["patch"]?.string.map(parsePatch))
+        }
     }
 }

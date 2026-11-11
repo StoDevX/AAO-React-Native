@@ -1,7 +1,7 @@
 import Foundation
 
-public struct DiffLine: Hashable, Sendable {
-    public enum Kind: Sendable { case same, added, removed }
+public struct DiffLine: Hashable, Codable, Sendable {
+    public enum Kind: String, Codable, Sendable { case same, added, removed }
     public let kind: Kind
     public let text: String
 
