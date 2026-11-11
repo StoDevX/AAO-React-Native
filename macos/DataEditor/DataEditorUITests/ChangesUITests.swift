@@ -41,7 +41,7 @@ final class ChangesUITests: XCTestCase {
         app.buttons["Submit for Review…"].click()
         let summary = app.textFields["submit-summary"]
         XCTAssertTrue(summary.waitForExistence(timeout: 5))
-        let refusal = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "without a GitHub sign-in", "without a GitHub sign-in")
+        let refusal = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "can't submit changes", "can't submit changes")
         XCTAssertTrue(app.descendants(matching: .any).matching(refusal).firstMatch.exists)
         attachScreenshot(of: app.windows.firstMatch, named: "Submit sheet as it opens, with no client ID")
 

@@ -69,10 +69,10 @@ struct ServerStatusView: View {
                 4. Pull to refresh the hours.
                 """)
                 if model.cccStatus == .portInUse {
-                    Text("Something else on this Mac is using port 8787, probably another copy of ccc-server. Quit it, then start the preview again.").foregroundStyle(.red)
+                    Text("Another program is using port 8787, probably another copy of ccc-server. Quit it first.").foregroundStyle(.red)
                 }
                 if model.servePortInUse {
-                    Text("Something else on this Mac is using port \(AppModel.port), which the preview serves the data from, probably another copy of the Data Editor. Quit it, then start the preview again.").foregroundStyle(.red)
+                    Text("Another program is using port \(AppModel.port), probably another copy of the Data Editor. Quit it first.").foregroundStyle(.red)
                 }
                 HStack {
                     if control.offersStartAgain {
@@ -85,7 +85,6 @@ struct ServerStatusView: View {
                         }
                     }
                 }
-                if let origin = model.pagesOrigin { Text("Serving data at \(origin)").font(.caption).textSelection(.enabled) }
                 DisclosureGroup("Log") {
                     ScrollView { Text(model.cccLog.suffix(40).joined(separator: "\n")).font(.caption.monospaced()).textSelection(.enabled) }
                         .frame(height: 160)

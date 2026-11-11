@@ -25,7 +25,7 @@ struct SubmitSheet: View {
         let working = sending != nil
         Form {
             if model.githubClientID.isEmpty {
-                Text("This copy of the Data Editor was built without a GitHub sign-in, so it cannot submit changes.")
+                Text("This copy of the Data Editor can't submit changes.")
                     .foregroundStyle(.red)
             }
             TextField("What changed?", text: $summary, prompt: Text("e.g. Close The Cage at 9 p.m. on Fridays"))

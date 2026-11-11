@@ -49,7 +49,7 @@ struct ContentView: View {
             ProgressView(model.phase == .downloading ? "Downloading the app's data…" : "Starting…")
         case .needsAppUpdate:
             ContentUnavailableView("An update is needed to edit this data", systemImage: "arrow.down.app",
-                                   description: Text("The data now expects newer scripts than this copy of the Data Editor has. Download the newest Data Editor, then open it again."))
+                                   description: Text("Download the newest Data Editor, then open it again."))
         case .failed(let message):
             ContentUnavailableView {
                 Label("The Data Editor could not start", systemImage: "exclamationmark.triangle")

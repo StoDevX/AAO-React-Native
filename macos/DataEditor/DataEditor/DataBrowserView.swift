@@ -60,7 +60,7 @@ struct DataBrowserView: View {
         let local = if let url = Self.localURL(for: path, status: model.cccStatus) {
             await Self.fetch(url)
         } else {
-            "Start the preview to see this Mac's data.\nThe local Worker answers only while the preview runs."
+            "Start the preview to see this Mac's data."
         }
         let fetched = await production
         guard !Task.isCancelled else { return }

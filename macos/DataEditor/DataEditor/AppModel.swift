@@ -29,17 +29,17 @@ final class AppModel {
 
         var errorDescription: String? {
             switch self {
-            case .notReady: "The data has not finished loading. Submit again once it has."
-            case .updating: "The data is being updated. Submit again once the update finishes."
-            case .buildProblems: "The data has problems that stop it building. Fix the ones listed, then submit again."
-            case .unsavedText: "Some text you typed could not be saved. Press Return in that field to try again, then submit again."
+            case .notReady: "The data is still loading."
+            case .updating: "The data is still updating."
+            case .buildProblems: "Fix the problems listed first."
+            case .unsavedText: "Some text you typed isn't saved yet. Press Return in that field."
             }
         }
     }
 
     /// Why the window offers Try Again once the helper has gone. The edits
     /// made so far are in their files, so starting it again loses nothing.
-    static let helperStoppedMessage = "The editor's helper stopped. Your edits so far are saved; Try Again starts it again."
+    static let helperStoppedMessage = "The editor stopped. Your edits are saved."
 
     /// The phase an error from the helper leaves the app in: failed once the
     /// helper has gone, since every later edit would fail too, and nil for a
@@ -374,7 +374,7 @@ final class AppModel {
             guard held == expected else {
                 if file == selection { await select(file) }
                 let typed = op.value?.string ?? ""
-                draftNotices.append(Problem(file: file, message: "“\(typed)” was not saved: the file changed there while you typed. Copy it from here if you still want it.", path: op.path))
+                draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because the file changed while you typed.", path: op.path))
                 return .letGo(current: held)
             }
             if await apply([op], to: file) { return .saved }
