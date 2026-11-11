@@ -4,6 +4,11 @@ public struct DiffLine: Hashable, Sendable {
     public enum Kind: Sendable { case same, added, removed }
     public let kind: Kind
     public let text: String
+
+    public init(kind: Kind, text: String) {
+        self.kind = kind
+        self.text = text
+    }
 }
 
 /// `new` against `old`, line by line, with each removal shown just before what replaced it.

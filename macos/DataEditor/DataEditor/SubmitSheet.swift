@@ -10,6 +10,9 @@ struct SubmitSheet: View {
     @State private var summary = ""
     @State private var code: DeviceFlow.DeviceCode?
     @State private var sending: Task<Void, Never>?
+    /// Set while the model sends the changes. Stopping then could leave a
+    /// branch or pull request half made, so the sheet cannot be closed.
+    @State private var sendingToGitHub = false
     @State private var error: String?
 
     /// Whether Submit may be clicked: a summary to title the pull request, no
@@ -25,7 +28,7 @@ struct SubmitSheet: View {
                 Text("This copy of the Data Editor was built without a GitHub sign-in, so it cannot submit changes.")
                     .foregroundStyle(.red)
             }
-            TextField("What changed?", text: $summary, prompt: Text("Close The Cage at 9 p.m. on Fridays"))
+            TextField("What changed?", text: $summary, prompt: Text("e.g. Close The Cage at 9 p.m. on Fridays"))
                 .accessibilityIdentifier("submit-summary")
             if let code {
                 VStack(alignment: .leading, spacing: 8) {
@@ -42,14 +45,15 @@ struct SubmitSheet: View {
         .formStyle(.grouped)
         .frame(width: 460)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+            ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(sendingToGitHub) }
             ToolbarItem(placement: .confirmationAction) {
                 Button(working ? "Submitting…" : "Submit") { sending = Task { await submit() } }
                     .disabled(!Self.canSubmit(summary: summary, working: working, clientID: model.githubClientID))
                     .accessibilityIdentifier("submit-confirm")
             }
         }
-        // stops waiting for a sign-in nobody will finish
+        .interactiveDismissDisabled(sendingToGitHub)
+        // stops waiting for a sign-in nobody will finish; the sheet stays open while sending
         .onDisappear { sending?.cancel() }
     }
 
@@ -62,17 +66,25 @@ struct SubmitSheet: View {
         do {
             if model.tokens.read() == nil { try await signIn() }
             do {
-                try await model.submit(summary: summary)
+                try await send()
             } catch SubmitError.signInRequired {
                 // the saved token was revoked or expired; GitHub has forgotten it
                 try await signIn()
-                try await model.submit(summary: summary)
+                try await send()
             }
             dismiss()
         } catch {
             // a cancelled submission belongs to a sheet that has closed
             if !Task.isCancelled { self.error = error.localizedDescription }
         }
+    }
+
+    /// Sends the changes, unless the sheet closed during the sign-in before it.
+    private func send() async throws {
+        try Task.checkCancellation()
+        sendingToGitHub = true
+        defer { sendingToGitHub = false }
+        try await model.submit(summary: summary)
     }
 
     private func signIn() async throws {

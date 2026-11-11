@@ -97,7 +97,7 @@ private struct DraftField: View {
                 // what was typed while this one waited
                 commitIfChanged()
             case .letGo(let current):
-                // the problems quote the typed text; the field starts afresh from the file
+                // a notice quotes the typed text; the field starts afresh from the file
                 draft = current
                 base = current
             case .notSaved:

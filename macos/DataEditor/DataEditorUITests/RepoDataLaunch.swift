@@ -3,10 +3,10 @@ import XCTest
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
     /// and the repo's helper. A `conflicted` file is set aside as a conflict,
-    /// as an update leaves one. Returns the app and its data folder, for a
-    /// test that changes a file under it.
+    /// as an update leaves one, and `arguments` follow the workspace's. Returns
+    /// the app and its data folder, for a test that changes a file under it.
     @MainActor
-    func launchWithRepoData(conflicted: String? = nil) throws -> (app: XCUIApplication, data: URL) {
+    func launchWithRepoData(conflicted: String? = nil, arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let support = FileManager.default.temporaryDirectory.appending(path: "ui \(UUID().uuidString)")
         let workspace = support.appending(path: "workspace")
@@ -27,7 +27,7 @@ extension XCTestCase {
             try FileManager.default.removeItem(at: support)
         }
         let node = try XCTUnwrap(ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"], "run with TEST_RUNNER_DATA_EDITOR_NODE=$(mise which node)")
-        app.launchArguments = ["-UITestWorkspace", support.path, "-UITestNode", node, "-UITestHelper", repo.appending(path: "scripts").path]
+        app.launchArguments = ["-UITestWorkspace", support.path, "-UITestNode", node, "-UITestHelper", repo.appending(path: "scripts").path] + arguments
         app.launch()
         return (app, workspace.appending(path: "data"))
     }

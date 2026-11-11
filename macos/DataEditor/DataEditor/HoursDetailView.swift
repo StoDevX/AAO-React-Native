@@ -23,16 +23,27 @@ struct HoursDetailView: View {
             if !model.problems.isEmpty || !model.buildProblems.isEmpty {
                 Section {
                     ForEach(Array((model.problems + model.buildProblems).enumerated()), id: \.offset) { _, problem in
-                        Label {
-                            VStack(alignment: .leading) {
-                                // selectable, so a draft the file refused can be copied back
-                                Text(problem.message).textSelection(.enabled)
-                                if let path = problem.path { Text(path.map(\.description).joined(separator: " › ")).font(.caption).foregroundStyle(.secondary) }
-                            }
-                        } icon: { Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange) }
+                        ProblemLabel(problem: problem, systemImage: "exclamationmark.triangle.fill")
                     }
                 } header: { Text("Problems") }
                 .accessibilityIdentifier("problems")
+            }
+
+            let notices = model.draftNotices.filter { $0.file == model.documentFile }
+            if !notices.isEmpty {
+                Section {
+                    ForEach(Array(notices.enumerated()), id: \.offset) { index, notice in
+                        HStack {
+                            ProblemLabel(problem: notice, systemImage: "text.badge.xmark")
+                            Spacer()
+                            Button("Dismiss", systemImage: "xmark") { model.dismissDraftNotice(notice) }
+                                .labelStyle(.iconOnly)
+                                .buttonStyle(.borderless)
+                                .accessibilityLabel("Dismiss this notice")
+                                .accessibilityIdentifier("dismiss-draft-notice-\(index)")
+                        }
+                    }
+                } header: { Text("Not saved") }
             }
 
             Section("This week") { WeekTimeline(services: document.services) }
@@ -142,5 +153,21 @@ private struct BreaksSection: View {
                 }
             }
         }
+    }
+}
+
+/// A problem's message, selectable so a draft the file refused can be copied
+/// back, with the place in the file it concerns.
+private struct ProblemLabel: View {
+    let problem: Problem
+    let systemImage: String
+
+    var body: some View {
+        Label {
+            VStack(alignment: .leading) {
+                Text(problem.message).textSelection(.enabled)
+                if let path = problem.path { Text(path.map(\.description).joined(separator: " › ")).font(.caption).foregroundStyle(.secondary) }
+            }
+        } icon: { Image(systemName: systemImage).foregroundStyle(.orange) }
     }
 }

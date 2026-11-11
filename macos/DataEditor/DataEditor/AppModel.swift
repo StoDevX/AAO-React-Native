@@ -24,9 +24,11 @@ final class AppModel {
     enum Refusal: LocalizedError {
         case updating
         case buildProblems
+        case notReady
 
         var errorDescription: String? {
             switch self {
+            case .notReady: "The data has not finished loading. Submit again once it has."
             case .updating: "The data is being updated. Submit again once the update finishes."
             case .buildProblems: "The data has problems that stop it building. Fix the ones listed, then submit again."
             }
@@ -52,6 +54,10 @@ final class AppModel {
     /// master's newest commit, when it is not the one being edited
     var newerCommit: String?
     var conflicts: [String] = []
+    /// Text fields' drafts that were let go because their file changed while
+    /// they were typed, each quoting the typed text. They report and do not
+    /// stop a submission, since the file holds nothing wrong.
+    private(set) var draftNotices: [Problem] = []
     /// Set while `updateWorkspace` runs. The update saves the edits before it
     /// downloads, so anything written into `data/` meanwhile would be lost.
     private(set) var updating = false
@@ -100,7 +106,14 @@ final class AppModel {
         submission = (try? Data(contentsOf: support.appending(path: "submission.json"))).flatMap { try? JSONDecoder().decode(Submission.self, from: $0) }
     }
 
-    var githubClientID: String { Bundle.main.object(forInfoDictionaryKey: "DataEditorGitHubClientID") as? String ?? "" }
+    /// The GitHub OAuth app's client ID. UI tests set their own, so a test of
+    /// a build without one holds once the build has one.
+    var githubClientID: String {
+        UserDefaults.standard.string(forKey: "UITestGitHubClientID")
+            ?? Bundle.main.object(forInfoDictionaryKey: "DataEditorGitHubClientID") as? String ?? ""
+    }
+    /// Whether UI tests launched the app, which then reaches no server of its own accord.
+    var runsUnderUITests: Bool { testHelper != nil }
     var appVersion: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev" }
     var baseCommit: String? { workspace.snapshot?.commit }
 
@@ -280,7 +293,7 @@ final class AppModel {
         case notSaved
         /// The file no longer held the text the draft began from: an update
         /// changed it, or the service moved. The field takes `current`, and the
-        /// typed text stays in sight in the problems.
+        /// typed text stays in sight in `draftNotices`.
         case letGo(current: String)
     }
 
@@ -298,11 +311,9 @@ final class AppModel {
             guard let helper, let current = try? await helper.load(file).value else { return .notSaved }
             let held = current[path: op.path]?.string ?? ""
             guard held == expected else {
-                if file == selection {
-                    await select(file)
-                    let typed = op.value?.string ?? ""
-                    problems.append(Problem(file: file, message: "“\(typed)” was not saved: the file changed there while you typed. Copy it from here if you still want it.", path: op.path))
-                }
+                if file == selection { await select(file) }
+                let typed = op.value?.string ?? ""
+                draftNotices.append(Problem(file: file, message: "“\(typed)” was not saved: the file changed there while you typed. Copy it from here if you still want it.", path: op.path))
                 return .letGo(current: held)
             }
             if await apply([op], to: file) { return .saved }
@@ -338,24 +349,37 @@ final class AppModel {
         return lineDiff(old: text(try? workspace.baseContents(of: file)), new: text(try? workspace.contents(of: file)))
     }
 
+    /// Whether a submission after a pull request in `state` opens a new one:
+    /// a merged or closed pull request takes no more commits.
+    static func opensNewPullRequest(after state: SubmissionState) -> Bool {
+        state == .merged || state == .closed
+    }
+
     /// Opens a pull request, or adds a commit to the open one. Refuses during
     /// an update, which may have removed a file it has not yet put back, and
     /// would send that file as deleted. Builds first and refuses data that
     /// does not build, since nothing else may have built it this session.
+    /// Asks GitHub for the earlier pull request's state first, and stops if
+    /// it cannot tell, since guessing "none" would open a second one.
     func submit(summary: String) async throws {
         if updating { throw Refusal.updating }
-        guard let base = baseCommit, let helper else { return }
+        guard let base = baseCommit, let helper else { throw Refusal.notReady }
         submitting = true
         defer { submitting = false }
         buildProblems = try await helper.build().problems
         if !buildProblems.isEmpty { throw Refusal.buildProblems }
         let submitter = GitHubSubmitter(tokens: tokens)
         let changes = changedFiles.map { Change(path: "data/\($0)", contents: try? workspace.contents(of: $0)) }
-        if let submission, submissionState == .open || submissionState == .changesRequested {
-            self.submission = try await submitter.update(submission, changes: changes, summary: summary)
-        } else {
-            submission = try await submitter.submit(changes: changes, base: base, summary: summary, appVersion: appVersion)
+        if let submission {
+            let state = try await submitter.state(of: submission)
+            submissionState = state
+            if !Self.opensNewPullRequest(after: state) {
+                self.submission = try await submitter.update(submission, changes: changes, summary: summary)
+                await refreshSubmission()
+                return
+            }
         }
+        submission = try await submitter.submit(changes: changes, base: base, summary: summary, appVersion: appVersion)
         await refreshSubmission()
     }
 
@@ -402,6 +426,9 @@ final class AppModel {
 
     /// Clears a failed update's message once the contributor has read it.
     func dismissUpdateError() { updateError = nil }
+
+    /// Clears a let-go draft's notice once the contributor has copied what they need from it.
+    func dismissDraftNotice(_ notice: Problem) { draftNotices.removeAll { $0 == notice } }
 
     func keepMine(_ file: String) async {
         guard !updating else { return }

@@ -12,6 +12,11 @@ struct DataBrowserTests {
         }
     }
 
+    @Test func asksProductionExceptUnderUITests() {
+        #expect(DataBrowserView.productionURL(for: "spaces/hours", underUITests: false) != nil)
+        #expect(DataBrowserView.productionURL(for: "spaces/hours", underUITests: true) == nil)
+    }
+
     @Test func trimsSlashesAndSpacesFromTheRoute() {
         #expect(DataBrowserView.routePath(" /spaces/hours/ ") == "spaces/hours")
     }
