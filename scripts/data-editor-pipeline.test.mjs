@@ -15,6 +15,7 @@ import {
 	validate,
 } from './data-editor-pipeline.ts'
 import {scratchData} from './data-editor-test-support.mjs'
+import {loadScheduleData} from './schedule-data.ts'
 
 describe('keysOf', () => {
 	it('reads a JSON pointer', () => {
@@ -110,7 +111,7 @@ describe('validate', () => {
 })
 
 describe('listBuildings', () => {
-	it('lists every hours file with its name and category, in order', () => {
+	it('lists every hours file with its name and category', () => {
 		let buildings = listBuildings(DATA_BASE)
 		assert.ok(
 			buildings.some(
@@ -120,10 +121,21 @@ describe('listBuildings', () => {
 					b.category === 'Food',
 			),
 		)
-		let keys = buildings.map((b) => `${b.category}\u0000${b.name}`)
+	})
+
+	// the phone app lists the buildings in the order the published data holds them
+	it('lists them in the order bundle-data publishes them', () => {
+		let published = loadScheduleData(DATA_BASE).spaces.map(({label}) =>
+			path.relative(DATA_BASE, label),
+		)
 		assert.deepEqual(
-			keys,
-			[...keys].sort((a, b) => a.localeCompare(b)),
+			listBuildings(DATA_BASE).map((b) => b.file),
+			published,
+		)
+		// numbered prefixes count, so 10- follows 8-
+		assert.ok(
+			published.indexOf('building-hours/10-osa.yaml') >
+				published.indexOf('building-hours/8-toh.yaml'),
 		)
 	})
 })

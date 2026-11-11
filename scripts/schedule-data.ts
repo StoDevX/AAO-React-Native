@@ -238,11 +238,17 @@ function readInput(filename: string): ScheduleDataInput {
 /** A selected file replaces its authored input, or adds a new space to the pair. */
 type ScheduleSelection = {kind: 'calendar' | 'space'; filename: string}
 
+/**
+ * The order the hours files are published in, which the phone app lists them
+ * in: by name, counting a numbered prefix as a number, so `10-` follows `8-`.
+ */
+export const hoursFileOrder = new Intl.Collator(undefined, {numeric: true}).compare
+
 /** Reads a consistently ordered pair, applies any selection, then prepares it for publication. */
 export function loadScheduleData(fromDir: string, selection?: ScheduleSelection): ScheduleData {
 	let hoursDir = join(fromDir, 'building-hours')
 	let files = readdirSync(hoursDir).filter(isDataEntry)
-	files.sort(new Intl.Collator(undefined, {numeric: true}).compare)
+	files.sort(hoursFileOrder)
 	let spaceFiles = files.map((file) => join(hoursDir, file))
 	if (selection?.kind === 'space') {
 		let selectedPath = realpathSync.native(selection.filename)

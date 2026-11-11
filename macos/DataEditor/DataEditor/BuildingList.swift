@@ -5,8 +5,21 @@ import SwiftUI
 struct BuildingList: View {
     @Environment(AppModel.self) private var model
 
-    private var categories: [(String, [BuildingSummary])] {
-        Dictionary(grouping: model.buildings, by: \.category).sorted { $0.key < $1.key }
+    /// The buildings by category, as the phone app's hours list shows them:
+    /// each category where its first building comes, the buildings in the
+    /// order given, which is the order the data is published in, and those
+    /// with no category under Other.
+    static func sections(of buildings: [BuildingSummary]) -> [(title: String, buildings: [BuildingSummary])] {
+        var sections: [(title: String, buildings: [BuildingSummary])] = []
+        for building in buildings {
+            let title = building.category.isEmpty ? "Other" : building.category
+            if let index = sections.firstIndex(where: { $0.title == title }) {
+                sections[index].buildings.append(building)
+            } else {
+                sections.append((title, [building]))
+            }
+        }
+        return sections
     }
 
     /// A conflict first: the file cannot be edited until the contributor chooses in Changes.
@@ -18,9 +31,9 @@ struct BuildingList: View {
     var body: some View {
         @Bindable var model = model
         List(selection: $model.selection) {
-            ForEach(categories, id: \.0) { category, buildings in
-                Section(category.isEmpty ? "Other" : category) {
-                    ForEach(buildings) { building in
+            ForEach(Self.sections(of: model.buildings), id: \.title) { section in
+                Section(section.title) {
+                    ForEach(section.buildings) { building in
                         Label(building.name, systemImage: icon(for: building.file))
                             .tag(building.file)
                     }

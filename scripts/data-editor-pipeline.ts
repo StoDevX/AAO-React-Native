@@ -4,7 +4,7 @@ import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
 import {load} from 'js-yaml'
 import {isDataEntry} from './data-entries.mjs'
-import {loadScheduleData} from './schedule-data.ts'
+import {hoursFileOrder, loadScheduleData} from './schedule-data.ts'
 
 /** Something wrong with the data, at a path inside `file` when the message names one. */
 export type Problem = {file: string | null; message: string; path: (string | number)[] | null}
@@ -81,11 +81,12 @@ const text = (value: unknown, fallback: string): string =>
 const asRecord = (value: unknown): Record<string, unknown> =>
 	typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {}
 
-/** Every hours file, sorted by category and then name. */
+/** Every hours file, in the order the data is published in. */
 export function listBuildings(dataDir: string): Building[] {
 	let dir = path.join(dataDir, 'building-hours')
-	let buildings = readdirSync(dir)
+	return readdirSync(dir)
 		.filter(isDataEntry)
+		.sort(hoursFileOrder)
 		.map((entry) => {
 			let data = asRecord(readYaml(path.join(dir, entry)))
 			return {
@@ -94,8 +95,6 @@ export function listBuildings(dataDir: string): Building[] {
 				category: text(data['category'], ''),
 			}
 		})
-	let key = (b: Building) => `${b.category}\u0000${b.name}`
-	return buildings.sort((a, b) => key(a).localeCompare(key(b)))
 }
 
 /** The breaks in `breaks.yaml` and the templates a building may name. */
