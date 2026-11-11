@@ -16,7 +16,7 @@ extension XCTestCase {
         try FileManager.default.copyItem(at: repo.appending(path: "data"), to: workspace.appending(path: "data"))
         try FileManager.default.copyItem(at: repo.appending(path: "data"), to: workspace.appending(path: "base/data"))
         try FileManager.default.copyItem(at: repo.appending(path: "images"), to: workspace.appending(path: "images"))
-        try Data(#"{"commit":"c1","scriptsTree":"s","modulesTree":"m"}"#.utf8).write(to: workspace.appending(path: "snapshot.json"))
+        try Data(#"{"commit":"c1","files":{}}"#.utf8).write(to: workspace.appending(path: "snapshot.json"))
         if let conflicted {
             let kept = workspace.appending(path: "conflicts/\(conflicted)")
             try FileManager.default.createDirectory(at: kept.deletingLastPathComponent(), withIntermediateDirectories: true)

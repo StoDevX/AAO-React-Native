@@ -9,25 +9,27 @@ public struct GitHubRepo: Sendable, Hashable {
     public var fullName: String { "\(owner)/\(name)" }
 }
 
-/// The trees of `scripts/` and `modules/` the bundled helper was built from.
+/// The repo's files the bundled helper was built from, each by its git blob.
 public struct HelperStamp: Codable, Hashable, Sendable {
-    public let scriptsTree: String
-    public let modulesTree: String
-    public init(scriptsTree: String, modulesTree: String) {
-        self.scriptsTree = scriptsTree
-        self.modulesTree = modulesTree
-    }
+    public let files: [String: String]
+    public init(files: [String: String]) { self.files = files }
 }
 
-/// The commit a workspace was downloaded at.
+/// The commit a workspace was downloaded at, with the blob of each file
+/// under `scripts/` and `modules/` there.
 public struct Snapshot: Codable, Hashable, Sendable {
     public let commit: String
-    public let scriptsTree: String
-    public let modulesTree: String
+    public let files: [String: String]
 
-    /// Whether the bundled helper was built from the scripts this data expects.
+    public init(commit: String, files: [String: String]) {
+        self.commit = commit
+        self.files = files
+    }
+
+    /// Whether the bundled helper was built from the code this commit holds.
+    /// Only its own files count, since master changes other scripts most days.
     public func isCompatible(with stamp: HelperStamp) -> Bool {
-        scriptsTree == stamp.scriptsTree && modulesTree == stamp.modulesTree
+        stamp.files.allSatisfy { files[$0.key] == $0.value }
     }
 }
 
@@ -102,7 +104,13 @@ public final class Workspace: Sendable {
         let images = try await tree(try sha("images"), recursive: true).tree
             .filter { $0.type == "blob" && ($0.path == "groups.json" || $0.path.split(separator: "/").count == 2 && $0.path.hasSuffix(".webp")) }
             .map { "images/\($0.path)" }
-        return (data + images, Snapshot(commit: commit, scriptsTree: try sha("scripts"), modulesTree: try sha("modules")))
+        var code: [String: String] = [:]
+        for folder in ["scripts", "modules"] {
+            for entry in try await tree(try sha(folder), recursive: true).tree where entry.type == "blob" {
+                code["\(folder)/\(entry.path)"] = entry.sha
+            }
+        }
+        return (data + images, Snapshot(commit: commit, files: code))
     }
 
     /// Downloads `commit` into a staging folder, then swaps it in. The old

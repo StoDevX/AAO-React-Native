@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import {spawn} from 'node:child_process'
+import {execFileSync, spawn} from 'node:child_process'
 import {readdirSync} from 'node:fs'
 import {cp, mkdtemp, readFile} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
@@ -49,8 +49,23 @@ describe('the bundled helper', () => {
 		assert.deepEqual(edited.result?.problems, [], JSON.stringify(edited))
 		let written = await readFile(path.join(ws, 'data/building-hours/1-1-cage.yaml'), 'utf8')
 		assert.match(written, new RegExp(`\\n {6}url: '${url}',\\n {4}\\}`, 'u'))
-		let stamp = JSON.parse(await readFile(path.join(ws, 'scripts/helper-stamp.json'), 'utf8'))
-		assert.match(stamp.scriptsTree, /^[0-9a-f]{40}$/u)
-		assert.match(stamp.modulesTree, /^[0-9a-f]{40}$/u)
+	})
+
+	/// The app compares these with master's, so only a change to code the helper runs makes it refuse.
+	it('stamps the files the bundle was built from with their committed blobs', async () => {
+		let ws = await mkdtemp(path.join(tmpdir(), 'data-editor-stamp-'))
+		await buildHelper({outDir: ws})
+		let {files} = JSON.parse(await readFile(path.join(ws, 'helper-stamp.json'), 'utf8'))
+		let blob = (file) =>
+			execFileSync('git', ['rev-parse', `HEAD:${file}`], {cwd: REPO_ROOT, encoding: 'utf8'}).trim()
+		assert.equal(files['scripts/data-editor-helper.mjs'], blob('scripts/data-editor-helper.mjs'))
+		assert.equal(files['scripts/bundle-data.mjs'], blob('scripts/bundle-data.mjs'))
+		assert.equal(files['modules/schedules/index.ts'], blob('modules/schedules/index.ts'))
+		// a script the helper never runs, and the dependencies, are left out
+		assert.equal(files['scripts/scrape-bonapp.mjs'], undefined)
+		assert.deepEqual(
+			Object.keys(files).filter((file) => file.includes('node_modules')),
+			[],
+		)
 	})
 })

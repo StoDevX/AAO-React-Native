@@ -11,7 +11,7 @@ struct RuntimeTests {
         try fm.createDirectory(at: helper, withIntermediateDirectories: true)
         try Data("// helper".utf8).write(to: helper.appending(path: "data-editor-helper.mjs"))
         try Data("// bundle".utf8).write(to: helper.appending(path: "bundle-data.mjs"))
-        try Data(#"{"scriptsTree":"s","modulesTree":"m"}"#.utf8).write(to: helper.appending(path: "helper-stamp.json"))
+        try Data(#"{"files":{"scripts/a.mjs":"s"}}"#.utf8).write(to: helper.appending(path: "helper-stamp.json"))
         let runtime = Runtime(root: resources)
         let workspace = fm.temporaryDirectory.appending(path: "ws \(UUID().uuidString)")
 
@@ -20,6 +20,6 @@ struct RuntimeTests {
 
         #expect(fm.fileExists(atPath: workspace.appending(path: "scripts/data-editor-helper.mjs").path))
         #expect(fm.fileExists(atPath: workspace.appending(path: "scripts/bundle-data.mjs").path))
-        #expect(try runtime.stamp().scriptsTree == "s")
+        #expect(try runtime.stamp().files == ["scripts/a.mjs": "s"])
     }
 }

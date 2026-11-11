@@ -14,6 +14,10 @@ private func stubRepo(commit: String = "c1", failing failPath: String? = nil, ca
             return (200, body(#"{"tree":[{"path":"data","type":"tree","sha":"tdata"},{"path":"images","type":"tree","sha":"timages"},{"path":"scripts","type":"tree","sha":"tscripts"},{"path":"modules","type":"tree","sha":"tmodules"}]}"#))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tdata?recursive=1":
             return (200, body(#"{"truncated":false,"tree":[{"path":"building-hours","type":"tree","sha":"x"},{"path":"building-hours/1-1-cage.yaml","type":"blob","sha":"a"}]}"#))
+        case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tscripts?recursive=1":
+            return (200, body(#"{"truncated":false,"tree":[{"path":"lib","type":"tree","sha":"x"},{"path":"lib/paths.mjs","type":"blob","sha":"bpaths"},{"path":"data-editor-helper.mjs","type":"blob","sha":"bhelper"}]}"#))
+        case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tmodules?recursive=1":
+            return (200, body(#"{"truncated":false,"tree":[{"path":"schedules/index.ts","type":"blob","sha":"bschedules"}]}"#))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/timages?recursive=1":
             return (200, body(#"{"truncated":false,"tree":[{"path":"groups.json","type":"blob","sha":"g"},{"path":"spaces/cage.webp","type":"blob","sha":"w"},{"path":"spaces/source/cage.jpg","type":"blob","sha":"j"}]}"#))
         case "https://raw.githubusercontent.com/StoDevX/AAO-React-Native/\(commit)/data/building-hours/1-1-cage.yaml":
@@ -46,7 +50,9 @@ struct WorkspaceTests {
         let (session, stub) = stubRepo()
         let workspace = Workspace(root: temporaryRoot(), session: session)
         let snapshot = try await workspace.download(commit: try await workspace.latestCommit())
-        #expect(snapshot == Snapshot(commit: "c1", scriptsTree: "tscripts", modulesTree: "tmodules"))
+        #expect(snapshot == Snapshot(commit: "c1", files: [
+            "scripts/lib/paths.mjs": "bpaths", "scripts/data-editor-helper.mjs": "bhelper", "modules/schedules/index.ts": "bschedules",
+        ]))
         #expect(workspace.snapshot == snapshot)
         #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage\n"))
         #expect(FileManager.default.fileExists(atPath: workspace.root.appending(path: "images/spaces/cage.webp").path))
@@ -266,9 +272,13 @@ struct WorkspaceTests {
         #expect(try workspace.changedFiles() == [])
     }
 
-    @Test func comparesTreesWithTheBundledHelper() {
-        let snapshot = Snapshot(commit: "c1", scriptsTree: "s", modulesTree: "m")
-        #expect(snapshot.isCompatible(with: HelperStamp(scriptsTree: "s", modulesTree: "m")))
-        #expect(!snapshot.isCompatible(with: HelperStamp(scriptsTree: "s2", modulesTree: "m")))
+    /// Only the files the helper was built from count: master changes other scripts most days.
+    @Test func comparesTheFilesTheBundledHelperWasBuiltFrom() {
+        let snapshot = Snapshot(commit: "c1", files: ["scripts/a.mjs": "1", "modules/b.ts": "2", "scripts/scrape.mjs": "3"])
+        #expect(snapshot.isCompatible(with: HelperStamp(files: ["scripts/a.mjs": "1", "modules/b.ts": "2"])))
+        // one of its files changed on master
+        #expect(!snapshot.isCompatible(with: HelperStamp(files: ["scripts/a.mjs": "1", "modules/b.ts": "9"])))
+        // one of its files is gone from master
+        #expect(!snapshot.isCompatible(with: HelperStamp(files: ["scripts/a.mjs": "1", "scripts/gone.mjs": "4"])))
     }
 }

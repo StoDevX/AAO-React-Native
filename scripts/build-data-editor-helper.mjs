@@ -14,9 +14,30 @@ import path from 'node:path'
 import {build} from 'esbuild'
 import {REPO_ROOT} from './paths.mjs'
 
-/** The git tree of `dir` at HEAD, which the app compares with master's. */
-const treeOf = (dir) =>
-	execFileSync('git', ['rev-parse', `HEAD:${dir}`], {cwd: REPO_ROOT, encoding: 'utf8'}).trim()
+/**
+ * The committed blob of each of the repo's `files`, which the app compares
+ * with master's: only a change to code the helper runs makes it refuse.
+ */
+function blobsOf(files) {
+	let lines = execFileSync('git', ['ls-tree', 'HEAD', '--', ...files], {
+		cwd: REPO_ROOT,
+		encoding: 'utf8',
+	})
+	// "<mode> blob <sha>\t<path>"
+	return Object.fromEntries(
+		lines
+			.trim()
+			.split('\n')
+			.map((line) => {
+				let [meta, file] = line.split('\t')
+				return [file, meta.split(' ')[2]]
+			}),
+	)
+}
+
+/** The repo's own files among a build's inputs, leaving out the dependencies. */
+const repoInputs = (metafile) =>
+	Object.keys(metafile.inputs).filter((file) => !file.includes('node_modules'))
 
 export async function buildHelper({
 	outDir = path.join(REPO_ROOT, 'macos/DataEditor/build/helper'),
@@ -37,8 +58,9 @@ export async function buildHelper({
 			js: "import {createRequire as __createRequire} from 'node:module'; const require = __createRequire(import.meta.url);",
 		},
 	}
-	await build({
+	let helper = await build({
 		...shared,
+		metafile: true,
 		stdin: {
 			contents: "import {main} from './data-editor-helper.mjs'\nmain()\n",
 			resolveDir: path.join(REPO_ROOT, 'scripts'),
@@ -46,8 +68,9 @@ export async function buildHelper({
 		},
 		outfile: path.join(outDir, 'data-editor-helper.mjs'),
 	})
-	await build({
+	let bundleData = await build({
 		...shared,
+		metafile: true,
 		entryPoints: [path.join(REPO_ROOT, 'scripts/bundle-data.mjs')],
 		outfile: path.join(outDir, 'bundle-data.mjs'),
 	})
@@ -57,7 +80,7 @@ export async function buildHelper({
 	await cp(path.dirname(oxfmt), modules, {recursive: true, dereference: true})
 	await writeFile(
 		path.join(outDir, 'helper-stamp.json'),
-		`${JSON.stringify({scriptsTree: treeOf('scripts'), modulesTree: treeOf('modules')})}\n`,
+		`${JSON.stringify({files: blobsOf([...new Set([...repoInputs(helper.metafile), ...repoInputs(bundleData.metafile)])].toSorted())})}\n`,
 	)
 	return outDir
 }
