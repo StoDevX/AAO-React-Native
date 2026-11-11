@@ -476,6 +476,8 @@ final class AppModel {
         if !buildProblems.isEmpty { throw Refusal.buildProblems }
         let submitter = GitHubSubmitter(tokens: tokens)
         let changes = changedFiles.map { Change(path: "data/\($0)", contents: try? workspace.contents(of: $0)) }
+        // what is sent, kept so the pull request's changes show without GitHub
+        let sent = Dictionary(uniqueKeysWithValues: changedFiles.map { ($0, diffRows(diff(for: $0))) })
         if let current = currentSubmission {
             let state: SubmissionState
             do {
@@ -487,12 +489,14 @@ final class AppModel {
             submissions.take(.success(state), for: current.id, failures: &checkFailures)
             if !Self.opensNewPullRequest(after: state) {
                 submissions.replace(try await submitter.update(current.submission, changes: changes, summary: summary))
+                submissions.saveDiffs(sent, for: current.id)
                 await refreshSubmissions()
                 return
             }
         }
         let opened = try await submitter.submit(changes: changes, base: base, summary: summary, appVersion: appVersion)
         submissions.add(SubmissionRecord(submission: opened, summary: summary, submitted: .now, state: nil))
+        submissions.saveDiffs(sent, for: opened.number)
         await refreshSubmissions()
     }
 
@@ -510,6 +514,34 @@ final class AppModel {
                 result = .failure(error)
             }
             submissions.take(result, for: record.id, failures: &checkFailures)
+        }
+    }
+
+    /// Why a past pull request's diffs are not GitHub's latest.
+    enum DiffLoad: Equatable {
+        case loading
+        /// GitHub could not be asked or did not answer; the kept diffs stand
+        case failed
+        /// GitHub says the pull request no longer exists
+        case gone
+    }
+
+    /// The pull requests whose diffs are being asked for, or whose last ask failed, by number.
+    private(set) var diffLoad: [Int: DiffLoad] = [:]
+
+    /// Asks GitHub for pull request `number`'s files, unless they can no
+    /// longer change. What GitHub sends replaces the kept diffs; a failure
+    /// keeps them, and `diffLoad` says which failure. UI tests reach no server.
+    func loadDiffs(of number: Int) async {
+        guard !runsUnderUITests, diffLoad[number] != .loading,
+              let record = submissions.records.first(where: { $0.id == number }), record.needsFetch else { return }
+        diffLoad[number] = .loading
+        do {
+            let files = try await GitHubSubmitter(tokens: tokens).files(of: record.submission)
+            submissions.take(files: files, fetched: .now, for: number)
+            diffLoad[number] = nil
+        } catch {
+            diffLoad[number] = (error as? SubmitError)?.isGone == true ? .gone : .failed
         }
     }
 

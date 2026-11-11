@@ -169,4 +169,72 @@ struct SubmissionHistoryTests {
     @Test func namesTheChangedFilesAsTheDataFolderDoes() {
         #expect(record(1, .open).changedFiles == ["building-hours/1-1-cage.yaml"])
     }
+
+    /// Launching again on the same bad file must not copy it once more each time.
+    @Test func setsTheSameUnreadableFileAsideOnce() throws {
+        try inFolder { folder in
+            let file = folder.appending(path: "submissions.json")
+            try Data("bad".utf8).write(to: file)
+            let first = try #require(SubmissionHistory.load(from: file).setAside)
+            let second = try #require(SubmissionHistory.load(from: file).setAside)
+            #expect(first == second)
+            let copies = try FileManager.default.contentsOfDirectory(atPath: folder.path(percentEncoded: false)).filter { $0.contains("unreadable") }
+            #expect(copies.count == 1)
+        }
+    }
+
+    @Test func savedDiffsReplaceTheLastAndForgetTheCheck() {
+        var history = history(record(7, .open))
+        history.take(files: [PullRequestFile(path: "data/building-hours/1-1-cage.yaml", rows: [.gap])], fetched: .now, for: 7)
+        history.saveDiffs(["building-hours/1-1-cage.yaml": [.line(DiffLine(kind: .added, text: "a"))]], for: 7)
+        #expect(history.records[0].diffs == ["building-hours/1-1-cage.yaml": [.line(DiffLine(kind: .added, text: "a"))]])
+        #expect(history.records[0].checked == nil)
+    }
+
+    @Test func aFetchNamesFilesAsTheWorkspaceDoesAndMarksTheTooLarge() {
+        var history = history(record(7, .open))
+        history.take(files: [PullRequestFile(path: "data/building-hours/2-1-big.yaml", rows: nil)], fetched: .now, for: 7)
+        #expect(history.records[0].diffs == ["building-hours/2-1-big.yaml": []])
+        #expect(history.records[0].tooLarge == ["building-hours/2-1-big.yaml"])
+        #expect(history.records[0].checked != nil)
+    }
+
+    /// Its files can no longer change, so one fetch after it finished is the last.
+    @Test func aFinishedPullRequestIsFetchedOnceMore() {
+        var history = history(record(7, .merged))
+        #expect(history.records[0].needsFetch)
+        history.take(files: [], fetched: .now, for: 7)
+        #expect(!history.records[0].needsFetch)
+    }
+
+    @Test func anOpenPullRequestKeepsBeingFetched() {
+        var history = history(record(7, .open))
+        history.take(files: [], fetched: .now, for: 7)
+        #expect(history.records[0].needsFetch)
+    }
+
+    @Test func savedDiffsSurviveSavingAndLoading() throws {
+        try inFolder { folder in
+            let file = folder.appending(path: "submissions.json")
+            var saved = history(record(7, .merged))
+            saved.take(files: [PullRequestFile(path: "data/building-hours/1-1-cage.yaml", rows: [.line(DiffLine(kind: .removed, text: "a")), .gap])],
+                       fetched: Date(timeIntervalSince1970: 1_800_000_000), for: 7)
+            saved.save(to: file)
+            let loaded = SubmissionHistory.load(from: file)
+            #expect(loaded.history == saved)
+            #expect(loaded.setAside == nil)
+        }
+    }
+
+    /// The shape `submissions.json` had before records kept their diffs.
+    @Test func aHistoryWrittenBeforeDiffsStillReads() throws {
+        try inFolder { folder in
+            let file = folder.appending(path: "submissions.json")
+            try Data(#"[{"submission":{"number":7,"url":"https://github.com/StoDevX/AAO-React-Native/pull/7","owner":"me","branch":"b","base":"c","paths":[]},"summary":"s","submitted":"2026-11-10T12:00:00Z"}]"#.utf8).write(to: file)
+            let loaded = SubmissionHistory.load(from: file)
+            #expect(loaded.history.records.map(\.id) == [7])
+            #expect(loaded.history.records.first?.needsFetch == true)
+            #expect(loaded.setAside == nil)
+        }
+    }
 }
