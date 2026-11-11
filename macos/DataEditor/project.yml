@@ -98,9 +98,10 @@ targets:
           - Info.plist
     dependencies:
       - package: DataEditorKit
-    # Node, the helper and ccc-server, from `mise run data-editor:runtime`.
-    # A Debug build goes without them, since tests and the UI tests bring their
-    # own Node and helper; a Release build is what ships, so it stops instead.
+    # oxfmt, and the Node and ccc-server the preview downloads, from
+    # `mise run data-editor:runtime`. A Debug build goes without them, since the
+    # UI tests bring the repo's own oxfmt; a Release build is what ships, so it
+    # stops instead.
     postBuildScripts:
       - name: Embed Runtime
         inputFiles: ['$(SRCROOT)/build/runtime/oxfmt']

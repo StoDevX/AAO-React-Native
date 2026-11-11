@@ -19,8 +19,13 @@ extension XCTestCase {
         try Data(#"{"commit":"c1"}"#.utf8).write(to: workspace.appending(path: "snapshot.json"))
         // the helper built from the checkout, as the data deploy publishes it
         let helper = repo.appending(path: "macos/DataEditor/build/helper")
-        guard FileManager.default.fileExists(atPath: helper.appending(path: "helper.js").path) else {
-            throw XCTSkip("run `mise run data-editor:helper` first, to build the helper the UI tests load")
+        let built = try? helper.appending(path: "helper.js").resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+        guard let built else {
+            throw LaunchError("run `mise run data-editor:helper` first, to build the helper the UI tests load")
+        }
+        // a helper built before the scripts last changed would test the old ones
+        if let changed = newestChange(under: [repo.appending(path: "scripts"), repo.appending(path: "modules")]), changed.date > built {
+            throw LaunchError("\(changed.file) changed after the helper was built; run `mise run data-editor:helper`")
         }
         try FileManager.default.copyItem(at: helper, to: workspace.appending(path: "scripts"))
         let node = try XCTUnwrap(ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"], "run with TEST_RUNNER_DATA_EDITOR_NODE=$(mise which node)")
@@ -103,6 +108,27 @@ extension XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
     }
+}
+
+/// Why the app could not be launched as a test asked.
+struct LaunchError: Error, CustomStringConvertible {
+    let description: String
+    init(_ description: String) { self.description = description }
+}
+
+/// The file changed last under `folders`, leaving out installed dependencies.
+private func newestChange(under folders: [URL]) -> (file: String, date: Date)? {
+    var newest: (file: String, date: Date)?
+    for folder in folders {
+        guard let files = FileManager.default.enumerator(at: folder, includingPropertiesForKeys: [.contentModificationDateKey, .isRegularFileKey]) else { continue }
+        for case let file as URL in files {
+            if file.lastPathComponent == "node_modules" { files.skipDescendants(); continue }
+            let values = try? file.resourceValues(forKeys: [.contentModificationDateKey, .isRegularFileKey])
+            guard values?.isRegularFile == true, let date = values?.contentModificationDate, date > (newest?.date ?? .distantPast) else { continue }
+            newest = (file.path, date)
+        }
+    }
+    return newest
 }
 
 extension XCUIElement {
