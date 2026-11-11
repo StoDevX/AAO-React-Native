@@ -57,7 +57,23 @@ private func plainMessage(_ message: String, path: [PathKey]?) -> String? {
     if message == "break closure messages must not end with a period" {
         return "Take the period off the end of this note."
     }
+    if let match = message.wholeMatch(of: /overlaps hours\[(\d+)\] on (.+)/), let row = Int(match.1) {
+        let days = match.2.split(separator: ", ").map { dayNames[String($0)] ?? String($0) }
+        return "Overlaps row \(row + 1) on \(spokenList(days))."
+    }
     return nil
+}
+
+/// Each day as the files abbreviate it, in full.
+private let dayNames: [String: String] = [
+    "Mo": "Monday", "Tu": "Tuesday", "We": "Wednesday", "Th": "Thursday",
+    "Fr": "Friday", "Sa": "Saturday", "Su": "Sunday",
+]
+
+/// `items` as a sentence lists them: "Friday, Saturday and Sunday".
+private func spokenList(_ items: [String]) -> String {
+    guard let last = items.last, items.count > 1 else { return items.first ?? "" }
+    return items.dropLast().joined(separator: ", ") + " and " + last
 }
 
 /// The schema lets a service have no hours only if it is closed or has a

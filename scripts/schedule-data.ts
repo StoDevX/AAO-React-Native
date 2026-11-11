@@ -13,6 +13,7 @@ import type {
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
+	SingleBuildingScheduleType,
 } from '../source/features/building-hours/types.ts'
 import {isDataEntry} from './data-entries.mjs'
 import {SCHEMA_BASE} from './paths.mjs'
@@ -152,43 +153,93 @@ function validateInput<T>(input: ScheduleDataInput, validate: ValidateFunction<T
 	return input.data
 }
 
-/** Only named break closure messages omit a final period; other notes retain their punctuation. */
-function validateBreakMessages({calendar, spaces}: ScheduleData, calendarLabel: string): void {
-	let messages = new Set(Object.values(calendar.breaks).map(({name}) => `Closed for ${name}`))
-	let check = (policy: string | Schedule<NamedBuildingScheduleType>, path: string) => {
-		if (typeof policy === 'string') return
-		let schedules = [
-			{schedule: policy.schedule, path: `${path}.schedule`},
-			...policy.exceptions.map(({schedule}, index) => ({
-				schedule,
-				path: `${path}.exceptions[${index}].schedule`,
-			})),
-		]
-		for (let {schedule, path} of schedules) {
-			for (let [index, {notes}] of schedule.entries()) {
-				if (notes && /\.\s*$/u.test(notes) && messages.has(notes.trim().replace(/\.+$/u, ''))) {
-					throw new Error(
-						`${path}[${index}].notes: break closure messages must not end with a period`,
-					)
-				}
-			}
-		}
-	}
+type AuthoredPolicy = {policy: string | Schedule<NamedBuildingScheduleType>; path: string}
+
+/** The calendar's templates and break defaults, and each space's break schedules, with their authored paths. */
+function breakPolicies({calendar, spaces}: ScheduleData, calendarLabel: string): AuthoredPolicy[] {
+	let policies: AuthoredPolicy[] = []
 	for (let [name, policy] of Object.entries(calendar.templates ?? {})) {
-		check(policy, `${calendarLabel}.templates.${name}`)
+		policies.push({policy, path: `${calendarLabel}.templates.${name}`})
 	}
 	for (let [key, entry] of Object.entries(calendar.breaks)) {
 		let path = `${calendarLabel}.breaks.${key}`
 		if (entry.defaultSpaceSchedule !== undefined) {
-			check(entry.defaultSpaceSchedule, `${path}.defaultSpaceSchedule`)
+			policies.push({policy: entry.defaultSpaceSchedule, path: `${path}.defaultSpaceSchedule`})
 		}
 		for (let [name, policy] of Object.entries(entry.templates ?? {})) {
-			check(policy, `${path}.templates.${name}`)
+			policies.push({policy, path: `${path}.templates.${name}`})
 		}
 	}
 	for (let {label, data} of spaces) {
 		for (let [key, policy] of Object.entries(data.breakSchedule ?? {})) {
-			if (policy !== undefined) check(policy, `${label}.breakSchedule.${key}`)
+			if (policy !== undefined) policies.push({policy, path: `${label}.breakSchedule.${key}`})
+		}
+	}
+	return policies
+}
+
+/** A policy's services, and each of its exceptions', with their authored paths; none for a reference. */
+function servicesOf({policy, path}: AuthoredPolicy) {
+	if (typeof policy === 'string') return []
+	return [
+		{schedule: policy.schedule, path: `${path}.schedule`},
+		...policy.exceptions.map(({schedule}, index) => ({
+			schedule,
+			path: `${path}.exceptions[${index}].schedule`,
+		})),
+	]
+}
+
+/** Only named break closure messages omit a final period; other notes retain their punctuation. */
+function validateBreakMessages(data: ScheduleData, calendarLabel: string): void {
+	let messages = new Set(Object.values(data.calendar.breaks).map(({name}) => `Closed for ${name}`))
+	for (let {schedule, path} of breakPolicies(data, calendarLabel).flatMap(servicesOf)) {
+		for (let [index, {notes}] of schedule.entries()) {
+			if (notes && /\.\s*$/u.test(notes) && messages.has(notes.trim().replace(/\.+$/u, ''))) {
+				throw new Error(
+					`${path}[${index}].notes: break closure messages must not end with a period`,
+				)
+			}
+		}
+	}
+}
+
+/** Minutes after midnight of a clock time the schema has checked, like `7:30am`. */
+function minutesOf(time: string): number {
+	let [, hour, minute, half] = /^(\d{1,2}):(\d{2})(am|pm)$/u.exec(time) ?? []
+	return (Number(hour) % 12) * 60 + Number(minute) + (half === 'pm' ? 12 * 60 : 0)
+}
+
+/** A row's minutes from midnight of its day, a close before the opening running past midnight. */
+function spanOf({from, to}: SingleBuildingScheduleType): [number, number] {
+	let open = minutesOf(from)
+	let close = minutesOf(to)
+	return [open, close < open ? close + 24 * 60 : close]
+}
+
+/**
+ * Two rows of one service whose hours overlap on a day they share say two
+ * things about that day; rows that only meet, as split hours do, are fine.
+ */
+function validateRowOverlaps(data: ScheduleData, calendarLabel: string): void {
+	let policies = [
+		...breakPolicies(data, calendarLabel),
+		...data.spaces.map(({label, data}) => ({policy: data, path: label})),
+	]
+	for (let {schedule, path} of policies.flatMap(servicesOf)) {
+		for (let [service, {hours}] of schedule.entries()) {
+			for (let [later, row] of hours.entries()) {
+				for (let [earlier, other] of hours.slice(0, later).entries()) {
+					let shared = row.days.filter((day) => other.days.includes(day))
+					let [open, close] = spanOf(row)
+					let [otherOpen, otherClose] = spanOf(other)
+					if (shared.length > 0 && open < otherClose && otherOpen < close) {
+						throw new Error(
+							`${path}[${service}].hours[${later}]: overlaps hours[${earlier}] on ${shared.join(', ')}`,
+						)
+					}
+				}
+			}
 		}
 	}
 }
@@ -208,6 +259,7 @@ export function parseScheduleData(
 	let calendar = normalizeCalendar(authoredCalendar)
 	let spaces = authoredSpaces.map(({label, data}) => ({label, data: normalizeSpace(data)}))
 	validateBreakMessages({calendar, spaces}, calendarInput.label)
+	validateRowOverlaps({calendar, spaces}, calendarInput.label)
 	validateSchedules(
 		calendar,
 		spaces.map(({label, data}) => ({label, schedules: data})),

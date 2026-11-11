@@ -26,6 +26,13 @@ struct ProblemWordingTests {
         #expect(plain(problem(#"must match pattern "\S""#, ["schedule", 0, "notes"])) == ["The note can't be empty."])
     }
 
+    @Test func namesTheRowAndTheDaysTwoRowsOverlapOn() {
+        let row = ["schedule", 0, "hours", 1] as [PathKey]
+        #expect(plain(problem("overlaps hours[0] on Sa", row)) == ["Overlaps row 1 on Saturday."])
+        #expect(plain(problem("overlaps hours[0] on Sa, Su", row)) == ["Overlaps row 1 on Saturday and Sunday."])
+        #expect(plain(problem("overlaps hours[2] on Fr, Sa, Su", row)) == ["Overlaps row 3 on Friday, Saturday and Sunday."])
+    }
+
     @Test func asksForATimeOrADateItCanRead() {
         let time = #"must match pattern "^(?:[1-9]|1[0-2]):[0-5]\d[ap]m$""#
         #expect(plain(problem(time, ["schedule", 0, "hours", 0, "from"])) == ["The opening time must be a time like 9:00am."])
