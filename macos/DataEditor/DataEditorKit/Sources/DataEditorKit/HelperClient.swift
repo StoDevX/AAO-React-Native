@@ -118,6 +118,12 @@ public struct BuildingSummary: Decodable, Hashable, Sendable, Identifiable {
     public let name: String
     public let category: String
     public var id: String { file }
+
+    public init(file: String, name: String, category: String) {
+        self.file = file
+        self.name = name
+        self.category = category
+    }
 }
 
 /// The breaks a building may give its own hours for, and the templates it may name.

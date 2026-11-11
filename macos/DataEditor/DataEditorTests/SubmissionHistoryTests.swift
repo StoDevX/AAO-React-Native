@@ -5,21 +5,6 @@ import Testing
 
 @MainActor
 struct SubmissionHistoryTests {
-    private func record(_ number: Int, _ state: SubmissionState?) -> SubmissionRecord {
-        let submission = Submission(number: number, url: URL(string: "https://github.com/StoDevX/AAO-React-Native/pull/\(number)")!,
-                                    owner: "someone", branch: "data-editor/\(number)", base: "c1",
-                                    paths: ["data/building-hours/1-1-cage.yaml"])
-        return SubmissionRecord(submission: submission, summary: "Change \(number)",
-                                submitted: Date(timeIntervalSince1970: 1_800_000_000 + Double(number)), state: state)
-    }
-
-    private func history(_ records: SubmissionRecord...) -> SubmissionHistory {
-        var history = SubmissionHistory()
-        // each is newer than the one before
-        for record in records { history.add(record) }
-        return history
-    }
-
     /// A fresh folder for a history file, removed when `body` returns.
     private func inFolder(_ body: (URL) throws -> Void) throws {
         let folder = FileManager.default.temporaryDirectory.appending(path: "history \(UUID().uuidString)")

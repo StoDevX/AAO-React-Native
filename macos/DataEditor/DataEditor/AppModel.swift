@@ -420,11 +420,23 @@ final class AppModel {
             buildProblems = [Problem(file: nil, message: "The build did not run", path: nil)]
             noteFailure(error)
         }
+        hasBuilt = true
         cccLog = await ccc?.log ?? []
     }
 
-    /// The open file's problems and the last build's, as a contributor reads them.
-    var shownProblems: [Problem] { plainProblems(problems + buildProblems) }
+    /// The open file's problems, as a contributor reads them. Another file's
+    /// problems show on the Overview, not in this file's editor.
+    var shownProblems: [Problem] { plainProblems(Self.editorProblems(of: documentFile, open: problems, build: buildProblems)) }
+
+    /// The problems an editor of `file` shows: its own, from its last edit
+    /// and from the last build, each once.
+    static func editorProblems(of file: String?, open: [Problem], build: [Problem]) -> [Problem] {
+        var seen = Set<Problem>()
+        return (open + build.filter { $0.file == file }).filter { seen.insert($0).inserted }
+    }
+
+    /// Whether a build has run since launch, so the Overview can say how the preview stands.
+    private(set) var hasBuilt = false
 
     func revert(_ file: String) async {
         guard !updating else { return }
