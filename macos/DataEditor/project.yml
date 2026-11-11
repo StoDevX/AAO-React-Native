@@ -103,12 +103,12 @@ targets:
     # own Node and helper; a Release build is what ships, so it stops instead.
     postBuildScripts:
       - name: Embed Runtime
-        inputFiles: ['$(SRCROOT)/build/runtime/node']
-        outputFiles: ['$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Runtime/node']
+        inputFiles: ['$(SRCROOT)/build/runtime/oxfmt']
+        outputFiles: ['$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Runtime/oxfmt']
         script: |
           set -euo pipefail
           runtime="$SRCROOT/build/runtime"
-          if [ ! -x "$runtime/node" ]; then
+          if [ ! -x "$runtime/oxfmt" ]; then
             if [ "$CONFIGURATION" = Release ]; then
               echo "error: run \`mise run data-editor:runtime\` first" >&2
               exit 1
