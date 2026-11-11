@@ -162,4 +162,17 @@ struct HelperRuntimeTests {
             """)
         #expect(try await runtime(folder).call("rename", paramsJSON: "{}") == #"{"replaced":"new","code":"ENOENT","kept":"new"}"#)
     }
+
+    /// Node reads a file that is not UTF-8 with U+FFFD in place of its bad bytes; it is not missing.
+    @Test func readsAFileThatIsNotUTF8AsNodeDoes() async throws {
+        let folder = try scripts(handlers: "read: async () => __host.readFile(__scriptDir + '/../latin1.yaml'),")
+        try Data([0x61, 0xE9, 0x62]).write(to: folder.deletingLastPathComponent().appending(path: "latin1.yaml"))
+        #expect(try await runtime(folder).call("read", paramsJSON: "{}") == "\"a\u{FFFD}b\"")
+    }
+
+    /// A handler that resolves to nothing answers null, which the app reads as JSON.
+    @Test func answersNullForAHandlerThatReturnsNothing() async throws {
+        let helper = try runtime(try scripts(handlers: "nothing: async () => {},"))
+        #expect(try await helper.call("nothing", paramsJSON: "{}") == "null")
+    }
 }

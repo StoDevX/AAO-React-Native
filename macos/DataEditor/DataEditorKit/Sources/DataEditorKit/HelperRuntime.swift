@@ -75,7 +75,9 @@ public final class HelperRuntime: @unchecked Sendable {
         timers.drain { box.forProperty("done").toBool() }
         guard box.forProperty("done").toBool() else { throw Failure(message: "The helper's \(method) never finished") }
         if let error = box.forProperty("error"), error.isString { throw Failure(message: error.toString()) }
-        return json.invokeMethod("stringify", withArguments: [box.forProperty("value") as Any])?.toString() ?? "null"
+        // a handler that resolves to nothing answers null, which JSON.stringify would leave out
+        guard let value = box.forProperty("value"), !value.isUndefined else { return "null" }
+        return json.invokeMethod("stringify", withArguments: [value])?.toString() ?? "null"
     }
 
     /// An uncaught error as Node prints one: "Name: message", then the stack.
@@ -117,7 +119,10 @@ public final class HelperRuntime: @unchecked Sendable {
         let fm = FileManager.default
         let host = JSValue(newObjectIn: context)!
         func define(_ name: String, _ block: Any) { host.setObject(block, forKeyedSubscript: name as NSString) }
-        define("readFile", { (path: String) -> Any in (try? String(contentsOfFile: path, encoding: .utf8)) ?? NSNull() } as @convention(block) (String) -> Any)
+        // bytes that are not UTF-8 read as U+FFFD, as Node reads them
+        define("readFile", { (path: String) -> Any in
+            fm.contents(atPath: path).map { String(decoding: $0, as: UTF8.self) } ?? NSNull()
+        } as @convention(block) (String) -> Any)
         define("writeFile", { (path: String, text: String) in
             failing("open", path) { try Data(text.utf8).write(to: URL(filePath: path)) }
         } as @convention(block) (String, String) -> Void)
