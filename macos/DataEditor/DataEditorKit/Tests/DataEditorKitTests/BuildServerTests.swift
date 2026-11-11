@@ -63,4 +63,27 @@ struct BuildServerTests {
         await #expect(throws: BuildServer.Failure.portInUse(18791)) { try await second.start() }
         #expect(BuildServer.Failure.portInUse(8790).localizedDescription == "Port 8790 is in use")
     }
+
+    /// A client that connects and says nothing must not hold its connection forever.
+    @Test func closesAConnectionThatSendsNothing() async throws {
+        let server = BuildServer(port: 18792, root: { nil }, requestLimit: .milliseconds(200))
+        try await server.start()
+        defer { server.stop() }
+        let started = ContinuousClock.now
+        let closed = try await Task.detached { () -> Bool in
+            let socket = Darwin.socket(AF_INET, SOCK_STREAM, 0)
+            defer { close(socket) }
+            var address = sockaddr_in(sin_len: UInt8(MemoryLayout<sockaddr_in>.size), sin_family: sa_family_t(AF_INET),
+                                      sin_port: in_port_t(18792).bigEndian, sin_addr: in_addr(s_addr: inet_addr("127.0.0.1")), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
+            let connected = withUnsafePointer(to: &address) { $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(socket, $0, socklen_t(MemoryLayout<sockaddr_in>.size)) } }
+            guard connected == 0 else { return false }
+            var wait = timeval(tv_sec: 3, tv_usec: 0)
+            setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &wait, socklen_t(MemoryLayout<timeval>.size))
+            var byte: UInt8 = 0
+            // 0: the server closed it; -1: the three seconds ran out first
+            return recv(socket, &byte, 1, 0) == 0
+        }.value
+        #expect(closed)
+        #expect(ContinuousClock.now - started < .seconds(2))
+    }
 }

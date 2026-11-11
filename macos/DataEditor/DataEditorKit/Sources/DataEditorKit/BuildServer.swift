@@ -25,12 +25,15 @@ public final class BuildServer: @unchecked Sendable {
 
     private let port: UInt16
     private let root: @Sendable () -> URL?
+    /// How long a connection may take to send its request and get its answer.
+    private let requestLimit: Duration
     private let queue = DispatchQueue(label: "com.drewvolz.allaboutolaf-data-editor.build-server")
     private var listener: NWListener?
 
-    public init(port: UInt16, root: @escaping @Sendable () -> URL?) {
+    public init(port: UInt16, root: @escaping @Sendable () -> URL?, requestLimit: Duration = .seconds(10)) {
         self.port = port
         self.root = root
+        self.requestLimit = requestLimit
     }
 
     /// What a request for `target` gets: a file under `root`, or a refusal.
@@ -81,6 +84,9 @@ public final class BuildServer: @unchecked Sendable {
     /// Reads one request head, answers it and closes the connection.
     private func serve(_ connection: NWConnection) {
         connection.start(queue: queue)
+        // a client that connects and sends nothing would otherwise hold the connection for good
+        let components = requestLimit.components
+        queue.asyncAfter(deadline: .now() + Double(components.seconds) + Double(components.attoseconds) / 1e18) { connection.cancel() }
         read(connection, after: Data())
     }
 
