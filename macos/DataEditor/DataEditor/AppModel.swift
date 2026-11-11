@@ -2,6 +2,7 @@ import AppKit
 import DataEditorKit
 import Foundation
 import Observation
+import os
 import SystemConfiguration
 
 /// Everything the windows show, and the one place that talks to the helper, ccc and GitHub.
@@ -38,21 +39,6 @@ final class AppModel {
             }
         }
     }
-
-    /// Why the window offers Try Again once the helper has gone. The edits
-    /// made so far are in their files, so starting it again loses nothing.
-    static let helperStoppedMessage = "The editor stopped. Your edits are saved."
-
-    /// The phase an error from the helper leaves the app in: failed once the
-    /// helper has gone, since every later edit would fail too, and nil for a
-    /// refusal of one request, which leaves it running.
-    static func failurePhase(after error: any Error) -> Phase? {
-        (error as? HelperClient.Failure)?.helperStopped == true ? .failed(helperStoppedMessage) : nil
-    }
-
-    /// Whether the helper could not serve the data because its port is taken,
-    /// by a second copy of the app or anything else.
-    static func isPortInUse(_ message: String) -> Bool { message.contains("EADDRINUSE") }
 
     var phase: Phase = .starting
     var buildings: [BuildingSummary] = []
@@ -106,10 +92,13 @@ final class AppModel {
     let tokens = KeychainTokenStore()
     private let runtime: Runtime
     private let support: URL
-    /// UI tests run the repo's own helper on the test runner's Node, and no ccc
-    private let testHelper: (node: URL, scripts: URL)?
+    /// UI tests write the data with the repo's own oxfmt, run on the test runner's Node, and run no ccc
+    private let testOxfmt: URL?
     private let workspace: Workspace
     private var helper: HelperClient?
+    private var buildServer: BuildServer?
+    /// The newest good build, which the build server reads on each request.
+    private let currentBuild = OSAllocatedUnfairLock<URL?>(initialState: nil)
     private var ccc: CccRunner?
     /// Copies ccc's statuses into `cccStatus`. Its stream never ends, so stopping the preview cancels it.
     private var cccWatch: Task<Void, Never>?
@@ -134,11 +123,7 @@ final class AppModel {
         self.support = support ?? defaults.string(forKey: "UITestWorkspace").map { URL(filePath: $0) }
             ?? Self.supportFolder(in: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0],
                                   bundleIdentifier: Bundle.main.bundleIdentifier)
-        if let node = defaults.string(forKey: "UITestNode"), let scripts = defaults.string(forKey: "UITestHelper") {
-            testHelper = (URL(filePath: node), URL(filePath: scripts))
-        } else {
-            testHelper = nil
-        }
+        testOxfmt = defaults.string(forKey: "UITestOxfmt").map { URL(filePath: $0) }
         workspace = Workspace(root: self.support.appending(path: "workspace"))
         // a file this build cannot read is copied aside before anything saves over it
         submissions = SubmissionHistory.load(from: self.support.appending(path: "submissions.json")).history
@@ -151,7 +136,7 @@ final class AppModel {
             ?? Bundle.main.object(forInfoDictionaryKey: "DataEditorGitHubClientID") as? String ?? ""
     }
     /// Whether UI tests launched the app, which then reaches no server of its own accord.
-    var runsUnderUITests: Bool { testHelper != nil }
+    var runsUnderUITests: Bool { testOxfmt != nil }
     var appVersion: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev" }
     var baseCommit: String? { workspace.snapshot?.commit }
 
@@ -159,7 +144,7 @@ final class AppModel {
     /// Editing it would replace the copy they set aside, so it is not editable until they choose.
     func isConflicted(_ file: String) -> Bool { conflicts.contains(file) }
 
-    /// Downloads the workspace if need be and starts the helper. The first
+    /// Downloads the workspace if need be and loads the helper it holds. The first
     /// build waits for the preview or a submission, so editing opens quickly. Does
     /// nothing while a launch runs or once one has succeeded; after a failure
     /// it starts again, first stopping whatever the failed attempt started.
@@ -173,25 +158,15 @@ final class AppModel {
         do {
             if workspace.snapshot == nil {
                 phase = .downloading
-                try await workspace.download(commit: try await workspace.latestCommit())
-            }
-            let node: URL
-            let script: URL
-            if let testHelper {
-                (node, script) = (testHelper.node, testHelper.scripts.appending(path: "data-editor-helper.mjs"))
-            } else {
-                guard let snapshot = workspace.snapshot, snapshot.isCompatible(with: try runtime.stamp()) else {
-                    phase = .needsAppUpdate
-                    return
-                }
-                try runtime.installHelper(into: workspace.root)
-                (node, script) = (runtime.node, workspace.root.appending(path: "scripts/data-editor-helper.mjs"))
+                try await workspace.downloadLatest()
             }
             if shuttingDown { return }
-            let helper = try HelperClient(executable: node, arguments: [
-                script.path, "--data", workspace.dataDirectory.path, "--out", workspace.outDirectory.path,
-            ])
-            await helper.start()
+            let helper = try makeHelper()
+            // a workspace downloaded by an older app can hold a helper this one cannot speak to
+            guard helper.helperProtocol == HelperRuntime.protocolVersion else {
+                phase = .needsAppUpdate
+                return
+            }
             self.helper = helper
             // the list appears with the phase that enables it, so no row shows unclickable
             let listed = try await helper.buildings()
@@ -204,9 +179,24 @@ final class AppModel {
             // the list is usable meanwhile, so the launch need not wait for GitHub
             Task { await refreshSubmissions() }
             await refreshNewerCommit()
+        } catch is Workspace.NeedsNewerApp {
+            phase = .needsAppUpdate
         } catch {
             phase = .failed(error.localizedDescription)
         }
+    }
+
+    /// The helper the workspace holds, over its data, writing files with the bundled oxfmt.
+    private func makeHelper() throws -> HelperClient {
+        HelperClient(runtime: try HelperRuntime(scripts: workspace.scriptsDirectory, data: workspace.dataDirectory,
+                                                out: workspace.outDirectory, oxfmt: testOxfmt ?? runtime.oxfmt))
+    }
+
+    /// Builds into `out/`, and serves the build from now on if it is good.
+    private func build(with helper: HelperClient) async throws -> [Problem] {
+        let result = try await helper.build()
+        if let dir = result.dir { currentBuild.withLock { $0 = URL(filePath: dir) } }
+        return result.problems
     }
 
     /// Starts the phone preview: builds, serves the newest good build and runs
@@ -216,7 +206,7 @@ final class AppModel {
     /// nothing while it starts or runs, during an update or quitting, or
     /// under UI tests, which have no bundled ccc to run.
     func startPreview() async {
-        guard testHelper == nil, !shuttingDown, !updating, let helper else { return }
+        guard testOxfmt == nil, !shuttingDown, !updating, helper != nil else { return }
         switch cccStatus {
         case .starting, .running: return
         case .stopped, .portInUse, .crashed: break
@@ -235,7 +225,12 @@ final class AppModel {
             return
         }
         do {
-            let port = try await helper.serve(port: Self.port)
+            if buildServer == nil {
+                let server = BuildServer(port: UInt16(Self.port), root: { [currentBuild] in currentBuild.withLock { $0 } })
+                try await server.start()
+                buildServer = server
+            }
+            let port = Self.port
             let origin = DataEditorKit.pagesOrigin(localHostName: Self.localHostName(), port: port)
             pagesOrigin = origin
             if shuttingDown || generation != previewGeneration { return }
@@ -246,12 +241,12 @@ final class AppModel {
         } catch {
             guard generation == previewGeneration else { return }
             cccLog = [error.localizedDescription]
-            servePortInUse = Self.isPortInUse(error.localizedDescription)
+            servePortInUse = error as? BuildServer.Failure == .portInUse(UInt16(Self.port))
             cccStatus = .crashed(1)
         }
     }
 
-    /// Stops ccc and lets it go. The helper keeps serving the build, which costs nothing and the next start reuses.
+    /// Stops ccc and lets it go. The build server keeps serving the build, which costs nothing and the next start reuses.
     func stopPreview() async {
         previewGeneration += 1
         cccWatch?.cancel()
@@ -280,16 +275,10 @@ final class AppModel {
         await stopProcesses()
     }
 
-    /// Fails the launch once the helper has gone, so the window offers Try
-    /// Again. Not while a launch or quitting stops the helper on purpose.
-    private func noteFailure(_ error: any Error) {
-        guard !launching, !shuttingDown, phase == .ready, let failed = Self.failurePhase(after: error) else { return }
-        phase = failed
-    }
-
     private func stopProcesses() async {
         await stopPreview()
-        await helper?.stop()
+        buildServer?.stop()
+        buildServer = nil
         helper = nil
     }
 
@@ -303,7 +292,6 @@ final class AppModel {
             documentFile = file
             problems = loaded.problems
         } catch {
-            noteFailure(error)
             guard selection == file else { return }
             document = nil
             documentFile = nil
@@ -332,7 +320,6 @@ final class AppModel {
         do {
             edited = try await helper.edit(file, ops)
         } catch {
-            noteFailure(error)
             if file == selection { problems = [Problem(file: file, message: error.localizedDescription, path: nil)] }
             return false
         }
@@ -398,7 +385,6 @@ final class AppModel {
             do {
                 current = try await helper.load(file).value
             } catch {
-                noteFailure(error)
                 return .notSaved
             }
             let held = current[path: op.path]?.string ?? ""
@@ -452,10 +438,9 @@ final class AppModel {
     private func rebuild() async {
         guard !updating, let helper else { return }
         do {
-            buildProblems = try await helper.build().problems
+            buildProblems = try await build(with: helper)
         } catch {
             buildProblems = [Problem(file: nil, message: "The build did not run", path: nil)]
-            noteFailure(error)
         }
         hasBuilt = true
         cccLog = await ccc?.log ?? []
@@ -538,7 +523,7 @@ final class AppModel {
         if await !commitPendingDrafts() { throw Refusal.unsavedText }
         submitting = true
         defer { submitting = false }
-        buildProblems = try await helper.build().problems
+        buildProblems = try await build(with: helper)
         if !buildProblems.isEmpty { throw Refusal.buildProblems }
         let submitter = GitHubSubmitter(tokens: tokens)
         let changes = changedFiles.map { Change(path: "data/\($0)", contents: try? workspace.contents(of: $0)) }
@@ -570,7 +555,7 @@ final class AppModel {
     /// finished one cannot change, so it is not asked after. A failed check
     /// keeps the state GitHub last gave. UI tests reach no server.
     func refreshSubmissions() async {
-        guard testHelper == nil else { return }
+        guard testOxfmt == nil else { return }
         let submitter = GitHubSubmitter(tokens: tokens)
         for record in submissions.needingCheck {
             let result: Result<SubmissionState, any Error>
@@ -644,10 +629,10 @@ final class AppModel {
         if case .building(let file) = item { selection = file }
     }
 
-    /// Asks GitHub whether master has moved past the data being edited, so
+    /// Asks Pages whether master's data deploy has moved past the data being edited, so
     /// a session left open for days is offered the newer data. UI tests reach no server.
     func refreshNewerCommit() async {
-        guard testHelper == nil, let latest = try? await workspace.latestCommit() else { return }
+        guard testOxfmt == nil, let latest = try? await workspace.latestPublished().commit else { return }
         newerCommit = latest == workspace.snapshot?.commit ? nil : latest
     }
 
@@ -662,7 +647,11 @@ final class AppModel {
         // an edit already sent writes into data/ when its reply comes, after the update has saved the edits
         while editing { try? await Task.sleep(for: .milliseconds(50)) }
         do {
-            conflicts = try await workspace.update(to: try await workspace.latestCommit())
+            conflicts = try await workspace.updateToLatest()
+        } catch is Workspace.NeedsNewerApp {
+            updating = false
+            phase = .needsAppUpdate
+            return
         } catch {
             updating = false
             updateError = error.localizedDescription
@@ -672,11 +661,9 @@ final class AppModel {
         }
         updating = false
         newerCommit = nil
+        // the update brought the helper published with the new data
         do {
-            if testHelper == nil, let snapshot = workspace.snapshot, !snapshot.isCompatible(with: try runtime.stamp()) {
-                phase = .needsAppUpdate
-                return
-            }
+            helper = try makeHelper()
         } catch {
             phase = .failed(error.localizedDescription)
             return

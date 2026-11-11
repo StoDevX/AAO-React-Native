@@ -2,22 +2,24 @@ import Foundation
 import Testing
 @testable import DataEditorKit
 
-/// A repo at `commit` with one data file, the image groups and one image.
-private func stubRepo(commit: String = "c1", failing failPath: String? = nil, cageHours: String = "name: The Cage\n") -> (URLSession, StubProtocol.Stub) {
-    StubProtocol.session { request in
+/// Answers for a repo at `commit` with one data file, the image groups and
+/// one image, and for Pages with the helper published from `scriptCommit`
+/// (`commit` unless given) speaking `helperProtocol`.
+private func repoResponse(commit: String = "c1", failing failPath: String? = nil, cageHours: String = "name: The Cage\n",
+                          scriptCommit: String? = nil, helperProtocol: Int = HelperRuntime.protocolVersion) -> @Sendable (URLRequest) -> (Int, Data) {
+    { request in
         let url = request.url!.absoluteString
         if let failPath, url.hasSuffix(failPath) { return (-1, Data()) }
         switch url {
-        case "https://api.github.com/repos/StoDevX/AAO-React-Native/commits/master":
-            return (200, body(commit))
+        case "https://stolaf.dev/AAO-React-Native/data-editor/helper.json":
+            return (200, body(#"{"commit":"\#(commit)","protocol":\#(helperProtocol)}"#))
+        case "https://stolaf.dev/AAO-React-Native/data-editor/helper.js",
+             "https://stolaf.dev/AAO-React-Native/data-editor/bundle-data.js":
+            return (200, body("// data-editor commit \(scriptCommit ?? commit)\n;"))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/\(commit)":
-            return (200, body(#"{"tree":[{"path":"data","type":"tree","sha":"tdata"},{"path":"images","type":"tree","sha":"timages"},{"path":"scripts","type":"tree","sha":"tscripts"},{"path":"modules","type":"tree","sha":"tmodules"}]}"#))
+            return (200, body(#"{"tree":[{"path":"data","type":"tree","sha":"tdata"},{"path":"images","type":"tree","sha":"timages"}]}"#))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tdata?recursive=1":
             return (200, body(#"{"truncated":false,"tree":[{"path":"building-hours","type":"tree","sha":"x"},{"path":"building-hours/1-1-cage.yaml","type":"blob","sha":"a"}]}"#))
-        case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tscripts?recursive=1":
-            return (200, body(#"{"truncated":false,"tree":[{"path":"lib","type":"tree","sha":"x"},{"path":"lib/paths.mjs","type":"blob","sha":"bpaths"},{"path":"data-editor-helper.mjs","type":"blob","sha":"bhelper"}]}"#))
-        case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/tmodules?recursive=1":
-            return (200, body(#"{"truncated":false,"tree":[{"path":"schedules/index.ts","type":"blob","sha":"bschedules"}]}"#))
         case "https://api.github.com/repos/StoDevX/AAO-React-Native/git/trees/timages?recursive=1":
             return (200, body(#"{"truncated":false,"tree":[{"path":"groups.json","type":"blob","sha":"g"},{"path":"spaces/cage.webp","type":"blob","sha":"w"},{"path":"spaces/source/cage.jpg","type":"blob","sha":"j"}]}"#))
         case "https://raw.githubusercontent.com/StoDevX/AAO-React-Native/\(commit)/data/building-hours/1-1-cage.yaml":
@@ -30,6 +32,11 @@ private func stubRepo(commit: String = "c1", failing failPath: String? = nil, ca
             return (404, Data())
         }
     }
+}
+
+private func stubRepo(commit: String = "c1", failing failPath: String? = nil, cageHours: String = "name: The Cage\n",
+                      scriptCommit: String? = nil, helperProtocol: Int = HelperRuntime.protocolVersion) -> (URLSession, StubProtocol.Stub) {
+    StubProtocol.session(repoResponse(commit: commit, failing: failPath, cageHours: cageHours, scriptCommit: scriptCommit, helperProtocol: helperProtocol))
 }
 
 /// The real workspace lives under Application Support, so the folder name has a space.
@@ -46,16 +53,16 @@ private final class Flag: @unchecked Sendable {
 }
 
 struct WorkspaceTests {
-    @Test func downloadsTheDataAndThePublishedImages() async throws {
+    @Test func downloadsTheDataThePublishedImagesAndTheHelper() async throws {
         let (session, stub) = stubRepo()
         let workspace = Workspace(root: temporaryRoot(), session: session)
-        let snapshot = try await workspace.download(commit: try await workspace.latestCommit())
-        #expect(snapshot == Snapshot(commit: "c1", files: [
-            "scripts/lib/paths.mjs": "bpaths", "scripts/data-editor-helper.mjs": "bhelper", "modules/schedules/index.ts": "bschedules",
-        ]))
+        let snapshot = try await workspace.downloadLatest()
+        #expect(snapshot == Snapshot(commit: "c1"))
         #expect(workspace.snapshot == snapshot)
         #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage\n"))
         #expect(FileManager.default.fileExists(atPath: workspace.root.appending(path: "images/spaces/cage.webp").path))
+        #expect(try Data(contentsOf: workspace.scriptsDirectory.appending(path: "helper.js")) == body("// data-editor commit c1\n;"))
+        #expect(FileManager.default.fileExists(atPath: workspace.scriptsDirectory.appending(path: "bundle-data.js").path))
         // the source photos are not published, so not fetched
         #expect(!stub.requests.contains { $0.url!.path.hasSuffix("cage.jpg") })
     }
@@ -81,6 +88,7 @@ struct WorkspaceTests {
         #expect(workspace.snapshot?.commit == "c1")
         #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage\n"))
         #expect(try workspace.changedFiles() == [])
+        #expect(try Data(contentsOf: workspace.scriptsDirectory.appending(path: "helper.js")) == body("// data-editor commit c1\n;"))
     }
 
     @Test func keepsEditsWhenUpdatingPastCommitsThatDidNotTouchThem() async throws {
@@ -273,12 +281,38 @@ struct WorkspaceTests {
     }
 
     /// Only the files the helper was built from count: master changes other scripts most days.
-    @Test func comparesTheFilesTheBundledHelperWasBuiltFrom() {
-        let snapshot = Snapshot(commit: "c1", files: ["scripts/a.mjs": "1", "modules/b.ts": "2", "scripts/scrape.mjs": "3"])
-        #expect(snapshot.isCompatible(with: HelperStamp(files: ["scripts/a.mjs": "1", "modules/b.ts": "2"])))
-        // one of its files changed on master
-        #expect(!snapshot.isCompatible(with: HelperStamp(files: ["scripts/a.mjs": "1", "modules/b.ts": "9"])))
-        // one of its files is gone from master
-        #expect(!snapshot.isCompatible(with: HelperStamp(files: ["scripts/a.mjs": "1", "scripts/gone.mjs": "4"])))
+
+    /// Pages' cache can hand out a script from a newer deploy than helper.json named.
+    @Test func startsAgainWhenADeployLandsMidDownload() async throws {
+        let c1 = repoResponse(commit: "c1", scriptCommit: "c2")
+        let c2 = repoResponse(commit: "c2")
+        let asked = Counter()
+        let (session, _) = StubProtocol.session { request in
+            if request.url!.path.hasSuffix("/data-editor/helper.json") {
+                return (200, body(asked.next() == 1 ? #"{"commit":"c1","protocol":1}"# : #"{"commit":"c2","protocol":1}"#))
+            }
+            return request.url!.absoluteString.contains("c1") ? c1(request) : c2(request)
+        }
+        let workspace = Workspace(root: temporaryRoot(), session: session)
+        #expect(try await workspace.downloadLatest() == Snapshot(commit: "c2"))
+        #expect(try Data(contentsOf: workspace.scriptsDirectory.appending(path: "helper.js")) == body("// data-editor commit c2\n;"))
+    }
+
+    @Test func givesUpWhenTheScriptsKeepNamingAnotherCommit() async throws {
+        let (session, _) = stubRepo(scriptCommit: "c9")
+        let workspace = Workspace(root: temporaryRoot(), session: session)
+        await #expect(throws: Workspace.Moved()) { _ = try await workspace.downloadLatest() }
+        #expect(workspace.snapshot == nil)
+    }
+
+    @Test func refusesAHelperThatSpeaksAnotherProtocol() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).downloadLatest()
+        let (c2, _) = stubRepo(commit: "c2", helperProtocol: HelperRuntime.protocolVersion + 1)
+        let workspace = Workspace(root: root, session: c2)
+        await #expect(throws: Workspace.NeedsNewerApp()) { _ = try await workspace.updateToLatest() }
+        // nothing was downloaded, so the data being edited stays as it was
+        #expect(workspace.snapshot == Snapshot(commit: "c1"))
     }
 }

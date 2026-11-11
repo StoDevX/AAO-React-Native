@@ -16,7 +16,7 @@ struct PreviewControl: Equatable {
     /// after a crash or a refused port, which ccc does not recover from by itself
     let offersStartAgain: Bool
 
-    /// - Parameter servePortInUse: whether the helper could not serve the data on its own port
+    /// - Parameter servePortInUse: whether the app could not serve the data on its own port
     init(_ status: CccRunner.Status, servePortInUse: Bool = false) {
         switch status {
         case .stopped: (title, click, offersStop, offersStartAgain) = ("Start Preview", .start, false, false)

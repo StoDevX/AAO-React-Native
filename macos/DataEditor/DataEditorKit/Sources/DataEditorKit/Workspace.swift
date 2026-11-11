@@ -9,44 +9,49 @@ public struct GitHubRepo: Sendable, Hashable {
     public var fullName: String { "\(owner)/\(name)" }
 }
 
-/// The repo's files the bundled helper was built from, each by its git blob.
-public struct HelperStamp: Codable, Hashable, Sendable {
-    public let files: [String: String]
-    public init(files: [String: String]) { self.files = files }
-}
-
-/// The commit a workspace was downloaded at, with the blob of each file
-/// under `scripts/` and `modules/` there.
+/// The commit a workspace was downloaded at.
 public struct Snapshot: Codable, Hashable, Sendable {
     public let commit: String
-    public let files: [String: String]
-
-    public init(commit: String, files: [String: String]) {
-        self.commit = commit
-        self.files = files
-    }
-
-    /// Whether the bundled helper was built from the code this commit holds.
-    /// Only its own files count, since master changes other scripts most days.
-    public func isCompatible(with stamp: HelperStamp) -> Bool {
-        stamp.files.allSatisfy { files[$0.key] == $0.value }
-    }
+    public init(commit: String) { self.commit = commit }
 }
 
-/// The data being edited: `data/` and the published `images/` at a commit, a
-/// pristine copy of both under `base/`, and the build under `out/`.
+/// What master's data deploy last published: the commit it was built from,
+/// and the protocol the helper published with it speaks.
+public struct Published: Decodable, Equatable, Sendable {
+    public let commit: String
+    public let helperProtocol: Int
+    private enum CodingKeys: String, CodingKey { case commit, helperProtocol = "protocol" }
+}
+
+/// The data being edited: `data/` and the published `images/` at a commit, the
+/// helper published with them under `scripts/`, a pristine copy of the data
+/// under `base/`, and the build under `out/`.
 public final class Workspace: Sendable {
+    /// A script came from another deploy than the data, so the download starts again.
+    public struct Moved: LocalizedError, Equatable {
+        public init() {}
+        public var errorDescription: String? { "The data changed on GitHub while it downloaded. Try again in a few minutes." }
+    }
+
+    /// The published helper speaks another protocol than this app.
+    public struct NeedsNewerApp: Error, Equatable { public init() {} }
+
+    private let pages: URL
+
     public let root: URL
     private let session: URLSession
     private let repo: GitHubRepo
 
-    public init(root: URL, session: URLSession = .shared, repo: GitHubRepo = .aao) {
+    public init(root: URL, session: URLSession = .shared, repo: GitHubRepo = .aao,
+                pages: URL = URL(string: "https://stolaf.dev/AAO-React-Native/")!) {
         self.root = root
         self.session = session
         self.repo = repo
+        self.pages = pages
     }
 
     public var dataDirectory: URL { root.appending(path: "data") }
+    public var scriptsDirectory: URL { root.appending(path: "scripts") }
     public var outDirectory: URL { root.appending(path: "out") }
     private var baseDataDirectory: URL { root.appending(path: "base/data") }
     private var snapshotFile: URL { root.appending(path: "snapshot.json") }
@@ -74,10 +79,28 @@ public final class Workspace: Sendable {
 
     private var api: URL { URL(string: "https://api.github.com/repos/\(repo.fullName)")! }
 
-    /// The newest commit on the repo's default branch.
-    public func latestCommit() async throws -> String {
-        let data = try await get(api.appending(path: "commits/\(repo.branch)"), accept: "application/vnd.github.sha")
-        return String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+    /// What master's data deploy last published, which the data and helper are downloaded at.
+    public func latestPublished() async throws -> Published {
+        try JSONDecoder().decode(Published.self, from: try await get(pages.appending(path: "data-editor/helper.json"), accept: "application/json"))
+    }
+
+    /// Downloads master's published commit, starting again while a deploy lands meanwhile.
+    @discardableResult
+    public func downloadLatest() async throws -> Snapshot { try await atLatest { try await self.download(commit: $0) } }
+
+    /// Moves to master's published commit, keeping the edits, as `update(to:)` does.
+    public func updateToLatest() async throws -> [String] { try await atLatest { try await self.update(to: $0) } }
+
+    /// Runs `body` at the published commit, after refusing a helper this app
+    /// cannot speak to. A deploy that lands meanwhile makes `body` throw
+    /// `Moved`, so it runs again at the newer commit, up to three times.
+    private func atLatest<T: Sendable>(_ body: @Sendable (String) async throws -> T) async throws -> T {
+        var attempt = 1
+        while true {
+            let published = try await latestPublished()
+            guard published.helperProtocol == HelperRuntime.protocolVersion else { throw NeedsNewerApp() }
+            do { return try await body(published.commit) } catch is Moved where attempt < 3 { attempt += 1 }
+        }
     }
 
     private func tree(_ sha: String, recursive: Bool) async throws -> Tree {
@@ -94,7 +117,7 @@ public final class Workspace: Sendable {
     }
 
     /// The files of `data/` and the images `bundle-data` publishes, at `commit`.
-    private func files(at commit: String) async throws -> (paths: [String], snapshot: Snapshot) {
+    private func files(at commit: String) async throws -> [String] {
         let top = try await tree(commit, recursive: false)
         func sha(_ name: String) throws -> String {
             guard let entry = top.tree.first(where: { $0.path == name && $0.type == "tree" }) else { throw URLError(.fileDoesNotExist) }
@@ -104,23 +127,18 @@ public final class Workspace: Sendable {
         let images = try await tree(try sha("images"), recursive: true).tree
             .filter { $0.type == "blob" && ($0.path == "groups.json" || $0.path.split(separator: "/").count == 2 && $0.path.hasSuffix(".webp")) }
             .map { "images/\($0.path)" }
-        var code: [String: String] = [:]
-        for folder in ["scripts", "modules"] {
-            for entry in try await tree(try sha(folder), recursive: true).tree where entry.type == "blob" {
-                code["\(folder)/\(entry.path)"] = entry.sha
-            }
-        }
-        return (data + images, Snapshot(commit: commit, files: code))
+        return data + images
     }
 
-    /// Downloads `commit` into a staging folder, then swaps it in. The old
-    /// `data/`, `images/` and `base/` wait in `previous/` until the new ones and
+    /// Downloads `commit`, and the helper published with it, into a staging
+    /// folder, then swaps them in. The old `data/`, `images/`, `base/` and `scripts/` wait in `previous/` until the new ones and
     /// the snapshot are in place; a failure at any point puts them back, so the
     /// workspace and its snapshot always agree. Local edits are dropped; the
     /// caller keeps any it means to replay.
     @discardableResult
     public func download(commit: String) async throws -> Snapshot {
-        let (paths, snapshot) = try await files(at: commit)
+        let paths = try await files(at: commit)
+        let snapshot = Snapshot(commit: commit)
         let fm = FileManager.default
         let staging = root.appending(path: "staging")
         try? fm.removeItem(at: staging)
@@ -138,7 +156,14 @@ public final class Workspace: Sendable {
                 group.addTask { try await self.fetch(raw.appending(path: path), to: staging.appending(path: path)) }
             }
         }
-        let names = ["data", "images", "base"]
+        // the helper published with this commit, each script named by the commit it came from
+        for script in ["helper.js", "bundle-data.js"] {
+            let file = staging.appending(path: "scripts/\(script)")
+            try await fetch(pages.appending(path: "data-editor/\(script)"), to: file)
+            let first = String(decoding: try Data(contentsOf: file).prefix(200), as: UTF8.self).split(separator: "\n", maxSplits: 1).first
+            guard first == "// data-editor commit \(commit)" else { throw Moved() }
+        }
+        let names = ["data", "images", "base", "scripts"]
         let previous = root.appending(path: "previous")
         try? fm.removeItem(at: previous)
         try fm.createDirectory(at: previous, withIntermediateDirectories: true)
@@ -153,6 +178,7 @@ public final class Workspace: Sendable {
             try fm.copyItem(at: staging.appending(path: "data"), to: baseDataDirectory)
             try fm.moveItem(at: staging.appending(path: "data"), to: dataDirectory)
             try fm.moveItem(at: staging.appending(path: "images"), to: root.appending(path: "images"))
+            try fm.moveItem(at: staging.appending(path: "scripts"), to: scriptsDirectory)
             try JSONEncoder().encode(snapshot).write(to: snapshotFile, options: .atomic)
         } catch {
             // an original whose move failed is still in place, so only what this call made goes

@@ -2,7 +2,7 @@ import XCTest
 
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
-    /// and the repo's helper. A `conflicted` file is set aside as a conflict,
+    /// the helper built from the checkout, and the repo's oxfmt. A `conflicted` file is set aside as a conflict,
     /// as an update leaves one, `submissions` is planted as the pull requests
     /// submitted before, and `arguments` follow the workspace's. Returns
     /// the app and its data folder, for a test that changes a file under it.
@@ -16,7 +16,17 @@ extension XCTestCase {
         try FileManager.default.copyItem(at: repo.appending(path: "data"), to: workspace.appending(path: "data"))
         try FileManager.default.copyItem(at: repo.appending(path: "data"), to: workspace.appending(path: "base/data"))
         try FileManager.default.copyItem(at: repo.appending(path: "images"), to: workspace.appending(path: "images"))
-        try Data(#"{"commit":"c1","files":{}}"#.utf8).write(to: workspace.appending(path: "snapshot.json"))
+        try Data(#"{"commit":"c1"}"#.utf8).write(to: workspace.appending(path: "snapshot.json"))
+        // the helper built from the checkout, as the data deploy publishes it
+        let helper = repo.appending(path: "macos/DataEditor/build/helper")
+        guard FileManager.default.fileExists(atPath: helper.appending(path: "helper.js").path) else {
+            throw XCTSkip("run `mise run data-editor:helper` first, to build the helper the UI tests load")
+        }
+        try FileManager.default.copyItem(at: helper, to: workspace.appending(path: "scripts"))
+        let node = try XCTUnwrap(ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"], "run with TEST_RUNNER_DATA_EDITOR_NODE=$(mise which node)")
+        let oxfmt = support.appending(path: "oxfmt")
+        try Data("#!/bin/sh\nexec '\(node)' '\(repo.appending(path: "node_modules/oxfmt/bin/oxfmt").path)' \"$@\"\n".utf8).write(to: oxfmt)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: oxfmt.path)
         if let conflicted {
             let kept = workspace.appending(path: "conflicts/\(conflicted)")
             try FileManager.default.createDirectory(at: kept.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -31,9 +41,8 @@ extension XCTestCase {
             app.terminate()
             try FileManager.default.removeItem(at: support)
         }
-        let node = try XCTUnwrap(ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"], "run with TEST_RUNNER_DATA_EDITOR_NODE=$(mise which node)")
         // each test starts from the Changesets window alone, not the windows an earlier test left open
-        app.launchArguments = ["-UITestWorkspace", support.path, "-UITestNode", node, "-UITestHelper", repo.appending(path: "scripts").path,
+        app.launchArguments = ["-UITestWorkspace", support.path, "-UITestOxfmt", oxfmt.path,
                                "-ApplePersistenceIgnoreState", "YES"] + arguments
         app.launch()
         return (app, workspace.appending(path: "data"))

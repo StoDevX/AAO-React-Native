@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Builds macos/DataEditor/build/runtime for arm64 macOS: oxfmt's standalone
 # binary, the Node archive the preview downloads (node.json) and the
-# ccc-server commit it runs (ccc-server.ref), beside Node, the helper and
-# ccc-server themselves.
+# ccc-server commit it runs (ccc-server.ref), beside Node and ccc-server
+# themselves.
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")/.." && pwd)"
@@ -36,10 +36,6 @@ curl -fsSL "https://nodejs.org/dist/v$node_version/SHASUMS256.txt" -o "$work/SHA
 (cd "$work" && grep " $tarball\$" SHASUMS256.txt | shasum -a 256 -c -)
 tar -xzf "$work/$tarball" -C "$work"
 cp "$work/node-v$node_version-darwin-arm64/bin/node" "$out/node"
-
-# the helper
-node "$repo/scripts/build-data-editor-helper.mjs"
-cp -R "$here/build/helper" "$out/helper"
 
 # ccc-server at the pinned commit
 git clone --quiet https://github.com/frog-pond/ccc-server "$out/ccc"

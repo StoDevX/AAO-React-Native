@@ -1,114 +1,30 @@
 import Foundation
 
-/// The pipeline helper, a child process spoken to in JSON lines.
-public actor HelperClient {
+/// The pipeline helper's calls, typed, over the helper running in JavaScriptCore.
+public struct HelperClient: Sendable {
     public struct Failure: LocalizedError, Equatable, Sendable {
         public let message: String
         public var errorDescription: String? { message }
-        /// Whether the helper process has gone, so no later call can succeed
-        /// either, rather than refusing this one request.
-        public var helperStopped: Bool { message.hasPrefix(HelperClient.stoppedMessage) }
-
-        public init(message: String) {
-            self.message = message
-        }
+        public init(message: String) { self.message = message }
     }
 
-    /// How a call failed because the helper is no longer running.
-    static let stoppedMessage = "The helper stopped"
+    private let runtime: HelperRuntime
 
-    private struct Request<P: Encodable>: Encodable {
-        let id: Int
-        let method: String
-        let params: P
-    }
+    public init(runtime: HelperRuntime) { self.runtime = runtime }
 
-    private struct Reply: Decodable {
-        struct Message: Decodable { let message: String }
-        let id: Int?
-        let result: JSONValue?
-        let error: Message?
-    }
-
-    private let process = Process()
-    private let input: FileHandle
-    private let output: FileHandle
-    private var nextID = 1
-    private var pending: [Int: CheckedContinuation<JSONValue, any Error>] = [:]
-    private var stopped = false
-
-    public init(executable: URL, arguments: [String], environment: [String: String]? = nil) throws {
-        let stdin = Pipe()
-        let stdout = Pipe()
-        process.executableURL = executable
-        process.arguments = arguments
-        if let environment { process.environment = environment }
-        process.standardInput = stdin
-        process.standardOutput = stdout
-        process.standardError = FileHandle.standardError
-        try process.run()
-        input = stdin.fileHandleForWriting
-        // a write to a helper that has died fails with EPIPE instead of killing the app
-        _ = fcntl(input.fileDescriptor, F_SETNOSIGPIPE, 1)
-        output = stdout.fileHandleForReading
-    }
-
-    /// Starts reading replies. Call once, before the first `call`.
-    public func start() {
-        Task { await listen() }
-    }
-
-    /// Reads replies until the helper's output closes. Replies end at "\n"
-    /// alone: a value may hold U+2028, U+2029 or U+0085, which Node writes raw.
-    private func listen() async {
-        var reason = Self.stoppedMessage
-        do {
-            for try await line in lines(of: output) { receive(line) }
-        } catch {
-            reason = "\(Self.stoppedMessage): \(error.localizedDescription)"
-        }
-        stopped = true
-        for continuation in pending.values { continuation.resume(throwing: Failure(message: reason)) }
-        pending.removeAll()
-    }
-
-    /// Resumes the call `line` answers. The helper replies in order, so a line
-    /// that will not decode belongs to the oldest call still waiting.
-    private func receive(_ line: Data) {
-        guard let reply = try? JSONDecoder().decode(Reply.self, from: line) else {
-            guard let oldest = pending.keys.min(), let continuation = pending.removeValue(forKey: oldest) else { return }
-            continuation.resume(throwing: Failure(message: "The helper sent a reply that is not JSON: \(String(decoding: line, as: UTF8.self))"))
-            return
-        }
-        guard let id = reply.id, let continuation = pending.removeValue(forKey: id) else { return }
-        if let error = reply.error {
-            continuation.resume(throwing: Failure(message: error.message))
-        } else {
-            continuation.resume(returning: reply.result ?? .null)
-        }
-    }
+    /// The protocol the loaded helper speaks.
+    public var helperProtocol: Int { runtime.helperProtocol }
 
     /// Sends `method` and decodes its result as `R`.
     public func call<R: Decodable & Sendable>(_ method: String, _ params: some Encodable & Sendable) async throws -> R {
-        if stopped { throw Failure(message: Self.stoppedMessage) }
-        let id = nextID
-        nextID += 1
-        let line = try JSONEncoder.sorted.encode(Request(id: id, method: method, params: params)) + Data("\n".utf8)
-        let result = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<JSONValue, any Error>) in
-            pending[id] = continuation
-            do {
-                try input.write(contentsOf: line)
-            } catch {
-                pending[id] = nil
-                continuation.resume(throwing: error)
-            }
+        let json = String(decoding: try JSONEncoder.sorted.encode(params), as: UTF8.self)
+        let reply: String
+        do {
+            reply = try await runtime.call(method, paramsJSON: json)
+        } catch let failure as HelperRuntime.Failure {
+            throw Failure(message: failure.message)
         }
-        return try JSONDecoder().decode(R.self, from: try JSONEncoder().encode(result))
-    }
-
-    /// Closes the helper's input, which is how it is told to stop.
-    public func stop() {
-        try? input.close()
+        return try JSONDecoder().decode(R.self, from: Data(reply.utf8))
     }
 }
 
@@ -150,20 +66,21 @@ public struct Loaded: Decodable, Hashable, Sendable {
 public struct BuildResult: Decodable, Hashable, Sendable {
     public let ok: Bool
     public let problems: [Problem]
+    /// The folder the build went into, which the app serves when the build is good
+    public let dir: String?
 
-    private enum CodingKeys: String, CodingKey { case ok, problems }
+    private enum CodingKeys: String, CodingKey { case ok, problems, dir }
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         ok = try container.decode(Bool.self, forKey: .ok)
         problems = try container.decodeIfPresent([Problem].self, forKey: .problems) ?? []
+        dir = try container.decodeIfPresent(String.self, forKey: .dir)
     }
 }
 
-private struct Served: Decodable, Sendable { let port: Int }
 private struct NoParams: Encodable, Sendable {}
 private struct FileParams: Encodable, Sendable { let file: String }
 private struct EditParams: Encodable, Sendable { let file: String; let ops: [EditOp] }
-private struct PortParams: Encodable, Sendable { let port: Int }
 
 extension HelperClient {
     public func buildings() async throws -> [BuildingSummary] { try await call("list", NoParams()) }
@@ -171,6 +88,4 @@ extension HelperClient {
     public func load(_ file: String) async throws -> Loaded { try await call("load", FileParams(file: file)) }
     public func edit(_ file: String, _ ops: [EditOp]) async throws -> Loaded { try await call("edit", EditParams(file: file, ops: ops)) }
     public func build() async throws -> BuildResult { try await call("build", NoParams()) }
-    /// Serves the build on every address at `port`, and returns the port it got.
-    public func serve(port: Int) async throws -> Int { (try await call("serve", PortParams(port: port)) as Served).port }
 }

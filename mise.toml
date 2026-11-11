@@ -422,7 +422,7 @@ wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs --bundle-into-app data/ docs/"
 
 [tasks."data-editor:helper"]
-description = "Bundle the Mac data editor's pipeline helper"
+description = "Bundle the Mac data editor's helper for JavaScriptCore, as the data deploy publishes it"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/build-data-editor-helper.mjs"
 
