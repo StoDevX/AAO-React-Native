@@ -43,13 +43,14 @@ class DoubleTapView(context: Context, appContext: AppContext) : ExpoView(context
       override fun onDown(e: MotionEvent): Boolean = true
 
       override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-        onSingleTap(emptyMap())
+        this@DoubleTapView.onSingleTap(emptyMap())
         return true
       }
 
       override fun onDoubleTap(e: MotionEvent): Boolean {
         val density = resources.displayMetrics.density
-        onDoubleTap(mapOf("x" to e.x / density, "y" to e.y / density))
+        // Qualified, since the listener has an onDoubleTap of its own.
+        this@DoubleTapView.onDoubleTap(mapOf("x" to e.x / density, "y" to e.y / density))
         return true
       }
     }
