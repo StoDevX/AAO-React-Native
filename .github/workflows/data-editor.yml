@@ -92,6 +92,10 @@ jobs:
       - name: Build the helper
         run: mise run data-editor:helper
 
+      # The app's build stops without the oxfmt it bundles.
+      - name: Build the app's runtime
+        run: mise run data-editor:runtime
+
       - name: Generate the Xcode project
         run: mise run xcodegen
 

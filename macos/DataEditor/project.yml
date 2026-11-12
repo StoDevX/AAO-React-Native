@@ -99,9 +99,8 @@ targets:
     dependencies:
       - package: DataEditorKit
     # oxfmt, and the Node and ccc-server the preview downloads, from
-    # `mise run data-editor:runtime`. A Debug build goes without them, since the
-    # UI tests bring the repo's own oxfmt; a Release build is what ships, so it
-    # stops instead.
+    # `mise run data-editor:runtime`. Every build stops without them: an app
+    # without oxfmt opens, then fails the first time it saves a file.
     postBuildScripts:
       - name: Embed Runtime
         inputFiles: ['$(SRCROOT)/build/runtime/oxfmt']
@@ -110,12 +109,8 @@ targets:
           set -euo pipefail
           runtime="$SRCROOT/build/runtime"
           if [ ! -x "$runtime/oxfmt" ]; then
-            if [ "$CONFIGURATION" = Release ]; then
-              echo "error: run \`mise run data-editor:runtime\` first" >&2
-              exit 1
-            fi
-            echo "warning: no runtime in this build; run \`mise run data-editor:runtime\` to run the app on its own"
-            exit 0
+            echo "error: run \`mise run data-editor:runtime\` first" >&2
+            exit 1
           fi
           rsync -a --delete "$runtime/" "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Runtime/"
     settings:
