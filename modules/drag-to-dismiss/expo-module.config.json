@@ -1,6 +1,16 @@
 {
-  "platforms": ["apple"],
+  "platforms": [
+    "apple",
+    "android"
+  ],
   "apple": {
-    "modules": ["DragToDismissModule"]
+    "modules": [
+      "DragToDismissModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "tech.frogpond.dragtodismiss.DragToDismissModule"
+    ]
   }
 }

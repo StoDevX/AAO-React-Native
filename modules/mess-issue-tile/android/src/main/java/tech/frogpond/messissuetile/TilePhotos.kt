@@ -74,13 +74,15 @@ internal object TilePhotos {
   }
 
   private suspend fun fetch(url: String): Fetch = runInterruptible(Dispatchers.IO) {
-    var connection: HttpURLConnection? = null
+    val connection = try {
+      URL(url).openConnection() as? HttpURLConnection
+    } catch (e: IOException) {
+      null
+    } ?: return@runInterruptible Fetch.Gone
     try {
-      connection = (URL(url).openConnection() as HttpURLConnection).apply {
-        connectTimeout = 15_000
-        readTimeout = 20_000
-        instanceFollowRedirects = true
-      }
+      connection.connectTimeout = 15_000
+      connection.readTimeout = 20_000
+      connection.instanceFollowRedirects = true
       val code = connection.responseCode
       when {
         code in 200..299 -> Fetch.Done(connection.inputStream.use { it.readBytes() })
@@ -89,10 +91,8 @@ internal object TilePhotos {
       }
     } catch (e: IOException) {
       Fetch.Retry
-    } catch (e: IllegalArgumentException) {
-      Fetch.Gone
     } finally {
-      connection?.disconnect()
+      connection.disconnect()
     }
   }
 

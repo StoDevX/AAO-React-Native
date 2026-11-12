@@ -98,7 +98,11 @@ class AirPlayButtonView(context: Context, appContext: AppContext) :
   private fun isRoutedAway(): Boolean {
     val devices = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       val media = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
-      audioManager.getAudioDevicesForAttributes(media)
+      try {
+        audioManager.getAudioDevicesForAttributes(media)
+      } catch (_: SecurityException) {
+        audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS).toList()
+      }
     } else {
       audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS).toList()
     }

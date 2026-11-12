@@ -1,6 +1,16 @@
 {
-  "platforms": ["apple"],
+  "platforms": [
+    "apple",
+    "android"
+  ],
   "apple": {
-    "modules": ["LaunchArgumentsModule"]
+    "modules": [
+      "LaunchArgumentsModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "tech.frogpond.launcharguments.LaunchArgumentsModule"
+    ]
   }
 }
