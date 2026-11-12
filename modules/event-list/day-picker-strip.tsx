@@ -16,14 +16,20 @@ import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {formatDate, formatDayOfMonth, formatWeekday} from '@frogpond/time-format'
 
-// `DynamicColorIOS` throws on Android, so it is only called on iOS; Android
-// marks the selected day with the theme's accent.
+/**
+ * The selected day's circle: black in light mode and white in dark on iOS, and
+ * Material's `primary` on Android, as its date pickers mark a selected day.
+ * `DynamicColorIOS` throws on Android, so it is only called on iOS.
+ */
 const selectionCircleFill =
 	Platform.OS === 'ios'
 		? DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
-		: PlatformColor('?android:attr/colorAccent')
+		: PlatformColor('?attr/colorPrimary')
+/** The selected day's number, on that circle: the inverse, or Material's `onPrimary`. */
 const selectionTextColor =
-	Platform.OS === 'ios' ? DynamicColorIOS({light: '#FFFFFF', dark: '#000000'}) : '#FFFFFF'
+	Platform.OS === 'ios'
+		? DynamicColorIOS({light: '#FFFFFF', dark: '#000000'})
+		: PlatformColor('?attr/colorOnPrimary')
 
 import {DAYS_PER_WEEK} from './days'
 
