@@ -180,18 +180,18 @@ class DragToDismissView(context: Context, appContext: AppContext) : ExpoView(con
 
   private fun springBack() {
     onDragCancel(emptyMap())
-    animate(to = 0f, alpha = 255, duration = 350L)
+    animateTo(to = 0f, alpha = 255, duration = 350L)
   }
 
   private fun slideAway(downward: Boolean) {
     dismissed = true
     val distance = height.toFloat() * if (downward) 1 else -1
-    animate(to = distance, alpha = 0, duration = 200L) {
+    animateTo(to = distance, alpha = 0, duration = 200L) {
       onDismiss(emptyMap())
     }
   }
 
-  private fun animate(to: Float, alpha: Int, duration: Long, completion: (() -> Unit)? = null) {
+  private fun animateTo(to: Float, alpha: Int, duration: Long, completion: (() -> Unit)? = null) {
     animator?.cancel()
     val fromOffset = offset
     val fromAlpha = backgroundAlpha
