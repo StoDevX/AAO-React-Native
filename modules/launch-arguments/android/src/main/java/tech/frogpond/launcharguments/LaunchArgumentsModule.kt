@@ -32,10 +32,17 @@ import org.json.JSONObject
  * relaunches the activity instead.
  */
 class LaunchArgumentsModule : Module() {
-  /** The extras of the intent that launched the activity, read once, when JavaScript first asks. */
-  private val extras: Bundle? by lazy {
-    appContext.currentActivity?.intent?.extras
-  }
+  /**
+   * The extras of the intent that launched the activity, kept once found, so
+   * an intent the activity is handed later (a deep link) cannot change them.
+   */
+  private var launchExtras: Bundle? = null
+
+  private val extras: Bundle?
+    get() {
+      launchExtras?.let { return it }
+      return appContext.currentActivity?.intent?.extras?.also { launchExtras = it }
+    }
 
   override fun definition() = ModuleDefinition {
     Name("LaunchArguments")
@@ -47,12 +54,12 @@ class LaunchArgumentsModule : Module() {
     AsyncFunction("finishReset") { _: String, _: String ->
     }
 
-    Function("takePendingResetURL") { ->
+    Function("takePendingResetURL") {
       null as String?
     }
 
     // The campus a UI test names with `campus`, by domain. Nil outside UI tests.
-    Function("uiTestCampus") { ->
+    Function("uiTestCampus") {
       if (flag("uitesting")) value("campus") else null
     }
 
