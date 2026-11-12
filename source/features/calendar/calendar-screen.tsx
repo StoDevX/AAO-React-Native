@@ -2,7 +2,12 @@ import * as React from 'react'
 import {useMemo} from 'react'
 import {useRouter} from 'expo-router'
 
-import {CalendarToolbar, type SourcedEvent, useMergedEvents} from '@frogpond/ccc-calendar'
+import {
+	CalendarFilterChips,
+	CalendarToolbar,
+	type SourcedEvent,
+	useMergedEvents,
+} from '@frogpond/ccc-calendar'
 import {type CalendarBodyHandle, DayView, EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
@@ -98,6 +103,18 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 
 	return (
 		<>
+			{/* Android's filters, as chips above the list; iOS's are in the toolbar. */}
+			{adjustable ? (
+				<CalendarFilterChips
+					categories={categories}
+					enabledIds={enabledIds}
+					filter={filter}
+					onSelectFilter={saved.selectFilter}
+					onToggleSource={toggle}
+					organizations={organizations}
+					sources={all}
+				/>
+			) : null}
 			<Body
 				ref={bodyRef}
 				events={events}

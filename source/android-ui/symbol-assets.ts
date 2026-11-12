@@ -27,6 +27,8 @@ import appsOutlined from './symbols/apps.xml'
 import appsFilled from './symbols/apps_fill.xml'
 import arrowBackOutlined from './symbols/arrow_back.xml'
 import arrowBackFilled from './symbols/arrow_back_fill.xml'
+import arrowDropDownOutlined from './symbols/arrow_drop_down.xml'
+import arrowDropDownFilled from './symbols/arrow_drop_down_fill.xml'
 import arrowForwardOutlined from './symbols/arrow_forward.xml'
 import arrowForwardFilled from './symbols/arrow_forward_fill.xml'
 import autoAwesomeOutlined from './symbols/auto_awesome.xml'
@@ -351,6 +353,7 @@ export const SYMBOL_ASSETS: Readonly<
 	app_badging: [appBadgingOutlined, appBadgingFilled],
 	apps: [appsOutlined, appsFilled],
 	arrow_back: [arrowBackOutlined, arrowBackFilled],
+	arrow_drop_down: [arrowDropDownOutlined, arrowDropDownFilled],
 	arrow_forward: [arrowForwardOutlined, arrowForwardFilled],
 	auto_awesome: [autoAwesomeOutlined, autoAwesomeFilled],
 	auto_stories: [autoStoriesOutlined, autoStoriesFilled],
