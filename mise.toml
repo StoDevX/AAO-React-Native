@@ -59,7 +59,7 @@ os = ["macos"]
 version = "10.2.1"
 os = ["macos"]
 
-# Writes the Mac radio's Xcode project from macos/Radio/project.yml.
+# Generates the Mac apps' Xcode projects from macos/*/project.yml.
 [tools.xcodegen]
 version = "2.46.0"
 os = ["macos"]
@@ -419,7 +419,17 @@ claude plugin test .claude/skills/test-writing-reminder
 [tasks."bundle-data"]
 description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
-run = "node scripts/bundle-data.mjs data/ docs/"
+run = "node scripts/bundle-data.mjs --bundle-into-app data/ docs/"
+
+[tasks."data-editor:helper"]
+description = "Bundle the Mac data editor's helper for JavaScriptCore, as the data deploy publishes it"
+wait_for = ["pnpm:install:*"]
+run = "node scripts/build-data-editor-helper.mjs"
+
+[tasks."data-editor:runtime"]
+description = "Build what the Mac data editor bundles: oxfmt, and the preview's Node and ccc-server pins"
+wait_for = ["pnpm:install:*"]
+run = "macos/DataEditor/scripts/embed-runtime.sh"
 
 [tasks.docs]
 description = "Build the DocC site from documentation/ into docs/documentation/"
