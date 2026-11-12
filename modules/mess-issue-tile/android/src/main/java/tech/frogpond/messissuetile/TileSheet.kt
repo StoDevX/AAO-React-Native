@@ -36,6 +36,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -109,6 +110,7 @@ internal class PhotoState(val image: ImageBitmap?, val loading: Boolean)
  * elevation shadow. The tile is one button: pressing it presses the sheet down a little, with a
  * ripple in the sheet's own outline, and TalkBack reads only its label.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun FoldedTile(
   content: TileContent,
@@ -121,7 +123,7 @@ internal fun FoldedTile(
 ) {
   val palette = PaperPalette.of(dark)
   val sheet = content.sheet
-  /** How far along each edge a turned corner reaches: enough to nick a headline's last letter at most. */
+  // How far along each edge a turned corner reaches: enough to nick a headline's last letter at most.
   val earSize = if (content.layout.isTop) 14.dp else 10.dp
   val outline = remember(sheet.edgeSeed, sheet.dogEar, earSize) {
     PaperOutline(seed = sheet.edgeSeed.toLong().toInt(), dogEar = sheet.dogEar, earSize = earSize)
@@ -148,6 +150,13 @@ internal fun FoldedTile(
       // Room for the sheets showing behind, down and to the right.
       .padding(end = 5.dp, bottom = 5.dp)
       .aspectRatio(content.layout.aspect)
+      .then(
+        if (!testID.isNullOrEmpty()) {
+          Modifier.semantics { testTagsAsResourceId = true }.testTag(testID)
+        } else {
+          Modifier
+        }
+      )
       .clickable(
         interactionSource = interaction,
         indication = null,
@@ -159,13 +168,6 @@ internal fun FoldedTile(
         role = Role.Button
         onClick { onPress(); true }
       }
-      .then(
-        if (!testID.isNullOrEmpty()) {
-          Modifier.semantics { testTagsAsResourceId = true }.testTag(testID)
-        } else {
-          Modifier
-        }
-      )
   ) {
     Box(
       Modifier
