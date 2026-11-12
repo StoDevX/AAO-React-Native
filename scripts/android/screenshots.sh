@@ -74,6 +74,13 @@ shoot() {
 		# this closes one already up.
 		adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 		adb exec-out screencap -p >"$out/$mode/$name.png"
+		# The view hierarchy with each view's bounds, for measuring layout --
+		# where a title sits against the app bar's icons -- rather than eyeing
+		# pixels. Once per screen is enough.
+		if [ "$mode" = light ]; then
+			adb shell uiautomator dump /sdcard/view.xml >/dev/null 2>&1 &&
+				adb shell cat /sdcard/view.xml >"$out/$mode/$name.xml" || true
+		fi
 		# Whether the app is still in front, so a crash reads as one rather than as the launcher.
 		top=$(adb shell dumpsys activity activities | grep -m1 -E 'topResumedActivity|mResumedActivity' || true)
 		echo "$mode $name: $top" >>"$out/foreground.txt"
