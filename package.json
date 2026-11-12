@@ -40,6 +40,7 @@
     "@frogpond/open-url": "workspace:*",
     "@frogpond/place-card-header": "workspace:*",
     "@frogpond/quick-actions": "workspace:*",
+    "@frogpond/radio-scrub": "workspace:*",
     "@frogpond/schedules": "workspace:*",
     "@frogpond/selectable-text": "workspace:*",
     "@frogpond/separator": "workspace:*",
