@@ -3,7 +3,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import {load} from 'js-yaml'
 
-export function buildFaqs({sourceFile, outputFile}) {
+/** The FAQs as the app reads them. */
+export function renderFaqs(sourceFile) {
 	let raw = load(fs.readFileSync(sourceFile, 'utf-8')) ?? {}
 	let faqs = Array.isArray(raw.faqs) ? raw.faqs : []
 	let legacyText =
@@ -18,8 +19,12 @@ export function buildFaqs({sourceFile, outputFile}) {
 		text: legacyText,
 	}
 
+	return JSON.stringify(payload) + '\n'
+}
+
+export function buildFaqs({sourceFile, outputFile}) {
 	fs.mkdirSync(path.dirname(outputFile), {recursive: true})
-	fs.writeFileSync(outputFile, JSON.stringify(payload) + '\n')
+	fs.writeFileSync(outputFile, renderFaqs(sourceFile))
 }
 
 if (import.meta.main) {
