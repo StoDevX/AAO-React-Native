@@ -101,10 +101,13 @@ targets:
     # oxfmt, and the Node and ccc-server the preview downloads, from
     # `mise run data-editor:runtime`. Every build stops without them: an app
     # without oxfmt opens, then fails the first time it saves a file.
+    # oxfmt goes in Contents/Helpers, signed as the app is with the hardened
+    # runtime: notarization refuses code among the resources, or code
+    # oxfmt's release signed only ad hoc. Xcode signs the app itself after this.
     postBuildScripts:
       - name: Embed Runtime
         inputFiles: ['$(SRCROOT)/build/runtime/oxfmt']
-        outputFiles: ['$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Runtime/oxfmt']
+        outputFiles: ['$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/oxfmt']
         script: |
           set -euo pipefail
           runtime="$SRCROOT/build/runtime"
@@ -112,7 +115,11 @@ targets:
             echo "error: run \`mise run data-editor:runtime\` first" >&2
             exit 1
           fi
-          rsync -a --delete "$runtime/" "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Runtime/"
+          rsync -a --delete --exclude oxfmt "$runtime/" "$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/Runtime/"
+          helpers="$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers"
+          mkdir -p "$helpers"
+          cp "$runtime/oxfmt" "$helpers/oxfmt"
+          codesign --force --options runtime --timestamp=none --sign "${EXPANDED_CODE_SIGN_IDENTITY:--}" "$helpers/oxfmt"
     settings:
       base:
         CODE_SIGN_ENTITLEMENTS: DataEditor/DataEditor.entitlements
