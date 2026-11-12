@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>All About Olaf Data Editor</string>
+	<key>DataEditorGitHubClientID</key>
+	<string>$(DATA_EDITOR_GITHUB_CLIENT_ID)</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>The Data Editor shares your edits with All About Olaf on your phone over your local network.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_ccc-server._tcp.</string>
+	</array>
+</dict>
+</plist>

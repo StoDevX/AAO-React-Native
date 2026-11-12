@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {load as loadYaml} from 'js-yaml'
+import {raise} from './data-problems.mjs'
 import {IMAGE_GROUPS, IMAGES_DIR} from './make-images.mjs'
 
 /**
@@ -8,6 +9,18 @@ import {IMAGE_GROUPS, IMAGES_DIR} from './make-images.mjs'
  * ccc-server proxies this tree at `/v1/images/<group>/<name>.webp`.
  */
 export const PUBLISHED_DIR = 'img'
+
+/** Fails, naming each, when a group has no folder to publish from. */
+export function checkImageGroups({fromDir = IMAGES_DIR} = {}) {
+	raise(
+		IMAGE_GROUPS.filter((group) => !fs.existsSync(path.join(fromDir, group))).map((group) =>
+			missingGroup(path.join(fromDir, group), group),
+		),
+	)
+}
+
+const missingGroup = (groupDir, group) =>
+	new Error(`bundle-images: ${groupDir} is missing, so the "${group}" images cannot be published`)
 
 /**
  * Copy each group's committed WebP files into `<toDir>/img/<group>/`. A group
@@ -19,9 +32,7 @@ export function bundleImages({fromDir = IMAGES_DIR, toDir}) {
 	for (let group of IMAGE_GROUPS) {
 		let groupDir = path.join(fromDir, group)
 		if (!fs.existsSync(groupDir)) {
-			throw new Error(
-				`bundle-images: ${groupDir} is missing, so the "${group}" images cannot be published`,
-			)
+			throw missingGroup(groupDir, group)
 		}
 		let outDir = path.join(toDir, PUBLISHED_DIR, group)
 		fs.mkdirSync(outDir, {recursive: true})

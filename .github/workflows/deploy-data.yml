@@ -53,6 +53,11 @@ jobs:
       - name: Bundle the data
         run: mise run bundle-data
 
+      # The Mac data editor downloads its helper with the data, so the two
+      # always come from one commit.
+      - name: Build the data editor's helper
+        run: node scripts/build-data-editor-helper.mjs --out docs/data-editor --commit "$GITHUB_SHA"
+
       # Pages replaces the whole site on each deploy, so the documentation
       # rides along every time. docs.yml cached it, on a Mac if it had changed.
       - name: Restore the documentation
