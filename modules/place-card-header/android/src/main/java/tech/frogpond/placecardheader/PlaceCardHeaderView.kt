@@ -1,8 +1,10 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
+// basicMarquee and MarqueeSpacing were experimental before Compose 1.7.
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 
 package tech.frogpond.placecardheader
 
 import android.provider.Settings
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
