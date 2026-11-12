@@ -22,7 +22,7 @@ import type {CalendarSource} from './sources'
  * CALENDARS, then each axis, then Reset Filters -- where a menu opened from the
  * bottom bar would otherwise draw its contents bottom to top.
  */
-type Props = {
+export type CalendarPickerProps = {
 	sources: CalendarSource[]
 	enabledIds: string[]
 	onToggleSource: (id: string) => void
@@ -38,7 +38,29 @@ const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 // the only handle those tests have on the toolbar menu.
 const LABEL = accessibilityLabel('Calendar filter')
 
-export function CalendarPicker({
+export function CalendarPicker({onTodayPress, ...menu}: CalendarPickerProps): React.ReactNode {
+	return (
+		<Stack.Toolbar placement="bottom">
+			{onTodayPress ? (
+				<Stack.Toolbar.Button accessibilityLabel="Today" onPress={onTodayPress}>
+					Today
+				</Stack.Toolbar.Button>
+			) : null}
+			<Stack.Toolbar.Spacer />
+			<Stack.Toolbar.View>
+				<CalendarFilterMenu {...menu} systemName="calendar" />
+			</Stack.Toolbar.View>
+		</Stack.Toolbar>
+	)
+}
+
+type FilterMenuProps = Omit<CalendarPickerProps, 'onTodayPress'> & {
+	/** The menu's glyph: the calendar on iOS's bottom bar, the filter glyph in Android's app bar. */
+	systemName: React.ComponentProps<typeof Image>['systemName']
+}
+
+/** The filter menu itself, for a toolbar to place. */
+export function CalendarFilterMenu({
 	sources,
 	enabledIds,
 	onToggleSource,
@@ -46,8 +68,8 @@ export function CalendarPicker({
 	organizations,
 	filter,
 	onSelectFilter,
-	onTodayPress,
-}: Props): React.ReactNode {
+	systemName,
+}: FilterMenuProps): React.ReactNode {
 	let isActive = filter !== null
 	// Keep the modifier list structurally identical every render -- only the
 	// colour value changes. Swapping modifier types/count rebuilds the native
@@ -63,60 +85,47 @@ export function CalendarPicker({
 	}
 
 	return (
-		<Stack.Toolbar placement="bottom">
-			{onTodayPress ? (
-				<Stack.Toolbar.Button accessibilityLabel="Today" onPress={onTodayPress}>
-					Today
-				</Stack.Toolbar.Button>
-			) : null}
-			<Stack.Toolbar.Spacer />
-			<Stack.Toolbar.View>
-				<Host matchContents={true}>
-					<Menu label={<Image systemName="calendar" />} modifiers={menuModifiers}>
-						<Section modifiers={STAYS_OPEN} title="Calendars">
-							{sources.map((source) => (
-								<Toggle
-									isOn={enabledIds.includes(source.id)}
-									key={source.id}
-									label={source.title}
-									onIsOnChange={() => onToggleSource(source.id)}
-								/>
-							))}
-						</Section>
-						<Menu label={axisLabel('category', 'Category', filter)} modifiers={STAYS_OPEN}>
-							{categories.map((category) => (
-								<Toggle
-									isOn={filter?.axis === 'category' && filter.value === category.value}
-									key={category.value}
-									label={`${category.value} (${category.count})`}
-									onIsOnChange={() => toggleFilter('category', category.value)}
-								/>
-							))}
-						</Menu>
-						{organizations.length > 0 ? (
-							<Menu
-								label={axisLabel('organization', 'Organization', filter)}
-								modifiers={STAYS_OPEN}
-							>
-								{organizations.map((organization) => (
-									<Toggle
-										isOn={filter?.axis === 'organization' && filter.value === organization.value}
-										key={organization.value}
-										label={`${organization.value} (${organization.count})`}
-										onIsOnChange={() => toggleFilter('organization', organization.value)}
-									/>
-								))}
-							</Menu>
-						) : null}
-						{filter ? (
-							<>
-								<Divider />
-								<Button label="Reset Filters" onPress={() => onSelectFilter(null)} />
-							</>
-						) : null}
+		<Host matchContents={true}>
+			<Menu label={<Image systemName={systemName} />} modifiers={menuModifiers}>
+				<Section modifiers={STAYS_OPEN} title="Calendars">
+					{sources.map((source) => (
+						<Toggle
+							isOn={enabledIds.includes(source.id)}
+							key={source.id}
+							label={source.title}
+							onIsOnChange={() => onToggleSource(source.id)}
+						/>
+					))}
+				</Section>
+				<Menu label={axisLabel('category', 'Category', filter)} modifiers={STAYS_OPEN}>
+					{categories.map((category) => (
+						<Toggle
+							isOn={filter?.axis === 'category' && filter.value === category.value}
+							key={category.value}
+							label={`${category.value} (${category.count})`}
+							onIsOnChange={() => toggleFilter('category', category.value)}
+						/>
+					))}
+				</Menu>
+				{organizations.length > 0 ? (
+					<Menu label={axisLabel('organization', 'Organization', filter)} modifiers={STAYS_OPEN}>
+						{organizations.map((organization) => (
+							<Toggle
+								isOn={filter?.axis === 'organization' && filter.value === organization.value}
+								key={organization.value}
+								label={`${organization.value} (${organization.count})`}
+								onIsOnChange={() => toggleFilter('organization', organization.value)}
+							/>
+						))}
 					</Menu>
-				</Host>
-			</Stack.Toolbar.View>
-		</Stack.Toolbar>
+				) : null}
+				{filter ? (
+					<>
+						<Divider />
+						<Button label="Reset Filters" onPress={() => onSelectFilter(null)} />
+					</>
+				) : null}
+			</Menu>
+		</Host>
 	)
 }

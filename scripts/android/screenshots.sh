@@ -69,6 +69,10 @@ shoot() {
 		launch "$route"
 		# A cold start loads the bundle, then the screen fetches its (mocked) data.
 		sleep 6
+		# The emulator's launcher sometimes stalls under the load and its "isn't
+		# responding" dialog lands over the app. hide_error_dialogs stops most;
+		# this closes one already up.
+		adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 		adb exec-out screencap -p >"$out/$mode/$name.png"
 		# Whether the app is still in front, so a crash reads as one rather than as the launcher.
 		top=$(adb shell dumpsys activity activities | grep -m1 -E 'topResumedActivity|mResumedActivity' || true)
@@ -80,6 +84,10 @@ adb logcat -c
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
+# Not-responding and crash dialogs from other apps -- the emulator's launcher
+# stalls on a slow runner -- would cover the screenshots. The app's own crash
+# still shows: foreground.txt and errors.txt record it.
+adb shell settings put global hide_error_dialogs 1
 
 # The first launch, cold, timed.
 adb shell am start -W -n "$package/.MainActivity" | tee "$out/cold-start.txt"
