@@ -13,7 +13,16 @@ export type RowStyle = 'grouped' | 'plain'
  * so nothing nested deeper draws a second one. A button that is the whole row
  * becomes a clickable list item; a stack becomes the item's content.
  */
-export type RowSlot = {position: RowPosition; style: RowStyle; divider: boolean}
+export type RowSlot = {
+	position: RowPosition
+	style: RowStyle
+	/** Draws a divider under the row: every plain row but a section's last. */
+	divider: boolean
+	/** Leaves a gap above the row, for a row standing alone outside any section. */
+	spaced?: boolean
+	/** The `listRowBackground` its section set for every row in it. */
+	background?: unknown
+}
 
 /** The row slot the current view may claim, or null once one has. */
 export const RowSlotContext = React.createContext<RowSlot | null>(null)

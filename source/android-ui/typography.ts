@@ -1,4 +1,15 @@
-import type {TextFontWeight, TextStyle, TypographyStyle} from '@expo/ui/jetpack-compose'
+import type * as React from 'react'
+
+import type {Text} from '@expo/ui/jetpack-compose'
+
+/** The style Compose's `Text` takes. */
+export type TextStyle = NonNullable<React.ComponentProps<typeof Text>['style']>
+
+/** A Material type scale role. */
+export type TypographyStyle = NonNullable<TextStyle['typography']>
+
+/** A Compose font weight. */
+type TextFontWeight = NonNullable<TextStyle['fontWeight']>
 
 /** The parameters of a SwiftUI `font(…)` modifier, as its payload carries them. */
 export type FontParams = {

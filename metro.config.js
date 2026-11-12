@@ -31,6 +31,9 @@ const defaultConfig = getSentryExpoConfig(__dirname, {
 // then swaps a fixture's result.
 const upstreamResolve = defaultConfig.resolver.resolveRequest
 
+/** The Android stand-in for @expo/ui/swift-ui; see resolveRequest below. */
+const ANDROID_UI = `${__dirname}/source/android-ui/index.tsx`
+
 const config = {
 	transformer: {
 		// Turns Wiki Monkeys' .yaml fixtures into JSON modules, then hands every
@@ -41,6 +44,14 @@ const config = {
 		// A release bundle carries an empty object for each UI-test fixture, which
 		// only --uitesting reads; `mise run bundle:ios` keeps them, for the UI tests.
 		resolveRequest: (context, moduleName, platform) => {
+			// The screens are written against SwiftUI through @expo/ui/swift-ui,
+			// whose native views exist only on iOS. On Android that import resolves
+			// to source/android-ui, which implements the same components in Material
+			// 3 on Jetpack Compose. The modifiers module is plain data and loads as
+			// is. iOS resolves normally; Jest maps the import to its own mock.
+			if (platform === 'android' && moduleName === '@expo/ui/swift-ui') {
+				return {type: 'sourceFile', filePath: ANDROID_UI}
+			}
 			let resolution = upstreamResolve(context, moduleName, platform)
 			let keep = process.env.KEEP_UITEST_FIXTURES === '1'
 			if (

@@ -112,9 +112,9 @@ function isDark(hex: string): boolean {
 	if (Number.isNaN(value)) {
 		return false
 	}
-	let r = (value >> 16) & 0xff
-	let g = (value >> 8) & 0xff
-	let b = value & 0xff
+	let r = (value >> 16) & 255
+	let g = (value >> 8) & 255
+	let b = value & 255
 	return 0.299 * r + 0.587 * g + 0.114 * b < 128
 }
 
@@ -147,8 +147,8 @@ function namedColor(name: string, palette: Palette): string | undefined {
 /** An ARGB integer from `processColor` as the `#RRGGBBAA` string Compose parses. */
 function argbToHex(argb: number): string {
 	let unsigned = argb >>> 0
-	let alpha = (unsigned >>> 24) & 0xff
-	let rgb = unsigned & 0xffffff
+	let alpha = (unsigned >>> 24) & 255
+	let rgb = unsigned & 16_777_215
 	return `#${rgb.toString(16).padStart(6, '0')}${alpha.toString(16).padStart(2, '0')}`.toUpperCase()
 }
 
@@ -159,7 +159,7 @@ function argbToHex(argb: number): string {
  * surface it stands for), and anything Compose would refuse is dropped rather
  * than handed to native, where a malformed colour throws.
  */
-export function resolveColor(input: ColorInput | unknown, palette: Palette): string | undefined {
+export function resolveColor(input: unknown, palette: Palette): string | undefined {
 	if (input == null) {
 		return undefined
 	}
