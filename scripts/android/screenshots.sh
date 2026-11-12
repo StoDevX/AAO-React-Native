@@ -13,7 +13,7 @@ out="$3"
 mkdir -p "$out/light" "$out/dark"
 
 # The screens a reader reaches from Home, and the ones a deep link opens on
-# its own. Routes needing a parameter are reached by tapping through instead.
+# its own, and a detail screen or two opened by its parameter in the path.
 routes=(
 	''
 	menus
@@ -41,6 +41,10 @@ routes=(
 	print-jobs
 	support
 	customize
+	customize/app-icon
+	hours/detail/The%20Cage
+	dictionary/entry/AAC
+	directory/named/PubSafe
 	developer
 	athletics
 	report-problem
