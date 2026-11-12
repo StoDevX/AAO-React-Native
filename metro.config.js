@@ -34,6 +34,13 @@ const upstreamResolve = defaultConfig.resolver.resolveRequest
 /** The Android stand-in for @expo/ui/swift-ui; see resolveRequest below. */
 const ANDROID_UI = `${__dirname}/source/android-ui/index.tsx`
 
+/** The Android stand-in for Expo Router's toolbar items; see resolveRequest below. */
+const ANDROID_TOOLBAR = `${__dirname}/source/android-ui/toolbar.tsx`
+
+/** Expo Router's Android toolbar button and menu modules, which ANDROID_TOOLBAR wraps. */
+const EXPO_ROUTER_TOOLBAR_ITEMS =
+	/expo-router\/build\/layouts\/stack-utils\/toolbar\/StackToolbar(Button|Menu)\/native\.android\.js$/
+
 const config = {
 	transformer: {
 		// Turns Wiki Monkeys' .yaml fixtures into JSON modules, then hands every
@@ -53,6 +60,19 @@ const config = {
 				return {type: 'sourceFile', filePath: ANDROID_UI}
 			}
 			let resolution = upstreamResolve(context, moduleName, platform)
+			// Expo Router's Android toolbar draws an item only from an image
+			// source, and the screens name SF Symbols, so every icon button and
+			// menu in a top app bar went missing. Its button and menu modules
+			// resolve to wrappers that hand them the Material Symbol instead,
+			// except from the wrappers themselves, which import the originals.
+			if (
+				platform === 'android' &&
+				resolution.type === 'sourceFile' &&
+				EXPO_ROUTER_TOOLBAR_ITEMS.test(resolution.filePath) &&
+				context.originModulePath !== ANDROID_TOOLBAR
+			) {
+				return {type: 'sourceFile', filePath: ANDROID_TOOLBAR}
+			}
 			let keep = process.env.KEEP_UITEST_FIXTURES === '1'
 			if (
 				resolution.type === 'sourceFile' &&
