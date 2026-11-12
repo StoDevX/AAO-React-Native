@@ -440,17 +440,29 @@ const config: ExpoConfig = {
 							data: [{scheme: variant.scheme.toLowerCase()}],
 						},
 					],
+		// The map's location, and the radio's playback with the screen off. No
+		// POST_NOTIFICATIONS: the radio's lock-screen controls are a media
+		// session's notification, which Android shows without it, and nothing
+		// asks for it, so on Android 13 and later it would never be granted.
 		permissions: [
 			'android.permission.ACCESS_COARSE_LOCATION',
 			'android.permission.ACCESS_FINE_LOCATION',
 			'android.permission.FOREGROUND_SERVICE',
 			'android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK',
-			'android.permission.POST_NOTIFICATIONS',
 		],
 		blockedPermissions: [
 			'android.permission.RECORD_AUDIO',
 			'android.permission.READ_CALENDAR',
 			'android.permission.WRITE_CALENDAR',
+			// expo-image-picker declares these up to Android 12, but the library
+			// picker the problem report uses hands back a URI the app may read
+			// without them, and Play asks why an app holds broad storage access.
+			'android.permission.READ_EXTERNAL_STORAGE',
+			'android.permission.WRITE_EXTERNAL_STORAGE',
+			// Expo's template asks for it so a debug build can draw React Native's
+			// overlays; the app draws over nothing else, and Play treats it as a
+			// sensitive permission.
+			'android.permission.SYSTEM_ALERT_WINDOW',
 		],
 	},
 
