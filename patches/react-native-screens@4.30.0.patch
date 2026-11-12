@@ -1,0 +1,18 @@
+diff --git a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
+index e0762e87bc2080805bec5e9f25523fc6d42afae6..c69e29f809f6d679bfaf8e92dea883c5c10dd90c 100644
+--- a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
++++ b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
+@@ -58,6 +58,13 @@ open class CustomToolbar(
+         // This guarantees that all size-dependent children are present during the first layout pass,
+         // resulting in correct height determination from the beginning.
+         menu
++
++        // Material 3's small top app bar is 64dp. Without a minimum the Toolbar
++        // takes its tallest child's height -- a 48dp header subview -- and centres
++        // the title and subviews in that, while the 56dp navigation button keeps
++        // its own height from the top: the back arrow sat about 4dp below the
++        // title and actions. At 64dp every child centres on the same line.
++        minimumHeight = (64 * resources.displayMetrics.density).toInt()
+     }
+ 
+     private val layoutCallback: Choreographer.FrameCallback =
