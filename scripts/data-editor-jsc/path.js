@@ -23,7 +23,10 @@ export function join(...parts) {
 
 export function resolve(...parts) {
 	let resolved = ''
-	for (let part of parts) resolved = part.startsWith('/') ? part : `${resolved}/${part}`
+	for (let part of parts) {
+		if (part.startsWith('/')) resolved = part
+		else if (part !== '') resolved = resolved ? `${resolved}/${part}` : part
+	}
 	if (!resolved.startsWith('/')) resolved = `${globalThis.__host.cwd()}/${resolved}`
 	return normalize(resolved)
 }
