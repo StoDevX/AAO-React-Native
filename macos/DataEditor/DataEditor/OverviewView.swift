@@ -43,6 +43,7 @@ struct OverviewView: View {
     @State private var submitting = false
     /// The file whose Revert waits for the contributor to confirm it.
     @State private var reverting: String?
+    @State private var discardingAll = false
 
     /// The question that confirms a revert, naming the building where its file is known.
     static func revertQuestion(file: String, name: String?) -> String {
@@ -115,6 +116,9 @@ struct OverviewView: View {
                     Text(reason).foregroundStyle(.secondary)
                 }
                 Spacer()
+                if !parts.isEmpty {
+                    Button("Discard All Changes…", role: .destructive) { discardingAll = true }
+                }
                 // no Return key: in the Changesets window Return opens the chosen changeset
                 Button(control.title) { submitting = true }
                     .disabled(!control.isEnabled)
@@ -133,6 +137,14 @@ struct OverviewView: View {
                 .accessibilityIdentifier("confirm-revert")
         } message: { _ in
             Text("Your changes to this file will be lost.")
+        }
+        .confirmationDialog("Discard all changes?", isPresented: $discardingAll, titleVisibility: .visible) {
+            Button("Discard All Changes", role: .destructive) { Task { await model.discardAll() } }
+                .accessibilityIdentifier("confirm-discard-all")
+        } message: {
+            Text(model.currentSubmission == nil
+                ? "Your changes to every building will be lost."
+                : "Your changes to every building will be lost. The pull request stays on GitHub.")
         }
         .sheet(isPresented: $submitting) { SubmitSheet() }
         .task {

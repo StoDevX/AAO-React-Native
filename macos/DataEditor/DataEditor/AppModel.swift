@@ -510,6 +510,15 @@ final class AppModel {
         await afterFilesChanged()
     }
 
+    /// Drops every edit and conflict in Current changes. Refused during an
+    /// update or a submission, which read `data/` underneath it.
+    func discardAll() async {
+        guard !updating, !submitting else { return }
+        try? workspace.discardAll()
+        conflicts = workspace.conflicts
+        await afterFilesChanged()
+    }
+
     private static func text(_ data: Data?) -> String { data.map { String(decoding: $0, as: UTF8.self) } ?? "" }
 
     func diff(for file: String) -> [DiffLine] {

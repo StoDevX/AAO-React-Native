@@ -34,6 +34,20 @@ final class OverviewUITests: XCTestCase {
         attachScreenshot(of: currentChanges(in: app), named: "Overview with no changes after the revert")
     }
 
+    func testDiscardingAllChangesAsksFirst() throws {
+        let app = try launchWithRepoData(conflicted: "building-hours/1-3-stav.yaml").app
+        changeTheCageAndOpenTheOverview(in: app)
+
+        currentChanges(in: app).buttons["Discard All Changes…"].click()
+        let confirm = currentChanges(in: app).buttons["confirm-discard-all"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        attachScreenshot(of: currentChanges(in: app), named: "Discard All asks first")
+        confirm.click()
+
+        XCTAssertTrue(currentChanges(in: app).staticTexts["No changes"].waitForExistence(timeout: 5))
+        XCTAssertFalse(currentChanges(in: app).buttons["Discard All Changes…"].exists)
+    }
+
     func testSubmittingWithoutAGitHubSignInSaysSo() throws {
         let app = try launchWithRepoData(arguments: ["-UITestGitHubClientID", ""]).app
         changeTheCageAndOpenTheOverview(in: app)

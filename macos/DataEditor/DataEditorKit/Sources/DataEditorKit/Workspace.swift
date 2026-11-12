@@ -392,6 +392,12 @@ public final class Workspace: Sendable {
         try fm.removeItem(at: fm.fileExists(atPath: kept.path) ? kept : deletedConflictsDirectory.appending(path: file))
     }
 
+    /// Drops every edit and set-aside copy, leaving the data as master has it.
+    public func discardAll() throws {
+        for file in conflicts { try keepLatest(file) }
+        for file in try changedFiles() { try revert(file) }
+    }
+
     /// Puts a data file back as it was at the base commit.
     public func revert(_ file: String) throws {
         let target = dataDirectory.appending(path: file)

@@ -265,6 +265,22 @@ struct WorkspaceTests {
         #expect(try workspace.changedFiles() == [])
     }
 
+    @Test func discardsEveryChangeAndConflict() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).download(commit: "c1")
+        try body("name: The Cage Grill\n").write(to: root.appending(path: "data/building-hours/1-1-cage.yaml"))
+        let (c2, _) = stubRepo(commit: "c2", cageHours: "name: The Cage at Buntrock\n")
+        let workspace = Workspace(root: root, session: c2)
+        #expect(try await workspace.update(to: "c2") == ["building-hours/1-1-cage.yaml"])
+        try body("name: The Pause\n").write(to: root.appending(path: "data/building-hours/2-1-pause.yaml"))
+
+        try workspace.discardAll()
+        #expect(workspace.conflicts == [])
+        #expect(try workspace.changedFiles() == [])
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage at Buntrock\n"))
+    }
+
     @Test func carriesAnAddedAndADeletedFileThroughAnUpdate() async throws {
         let root = temporaryRoot()
         let (c1, _) = stubRepo()
