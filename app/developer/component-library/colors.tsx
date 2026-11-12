@@ -10,15 +10,54 @@
  */
 
 import * as React from 'react'
-import {DynamicColorIOS, PlatformColor, StyleSheet, Text, View} from 'react-native'
+import {DynamicColorIOS, Platform, PlatformColor, StyleSheet, Text, View} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 import {LibraryWrapper} from '../../../source/features/developer/component-library/base/library-wrapper'
 
-function createTable(): Array<{
+/** A swatch in a table: what it is called, and the colour. */
+type Swatch = {
 	color: ReturnType<typeof PlatformColor>
 	label: string
-}> {
+}
+
+/**
+ * The Material 3 theme's colour roles, which Android's `PlatformColor` reads as
+ * theme attributes, and which `@frogpond/colors` maps iOS's names onto there.
+ */
+const MATERIAL_ROLES = [
+	'colorPrimary',
+	'colorOnPrimary',
+	'colorPrimaryContainer',
+	'colorOnPrimaryContainer',
+	'colorSecondary',
+	'colorOnSecondary',
+	'colorSecondaryContainer',
+	'colorOnSecondaryContainer',
+	'colorTertiary',
+	'colorOnTertiary',
+	'colorTertiaryContainer',
+	'colorOnTertiaryContainer',
+	'colorError',
+	'colorOnError',
+	'colorErrorContainer',
+	'colorOnErrorContainer',
+	'colorSurface',
+	'colorOnSurface',
+	'colorOnSurfaceVariant',
+	'colorSurfaceContainerLowest',
+	'colorSurfaceContainerLow',
+	'colorSurfaceContainer',
+	'colorSurfaceContainerHigh',
+	'colorSurfaceContainerHighest',
+	'colorOutline',
+	'colorOutlineVariant',
+]
+
+function createTable(): Array<Swatch> {
+	if (Platform.OS === 'android') {
+		return MATERIAL_ROLES.map((role) => ({label: role, color: PlatformColor(`?attr/${role}`)}))
+	}
 	return [
 		// https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
 		// Label Colors
@@ -130,9 +169,10 @@ function PlatformColorsExample() {
 }
 
 function FallbackColorsExample() {
+	let fallback = Platform.OS === 'android' ? '?attr/colorTertiary' : 'systemGreenColor'
 	let color = {
-		label: "PlatformColor('bogus', 'systemGreenColor')",
-		color: PlatformColor('bogus', 'systemGreenColor'),
+		label: `PlatformColor('bogus', '${fallback}')`,
+		color: PlatformColor('bogus', fallback),
 	}
 
 	return (
@@ -223,7 +263,10 @@ const styles = StyleSheet.create({
 	labelCell: {
 		flex: 1,
 		alignItems: 'stretch',
-		color: PlatformColor('labelColor'),
+		color: Platform.select({
+			android: PlatformColor('?attr/colorOnSurface'),
+			default: PlatformColor('labelColor'),
+		}),
 	},
 	colorCell: {flex: 0.25, alignItems: 'stretch'},
 })
@@ -236,7 +279,7 @@ export default function ColorsLibraryPage(): React.ReactNode {
 			<Stack.Title>Colors</Stack.Title>
 			<LibraryWrapper>
 				<>
-					<Section title="Platform Colors">
+					<Section title={Platform.OS === 'android' ? 'Material Colors' : 'Platform Colors'}>
 						<PlatformColorsExample />
 					</Section>
 
@@ -244,13 +287,18 @@ export default function ColorsLibraryPage(): React.ReactNode {
 						<FallbackColorsExample />
 					</Section>
 
-					<Section title="iOS Dynamic Colors">
-						<DynamicColorsExample />
-					</Section>
+					{/* DynamicColorIOS throws anywhere but iOS. */}
+					{Platform.OS === 'ios' ? (
+						<>
+							<Section title="iOS Dynamic Colors">
+								<DynamicColorsExample />
+							</Section>
 
-					<Section title="Variant Colors">
-						<VariantColorsExample />
-					</Section>
+							<Section title="Variant Colors">
+								<VariantColorsExample />
+							</Section>
+						</>
+					) : null}
 				</>
 			</LibraryWrapper>
 		</>

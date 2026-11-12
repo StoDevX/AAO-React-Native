@@ -1,11 +1,7 @@
 import * as React from 'react'
 import {processColor, type ColorValue} from 'react-native'
 
-import {
-	ADAPTIVE_COLORS,
-	type AdaptiveColorName,
-	type AdaptivePair,
-} from '@frogpond/colors'
+import {ADAPTIVE_COLORS, type AdaptiveColorName, type AdaptivePair} from '@frogpond/colors'
 import {type MaterialColors, useMaterialColors} from '@expo/ui/jetpack-compose'
 
 /**
@@ -106,8 +102,9 @@ export type Palette = {colors: MaterialColors; dark: boolean}
 
 /**
  * The current Host's palette. `useMaterialColors()` reads the palette the
- * nearest `Host` derived from its seed colour, so every role resolved here is
- * on-brand and follows light and dark.
+ * nearest `Host` has: the wallpaper's dynamic colours where the system has
+ * them, and the brand gold's otherwise, as the app's theme has. Every role
+ * resolved here follows light and dark.
  */
 export function usePalette(): Palette {
 	let colors = useMaterialColors()
