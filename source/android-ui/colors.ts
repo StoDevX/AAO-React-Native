@@ -1,6 +1,11 @@
 import * as React from 'react'
 import {processColor, type ColorValue} from 'react-native'
 
+import {
+	ADAPTIVE_COLORS,
+	type AdaptiveColorName,
+	type AdaptivePair,
+} from '@frogpond/colors'
 import {type MaterialColors, useMaterialColors} from '@expo/ui/jetpack-compose'
 
 /**
@@ -14,10 +19,11 @@ export type ColorInput = ColorValue | Record<string, unknown> | null | undefined
 type Role = keyof MaterialColors
 
 /**
- * iOS's semantic colours, which `@frogpond/colors` exports as
- * `PlatformColor`s, mapped to the Material roles that play the same part. On
- * Android a `PlatformColor('label')` is a resource lookup that resolves to
- * nothing, so every one the app uses is translated here instead.
+ * iOS's semantic colours, by the names SwiftUI and iOS's `PlatformColor` use,
+ * mapped to the Material roles that play the same part. On Android
+ * `@frogpond/colors` exports each as that role's theme attribute instead (see
+ * its platform.android.ts, which mirrors this table), so a screen's colour
+ * reaches here as a name only when it is written as a string.
  */
 const SEMANTIC_ROLES: Readonly<Record<string, Role>> = {
 	label: 'onSurface',
@@ -55,34 +61,36 @@ const SEMANTIC_ROLES: Readonly<Record<string, Role>> = {
 }
 
 /**
- * iOS's system hues that have no Material role, as fixed colours. They are
- * brand-neutral accents (a green "open" dot, an orange warning), so they keep
- * their hue, in the Material 3 baseline's tone for each scheme.
+ * SwiftUI's named hues, as the `ADAPTIVE_COLORS` entry each stands for. The
+ * entries are iOS's system hues, which have no Material role: brand-neutral
+ * accents (a green "open" dot, an orange warning) that keep their hue, in the
+ * Material 3 baseline's tone for each scheme. React Native views get the same
+ * values as colour resources, through `@frogpond/colors`.
  */
-const SYSTEM_HUES: Readonly<Record<string, readonly [light: string, dark: string]>> = {
-	systemGreen: ['#2E7D32', '#81C784'],
-	green: ['#2E7D32', '#81C784'],
-	systemOrange: ['#E65100', '#FFB74D'],
-	orange: ['#E65100', '#FFB74D'],
-	systemYellow: ['#F9A825', '#FFF176'],
-	yellow: ['#F9A825', '#FFF176'],
-	systemPink: ['#C2185B', '#F48FB1'],
-	pink: ['#C2185B', '#F48FB1'],
-	systemPurple: ['#7B1FA2', '#CE93D8'],
-	purple: ['#7B1FA2', '#CE93D8'],
-	systemIndigo: ['#3949AB', '#9FA8DA'],
-	indigo: ['#3949AB', '#9FA8DA'],
-	systemTeal: ['#00796B', '#80CBC4'],
-	teal: ['#00796B', '#80CBC4'],
-	systemMint: ['#00897B', '#80CBC4'],
-	mint: ['#00897B', '#80CBC4'],
-	systemCyan: ['#0097A7', '#80DEEA'],
-	cyan: ['#0097A7', '#80DEEA'],
-	systemBrown: ['#6D4C41', '#BCAAA4'],
-	brown: ['#6D4C41', '#BCAAA4'],
-	blue: ['#1565C0', '#90CAF9'],
-	red: ['#C62828', '#EF9A9A'],
+const SWIFTUI_HUES: Readonly<Record<string, AdaptiveColorName>> = {
+	green: 'systemGreen',
+	orange: 'systemOrange',
+	yellow: 'systemYellow',
+	pink: 'systemPink',
+	purple: 'systemPurple',
+	indigo: 'systemIndigo',
+	teal: 'systemTeal',
+	mint: 'systemMint',
+	cyan: 'systemCyan',
+	brown: 'systemBrown',
 }
+
+/**
+ * SwiftUI's blue and red, which as named colours mean the hue itself rather
+ * than the accent and error roles iOS's `systemBlue` and `systemRed` play.
+ */
+const FIXED_HUES: Readonly<Record<string, AdaptivePair>> = {
+	blue: {light: '#1565C0', dark: '#90CAF9'},
+	red: {light: '#C62828', dark: '#EF9A9A'},
+}
+
+/** Every adaptive colour by name, for a lookup by a string. */
+const ADAPTIVE_BY_NAME: Readonly<Record<string, AdaptivePair | undefined>> = ADAPTIVE_COLORS
 
 /** SwiftUI's hierarchical foreground levels, as Material roles. */
 const HIERARCHY_ROLES: Readonly<Record<string, Role>> = {
@@ -93,7 +101,7 @@ const HIERARCHY_ROLES: Readonly<Record<string, Role>> = {
 	quinary: 'outlineVariant',
 }
 
-/** A palette and whether it is the dark one, which `SYSTEM_HUES` needs. */
+/** A palette and whether it is the dark one, which the fixed hues need. */
 export type Palette = {colors: MaterialColors; dark: boolean}
 
 /**
@@ -134,14 +142,46 @@ function namedColor(name: string, palette: Palette): string | undefined {
 	if (role) {
 		return palette.colors[role]
 	}
-	let hue = SYSTEM_HUES[name]
+	let hue = FIXED_HUES[name] ?? ADAPTIVE_BY_NAME[SWIFTUI_HUES[name] ?? name]
 	if (hue) {
-		return palette.dark ? hue[1] : hue[0]
+		return palette.dark ? hue.dark : hue.light
 	}
 	if (name === 'clear' || name === 'transparent') {
 		return '#00000000'
 	}
 	return undefined
+}
+
+/** How an Android `PlatformColor` names a Material role: its theme attribute. */
+const THEME_ROLE = '?attr/color'
+
+/** How an Android `PlatformColor` names one of `ADAPTIVE_COLORS`: its colour resource. */
+const COLOR_RESOURCE = '@color/'
+
+/** Android's own transparent, which `@frogpond/colors` exports as `clear`. */
+const TRANSPARENT = '@android:color/transparent'
+
+/**
+ * The colour a `PlatformColor`'s first name or resource path stands for. On
+ * Android `@frogpond/colors` exports Material roles as theme attributes
+ * (`?attr/colorOnSurface`), its fixed hues as colour resources, and `clear` as
+ * Android's transparent; each resolves here to what the theme would give, so
+ * Compose draws what a React Native view given the same colour draws. Anything
+ * else is taken as an iOS name.
+ */
+function pathColor(path: string, palette: Palette): string | undefined {
+	if (path.startsWith(THEME_ROLE)) {
+		let attribute = path.slice(THEME_ROLE.length)
+		let role = attribute.charAt(0).toLowerCase() + attribute.slice(1)
+		return role in palette.colors ? palette.colors[role as Role] : undefined
+	}
+	if (path.startsWith(COLOR_RESOURCE)) {
+		return namedColor(path.slice(COLOR_RESOURCE.length), palette)
+	}
+	if (path === TRANSPARENT) {
+		return '#00000000'
+	}
+	return namedColor(path, palette)
 }
 
 /** An ARGB integer from `processColor` as the `#RRGGBBAA` string Compose parses. */
@@ -180,7 +220,7 @@ export function resolveColor(input: unknown, palette: Palette): string | undefin
 	let value = input as Record<string, unknown>
 	let platformName = platformColorName(value)
 	if (platformName) {
-		return namedColor(platformName, palette)
+		return pathColor(platformName, palette)
 	}
 	if (value.dynamic && typeof value.dynamic === 'object') {
 		let dynamic = value.dynamic as {light?: unknown; dark?: unknown}

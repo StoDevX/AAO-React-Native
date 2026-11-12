@@ -23,6 +23,7 @@ import {
 	Column,
 	Host as ComposeHost,
 	HorizontalDivider,
+	isDynamicColorAvailable,
 	LazyColumn,
 	LazyRow,
 	PullToRefreshBox,
@@ -130,9 +131,20 @@ function useContainer(modifiers: ModifierList): {
 }
 
 /**
- * SwiftUI's `Host`, as Expo UI's Compose `Host`. Its palette is seeded from the
- * app's brand gold, so every Material role below it is on-brand while still
- * following light and dark; `@expo/ui`'s `useMaterialColors()` reads it.
+ * The seed a `Host` derives its palette from when the screen gives none:
+ * none where the system has dynamic colour, so Compose takes the wallpaper's
+ * as the theme does, and the brand gold where it has not, which the theme
+ * plugin seeds the same palette from.
+ */
+const FALLBACK_SEED = isDynamicColorAvailable ? undefined : gold
+
+/**
+ * SwiftUI's `Host`, as Expo UI's Compose `Host`. Its palette is the one the
+ * app's theme has (plugins/with-material-theme): the wallpaper's dynamic
+ * colours on Android 12 and later, and below that a palette seeded from the
+ * brand gold. Either way every Material role below it follows light and dark,
+ * and matches the React Native views and navigation bars around it, which read
+ * the same roles from the theme. `@expo/ui`'s `useMaterialColors()` reads it.
  */
 export function Host(props: HostProps): React.ReactNode {
 	let {
@@ -144,7 +156,7 @@ export function Host(props: HostProps): React.ReactNode {
 		...rest
 	} = props
 	return (
-		<ComposeHost {...rest} seedColor={seedColor ?? gold}>
+		<ComposeHost {...rest} seedColor={seedColor ?? FALLBACK_SEED}>
 			<Inherit axis="none" env={NO_ENVIRONMENT}>
 				<ListStyleContext.Provider value={null}>
 					<MenuContext.Provider value={null}>{children}</MenuContext.Provider>
