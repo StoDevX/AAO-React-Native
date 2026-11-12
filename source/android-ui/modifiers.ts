@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import {
 	alpha,
+	aspectRatio,
 	background,
 	border,
 	blur,
@@ -11,6 +12,7 @@ import {
 	defaultMinSize,
 	fillMaxHeight,
 	fillMaxWidth,
+	gradientBackground,
 	graphicsLayer,
 	height,
 	offset,
@@ -30,7 +32,7 @@ import {
 	type ModifierConfig,
 } from '@expo/ui/jetpack-compose/modifiers'
 
-import {resolveColor, type ColorInput, type Palette} from './colors'
+import {resolveColor, resolveGradient, type ColorInput, type Palette, type Scheme} from './colors'
 import {type FontParams} from './typography'
 
 /**
@@ -68,7 +70,10 @@ export const MODIFIER_TABLE: Readonly<
 		'compose',
 		'fixed width/height → size/width/height; maxWidth/maxHeight ≥ 1000 → weight(1) along a Row/Column axis, else fillMaxWidth/Height; then wrapContent with the frame alignment; minWidth/minHeight → defaultMinSize; a finite max is dropped',
 	],
-	background: ['compose', 'clip(shape) when one is given, then background(colour)'],
+	background: [
+		'compose',
+		'a linear or radial gradient → gradientBackground(gradient, shape); a colour → clip(shape) when one is given, then background(colour)',
+	],
 	clipShape: ['compose', 'clip(shape)'],
 	clipped: ['compose', 'clip(rectangle)'],
 	mask: ['compose', 'clip(shape)'],
@@ -97,7 +102,10 @@ export const MODIFIER_TABLE: Readonly<
 	onDisappear: ['component', 'an unmount effect'],
 	id: ['component', 'a React key, so a new id rebuilds the view as SwiftUI does'],
 	font: ['environment', 'Material type role (see typography.ts); size/weight/design honoured'],
-	foregroundStyle: ['environment', 'content colour; iOS semantic colours become Material roles'],
+	foregroundStyle: [
+		'environment',
+		'content colour; iOS semantic colours become Material roles; a shape fills with a linear or radial gradient',
+	],
 	foregroundColor: ['environment', 'as foregroundStyle'],
 	tint: ['environment', 'accent for controls and button labels'],
 	bold: ['environment', 'fontWeight 700'],
@@ -173,11 +181,17 @@ export const MODIFIER_TABLE: Readonly<
 	monospacedDigit: ['ignored', 'no tabular figures in Expo UI’s text style'],
 	fixedSize: ['ignored', 'Compose text never truncates to fit unless maxLines says so'],
 	layoutPriority: ['ignored', 'no Compose equivalent'],
-	aspectRatio: ['ignored', 'not in Expo UI’s modifier set'],
+	aspectRatio: [
+		'compose',
+		'a positive ratio → aspectRatio(ratio), fitted to the constraints for fit and fill alike; none (the image’s own) is dropped',
+	],
 	containerRelativeFrame: ['ignored', 'not in Expo UI’s modifier set'],
 	ignoreSafeArea: ['ignored', 'the RN layout around the Host owns insets'],
 	dynamicTypeSize: ['ignored', 'Material type follows the system font scale'],
-	environment: ['ignored', 'colorScheme/editMode overrides have no Compose counterpart here'],
+	environment: [
+		'environment',
+		'colorScheme: content colours resolve in that scheme (see inScheme); other keys are dropped',
+	],
 	presentationCornerRadius: ['ignored', 'Material sheets have fixed corners'],
 	presentationBackgroundInteraction: ['ignored', 'ModalBottomSheet is always modal'],
 	menuOrder: ['ignored', 'Material menus keep source order'],
@@ -307,6 +321,18 @@ function frameAlignment(
 	return [horizontal, vertical]
 }
 
+/**
+ * What a view that takes all the room offered becomes along each axis, as a
+ * frame with an unbounded max size does: a share of a stack's main axis
+ * through `weight`, and the parent's full extent across it.
+ */
+export function fillModifiers(axis: Axis): ModifierConfig[] {
+	return [
+		axis === 'row' ? weight(1) : fillMaxWidth(),
+		axis === 'column' ? weight(1) : fillMaxHeight(),
+	]
+}
+
 /** The Compose modifiers a `frame(…)` stands for, outermost first. */
 function frameModifiers(params: SwiftModifier, axis: Axis): ModifierConfig[] {
 	let out: ModifierConfig[] = []
@@ -422,12 +448,31 @@ export function toCompose(list: ModifierList, options: ComposeOptions): Modifier
 				group.push(...frameModifiers(modifier, axis))
 				break
 			case 'background': {
+				let gradient = resolveGradient(modifier.style, palette)
+				if (gradient) {
+					group.push(
+						gradientBackground(
+							gradient,
+							typeof modifier.shape === 'string'
+								? shapeOf(modifier.shape, modifier.cornerRadius)
+								: undefined,
+						),
+					)
+					break
+				}
 				let color = resolveColor(modifier.style as ColorInput, palette)
 				if (color) {
 					if (typeof modifier.shape === 'string') {
 						group.push(clip(shapeOf(modifier.shape, modifier.cornerRadius)))
 					}
 					group.push(background(color))
+				}
+				break
+			}
+			case 'aspectRatio': {
+				let ratio = num(modifier.ratio)
+				if (ratio !== undefined && ratio > 0) {
+					group.push(aspectRatio(ratio))
 				}
 				break
 			}
@@ -599,6 +644,8 @@ export type Environment = {
 	pickerStyle?: string
 	labelsHidden?: boolean
 	menuStaysOpen?: boolean
+	/** The scheme `environment('colorScheme', …)` forces its content into. */
+	colorScheme?: Scheme
 }
 
 /** The environment above the current view. */
@@ -687,6 +734,14 @@ export function mergeEnvironment(parent: Environment, list: ModifierList): Envir
 				break
 			case 'menuActionDismissBehavior':
 				env.menuStaysOpen = modifier.behavior === 'disabled'
+				break
+			case 'environment':
+				if (
+					modifier.key === 'colorScheme' &&
+					(modifier.value === 'light' || modifier.value === 'dark')
+				) {
+					env.colorScheme = modifier.value
+				}
 				break
 			default:
 				break

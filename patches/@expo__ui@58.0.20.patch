@@ -1,5 +1,245 @@
+diff --git a/android/src/main/java/expo/modules/ui/ModifierRegistry.kt b/android/src/main/java/expo/modules/ui/ModifierRegistry.kt
+index 68b3df6d42fd65a982c3926e5500f5e9e06e7a56..bdf195ffe266e0568c1bb5fa1d026a4bad6f1480 100644
+--- a/android/src/main/java/expo/modules/ui/ModifierRegistry.kt
++++ b/android/src/main/java/expo/modules/ui/ModifierRegistry.kt
+@@ -22,6 +22,7 @@ import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.combinedClickable
+ import androidx.compose.foundation.horizontalScroll
+ import androidx.compose.foundation.layout.IntrinsicSize
++import androidx.compose.foundation.layout.aspectRatio
+ import androidx.compose.foundation.layout.defaultMinSize
+ import androidx.compose.foundation.layout.fillMaxHeight
+ import androidx.compose.foundation.layout.fillMaxSize
+@@ -48,6 +49,7 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
+ import androidx.compose.material3.toShape
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.getValue
++import androidx.compose.runtime.remember
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.alpha
+ import androidx.compose.ui.draw.blur
+@@ -56,8 +58,14 @@ import androidx.compose.ui.draw.dropShadow
+ import androidx.compose.ui.draw.innerShadow
+ import androidx.compose.ui.draw.rotate
+ import androidx.compose.ui.draw.shadow
++import androidx.compose.ui.geometry.Offset
++import androidx.compose.ui.geometry.Size
+ import androidx.compose.ui.graphics.CompositingStrategy
++import androidx.compose.ui.graphics.LinearGradientShader
++import androidx.compose.ui.graphics.RadialGradientShader
+ import androidx.compose.ui.graphics.RectangleShape
++import androidx.compose.ui.graphics.Shader
++import androidx.compose.ui.graphics.ShaderBrush
+ import androidx.compose.ui.graphics.Shape
+ import androidx.compose.ui.graphics.TransformOrigin
+ import androidx.compose.ui.graphics.graphicsLayer
+@@ -182,6 +190,35 @@ data class BackgroundParams(
+   @Field val color: Color? = null
+ ) : Record
+ 
++@OptimizedRecord
++internal data class AspectRatioParams(
++  @Field val ratio: Float = 0f,
++  @Field val matchHeightConstraintsFirst: Boolean = false
++) : Record
++
++internal enum class GradientType(val value: String) : Enumerable {
++  LINEAR("linear"),
++  RADIAL("radial")
++}
++
++// Points are fractions of the view's size: (0, 0) is its top start corner and (1, 1) its bottom end.
++@OptimizedRecord
++internal data class GradientBackgroundParams(
++  @Field val type: GradientType = GradientType.LINEAR,
++  @Field val colors: List<Color> = emptyList(),
++  @Field val stops: List<Float>? = null,
++  @Field val startX: Float = 0.5f,
++  @Field val startY: Float = 0f,
++  @Field val endX: Float = 0.5f,
++  @Field val endY: Float = 1f,
++  @Field val centerX: Float = 0.5f,
++  @Field val centerY: Float = 0.5f,
++  // The radial gradient's radius in dp, or else `radiusFraction` of the view's longer side.
++  @Field val radius: Float? = null,
++  @Field val radiusFraction: Float = 0.5f,
++  @Field val shape: BuiltinShapeRecord? = null
++) : Record
++
+ // Color animation specs reuse the JS `$type` shape from `@expo/ui/jetpack-compose/modifiers/animation` (spring / tween / snap).
+ // Keyframes are float-only and aren't supported for colors.
+ private fun parseColorAnimationSpec(raw: Any?): AnimationSpec<androidx.compose.ui.graphics.Color>? {
+@@ -551,6 +588,58 @@ object ModifierRegistry {
+       }
+     }
+ 
++    register("aspectRatio") { map, _, appContext, _ ->
++      val params = recordFromMap<AspectRatioParams>(map, appContext)
++      // Compose requires a positive, finite ratio and throws on anything else.
++      if (params.ratio > 0f && params.ratio.isFinite()) {
++        Modifier.aspectRatio(params.ratio, params.matchHeightConstraintsFirst)
++      } else {
++        Modifier
++      }
++    }
++
++    register("gradientBackground") { map, _, appContext, _ ->
++      val params = recordFromMap<GradientBackgroundParams>(map, appContext)
++      val shape = params.shape?.let { resolveShape(it) } ?: RectangleShape
++      val colors = params.colors.map { it.compose }
++      // An Android gradient shader needs two colours or more, and one stop per colour.
++      if (colors.isEmpty()) {
++        return@register Modifier
++      }
++      if (colors.size == 1) {
++        return@register Modifier.background(colors[0], shape)
++      }
++      val stops = params.stops?.takeIf { it.size == colors.size }
++      val density = LocalDensity.current.density
++      val brush = remember(params, density) {
++        object : ShaderBrush() {
++          override fun createShader(size: Size): Shader {
++            return when (params.type) {
++              GradientType.LINEAR -> LinearGradientShader(
++                from = Offset(size.width * params.startX, size.height * params.startY),
++                to = Offset(size.width * params.endX, size.height * params.endY),
++                colors = colors,
++                colorStops = stops
++              )
++
++              GradientType.RADIAL -> {
++                val radius = params.radius?.let { it * density }
++                  ?: (maxOf(size.width, size.height) * params.radiusFraction)
++                RadialGradientShader(
++                  center = Offset(size.width * params.centerX, size.height * params.centerY),
++                  // A radius of zero throws; a hair's width draws the end colour throughout.
++                  radius = maxOf(radius, 0.01f),
++                  colors = colors,
++                  colorStops = stops
++                )
++              }
++            }
++          }
++        }
++      }
++      Modifier.background(brush, shape)
++    }
++
+     register("border") { map, _, appContext, _ ->
+       val params = recordFromMap<BorderParams>(map, appContext)
+       params.borderColor?.let { borderColor ->
+diff --git a/build/jetpack-compose/modifiers/index.d.ts b/build/jetpack-compose/modifiers/index.d.ts
+index 0decc53cc54b04316c0809b509df3b4a07d984b4..08be8ba5b7aaa0a2bec13234206f1f17f15ad634 100644
+--- a/build/jetpack-compose/modifiers/index.d.ts
++++ b/build/jetpack-compose/modifiers/index.d.ts
+@@ -104,6 +104,52 @@ export declare const offset: (x: number, y: number) => import("./createModifier"
+ export declare const background: (color: ColorValue, options?: {
+     animationSpec?: AnimationSpec;
+ }) => import("./createModifier").ModifierConfig;
++/**
++ * A point inside a view, as fractions of its size: `{ x: 0, y: 0 }` is its top start corner and
++ * `{ x: 1, y: 1 }` its bottom end corner.
++ */
++export type GradientPoint = {
++    x: number;
++    y: number;
++};
++/**
++ * A gradient for `gradientBackground`. `stops`, when given, places each color along the
++ * gradient, from 0 to 1, and must have one entry per color.
++ */
++export type Gradient = {
++    type: 'linear';
++    colors: ColorValue[];
++    stops?: number[];
++    /** Where the first color sits. Defaults to the middle of the top edge. */
++    start?: GradientPoint;
++    /** Where the last color sits. Defaults to the middle of the bottom edge. */
++    end?: GradientPoint;
++} | {
++    type: 'radial';
++    colors: ColorValue[];
++    stops?: number[];
++    /** Where the first color sits. Defaults to the view's center. */
++    center?: GradientPoint;
++    /** Distance from the center to the last color, in dp. */
++    radius?: number;
++    /** Distance from the center to the last color, as a fraction of the view's longer side, when `radius` is not given. Defaults to 0.5. */
++    radiusFraction?: number;
++};
++/**
++ * Paints a linear or radial gradient behind the view, inside `shape` (a rectangle by default).
++ * Points are fractions of the view's size, so `{ x: 0.5, y: 0 }` is the middle of its top edge.
++ * Backed by `Modifier.background(Brush, Shape)`.
++ * @param gradient - The gradient's kind, colors, optional stops (one per color, 0 to 1), and geometry.
++ * @param shape - The shape to fill, for example `Shapes.RoundedCorner(16)`.
++ */
++export declare const gradientBackground: (gradient: Gradient, shape?: BuiltinShape) => import("./createModifier").ModifierConfig;
++/**
++ * Sizes the view to a width-to-height ratio within the constraints it is given.
++ * Backed by `Modifier.aspectRatio`.
++ * @param ratio - Width divided by height. Must be positive; anything else leaves the view as it is.
++ * @param matchHeightConstraintsFirst - Tries the incoming height constraints before the width ones.
++ */
++export declare const aspectRatio: (ratio: number, matchHeightConstraintsFirst?: boolean) => import("./createModifier").ModifierConfig;
+ /**
+  * Adds a border around the view.
+  * @param borderWidth - Border width in dp.
+diff --git a/build/jetpack-compose/modifiers/index.js b/build/jetpack-compose/modifiers/index.js
+index e174ad8eb7469299251c29f6641c10cd8ed452bf..59c1ff01fde35ca3a54e515bfffb0532b35036d6 100644
+--- a/build/jetpack-compose/modifiers/index.js
++++ b/build/jetpack-compose/modifiers/index.js
+@@ -122,6 +122,48 @@ export { animated, spring, tween, snap, keyframes } from './animation';
+         color,
+         animationSpec: options?.animationSpec
+     });
++/**
++ * Paints a linear or radial gradient behind the view, inside `shape` (a rectangle by default).
++ * Points are fractions of the view's size, so `{ x: 0.5, y: 0 }` is the middle of its top edge.
++ * Backed by `Modifier.background(Brush, Shape)`.
++ * @param gradient - The gradient's kind, colors, optional stops (one per color, 0 to 1), and geometry.
++ * @param shape - The shape to fill, for example `Shapes.RoundedCorner(16)`.
++ */ export const gradientBackground = (gradient, shape)=>{
++    const params = {
++        type: gradient.type,
++        colors: gradient.colors
++    };
++    // Leave out what the caller left out, so native falls back to its defaults rather than
++    // receiving a null for a field that has none.
++    const set = (key, value)=>{
++        if (value !== undefined && value !== null) {
++            params[key] = value;
++        }
++    };
++    set('stops', gradient.stops);
++    if (gradient.type === 'radial') {
++        set('centerX', gradient.center?.x);
++        set('centerY', gradient.center?.y);
++        set('radius', gradient.radius);
++        set('radiusFraction', gradient.radiusFraction);
++    } else {
++        set('startX', gradient.start?.x);
++        set('startY', gradient.start?.y);
++        set('endX', gradient.end?.x);
++        set('endY', gradient.end?.y);
++    }
++    set('shape', shape);
++    return createModifier('gradientBackground', params);
++};
++/**
++ * Sizes the view to a width-to-height ratio within the constraints it is given.
++ * Backed by `Modifier.aspectRatio`.
++ * @param ratio - Width divided by height. Must be positive; anything else leaves the view as it is.
++ * @param matchHeightConstraintsFirst - Tries the incoming height constraints before the width ones.
++ */ export const aspectRatio = (ratio, matchHeightConstraintsFirst = false)=>createModifier('aspectRatio', {
++        ratio,
++        matchHeightConstraintsFirst
++    });
+ /**
+  * Adds a border around the view.
+  * @param borderWidth - Border width in dp.
 diff --git a/build/swift-ui/ContentUnavailableView/index.d.ts b/build/swift-ui/ContentUnavailableView/index.d.ts
-index eacb35e..06bd61c 100644
+index eacb35e0a7a25f379e02ddeb2d45377a329e3f6e..06bd61cb5ac8d86c02c61c92cbfbb2b186756410 100644
 --- a/build/swift-ui/ContentUnavailableView/index.d.ts
 +++ b/build/swift-ui/ContentUnavailableView/index.d.ts
 @@ -13,6 +13,11 @@ export interface ContentUnavailableViewProps extends CommonViewModifierProps {
@@ -15,7 +255,7 @@ index eacb35e..06bd61c 100644
  /**
   * Displays a native Swift UI ContentUnavailableView.
 diff --git a/build/swift-ui/ContentUnavailableView/index.js b/build/swift-ui/ContentUnavailableView/index.js
-index cb82ad4..f8ad5d8 100644
+index cb82ad470d8f3fac3fb0e69013a64c774a4b3ba0..f8ad5d85ebd5a4ddaf6c6eed965908aea3ef3c80 100644
 --- a/build/swift-ui/ContentUnavailableView/index.js
 +++ b/build/swift-ui/ContentUnavailableView/index.js
 @@ -1,9 +1,10 @@
@@ -43,9 +283,9 @@ index cb82ad4..f8ad5d8 100644
      });
  }
  
-diff --git a/b/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
+diff --git a/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
 new file mode 100644
-index 0000000..d08232a
+index 0000000000000000000000000000000000000000..d08232a073aef5a8f011f7ce4e26ceaada54d8d5
 --- /dev/null
 +++ b/build/swift-ui/HangingText/index.d.ts
 @@ -0,0 +1,40 @@
@@ -89,9 +329,9 @@ index 0000000..d08232a
 + * when tapped.
 + */
 +export declare function HangingText({ children, modifiers, ...props }: HangingTextProps): import("react/jsx-runtime").JSX.Element;
-diff --git a/b/build/swift-ui/HangingText/index.js b/build/swift-ui/HangingText/index.js
+diff --git a/build/swift-ui/HangingText/index.js b/build/swift-ui/HangingText/index.js
 new file mode 100644
-index 0000000..ac66d3a
+index 0000000000000000000000000000000000000000..ac66d3a43bc5b7595f76132c7dac76b8092a167c
 --- /dev/null
 +++ b/build/swift-ui/HangingText/index.js
 @@ -0,0 +1,17 @@
@@ -113,7 +353,7 @@ index 0000000..ac66d3a
 +    });
 +}
 diff --git a/build/swift-ui/RNHostView.js b/build/swift-ui/RNHostView.js
-index 4b5e4ec..5a7042f 100644
+index 4b5e4ecfb7dcec4d01c9508bd785b296c273a672..5a7042f74ed5a99034234ff9a0758dfb97bfadc4 100644
 --- a/build/swift-ui/RNHostView.js
 +++ b/build/swift-ui/RNHostView.js
 @@ -17,7 +17,8 @@ export function RNHostView({ matchContents, ...props }) {
@@ -127,7 +367,7 @@ index 4b5e4ec..5a7042f 100644
          // So we force unmount when it changes to prevent unexpected layout
          key: `${matchContentsHorizontal}-${matchContentsVertical}`
 diff --git a/build/swift-ui/TabView/index.d.ts b/build/swift-ui/TabView/index.d.ts
-index 8b5f6db..ae52c4e 100644
+index 8b5f6dbe4789075fa1f5caf1a2a1f3806dcfe3c0..ae52c4e56432fb950b2ca04f89a843ad10aa3ebe 100644
 --- a/build/swift-ui/TabView/index.d.ts
 +++ b/build/swift-ui/TabView/index.d.ts
 @@ -15,6 +15,13 @@ export interface TabViewProps extends CommonViewModifierProps {
@@ -145,7 +385,7 @@ index 8b5f6db..ae52c4e 100644
       * `<TabView.Tab>` elements defining the pages.
       */
 diff --git a/build/swift-ui/TabView/index.js b/build/swift-ui/TabView/index.js
-index 0e8cc33..86a9452 100644
+index 0e8cc33d3b19e7a206672f765f15d589572d2c03..86a94529a1f0334ff20ea75019cbb19a43a20ba7 100644
 --- a/build/swift-ui/TabView/index.js
 +++ b/build/swift-ui/TabView/index.js
 @@ -4,12 +4,13 @@ import { createViewModifierEventListener } from '../modifiers/utils';
@@ -165,7 +405,7 @@ index 0e8cc33..86a9452 100644
  }
  /**
 diff --git a/build/swift-ui/index.d.ts b/build/swift-ui/index.d.ts
-index abf47ae..63edc5d 100644
+index abf47ae882861880e8206b8fa077318800d76ba9..63edc5d1e7e56ab16fa36d3096d7c4b753a2c4a0 100644
 --- a/build/swift-ui/index.d.ts
 +++ b/build/swift-ui/index.d.ts
 @@ -10,6 +10,7 @@ export * from './ControlGroup';
@@ -177,7 +417,7 @@ index abf47ae..63edc5d 100644
  export * from './Form';
  export * from './Gauge';
 diff --git a/build/swift-ui/index.js b/build/swift-ui/index.js
-index 96ca691..dab6ae3 100644
+index 96ca69155a7770d5e8f9096b1ce27e8e294f8dda..dab6ae341d02d5b75f15495f7a1efe81d18917e4 100644
 --- a/build/swift-ui/index.js
 +++ b/build/swift-ui/index.js
 @@ -10,6 +10,7 @@ export * from './ControlGroup';
@@ -189,7 +429,7 @@ index 96ca691..dab6ae3 100644
  export * from './Form';
  export * from './Gauge';
 diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
-index 0de5cd2..b226d5a 100644
+index 0de5cd2557155bcb25ba88fc02e88478e3aa4547..b226d5a29a0aba94760763e77da8d7334e61cbe1 100644
 --- a/build/swift-ui/modifiers/index.d.ts
 +++ b/build/swift-ui/modifiers/index.d.ts
 @@ -1113,6 +1113,17 @@ export declare const font: (params: {
@@ -211,7 +451,7 @@ index 0de5cd2..b226d5a 100644
  /**
   * A standard size for Dynamic Type, from `xSmall` through the five
 diff --git a/ios/ContentUnavailableView.swift b/ios/ContentUnavailableView.swift
-index 3e07ece..190d26a 100644
+index 3e07eceecb782b3c924ee9e3d5ec20424ef7f491..190d26a536036f9be84322536ce92d80ea3243e1 100644
 --- a/ios/ContentUnavailableView.swift
 +++ b/ios/ContentUnavailableView.swift
 @@ -18,7 +18,21 @@ public struct ContentUnavailableView: ExpoSwiftUI.View {
@@ -238,7 +478,7 @@ index 3e07ece..190d26a 100644
    }
  }
 diff --git a/ios/ExpoUIModule.swift b/ios/ExpoUIModule.swift
-index 265f318..542b407 100644
+index 265f3186bb9e52f5b8d1f7dc7a95fa12e593459b..542b407fa02f11e285fdcf81577490f0c3097bb9 100644
 --- a/ios/ExpoUIModule.swift
 +++ b/ios/ExpoUIModule.swift
 @@ -200,6 +200,7 @@ public final class ExpoUIModule: Module {
@@ -249,9 +489,9 @@ index 265f318..542b407 100644
      ExpoUIView(PopoverView.self)
      ExpoUIView(OverlayView.self)
      ExpoUIView(BackgroundView.self)
-diff --git a/b/ios/HangingTextView.swift b/ios/HangingTextView.swift
+diff --git a/ios/HangingTextView.swift b/ios/HangingTextView.swift
 new file mode 100644
-index 0000000..2c04f39
+index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c5249bfca635
 --- /dev/null
 +++ b/ios/HangingTextView.swift
 @@ -0,0 +1,163 @@
@@ -419,7 +659,7 @@ index 0000000..2c04f39
 +  }
 +}
 diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
-index 094cee1..1d0781d 100644
+index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67748e89a8 100644
 --- a/ios/Modifiers/FontModifier.swift
 +++ b/ios/Modifiers/FontModifier.swift
 @@ -29,6 +29,20 @@ internal enum FontWeight: String, Enumerable {
@@ -471,7 +711,7 @@ index 094cee1..1d0781d 100644
        let baseSize = size ?? 17
        var font: Font = if let textStyle = textStyle {
 diff --git a/ios/Modifiers/ScrollPositionModifier.swift b/ios/Modifiers/ScrollPositionModifier.swift
-index 2b9e034..9f67337 100644
+index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a259e6fbc9 100644
 --- a/ios/Modifiers/ScrollPositionModifier.swift
 +++ b/ios/Modifiers/ScrollPositionModifier.swift
 @@ -37,16 +37,64 @@ private struct ScrollPositionWrapper<C: View>: View {
@@ -544,7 +784,7 @@ index 2b9e034..9f67337 100644
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index eac8fd5..d91f3ca 100644
+index eac8fd514a73aa1052edffe1d84dc8c387b46bb2..d91f3ca57bc7912bed690fb86cff9a6d489a8f6e 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -662,7 +902,7 @@ index eac8fd5..d91f3ca 100644
        return try MoveDisabledModifier(from: params, appContext: appContext)
      }
 diff --git a/ios/TabView/TabView.swift b/ios/TabView/TabView.swift
-index 0d6fbf2..1f97609 100644
+index 0d6fbf2c012bf394d32316e888ca11cf88187bee..1f976091f9fd05ed588bb99f41d27d61b8de0702 100644
 --- a/ios/TabView/TabView.swift
 +++ b/ios/TabView/TabView.swift
 @@ -7,6 +7,7 @@ internal final class TabViewProps: UIBaseViewProps {
@@ -784,3 +1024,87 @@ index 0d6fbf2..1f97609 100644
 +    }
 +  }
 +}
+diff --git a/src/jetpack-compose/modifiers/index.ts b/src/jetpack-compose/modifiers/index.ts
+index 9ab09f9867e129561e1563787a6898425df58b2c..205d4cbae4c52d834d3115453345c24677255cda 100644
+--- a/src/jetpack-compose/modifiers/index.ts
++++ b/src/jetpack-compose/modifiers/index.ts
+@@ -162,6 +162,79 @@ export const offset = (x: number, y: number) => createModifier('offset', { x, y
+ export const background = (color: ColorValue, options?: { animationSpec?: AnimationSpec }) =>
+   createModifier('background', { color, animationSpec: options?.animationSpec });
+ 
++/**
++ * A point inside a view, as fractions of its size: `{ x: 0, y: 0 }` is its top start corner and
++ * `{ x: 1, y: 1 }` its bottom end corner.
++ */
++export type GradientPoint = { x: number; y: number };
++
++/**
++ * A gradient for `gradientBackground`. `stops`, when given, places each color along the
++ * gradient, from 0 to 1, and must have one entry per color.
++ */
++export type Gradient =
++  | {
++      type: 'linear';
++      colors: ColorValue[];
++      stops?: number[];
++      /** Where the first color sits. Defaults to the middle of the top edge. */
++      start?: GradientPoint;
++      /** Where the last color sits. Defaults to the middle of the bottom edge. */
++      end?: GradientPoint;
++    }
++  | {
++      type: 'radial';
++      colors: ColorValue[];
++      stops?: number[];
++      /** Where the first color sits. Defaults to the view's center. */
++      center?: GradientPoint;
++      /** Distance from the center to the last color, in dp. */
++      radius?: number;
++      /** Distance from the center to the last color, as a fraction of the view's longer side, when `radius` is not given. Defaults to 0.5. */
++      radiusFraction?: number;
++    };
++
++/**
++ * Paints a linear or radial gradient behind the view, inside `shape` (a rectangle by default).
++ * Points are fractions of the view's size, so `{ x: 0.5, y: 0 }` is the middle of its top edge.
++ * Backed by `Modifier.background(Brush, Shape)`.
++ * @param gradient - The gradient's kind, colors, optional stops (one per color, 0 to 1), and geometry.
++ * @param shape - The shape to fill, for example `Shapes.RoundedCorner(16)`.
++ */
++export const gradientBackground = (gradient: Gradient, shape?: BuiltinShape) => {
++  const params: Record<string, unknown> = { type: gradient.type, colors: gradient.colors };
++  // Leave out what the caller left out, so native falls back to its defaults rather than
++  // receiving a null for a field that has none.
++  const set = (key: string, value: unknown) => {
++    if (value !== undefined && value !== null) {
++      params[key] = value;
++    }
++  };
++  set('stops', gradient.stops);
++  if (gradient.type === 'radial') {
++    set('centerX', gradient.center?.x);
++    set('centerY', gradient.center?.y);
++    set('radius', gradient.radius);
++    set('radiusFraction', gradient.radiusFraction);
++  } else {
++    set('startX', gradient.start?.x);
++    set('startY', gradient.start?.y);
++    set('endX', gradient.end?.x);
++    set('endY', gradient.end?.y);
++  }
++  set('shape', shape);
++  return createModifier('gradientBackground', params);
++};
++
++/**
++ * Sizes the view to a width-to-height ratio within the constraints it is given.
++ * Backed by `Modifier.aspectRatio`.
++ * @param ratio - Width divided by height. Must be positive; anything else leaves the view as it is.
++ * @param matchHeightConstraintsFirst - Tries the incoming height constraints before the width ones.
++ */
++export const aspectRatio = (ratio: number, matchHeightConstraintsFirst = false) =>
++  createModifier('aspectRatio', { ratio, matchHeightConstraintsFirst });
++
+ /**
+  * Adds a border around the view.
+  * @param borderWidth - Border width in dp.

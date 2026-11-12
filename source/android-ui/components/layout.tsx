@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {StyleSheet, useColorScheme, type StyleProp, type ViewStyle} from 'react-native'
 
 import {gold} from '@frogpond/colors'
 import type {
@@ -21,6 +22,7 @@ import type {
 import {
 	Box,
 	Column,
+	getMaterialColors,
 	Host as ComposeHost,
 	HorizontalDivider,
 	isDynamicColorAvailable,
@@ -37,6 +39,7 @@ import {
 	clip,
 	fillMaxSize,
 	fillMaxWidth,
+	gradientBackground,
 	height,
 	horizontalScroll,
 	matchParentSize,
@@ -47,11 +50,12 @@ import {
 	type ModifierConfig,
 } from '@expo/ui/jetpack-compose/modifiers'
 
-import {resolveColor, usePalette} from '../colors'
+import {contentColor, inScheme, resolveColor, resolveGradient, usePalette} from '../colors'
 import {ListStyleContext, MenuContext, RowSlotContext} from '../context'
 import {
 	AxisContext,
 	EnvironmentContext,
+	fillModifiers,
 	find,
 	runRefresh,
 	shapeOf,
@@ -66,6 +70,14 @@ import {
 	type SwiftModifier,
 } from '../modifiers'
 import {asRow, useRowSlot} from './row'
+
+/**
+ * Set by a `ZStack` for its own children: an unframed shape among them calls
+ * it, and the stack then takes all the room offered, as a SwiftUI shape does
+ * and a Compose box sized to its children does not. Every other container
+ * clears it, so a shape deeper down marks only its own stack.
+ */
+const FlexibleLayerContext = React.createContext<(() => void) | null>(null)
 
 /** A Host starts with an empty SwiftUI environment. */
 const NO_ENVIRONMENT: Environment = {}
@@ -89,7 +101,9 @@ export function Inherit({
 	return (
 		<EnvironmentContext.Provider value={env}>
 			<AxisContext.Provider value={axis}>
-				<RowSlotContext.Provider value={null}>{children}</RowSlotContext.Provider>
+				<RowSlotContext.Provider value={null}>
+					<FlexibleLayerContext.Provider value={null}>{children}</FlexibleLayerContext.Provider>
+				</RowSlotContext.Provider>
 			</AxisContext.Provider>
 		</EnvironmentContext.Provider>
 	)
@@ -153,10 +167,13 @@ export function Host(props: HostProps): React.ReactNode {
 		alignment: _alignment,
 		ignoreSafeArea: _ignoreSafeArea,
 		seedColor,
+		style,
 		...rest
 	} = props
+	let seed = seedColor ?? FALLBACK_SEED
+	let hostStyle = useHostStyle(style, seed, rest.colorScheme)
 	return (
-		<ComposeHost {...rest} seedColor={seedColor ?? FALLBACK_SEED}>
+		<ComposeHost {...rest} seedColor={seed} style={hostStyle}>
 			<Inherit axis="none" env={NO_ENVIRONMENT}>
 				<ListStyleContext.Provider value={null}>
 					<MenuContext.Provider value={null}>{children}</MenuContext.Provider>
@@ -164,6 +181,32 @@ export function Host(props: HostProps): React.ReactNode {
 			</Inherit>
 		</ComposeHost>
 	)
+}
+
+/**
+ * A Host's style with a theme colour as its background resolved to the colour
+ * itself. The screens give a Host the same `@frogpond/colors` background as
+ * their React Native views, which on Android is a `PlatformColor` naming a
+ * Material role; Expo UI's Host reads its background as a plain colour number
+ * and refuses the theme reference, leaving the Host unpainted. The role comes
+ * from the palette the Host itself is seeded with.
+ */
+function useHostStyle(
+	style: StyleProp<ViewStyle>,
+	seed: HostProps['seedColor'],
+	colorScheme: HostProps['colorScheme'],
+): StyleProp<ViewStyle> {
+	let systemScheme = useColorScheme()
+	let background = StyleSheet.flatten(style)?.backgroundColor
+	let dark = (colorScheme ?? systemScheme) === 'dark'
+	return React.useMemo(() => {
+		if (background === undefined || typeof background !== 'object') {
+			return style
+		}
+		let colors = getMaterialColors({scheme: dark ? 'dark' : 'light', seedColor: seed})
+		let resolved = resolveColor(background, {colors, dark})
+		return [style, {backgroundColor: resolved ?? 'transparent'}]
+	}, [style, background, seed, dark])
 }
 
 /** SwiftUI's vertical alignments, as Row's. */
@@ -228,13 +271,26 @@ const BOX_ALIGNMENT: Readonly<Record<string, ContentAlignment>> = {
 	bottomTrailing: 'bottomEnd',
 }
 
-/** SwiftUI's `ZStack`, as a Compose `Box` that layers its children. */
+/**
+ * SwiftUI's `ZStack`, as a Compose `Box` that layers its children. A Box is
+ * as big as its children, where a SwiftUI stack holding a shape is as big as
+ * it is offered (the shape takes any size); so once an unframed shape inside
+ * says it is there, a stack with no frame of its own fills the room too.
+ */
 export function ZStack({children, modifiers, alignment}: ZStackProps): React.ReactNode {
 	let {env, chain, slot} = useContainer(modifiers)
+	let axis = useAxis()
+	let [flexible, setFlexible] = React.useState(false)
+	let markFlexible = React.useCallback(() => setFlexible(true), [])
+	if (flexible && find(modifiers, 'frame') === undefined) {
+		chain = [...chain, ...fillModifiers(axis)]
+	}
 	let element = (
 		<Box contentAlignment={BOX_ALIGNMENT[alignment ?? 'center'] ?? 'center'} modifiers={chain}>
 			<Inherit axis="box" env={env}>
-				{children}
+				<FlexibleLayerContext.Provider value={markFlexible}>
+					{children}
+				</FlexibleLayerContext.Provider>
 			</Inherit>
 		</Box>
 	)
@@ -484,9 +540,11 @@ Grid.Row = function GridRow({children}: {children: React.ReactNode}): React.Reac
 }
 
 /**
- * A SwiftUI shape as a filled Compose `Box`: the shape's clip and fill, in the
- * foreground colour SwiftUI fills shapes with. A shape takes all the room its
- * frame or parent offers.
+ * A SwiftUI shape as a filled Compose `Box`, in the foreground style SwiftUI
+ * fills shapes with: a linear or radial gradient through the patched
+ * `gradientBackground`, which paints inside the shape, or else the shape's
+ * clip and a solid colour. A shape takes all the room its frame or parent
+ * offers.
  */
 function ShapeView({
 	modifiers,
@@ -498,15 +556,31 @@ function ShapeView({
 	let palette = usePalette()
 	let env = useEnvironment(modifiers)
 	let axis = useAxis()
+	let markFlexible = React.useContext(FlexibleLayerContext)
 	let chain = toCompose(modifiers, {palette, axis})
-	// Inside a ZStack a shape is a layer the size of its siblings; elsewhere it
-	// fills what its frame (or its parent) offers.
+	// Inside a ZStack a shape is a layer the size of its siblings, and the
+	// stack grows to what it is offered; elsewhere it fills what its frame (or
+	// its parent) offers.
 	let framed = find(modifiers, 'frame') !== undefined
-	chain.push(
-		axis === 'box' && !framed ? matchParentSize() : fillMaxSize(),
-		clip(shape),
-		background(resolveColor(env.foreground, palette) ?? palette.colors.onSurface),
-	)
+	let layer = axis === 'box' && !framed
+	React.useLayoutEffect(() => {
+		if (layer) {
+			markFlexible?.()
+		}
+	}, [layer, markFlexible])
+	chain.push(layer ? matchParentSize() : fillMaxSize())
+	let schemed = inScheme(palette, env.colorScheme)
+	let gradient = resolveGradient(env.foreground, schemed)
+	if (gradient) {
+		chain.push(gradientBackground(gradient, shape))
+	} else {
+		chain.push(
+			clip(shape),
+			background(
+				contentColor(env.foreground, palette, env.colorScheme) ?? palette.colors.onSurface,
+			),
+		)
+	}
 	return <Box modifiers={chain} />
 }
 
