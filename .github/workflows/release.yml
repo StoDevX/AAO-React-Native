@@ -1,8 +1,8 @@
 name: Release
 
 # Opens (and keeps current) a "Version Packages" pull request from the
-# changesets on master. Merging it tags the release, and Xcode Cloud builds the
-# tag.
+# changesets on master. Merging it tags the release; Xcode Cloud builds the tag
+# for iOS, and this workflow starts Android Release on it for Android.
 #
 # The channel is picked on that pull request with a label, `prerelease:alpha`,
 # `prerelease:beta` or `prerelease:rc`, and `prerelease:none` for the final
@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: write # zizmor: ignore[excessive-permissions] -- the rerun job dispatches this workflow
+  actions: write # zizmor: ignore[excessive-permissions] -- the rerun job dispatches this workflow, the release job Android Release
   contents: write # zizmor: ignore[excessive-permissions] -- the release job pushes the Version PR branch
   pull-requests: write # zizmor: ignore[excessive-permissions] -- the release job opens the Version PR
 
@@ -82,3 +82,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
           PR_NUMBER: ${{ steps.changesets.outputs.pr-number }}
+      # The tag the publish just made is what Xcode Cloud builds. A tag pushed
+      # with the default token starts no workflow, but a dispatch does, so this
+      # starts Android's build of the same tag: one run per app that ships, onto
+      # Play's internal track, to promote by hand as TestFlight builds are.
+      - name: Build the release for Android
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          set -euo pipefail
+          tag="v$(node -p "require('./package.json').version")"
+          for variant in aao carls; do
+            gh workflow run android-release.yml --repo "${GITHUB_REPOSITORY}" --ref "$tag" \
+              -f variant="$variant" -f track=internal
+          done
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
