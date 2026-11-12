@@ -81,8 +81,14 @@ export const MODIFIER_TABLE: Readonly<
 	rotationEffect: ['compose', 'rotate'],
 	zIndex: ['compose', 'zIndex'],
 	blur: ['compose', 'blur'],
-	accessibilityIdentifier: ['compose', 'testID (Compose test tag; resource-id with testTagsAsResourceId)'],
-	accessibilityLabel: ['compose', 'semantics(contentDescription), with accessibilityValue appended'],
+	accessibilityIdentifier: [
+		'compose',
+		'testID (Compose test tag; resource-id with testTagsAsResourceId)',
+	],
+	accessibilityLabel: [
+		'compose',
+		'semantics(contentDescription), with accessibilityValue appended',
+	],
 	accessibilityValue: ['compose', 'appended to the contentDescription'],
 	onTapGesture: ['compose', 'clickable without ripple, as a tap gesture draws none'],
 	onLongPressGesture: ['compose', 'combinedClickable(onLongClick)'],
@@ -106,24 +112,39 @@ export const MODIFIER_TABLE: Readonly<
 	truncationMode: ['environment', 'overflow ellipsis (Compose ellipsises at the end only)'],
 	textCase: ['environment', 'the string upper- or lower-cased'],
 	disabled: ['environment', 'enabled = false on every control beneath'],
-	buttonStyle: ['environment', 'borderedProminent/glassProminent → Button, bordered/glass → FilledTonalButton, borderless/plain/automatic → TextButton'],
+	buttonStyle: [
+		'environment',
+		'borderedProminent/glassProminent → Button, bordered/glass → FilledTonalButton, borderless/plain/automatic → TextButton',
+	],
 	buttonBorderShape: ['component', 'the Material button shape'],
 	controlSize: ['environment', 'large/extraLarge buttons fill the width'],
-	pickerStyle: ['environment', 'segmented → SingleChoiceSegmentedButtonRow; menu/automatic → exposed dropdown'],
+	pickerStyle: [
+		'environment',
+		'segmented → SingleChoiceSegmentedButtonRow; menu/automatic → exposed dropdown',
+	],
 	labelsHidden: ['environment', 'drops a control’s own label'],
 	menuActionDismissBehavior: ['environment', 'disabled keeps a menu open after an item is chosen'],
-	listStyle: ['component', 'plain → full-bleed rows with dividers; anything else → inset grouped cards'],
+	listStyle: [
+		'component',
+		'plain → full-bleed rows with dividers; anything else → inset grouped cards',
+	],
 	listRowBackground: ['component', 'the row card’s container colour; clear drops the card'],
 	listRowInsets: ['component', 'replaces the ListItem padding with these insets'],
 	scrollContentBackground: ['component', 'hidden → the list paints no surface of its own'],
 	refreshable: ['component', 'PullToRefreshBox around List/ScrollView/stack'],
 	tag: ['component', 'a Picker option’s value, or a selectable row’s id'],
-	presentationDetents: ['component', 'medium/fraction < 1 → half-expanded sheet; large only → skip partial'],
+	presentationDetents: [
+		'component',
+		'medium/fraction < 1 → half-expanded sheet; large only → skip partial',
+	],
 	presentationDragIndicator: ['component', 'ModalBottomSheet drag handle'],
 	presentationBackground: ['component', 'ModalBottomSheet containerColor'],
 	interactiveDismissDisabled: ['component', 'sheet ignores back and outside taps'],
 	tabViewStyle: ['component', 'every TabView is a HorizontalPager'],
-	datePickerStyle: ['component', 'compact → row that expands to the picker; graphical/wheel → inline picker'],
+	datePickerStyle: [
+		'component',
+		'compact → row that expands to the picker; graphical/wheel → inline picker',
+	],
 	imageScale: ['component', 'icon size × 0.75 / 1 / 1.25'],
 	resizable: ['component', 'icon takes its frame size'],
 	keyboardType: ['component', 'TextInput keyboardType'],
@@ -134,7 +155,10 @@ export const MODIFIER_TABLE: Readonly<
 	textContentType: ['ignored', 'Android autofill hints are not exposed by Expo UI'],
 	accessibilityHint: ['ignored', 'Compose semantics in Expo UI carry no hint'],
 	accessibilityHidden: ['ignored', 'Expo UI’s semantics modifier cannot clear semantics'],
-	accessibilityAddTraits: ['ignored', 'no heading/selected semantics in Expo UI; buttons and switches carry their own roles'],
+	accessibilityAddTraits: [
+		'ignored',
+		'no heading/selected semantics in Expo UI; buttons and switches carry their own roles',
+	],
 	accessibilityRemoveTraits: ['ignored', 'as accessibilityAddTraits'],
 	accessibilityElement: ['ignored', 'no mergeDescendants in Expo UI'],
 	contentShape: ['ignored', 'Compose hit-tests a clickable’s whole bounds already'],
@@ -185,6 +209,29 @@ export type Axis = 'row' | 'column' | 'box' | 'none'
  */
 export const AxisContext = React.createContext<Axis>('none')
 
+/**
+ * Whether the views here are measured without a bound along each axis, as a
+ * scrolling container or a lazy list's items are. A `weight` along an
+ * unbounded axis measures to nothing, so a frame there fills instead.
+ */
+export const UnboundedContext = React.createContext<{vertical: boolean; horizontal: boolean}>({
+	vertical: false,
+	horizontal: false,
+})
+
+/**
+ * The enclosing layout's axis as far as `weight` may use it: `none` where
+ * that axis is unbounded.
+ */
+export function useAxis(): Axis {
+	let axis = React.useContext(AxisContext)
+	let unbounded = React.useContext(UnboundedContext)
+	if ((axis === 'row' && unbounded.horizontal) || (axis === 'column' && unbounded.vertical)) {
+		return 'none'
+	}
+	return axis
+}
+
 /** The modifiers a screen passed, without the holes a conditional leaves. */
 export function modifiersOf(list: ModifierList): SwiftModifier[] {
 	if (!list) {
@@ -192,7 +239,9 @@ export function modifiersOf(list: ModifierList): SwiftModifier[] {
 	}
 	return list.filter(
 		(item): item is SwiftModifier =>
-			typeof item === 'object' && item !== null && typeof (item as SwiftModifier).$type === 'string',
+			typeof item === 'object' &&
+			item !== null &&
+			typeof (item as SwiftModifier).$type === 'string',
 	)
 }
 
@@ -331,7 +380,7 @@ function fire(modifier: SwiftModifier, args?: unknown): void {
 	try {
 		let result = listener?.(args)
 		if (result instanceof Promise) {
-			result.catch(() => {})
+			result.catch(() => undefined)
 		}
 	} catch (error) {
 		console.warn(`[android-ui] ${modifier.$type} handler threw`, error)
@@ -470,26 +519,29 @@ export function useLifecycle(list: ModifierList): void {
 	let all = modifiersOf(list)
 	let appear = all.find((modifier) => modifier.$type === 'onAppear')
 	let disappear = all.find((modifier) => modifier.$type === 'onDisappear')
-	let latest = React.useRef({appear, disappear})
-	latest.current = {appear, disappear}
+	let onAppear = React.useEffectEvent(() => {
+		if (appear) {
+			fire(appear)
+		}
+	})
+	let onDisappear = React.useEffectEvent(() => {
+		if (disappear) {
+			fire(disappear)
+		}
+	})
 	React.useEffect(() => {
-		let {appear: onAppear} = latest.current
-		if (onAppear) {
-			fire(onAppear)
-		}
-		return () => {
-			let {disappear: onDisappear} = latest.current
-			if (onDisappear) {
-				fire(onDisappear)
-			}
-		}
+		onAppear()
+		return () => onDisappear()
 	}, [])
 }
 
 /** The value an `id(…)` modifier carries, which keys the view's identity. */
 export function identityOf(list: ModifierList): string | undefined {
 	let value = find(list, 'id')?.id
-	return value === undefined || value === null ? undefined : String(value)
+	if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+		return String(value)
+	}
+	return value === undefined || value === null ? undefined : JSON.stringify(value)
 }
 
 /** The value a `tag(…)` modifier carries. */
