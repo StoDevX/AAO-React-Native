@@ -4,14 +4,17 @@ import Testing
 
 /// GitHub as far as a submission sees it, for user `ole` whose fork already
 /// exists, or who may `push` to StoDevX's repository itself, whose commits then
-/// go there. The fork's sync answers `syncStatus`.
-private func github(status401 paths: Set<String> = [], push: Bool = false, syncStatus: Int = 200) -> (URLSession, StubProtocol.Stub) {
+/// go there. The fork's sync answers `syncStatus`. The pull request's head is
+/// in `fork`, which a contributor may have named other than the upstream.
+private func github(status401 paths: Set<String> = [], push: Bool = false, syncStatus: Int = 200,
+                    fork: String = "ole/AAO-React-Native") -> (URLSession, StubProtocol.Stub) {
     StubProtocol.session { request in
         let method = request.httpMethod ?? "GET"
         var path = request.url!.path
         if paths.contains(path) { return (401, body(#"{"message":"Bad credentials"}"#)) }
         // the git calls answer alike in whichever repository the commits go to
         if push { path = path.replacingOccurrences(of: "/repos/StoDevX/AAO-React-Native/git/", with: "/repos/ole/AAO-React-Native/git/") }
+        path = path.replacingOccurrences(of: "/repos/\(fork)/", with: "/repos/ole/AAO-React-Native/")
         switch (method, path) {
         case ("GET", "/user"): return (200, body(#"{"login":"ole"}"#))
         case ("GET", "/repos/StoDevX/AAO-React-Native"): return (200, body(#"{"permissions":{"push":\#(push)}}"#))
@@ -28,7 +31,8 @@ private func github(status401 paths: Set<String> = [], push: Bool = false, syncS
         case ("POST", "/repos/ole/AAO-React-Native/git/refs"): return (201, body("{}"))
         case ("PATCH", "/repos/ole/AAO-React-Native/git/refs/heads/data-editor/x"): return (200, body("{}"))
         case ("POST", "/repos/StoDevX/AAO-React-Native/pulls"): return (201, body(#"{"number":42,"html_url":"https://github.com/StoDevX/AAO-React-Native/pull/42"}"#))
-        case ("GET", "/repos/StoDevX/AAO-React-Native/pulls/42"): return (200, body(#"{"state":"open","merged_at":null}"#))
+        case ("GET", "/repos/StoDevX/AAO-React-Native/pulls/42"):
+            return (200, body(#"{"state":"open","merged_at":null,"head":{"repo":{"full_name":"\#(fork)"}}}"#))
         case ("GET", "/repos/StoDevX/AAO-React-Native/pulls/42/reviews"): return (200, body(#"[{"user":{"login":"drew"},"state":"COMMENTED"},{"user":{"login":"drew"},"state":"CHANGES_REQUESTED"}]"#))
         case ("GET", "/repos/ole/AAO-React-Native/contents/data/building-hours/1-3-stav.yaml") where request.url!.query == "ref=base1":
             return (200, body(#"{"sha":"stavbase"}"#))
@@ -125,6 +129,14 @@ struct GitHubSubmitterTests {
         #expect(commit["parents"] == .array([.string("head1")]))
         let patch = requests.first { $0.httpMethod == "PATCH" }!
         #expect(json(patch)["sha"] == .string("commit2"))
+    }
+
+    /// A fork named other than the upstream, as GitHub names a second one `AAO-React-Native-1`.
+    @Test func addsACommitInAForkWithAnotherName() async throws {
+        let (session, stub) = github(fork: "ole/AAO-React-Native-1")
+        let (submitter, _) = submitter(session)
+        _ = try await submitter.update(openSubmission(), changes: [change], summary: "Fix the Friday close")
+        #expect(stub.requests.contains { $0.httpMethod == "PATCH" && $0.url!.path == "/repos/ole/AAO-React-Native-1/git/refs/heads/data-editor/x" })
     }
 
     @Test func restoresTheBaseOfAFileNoLongerChanged() async throws {

@@ -139,7 +139,9 @@ public struct GitHubSubmitter: ChangeSubmitter {
     }
 
     public func update(_ submission: Submission, changes: [Change], summary: String) async throws -> Submission {
-        let fullName = "\(submission.owner)/\(repo.name)"
+        // the head's repository as GitHub names it: a contributor's fork may be named other than the upstream
+        let pull = try await send("GET", "/repos/\(repo.fullName)/pulls/\(submission.number)")
+        guard let fullName = pull["head"]?["repo"]?["full_name"]?.string else { throw SubmitError.github(0, "The pull request's branch is gone") }
         let ref = try await send("GET", "/repos/\(fullName)/git/ref/heads/\(submission.branch)")
         guard let head = ref["object"]?["sha"]?.string else { throw SubmitError.github(0, "The pull request's branch is gone") }
         // a file the pull request changed before, and the contributor has since reverted, goes back to the base
