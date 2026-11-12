@@ -10,11 +10,6 @@ import {IMAGE_GROUPS, IMAGES_DIR} from './make-images.mjs'
  */
 export const PUBLISHED_DIR = 'img'
 
-/**
- * Copy each group's committed WebP files into `<toDir>/img/<group>/`. A group
- * with no folder is an error: carrying on would publish a site with no images,
- * and every device would then 404 every picture.
- */
 /** Fails, naming each, when a group has no folder to publish from. */
 export function checkImageGroups({fromDir = IMAGES_DIR} = {}) {
 	raise(
@@ -27,6 +22,11 @@ export function checkImageGroups({fromDir = IMAGES_DIR} = {}) {
 const missingGroup = (groupDir, group) =>
 	new Error(`bundle-images: ${groupDir} is missing, so the "${group}" images cannot be published`)
 
+/**
+ * Copy each group's committed WebP files into `<toDir>/img/<group>/`. A group
+ * with no folder is an error: carrying on would publish a site with no images,
+ * and every device would then 404 every picture.
+ */
 export function bundleImages({fromDir = IMAGES_DIR, toDir}) {
 	let copied = 0
 	for (let group of IMAGE_GROUPS) {
