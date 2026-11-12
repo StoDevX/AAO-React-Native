@@ -4,6 +4,7 @@ import {
 	withAndroidColorsNight,
 	withAndroidStyles,
 	withAppBuildGradle,
+	withMainActivity,
 	withMainApplication,
 } from '@expo/config-plugins'
 import type {ConfigPlugin} from '@expo/config-plugins'
@@ -250,6 +251,39 @@ export function applyDynamicColors(kotlin: string): string {
 	return withImport.replace(SUPER_ON_CREATE, (match) => `${match}${lines}`)
 }
 
+/** MainActivity's `setTheme(R.style.AppTheme)`, which the call goes after. */
+const SET_APP_THEME = /^([ \t]*)setTheme\(R\.style\.AppTheme\);?\n/mu
+
+/** What MainActivity runs right after setting its theme. */
+export const REAPPLY_LINE = 'DynamicColors.applyToActivityIfAvailable(this)'
+
+/**
+ * Applies dynamic colour to MainActivity again, after it sets AppTheme.
+ *
+ * The activity starts on expo-splash-screen's theme, which `DynamicColors`
+ * overlays with the wallpaper's colours before `onCreate` runs. `onCreate`
+ * then calls `setTheme(R.style.AppTheme)`, which replaces that theme, overlay
+ * and all, so every native view -- the app bars, and each `PlatformColor` a
+ * React Native view converts against the activity -- fell back to the gold
+ * seeded roles while Compose, which reads the wallpaper directly, did not.
+ * Idempotent, like `applyDynamicColors`.
+ */
+export function reapplyDynamicColorsAfterSetTheme(kotlin: string): string {
+	if (kotlin.includes(REAPPLY_LINE)) {
+		return kotlin
+	}
+	let setTheme = SET_APP_THEME.exec(kotlin)
+	if (!FIRST_IMPORT.test(kotlin) || !setTheme) {
+		throw new Error(
+			'with-material-theme: could not find an import and `setTheme(R.style.AppTheme)` in MainActivity.kt. The Expo template moved them; update this plugin.',
+		)
+	}
+	let withImport = kotlin.includes(DYNAMIC_COLORS_IMPORT)
+		? kotlin
+		: kotlin.replace(FIRST_IMPORT, `${DYNAMIC_COLORS_IMPORT}\nimport `)
+	return withImport.replace(SET_APP_THEME, (match) => `${match}${setTheme[1]}${REAPPLY_LINE}\n`)
+}
+
 /**
  * Gives the Android app a Material 3 DayNight theme with dynamic colour
  * (Material You), seeded from the brand gold where dynamic colour is not
@@ -276,11 +310,18 @@ const withMaterialTheme: ConfigPlugin<Options | undefined> = (config, options) =
 		mod.modResults.contents = addMaterialDependency(mod.modResults.contents)
 		return mod
 	})
-	return withMainApplication(config, (mod) => {
+	config = withMainApplication(config, (mod) => {
 		if (mod.modResults.language !== 'kt') {
 			throw new Error('with-material-theme: MainApplication is not Kotlin.')
 		}
 		mod.modResults.contents = applyDynamicColors(mod.modResults.contents)
+		return mod
+	})
+	return withMainActivity(config, (mod) => {
+		if (mod.modResults.language !== 'kt') {
+			throw new Error('with-material-theme: MainActivity is not Kotlin.')
+		}
+		mod.modResults.contents = reapplyDynamicColorsAfterSetTheme(mod.modResults.contents)
 		return mod
 	})
 }
