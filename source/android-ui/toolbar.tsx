@@ -75,7 +75,13 @@ export function NativeToolbarMenu(props: NativeToolbarMenuProps): React.ReactNod
 	return <UpstreamMenu {...props} source={sourceFor(props.icon, props.source)} />
 }
 
-/** `Stack.Toolbar.MenuAction` on Android, with its SF Symbol as a leading Material Symbol. */
+/**
+ * `Stack.Toolbar.MenuAction` on Android: text alone, without the SF Symbol
+ * iOS draws beside it. An app bar's overflow menu on Android is a list of
+ * words -- Material allows a leading icon only if every item has one, and
+ * Android's own apps leave them off -- so a ported iOS menu drew icons no
+ * Android menu has. Context menus, drawn elsewhere, keep theirs.
+ */
 export function NativeToolbarMenuAction(props: NativeToolbarMenuActionProps): React.ReactNode {
-	return <UpstreamMenuAction {...props} source={sourceFor(props.icon, props.source)} />
+	return <UpstreamMenuAction {...props} icon={undefined} source={undefined} />
 }
