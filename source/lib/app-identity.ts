@@ -1,3 +1,4 @@
+import {Platform} from 'react-native'
 import Constants from 'expo-constants'
 
 /** Which app a build is: All About Olaf, CARLS, or All About Anything. */
@@ -31,5 +32,10 @@ export const PRIMARY_ICON: string | null =
 		? Constants.expoConfig.extra.primaryIcon
 		: null
 
-/** Whether this app has a feature request board, as app.config.ts's variant says. */
-export const FEATURE_REQUESTS: boolean = Constants.expoConfig?.extra?.featureRequests === true
+/**
+ * Whether this app has a feature request board: the variant has a key, as
+ * app.config.ts says, and the platform has the board. KickstartSignal ships
+ * for iOS alone.
+ */
+export const FEATURE_REQUESTS: boolean =
+	Platform.OS === 'ios' && Constants.expoConfig?.extra?.featureRequests === true
