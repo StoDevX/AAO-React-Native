@@ -22,6 +22,7 @@ overrides:
   metro-source-map@: 0.87.1
   metro-symbolicate@: 0.87.1
   '@react-native/metro-config': '-'
+  '@react-native/normalize-colors': 0.88.0
   '@react-native/community-cli-plugin': '-'
   babel-jest@29: 30.5.2
   jest-environment-node@29: 30.5.2
@@ -2687,9 +2688,6 @@ packages:
 
   '@react-native/normalize-colors@0.88.0':
     resolution: {integrity: sha512-eZCu3tGAQCfvMCPQJVY4dmoMX8ZZYBvqIGHX7lwOYyzNK+Dl8e5ky7ZoXub1Rq75oSrQXNNmSP2CDjNNXXZpFQ==}
-
-  '@react-native/normalize-colors@0.88.1':
-    resolution: {integrity: sha512-2SAKiLyZRf+peBLkhhJWGY5vC26w1Uj9QBgUZvjAnOxjgeEKUGBE5riPS0R7+YoqSrRL0w8ucwZB4M+vvy9HMg==}
 
   '@react-native/virtualized-lists@0.88.0':
     resolution: {integrity: sha512-zpZIOAbobdS93edwHkNUdGDzvElNeQJqukRERRPns3/ucPvuMd2G4fYpmVJSVjhxtGCcLLB1PFndLYYfwaYoBQ==}
@@ -7395,8 +7393,6 @@ snapshots:
 
   '@react-native/normalize-colors@0.88.0': {}
 
-  '@react-native/normalize-colors@0.88.1': {}
-
   '@react-native/virtualized-lists@0.88.0(@types/react@19.2.18)(react-native@0.88.0)(react@19.3.0)':
     dependencies:
       invariant: 2.2.4
@@ -8684,7 +8680,7 @@ snapshots:
 
   expo-system-ui@58.0.7(expo@58.0.14)(react-native@0.88.0)(supports-color@8.1.1):
     dependencies:
-      '@react-native/normalize-colors': 0.88.1
+      '@react-native/normalize-colors': 0.88.0
       debug: 4.4.3(supports-color@8.1.1)
       expo: 58.0.14(@babel/core@7.29.7)(@expo/metro-runtime@58.0.14)(expo-router@58.0.23)(react-native-webview@14.0.1)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)(typescript@7.0.2)
       react-native: 0.88.0(patch_hash=5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077)(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.3.0)(supports-color@8.1.1)
