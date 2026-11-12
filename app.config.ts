@@ -425,6 +425,21 @@ const config: ExpoConfig = {
 			backgroundImage: variant.androidIcon.background,
 		},
 		predictiveBackGestureEnabled: true,
+		// Android matches a link's scheme case by case, and a browser lowercases
+		// the scheme of a link it hands over, so `AllAboutOlaf://` from a web page
+		// arrives as `allaboutolaf://`. Prebuild registers `scheme` as written;
+		// this adds its lowercase spelling beside it. Expo Router reads the path
+		// whatever the scheme, so both open the same screen.
+		intentFilters:
+			variant.scheme === variant.scheme.toLowerCase()
+				? []
+				: [
+						{
+							action: 'VIEW',
+							category: ['BROWSABLE', 'DEFAULT'],
+							data: [{scheme: variant.scheme.toLowerCase()}],
+						},
+					],
 		permissions: [
 			'android.permission.ACCESS_COARSE_LOCATION',
 			'android.permission.ACCESS_FINE_LOCATION',
