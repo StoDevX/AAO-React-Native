@@ -39,24 +39,6 @@ struct SubmissionRecord: Codable, Hashable, Identifiable {
     }
 }
 
-extension SubmissionRecord {
-    private enum CodingKeys: String, CodingKey { case submission, summary, submitted, state, diffs, tooLarge, checked, isFinal, savedAt }
-
-    /// Reads a record written before records kept their diffs, as one with none saved.
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        submission = try container.decode(Submission.self, forKey: .submission)
-        summary = try container.decode(String.self, forKey: .summary)
-        submitted = try container.decode(Date.self, forKey: .submitted)
-        state = try container.decodeIfPresent(SubmissionState.self, forKey: .state)
-        diffs = try container.decodeIfPresent([String: [DiffRow]].self, forKey: .diffs)
-        tooLarge = try container.decodeIfPresent(Set<String>.self, forKey: .tooLarge) ?? []
-        checked = try container.decodeIfPresent(Date.self, forKey: .checked)
-        isFinal = try container.decodeIfPresent(Bool.self, forKey: .isFinal) ?? false
-        savedAt = try container.decodeIfPresent(Date.self, forKey: .savedAt)
-    }
-}
-
 /// The pull requests whose last check GitHub did not answer. Kept in memory
 /// only: a failed check leaves each record's state as GitHub last said it.
 struct CheckFailures: Equatable {

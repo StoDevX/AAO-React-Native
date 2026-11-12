@@ -10,13 +10,15 @@ final class PullRequestUITests: XCTestCase {
                       "branch": "data-editor/stav-2", "base": "c1",
                       "paths": ["data/building-hours/1-3-stav.yaml", "data/building-hours/1-1-cage.yaml"]},
        "summary": "Open Stav and the Cage later on Fridays", "submitted": "2026-11-04T15:30:00Z", "state": "open",
+       "tooLarge": [], "isFinal": false,
        "diffs": {"building-hours/1-1-cage.yaml": [
          {"line": {"_0": {"kind": "same", "text": "    hours:"}}},
          {"line": {"_0": {"kind": "removed", "text": "      - {days: [Fr], from: '7:30am', to: '8:00pm'}"}}},
          {"line": {"_0": {"kind": "added", "text": "      - {days: [Fr], from: '7:30am', to: '10:00pm'}"}}}]}},
       {"submission": {"number": 9001, "url": "https://github.com/StoDevX/AAO-React-Native/pull/9001", "owner": "someone",
                       "branch": "data-editor/pause-1", "base": "c0", "paths": ["data/building-hours/1-2-pause-kitchen.yaml"]},
-       "summary": "Close the Pause kitchen over fall break", "submitted": "2026-10-20T18:00:00Z", "state": "merged"}
+       "summary": "Close the Pause kitchen over fall break", "submitted": "2026-10-20T18:00:00Z", "state": "merged",
+       "tooLarge": [], "isFinal": false}
     ]
     """
 

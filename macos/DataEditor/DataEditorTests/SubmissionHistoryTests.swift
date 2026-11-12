@@ -222,15 +222,14 @@ struct SubmissionHistoryTests {
         }
     }
 
-    /// The shape `submissions.json` had before records kept their diffs.
-    @Test func aHistoryWrittenBeforeDiffsStillReads() throws {
+    /// A record without the fields this build writes cannot be read, so the file is kept aside.
+    @Test func setsAsideARecordMissingItsFields() throws {
         try inFolder { folder in
             let file = folder.appending(path: "submissions.json")
             try Data(#"[{"submission":{"number":7,"url":"https://github.com/StoDevX/AAO-React-Native/pull/7","owner":"me","branch":"b","base":"c","paths":[]},"summary":"s","submitted":"2026-11-10T12:00:00Z"}]"#.utf8).write(to: file)
             let loaded = SubmissionHistory.load(from: file)
-            #expect(loaded.history.records.map(\.id) == [7])
-            #expect(loaded.history.records.first?.needsFetch == true)
-            #expect(loaded.setAside == nil)
+            #expect(loaded.history.records.isEmpty)
+            #expect(loaded.setAside != nil)
         }
     }
 }
