@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, useWindowDimensions} from 'react-native'
+import {Platform, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {
 	Button,
@@ -227,15 +227,31 @@ export default function HomePage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>{branding.appName}</Stack.Title>
-			<Stack.Toolbar placement="left">
-				<Stack.Toolbar.Button
-					accessibilityLabel={CUSTOMIZE_LABEL}
-					icon="paintbrush"
-					onPress={() => router.navigate('/customize')}
-				/>
-			</Stack.Toolbar>
+			{/* On Android the leading slot of a top app bar is for navigation, and
+			    an icon there read as the app's own; Customize -- the app's settings
+			    -- leads the overflow menu instead, as Settings does in Android's
+			    own apps. */}
+			{Platform.OS === 'android' ? null : (
+				<Stack.Toolbar placement="left">
+					<Stack.Toolbar.Button
+						accessibilityLabel={CUSTOMIZE_LABEL}
+						icon="paintbrush"
+						onPress={() => router.navigate('/customize')}
+					/>
+				</Stack.Toolbar>
+			)}
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="ellipsis">
+					{Platform.OS === 'android' ? (
+						<Stack.Toolbar.Menu inline={true}>
+							<Stack.Toolbar.MenuAction
+								icon="paintpalette"
+								onPress={() => router.navigate('/customize')}
+							>
+								{CUSTOMIZE_LABEL}
+							</Stack.Toolbar.MenuAction>
+						</Stack.Toolbar.Menu>
+					) : null}
 					<Stack.Toolbar.Menu inline={true}>
 						<Stack.Toolbar.MenuAction
 							icon="lifepreserver"
