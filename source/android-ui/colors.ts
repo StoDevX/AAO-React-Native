@@ -3,6 +3,7 @@ import {processColor, type ColorValue} from 'react-native'
 
 import {ADAPTIVE_COLORS, type AdaptiveColorName, type AdaptivePair} from '@frogpond/colors'
 import {type MaterialColors, useMaterialColors} from '@expo/ui/jetpack-compose'
+import {type Gradient} from '@expo/ui/jetpack-compose/modifiers'
 
 /**
  * A colour as the screens hand it to a SwiftUI modifier: a CSS string, one of
@@ -211,6 +212,9 @@ export function resolveColor(input: unknown, palette: Palette): string | undefin
 	if (typeof input === 'number') {
 		return argbToHex(input)
 	}
+	if (Array.isArray(input)) {
+		return componentsToHex(input)
+	}
 	if (typeof input !== 'object') {
 		return undefined
 	}
@@ -240,6 +244,144 @@ export function resolveColor(input: unknown, palette: Palette): string | undefin
 		default:
 			return undefined
 	}
+}
+
+/**
+ * A colour given as `[red, green, blue, alpha?]` components from 0 to 1, as
+ * `displayP3` in `@frogpond/colors` hands one over: extended sRGB, which Expo
+ * UI passes to iOS unclamped to reach Display P3. Compose takes sRGB, so the
+ * components are clamped into it, the nearest colour Android draws without a
+ * wide-gamut window.
+ */
+function componentsToHex(components: readonly unknown[]): string | undefined {
+	let [red, green, blue, alpha = 1] = components
+	let channels = [red, green, blue, alpha]
+	if (!channels.every((value) => typeof value === 'number' && Number.isFinite(value))) {
+		return undefined
+	}
+	let hex = (channels as number[])
+		.map((value) =>
+			Math.round(Math.min(1, Math.max(0, value)) * 255)
+				.toString(16)
+				.padStart(2, '0'),
+		)
+		.join('')
+	return `#${hex}`.toUpperCase()
+}
+
+/** A SwiftUI `UnitPoint` as the shape styles carry it, or undefined. */
+function unitPoint(value: unknown): {x: number; y: number} | undefined {
+	if (typeof value !== 'object' || value === null) {
+		return undefined
+	}
+	let {x, y} = value as {x?: unknown; y?: unknown}
+	return typeof x === 'number' && typeof y === 'number' ? {x, y} : undefined
+}
+
+/**
+ * A SwiftUI gradient `ShapeStyle` as the Compose gradient Expo UI's patched
+ * `gradientBackground` modifier paints, or undefined for anything else (a plain
+ * colour, a hierarchical style, an angular gradient, which has no Compose brush
+ * here and draws its first colour through `resolveColor`).
+ *
+ * SwiftUI gives a radial gradient's radii in points, which are Compose's dp,
+ * so the end radius passes as is. Its start radius has no Compose counterpart:
+ * the colours start that far out instead, by pushing every stop outwards.
+ */
+export function resolveGradient(input: unknown, palette: Palette): Gradient | undefined {
+	if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+		return undefined
+	}
+	let value = input as Record<string, unknown>
+	if (value.type !== 'linearGradient' && value.type !== 'radialGradient') {
+		return undefined
+	}
+	let colors = (Array.isArray(value.colors) ? value.colors : [])
+		.map((color) => resolveColor(color, palette))
+		.filter((color): color is string => color !== undefined)
+	if (colors.length === 0) {
+		return undefined
+	}
+	if (value.type === 'linearGradient') {
+		return {
+			type: 'linear',
+			colors,
+			start: unitPoint(value.startPoint) ?? {x: 0.5, y: 0},
+			end: unitPoint(value.endPoint) ?? {x: 0.5, y: 1},
+		}
+	}
+	let endRadius = typeof value.endRadius === 'number' ? value.endRadius : undefined
+	let startRadius = typeof value.startRadius === 'number' ? value.startRadius : 0
+	let inner = endRadius && endRadius > 0 ? Math.min(1, Math.max(0, startRadius / endRadius)) : 0
+	let last = Math.max(1, colors.length - 1)
+	return {
+		type: 'radial',
+		colors,
+		stops: inner > 0 ? colors.map((_, index) => inner + (index / last) * (1 - inner)) : undefined,
+		center: unitPoint(value.center) ?? {x: 0.5, y: 0.5},
+		radius: endRadius && endRadius > 0 ? endRadius : undefined,
+	}
+}
+
+/** A colour scheme a view can be forced into, as SwiftUI's `environment(\.colorScheme)` does. */
+export type Scheme = 'light' | 'dark'
+
+/**
+ * iOS's label colours in each scheme: white or black, with the secondary to
+ * quaternary levels at the opacities iOS gives them. A view forced into the
+ * other scheme sits on a fill of its own (a home card's gradient), which is
+ * what those levels were drawn for.
+ */
+const SCHEME_CONTENT: Readonly<Record<Scheme, Partial<MaterialColors>>> = {
+	dark: {
+		onSurface: '#FFFFFFFF',
+		onSurfaceVariant: '#EBEBF599',
+		outline: '#EBEBF54D',
+		outlineVariant: '#EBEBF52E',
+	},
+	light: {
+		onSurface: '#000000FF',
+		onSurfaceVariant: '#3C3C4399',
+		outline: '#3C3C434D',
+		outlineVariant: '#3C3C432E',
+	},
+}
+
+/** Each palette's forced-scheme variants, so a forced palette keeps one identity. */
+const schemedPalettes = new WeakMap<Palette, Palette>()
+
+/**
+ * The palette for content forced into a colour scheme. In the palette's own
+ * scheme that is the palette itself; in the other, its content roles become
+ * that scheme's label colours, so `foregroundStyle(.primary)` reads white on
+ * a card that asks for dark content, as on iOS.
+ */
+export function inScheme(palette: Palette, scheme: Scheme | undefined): Palette {
+	if (scheme === undefined || (scheme === 'dark') === palette.dark) {
+		return palette
+	}
+	let cached = schemedPalettes.get(palette)
+	if (!cached) {
+		cached = {colors: {...palette.colors, ...SCHEME_CONTENT[scheme]}, dark: scheme === 'dark'}
+		schemedPalettes.set(palette, cached)
+	}
+	return cached
+}
+
+/**
+ * A view's content colour: its foreground resolved in the scheme it was
+ * forced into, or that scheme's primary label when it names none, since
+ * Compose's own default follows the Host's scheme instead.
+ */
+export function contentColor(
+	input: unknown,
+	palette: Palette,
+	scheme: Scheme | undefined,
+): string | undefined {
+	let schemed = inScheme(palette, scheme)
+	return (
+		resolveColor(input, schemed) ?? (schemed === palette ? undefined : schemed.colors.onSurface)
+	)
 }
 
 /** The same colour at an opacity, for the faded states SwiftUI draws by opacity. */

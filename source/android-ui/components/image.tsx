@@ -5,7 +5,7 @@ import type {ImageProps} from '@expo/ui/swift-ui'
 import {Image as ComposeImage} from '@expo/ui/jetpack-compose'
 import {clickable, type ModifierConfig} from '@expo/ui/jetpack-compose/modifiers'
 
-import {resolveColor, usePalette} from '../colors'
+import {contentColor, usePalette} from '../colors'
 import {MenuContext} from '../context'
 import {
 	useAxis,
@@ -110,7 +110,7 @@ export function Image(props: ImageProps): React.ReactNode {
 
 	let element = (
 		<SymbolIcon
-			color={resolveColor(color ?? env.foreground, palette)}
+			color={contentColor(color ?? env.foreground, palette, env.colorScheme)}
 			contentDescription={label}
 			modifiers={chain}
 			name={systemName ?? assetName}
