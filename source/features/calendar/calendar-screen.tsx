@@ -2,12 +2,7 @@ import * as React from 'react'
 import {useMemo} from 'react'
 import {useRouter} from 'expo-router'
 
-import {
-	CalendarModePicker,
-	CalendarPicker,
-	type SourcedEvent,
-	useMergedEvents,
-} from '@frogpond/ccc-calendar'
+import {CalendarToolbar, type SourcedEvent, useMergedEvents} from '@frogpond/ccc-calendar'
 import {type CalendarBodyHandle, DayView, EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
@@ -117,19 +112,18 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 			{/* An organization's view has nothing for the reader to choose: its
 			    filter, mode and calendars are all its own. */}
 			{adjustable ? (
-				<>
-					<CalendarModePicker mode={mode} onSelectMode={saved.selectMode} />
-					<CalendarPicker
-						categories={categories}
-						enabledIds={enabledIds}
-						filter={filter}
-						onSelectFilter={saved.selectFilter}
-						onToggleSource={toggle}
-						onTodayPress={mode === 'day' ? onTodayPress : undefined}
-						organizations={organizations}
-						sources={all}
-					/>
-				</>
+				<CalendarToolbar
+					categories={categories}
+					enabledIds={enabledIds}
+					filter={filter}
+					mode={mode}
+					onSelectFilter={saved.selectFilter}
+					onSelectMode={saved.selectMode}
+					onToggleSource={toggle}
+					onTodayPress={mode === 'day' ? onTodayPress : undefined}
+					organizations={organizations}
+					sources={all}
+				/>
 			) : null}
 		</>
 	)

@@ -19,7 +19,7 @@ import type {CalendarMode} from '../../source/features/calendar/store'
  * one decision, and the menu would otherwise sit over the view it just
  * changed.
  */
-type Props = {
+export type CalendarModePickerProps = {
 	mode: CalendarMode
 	onSelectMode: (mode: CalendarMode) => void
 }
@@ -29,28 +29,41 @@ type Props = {
 const LABEL = accessibilityLabel('Calendar view')
 const MENU_MODIFIERS = [LABEL, foregroundStyle(c.label)]
 
-export function CalendarModePicker({mode, onSelectMode}: Props): React.ReactNode {
+export function CalendarModePicker(props: CalendarModePickerProps): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
 			<Stack.Toolbar.View>
-				<Host matchContents={true}>
-					<Menu label={<Image systemName="ellipsis.circle" />} modifiers={MENU_MODIFIERS}>
-						<Toggle isOn={mode === 'day'} label="Day" onIsOnChange={() => onSelectMode('day')} />
-						{/*
-						<Toggle
-							isOn={mode === 'timeline'}
-							label="Timeline"
-							onIsOnChange={() => onSelectMode('timeline')}
-						/>
-						*/}
-						<Toggle
-							isOn={mode === 'upcoming'}
-							label="Upcoming"
-							onIsOnChange={() => onSelectMode('upcoming')}
-						/>
-					</Menu>
-				</Host>
+				<CalendarModeMenu {...props} systemName="ellipsis.circle" />
 			</Stack.Toolbar.View>
 		</Stack.Toolbar>
+	)
+}
+
+/** The mode menu itself, for a toolbar to place. */
+export function CalendarModeMenu({
+	mode,
+	onSelectMode,
+	systemName,
+}: CalendarModePickerProps & {
+	systemName: React.ComponentProps<typeof Image>['systemName']
+}): React.ReactNode {
+	return (
+		<Host matchContents={true}>
+			<Menu label={<Image systemName={systemName} />} modifiers={MENU_MODIFIERS}>
+				<Toggle isOn={mode === 'day'} label="Day" onIsOnChange={() => onSelectMode('day')} />
+				{/*
+				<Toggle
+					isOn={mode === 'timeline'}
+					label="Timeline"
+					onIsOnChange={() => onSelectMode('timeline')}
+				/>
+				*/}
+				<Toggle
+					isOn={mode === 'upcoming'}
+					label="Upcoming"
+					onIsOnChange={() => onSelectMode('upcoming')}
+				/>
+			</Menu>
+		</Host>
 	)
 }
