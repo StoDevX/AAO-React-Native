@@ -48,13 +48,13 @@ struct ScheduleSection: View {
                     }
                 }
                 // each of these edits names a row or service by its place, which the edit in flight may move
-                .disabled(model.editing)
+                .disabled(model.edits.isShown)
             } header: {
                 Text(s == 0 ? (title ?? service.title) : service.title)
             }
         }
         Button("Add a schedule", systemImage: "plus.rectangle.on.rectangle") { apply(editor.addService(title: "New schedule")) }
-            .disabled(model.editing)
+            .disabled(model.edits.isShown)
     }
 }
 

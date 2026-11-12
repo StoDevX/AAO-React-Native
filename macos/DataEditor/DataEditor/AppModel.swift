@@ -82,10 +82,13 @@ final class AppModel {
     private(set) var updating = false
     /// Why the last update failed. The workspace is left as it was, so editing goes on.
     private(set) var updateError: String?
-    /// Set while an edit waits for the helper's reply. Edits made meanwhile
-    /// are dropped: they were built from the document before the reply, so a
-    /// second click on Remove would name a row that has since moved.
-    private(set) var editing = false
+    /// The edit waiting for the helper's reply. Edits made meanwhile are
+    /// dropped: they were built from the document before the reply, so a
+    /// second click on Remove would name a row that has since moved. The
+    /// editor greys its controls only for an edit slow enough to notice.
+    let edits = SlowWork(delay: .milliseconds(500))
+    /// Whether an edit waits for the helper's reply.
+    var editing: Bool { edits.isRunning }
     /// Set while `submit` runs, which reads `data/` that an update would replace underneath it.
     private(set) var submitting = false
     /// Set while `launch()` runs, so a second call does not start a second helper.
@@ -347,11 +350,9 @@ final class AppModel {
     @discardableResult
     func apply(_ ops: [EditOp], to file: String) async -> Bool {
         guard !updating, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
-        editing = true
-        defer { editing = false }
         let edited: Loaded
         do {
-            edited = try await helper.edit(file, ops)
+            edited = try await edits.run { try await helper.edit(file, ops) }
         } catch {
             if file == selection { problems = [Problem(file: file, message: error.localizedDescription, path: nil)] }
             return false
