@@ -20,6 +20,7 @@ import {DirectoryResultsGrid} from '../../source/features/directory/directory-re
 import {formatResults} from '../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../source/features/directory/query'
 import {resolveSearch, searchHeading} from '../../source/features/directory/resolve-search'
+import {ResultsToolbar} from '../../source/features/directory/results-toolbar'
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../source/features/directory/types'
 import {ImportantContactsGrid} from '../../source/features/directory/important-contacts-grid'
 import {useDirectory} from '../../source/features/directory/use-directory'
@@ -78,28 +79,13 @@ function DirectoryView(): React.ReactNode {
 	// scrollable mounts above the toolbar, so the scrollable has to come first.
 	let searchChrome = (
 		<>
-			<Stack.Toolbar placement="bottom">
-				<Stack.Toolbar.SearchBarSlot />
-				<Stack.Toolbar.Spacer />
-				{/* Always mounted, hidden until there are results to re-lay-out:
-				    `Stack.Toolbar` only reads direct Button/Spacer children, so a
-				    conditionally-rendered fragment of them is dropped entirely. */}
-				{/* Icon and Label as children rather than an `icon` prop and an
-				    `accessibilityLabel`: a bottom-toolbar item drops the latter and
-				    lets iOS name it after its symbol, so the button announced
-				    itself as "List" rather than saying what tapping it does. */}
-				<Stack.Toolbar.Button
-					hidden={!hasResults}
-					onPress={() =>
-						dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
-					}
-				>
-					<Stack.Toolbar.Icon sf={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'} />
-					<Stack.Toolbar.Label>
-						{resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
-					</Stack.Toolbar.Label>
-				</Stack.Toolbar.Button>
-			</Stack.Toolbar>
+			<ResultsToolbar
+				hasResults={hasResults}
+				onToggle={() =>
+					dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
+				}
+				resultsView={resultsView}
+			/>
 
 			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
 		</>
