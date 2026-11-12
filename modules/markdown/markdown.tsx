@@ -4,19 +4,8 @@ import {
 	type LinkPressEvent,
 	type MarkdownStyle,
 } from 'react-native-enriched-markdown'
-import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
-
-// `c.label`/`c.link` are `PlatformColor(...)` objects. `MarkdownStyle`'s
-// public type declares `color?: string`, but the library's own
-// `normalizeMarkdownStyle` pipes colors through RN's `processColor()` into
-// the Fabric codegen schema, which types color props as real `ColorValue` —
-// so `PlatformColor` values work at runtime and adapt to the system color
-// scheme automatically. The cast below only satisfies the narrower public type.
-const label = c.label as unknown as string
-const link = c.link as unknown as string
-const secondarySystemBackground = c.secondarySystemBackground as unknown as string
-const separator = c.separator as unknown as string
+import {type MarkdownColors, useMarkdownColors} from './theme'
 
 /**
  * The body text style's default size, where the library's own is 16, so running
@@ -24,29 +13,37 @@ const separator = c.separator as unknown as string
  */
 const BODY_SIZE = 17
 
-const baseMarkdownStyle: MarkdownStyle = {
-	paragraph: {color: label, fontSize: BODY_SIZE},
-	h1: {color: label},
-	h2: {color: label},
-	h3: {color: label},
-	h4: {color: label},
-	h5: {color: label},
-	h6: {color: label},
-	strong: {color: label},
-	em: {color: label},
-	blockquote: {
-		color: label,
-		fontSize: BODY_SIZE,
-		backgroundColor: secondarySystemBackground,
-		borderColor: separator,
-	},
-	list: {color: label, fontSize: BODY_SIZE},
-	code: {
-		color: label,
-		backgroundColor: secondarySystemBackground,
-		borderColor: separator,
-	},
-	link: {color: link},
+/** The library's style for each element, in the given colours. */
+function baseMarkdownStyle({
+	label,
+	link,
+	secondarySystemBackground,
+	separator,
+}: MarkdownColors): MarkdownStyle {
+	return {
+		paragraph: {color: label, fontSize: BODY_SIZE},
+		h1: {color: label},
+		h2: {color: label},
+		h3: {color: label},
+		h4: {color: label},
+		h5: {color: label},
+		h6: {color: label},
+		strong: {color: label},
+		em: {color: label},
+		blockquote: {
+			color: label,
+			fontSize: BODY_SIZE,
+			backgroundColor: secondarySystemBackground,
+			borderColor: separator,
+		},
+		list: {color: label, fontSize: BODY_SIZE},
+		code: {
+			color: label,
+			backgroundColor: secondarySystemBackground,
+			borderColor: separator,
+		},
+		link: {color: link},
+	}
 }
 
 // `react-native-enriched-markdown`'s parser pairs `$...$` as a math node by
@@ -75,9 +72,11 @@ export type MarkdownProps = {
 }
 
 export function Markdown({source, markdownStyle}: MarkdownProps): React.ReactNode {
-	let style = markdownStyle
-		? mergeMarkdownStyle(baseMarkdownStyle, markdownStyle)
-		: baseMarkdownStyle
+	let colors = useMarkdownColors()
+	let style = React.useMemo(() => {
+		let base = baseMarkdownStyle(colors)
+		return markdownStyle ? mergeMarkdownStyle(base, markdownStyle) : base
+	}, [colors, markdownStyle])
 
 	return (
 		<EnrichedMarkdownText
