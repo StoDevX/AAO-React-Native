@@ -92,7 +92,7 @@ jobs:
       - name: Build the helper
         run: mise run data-editor:helper
 
-      # The app's build stops without the oxfmt it bundles.
+      # The app's build stops without the oxfmt it bundles, which the UI tests format with too.
       - name: Build the app's runtime
         run: mise run data-editor:runtime
 
@@ -103,7 +103,7 @@ jobs:
       # team certificate.
       - name: Test the app
         run: |
-          TEST_RUNNER_DATA_EDITOR_NODE="$(mise which node)" xcodebuild test \
+          xcodebuild test \
             -project macos/DataEditor/DataEditor.xcodeproj \
             -scheme DataEditor \
             -destination 'platform=macOS,arch=arm64' \

@@ -2,7 +2,7 @@ import XCTest
 
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
-    /// the helper built from the checkout, and the repo's oxfmt. A `conflicted` file is set aside as a conflict,
+    /// the helper built from the checkout, and the oxfmt the app bundles. A `conflicted` file is set aside as a conflict,
     /// as an update leaves one, `submissions` is planted as the pull requests
     /// submitted before, and `arguments` follow the workspace's. Returns
     /// the app and its data folder, for a test that changes a file under it.
@@ -28,10 +28,11 @@ extension XCTestCase {
             throw LaunchError("\(changed.file) changed after the helper was built; run `mise run data-editor:helper`")
         }
         try FileManager.default.copyItem(at: helper, to: workspace.appending(path: "scripts"))
-        let node = try XCTUnwrap(ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"], "run with TEST_RUNNER_DATA_EDITOR_NODE=$(mise which node)")
-        let oxfmt = support.appending(path: "oxfmt")
-        try Data("#!/bin/sh\nexec '\(node)' '\(repo.appending(path: "node_modules/oxfmt/bin/oxfmt").path)' \"$@\"\n".utf8).write(to: oxfmt)
-        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: oxfmt.path)
+        // the oxfmt the app bundles; the runner is sandboxed, and the app may not run a file from its container
+        let oxfmt = repo.appending(path: "macos/DataEditor/build/runtime/oxfmt")
+        guard FileManager.default.isExecutableFile(atPath: oxfmt.path) else {
+            throw LaunchError("run `mise run data-editor:runtime` first, for the oxfmt the UI tests format with")
+        }
         if let conflicted {
             let kept = workspace.appending(path: "conflicts/\(conflicted)")
             try FileManager.default.createDirectory(at: kept.deletingLastPathComponent(), withIntermediateDirectories: true)
