@@ -28,6 +28,7 @@ final class AppModel {
         case buildProblems
         case notReady
         case unsavedText
+        case conflicts
 
         var errorDescription: String? {
             switch self {
@@ -36,6 +37,7 @@ final class AppModel {
             case .updating: "The data is still updating."
             case .buildProblems: "Fix the problems listed first."
             case .unsavedText: "Some text you typed isn't saved yet. Press Return in that field."
+            case .conflicts: "Choose which copy to keep of each conflicting file first."
             }
         }
     }
@@ -91,6 +93,9 @@ final class AppModel {
     var editing: Bool { edits.isRunning }
     /// Set while `submit` runs, which reads `data/` that an update would replace underneath it.
     private(set) var submitting = false
+    /// Set once `submit` has saved what was typed, while it builds and sends
+    /// `data/`: an edit then would reach the pull request without the build seeing it.
+    private(set) var sending = false
     /// Set while `launch()` runs, so a second call does not start a second helper.
     private var launching = false
     /// Set once quitting has begun, so a launch still under way starts nothing more.
@@ -344,12 +349,12 @@ final class AppModel {
 
     /// Edits `file`, which a text field still holding a draft names after the
     /// selection has moved on. The document follows only an edit to the
-    /// selected file. Does nothing during an update, to a file with
-    /// an open conflict, whose set-aside copy the edit would replace, or while
-    /// another edit waits for its reply. Returns whether the helper took the edit.
+    /// selected file. Does nothing during an update, while a submission sends,
+    /// to a file with an open conflict, whose set-aside copy the edit would
+    /// replace, or while another edit waits for its reply. Returns whether the helper took the edit.
     @discardableResult
     func apply(_ ops: [EditOp], to file: String) async -> Bool {
-        guard !updating, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
+        guard !updating, !sending, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
         let edited: Loaded
         do {
             edited = try await edits.run { try await helper.edit(file, ops) }
@@ -505,7 +510,7 @@ final class AppModel {
     }
 
     func revert(_ file: String) async {
-        guard !updating else { return }
+        guard !updating, !submitting else { return }
         try? workspace.revert(file)
         await afterFilesChanged()
     }
@@ -570,19 +575,26 @@ final class AppModel {
     /// Why a submission may not start: an update may have removed a file it
     /// would send as deleted, and a second submission while one runs could
     /// open a second pull request, since each window's Overview has a Submit.
-    static func submitRefusal(updating: Bool, submitting: Bool) -> Refusal? {
+    static func submitRefusal(updating: Bool, submitting: Bool, conflicted: Bool) -> Refusal? {
         if submitting { return .submitting }
         if updating { return .updating }
         return nil
     }
+        if conflicted { return .conflicts }
 
     func submit(summary: String) async throws {
-        if let refusal = Self.submitRefusal(updating: updating, submitting: submitting) { throw refusal }
-        guard let base = baseCommit, let helper else { throw Refusal.notReady }
+        if let refusal = Self.submitRefusal(updating: updating, submitting: submitting, conflicted: !conflicts.isEmpty) { throw refusal }
+        guard let base = baseCommit else { throw Refusal.notReady }
+        // held before the first wait, which would let a second Submit or an update in
+        submitting = true
+        defer {
+            submitting = false
+            sending = false
+        }
         // what is typed in a field goes with the rest
         if await !commitPendingDrafts() { throw Refusal.unsavedText }
-        submitting = true
-        defer { submitting = false }
+        guard let helper else { throw Refusal.notReady }
+        sending = true
         buildProblems = try await build(with: helper)
         if !buildProblems.isEmpty { throw Refusal.buildProblems }
         let submitter = GitHubSubmitter(tokens: tokens)
@@ -741,14 +753,14 @@ final class AppModel {
     func dismissDraftNotice(_ notice: Problem) { draftNotices.removeAll { $0 == notice } }
 
     func keepMine(_ file: String) async {
-        guard !updating else { return }
+        guard !updating, !submitting else { return }
         try? workspace.keepMine(file)
         conflicts = workspace.conflicts
         await afterFilesChanged()
     }
 
     func keepLatest(_ file: String) async {
-        guard !updating else { return }
+        guard !updating, !submitting else { return }
         try? workspace.keepLatest(file)
         conflicts = workspace.conflicts
         await afterFilesChanged()

@@ -42,9 +42,49 @@ struct SubmitControlTests {
 
     /// Each window's Overview has its own Submit, and two submissions at once could open two pull requests.
     @Test func refusesASecondSubmissionWhileOneRuns() {
-        #expect(AppModel.submitRefusal(updating: false, submitting: true) == .submitting)
-        #expect(AppModel.submitRefusal(updating: true, submitting: false) == .updating)
-        #expect(AppModel.submitRefusal(updating: false, submitting: false) == nil)
+        #expect(AppModel.submitRefusal(updating: false, submitting: true, conflicted: false) == .submitting)
+        #expect(AppModel.submitRefusal(updating: true, submitting: false, conflicted: false) == .updating)
+        #expect(AppModel.submitRefusal(updating: false, submitting: false, conflicted: false) == nil)
+    }
+
+    /// A conflicted file's own copy is set aside, so a submission would leave it out without a word.
+    @Test func refusesASubmissionWithAConflictOpen() {
+        #expect(AppModel.submitRefusal(updating: false, submitting: false, conflicted: true) == .conflicts)
+    }
+
+    /// A model on a workspace downloaded at `c1`, whose Cage file the
+    /// contributor changed, and a text field whose save takes 300 ms.
+    private func modelSavingSlowly() throws -> (AppModel, URL) {
+        let support = FileManager.default.temporaryDirectory.appending(path: "submit \(UUID().uuidString)")
+        let workspace = support.appending(path: "workspace")
+        let cage = "building-hours/1-1-cage.yaml"
+        for (folder, text) in [("base/data", "name: The Cage\n"), ("data", "name: The Cage Grill\n")] {
+            let file = workspace.appending(path: "\(folder)/\(cage)")
+            try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try Data(text.utf8).write(to: file)
+        }
+        try Data(#"{"commit":"c1"}"#.utf8).write(to: workspace.appending(path: "snapshot.json"))
+        let model = AppModel(support: support)
+        model.registerDraftSaver(UUID()) {
+            try? await Task.sleep(for: .milliseconds(300))
+            return true
+        }
+        return (model, workspace.appending(path: "data/\(cage)"))
+    }
+
+    /// Saving typed text is the first wait; a second Submit, an update or a
+    /// revert in it would open a second pull request or change what is sent.
+    @Test func holdsItsPlaceFromTheFirstWait() async throws {
+        let (model, cage) = try modelSavingSlowly()
+        let first = Task { try await model.submit(summary: "Close at 9") }
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(model.submitting)
+        await #expect(throws: AppModel.Refusal.submitting) { try await model.submit(summary: "Close at 9") }
+        await model.revert("building-hours/1-1-cage.yaml")
+        #expect(try String(contentsOf: cage, encoding: .utf8) == "name: The Cage Grill\n")
+        // no helper loads in a unit test, so the build is refused
+        await #expect(throws: AppModel.Refusal.notReady) { try await first.value }
+        #expect(!model.submitting)
     }
 
     @Test func aFinishedPullRequestTakesNoMoreCommits() {
