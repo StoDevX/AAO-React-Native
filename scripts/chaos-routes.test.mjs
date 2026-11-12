@@ -32,6 +32,19 @@ test('turns route files into routes', () => {
 	)
 })
 
+test('reads a platform file as the route it is a version of', () => {
+	assert.deepEqual(
+		routesIn([
+			'menus/_layout.tsx',
+			'menus/_layout.android.tsx',
+			'menus/cafe.tsx',
+			'menus/cafe.android.tsx',
+			'menus/cafe.ios.tsx',
+		]),
+		['menus/cafe'],
+	)
+})
+
 test('sorts routes by code unit, whatever the locale', () => {
 	assert.deepEqual(routesIn(['b.tsx', 'a-b.tsx', 'B.tsx', 'a.tsx', 'ab.tsx']), [
 		'B',
