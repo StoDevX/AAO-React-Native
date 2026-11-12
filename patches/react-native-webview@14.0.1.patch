@@ -1,5 +1,23 @@
+diff --git a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+index fa8efb88e2b7c09afbfe473363cdb29af964563c..686a767bff6e213b9fc0f5333827d8398aca51e0 100644
+--- a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
++++ b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+@@ -512,6 +512,13 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
+       view.getWebView().clearHistory();
+   }
+ 
++  @Override
++  @SuppressWarnings("deprecation")
++  public void presentFindNavigator(RNCWebViewWrapper view) {
++      // The WebView's own find bar, Android's counterpart of iOS's find navigator.
++      view.getWebView().showFindDialog(null, true);
++  }
++
+   @Override
+     protected void addEventEmitters(@NonNull ThemedReactContext reactContext, RNCWebViewWrapper view) {
+         // Do not register default touch emitter and let WebView implementation handle touches
 diff --git a/apple/RNCWebView.mm b/apple/RNCWebView.mm
-index 2be7877..9197cd7 100644
+index 2be787788bbfdfefe8e327f3aac3c86bf300874d..9197cd7019d04db8c0200d1ae6df7398dce62c31 100644
 --- a/apple/RNCWebView.mm
 +++ b/apple/RNCWebView.mm
 @@ -558,6 +558,10 @@ Class<RCTComponentViewProtocol> RNCWebViewCls(void)
@@ -14,7 +32,7 @@ index 2be7877..9197cd7 100644
      [_view stopLoading];
  }
 diff --git a/apple/RNCWebViewImpl.h b/apple/RNCWebViewImpl.h
-index 1f637c1..673ea60 100644
+index 1f637c1d761c867ac5b63c1e16de866798944fc8..673ea6055f07a78cfe86deeb55d1b57768e2ef2a 100644
 --- a/apple/RNCWebViewImpl.h
 +++ b/apple/RNCWebViewImpl.h
 @@ -149,6 +149,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *)request
@@ -26,7 +44,7 @@ index 1f637c1..673ea60 100644
  #ifdef RCT_NEW_ARCH_ENABLED
  - (void)destroyWebView;
 diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
-index 3890426..ed532ef 100644
+index 38904266dc37b006274104f4680778ffbfece369..ed532ef126ae7bb05ab36e3f42a6e00422109329 100644
 --- a/apple/RNCWebViewImpl.m
 +++ b/apple/RNCWebViewImpl.m
 @@ -517,6 +517,12 @@ RCTAutoInsetsProtocol>
@@ -59,7 +77,7 @@ index 3890426..ed532ef 100644
  {
    NSMutableSet *dataTypes = [NSMutableSet setWithArray:@[
 diff --git a/index.d.ts b/index.d.ts
-index 10b9c14..7d5dfce 100644
+index 10b9c145b920a6a2ba1fb09bd72150328fafe211..7d5dfce985a6121c3f409a23ca7181036b040659 100644
 --- a/index.d.ts
 +++ b/index.d.ts
 @@ -5,7 +5,8 @@ export { FileDownload, WebViewMessageEvent, WebViewNavigation } from './lib/WebV
@@ -86,7 +104,7 @@ index 10b9c14..7d5dfce 100644
     * Posts a message to WebView.
     */
 diff --git a/src/RNCWebViewNativeComponent.ts b/src/RNCWebViewNativeComponent.ts
-index ca3af15..2e5138e 100644
+index ca3af151a378c516266ae965a44898920e831172..2e5138e2cfac931e2ca416ea1e4abec0d1f512b3 100644
 --- a/src/RNCWebViewNativeComponent.ts
 +++ b/src/RNCWebViewNativeComponent.ts
 @@ -283,6 +283,7 @@ export interface NativeCommands {
@@ -105,8 +123,20 @@ index ca3af15..2e5138e 100644
      'postMessage',
      'loadUrl',
      'clearFormData',
+diff --git a/src/WebView.android.tsx b/src/WebView.android.tsx
+index 15e9dee9e1839972c64ed7d3bbd7a7d63575409f..cd9ffd60a011dcc9992319fc501ebdd1f0b09f65 100644
+--- a/src/WebView.android.tsx
++++ b/src/WebView.android.tsx
+@@ -166,6 +166,7 @@ const WebViewComponent = forwardRef<unknown, AndroidWebViewProps>(
+         clearCache: (includeDiskFiles: boolean) =>
+           webViewRef.current && Commands.clearCache(webViewRef.current, includeDiskFiles),
+         clearHistory: () => webViewRef.current && Commands.clearHistory(webViewRef.current),
++        presentFindNavigator: () => webViewRef.current && Commands.presentFindNavigator(webViewRef.current),
+       }),
+       [setViewState, webViewRef],
+     );
 diff --git a/src/WebView.ios.tsx b/src/WebView.ios.tsx
-index 970acb0..ed4390f 100644
+index 970acb0f8c2fb56c641cc80b555284843b2b4952..ed4390f5756eeacb5e13123e250200b7a8853c48 100644
 --- a/src/WebView.ios.tsx
 +++ b/src/WebView.ios.tsx
 @@ -138,6 +138,7 @@ const WebViewComponent = forwardRef<unknown, IOSWebViewProps>(
@@ -118,7 +148,7 @@ index 970acb0..ed4390f 100644
            webViewRef.current && Commands.clearCache(webViewRef.current, includeDiskFiles),
        }),
 diff --git a/src/WebViewTypes.ts b/src/WebViewTypes.ts
-index 4e7247f..73f66a5 100644
+index 4e7247f82e2bc418b495196132add7b416780a08..73f66a537d69c8afe6dd83266beb5e297a4dd87a 100644
 --- a/src/WebViewTypes.ts
 +++ b/src/WebViewTypes.ts
 @@ -20,6 +20,7 @@ type WebViewCommands =
