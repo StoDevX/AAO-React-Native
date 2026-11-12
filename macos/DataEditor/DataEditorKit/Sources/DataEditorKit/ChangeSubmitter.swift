@@ -44,6 +44,9 @@ public enum SubmitError: LocalizedError, Equatable, Sendable {
     /// the fork cannot see the commit the data was downloaded at yet
     case missingBaseCommit
     case github(Int, String)
+    /// the contributor's fork, which GitHub would not bring up to date for the app:
+    /// commits it lacks change workflows, which the app's sign-in may not touch
+    case forkBehind(URL)
 
     /// Whether GitHub says what was asked for no longer exists. Only 404 and
     /// 410 say so: a 403 on a public read is nearly always the rate limit, for
@@ -67,6 +70,7 @@ public enum SubmitError: LocalizedError, Equatable, Sendable {
         case .missingBaseCommit: return "GitHub is still setting up your copy of the data. Try again in a minute."
         case .github(let status, let message) where message.isEmpty: return "GitHub answered with status \(status)."
         case .github(_, let message): return message
+        case .forkBehind(let fork): return "Your copy of the data on GitHub is out of date. Open \(fork.absoluteString), choose Sync fork, then submit again."
         }
     }
 }

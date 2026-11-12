@@ -1,6 +1,8 @@
 import Foundation
 
-/// Opens and updates pull requests from the contributor's fork, through GitHub's API alone.
+/// Opens and updates pull requests through GitHub's API alone: from a branch
+/// in the repository itself for a contributor who may push to it, and from
+/// their fork for anyone else.
 public struct GitHubSubmitter: ChangeSubmitter {
     private let tokens: any TokenStore
     private let session: URLSession
@@ -43,7 +45,12 @@ public struct GitHubSubmitter: ChangeSubmitter {
         return value
     }
 
-    /// The contributor's fork, made if they have none, synced with upstream where it can be.
+    /// Whether the signed-in contributor may push to the repository itself.
+    private func canPush() async throws -> Bool {
+        try await send("GET", "/repos/\(repo.fullName)")["permissions"]?["push"] == .bool(true)
+    }
+
+    /// The contributor's fork, made if they have none, and brought up to date.
     private func fork() async throws -> (owner: String, fullName: String) {
         let created = try await send("POST", "/repos/\(repo.fullName)/forks")
         guard let fullName = created["full_name"]?.string, let owner = created["owner"]?["login"]?.string else {
@@ -59,7 +66,12 @@ public struct GitHubSubmitter: ChangeSubmitter {
                 await sleep(.seconds(1))
             }
         }
-        _ = try? await send("POST", "/repos/\(fullName)/merge-upstream", .object(["branch": .string(repo.branch)]))
+        do {
+            _ = try await send("POST", "/repos/\(fullName)/merge-upstream", .object(["branch": .string(repo.branch)]))
+        } catch let error as SubmitError where !error.isRateLimited && error != .signInRequired {
+            // a branch from a fork GitHub would not sync is refused the same way
+            throw SubmitError.forkBehind(URL(string: "https://github.com/\(fullName)")!)
+        }
         return (owner, fullName)
     }
 
@@ -109,7 +121,7 @@ public struct GitHubSubmitter: ChangeSubmitter {
 
     public func submit(changes: [Change], base: String, summary: String, appVersion: String) async throws -> Submission {
         _ = try await send("GET", "/user")
-        let (owner, fullName) = try await fork()
+        let (owner, fullName) = try await canPush() ? (repo.owner, repo.fullName) : try await fork()
         let stamp = Date.now.formatted(.iso8601.year().month().day().time(includingFractionalSeconds: false)).filter(\.isNumber)
         let branch = "data-editor/\(Self.slug(summary))-\(stamp)"
         let sha = try await commit(changes, parent: base, message: summary, in: fullName)

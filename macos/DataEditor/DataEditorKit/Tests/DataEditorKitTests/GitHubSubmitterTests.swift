@@ -2,17 +2,23 @@ import Foundation
 import Testing
 @testable import DataEditorKit
 
-/// GitHub as far as a submission sees it, for user `ole` whose fork already exists.
-private func github(status401 paths: Set<String> = []) -> (URLSession, StubProtocol.Stub) {
+/// GitHub as far as a submission sees it, for user `ole` whose fork already
+/// exists, or who may `push` to StoDevX's repository itself, whose commits then
+/// go there. The fork's sync answers `syncStatus`.
+private func github(status401 paths: Set<String> = [], push: Bool = false, syncStatus: Int = 200) -> (URLSession, StubProtocol.Stub) {
     StubProtocol.session { request in
         let method = request.httpMethod ?? "GET"
-        let path = request.url!.path
+        var path = request.url!.path
         if paths.contains(path) { return (401, body(#"{"message":"Bad credentials"}"#)) }
+        // the git calls answer alike in whichever repository the commits go to
+        if push { path = path.replacingOccurrences(of: "/repos/StoDevX/AAO-React-Native/git/", with: "/repos/ole/AAO-React-Native/git/") }
         switch (method, path) {
         case ("GET", "/user"): return (200, body(#"{"login":"ole"}"#))
+        case ("GET", "/repos/StoDevX/AAO-React-Native"): return (200, body(#"{"permissions":{"push":\#(push)}}"#))
         case ("POST", "/repos/StoDevX/AAO-React-Native/forks"): return (202, body(#"{"full_name":"ole/AAO-React-Native","owner":{"login":"ole"}}"#))
         case ("GET", "/repos/ole/AAO-React-Native"): return (200, body("{}"))
-        case ("POST", "/repos/ole/AAO-React-Native/merge-upstream"): return (200, body("{}"))
+        case ("POST", "/repos/ole/AAO-React-Native/merge-upstream"):
+            return (syncStatus, body(syncStatus == 200 ? "{}" : #"{"message":"Not Found"}"#))
         case ("POST", "/repos/ole/AAO-React-Native/git/blobs"): return (201, body(#"{"sha":"blob1"}"#))
         case ("GET", "/repos/ole/AAO-React-Native/git/commits/base1"): return (200, body(#"{"tree":{"sha":"tree0"}}"#))
         case ("GET", "/repos/ole/AAO-React-Native/git/commits/head1"): return (200, body(#"{"tree":{"sha":"tree1"}}"#))
@@ -84,6 +90,29 @@ struct GitHubSubmitterTests {
         #expect(requests.allSatisfy { $0.value(forHTTPHeaderField: "Authorization") == "Bearer tok" })
     }
 
+    /// A maintainer's branch goes in StoDevX's repository, which needs no fork.
+    @Test func opensAPullRequestFromTheRepositoryItselfWithPushAccess() async throws {
+        let (session, stub) = github(push: true)
+        let (submitter, _) = submitter(session)
+        let submission = try await submitter.submit(changes: [change], base: "base1", summary: "Close early", appVersion: "1.0")
+        #expect(submission.owner == "StoDevX")
+        let requests = stub.requests
+        #expect(!requests.contains { $0.url!.path.hasSuffix("/forks") })
+        #expect(requests.contains { $0.httpMethod == "POST" && $0.url!.path == "/repos/StoDevX/AAO-React-Native/git/refs" })
+        #expect(json(requests.first { $0.url!.path.hasSuffix("/pulls") }!)["head"] == .string("StoDevX:\(submission.branch)"))
+    }
+
+    /// GitHub refuses the sync of a fork whose missing commits change workflows to a token without that scope,
+    /// and a branch from that fork would fail the same way, so the contributor syncs it on GitHub.
+    @Test func asksForAForkThatCannotBeSyncedToBeSyncedOnGitHub() async {
+        let (session, stub) = github(syncStatus: 422)
+        let (submitter, _) = submitter(session)
+        await #expect(throws: SubmitError.forkBehind(URL(string: "https://github.com/ole/AAO-React-Native")!)) {
+            _ = try await submitter.submit(changes: [change], base: "base1", summary: "x", appVersion: "1.0")
+        }
+        #expect(!stub.requests.contains { $0.url!.path.hasSuffix("/git/refs") })
+    }
+
     @Test func addsACommitToAnOpenPullRequest() async throws {
         let (session, stub) = github()
         let (submitter, _) = submitter(session)
@@ -149,6 +178,8 @@ struct GitHubSubmitterTests {
         // a contributor never asked for a fork, so the word means nothing to them
         #expect(SubmitError.missingBaseCommit.errorDescription == "GitHub is still setting up your copy of the data. Try again in a minute.")
         #expect(SubmitError.github(500, "").errorDescription != nil)
+        #expect(SubmitError.forkBehind(URL(string: "https://github.com/ole/AAO-React-Native")!).errorDescription
+            == "Your copy of the data on GitHub is out of date. Open https://github.com/ole/AAO-React-Native, choose Sync fork, then submit again.")
     }
 
     /// A 403 on a public read is nearly always the rate limit, for a pull
@@ -230,6 +261,8 @@ struct GitHubSubmitterTests {
             case ("POST", "/repos/StoDevX/AAO-React-Native/forks"): return (202, body(#"{"full_name":"ole/AAO-React-Native","owner":{"login":"ole"}}"#))
             case ("GET", "/repos/ole/AAO-React-Native"):
                 return polls.next() == 1 ? (404, body(#"{"message":"Not Found"}"#)) : (200, body("{}"))
+            case ("POST", "/repos/ole/AAO-React-Native/merge-upstream"): return (200, body("{}"))
+            case ("GET", "/repos/StoDevX/AAO-React-Native"): return (200, body(#"{"permissions":{"push":false}}"#))
             case ("GET", "/repos/ole/AAO-React-Native/git/commits/base1"): return (200, body(#"{"tree":{"sha":"tree0"}}"#))
             case ("POST", "/repos/ole/AAO-React-Native/git/blobs"): return (201, body(#"{"sha":"blob1"}"#))
             case ("POST", "/repos/ole/AAO-React-Native/git/trees"): return (201, body(#"{"sha":"tree2"}"#))
