@@ -124,21 +124,23 @@ scroll_to() {
 # take (ModuleStreamingMediaTests). Runs after the other screens, since dev
 # mode stays on. Says in radio.txt which step failed, if one did.
 shoot_radio() {
-	local at
+	local at x y
 	adb shell "cmd uimode night no" >/dev/null
 	launch ''
 	sleep 8
 	at=$(scroll_to 'home-notice') || { echo 'radio: no notice on Home' >"$out/radio.txt"; return; }
-	set -- $at
-	adb shell input swipe "$1" "$2" "$1" "$2" 1500
+	read -r x y <<<"$at"
+	adb shell input swipe "$x" "$y" "$x" "$y" 1500
 	sleep 2
 	at=$(find_view 'Enable dev mode') || true
 	[ -n "$at" ] || { echo 'radio: no "Enable dev mode" in the notice menu' >"$out/radio.txt"; return; }
-	adb shell input tap $at
+	read -r x y <<<"$at"
+	adb shell input tap "$x" "$y"
 	sleep 3
 	at=$(find_view '.*Not Playing.*') || true
 	[ -n "$at" ] || at=$(scroll_to '.*Not Playing.*') || { echo 'radio: no Now Playing bar on Home' >"$out/radio.txt"; return; }
-	adb shell input tap $at
+	read -r x y <<<"$at"
+	adb shell input tap "$x" "$y"
 	sleep 5
 	adb exec-out screencap -p >"$out/light/radio.png"
 	adb shell uiautomator dump /sdcard/view.xml >/dev/null 2>&1 && adb shell cat /sdcard/view.xml >"$out/light/radio.xml" || true
