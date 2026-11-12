@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, useColorScheme, type StyleProp, type ViewStyle} from 'react-native'
+import {StyleSheet, useColorScheme, View, type StyleProp, type ViewStyle} from 'react-native'
 
 import {gold} from '@frogpond/colors'
 import type {
@@ -602,6 +602,12 @@ export function Circle({modifiers}: CircleProps): React.ReactNode {
 	return <ShapeView modifiers={modifiers} shape={shapeOf('circle')} />
 }
 
+const hostedStyles = StyleSheet.create({
+	fill: {
+		alignSelf: 'stretch',
+	},
+})
+
 /**
  * SwiftUI's `RNHostView`: React Native views hosted in the Compose tree, as is.
  *
@@ -615,10 +621,24 @@ export function Circle({modifiers}: CircleProps): React.ReactNode {
 export function RNHostView({children, matchContents, onLayout}: RNHostViewProps): React.ReactNode {
 	let slot = useRowSlot()
 	let axis = useAxis()
-	let match = matchContents === true && axis !== 'row' ? {vertical: true} : matchContents
+	let heightOnly = matchContents === true && axis !== 'row'
+	let match = heightOnly ? {vertical: true} : matchContents
 	let element = (
 		<ComposeRNHostView matchContents={match} onLayout={onLayout}>
-			{children}
+			{heightOnly ? (
+				// The host stretches its one native child across the width it takes,
+				// so a hosted view of a size of its own -- About's 100-point app
+				// icon -- drew as wide as the screen and cropped. Hosting a plain
+				// view across that width instead leaves the content its own size
+				// and alignment within it, as SwiftUI does. Not collapsable, or
+				// React Native flattens the wrapper away and the content is the
+				// stretched child again.
+				<View collapsable={false} style={hostedStyles.fill}>
+					{children}
+				</View>
+			) : (
+				children
+			)}
 		</ComposeRNHostView>
 	)
 	return asRow(slot, element)

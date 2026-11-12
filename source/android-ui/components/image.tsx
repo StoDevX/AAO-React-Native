@@ -59,6 +59,16 @@ export function SymbolIcon({
 }
 
 /**
+ * Whether an image is iOS's disclosure indicator: a bare `chevron.right` at
+ * the end of a row that pushes another screen. Material list items navigate
+ * without one, so it draws nothing here and the row reads as a plain list
+ * item; a tappable chevron is a control, and stays.
+ */
+function isDisclosureIndicator(systemName: string | undefined, onPress: unknown): boolean {
+	return systemName === 'chevron.right' && !onPress
+}
+
+/**
  * SwiftUI's `Image`. An SF Symbol (`systemName`) or custom symbol
  * (`assetName`) draws as its Material Symbol, sized from the font in effect
  * the way SwiftUI sizes a symbol to its text; `uiImage` draws the file. A
@@ -72,7 +82,7 @@ export function Image(props: ImageProps): React.ReactNode {
 	let slot = useRowSlot()
 	let menu = React.useContext(MenuContext)
 	useLifecycle(modifiers)
-	if (menu) {
+	if (menu || isDisclosureIndicator(systemName, onPress)) {
 		return null
 	}
 
