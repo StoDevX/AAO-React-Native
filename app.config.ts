@@ -600,6 +600,9 @@ const config: ExpoConfig = {
 		['./plugins/with-material-theme', {colors: adaptiveColors}],
 		// The launcher's name, which Expo would otherwise take from `name` above.
 		['./plugins/with-android-app-name', {name: variant.displayName}],
+		// Play's upload key for a release build when CI provides one, and the
+		// debug key otherwise; see .github/workflows/android-release.yml.
+		'./plugins/with-android-release-signing',
 	],
 }
 
