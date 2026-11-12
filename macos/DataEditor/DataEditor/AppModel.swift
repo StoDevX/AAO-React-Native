@@ -206,7 +206,7 @@ final class AppModel {
 
     /// Builds into `out/`, and serves the build from now on if it is good.
     private func build(with helper: HelperClient) async throws -> [Problem] {
-        let result = try await helper.build()
+        let result = try await helper.build(serving: currentBuild.withLock { $0 })
         if let dir = result.dir { currentBuild.withLock { $0 = URL(filePath: dir) } }
         return result.problems
     }
@@ -580,9 +580,9 @@ final class AppModel {
     static func submitRefusal(updating: Bool, submitting: Bool, conflicted: Bool) -> Refusal? {
         if submitting { return .submitting }
         if updating { return .updating }
+        if conflicted { return .conflicts }
         return nil
     }
-        if conflicted { return .conflicts }
 
     func submit(summary: String) async throws {
         if let refusal = Self.submitRefusal(updating: updating, submitting: submitting, conflicted: !conflicts.isEmpty) { throw refusal }

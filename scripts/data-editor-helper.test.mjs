@@ -17,20 +17,34 @@ async function handlers() {
 describe('build', () => {
 	/// The Mac app moves its server to a new build once the reply reaches it,
 	/// so the build it serves until then must still be there.
-	it('keeps the build before the newest until the next one', async () => {
+	it('keeps the build the app serves and the new one', async () => {
 		let {root, dataDir} = await scratchData()
 		let outDir = path.join(root, 'out')
 		let helper = createHandlers({dataDir, outDir, bundleData: BUNDLE_DATA})
-		let first = await helper.build()
-		let second = await helper.build()
+		let first = await helper.build({})
+		let second = await helper.build({serving: first.dir})
 		assert.deepEqual(
 			readdirSync(outDir).sort(),
 			[path.basename(first.dir), path.basename(second.dir)].sort(),
 		)
-		let third = await helper.build()
+		let third = await helper.build({serving: second.dir})
 		assert.deepEqual(
 			readdirSync(outDir).sort(),
 			[path.basename(second.dir), path.basename(third.dir)].sort(),
+		)
+	})
+
+	/// A helper started again, as after a crash, knows nothing of the build
+	/// the app still serves.
+	it('keeps the build the app serves after the helper restarts', async () => {
+		let {root, dataDir} = await scratchData()
+		let outDir = path.join(root, 'out')
+		let served = await createHandlers({dataDir, outDir, bundleData: BUNDLE_DATA}).build({})
+		let fresh = createHandlers({dataDir, outDir, bundleData: BUNDLE_DATA})
+		let next = await fresh.build({serving: served.dir})
+		assert.deepEqual(
+			readdirSync(outDir).sort(),
+			[path.basename(served.dir), path.basename(next.dir)].sort(),
 		)
 	})
 })

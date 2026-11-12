@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // The Mac data editor's pipeline helper: one JSON request per line on stdin,
-// one reply per line on stdout, handled in order. See
-// documentation/plans/2026-11-05-mac-data-editor.md for the protocol.
+// one reply per line on stdout, handled in order. `createHandlers` holds
+// the protocol's methods, and `handle` the shape of a request and reply.
 
 import path from 'node:path'
 import {createInterface} from 'node:readline'
@@ -33,14 +33,13 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 			problems: validate(dataDir, file),
 		}),
 		// The new build is served from the moment it is whole; older ones go
-		// after. The one before stays until the next build, since the Mac app
-		// moves its server to the new one only once this reply reaches it.
-		build: async () => {
+		// after. `serving` is the build the Mac app serves, which stays: the
+		// app moves its server to the new one only once this reply reaches it.
+		build: async ({serving}) => {
 			let result = await build({bundleData, dataDir, outDir})
 			if (!result.ok) return result
-			let previous = current
 			current = result.dir
-			await pruneBuilds(outDir, current, previous)
+			await pruneBuilds(outDir, current, serving)
 			// the folder to serve, which the app's own server reads
 			return {ok: true, dir: current}
 		},

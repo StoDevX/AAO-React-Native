@@ -82,13 +82,17 @@ private struct NoParams: Encodable, Sendable {}
 private struct FileParams: Encodable, Sendable { let file: String }
 private struct EditParams: Encodable, Sendable { let file: String; let ops: [EditOp] }
 private struct TextParams: Encodable, Sendable { let text: String }
+private struct BuildParams: Encodable, Sendable { let serving: String? }
 
 extension HelperClient {
     public func buildings() async throws -> [BuildingSummary] { try await call("list", NoParams()) }
     public func calendar() async throws -> BreakCalendar { try await call("calendar", NoParams()) }
     public func load(_ file: String) async throws -> Loaded { try await call("load", FileParams(file: file)) }
     public func edit(_ file: String, _ ops: [EditOp]) async throws -> Loaded { try await call("edit", EditParams(file: file, ops: ops)) }
-    public func build() async throws -> BuildResult { try await call("build", NoParams()) }
+    /// Builds into a new folder. `serving` is the build the app serves, which the helper keeps.
+    public func build(serving: URL?) async throws -> BuildResult {
+        try await call("build", BuildParams(serving: serving?.path(percentEncoded: false)))
+    }
     /// YAML text read as the helper reads a data file: a file's base version, which is not in `data/`.
     public func parse(_ text: String) async throws -> JSONValue { try await call("parse", TextParams(text: text)) }
 }
