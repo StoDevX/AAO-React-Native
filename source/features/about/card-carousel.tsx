@@ -1,13 +1,9 @@
 import * as React from 'react'
-import {Circle, HStack, ScrollView, Text, VStack, useNativeState} from '@expo/ui/swift-ui'
+import {HStack, ScrollView, Text, VStack, useNativeState} from '@expo/ui/swift-ui'
 import {
-	accessibilityElement,
-	accessibilityLabel,
-	accessibilityValue,
 	containerRelativeFrame,
 	font,
 	foregroundStyle,
-	frame,
 	id,
 	listRowInsets,
 	padding,
@@ -21,12 +17,10 @@ import {SheetSection} from '@frogpond/sheet-section'
 import {HyphenatedText} from '@frogpond/hyphenated-text'
 
 import {cardIndex} from './card-index'
+import {PageDots} from './page-dots'
 
 /** The space between a page's text and the row's edges, as a list row has. */
 const PAGE_INSET = 16
-/** UIPageControl's dot and the gap between dots. */
-const DOT_SIZE = 7
-const DOT_GAP = 8
 
 /** One card: a heading over a body of text. */
 export type Card = {
@@ -45,27 +39,7 @@ export function PagedSection({title, cards}: {title: string; cards: Array<Card>}
 	let [shownId, setShownId] = React.useState<string | null>(null)
 	let shown = cardIndex(cards, shownId)
 
-	let dots = (
-		<HStack
-			modifiers={[
-				frame({maxWidth: Infinity}),
-				accessibilityElement('ignore'),
-				accessibilityLabel('Page'),
-				accessibilityValue(`${shown + 1} of ${cards.length}`),
-			]}
-			spacing={DOT_GAP}
-		>
-			{cards.map((card, index) => (
-				<Circle
-					key={card.id}
-					modifiers={[
-						frame({width: DOT_SIZE, height: DOT_SIZE}),
-						foregroundStyle(index === shown ? c.label : c.tertiaryLabel),
-					]}
-				/>
-			))}
-		</HStack>
-	)
+	let dots = <PageDots count={cards.length} shown={shown} />
 
 	return (
 		<SheetSection footer={dots} title={title}>
