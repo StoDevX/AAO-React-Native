@@ -528,11 +528,22 @@ export function Circle({modifiers}: CircleProps): React.ReactNode {
 	return <ShapeView modifiers={modifiers} shape={shapeOf('circle')} />
 }
 
-/** SwiftUI's `RNHostView`: React Native views hosted in the Compose tree, as is. */
+/**
+ * SwiftUI's `RNHostView`: React Native views hosted in the Compose tree, as is.
+ *
+ * SwiftUI measures the hosted views at the width its parent proposes and takes
+ * their height. Compose's `matchContents` instead takes each axis from the
+ * content, and a horizontal scroll view's content is as wide as everything in
+ * it -- the calendar's day strip spans years, wider than Compose can lay out.
+ * So outside a row, matching follows the height alone and the width comes from
+ * the parent, as it does in SwiftUI.
+ */
 export function RNHostView({children, matchContents, onLayout}: RNHostViewProps): React.ReactNode {
 	let slot = useRowSlot()
+	let axis = useAxis()
+	let match = matchContents === true && axis !== 'row' ? {vertical: true} : matchContents
 	let element = (
-		<ComposeRNHostView matchContents={matchContents} onLayout={onLayout}>
+		<ComposeRNHostView matchContents={match} onLayout={onLayout}>
 			{children}
 		</ComposeRNHostView>
 	)
