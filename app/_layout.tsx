@@ -30,7 +30,7 @@ import {Stack, useNavigationContainerRef} from 'expo-router'
 import * as Sentry from '@sentry/react-native'
 
 import {LoadingView} from '@frogpond/notice'
-import {StatusBar, useColorScheme} from 'react-native'
+import {Platform, StatusBar, useColorScheme} from 'react-native'
 
 import {RootErrorBoundary} from '../source/components/root-error-boundary'
 import {ScreenErrorFallback} from '../source/components/screen-error-boundary'
@@ -65,13 +65,34 @@ import {CampusPicker} from '../source/features/campus/campus-picker'
  * The upper detent is a shade under 1 so the sheet keeps the inset that tells
  * a reader it is a sheet at all.
  */
-const DETAIL_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
+const IOS_DETAIL_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
 	presentation: 'formSheet',
 	headerShown: false,
 	sheetAllowedDetents: [SHEET_RESTING_FRACTION, 0.999],
 	sheetGrabberVisible: true,
 	sheetLargestUndimmedDetentIndex: 'none',
 }
+
+/**
+ * The same routes on Android, as full screens pushed onto the stack, each with
+ * a top app bar drawn by its own nested stack: a back arrow, its title, and
+ * its actions at the trailing edge.
+ *
+ * Not a bottom sheet. react-native-screens' Android `formSheet` is a Material
+ * `BottomSheetBehavior` that draws no header and cannot host a nested stack,
+ * and every one of these routes nests one -- for a title, for actions, and in
+ * most for screens pushed inside it (an entry's editor, a building's problem
+ * report, the app-icon gallery). Presented as a sheet, the nested stack never
+ * appears and the reader sees only the dimmed screen behind. Material keeps
+ * bottom sheets for supplementary content besides, not for flows with their
+ * own app bar and further screens, which Android pushes as screens.
+ */
+const ANDROID_DETAIL_SCREEN: React.ComponentProps<typeof Stack.Screen>['options'] = {
+	headerShown: false,
+}
+
+/** How this platform presents those detail routes. */
+const DETAIL_SHEET = Platform.OS === 'android' ? ANDROID_DETAIL_SCREEN : IOS_DETAIL_SHEET
 
 /**
  * Keeps the home screen beneath whatever a cold-start deep link opens, so
