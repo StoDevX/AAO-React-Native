@@ -151,6 +151,20 @@ shoot_radio() {
 	echo 'radio: shot' >"$out/radio.txt"
 }
 
+# Home's overflow menu, open: no route shows a menu.
+shoot_home_menu() {
+	local at x y
+	adb shell "cmd uimode night no" >/dev/null
+	launch ''
+	sleep 8
+	at=$(find_view 'Home menu') || true
+	[ -n "$at" ] || return 0
+	read -r x y <<<"$at"
+	adb shell input tap "$x" "$y"
+	sleep 2
+	adb exec-out screencap -p >"$out/light/home-menu.png"
+}
+
 adb logcat -c
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
@@ -166,6 +180,7 @@ sleep 10
 
 shoot light
 shoot dark
+shoot_home_menu
 shoot_radio
 adb shell "cmd uimode night no" >/dev/null
 
