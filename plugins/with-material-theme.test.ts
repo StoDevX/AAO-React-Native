@@ -10,6 +10,7 @@ import {
 	addMaterialDependency,
 	androidHex,
 	applyDynamicColors,
+	reapplyDynamicColorsAfterSetTheme,
 	applyMaterialTheme,
 	colorResources,
 } from './with-material-theme.ts'
@@ -162,6 +163,37 @@ describe('applyDynamicColors', () => {
 	it('says so when the template moved onCreate', () => {
 		assert.throws(
 			() => applyDynamicColors('import android.app.Application\n\nclass MainApplication\n'),
+			/update this plugin/u,
+		)
+	})
+})
+
+describe('reapplyDynamicColorsAfterSetTheme', () => {
+	let stock = fixture('MainActivity.kt')
+
+	// The activity starts on the splash theme, which DynamicColors overlays
+	// before onCreate; setTheme(AppTheme) then replaces it, overlay and all.
+	it('applies dynamic colour again right after setTheme(AppTheme)', () => {
+		let patched = reapplyDynamicColorsAfterSetTheme(stock)
+		assert.match(
+			patched,
+			/setTheme\(R\.style\.AppTheme\);?\n {4}DynamicColors\.applyToActivityIfAvailable\(this\)\n {4}super\.onCreate\(null\)/u,
+		)
+	})
+
+	it('imports DynamicColors', () => {
+		let patched = reapplyDynamicColorsAfterSetTheme(stock)
+		assert.match(patched, /^import com\.google\.android\.material\.color\.DynamicColors$/mu)
+	})
+
+	it('changes nothing the second time', () => {
+		let once = reapplyDynamicColorsAfterSetTheme(stock)
+		assert.equal(reapplyDynamicColorsAfterSetTheme(once), once)
+	})
+
+	it('says so when the template moved setTheme', () => {
+		assert.throws(
+			() => reapplyDynamicColorsAfterSetTheme('import android.os.Bundle\n\nclass MainActivity\n'),
 			/update this plugin/u,
 		)
 	})
