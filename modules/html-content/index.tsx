@@ -6,7 +6,7 @@ import {canOpenUrl, openUrl} from '@frogpond/open-url'
 
 /** What a screen can ask of the page it shows. */
 export type HtmlContentHandle = {
-	/** Opens the system find bar over the page, as Safari's Find on Page does. iOS only. */
+	/** Opens the system find bar over the page, as Safari's Find on Page does, or the WebView's own find bar on Android. */
 	findInPage: () => void
 }
 
