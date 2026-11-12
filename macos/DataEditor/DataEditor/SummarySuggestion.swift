@@ -42,8 +42,8 @@ func cleanSuggestion(_ reply: String) -> String {
     return summary
 }
 
-/// Whether this Mac can suggest a summary: Apple Intelligence is on and its model is ready.
-var canSuggestSummary: Bool { SystemLanguageModel.default.isAvailable }
+/// What the submit sheet offers for suggesting a summary on this Mac now.
+var suggestionOffer: SuggestionOffer { SuggestionOffer(SystemLanguageModel.default.availability) }
 
 /// A summary of `files` from the on-device model, for the contributor to edit.
 func suggestSummary(for files: [ChangedFile]) async throws -> String {

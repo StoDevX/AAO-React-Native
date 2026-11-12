@@ -33,11 +33,14 @@ struct SubmitSheet: View {
             }
             TextField("What changed?", text: $summary, prompt: Text("e.g. Close The Cage at 9 p.m. on Fridays"))
                 .accessibilityIdentifier("submit-summary")
-            if canSuggestSummary {
+            let offer = suggestionOffer
+            if offer != .hidden {
                 Button(suggesting == nil ? "Suggest" : "Suggesting…", systemImage: "sparkles") { suggesting = Task { await suggest() } }
-                    .disabled(suggesting != nil || working)
+                    .disabled(offer != .offered || suggesting != nil || working)
                     .accessibilityIdentifier("submit-suggest")
-                if suggestionFailed {
+                if case .waiting(let note) = offer {
+                    Text(note).foregroundStyle(.secondary)
+                } else if suggestionFailed {
                     Text("Couldn't suggest a summary.").foregroundStyle(.secondary)
                 }
             }
