@@ -80,6 +80,120 @@ describe('schedule data contracts', () => {
 		)
 	})
 
+	it('rejects two rows of one service whose hours overlap on a day they share', () => {
+		let input = pair()
+		input.spaces[0].schedule[0].hours = [
+			{days: ['Mo', 'Tu', 'Sa'], from: '7:30am', to: '8:00pm'},
+			{days: ['Sa', 'Su'], from: '9:00am', to: '8:00pm'},
+		]
+		assert.throws(
+			() => parse(input),
+			/space-0.yaml.schedule\[0\].hours\[1\]: overlaps hours\[0\] on Sa$/u,
+		)
+	})
+
+	it('reports an overlap in every space, not only the first', () => {
+		let input = pair()
+		for (let space of input.spaces) {
+			space.schedule[0].hours = [
+				{days: ['Sa'], from: '7:30am', to: '8:00pm'},
+				{days: ['Sa'], from: '9:00am', to: '8:00pm'},
+			]
+		}
+		assert.throws(
+			() => parse(input),
+			(error) =>
+				/space-0.yaml.schedule\[0\].hours\[1\]: overlaps/u.test(error.message) &&
+				/space-1.yaml.schedule\[0\].hours\[1\]: overlaps/u.test(error.message),
+		)
+	})
+
+	it('reports a schema error in every space, not only the first', () => {
+		let input = pair()
+		for (let space of input.spaces) space.schedule[0].hours[0].from = '7:30'
+		assert.throws(
+			() => parse(input),
+			(error) => /space-0.yaml/u.test(error.message) && /space-1.yaml/u.test(error.message),
+		)
+	})
+
+	it('reports a bad break reference in every space, not only the first', () => {
+		let input = pair()
+		input.spaces[0].breakSchedule = {fal: 'normal'}
+		input.spaces[1].breakSchedule = {sprin: 'normal'}
+		assert.throws(
+			() => parse(input),
+			(error) =>
+				/space-0.yaml.breakSchedule.fal: unknown break key/u.test(error.message) &&
+				/space-1.yaml.breakSchedule.sprin: unknown break key/u.test(error.message),
+		)
+	})
+
+	it('names every shared day on which two rows overlap', () => {
+		let input = pair()
+		input.spaces[0].schedule[0].hours = [
+			{days: ['Fr', 'Sa', 'Su'], from: '9:00am', to: '5:00pm'},
+			{days: ['Sa', 'Su'], from: '4:00pm', to: '6:00pm'},
+		]
+		assert.throws(() => parse(input), /hours\[1\]: overlaps hours\[0\] on Sa, Su$/u)
+	})
+
+	it('rejects a late-night row that overlaps another row of the same night', () => {
+		let input = pair()
+		input.spaces[0].schedule[0].hours = [
+			{days: ['Fr'], from: '8:00pm', to: '2:00am'},
+			{days: ['Fr'], from: '11:00pm', to: '1:00am'},
+		]
+		assert.throws(() => parse(input), /hours\[1\]: overlaps hours\[0\] on Fr$/u)
+	})
+
+	it('accepts split hours on one day, including rows that meet', () => {
+		let input = pair()
+		input.spaces[0].schedule[0].hours = [
+			{days: ['Mo'], from: '7:00am', to: '11:00am'},
+			{days: ['Mo'], from: '11:00am', to: '1:00pm'},
+			{days: ['Mo'], from: '2:00pm', to: '5:00pm'},
+			{days: ['Fr'], from: '8:00pm', to: '2:00am'},
+			{days: ['Fr'], from: '1:00am', to: '3:00am'},
+		]
+		assert.doesNotThrow(() => parse(input))
+	})
+
+	it('accepts overlapping hours in separate services', () => {
+		let input = pair()
+		input.spaces[0].schedule = [
+			{title: 'Hours', hours: [{days: ['Mo'], from: '7:00am', to: '8:00pm'}]},
+			{title: 'Breakfast', hours: [{days: ['Mo'], from: '7:00am', to: '10:00am'}]},
+		]
+		assert.doesNotThrow(() => parse(input))
+	})
+
+	it('checks overlapping rows in exceptions, break schedules and calendar templates', () => {
+		let overlapping = () => [
+			{days: ['Mo'], from: '10:00am', to: '2:00pm'},
+			{days: ['Mo'], from: '1:00pm', to: '3:00pm'},
+		]
+		let cases = [
+			[
+				(input) => (input.spaces[0].breakSchedule.interim.schedule[0].hours = overlapping()),
+				/space-0.yaml.breakSchedule.interim.schedule\[0\].hours\[1\]: overlaps/u,
+			],
+			[
+				(input) => (input.spaces[0].exceptions[0].schedule[0].hours = overlapping()),
+				/space-0.yaml.exceptions\[0\].schedule\[0\].hours\[1\]: overlaps/u,
+			],
+			[
+				(input) => (input.calendar.templates['office-hours'].schedule[0].hours = overlapping()),
+				/calendar.yaml.templates.office-hours.schedule\[0\].hours\[1\]: overlaps/u,
+			],
+		]
+		for (let [mutate, message] of cases) {
+			let input = pair()
+			mutate(input)
+			assert.throws(() => parse(input), message)
+		}
+	})
+
 	it('accepts shorthand, full policies, closures, notes, local overrides and date exceptions', () => {
 		let input = pair()
 		let before = structuredClone(input)
@@ -992,6 +1106,17 @@ describe('schedule input loading', () => {
 		spaces.forEach((data, index) => write(spaceFiles[index], data))
 	})
 	afterEach(() => rmSync(root, {recursive: true, force: true}))
+
+	it('reports broken YAML in one file beside a schema error in another', () => {
+		writeFileSync(spaceFiles[0], 'schedule: [')
+		spaces[1].schedule[0].hours[0].from = '7:30'
+		write(spaceFiles[1], spaces[1])
+		assert.throws(
+			() => loadScheduleData(fromDir),
+			(error) =>
+				error.message.includes(`${spaceFiles[0]}: `) && error.message.includes(spaceFiles[1]),
+		)
+	})
 
 	it('loads authored inputs in numeric order and ignores unfinished files and OS junk', () => {
 		writeFileSync(join(fromDir, 'building-hours', '_unfinished.yaml'), 'invalid: [')
