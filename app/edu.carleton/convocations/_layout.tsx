@@ -1,17 +1,5 @@
-import * as React from 'react'
-import {NativeTabs} from 'expo-router/native-tabs'
+import {ConvocationTabs} from '../../../source/features/carleton/convocation-tabs'
 
-export default function CarletonConvosLayout(): React.ReactNode {
-	return (
-		<NativeTabs>
-			<NativeTabs.Trigger name="index">
-				<NativeTabs.Trigger.Icon sf="calendar" />
-				<NativeTabs.Trigger.Label>Upcoming</NativeTabs.Trigger.Label>
-			</NativeTabs.Trigger>
-			<NativeTabs.Trigger name="archived">
-				<NativeTabs.Trigger.Icon sf="waveform" />
-				<NativeTabs.Trigger.Label>Archives</NativeTabs.Trigger.Label>
-			</NativeTabs.Trigger>
-		</NativeTabs>
-	)
-}
+// The tabs are platform files outside app/: Expo Router bundles every file in
+// app/ on every platform, so an Android-only layout here would ship to iOS too.
+export default ConvocationTabs
