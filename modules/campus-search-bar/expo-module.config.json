@@ -1,6 +1,10 @@
 {
-  "platforms": ["apple"],
+  "platforms": ["apple", "android"],
+  "coreFeatures": ["compose"],
   "apple": {
     "modules": ["CampusSearchBarModule"]
+  },
+  "android": {
+    "modules": ["tech.frogpond.campussearchbar.CampusSearchBarModule"]
   }
 }
