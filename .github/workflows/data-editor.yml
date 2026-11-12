@@ -107,7 +107,35 @@ jobs:
             -project macos/DataEditor/DataEditor.xcodeproj \
             -scheme DataEditor \
             -destination 'platform=macOS,arch=arm64' \
+            -resultBundlePath data-editor-results \
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY=- \
             DEVELOPMENT_TEAM= \
             PROVISIONING_PROFILE_SPECIFIER=
+
+      # The screenshots each test attaches, to see what a failed test saw.
+      - name: Extract failure attachments
+        if: failure()
+        run: |
+          mkdir -p data-editor-attachments
+          xcrun xcresulttool export attachments \
+            --path data-editor-results.xcresult \
+            --output-path data-editor-attachments || echo "No attachments to export"
+
+      - name: Upload failure attachments
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: data-editor-attachments
+          path: data-editor-attachments/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload the result bundle
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: data-editor-results.xcresult
+          path: data-editor-results.xcresult
+          if-no-files-found: ignore
+          retention-days: 7
