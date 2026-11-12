@@ -488,6 +488,28 @@ const config: ExpoConfig = {
 					// environment opts in.
 					ccacheEnabled: process.env.USE_CCACHE === '1',
 				},
+				android: {
+					// R8, which Expo's template turns on already; said here so it
+					// cannot be switched off unnoticed. Every pull request's
+					// emulator screenshots run a minified release build, so a
+					// missing keep rule shows up there before it reaches Play.
+					// The libraries carry their own consumer rules (Expo modules,
+					// React Native, Reanimated and Worklets, Sentry, MapLibre's SDK),
+					// and so does expo-modules-core for the Kotlin modules in
+					// modules/, which keeps their Module and Record classes.
+					enableMinifyInReleaseBuilds: true,
+					// Not shrinkResources: React Native looks the bundle's images
+					// up as drawables by a name built at runtime, which the
+					// resource shrinker cannot see, so it can strip a picture
+					// that nothing misses until a screen draws it blank.
+					enableShrinkResourcesInReleaseBuilds: false,
+					// The MapLibre React Native wrapper ships no consumer rules of
+					// its own, and its GeoJSON types go through Gson by reflection.
+					extraProguardRules: [
+						'-keep class org.maplibre.reactnative.** { *; }',
+						'-keep class org.maplibre.geojson.** { *; }',
+					].join('\n'),
+				},
 			},
 		],
 		'expo-router',
