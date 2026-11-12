@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "PAGES_ORIGIN_OVERRIDE=$PAGES_ORIGIN_OVERRIDE"
+exec sleep 30

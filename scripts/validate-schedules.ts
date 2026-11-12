@@ -1,4 +1,5 @@
 import {normalizeCalendarInterval} from '../modules/schedules/index.ts'
+import {collecting, raise} from './data-problems.mjs'
 import type {
 	BreakCalendar,
 	CalendarInterval,
@@ -152,15 +153,20 @@ function validateSpaces<T>(
 ): void {
 	let {calendar} = context
 	let names = new Map<string, string>()
+	// each space is checked on its own, so a problem in one leaves the next one checked
+	let problems: Error[] = []
 	for (let {label, schedules} of spaces) {
-		validateSpaceName(schedules.name, label, names)
-		validateSchedule(
-			{schedule: schedules.schedule, exceptions: schedules.exceptions ?? []},
-			calendar.timezone,
-			label,
-		)
-		validateSpaceReferences(context, schedules.breakSchedule ?? {}, label)
+		collecting(problems, () => {
+			validateSpaceName(schedules.name, label, names)
+			validateSchedule(
+				{schedule: schedules.schedule, exceptions: schedules.exceptions ?? []},
+				calendar.timezone,
+				label,
+			)
+			validateSpaceReferences(context, schedules.breakSchedule ?? {}, label)
+		})
 	}
+	raise(problems)
 }
 
 function validateSpaceName(
