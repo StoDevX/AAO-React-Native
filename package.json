@@ -144,6 +144,7 @@
     "babel-plugin-transform-remove-console": "6.9.4",
     "babel-preset-expo": "58.0.17",
     "csv-parse": "7.0.3",
+    "esbuild": "0.28.2",
     "jest": "30.5.2",
     "js-yaml": "catalog:",
     "oxfmt": "0.74.0",
@@ -151,7 +152,8 @@
     "oxlint-tsgolint": "7.0.2003",
     "sf-symbols-typescript": "2.2.0",
     "typescript": "7.0.2",
-    "xcode": "3.0.1"
+    "xcode": "3.0.1",
+    "yaml": "2.9.1"
   },
   "engines": {
     "node": ">=18"

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import {spawnSync} from 'node:child_process'
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
@@ -217,6 +218,32 @@ describe('schedule bundling', () => {
 		/breaks.yaml/u,
 	)
 
+	it('reports a problem from every step, each on its own line, and writes nothing', () => {
+		withInputs(({fromDir, toDir, spaces, spaceFiles, run}) => {
+			spaces[1].breakSchedule = {fal: 'normal'}
+			writeYaml(spaceFiles[1], spaces[1])
+			mkdirSync(join(fromDir, 'a-first'))
+			writeFileSync(join(fromDir, 'a-first', '1-entry.yaml'), 'title: [')
+			writeFileSync(join(fromDir, 'a-first', '2-entry.yaml'), 'title: [')
+			writeFileSync(join(fromDir, 'notes.yaml'), 'hello: [')
+			let result = run()
+			assert.equal(result.status, 1)
+			let lines = result.stderr.split('\n')
+			for (let problem of [
+				`${spaceFiles[1]}.breakSchedule.fal: unknown break key`,
+				join(fromDir, 'a-first', '1-entry.yaml'),
+				join(fromDir, 'a-first', '2-entry.yaml'),
+				join(fromDir, 'notes.yaml'),
+			]) {
+				assert.ok(
+					lines.some((line) => line.startsWith(problem)),
+					`${problem} in:\n${result.stderr}`,
+				)
+			}
+			assert.equal(existsSync(toDir), false)
+		})
+	})
+
 	it('does not create an output directory when schedule validation fails', () => {
 		withInputs(({toDir, spaces, spaceFiles, run}) => {
 			spaces[1].breakSchedule = {fal: 'normal'}
@@ -225,6 +252,51 @@ describe('schedule bundling', () => {
 			assert.equal(result.status, 1)
 			assert.match(result.stderr, /unknown break key/u)
 			assert.equal(existsSync(toDir), false)
+		})
+	})
+})
+
+/**
+ * Runs the bundler as the data editor does: from a working directory of the
+ * app's choosing, over a workspace under a home folder with a dot and a space
+ * in its path.
+ */
+function runAsEditor(work) {
+	let root = mkdtempSync(join(tmpdir(), 'aao-bundle-editor-'))
+	let workspace = join(root, 'some.name', 'Application Support', 'workspace')
+	let fromDir = join(workspace, 'data')
+	let toDir = join(workspace, 'out', 'build-1')
+	let cwd = join(root, 'cwd')
+	mkdirSync(fromDir, {recursive: true})
+	mkdirSync(cwd)
+	copyFileSync(new URL('../data/sources.yaml', import.meta.url), join(fromDir, 'sources.yaml'))
+	writeFileSync(join(fromDir, 'notes.yaml'), 'hello: world\n')
+	let result = spawnSync(process.execPath, [script, fromDir, toDir], {cwd, encoding: 'utf8'})
+	try {
+		work({root, cwd, toDir, result})
+	} finally {
+		rmSync(root, {recursive: true, force: true})
+	}
+}
+
+describe('bundling into a workspace the data editor owns', () => {
+	it('writes each file into the output folder, whatever dots its path holds', () => {
+		runAsEditor(({root, toDir, result}) => {
+			assert.equal(result.status, 0, result.stderr)
+			assert.deepEqual(
+				readdirSync(toDir)
+					.filter((name) => name.endsWith('.json'))
+					.sort(),
+				['notes.json', 'sources.json'],
+			)
+			assert.equal(existsSync(join(root, 'some.json')), false)
+		})
+	})
+
+	it('writes nothing outside the output folder', () => {
+		runAsEditor(({cwd, result}) => {
+			assert.equal(result.status, 0, result.stderr)
+			assert.deepEqual(readdirSync(cwd), [])
 		})
 	})
 })
