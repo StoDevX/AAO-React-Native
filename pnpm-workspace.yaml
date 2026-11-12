@@ -117,6 +117,9 @@ overrides:
   'metro-source-map@': '0.87.1'
   'metro-symbolicate@': '0.87.1'
   '@react-native/metro-config': '-'
+  # expo-system-ui asks for ^0.88.1 and floats past the 0.88.0 react-native
+  # ships with, installing a second copy of the same colour parser.
+  '@react-native/normalize-colors': '0.88.0'
   '@react-native/community-cli-plugin': '-'
   # others
   'babel-jest@29': '30.5.2'
