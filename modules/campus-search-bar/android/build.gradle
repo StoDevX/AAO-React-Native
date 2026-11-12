@@ -1,0 +1,37 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:${kotlinVersion}")
+  }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'expo-module-gradle-plugin'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+
+group = 'tech.frogpond.campussearchbar'
+version = '1.0.0'
+
+android {
+  namespace "tech.frogpond.campussearchbar"
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+  }
+  buildFeatures {
+    compose true
+  }
+}
+
+dependencies {
+  // Kept in step with @expo/ui, whose Host this view renders inside.
+  implementation 'androidx.compose.foundation:foundation-android:1.12.1'
+  implementation 'androidx.compose.ui:ui-android:1.12.1'
+  implementation 'androidx.compose.material3:material3:1.5.0-beta01'
+  // Search, back and clear glyphs. Material3 no longer pulls the icon set in itself.
+  implementation 'androidx.compose.material:material-icons-core:1.7.8'
+  // BackHandler, so system Back cancels the search as the back arrow does.
+  implementation 'androidx.activity:activity-compose:1.11.0'
+}
