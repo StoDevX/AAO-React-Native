@@ -81,6 +81,19 @@ describe('DocumentStore.edit', () => {
 		assert.equal(await read(), FIXTURE + "      - {days: [Su], from: '9:00am', to: '10:30am'}\n")
 	})
 
+	/// Closing writes `hours: []`; reopening adds a row to that list.
+	it('writes a row added to a closed schedule on a line of its own', async () => {
+		let {store, read} = await storeWithFixture()
+		await store.edit('cage.yaml', [{path: ['schedule', 0, 'hours'], value: []}])
+		await store.edit('cage.yaml', [
+			{path: ['schedule', 0, 'hours', 0], value: {days: ['Mo'], from: '9:00am', to: '5:00pm'}},
+		])
+		assert.match(
+			await read(),
+			/\n {4}hours:\n {6}- \{days: \[Mo\], from: '9:00am', to: '5:00pm'\}\n/u,
+		)
+	})
+
 	it('adds a service whose rows are flow maps', async () => {
 		let {store, read} = await storeWithFixture()
 		await store.edit('cage.yaml', [

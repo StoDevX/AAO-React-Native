@@ -61,7 +61,8 @@ function styled(doc, parentPath, value) {
 	let node = doc.createNode(value)
 	let parent = doc.getIn(parentPath, true)
 	let sibling = isSeq(parent) ? parent.items[0] : undefined
-	if (isMap(node) && isMap(sibling) && sibling.flow) node.flow = true
+	let inRows = FLOW_ROWS.has(String(parentPath.at(-1)))
+	if (isMap(node) && ((isMap(sibling) && sibling.flow) || inRows)) node.flow = true
 	visit(node, {
 		Pair(_, pair) {
 			if (isScalar(pair.key) && FLOW_ROWS.has(String(pair.key.value)) && isSeq(pair.value)) {
@@ -89,6 +90,9 @@ function apply(doc, op) {
 		if (typeof op.value === 'string' && TIME.test(op.value)) existing.type = 'QUOTE_SINGLE'
 		return
 	}
+	// an emptied list is written `hours: []`, and a row added to it goes on a line of its own
+	let parent = doc.getIn(op.path.slice(0, -1), true)
+	if (isSeq(parent) && FLOW_ROWS.has(String(op.path.at(-2)))) parent.flow = false
 	doc.setIn(op.path, styled(doc, op.path.slice(0, -1), op.value))
 }
 
