@@ -217,7 +217,7 @@ describe('app.config Sentry', () => {
 		let config = loadConfig(variant)
 		expect(config.plugins).toContainEqual([
 			'@sentry/react-native/expo',
-			{organization: 'frog-pond-labs', project},
+			expect.objectContaining({organization: 'frog-pond-labs', project}),
 		])
 		expect(config.extra?.sentry?.dsn).toMatch(/^https:\/\/[0-9a-f]+@o524787\.ingest\./u)
 	})

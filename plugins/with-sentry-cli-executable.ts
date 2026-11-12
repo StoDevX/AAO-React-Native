@@ -27,8 +27,31 @@ export function defaultSentryCliExecutable(xcodeEnv: string): string {
 	return xcodeEnv.includes('SENTRY_CLI_EXECUTABLE') ? xcodeEnv : `${xcodeEnv}${DEFAULT_CLI}`
 }
 
-const withSentryCliExecutable: ConfigPlugin = (config) =>
-	withDangerousMod(config, [
+/**
+ * android/sentry.properties with `cli.executable` set to `binary`, or as it
+ * was when there is none.
+ *
+ * Gradle's source-map upload (@sentry/react-native's sentry.gradle.kts) runs
+ * `cli.executable` itself, not through node, and falls back to the npm
+ * @sentry/cli that pnpm-workspace.yaml drops, so a release build that uploads
+ * needs a native binary named here. It takes SENTRY_CLI_BINARY, the variable
+ * that already names the native binary on iOS, because SENTRY_CLI_EXECUTABLE
+ * there names a script node runs. The Sentry Android Gradle plugin reads the
+ * same property for the ProGuard mapping upload.
+ */
+export function withCliExecutableProperty(properties: string, binary: string | undefined): string {
+	if (!binary) {
+		return properties
+	}
+	// A backslash starts an escape in a .properties file.
+	let line = `cli.executable=${binary.replaceAll('\\', '\\\\')}`
+	let kept = properties.split('\n').filter((each) => !each.startsWith('cli.executable='))
+	let body = kept.join('\n').replace(/\n*$/u, '')
+	return `${body}\n${line}\n`
+}
+
+const withSentryCliExecutable: ConfigPlugin = (config) => {
+	config = withDangerousMod(config, [
 		'ios',
 		(mod) => {
 			let path = join(mod.modRequest.platformProjectRoot, '.xcode.env')
@@ -36,5 +59,17 @@ const withSentryCliExecutable: ConfigPlugin = (config) =>
 			return mod
 		},
 	])
+	// Listed above @sentry/react-native/expo in app.config.ts, so this runs
+	// after it has written the file.
+	return withDangerousMod(config, [
+		'android',
+		(mod) => {
+			let path = join(mod.modRequest.platformProjectRoot, 'sentry.properties')
+			let properties = readFileSync(path, 'utf8')
+			writeFileSync(path, withCliExecutableProperty(properties, process.env.SENTRY_CLI_BINARY))
+			return mod
+		},
+	])
+}
 
 export default withSentryCliExecutable
