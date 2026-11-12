@@ -1,0 +1,631 @@
+11-12 18:59:32.134  2485  2485 W SoLoader: Initializing SoLoader: 0
+11-12 18:59:32.136  2485  2485 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 18:59:32.136  2485  2485 W SoLoader: Previously recorded 0 base apk paths.
+11-12 18:59:32.139  2485  2485 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 18:59:32.139  2485  2485 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 18:59:32.139  2485  2485 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 18:59:32.145  2485  2485 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 18:59:32.147  2485  2485 I SoLoader: init finish: 4 SO sources prepared
+11-12 18:59:32.147  2485  2485 W SoLoader: SoLoader initialized: 8
+11-12 18:59:44.460  3089  3089 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-12 18:59:44.968  3089  3089 I AndroidRuntime: Using default boot image
+11-12 18:59:44.968  3089  3089 I AndroidRuntime: Leaving lock profiling enabled
+11-12 18:59:46.211  3089  3089 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-12 18:59:47.197  3089  3089 I AndroidRuntime: VM exiting with result code 0.
+11-12 18:59:47.322  3201  3201 W SoLoader: Initializing SoLoader: 0
+11-12 18:59:47.325  3201  3201 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 18:59:47.325  3201  3201 W SoLoader: Previously recorded 0 base apk paths.
+11-12 18:59:47.325  3201  3201 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 18:59:47.325  3201  3201 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 18:59:47.325  3201  3201 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 18:59:47.332  3201  3201 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 18:59:47.333  3201  3201 I SoLoader: init finish: 4 SO sources prepared
+11-12 18:59:47.333  3201  3201 W SoLoader: SoLoader initialized: 8
+11-12 18:59:56.607  3597  3597 W SoLoader: Initializing SoLoader: 0
+11-12 18:59:56.607  3597  3597 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 18:59:56.607  3597  3597 W SoLoader: Previously recorded 0 base apk paths.
+11-12 18:59:56.608  3597  3597 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 18:59:56.608  3597  3597 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 18:59:56.608  3597  3597 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 18:59:56.623  3597  3597 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 18:59:56.623  3597  3597 I SoLoader: init finish: 4 SO sources prepared
+11-12 18:59:56.623  3597  3597 W SoLoader: SoLoader initialized: 8
+11-12 19:00:06.511  3934  3934 W SoLoader: Initializing SoLoader: 0
+11-12 19:00:06.512  3934  3934 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:00:06.512  3934  3934 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:00:06.522  3934  3934 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:00:06.523  3934  3934 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:00:06.523  3934  3934 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:00:06.535  3934  3934 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:00:06.535  3934  3934 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:00:06.535  3934  3934 W SoLoader: SoLoader initialized: 8
+11-12 19:00:15.083  4179  4179 W SoLoader: Initializing SoLoader: 0
+11-12 19:00:15.083  4179  4179 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:00:15.083  4179  4179 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:00:15.084  4179  4179 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:00:15.084  4179  4179 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:00:15.084  4179  4179 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:00:15.099  4179  4179 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:00:15.099  4179  4179 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:00:15.100  4179  4179 W SoLoader: SoLoader initialized: 8
+11-12 19:00:23.507  4426  4426 W SoLoader: Initializing SoLoader: 0
+11-12 19:00:23.508  4426  4426 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:00:23.508  4426  4426 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:00:23.510  4426  4426 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:00:23.510  4426  4426 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:00:23.510  4426  4426 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:00:23.521  4426  4426 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:00:23.521  4426  4426 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:00:23.521  4426  4426 W SoLoader: SoLoader initialized: 8
+11-12 19:00:33.238  4638  4638 W SoLoader: Initializing SoLoader: 0
+11-12 19:00:33.240  4638  4638 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:00:33.240  4638  4638 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:00:33.240  4638  4638 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:00:33.241  4638  4638 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:00:33.241  4638  4638 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:00:33.249  4638  4638 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:00:33.249  4638  4638 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:00:33.249  4638  4638 W SoLoader: SoLoader initialized: 8
+11-12 19:00:41.897  4783  4783 W SoLoader: Initializing SoLoader: 0
+11-12 19:00:41.897  4783  4783 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:00:41.897  4783  4783 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:00:41.898  4783  4783 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:00:41.898  4783  4783 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:00:41.898  4783  4783 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:00:41.903  4783  4783 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:00:41.907  4783  4783 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:00:41.907  4783  4783 W SoLoader: SoLoader initialized: 8
+11-12 19:00:50.772  4952  4952 W SoLoader: Initializing SoLoader: 0
+11-12 19:00:50.773  4952  4952 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:00:50.773  4952  4952 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:00:50.774  4952  4952 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:00:50.774  4952  4952 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:00:50.774  4952  4952 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:00:50.778  4952  4952 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:00:50.778  4952  4952 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:00:50.780  4952  4952 W SoLoader: SoLoader initialized: 8
+11-12 19:00:57.973  5102  5102 W SoLoader: Initializing SoLoader: 0
+11-12 19:00:57.973  5102  5102 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:00:57.973  5102  5102 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:00:57.974  5102  5102 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:00:57.974  5102  5102 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:00:57.974  5102  5102 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:00:57.977  5102  5102 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:00:57.977  5102  5102 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:00:57.977  5102  5102 W SoLoader: SoLoader initialized: 8
+11-12 19:01:05.442  5237  5237 W SoLoader: Initializing SoLoader: 0
+11-12 19:01:05.442  5237  5237 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:01:05.442  5237  5237 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:01:05.444  5237  5237 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:01:05.444  5237  5237 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:01:05.444  5237  5237 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:01:05.451  5237  5237 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:01:05.451  5237  5237 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:01:05.451  5237  5237 W SoLoader: SoLoader initialized: 8
+11-12 19:01:12.920  5356  5356 W SoLoader: Initializing SoLoader: 0
+11-12 19:01:12.922  5356  5356 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:01:12.922  5356  5356 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:01:12.922  5356  5356 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:01:12.928  5356  5356 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:01:12.928  5356  5356 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:01:12.936  5356  5356 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:01:12.936  5356  5356 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:01:12.936  5356  5356 W SoLoader: SoLoader initialized: 8
+11-12 19:01:20.334  5469  5469 W SoLoader: Initializing SoLoader: 0
+11-12 19:01:20.334  5469  5469 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:01:20.334  5469  5469 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:01:20.335  5469  5469 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:01:20.335  5469  5469 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:01:20.335  5469  5469 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:01:20.338  5469  5469 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:01:20.338  5469  5469 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:01:20.338  5469  5469 W SoLoader: SoLoader initialized: 8
+11-12 19:01:29.959  5570  5570 W SoLoader: Initializing SoLoader: 0
+11-12 19:01:29.959  5570  5570 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:01:29.959  5570  5570 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:01:29.960  5570  5570 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:01:29.960  5570  5570 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:01:29.960  5570  5570 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:01:30.038  5570  5570 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:01:30.038  5570  5570 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:01:30.038  5570  5570 W SoLoader: SoLoader initialized: 8
+11-12 19:01:37.845  5672  5672 W SoLoader: Initializing SoLoader: 0
+11-12 19:01:37.845  5672  5672 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:01:37.845  5672  5672 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:01:37.846  5672  5672 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:01:37.846  5672  5672 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:01:37.846  5672  5672 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:01:37.886  5672  5672 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:01:37.898  5672  5672 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:01:37.898  5672  5672 W SoLoader: SoLoader initialized: 8
+11-12 19:01:45.572  5816  5816 W SoLoader: Initializing SoLoader: 0
+11-12 19:01:45.572  5816  5816 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:01:45.572  5816  5816 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:01:45.573  5816  5816 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:01:45.573  5816  5816 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:01:45.573  5816  5816 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:01:45.592  5816  5816 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:01:45.592  5816  5816 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:01:45.593  5816  5816 W SoLoader: SoLoader initialized: 8
+11-12 19:01:53.047  5943  5943 W SoLoader: Initializing SoLoader: 0
+11-12 19:01:53.047  5943  5943 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:01:53.047  5943  5943 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:01:53.047  5943  5943 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:01:53.047  5943  5943 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:01:53.047  5943  5943 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:01:53.053  5943  5943 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:01:53.053  5943  5943 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:01:53.053  5943  5943 W SoLoader: SoLoader initialized: 8
+11-12 19:02:00.809  6036  6036 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:00.809  6036  6036 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:00.809  6036  6036 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:00.810  6036  6036 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:00.810  6036  6036 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:00.810  6036  6036 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:00.821  6036  6036 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:00.821  6036  6036 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:00.821  6036  6036 W SoLoader: SoLoader initialized: 8
+11-12 19:02:08.477  6137  6137 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:08.478  6137  6137 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:08.478  6137  6137 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:08.478  6137  6137 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:08.478  6137  6137 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:08.478  6137  6137 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:08.492  6137  6137 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:08.492  6137  6137 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:08.493  6137  6137 W SoLoader: SoLoader initialized: 8
+11-12 19:02:15.616  6233  6233 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:15.616  6233  6233 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:15.616  6233  6233 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:15.617  6233  6233 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:15.617  6233  6233 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:15.617  6233  6233 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:15.622  6233  6233 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:15.631  6233  6233 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:15.631  6233  6233 W SoLoader: SoLoader initialized: 8
+11-12 19:02:23.556  6322  6322 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:23.556  6322  6322 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:23.556  6322  6322 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:23.556  6322  6322 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:23.557  6322  6322 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:23.557  6322  6322 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:23.574  6322  6322 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:23.577  6322  6322 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:23.577  6322  6322 W SoLoader: SoLoader initialized: 8
+11-12 19:02:30.805  6407  6407 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:30.805  6407  6407 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:30.805  6407  6407 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:30.805  6407  6407 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:30.806  6407  6407 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:30.806  6407  6407 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:30.812  6407  6407 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:30.812  6407  6407 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:30.813  6407  6407 W SoLoader: SoLoader initialized: 8
+11-12 19:02:38.250  6505  6505 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:38.251  6505  6505 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:38.251  6505  6505 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:38.251  6505  6505 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:38.251  6505  6505 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:38.251  6505  6505 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:38.282  6505  6505 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:38.341  6505  6505 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:38.341  6505  6505 W SoLoader: SoLoader initialized: 8
+11-12 19:02:45.621  6623  6623 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:45.621  6623  6623 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:45.621  6623  6623 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:45.621  6623  6623 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:45.621  6623  6623 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:45.621  6623  6623 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:45.625  6623  6623 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:45.625  6623  6623 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:45.625  6623  6623 W SoLoader: SoLoader initialized: 8
+11-12 19:02:53.003  6736  6736 W SoLoader: Initializing SoLoader: 0
+11-12 19:02:53.003  6736  6736 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:02:53.003  6736  6736 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:02:53.003  6736  6736 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:02:53.003  6736  6736 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:02:53.003  6736  6736 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:02:53.007  6736  6736 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:02:53.009  6736  6736 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:02:53.009  6736  6736 W SoLoader: SoLoader initialized: 8
+11-12 19:03:00.842  6825  6825 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:00.842  6825  6825 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:00.842  6825  6825 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:00.843  6825  6825 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:00.846  6825  6825 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:00.846  6825  6825 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:00.852  6825  6825 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:00.855  6825  6825 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:00.855  6825  6825 W SoLoader: SoLoader initialized: 8
+11-12 19:03:08.378  6914  6914 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:08.378  6914  6914 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:08.378  6914  6914 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:08.379  6914  6914 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:08.379  6914  6914 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:08.379  6914  6914 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:08.388  6914  6914 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:08.388  6914  6914 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:08.389  6914  6914 W SoLoader: SoLoader initialized: 8
+11-12 19:03:15.463  7001  7001 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:15.463  7001  7001 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:15.463  7001  7001 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:15.463  7001  7001 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:15.463  7001  7001 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:15.463  7001  7001 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:15.474  7001  7001 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:15.474  7001  7001 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:15.474  7001  7001 W SoLoader: SoLoader initialized: 8
+11-12 19:03:23.236  7092  7092 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:23.236  7092  7092 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:23.236  7092  7092 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:23.236  7092  7092 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:23.236  7092  7092 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:23.236  7092  7092 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:23.240  7092  7092 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:23.240  7092  7092 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:23.240  7092  7092 W SoLoader: SoLoader initialized: 8
+11-12 19:03:31.091  7204  7204 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:31.092  7204  7204 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:31.092  7204  7204 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:31.092  7204  7204 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:31.092  7204  7204 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:31.092  7204  7204 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:31.095  7204  7204 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:31.098  7204  7204 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:31.098  7204  7204 W SoLoader: SoLoader initialized: 8
+11-12 19:03:38.185  7290  7290 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:38.186  7290  7290 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:38.186  7290  7290 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:38.186  7290  7290 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:38.186  7290  7290 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:38.186  7290  7290 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:38.191  7290  7290 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:38.191  7290  7290 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:38.191  7290  7290 W SoLoader: SoLoader initialized: 8
+11-12 19:03:45.721  7410  7410 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:45.727  7410  7410 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:45.727  7410  7410 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:45.727  7410  7410 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:45.727  7410  7410 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:45.727  7410  7410 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:45.739  7410  7410 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:45.739  7410  7410 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:45.739  7410  7410 W SoLoader: SoLoader initialized: 8
+11-12 19:03:53.710  7500  7500 W SoLoader: Initializing SoLoader: 0
+11-12 19:03:53.710  7500  7500 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:03:53.710  7500  7500 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:03:53.710  7500  7500 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:03:53.710  7500  7500 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:03:53.710  7500  7500 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:03:53.716  7500  7500 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:03:53.719  7500  7500 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:03:53.720  7500  7500 W SoLoader: SoLoader initialized: 8
+11-12 19:04:00.853  7639  7639 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:00.857  7639  7639 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:00.857  7639  7639 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:00.860  7639  7639 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:00.860  7639  7639 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:00.860  7639  7639 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:00.904  7639  7639 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:00.910  7639  7639 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:00.910  7639  7639 W SoLoader: SoLoader initialized: 8
+11-12 19:04:08.252  7728  7728 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:08.252  7728  7728 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:08.252  7728  7728 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:08.253  7728  7728 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:08.253  7728  7728 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:08.253  7728  7728 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:08.256  7728  7728 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:08.256  7728  7728 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:08.257  7728  7728 W SoLoader: SoLoader initialized: 8
+11-12 19:04:15.361  7819  7819 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-12 19:04:15.466  7819  7819 I AndroidRuntime: Using default boot image
+11-12 19:04:15.466  7819  7819 I AndroidRuntime: Leaving lock profiling enabled
+11-12 19:04:16.337  7819  7819 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-12 19:04:16.419  7819  7819 I AndroidRuntime: VM exiting with result code 0.
+11-12 19:04:16.749  7842  7842 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:16.749  7842  7842 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:16.749  7842  7842 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:16.749  7842  7842 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:16.751  7842  7842 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:16.751  7842  7842 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:16.754  7842  7842 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:16.760  7842  7842 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:16.760  7842  7842 W SoLoader: SoLoader initialized: 8
+11-12 19:04:23.830  7939  7939 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:23.835  7939  7939 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:23.835  7939  7939 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:23.836  7939  7939 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:23.836  7939  7939 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:23.836  7939  7939 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:23.879  7939  7939 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:23.879  7939  7939 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:23.880  7939  7939 W SoLoader: SoLoader initialized: 8
+11-12 19:04:31.150  8026  8026 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:31.150  8026  8026 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:31.150  8026  8026 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:31.151  8026  8026 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:31.151  8026  8026 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:31.151  8026  8026 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:31.155  8026  8026 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:31.155  8026  8026 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:31.156  8026  8026 W SoLoader: SoLoader initialized: 8
+11-12 19:04:38.512  8112  8112 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:38.512  8112  8112 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:38.512  8112  8112 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:38.512  8112  8112 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:38.513  8112  8112 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:38.513  8112  8112 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:38.528  8112  8112 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:38.531  8112  8112 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:38.531  8112  8112 W SoLoader: SoLoader initialized: 8
+11-12 19:04:45.889  8198  8198 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:45.892  8198  8198 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:45.892  8198  8198 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:45.892  8198  8198 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:45.900  8198  8198 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:45.900  8198  8198 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:45.909  8198  8198 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:45.909  8198  8198 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:45.910  8198  8198 W SoLoader: SoLoader initialized: 8
+11-12 19:04:53.620  8305  8305 W SoLoader: Initializing SoLoader: 0
+11-12 19:04:53.620  8305  8305 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:04:53.620  8305  8305 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:04:53.620  8305  8305 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:04:53.620  8305  8305 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:04:53.620  8305  8305 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:04:53.624  8305  8305 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:04:53.624  8305  8305 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:04:53.624  8305  8305 W SoLoader: SoLoader initialized: 8
+11-12 19:05:01.027  8399  8399 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:01.027  8399  8399 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:01.027  8399  8399 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:01.028  8399  8399 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:01.028  8399  8399 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:01.028  8399  8399 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:01.039  8399  8399 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:01.039  8399  8399 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:01.039  8399  8399 W SoLoader: SoLoader initialized: 8
+11-12 19:05:08.737  8490  8490 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:08.737  8490  8490 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:08.737  8490  8490 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:08.741  8490  8490 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:08.741  8490  8490 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:08.741  8490  8490 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:08.748  8490  8490 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:08.748  8490  8490 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:08.748  8490  8490 W SoLoader: SoLoader initialized: 8
+11-12 19:05:16.106  8576  8576 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:16.120  8576  8576 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:16.120  8576  8576 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:16.120  8576  8576 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:16.120  8576  8576 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:16.120  8576  8576 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:16.149  8576  8576 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:16.152  8576  8576 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:16.152  8576  8576 W SoLoader: SoLoader initialized: 8
+11-12 19:05:25.145  8821  8821 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:25.145  8821  8821 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:25.145  8821  8821 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:25.147  8821  8821 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:25.147  8821  8821 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:25.147  8821  8821 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:25.155  8821  8821 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:25.176  8821  8821 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:25.176  8821  8821 W SoLoader: SoLoader initialized: 8
+11-12 19:05:32.826  8938  8938 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:32.828  8938  8938 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:32.828  8938  8938 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:32.828  8938  8938 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:32.828  8938  8938 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:32.828  8938  8938 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:32.837  8938  8938 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:32.849  8938  8938 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:32.861  8938  8938 W SoLoader: SoLoader initialized: 8
+11-12 19:05:40.831  9040  9040 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:40.835  9040  9040 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:40.835  9040  9040 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:40.835  9040  9040 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:40.835  9040  9040 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:40.835  9040  9040 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:40.842  9040  9040 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:40.843  9040  9040 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:40.848  9040  9040 W SoLoader: SoLoader initialized: 8
+11-12 19:05:49.936  9136  9136 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:49.937  9136  9136 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:49.937  9136  9136 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:49.937  9136  9136 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:49.937  9136  9136 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:49.937  9136  9136 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:49.951  9136  9136 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:49.996  9136  9136 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:49.996  9136  9136 W SoLoader: SoLoader initialized: 8
+11-12 19:05:57.032  9226  9226 W SoLoader: Initializing SoLoader: 0
+11-12 19:05:57.032  9226  9226 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:05:57.032  9226  9226 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:05:57.033  9226  9226 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:05:57.033  9226  9226 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:05:57.033  9226  9226 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:05:57.037  9226  9226 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:05:57.037  9226  9226 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:05:57.037  9226  9226 W SoLoader: SoLoader initialized: 8
+11-12 19:06:04.189  9317  9317 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:04.189  9317  9317 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:04.189  9317  9317 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:04.190  9317  9317 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:04.190  9317  9317 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:04.190  9317  9317 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:04.194  9317  9317 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:04.194  9317  9317 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:04.194  9317  9317 W SoLoader: SoLoader initialized: 8
+11-12 19:06:11.868  9412  9412 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:11.868  9412  9412 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:11.868  9412  9412 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:11.868  9412  9412 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:11.868  9412  9412 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:11.869  9412  9412 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:11.874  9412  9412 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:11.876  9412  9412 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:11.876  9412  9412 W SoLoader: SoLoader initialized: 8
+11-12 19:06:18.991  9507  9507 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:18.991  9507  9507 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:18.991  9507  9507 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:18.992  9507  9507 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:18.992  9507  9507 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:18.992  9507  9507 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:18.995  9507  9507 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:18.995  9507  9507 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:18.995  9507  9507 W SoLoader: SoLoader initialized: 8
+11-12 19:06:26.108  9589  9589 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:26.108  9589  9589 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:26.108  9589  9589 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:26.109  9589  9589 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:26.109  9589  9589 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:26.109  9589  9589 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:26.113  9589  9589 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:26.113  9589  9589 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:26.113  9589  9589 W SoLoader: SoLoader initialized: 8
+11-12 19:06:33.309  9678  9678 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:33.309  9678  9678 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:33.309  9678  9678 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:33.309  9678  9678 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:33.309  9678  9678 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:33.309  9678  9678 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:33.313  9678  9678 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:33.314  9678  9678 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:33.314  9678  9678 W SoLoader: SoLoader initialized: 8
+11-12 19:06:40.728  9767  9767 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:40.730  9767  9767 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:40.730  9767  9767 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:40.730  9767  9767 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:40.730  9767  9767 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:40.730  9767  9767 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:40.744  9767  9767 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:40.744  9767  9767 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:40.744  9767  9767 W SoLoader: SoLoader initialized: 8
+11-12 19:06:47.724  9853  9853 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:47.724  9853  9853 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:47.724  9853  9853 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:47.724  9853  9853 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:47.725  9853  9853 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:47.725  9853  9853 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:47.733  9853  9853 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:47.733  9853  9853 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:47.733  9853  9853 W SoLoader: SoLoader initialized: 8
+11-12 19:06:55.237  9953  9953 W SoLoader: Initializing SoLoader: 0
+11-12 19:06:55.237  9953  9953 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:06:55.237  9953  9953 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:06:55.237  9953  9953 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:06:55.237  9953  9953 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:06:55.237  9953  9953 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:06:55.253  9953  9953 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:06:55.260  9953  9953 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:06:55.260  9953  9953 W SoLoader: SoLoader initialized: 8
+11-12 19:07:02.757 10046 10046 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:02.764 10046 10046 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:02.764 10046 10046 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:02.764 10046 10046 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:02.765 10046 10046 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:02.765 10046 10046 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:02.778 10046 10046 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:02.782 10046 10046 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:02.782 10046 10046 W SoLoader: SoLoader initialized: 8
+11-12 19:07:09.886 10141 10141 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:09.886 10141 10141 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:09.886 10141 10141 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:09.886 10141 10141 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:09.887 10141 10141 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:09.887 10141 10141 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:09.889 10141 10141 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:09.889 10141 10141 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:09.889 10141 10141 W SoLoader: SoLoader initialized: 8
+11-12 19:07:17.710 10228 10228 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:17.713 10228 10228 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:17.713 10228 10228 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:17.713 10228 10228 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:17.713 10228 10228 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:17.713 10228 10228 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:17.723 10228 10228 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:17.723 10228 10228 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:17.723 10228 10228 W SoLoader: SoLoader initialized: 8
+11-12 19:07:25.027 10312 10312 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:25.027 10312 10312 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:25.027 10312 10312 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:25.027 10312 10312 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:25.027 10312 10312 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:25.031 10312 10312 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:25.058 10312 10312 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:25.060 10312 10312 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:25.060 10312 10312 W SoLoader: SoLoader initialized: 8
+11-12 19:07:32.684 10401 10401 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:32.684 10401 10401 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:32.684 10401 10401 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:32.685 10401 10401 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:32.685 10401 10401 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:32.685 10401 10401 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:32.697 10401 10401 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:32.697 10401 10401 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:32.697 10401 10401 W SoLoader: SoLoader initialized: 8
+11-12 19:07:40.224 10494 10494 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:40.224 10494 10494 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:40.224 10494 10494 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:40.224 10494 10494 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:40.224 10494 10494 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:40.224 10494 10494 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:40.232 10494 10494 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:40.232 10494 10494 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:40.232 10494 10494 W SoLoader: SoLoader initialized: 8
+11-12 19:07:47.952 10611 10611 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:47.956 10611 10611 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:47.956 10611 10611 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:47.956 10611 10611 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:47.956 10611 10611 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:47.956 10611 10611 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:48.035 10611 10611 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:48.040 10611 10611 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:48.040 10611 10611 W SoLoader: SoLoader initialized: 8
+11-12 19:07:55.360 10697 10697 W SoLoader: Initializing SoLoader: 0
+11-12 19:07:55.360 10697 10697 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:07:55.360 10697 10697 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:07:55.360 10697 10697 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:07:55.360 10697 10697 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:07:55.360 10697 10697 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:07:55.362 10697 10697 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:07:55.362 10697 10697 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:07:55.362 10697 10697 W SoLoader: SoLoader initialized: 8
+11-12 19:08:02.706 10784 10784 W SoLoader: Initializing SoLoader: 0
+11-12 19:08:02.707 10784 10784 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:08:02.707 10784 10784 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:08:02.707 10784 10784 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:08:02.707 10784 10784 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:08:02.707 10784 10784 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:08:02.732 10784 10784 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:08:02.733 10784 10784 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:08:02.737 10784 10784 W SoLoader: SoLoader initialized: 8
+11-12 19:08:10.715 10868 10868 W SoLoader: Initializing SoLoader: 0
+11-12 19:08:10.715 10868 10868 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:08:10.715 10868 10868 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:08:10.717 10868 10868 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:08:10.717 10868 10868 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:08:10.717 10868 10868 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:08:10.720 10868 10868 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:08:10.721 10868 10868 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:08:10.721 10868 10868 W SoLoader: SoLoader initialized: 8
+11-12 19:08:17.881 10960 10960 W SoLoader: Initializing SoLoader: 0
+11-12 19:08:17.881 10960 10960 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:08:17.881 10960 10960 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:08:17.881 10960 10960 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:08:17.881 10960 10960 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:08:17.881 10960 10960 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:08:17.889 10960 10960 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:08:17.889 10960 10960 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:08:17.889 10960 10960 W SoLoader: SoLoader initialized: 8
+11-12 19:08:25.627 11046 11046 W SoLoader: Initializing SoLoader: 0
+11-12 19:08:25.627 11046 11046 W SoLoader: Recording new base apk path: /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk
+11-12 19:08:25.627 11046 11046 W SoLoader: Previously recorded 0 base apk paths.
+11-12 19:08:25.628 11046 11046 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-12 19:08:25.628 11046 11046 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-12 19:08:25.628 11046 11046 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/base.apk!/lib/x86_64]]
+11-12 19:08:25.641 11046 11046 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~oi0-PvXA_02CY95m_xioJg==/com.drewvolz.stolaf-oRsJPFPvdTeQQiLdxVLAmQ==/lib/x86_64 flags = 0]]
+11-12 19:08:25.642 11046 11046 I SoLoader: init finish: 4 SO sources prepared
+11-12 19:08:25.642 11046 11046 W SoLoader: SoLoader initialized: 8
