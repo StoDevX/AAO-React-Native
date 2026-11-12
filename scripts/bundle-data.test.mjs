@@ -218,6 +218,32 @@ describe('schedule bundling', () => {
 		/breaks.yaml/u,
 	)
 
+	it('reports a problem from every step, each on its own line, and writes nothing', () => {
+		withInputs(({fromDir, toDir, spaces, spaceFiles, run}) => {
+			spaces[1].breakSchedule = {fal: 'normal'}
+			writeYaml(spaceFiles[1], spaces[1])
+			mkdirSync(join(fromDir, 'a-first'))
+			writeFileSync(join(fromDir, 'a-first', '1-entry.yaml'), 'title: [')
+			writeFileSync(join(fromDir, 'a-first', '2-entry.yaml'), 'title: [')
+			writeFileSync(join(fromDir, 'notes.yaml'), 'hello: [')
+			let result = run()
+			assert.equal(result.status, 1)
+			let lines = result.stderr.split('\n')
+			for (let problem of [
+				`${spaceFiles[1]}.breakSchedule.fal: unknown break key`,
+				join(fromDir, 'a-first', '1-entry.yaml'),
+				join(fromDir, 'a-first', '2-entry.yaml'),
+				join(fromDir, 'notes.yaml'),
+			]) {
+				assert.ok(
+					lines.some((line) => line.startsWith(problem)),
+					`${problem} in:\n${result.stderr}`,
+				)
+			}
+			assert.equal(existsSync(toDir), false)
+		})
+	})
+
 	it('does not create an output directory when schedule validation fails', () => {
 		withInputs(({toDir, spaces, spaceFiles, run}) => {
 			spaces[1].breakSchedule = {fal: 'normal'}

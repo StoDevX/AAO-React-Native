@@ -107,27 +107,6 @@ export function mkdtempSync(prefix) {
 	return host().mkdtemp(String(prefix))
 }
 
-/** `bundle-data-dir` writes each bundle through a stream, all at once. */
-export function createWriteStream(file) {
-	let written = ''
-	return {
-		write(data) {
-			written += String(data)
-			host().writeFile(String(file), written)
-			return true
-		},
-		end(data) {
-			if (data !== undefined) this.write(data)
-		},
-		on() {
-			return this
-		},
-		once() {
-			return this
-		},
-	}
-}
-
 /** Only scripts the helper never runs copy folders. */
 export function cpSync() {
 	throw new Error('cpSync has no stand-in in the Mac app')
@@ -146,6 +125,5 @@ export default {
 	copyFileSync,
 	realpathSync,
 	mkdtempSync,
-	createWriteStream,
 	cpSync,
 }

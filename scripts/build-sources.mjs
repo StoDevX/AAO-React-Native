@@ -11,9 +11,13 @@ const BUNDLED_COPY = path.join(import.meta.dirname, '..', 'modules/data-sources/
 // The manifest is a JRD document (RFC 7033 §4.4), which must be the root
 // object. convertDataFile would wrap it in {data: …}, so it gets a builder.
 // `bundledCopy` names where the app's copy goes; without one, none is written.
+/** The manifest as published, and as the app's copy holds it. */
+export function renderSources(sourceFile) {
+	return JSON.stringify(load(fs.readFileSync(sourceFile, 'utf-8'))) + '\n'
+}
+
 export function buildSources({sourceFile, outputFile, bundledCopy}) {
-	let manifest = load(fs.readFileSync(sourceFile, 'utf-8'))
-	let serialized = JSON.stringify(manifest) + '\n'
+	let serialized = renderSources(sourceFile)
 
 	fs.mkdirSync(path.dirname(outputFile), {recursive: true})
 	fs.writeFileSync(outputFile, serialized)

@@ -92,6 +92,43 @@ describe('schedule data contracts', () => {
 		)
 	})
 
+	it('reports an overlap in every space, not only the first', () => {
+		let input = pair()
+		for (let space of input.spaces) {
+			space.schedule[0].hours = [
+				{days: ['Sa'], from: '7:30am', to: '8:00pm'},
+				{days: ['Sa'], from: '9:00am', to: '8:00pm'},
+			]
+		}
+		assert.throws(
+			() => parse(input),
+			(error) =>
+				/space-0.yaml.schedule\[0\].hours\[1\]: overlaps/u.test(error.message) &&
+				/space-1.yaml.schedule\[0\].hours\[1\]: overlaps/u.test(error.message),
+		)
+	})
+
+	it('reports a schema error in every space, not only the first', () => {
+		let input = pair()
+		for (let space of input.spaces) space.schedule[0].hours[0].from = '7:30'
+		assert.throws(
+			() => parse(input),
+			(error) => /space-0.yaml/u.test(error.message) && /space-1.yaml/u.test(error.message),
+		)
+	})
+
+	it('reports a bad break reference in every space, not only the first', () => {
+		let input = pair()
+		input.spaces[0].breakSchedule = {fal: 'normal'}
+		input.spaces[1].breakSchedule = {sprin: 'normal'}
+		assert.throws(
+			() => parse(input),
+			(error) =>
+				/space-0.yaml.breakSchedule.fal: unknown break key/u.test(error.message) &&
+				/space-1.yaml.breakSchedule.sprin: unknown break key/u.test(error.message),
+		)
+	})
+
 	it('names every shared day on which two rows overlap', () => {
 		let input = pair()
 		input.spaces[0].schedule[0].hours = [
@@ -1069,6 +1106,17 @@ describe('schedule input loading', () => {
 		spaces.forEach((data, index) => write(spaceFiles[index], data))
 	})
 	afterEach(() => rmSync(root, {recursive: true, force: true}))
+
+	it('reports broken YAML in one file beside a schema error in another', () => {
+		writeFileSync(spaceFiles[0], 'schedule: [')
+		spaces[1].schedule[0].hours[0].from = '7:30'
+		write(spaceFiles[1], spaces[1])
+		assert.throws(
+			() => loadScheduleData(fromDir),
+			(error) =>
+				error.message.includes(`${spaceFiles[0]}: `) && error.message.includes(spaceFiles[1]),
+		)
+	})
 
 	it('loads authored inputs in numeric order and ignores unfinished files and OS junk', () => {
 		writeFileSync(join(fromDir, 'building-hours', '_unfinished.yaml'), 'invalid: [')

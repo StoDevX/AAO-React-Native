@@ -180,6 +180,25 @@ describe('build', () => {
 		assert.deepEqual(readdirSync(outDir), [path.basename(good.dir)])
 	})
 
+	it('reports a problem in every broken file, each placed in its own', async () => {
+		let {root, dataDir} = await scratchData()
+		let files = ['building-hours/1-1-cage.yaml', 'building-hours/1-3-stav.yaml']
+		await Promise.all(
+			files.map(async (file) => {
+				let full = path.join(dataDir, file)
+				let yaml = await readFile(full, 'utf8')
+				await writeFile(full, yaml.replace(/from: '([\d:]+)am'/u, "from: '$1'"))
+			}),
+		)
+		let result = await build({bundleData: BUNDLE_DATA, dataDir, outDir: path.join(root, 'out')})
+		assert.equal(result.ok, false)
+		assert.deepEqual(
+			new Set(result.problems.map((p) => p.file)),
+			new Set(files),
+			JSON.stringify(result),
+		)
+	})
+
 	it('removes every build but the one it keeps', async () => {
 		let {root, dataDir} = await scratchData()
 		let outDir = path.join(root, 'out')

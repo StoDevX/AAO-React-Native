@@ -15,7 +15,7 @@ import {readFileSync} from 'node:fs'
 const INPUTS = [
 	/^macos\/DataEditor\//u,
 	/^modules\/schedules\//u,
-	/^scripts\/(data-editor|bundle-data|bundle-images|build-data-editor-helper|build-faqs|build-sources|convert-data-file|data-entries|junk|make-images|paths|schedule-data|validate-schedules)/u,
+	/^scripts\/(data-editor|bundle-data|bundle-images|build-data-editor-helper|build-faqs|build-sources|convert-data-file|data-entries|data-problems|junk|make-images|paths|schedule-data|validate-schedules)/u,
 	/^mise\.lock$/u,
 	/^package\.json$/u,
 	/^pnpm-lock\.yaml$/u,

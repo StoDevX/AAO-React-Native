@@ -130,6 +130,20 @@ export function lastError(stderr: string): string {
 	return lines.at(-1) ?? 'bundle-data failed'
 }
 
+/**
+ * The problems a failed `bundle-data` listed, one line each, or nothing when
+ * it stopped without a list, as a crash does.
+ */
+function reportedProblems(stderr: string, dataDir: string): Problem[] | undefined {
+	let lines = stderr.split('\n')
+	let header = lines.findIndex((line) => /^bundle-data found \d+ problems?:$/u.test(line))
+	if (header === -1) return undefined
+	return lines
+		.slice(header + 1)
+		.filter((line) => line.trim() !== '')
+		.flatMap((line) => problemsFrom(new Error(line), dataDir))
+}
+
 function run(command: string, args: string[]): Promise<{code: number; stderr: string}> {
 	return new Promise((resolve, reject) => {
 		let child = spawn(command, args, {stdio: ['ignore', 'ignore', 'pipe']})
@@ -165,7 +179,9 @@ export async function build({
 	let {code, stderr} = await run(process.execPath, [bundleData, dataDir, dir])
 	if (code !== 0) {
 		await rm(dir, {recursive: true, force: true})
-		return {ok: false, problems: problemsFrom(new Error(lastError(stderr)), dataDir)}
+		let problems =
+			reportedProblems(stderr, dataDir) ?? problemsFrom(new Error(lastError(stderr)), dataDir)
+		return {ok: false, problems}
 	}
 	return {ok: true, dir}
 }
