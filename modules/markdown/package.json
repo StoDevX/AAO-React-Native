@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/ui": "58.0.20",
     "@frogpond/colors": "workspace:*",
     "@frogpond/open-url": "workspace:*",
     "react-native-enriched-markdown": "1.1.1"
