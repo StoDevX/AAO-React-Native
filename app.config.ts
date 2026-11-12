@@ -566,7 +566,24 @@ const config: ExpoConfig = {
 		['./plugins/with-app-variant', {variant: requested}],
 		[
 			'@sentry/react-native/expo',
-			{organization: variant.sentry.organization, project: variant.sentry.project},
+			{
+				organization: variant.sentry.organization,
+				project: variant.sentry.project,
+				// Sentry's Android Gradle plugin, which uploads R8's mapping and
+				// the native symbols so an obfuscated Android stack trace reads
+				// as source. It uploads only where the source maps do: not when
+				// SENTRY_DISABLE_AUTO_UPLOAD is set, as the pull-request build and
+				// a release without SENTRY_AUTH_TOKEN set it.
+				experimental_android: {
+					enableAndroidGradlePlugin: true,
+					autoUploadProguardMapping: true,
+					uploadNativeSymbols: true,
+					autoUploadNativeSymbols: true,
+					// Not the native libraries' C++ sources with every release:
+					// the symbols alone name the function and the line.
+					includeNativeSources: false,
+				},
+			},
 		],
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
 		// its options now live in the `enriched-markdown` block of package.json.
