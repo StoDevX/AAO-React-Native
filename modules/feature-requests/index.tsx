@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
 import {requireNativeView} from 'expo'
 
 export type FeatureRequestsBoardProps = {
@@ -8,6 +9,12 @@ export type FeatureRequestsBoardProps = {
 type NativeProps = {
 	onBack: () => void
 }
+
+/**
+ * Whether this platform has the board. KickstartSignal ships for iOS alone, so
+ * on Android the module's view only says the board is not there.
+ */
+export const isFeatureRequestsAvailable: boolean = Platform.OS === 'ios'
 
 const FeatureRequestsNativeView: React.ComponentType<NativeProps> = requireNativeView(
 	'FeatureRequests',

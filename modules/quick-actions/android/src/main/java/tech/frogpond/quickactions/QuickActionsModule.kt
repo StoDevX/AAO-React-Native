@@ -51,22 +51,22 @@ class QuickActionsModule : Module() {
     Name("QuickActions")
 
     AsyncFunction("setQuickActions") { actions: List<QuickAction> ->
-      val context = context
-      val scheme = appScheme(context)
+      val ctx = context
+      val scheme = appScheme(ctx)
       // Launchers show only a few; the rest would be refused.
-      val limit = ShortcutManagerCompat.getMaxShortcutCountPerActivity(context)
+      val limit = ShortcutManagerCompat.getMaxShortcutCountPerActivity(ctx)
       val shortcuts = actions.take(limit).mapIndexed { rank, action ->
         val url = "$scheme://${action.href.trimStart('/')}"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-          .setPackage(context.packageName)
-        ShortcutInfoCompat.Builder(context, action.id)
+          .setPackage(ctx.packageName)
+        ShortcutInfoCompat.Builder(ctx, action.id)
           .setShortLabel(action.title)
-          .setIcon(icon(context, action))
+          .setIcon(icon(ctx, action))
           .setIntent(intent)
           .setRank(rank)
           .build()
       }
-      ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
+      ShortcutManagerCompat.setDynamicShortcuts(ctx, shortcuts)
       Unit
     }
   }
