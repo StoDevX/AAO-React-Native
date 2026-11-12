@@ -52,7 +52,7 @@ overrides:
 patchedDependencies:
   '@expo/ui@58.0.20': 58d23476414eb2e1af6f6ac4bf2dbebc09f904510f45b667c4590a8868f67239
   react-native-change-icon@5.0.0: 5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306
-  react-native-webview@14.0.1: a8bf1feecd7cbf80f9806fe625dbc3d79c4c7ca0030bc83178283ba2217a59f5
+  react-native-webview@14.0.1: 0113b3bcb1b9b15013f0d42cd486bc3c1e21e03161f55325e7819bab770e4caa
   react-native@0.88.0: 5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077
 
 importers:
@@ -367,7 +367,7 @@ importers:
         version: 4.0.0(react-native@0.88.0)
       react-native-webview:
         specifier: 14.0.1
-        version: 14.0.1(patch_hash=a8bf1feecd7cbf80f9806fe625dbc3d79c4c7ca0030bc83178283ba2217a59f5)(react-native@0.88.0)(react@19.3.0)
+        version: 14.0.1(patch_hash=0113b3bcb1b9b15013f0d42cd486bc3c1e21e03161f55325e7819bab770e4caa)(react-native@0.88.0)(react@19.3.0)
       react-native-worklets:
         specifier: 0.13.0
         version: 0.13.0(@babel/core@7.29.7)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)
@@ -932,7 +932,7 @@ importers:
         version: 0.88.0(patch_hash=5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077)(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.3.0)(supports-color@8.1.1)
       react-native-webview:
         specifier: ^14.0.1
-        version: 14.0.1(patch_hash=a8bf1feecd7cbf80f9806fe625dbc3d79c4c7ca0030bc83178283ba2217a59f5)(react-native@0.88.0)(react@19.3.0)
+        version: 14.0.1(patch_hash=0113b3bcb1b9b15013f0d42cd486bc3c1e21e03161f55325e7819bab770e4caa)(react-native@0.88.0)(react@19.3.0)
 
   modules/html-lib:
     dependencies:
@@ -8726,7 +8726,7 @@ snapshots:
       whatwg-url-minimum: 0.2.0
     optionalDependencies:
       '@expo/metro-runtime': 58.0.14(@expo/log-box@58.0.12)(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)
-      react-native-webview: 14.0.1(patch_hash=a8bf1feecd7cbf80f9806fe625dbc3d79c4c7ca0030bc83178283ba2217a59f5)(react-native@0.88.0)(react@19.3.0)
+      react-native-webview: 14.0.1(patch_hash=0113b3bcb1b9b15013f0d42cd486bc3c1e21e03161f55325e7819bab770e4caa)(react-native@0.88.0)(react@19.3.0)
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
@@ -9991,7 +9991,7 @@ snapshots:
     dependencies:
       react-native: 0.88.0(patch_hash=5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077)(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.3.0)(supports-color@8.1.1)
 
-  react-native-webview@14.0.1(patch_hash=a8bf1feecd7cbf80f9806fe625dbc3d79c4c7ca0030bc83178283ba2217a59f5)(react-native@0.88.0)(react@19.3.0):
+  react-native-webview@14.0.1(patch_hash=0113b3bcb1b9b15013f0d42cd486bc3c1e21e03161f55325e7819bab770e4caa)(react-native@0.88.0)(react@19.3.0):
     dependencies:
       escape-string-regexp: 4.0.0
       invariant: 2.2.4
