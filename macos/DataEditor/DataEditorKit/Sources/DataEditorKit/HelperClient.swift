@@ -81,6 +81,7 @@ public struct BuildResult: Decodable, Hashable, Sendable {
 private struct NoParams: Encodable, Sendable {}
 private struct FileParams: Encodable, Sendable { let file: String }
 private struct EditParams: Encodable, Sendable { let file: String; let ops: [EditOp] }
+private struct TextParams: Encodable, Sendable { let text: String }
 
 extension HelperClient {
     public func buildings() async throws -> [BuildingSummary] { try await call("list", NoParams()) }
@@ -88,4 +89,6 @@ extension HelperClient {
     public func load(_ file: String) async throws -> Loaded { try await call("load", FileParams(file: file)) }
     public func edit(_ file: String, _ ops: [EditOp]) async throws -> Loaded { try await call("edit", EditParams(file: file, ops: ops)) }
     public func build() async throws -> BuildResult { try await call("build", NoParams()) }
+    /// YAML text read as the helper reads a data file: a file's base version, which is not in `data/`.
+    public func parse(_ text: String) async throws -> JSONValue { try await call("parse", TextParams(text: text)) }
 }

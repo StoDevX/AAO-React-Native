@@ -519,6 +519,23 @@ final class AppModel {
         await afterFilesChanged()
     }
 
+    /// Each changed building with what changed in it, in words, for Suggest.
+    func changeDescriptions() async -> [ChangedFile] {
+        guard let helper else { return [] }
+        var files: [ChangedFile] = []
+        for file in changedFiles {
+            // a file the contributor deleted has nothing to describe
+            guard let now = try? await helper.load(file).value else { continue }
+            var before: HoursDocument?
+            if let base = try? workspace.baseContents(of: file) {
+                before = (try? await helper.parse(Self.text(base))).map(HoursDocument.init(value:))
+            }
+            files.append(ChangedFile(building: buildingName(of: file, in: buildings),
+                                     changes: describeChange(from: before, to: HoursDocument(value: now))))
+        }
+        return files
+    }
+
     private static func text(_ data: Data?) -> String { data.map { String(decoding: $0, as: UTF8.self) } ?? "" }
 
     func diff(for file: String) -> [DiffLine] {

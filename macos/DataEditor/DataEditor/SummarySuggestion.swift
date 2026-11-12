@@ -2,15 +2,15 @@ import DataEditorKit
 import Foundation
 import FoundationModels
 
-/// A file the changeset changes, by the building it holds and its diff.
+/// A building the changeset changes, with what changed in it, in words.
 struct ChangedFile {
     let building: String
-    let diff: [DiffLine]
+    let changes: [String]
 }
 
 /// What the on-device model reads to suggest a summary: each building, then
-/// the lines its file gained (`+`) and lost (`-`). Stops before `limit`
-/// characters, between lines, since the model reads a few thousand words at most.
+/// what changed in it. Stops before `limit` characters, between lines, since
+/// the model reads a few thousand words at most.
 func summaryPrompt(_ files: [ChangedFile], limit: Int = 6000) -> String {
     var prompt = ""
     func add(_ line: String) -> Bool {
@@ -22,9 +22,8 @@ func summaryPrompt(_ files: [ChangedFile], limit: Int = 6000) -> String {
     for (index, file) in files.enumerated() {
         if index > 0, !add("") { break }
         guard add("\(file.building):") else { break }
-        for line in file.diff where line.kind != .same {
-            let mark = line.kind == .added ? "+" : "-"
-            guard add("\(mark) \(line.text.trimmingCharacters(in: .whitespaces))") else { return prompt }
+        for change in file.changes {
+            guard add("- \(change)") else { return prompt }
         }
     }
     return prompt
@@ -47,12 +46,13 @@ var suggestionOffer: SuggestionOffer { SuggestionOffer(SystemLanguageModel.defau
 
 /// A summary of `files` from the on-device model, for the contributor to edit.
 func suggestSummary(for files: [ChangedFile]) async throws -> String {
+    // an example naming a building in the data is copied word for word
     let session = LanguageModelSession(instructions: """
         You title changes to a college's building hours. Reply with one short \
-        line in the imperative, under 70 characters, with no full stop, like \
-        "Close The Cage at 9 p.m. on Fridays" or "Add brunch hours to Stav Hall". \
-        Name the building and what changed, in plain words. When more than \
-        one building changed, name each one.
+        line in the imperative, under 50 characters, with no full stop, like \
+        "Close Example Hall at 9 p.m. on Fridays" or "Add brunch hours to \
+        Example Hall". Say only the biggest change, in plain words, using the \
+        times given. When more than one building changed, name each one.
         """)
     // the small model drops all but the first building unless told them up front
     let buildings = "Buildings changed: " + files.map(\.building).joined(separator: ", ")

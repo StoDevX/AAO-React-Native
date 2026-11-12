@@ -314,7 +314,8 @@ struct WorkspaceTests {
         let asked = Counter()
         let (session, _) = StubProtocol.session { request in
             if request.url!.path.hasSuffix("/data-editor/helper.json") {
-                return (200, body(asked.next() == 1 ? #"{"commit":"c1","protocol":1}"# : #"{"commit":"c2","protocol":1}"#))
+                let commit = asked.next() == 1 ? "c1" : "c2"
+                return (200, body(#"{"commit":"\#(commit)","protocol":\#(HelperRuntime.protocolVersion)}"#))
             }
             return request.url!.absoluteString.contains("c1") ? c1(request) : c2(request)
         }

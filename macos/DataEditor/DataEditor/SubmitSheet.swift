@@ -78,9 +78,8 @@ struct SubmitSheet: View {
     private func suggest() async {
         defer { suggesting = nil }
         suggestionFailed = false
-        let files = model.changedFiles.map { ChangedFile(building: buildingName(of: $0, in: model.buildings), diff: model.diff(for: $0)) }
         do {
-            let suggestion = try await suggestSummary(for: files)
+            let suggestion = try await suggestSummary(for: await model.changeDescriptions())
             guard !Task.isCancelled else { return }
             if suggestion.isEmpty { suggestionFailed = true } else { summary = suggestion }
         } catch {

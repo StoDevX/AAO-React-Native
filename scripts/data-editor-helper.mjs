@@ -6,6 +6,7 @@
 import path from 'node:path'
 import {createInterface} from 'node:readline'
 import {parseArgs} from 'node:util'
+import {parse} from 'yaml'
 import {DocumentStore} from './data-editor-documents.mjs'
 import {build, listBuildings, pruneBuilds, readCalendar, validate} from './data-editor-pipeline.ts'
 import {serve} from './data-editor-serve.mjs'
@@ -15,7 +16,7 @@ import {serve} from './data-editor-serve.mjs'
  * one it speaks (`HelperRuntime.protocolVersion`) and refuses a helper with
  * another. Changing a handler's parameters or its reply's shape bumps both.
  */
-export const PROTOCOL = 1
+export const PROTOCOL = 2
 
 /** The protocol's methods over one data directory and its build folder. */
 export function createHandlers({dataDir, outDir, bundleData}) {
@@ -48,6 +49,8 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 			return {port: server.address().port}
 		},
 		close: () => server?.close(),
+		// a file's base version, which the app holds as text, to compare with the file now
+		parse: ({text}) => parse(text),
 	}
 }
 

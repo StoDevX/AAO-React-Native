@@ -77,6 +77,18 @@ describe('handle', () => {
 		)
 		assert.ok(reply.result.problems.length > 0)
 	})
+	/// A file's base version is text the app holds, not a file in the data folder.
+	it('parses YAML text it is given', async () => {
+		let reply = await handle(
+			await handlers(),
+			JSON.stringify({
+				id: 3,
+				method: 'parse',
+				params: {text: "name: The Cage\nhours: [{from: '9:00am'}]\n"},
+			}),
+		)
+		assert.deepEqual(reply.result, {name: 'The Cage', hours: [{from: '9:00am'}]})
+	})
 	it('answers an unknown method with an error', async () => {
 		let reply = await handle(await handlers(), '{"id":3,"method":"rm"}')
 		assert.deepEqual(reply, {id: 3, error: {message: 'no method rm'}})
