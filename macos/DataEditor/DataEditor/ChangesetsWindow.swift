@@ -39,7 +39,7 @@ struct ChangesetsWindow: View {
     @ViewBuilder private var detail: some View {
         if model.phase == .ready {
             switch selection {
-            case .current?: OverviewView()
+            case .current?: OverviewView(offersEditor: true)
             case .pullRequest(let number)?: PullRequestDetailView(number: number)
             case nil: ContentUnavailableView("Choose a changeset", systemImage: "list.bullet.rectangle.portrait")
             }

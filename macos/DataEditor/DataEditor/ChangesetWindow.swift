@@ -44,7 +44,7 @@ struct ChangesetWindow: View {
     @ViewBuilder private func detail(_ item: ChangesetItem) -> some View {
         switch (changeset, item) {
         case (.current, .overview):
-            OverviewView()
+            OverviewView(offersEditor: false)
         case (.current, .building):
             if let document = model.document {
                 HoursDetailView(document: document)

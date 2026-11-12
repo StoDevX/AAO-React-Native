@@ -38,6 +38,8 @@ struct OverviewView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
     @Environment(\.appearsActive) private var appearsActive
+    /// Whether this page sits outside the editor, so an empty page offers the way in.
+    let offersEditor: Bool
     @State private var submitting = false
     /// The file whose Revert waits for the contributor to confirm it.
     @State private var reverting: String?
@@ -63,8 +65,14 @@ struct OverviewView: View {
             }
             if parts.isEmpty {
                 Section {
-                    ContentUnavailableView("No changes", systemImage: "checkmark.circle")
-                        .frame(maxWidth: .infinity)
+                    ContentUnavailableView {
+                        Label("No changes", systemImage: "checkmark.circle")
+                    } actions: {
+                        if offersEditor {
+                            Button("Edit Building Hours") { openWindow(value: Changeset.current) }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
                 }
             } else {
                 ForEach(parts.conflicts, id: \.self) { file in
