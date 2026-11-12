@@ -73,7 +73,7 @@ export type MessIssueTileProps = {
 	paragraphs: string[]
 	/** How the sheet has been handled; see sheetShape in the Mess feature */
 	sheet: SheetShape
-	/** The tile is one button; this is all VoiceOver reads of it */
+	/** The tile is one button; this is all VoiceOver and TalkBack read of it */
 	accessibilityLabel: string
 	testID?: string
 	onPress: () => void
@@ -92,7 +92,8 @@ const MessIssueTileNativeView: React.ComponentType<NativeProps> = requireNativeV
 
 /**
  * One Messenger issue as a small folded broadsheet. Renders only inside a `Host`: it is a SwiftUI
- * view, not a React Native one.
+ * view on iOS and a Jetpack Compose view on Android, not a React Native one, so on Android it must
+ * be a direct child of `@expo/ui/jetpack-compose`'s `Host` or of one of its layouts.
  */
 export function MessIssueTile({
 	accessibilityLabel,

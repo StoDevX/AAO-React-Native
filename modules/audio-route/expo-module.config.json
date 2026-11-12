@@ -1,6 +1,19 @@
 {
-  "platforms": ["apple"],
+  "platforms": [
+    "apple",
+    "android"
+  ],
+  "coreFeatures": [
+    "compose"
+  ],
   "apple": {
-    "modules": ["AudioRouteModule"]
+    "modules": [
+      "AudioRouteModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "tech.frogpond.audioroute.AudioRouteModule"
+    ]
   }
 }

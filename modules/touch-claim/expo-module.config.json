@@ -1,6 +1,16 @@
 {
-  "platforms": ["apple"],
+  "platforms": [
+    "apple",
+    "android"
+  ],
   "apple": {
-    "modules": ["TouchClaimModule"]
+    "modules": [
+      "TouchClaimModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "tech.frogpond.touchclaim.TouchClaimModule"
+    ]
   }
 }
