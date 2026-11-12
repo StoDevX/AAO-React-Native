@@ -2,6 +2,6 @@ Starting: Intent { cmp=com.drewvolz.stolaf/.MainActivity }
 Status: ok
 LaunchState: COLD
 Activity: com.drewvolz.stolaf/.MainActivity
-TotalTime: 1411
-WaitTime: 1418
+TotalTime: 1025
+WaitTime: 1054
 Complete
