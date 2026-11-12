@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
 import {load} from 'js-yaml'
+import {yamlProblem} from './data-problems.mjs'
 
 // run cli
 // if (process.mainModule === module) {
@@ -17,7 +18,8 @@ import {load} from 'js-yaml'
 // }
 
 // exported module
-export function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
+/** The file as the app reads it: JSON, or for `toFileType` 'css' the stylesheet itself. */
+export function renderDataFile({fromFile, toFileType = 'json'}) {
 	let contents = fs.readFileSync(fromFile, 'utf-8')
 	let output = contents
 
@@ -27,7 +29,11 @@ export function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 			output = processMarkdown(contents)
 			break
 		case 'yaml':
-			output = processYaml(contents)
+			try {
+				output = processYaml(contents)
+			} catch (error) {
+				throw yamlProblem(fromFile, error)
+			}
 			break
 		case 'css':
 			if (toFileType === 'css') {
@@ -40,10 +46,7 @@ export function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 			throw new Error(`unexpected filetype "${fileType}; expected "md", "yaml", or "css"`)
 	}
 
-	output = output + '\n'
-
-	let outStream = toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
-	outStream.write(output)
+	return output + '\n'
 }
 
 function processYaml(fileContents) {
