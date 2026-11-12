@@ -1,20 +1,10 @@
 {
-  "platforms": [
-    "apple",
-    "android"
-  ],
-  "coreFeatures": [
-    "swiftui",
-    "compose"
-  ],
+  "platforms": ["apple", "android"],
+  "coreFeatures": ["swiftui", "compose"],
   "apple": {
-    "modules": [
-      "HyphenatedTextModule"
-    ]
+    "modules": ["HyphenatedTextModule"]
   },
   "android": {
-    "modules": [
-      "tech.frogpond.hyphenatedtext.HyphenatedTextModule"
-    ]
+    "modules": ["tech.frogpond.hyphenatedtext.HyphenatedTextModule"]
   }
 }
