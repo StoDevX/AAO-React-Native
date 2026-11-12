@@ -1,6 +1,10 @@
 {
-  "platforms": ["apple"],
+  "platforms": ["apple", "android"],
+  "coreFeatures": ["compose"],
   "apple": {
     "modules": ["SelectableTextModule"]
+  },
+  "android": {
+    "modules": ["tech.frogpond.selectabletext.SelectableTextModule"]
   }
 }
