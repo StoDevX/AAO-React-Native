@@ -31,6 +31,9 @@ private func describeServices(from before: [Service], to after: [Service], scope
         guard let old else { return ["\(new.title)\(scope) added: \(hours(new))"] }
         var lines: [String] = []
         if old.title != new.title { lines.append("\(old.title)\(scope) renamed to \(new.title)") }
+        // the closed days come first: the model titles the first change it reads
+        let closed = Set(old.rows.flatMap(\.days)).subtracting(new.rows.flatMap(\.days))
+        if !closed.isEmpty, !new.rows.isEmpty { lines.append("\(new.title)\(scope): no longer open \(days(Array(closed)))") }
         if hours(old) != hours(new) { lines.append("\(new.title)\(scope): \(hours(old)) → \(hours(new))") }
         switch (old.notes, new.notes) {
         case (nil, let added?): lines.append("\(new.title)\(scope): note added: \"\(added)\"")

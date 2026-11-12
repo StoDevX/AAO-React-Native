@@ -24,7 +24,9 @@ struct ChangeDescriptionTests {
         let before = building([service("Hours", notes: "The kitchen stops cooking at 8 p.m.",
                                        [row(weekdays, "7:30am", "8:00pm"), row(["Sa", "Su"], "9:00am", "8:00pm")])])
         let after = building([service("Hours", [row(weekdays, "9:00am", "5:00pm")])])
+        // the closed days first: the model titles the first change it reads
         #expect(describeChange(from: before, to: after) == [
+            "Hours: no longer open Sat–Sun",
             "Hours: Mon–Fri 7:30am–8pm; Sat–Sun 9am–8pm → Mon–Fri 9am–5pm",
             "Hours: note removed",
         ])
@@ -43,6 +45,7 @@ struct ChangeDescriptionTests {
         #expect(describeChange(from: before, to: after) == [
             "Hours renamed to Open",
             "Grill renamed to Brunch",
+            "Brunch: no longer open Mon",
             "Brunch: Mon 11am–2pm → Sun 10am–1pm",
             "Brunch: note added: \"Sundays only\"",
             "Snacks removed",
