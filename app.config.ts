@@ -536,6 +536,8 @@ const config: ExpoConfig = {
 		// the fixed day/night colours @frogpond/colors reads as resources there.
 		// JSON, as this file cannot import the TypeScript that exports them.
 		['./plugins/with-material-theme', {colors: adaptiveColors}],
+		// The launcher's name, which Expo would otherwise take from `name` above.
+		['./plugins/with-android-app-name', {name: variant.displayName}],
 	],
 }
 
