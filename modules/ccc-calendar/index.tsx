@@ -1,7 +1,7 @@
 export {namedCalendarOptions, scheduleCalendarOptions, scheduleEventOptions} from './query'
 export {CalendarPicker} from './calendar-picker'
 export {CalendarModePicker} from './mode-picker'
-export {CalendarToolbar} from './toolbar'
+export {CalendarFilterChips, CalendarToolbar} from './toolbar'
 export {ScheduleView} from './schedule-view'
 export {useCalendarSource, useCalendarSources} from './use-calendar-sources'
 export {useMergedEvents} from './use-merged-events'

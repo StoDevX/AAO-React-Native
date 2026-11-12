@@ -24,6 +24,8 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	'arrow.right': 'arrow_forward',
 	'arrow.triangle.2.circlepath': 'sync',
 	'arrow.up.arrow.down': 'swap_vert',
+	// A dropdown chip's trailing caret.
+	'arrowtriangle.down.fill': 'arrow_drop_down',
 	'arrow.up.left.and.arrow.down.right': 'open_in_full',
 	// An external link, on Android, is the open-in-new glyph.
 	'arrow.up.right': 'open_in_new',

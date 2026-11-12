@@ -19,6 +19,7 @@ import apartmentOutlined from '@expo/material-symbols/apartment.xml'
 import appBadgingOutlined from '@expo/material-symbols/app_badging.xml'
 import appsOutlined from '@expo/material-symbols/apps.xml'
 import arrowBackOutlined from '@expo/material-symbols/arrow_back.xml'
+import arrowDropDownOutlined from '@expo/material-symbols/arrow_drop_down.xml'
 import arrowForwardOutlined from '@expo/material-symbols/arrow_forward.xml'
 import autoStoriesOutlined from '@expo/material-symbols/auto_stories.xml'
 import backHandOutlined from '@expo/material-symbols/back_hand.xml'
@@ -194,6 +195,7 @@ export const SYMBOL_ASSETS: Readonly<
 	app_badging: [appBadgingOutlined],
 	apps: [appsOutlined],
 	arrow_back: [arrowBackOutlined],
+	arrow_drop_down: [arrowDropDownOutlined],
 	arrow_forward: [arrowForwardOutlined],
 	auto_stories: [autoStoriesOutlined],
 	back_hand: [backHandOutlined],
