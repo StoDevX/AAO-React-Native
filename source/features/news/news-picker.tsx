@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
 import {Stack} from 'expo-router'
 import {Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {
@@ -24,6 +25,13 @@ type Props = {
 }
 
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
+
+/**
+ * Where the filter sits: iOS's bottom toolbar, or on Android the top app
+ * bar's trailing actions, where Material puts a screen's actions. Android has
+ * no bottom toolbar, and one floated over the list hides its last row.
+ */
+const ON_ANDROID = Platform.OS === 'android'
 const LABEL = accessibilityLabel('News filter')
 
 export function NewsPicker({categories, selectedCategory, onSelect}: Props): React.ReactNode {
@@ -43,8 +51,8 @@ export function NewsPicker({categories, selectedCategory, onSelect}: Props): Rea
 	}
 
 	return (
-		<Stack.Toolbar placement="bottom">
-			<Stack.Toolbar.Spacer />
+		<Stack.Toolbar placement={ON_ANDROID ? 'right' : 'bottom'}>
+			{ON_ANDROID ? null : <Stack.Toolbar.Spacer />}
 			<Stack.Toolbar.View>
 				<Host matchContents={true}>
 					<Menu label={<Image systemName="line.3.horizontal.decrease" />} modifiers={menuModifiers}>
