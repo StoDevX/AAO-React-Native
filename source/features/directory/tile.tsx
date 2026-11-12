@@ -19,7 +19,8 @@ type Props = {
  * A curated campus contact's tile. Tapping opens the detail screen, where
  * the contact's call/link action lives. Square rather than the default
  * portrait shape, so the grid stays short enough to leave the department list
- * in view below it.
+ * in view below it. Every label holds two lines, so a row of tiles is one
+ * height and its cards line up whether a name wraps or not.
  */
 export function ContactTile({contact, onPress}: Props): React.ReactNode {
 	return (
@@ -28,6 +29,9 @@ export function ContactTile({contact, onPress}: Props): React.ReactNode {
 			icon={contact.icon ?? FALLBACK_ICON}
 			onPress={onPress}
 			ratio={1}
+			// Every name gets two lines' room, so the cards of a row line up
+			// whether a name wraps or not.
+			reservesLabelLines={true}
 			title={contact.title}
 		/>
 	)
