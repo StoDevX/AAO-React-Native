@@ -1,16 +1,9 @@
 {
-  "platforms": [
-    "apple",
-    "android"
-  ],
+  "platforms": ["apple", "android"],
   "apple": {
-    "modules": [
-      "QuickActionsModule"
-    ]
+    "modules": ["QuickActionsModule"]
   },
   "android": {
-    "modules": [
-      "tech.frogpond.quickactions.QuickActionsModule"
-    ]
+    "modules": ["tech.frogpond.quickactions.QuickActionsModule"]
   }
 }

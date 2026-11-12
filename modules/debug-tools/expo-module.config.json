@@ -1,16 +1,9 @@
 {
-  "platforms": [
-    "apple",
-    "android"
-  ],
+  "platforms": ["apple", "android"],
   "apple": {
-    "modules": [
-      "DebugToolsModule"
-    ]
+    "modules": ["DebugToolsModule"]
   },
   "android": {
-    "modules": [
-      "tech.frogpond.debugtools.DebugToolsModule"
-    ]
+    "modules": ["tech.frogpond.debugtools.DebugToolsModule"]
   }
 }

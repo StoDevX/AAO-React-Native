@@ -1,16 +1,9 @@
 {
-  "platforms": [
-    "apple",
-    "android"
-  ],
+  "platforms": ["apple", "android"],
   "apple": {
-    "modules": [
-      "DoubleTapModule"
-    ]
+    "modules": ["DoubleTapModule"]
   },
   "android": {
-    "modules": [
-      "tech.frogpond.doubletap.DoubleTapModule"
-    ]
+    "modules": ["tech.frogpond.doubletap.DoubleTapModule"]
   }
 }

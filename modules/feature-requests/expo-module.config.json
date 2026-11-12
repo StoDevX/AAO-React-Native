@@ -1,20 +1,10 @@
 {
-  "platforms": [
-    "apple",
-    "android"
-  ],
-  "coreFeatures": [
-    "swiftui",
-    "compose"
-  ],
+  "platforms": ["apple", "android"],
+  "coreFeatures": ["swiftui", "compose"],
   "apple": {
-    "modules": [
-      "FeatureRequestsModule"
-    ]
+    "modules": ["FeatureRequestsModule"]
   },
   "android": {
-    "modules": [
-      "tech.frogpond.featurerequests.FeatureRequestsModule"
-    ]
+    "modules": ["tech.frogpond.featurerequests.FeatureRequestsModule"]
   }
 }
