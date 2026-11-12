@@ -57,13 +57,13 @@ jobs:
       - name: Build the release APK
         working-directory: android
         env:
-          # Source maps go to Sentry only from a release pipeline with a token.
-          # The npm sentry-cli is excluded in pnpm-workspace.yaml, so an upload
-          # attempted here fails the build rather than skipping.
+          # Source maps, R8's mapping and native symbols go to Sentry only from
+          # Android Release, with a token. This job installs no sentry-cli,
+          # so an upload attempted here would fail the build.
           SENTRY_DISABLE_AUTO_UPLOAD: 'true'
         # One ABI, the emulator's, keeps the native build to a quarter of the
-        # time. The release build type signs with the debug key until a Play
-        # upload key is configured.
+        # time. With no upload key in the environment, the release build type
+        # signs with the debug key (plugins/with-android-release-signing.ts).
         run: ./gradlew assembleRelease -PreactNativeArchitectures=x86_64 --stacktrace
 
       - name: Upload the APK

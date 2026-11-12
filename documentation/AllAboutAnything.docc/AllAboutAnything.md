@@ -21,6 +21,10 @@ This is the **landing page** (a root page). Everything else hangs off its Topics
 - <doc:TestingGuides>
 - <doc:SampleCodeExample>
 
+### Shipping
+
+- <doc:AndroidReleases>
+
 ### The apps
 
 See the All About Olaf and CARLS catalogs.
