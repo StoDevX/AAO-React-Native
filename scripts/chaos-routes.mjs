@@ -26,11 +26,14 @@ export function appRouteFiles() {
 /**
  * The routes `paths` define. Layouts, `+` special files and dotfiles define
  * none; `index` is its directory; a `(group)` segment is not part of the URL.
+ * A platform file (`.ios`, `.android`, `.native`, `.web`) is a version of the
+ * route its name without the platform names, so `_layout.android.tsx` is a
+ * layout and `cafe.android.tsx` is the same route as `cafe.tsx`.
  */
 export function routesIn(paths) {
 	let routes = new Set()
 	for (let path of paths) {
-		let match = /^(.*)\.tsx?$/u.exec(path)
+		let match = /^(.*?)(?:\.(?:ios|android|native|web))?\.tsx?$/u.exec(path)
 		if (!match) continue
 		let segments = match[1].split('/')
 		let last = segments.at(-1)
