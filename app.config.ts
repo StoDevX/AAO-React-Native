@@ -29,6 +29,27 @@ const AAA_BUNDLE_ID = 'tech.frogpond.allaboutanything'
 /** Windmill (Sky), an Icon Composer document, as All About Anything's primary. */
 const AAA_ICON = './assets/windmill-sky.icon'
 
+/** Android's adaptive windmill: the sky and forest behind, the windmill in front, and a silhouette for themed icons. */
+const AAO_ANDROID_ICON = {
+	foreground: './assets/android/windmill-foreground.png',
+	background: './assets/android/windmill-background.png',
+	monochrome: './assets/android/windmill-monochrome.png',
+}
+
+/** The penguin is one flat picture, so it fills the background and the foreground stays empty. */
+const CARLS_ANDROID_ICON = {
+	foreground: './assets/android/transparent.png',
+	background: './assets/android/carls-penguin-background.png',
+	monochrome: './assets/android/windmill-monochrome.png',
+}
+
+/** Windmill (Sky), Android's adaptive version. */
+const AAA_ANDROID_ICON = {
+	foreground: './assets/android/windmill-sky-foreground.png',
+	background: './assets/android/windmill-sky-background.png',
+	monochrome: './assets/android/windmill-monochrome.png',
+}
+
 /**
  * Each app's Sentry project. A variant names its own organization too, so a
  * future app can report somewhere else without code changes. A DSN only
@@ -87,8 +108,10 @@ const VARIANTS = {
 		defaultCampus: 'edu.stolaf',
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
+		androidPackage: 'com.drewvolz.stolaf',
 		scheme: 'AllAboutOlaf',
 		icon: AAO_ICON,
+		androidIcon: AAO_ANDROID_ICON,
 		primaryIcon: 'windmill',
 		sentry: AAO_SENTRY,
 		signalApiKey: 'ks_live_sOB_c_zZAfsH8dG6CvSS51TYwEpcx-6vmd_SmUrltos',
@@ -98,8 +121,10 @@ const VARIANTS = {
 		defaultCampus: 'edu.stolaf',
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
+		androidPackage: 'com.drewvolz.stolaf.dev',
 		scheme: 'AllAboutOlafDev',
 		icon: AAO_ICON,
+		androidIcon: AAO_ANDROID_ICON,
 		primaryIcon: 'windmill',
 		sentry: AAO_SENTRY,
 		signalApiKey: null,
@@ -109,9 +134,11 @@ const VARIANTS = {
 		defaultCampus: 'edu.carleton',
 		displayName: 'CARLS',
 		bundleIdentifier: CARLS_BUNDLE_ID,
+		androidPackage: 'com.rives.carls',
 		// The CARLS app's own scheme, so links made for it still open it.
 		scheme: 'carls',
 		icon: CARLS_ICON,
+		androidIcon: CARLS_ANDROID_ICON,
 		primaryIcon: 'carls-penguin',
 		sentry: CARLS_SENTRY,
 		signalApiKey: null,
@@ -121,8 +148,10 @@ const VARIANTS = {
 		defaultCampus: 'edu.carleton',
 		displayName: 'CARLS Dev',
 		bundleIdentifier: `${CARLS_BUNDLE_ID}.dev`,
+		androidPackage: 'com.rives.carls.dev',
 		scheme: 'carlsDev',
 		icon: CARLS_ICON,
+		androidIcon: CARLS_ANDROID_ICON,
 		primaryIcon: 'carls-penguin',
 		sentry: CARLS_SENTRY,
 		signalApiKey: null,
@@ -132,8 +161,10 @@ const VARIANTS = {
 		defaultCampus: null,
 		displayName: 'All About Anything',
 		bundleIdentifier: AAA_BUNDLE_ID,
+		androidPackage: 'tech.frogpond.allaboutanything',
 		scheme: 'allaboutanything',
 		icon: AAA_ICON,
+		androidIcon: AAA_ANDROID_ICON,
 		primaryIcon: 'windmill-sky',
 		sentry: AAA_SENTRY,
 		signalApiKey: null,
@@ -143,8 +174,10 @@ const VARIANTS = {
 		defaultCampus: null,
 		displayName: 'AAA Dev',
 		bundleIdentifier: `${AAA_BUNDLE_ID}.dev`,
+		androidPackage: 'tech.frogpond.allaboutanything.dev',
 		scheme: 'allaboutanythingDev',
 		icon: AAA_ICON,
+		androidIcon: AAA_ANDROID_ICON,
 		primaryIcon: 'windmill-sky',
 		sentry: AAA_SENTRY,
 		signalApiKey: null,
@@ -215,7 +248,7 @@ const config: ExpoConfig = {
 	// resolved by their tooling, and it is their config plugin that writes the
 	// value into the Info.plist.
 	runtimeVersion: {policy: 'fingerprint'},
-	platforms: ['ios'],
+	platforms: ['ios', 'android'],
 	userInterfaceStyle: 'automatic',
 
 	experiments: {
@@ -379,6 +412,30 @@ const config: ExpoConfig = {
 
 			UIRequiredDeviceCapabilities: ['armv7'],
 		},
+	},
+
+	android: {
+		package: variant.androidPackage,
+		// Play requires a whole number that rises with each upload; CI sets it.
+		versionCode: Number(process.env.ANDROID_VERSION_CODE ?? '1'),
+		adaptiveIcon: {
+			foregroundImage: variant.androidIcon.foreground,
+			monochromeImage: variant.androidIcon.monochrome,
+			backgroundImage: variant.androidIcon.background,
+		},
+		predictiveBackGestureEnabled: true,
+		permissions: [
+			'android.permission.ACCESS_COARSE_LOCATION',
+			'android.permission.ACCESS_FINE_LOCATION',
+			'android.permission.FOREGROUND_SERVICE',
+			'android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK',
+			'android.permission.POST_NOTIFICATIONS',
+		],
+		blockedPermissions: [
+			'android.permission.RECORD_AUDIO',
+			'android.permission.READ_CALENDAR',
+			'android.permission.WRITE_CALENDAR',
+		],
 	},
 
 	extra: {
