@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Tabs} from 'expo-router/js-tabs'
 
-import {MaterialTabRow, type MaterialTab} from '../../../source/android-ui/tab-row'
+import {MaterialTabRow, type MaterialTab} from '../../android-ui/tab-row'
 
 /** Convocations' two lists, as Material primary tabs. */
 const TABS: ReadonlyArray<MaterialTab> = [
@@ -14,7 +14,7 @@ const TABS: ReadonlyArray<MaterialTab> = [
  * bar: two peer views of one destination, which Material draws as tabs rather
  * than as a navigation bar of top-level destinations.
  */
-export default function CarletonConvosLayout(): React.ReactNode {
+export function ConvocationTabs(): React.ReactNode {
 	return (
 		<Tabs
 			screenOptions={{headerShown: false, tabBarPosition: 'top'}}

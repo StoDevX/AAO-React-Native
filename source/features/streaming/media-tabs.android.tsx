@@ -1,8 +1,7 @@
 import * as React from 'react'
 import {Tabs} from 'expo-router/js-tabs'
 
-import {MaterialTabRow, type MaterialTab} from '../../source/android-ui/tab-row'
-import {requiresSection} from '../../source/features/campus/section-gate'
+import {MaterialTabRow, type MaterialTab} from '../../android-ui/tab-row'
 
 /** Streaming Media's two lists, as Material primary tabs. */
 const TABS: ReadonlyArray<MaterialTab> = [
@@ -15,7 +14,7 @@ const TABS: ReadonlyArray<MaterialTab> = [
  * peer views of one destination, which Material draws as tabs rather than as
  * a navigation bar of top-level destinations.
  */
-function StreamingMediaLayout(): React.ReactNode {
+export function StreamingMediaTabs(): React.ReactNode {
 	return (
 		<Tabs
 			screenOptions={{headerShown: false, tabBarPosition: 'top'}}
@@ -27,9 +26,3 @@ function StreamingMediaLayout(): React.ReactNode {
 		</Tabs>
 	)
 }
-
-export default requiresSection(
-	'streaming',
-	{title: 'Streaming Media', noun: 'webcams or streams', systemImage: 'video'},
-	StreamingMediaLayout,
-)
