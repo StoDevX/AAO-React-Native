@@ -5,7 +5,7 @@ import {Stack} from 'expo-router'
 import {DropdownChip} from '../../source/android-ui/dropdown-chip'
 import {filterAfterChoosing} from '../../source/features/calendar/picker-state'
 import type {CalendarFilter} from '../../source/features/calendar/store'
-import {CalendarModeMenu} from './mode-picker'
+import {calendarModeMenu} from './mode-picker'
 import type {CalendarFilterChipsProps, CalendarToolbarProps} from './toolbar'
 
 /**
@@ -27,9 +27,7 @@ export function CalendarToolbar({
 			{onTodayPress ? (
 				<Stack.Toolbar.Button accessibilityLabel="Today" icon="calendar" onPress={onTodayPress} />
 			) : null}
-			<Stack.Toolbar.View>
-				<CalendarModeMenu mode={mode} onSelectMode={onSelectMode} systemName="ellipsis" />
-			</Stack.Toolbar.View>
+			{calendarModeMenu({mode, onSelectMode}, 'ellipsis')}
 		</Stack.Toolbar>
 	)
 }
