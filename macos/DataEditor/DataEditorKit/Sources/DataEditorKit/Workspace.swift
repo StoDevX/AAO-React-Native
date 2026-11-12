@@ -318,9 +318,12 @@ public final class Workspace: Sendable {
     /// `keepLatest`, and stays a conflict through later updates until master
     /// matches it. The edits are written to `replay/` before the download and
     /// removed once replayed, so a failed download leaves the workspace as it
-    /// was and a failed replay leaves the edits on disk. Returns the conflicts.
+    /// was and a failed replay leaves the edits on disk, for the next update or
+    /// launch to put back. Returns the conflicts.
     public func update(to commit: String) async throws -> [String] {
         let fm = FileManager.default
+        // saving the edits below starts `replay/` afresh, from a `data/` without these
+        _ = try resumeReplay()
         try saveEdits()
         do {
             try await download(commit: commit)
@@ -328,6 +331,14 @@ public final class Workspace: Sendable {
             if dataHoldsSavedEdits() { try? fm.removeItem(at: replayDirectory) }
             throw error
         }
+        try replaySavedEdits()
+        return conflicts
+    }
+
+    /// Puts the edits in `replay/` back on top of `data/`, as `update(to:)`
+    /// describes, then removes `replay/`.
+    private func replaySavedEdits() throws {
+        let fm = FileManager.default
         try? fm.removeItem(at: conflictsDirectory)
         try? fm.removeItem(at: deletedConflictsDirectory)
         let files = relativeFiles(in: replayDirectory.appending(path: "mine")).union(relativeFiles(in: replayDirectory.appending(path: "deleted")))
@@ -347,6 +358,12 @@ public final class Workspace: Sendable {
             }
         }
         try? fm.removeItem(at: replayDirectory)
+    }
+
+    /// Puts back the edits a failed update left in `replay/`, on top of the
+    /// data as it is now. Returns the conflicts.
+    public func resumeReplay() throws -> [String] {
+        if FileManager.default.fileExists(atPath: replayDirectory.path) { try replaySavedEdits() }
         return conflicts
     }
 

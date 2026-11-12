@@ -181,6 +181,8 @@ final class AppModel {
                 try await workspace.downloadLatest()
             }
             if shuttingDown { return }
+            // edits an update failed to put back are put back before anything reads data/
+            _ = try workspace.resumeReplay()
             // a helper that will not load, or that an older app downloaded, gives way to master's
             let helper = try await workspace.loadHelper(oxfmt: testOxfmt ?? runtime.oxfmt)
             self.helper = helper

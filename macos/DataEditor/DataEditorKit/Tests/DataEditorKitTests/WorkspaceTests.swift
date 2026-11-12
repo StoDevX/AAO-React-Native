@@ -237,6 +237,44 @@ struct WorkspaceTests {
         #expect((try? Data(contentsOf: saved)) == body("name: The Cage Grill\n"))
     }
 
+    /// The next update saves the edits again from `data/`, which lacks the one left in `replay/`.
+    @Test func putsBackEditsAFailedUpdateLeftBeforeTheNextOne() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).download(commit: "c1")
+        let edited = root.appending(path: "data/building-hours/1-1-cage.yaml")
+        try body("name: The Cage Grill\n").write(to: edited)
+        let (failing, _) = StubProtocol.session { _ in
+            try? FileManager.default.removeItem(at: edited)
+            return (-1, Data())
+        }
+        await #expect(throws: URLError.self) { _ = try await Workspace(root: root, session: failing).update(to: "c2") }
+
+        let (c2, _) = stubRepo(commit: "c2")
+        let workspace = Workspace(root: root, session: c2)
+        #expect(try await workspace.update(to: "c2") == [])
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
+    }
+
+    /// A launch after a failed replay shows the edits it had not put back yet.
+    @Test func putsBackEditsAFailedUpdateLeftAtLaunch() async throws {
+        let root = temporaryRoot()
+        let (c1, _) = stubRepo()
+        _ = try await Workspace(root: root, session: c1).download(commit: "c1")
+        let edited = root.appending(path: "data/building-hours/1-1-cage.yaml")
+        try body("name: The Cage Grill\n").write(to: edited)
+        let (failing, _) = StubProtocol.session { _ in
+            try? FileManager.default.removeItem(at: edited)
+            return (-1, Data())
+        }
+        await #expect(throws: URLError.self) { _ = try await Workspace(root: root, session: failing).update(to: "c2") }
+
+        let workspace = Workspace(root: root, session: c1)
+        #expect(try workspace.resumeReplay() == [])
+        #expect(try workspace.contents(of: "building-hours/1-1-cage.yaml") == body("name: The Cage Grill\n"))
+        #expect(!FileManager.default.fileExists(atPath: root.appending(path: "replay").path))
+    }
+
     @Test func leavesEditsBaseAndSnapshotAloneWhenAnUpdateFailsOnTheNetwork() async throws {
         let root = temporaryRoot()
         let (c1, _) = stubRepo()
