@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useColorScheme} from 'react-native'
+import {Platform, useColorScheme} from 'react-native'
 import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
@@ -23,6 +23,7 @@ import {
 import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
 import {displayP3, type Gradient} from '@frogpond/colors'
+import {TileWidthContext} from './tile-grid'
 import {FILL_WIDTH, TILE_ASPECT} from './tile-layout'
 
 /// SwiftUI's own disabled look for a plain button, measured on the simulator:
@@ -132,6 +133,15 @@ export function GradientTile({
 	reservesLabelLines = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
+	let tileWidth = React.useContext(TileWidthContext)
+	// SwiftUI sizes the card from its column's width through the aspect
+	// ratio. Compose's grid cell does not pass its width on that way, and the
+	// card collapsed to the symbol's height -- a circle the symbol filled -- so
+	// on Android the card takes its grid's tile width outright.
+	let cardFrame =
+		Platform.OS === 'android' && tileWidth !== null
+			? [frame({width: tileWidth, height: tileWidth / ratio})]
+			: [frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]
 	let shownCount = count !== undefined && count > 0 ? count : undefined
 	// A known count is spoken even at zero: a dimmed tile is not disabled, so
 	// the label is all that tells VoiceOver an empty area from a loading one.
@@ -159,10 +169,7 @@ export function GradientTile({
 			>
 				{/* The count sits in the card's corner, over the centred icon, as
 				    a Home Screen badge sits on an app icon. */}
-				<ZStack
-					alignment="topTrailing"
-					modifiers={[frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]}
-				>
+				<ZStack alignment="topTrailing" modifiers={cardFrame}>
 					<ZStack modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
 						<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
 
