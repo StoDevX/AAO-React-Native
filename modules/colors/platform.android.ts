@@ -1,95 +1,165 @@
-import {Appearance, PlatformColor, type ColorValue} from 'react-native'
+import {PlatformColor} from 'react-native'
 
-/// Android's half of `./platform`: the same names, from colours any Android
-/// theme has.
+import {adaptiveColor} from './adaptive'
+
+/// Android's half of `./platform`: the same names, as Material 3 colours.
 ///
-/// iOS's `PlatformColor` names (`label`, `systemBackground`, …) don't resolve
-/// on Android, and `DynamicColorIOS` throws there as soon as it is called, so
-/// loading `./platform` on Android would crash the app before its first screen.
-/// This file stands in until the app has a Material theme: text and
-/// backgrounds come from the platform theme's own attributes, which follow
-/// light and dark, and the fixed hues are iOS's, picked for the appearance the
-/// app launched in.
+/// On Android `PlatformColor` takes resource paths, not iOS's semantic names,
+/// so each colour names the Material role that plays the part its iOS
+/// namesake does. A `?attr/` path is read from the activity's theme, which
+/// plugins/with-material-theme makes a Material 3 DayNight theme with dynamic
+/// colour: on Android 12 and later every role follows the wallpaper, and below
+/// that it comes from the brand gold. Either way it follows light and dark.
+///
+/// The roles match `SEMANTIC_ROLES` in source/android-ui/colors.ts, which
+/// resolves these same paths for Jetpack Compose, so a React Native view and a
+/// Compose one given the same export draw the same colour.
 
-/** A colour the platform theme defines, read by its attribute name. */
-function themed(attribute: string): ColorValue {
-	return PlatformColor(`?android:attr/${attribute}`)
-}
-
-/** iOS's light or dark value, for the appearance the app launched in. */
-function fixed(light: string, dark: string): ColorValue {
-	return Appearance.getColorScheme() === 'dark' ? dark : light
+/** A Material 3 colour role, read from the theme by its attribute name. */
+function role(attribute: string) {
+	return PlatformColor(`?attr/${attribute}`)
 }
 
 // MARK: Label colors
 
-export const label = themed('textColorPrimary')
-export const secondaryLabel = themed('textColorSecondary')
-export const tertiaryLabel = themed('textColorTertiary')
-export const quaternaryLabel = themed('textColorHint')
+/** Primary text: Material's `onSurface`. */
+export const label = role('colorOnSurface')
+
+/** Secondary text: Material's `onSurfaceVariant`. */
+export const secondaryLabel = role('colorOnSurfaceVariant')
+
+/** Tertiary text: Material's `outline`. */
+export const tertiaryLabel = role('colorOutline')
+
+/** Quaternary text: Material's `outlineVariant`. */
+export const quaternaryLabel = role('colorOutlineVariant')
 
 // MARK: Fill colors
 
-export const systemFill = fixed('#78788033', '#7878805C')
-export const secondarySystemFill = fixed('#78788029', '#78788052')
-export const tertiarySystemFill = fixed('#7676801F', '#7676803D')
-export const quaternarySystemFill = fixed('#74748014', '#7676802E')
+/** A fill for thin and small shapes: Material's `surfaceContainerHighest`. */
+export const systemFill = role('colorSurfaceContainerHighest')
+
+/** A fill for medium-size shapes: Material's `surfaceContainerHigh`. */
+export const secondarySystemFill = role('colorSurfaceContainerHigh')
+
+/** A fill for large shapes: Material's `surfaceContainerHigh`. */
+export const tertiarySystemFill = role('colorSurfaceContainerHigh')
+
+/** A fill for large areas with complex content: Material's `surfaceContainer`. */
+export const quaternarySystemFill = role('colorSurfaceContainer')
 
 // MARK: Text colors
 
-export const placeholderText = themed('textColorHint')
+/** Placeholder text: Material's `onSurfaceVariant`, as a text field's hint. */
+export const placeholderText = role('colorOnSurfaceVariant')
 
 // MARK: Standard content background colors
 
-export const systemBackground = themed('colorBackground')
-export const secondarySystemBackground = fixed('#F2F2F7', '#1C1C1E')
-export const tertiarySystemBackground = fixed('#FFFFFF', '#2C2C2E')
+/** The main background: Material's `surface`. */
+export const systemBackground = role('colorSurface')
+
+/** Content on the main background: Material's `surfaceContainer`. */
+export const secondarySystemBackground = role('colorSurfaceContainer')
+
+/** Content on secondary backgrounds: Material's `surfaceContainerHigh`. */
+export const tertiarySystemBackground = role('colorSurfaceContainerHigh')
 
 // MARK: Grouped content background colors
 
-export const systemGroupedBackground = themed('colorBackground')
-export const secondarySystemGroupedBackground = fixed('#FFFFFF', '#1C1C1E')
-export const tertiarySystemGroupedBackground = fixed('#F2F2F7', '#2C2C2E')
+/** The main background of a grouped interface: Material's `surface`. */
+export const systemGroupedBackground = role('colorSurface')
+
+/** Rows on a grouped background: Material's `surfaceContainer`. */
+export const secondarySystemGroupedBackground = role('colorSurfaceContainer')
+
+/** Content on grouped rows: Material's `surfaceContainerHigh`. */
+export const tertiarySystemGroupedBackground = role('colorSurfaceContainerHigh')
 
 // MARK: Separator colors
 
-export const separator = fixed('#3C3C4349', '#54545899')
-export const opaqueSeparator = fixed('#C6C6C8', '#38383A')
+/** A divider: Material's `outlineVariant`. */
+export const separator = role('colorOutlineVariant')
+
+/** An opaque divider: Material's `outlineVariant`, which is already opaque. */
+export const opaqueSeparator = role('colorOutlineVariant')
 
 // MARK: Link color
 
-export const link = themed('colorAccent')
+/** A link: Material's `primary`. */
+export const link = role('colorPrimary')
 
 // MARK: Adaptable colors
 
-export const systemBlue = themed('colorAccent')
-export const systemBrown = fixed('#A2845E', '#AC8E68')
-export const systemCyan = fixed('#32ADE6', '#64D2FF')
-export const systemGreen = fixed('#34C759', '#30D158')
-export const systemIndigo = fixed('#5856D6', '#5E5CE6')
-export const systemMint = fixed('#00C7BE', '#63E6E2')
-export const systemOrange = fixed('#FF9500', '#FF9F0A')
-export const systemPink = fixed('#FF2D55', '#FF375F')
-export const systemPurple = fixed('#AF52DE', '#BF5AF2')
-export const systemRed = fixed('#FF3B30', '#FF453A')
-export const systemTeal = fixed('#30B0C7', '#40C8E0')
-export const systemYellow = fixed('#FFCC00', '#FFD60A')
+/** The accent: Material's `primary`, which is what iOS's blue tint stands for. */
+export const systemBlue = role('colorPrimary')
+
+/** Brown, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemBrown = adaptiveColor('systemBrown')
+
+/** Cyan, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemCyan = adaptiveColor('systemCyan')
+
+/** Green, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemGreen = adaptiveColor('systemGreen')
+
+/** Indigo, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemIndigo = adaptiveColor('systemIndigo')
+
+/** Mint, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemMint = adaptiveColor('systemMint')
+
+/** Orange, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemOrange = adaptiveColor('systemOrange')
+
+/** Pink, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemPink = adaptiveColor('systemPink')
+
+/** Purple, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemPurple = adaptiveColor('systemPurple')
+
+/** Destructive and error states: Material's `error`. */
+export const systemRed = role('colorError')
+
+/** Teal, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemTeal = adaptiveColor('systemTeal')
+
+/** Yellow, from `ADAPTIVE_COLORS`: iOS's hue has no Material role. */
+export const systemYellow = adaptiveColor('systemYellow')
 
 // MARK: Adaptable gray colors
 
-export const systemGray = fixed('#8E8E93', '#8E8E93')
-export const systemGray2 = fixed('#AEAEB2', '#636366')
-export const systemGray3 = fixed('#C7C7CC', '#48484A')
-export const systemGray4 = fixed('#D1D1D6', '#3A3A3C')
-export const systemGray5 = fixed('#E5E5EA', '#2C2C2E')
-export const systemGray6 = fixed('#F2F2F7', '#1C1C1E')
+/** The base gray: Material's `outline`. */
+export const systemGray = role('colorOutline')
+
+/** The second gray: Material's `outline`. */
+export const systemGray2 = role('colorOutline')
+
+/** The third gray: Material's `outlineVariant`. */
+export const systemGray3 = role('colorOutlineVariant')
+
+/** The fourth gray: Material's `surfaceContainerHighest`. */
+export const systemGray4 = role('colorSurfaceContainerHighest')
+
+/** The fifth gray: Material's `surfaceContainerHigh`. */
+export const systemGray5 = role('colorSurfaceContainerHigh')
+
+/** The sixth gray: Material's `surfaceContainer`. */
+export const systemGray6 = role('colorSurfaceContainer')
 
 // MARK: Transparent color
 
+/** No colour at all: Android's own transparent. */
 export const clear = PlatformColor('@android:color/transparent')
 
 // MARK: Custom adaptive colors
 
-export const bodyText = fixed('#555555', '#DDDDDD')
-export const diffAdditionFill = fixed('#E4F5E9', '#12351F')
-export const diffDeletionFill = fixed('#FBE9E7', '#3B1513')
+/** Body text in posts and comments: Material's `onSurfaceVariant`. */
+export const bodyText = role('colorOnSurfaceVariant')
+
+/**
+ * The wash behind a sense a suggestion adds, and the one behind a sense it
+ * removes: Material's `tertiaryContainer` and `errorContainer`. Both are
+ * containers, so they sit quietly under `onSurface` text in light and dark.
+ */
+export const diffAdditionFill = role('colorTertiaryContainer')
+export const diffDeletionFill = role('colorErrorContainer')

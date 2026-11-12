@@ -1,0 +1,19 @@
+{
+  "systemBrown": {"light": "#6D4C41", "dark": "#BCAAA4"},
+  "systemCyan": {"light": "#0097A7", "dark": "#80DEEA"},
+  "systemGreen": {"light": "#2E7D32", "dark": "#81C784"},
+  "systemIndigo": {"light": "#3949AB", "dark": "#9FA8DA"},
+  "systemMint": {"light": "#00897B", "dark": "#80CBC4"},
+  "systemOrange": {"light": "#E65100", "dark": "#FFB74D"},
+  "systemPink": {"light": "#C2185B", "dark": "#F48FB1"},
+  "systemPurple": {"light": "#7B1FA2", "dark": "#CE93D8"},
+  "systemTeal": {"light": "#00796B", "dark": "#80CBC4"},
+  "systemYellow": {"light": "#F9A825", "dark": "#FFF176"},
+  "newspaperPaper": {"light": "#FBF9F4", "dark": "#1C1A17"},
+  "newspaperInk": {"light": "#1A1A1A", "dark": "#EDE8DF"},
+  "newspaperFaded": {"light": "#5C5850", "dark": "#A8A196"},
+  "newspaperMessRed": {"light": "#8A1C1C", "dark": "#E0736B"},
+  "newspaperOnMessRed": {"light": "#FFFFFF", "dark": "#1C1A17"},
+  "newspaperPrintShadow": {"light": "#0000004D", "dark": "#000000B3"},
+  "newspaperWash": {"light": "#ECE7DC", "dark": "#2A2723"}
+}
