@@ -1,4 +1,5 @@
 export {RadioHost} from './host'
+export {ShowRemindersHost} from './reminders/host'
 export {NOW_PLAYING_BAR_CLEARANCE, RadioNowPlayingBar, RadioTabAccessory} from './mini-player'
 export {useRadioStore} from './store'
 export {RadioNowPlayingSheet} from './now-playing-sheet'
