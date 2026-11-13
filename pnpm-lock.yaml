@@ -69,6 +69,9 @@ importers:
       '@expo/log-box':
         specifier: 58.0.12
         version: 58.0.12(@expo/dom-webview@58.0.2)(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)
+      '@expo/material-symbols':
+        specifier: 0.1.1
+        version: 0.1.1
       '@expo/metro-runtime':
         specifier: 58.0.14
         version: 58.0.14(@expo/log-box@58.0.12)(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)
@@ -1996,6 +1999,10 @@ packages:
     peerDependenciesMeta:
       expo:
         optional: true
+
+  '@expo/material-symbols@0.1.1':
+    resolution: {integrity: sha512-ruA6hZATOPKxo1qSd1NE3HI9FrmEDwcMDhsvzTAdMkP9AapdHfJ/0tKmBMWFJir85voxs1twYxLVrGW9OLGaOg==}
+    hasBin: true
 
   '@expo/metro-config@58.0.14':
     resolution: {integrity: sha512-UDUMAJwYGEzaB26ejMLG/IOVzwKDbHzoODBf3FZeRS94kk9jDf1dWE1VMX6bLBLoiflxXwqrMWiH0Fvz3gZ9YQ==}
@@ -6829,6 +6836,8 @@ snapshots:
       stacktrace-parser: 0.1.11
     optionalDependencies:
       expo: 58.0.14(@babel/core@7.29.7)(@expo/metro-runtime@58.0.14)(expo-router@58.0.23)(react-native-webview@14.0.1)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)(typescript@7.0.2)
+
+  '@expo/material-symbols@0.1.1': {}
 
   '@expo/metro-config@58.0.14(expo@58.0.14)(supports-color@8.1.1)(typescript@7.0.2)':
     dependencies:

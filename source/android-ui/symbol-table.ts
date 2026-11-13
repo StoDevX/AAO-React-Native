@@ -7,11 +7,12 @@
  * `materialSymbolFor` trims its trailing parts until it finds a mapped
  * ancestor (`bell.badge` falls back to `bell`), and past that draws
  * `FALLBACK_SYMBOL`. The values are Material Symbols' own snake_case names,
- * which is also the name of the vector drawable `fetch-symbols.mjs` downloads
- * into `symbols/`. A `.fill` SF Symbol draws Material's filled variant.
+ * which are also the names `@expo/material-symbols` ships its icons under;
+ * `sync-symbols.mjs` writes the import table from them. A `.fill` SF Symbol
+ * draws Material's filled variant.
  *
- * This file is plain data with no imports, so the download script can read it
- * under Node directly.
+ * This file is plain data with no imports, so that script can read it under
+ * Node directly.
  */
 export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	a: 'title',
@@ -167,7 +168,8 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	shield: 'shield',
 	'shield.lefthalf.filled': 'shield',
 	'slider.horizontal.3': 'tune',
-	sparkles: 'auto_awesome',
+	// Google retired auto_awesome; star_shine is the sparkle it ships now.
+	sparkles: 'star_shine',
 	speaker: 'volume_down',
 	'speaker.wave.3': 'volume_up',
 	sportscourt: 'stadium',
@@ -189,7 +191,7 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	trash: 'delete',
 	tray: 'inbox',
 	tree: 'park',
-	trophy: 'emoji_events',
+	trophy: 'trophy',
 	video: 'videocam',
 	'water.waves': 'waves',
 	waveform: 'graphic_eq',
@@ -212,32 +214,48 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 export const FALLBACK_SYMBOL = 'category'
 
 /**
- * The Material Symbols drawn filled even where the SF Symbol is an outline:
- * those whose outlined form reads as a different glyph (an empty circle for a
- * dot, say).
+ * The Material Symbols Android draws filled, when the SF Symbol asks for its
+ * `.fill` form. Material Symbols are outlined by default, and Android fills
+ * one only where filling means something: an on state (a favourite, a
+ * rating, a ticked item), a media control, and a dot. iOS fills symbols for
+ * weight -- a tile's graduation cap, a map category's tree -- which Android
+ * draws outlined, as its own apps do.
  */
-export const ALWAYS_FILLED: ReadonlySet<string> = new Set(['circle'])
+export const FILLED_SYMBOLS: ReadonlySet<string> = new Set([
+	'check_circle',
+	'circle',
+	'favorite',
+	'pause',
+	'play_arrow',
+	'star',
+])
 
 /** One Material Symbol: its name, and whether to draw its filled variant. */
 export type MaterialSymbol = {name: string; filled: boolean}
 
 /**
- * The Material Symbol closest to an SF Symbol name. `.fill` anywhere in the
- * name asks for the filled variant; the remaining name is looked up as is,
+ * The Material Symbol closest to an SF Symbol name. The whole name is looked
+ * up first, so a `.fill` symbol with a counterpart of its own (`circle.fill`,
+ * a dot, against `circle`, a ring) finds it; then the name without `.fill`,
  * then with its last dot-separated part dropped, until a match or nothing is
- * left, when it falls back to `FALLBACK_SYMBOL`.
+ * left, when it falls back to `FALLBACK_SYMBOL`. A `.fill` name draws filled
+ * only if its symbol is one of `FILLED_SYMBOLS`.
  */
 export function materialSymbolFor(sfName: string | undefined | null): MaterialSymbol {
 	if (!sfName) {
 		return {name: FALLBACK_SYMBOL, filled: false}
 	}
 	let parts = sfName.split('.')
-	let filled = parts.includes('fill') || parts.includes('filled')
+	let wantsFill = parts.includes('fill')
+	let exact = SF_TO_MATERIAL[sfName]
+	if (exact) {
+		return {name: exact, filled: wantsFill && FILLED_SYMBOLS.has(exact)}
+	}
 	let base = parts.filter((part) => part !== 'fill')
 	while (base.length > 0) {
 		let candidate = SF_TO_MATERIAL[base.join('.')]
 		if (candidate) {
-			return {name: candidate, filled: filled || ALWAYS_FILLED.has(candidate)}
+			return {name: candidate, filled: wantsFill && FILLED_SYMBOLS.has(candidate)}
 		}
 		base = base.slice(0, -1)
 	}
