@@ -1,8 +1,8 @@
 diff --git a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
-index e0762e87bc2080805bec5e9f25523fc6d42afae6..c69e29f809f6d679bfaf8e92dea883c5c10dd90c 100644
+index e0762e87bc2080805bec5e9f25523fc6d42afae6..8a566155f6028458e0451cee2ddef097b3fbd1c3 100644
 --- a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
 +++ b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
-@@ -58,6 +58,13 @@ open class CustomToolbar(
+@@ -58,6 +58,15 @@ open class CustomToolbar(
          // This guarantees that all size-dependent children are present during the first layout pass,
          // resulting in correct height determination from the beginning.
          menu
@@ -12,7 +12,27 @@ index e0762e87bc2080805bec5e9f25523fc6d42afae6..c69e29f809f6d679bfaf8e92dea883c5
 +        // the title and subviews in that, while the 56dp navigation button keeps
 +        // its own height from the top: the back arrow sat about 4dp below the
 +        // title and actions. At 64dp every child centres on the same line.
-+        minimumHeight = (64 * resources.displayMetrics.density).toInt()
++        // A View's minimum height includes its padding, and the top inset is
++        // padding here, so `applyExactPadding` keeps it 64dp plus the insets.
++        minimumHeight = contentMinHeight
      }
  
      private val layoutCallback: Choreographer.FrameCallback =
+@@ -219,6 +228,9 @@ open class CustomToolbar(
+         setContentInsetsRelative(config.preferredContentInsetStart, config.preferredContentInsetEnd)
+     }
+ 
++    private val contentMinHeight: Int
++        get() = (64 * resources.displayMetrics.density).toInt()
++
+     private fun applyExactPadding(
+         left: Int,
+         top: Int,
+@@ -226,6 +238,7 @@ open class CustomToolbar(
+         bottom: Int,
+     ) {
+         requestForceShadowStateUpdateOnLayout()
++        minimumHeight = top + bottom + contentMinHeight
+         setPadding(left, top, right, bottom)
+     }
+ 
