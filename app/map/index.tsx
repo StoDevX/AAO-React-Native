@@ -8,18 +8,8 @@ import {
 	type NativeSyntheticEvent,
 } from 'react-native'
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
-import {BottomSheet, Group, Host, ZStack} from '@expo/ui/swift-ui'
-import {
-	accessibilityHidden,
-	background,
-	disabled,
-	frame,
-	interactiveDismissDisabled,
-	opacity,
-	presentationBackgroundInteraction,
-	presentationDetents,
-	presentationDragIndicator,
-} from '@expo/ui/swift-ui/modifiers'
+import {Group, ZStack} from '@expo/ui/swift-ui'
+import {accessibilityHidden, disabled, frame, opacity} from '@expo/ui/swift-ui/modifiers'
 import {
 	Camera,
 	GeoJSONSource,
@@ -41,6 +31,7 @@ import {campusById, type CampusId} from '../../source/campuses'
 import type {MapSection} from '../../source/features/map/campus-section'
 import {useCampusParam} from '../../source/features/campus/campus-param'
 import {cardVenuesOptions} from '../../source/features/map/card-queries'
+import {MapSheet} from '../../source/features/map/map-sheet'
 import {PlaceStackCard} from '../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../source/features/map/building-picker'
@@ -68,7 +59,7 @@ import {
 	type SheetEvent,
 	type SheetState,
 } from '../../source/features/map/lib/sheet-moves'
-import {collapsedDetentFor, detentsFor, nameOf} from '../../source/features/map/lib/sheet-detents'
+import {collapsedDetentFor, detentsFor} from '../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../source/features/map/query'
 import {useRecentPlacesStore} from '../../source/features/map/store'
 import type {Building, Feature} from '../../source/features/map/types'
@@ -454,99 +445,71 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 
 				<MapSelectionLayer font={map.labelFont} selection={selection} />
 			</Map>
-			{/* Covers the map, and lets every touch through. The sheet is
-			    presented rather than laid out, so the Host needs no size of its
-			    own -- but the info card hosts a React Native image through
-			    RNHostView, and a zero-sized Host gives that image no bounds to
-			    draw into, so the photo came out blank. Full-bleed and
-			    `pointerEvents="none"` satisfies both: the image gets a box, and
-			    the taps that select a building still reach the map. The sheet is
-			    presented in its own window, so it stays interactive. */}
-			<Host pointerEvents="none" style={StyleSheet.absoluteFill}>
-				<BottomSheet
-					isPresented={sheetPresented && isFocused}
-					onIsPresentedChange={setSheetPresented}
-				>
+			<MapSheet
+				current={sheet.current}
+				detents={detents}
+				onDragged={(to) => dispatchSheet({type: 'dragged', to})}
+				onPresentedChange={setSheetPresented}
+				presented={sheetPresented && isFocused}
+			>
+				{/* The picker stays mounted under a card, so closing the card
+					    returns to the list as it was left: the same category, query
+					    and scroll. Hidden by opacity rather than `hidden()`, which
+					    @expo/ui applies in an if/else -- a new view identity each time
+					    it flips, and a list scrolled back to the top.
+
+					    A ZStack is as tall as its tallest child, and at the largest
+					    text size the picker's header is taller than the collapsed
+					    stop. The sheet would then centre the stack and cut off the
+					    card's header, so a covered picker takes no height -- at the
+					    collapsed stop only. Elsewhere it keeps its height: a list
+					    squeezed to nothing lays its rows out again from estimates
+					    when it returns, and where rows above wrap, the rows in view
+					    jump. Always the flexible frame: @expo/ui switches to a fixed
+					    one, and a new identity, once `height` is set. */}
+				<ZStack alignment="top">
 					<Group
 						modifiers={[
-							// The sheet's own chrome is a translucent material, and the
-							// map read straight through the list. A PlatformColor rather
-							// than the hex `presentationBackground` wants, so the sheet
-							// still follows the system appearance.
-							background(c.systemGroupedBackground),
-							presentationDetents([detents.collapsed, detents.medium, detents.large], {
-								selection: detents[sheet.current],
-								onSelectionChange: (to) => dispatchSheet({type: 'dragged', to: nameOf(to)}),
+							frame({
+								maxHeight: covered && sheet.current === 'collapsed' ? 0 : undefined,
+								alignment: 'top',
 							}),
-							presentationDragIndicator('visible'),
-							// The map behind the sheet stays live at every stop, which is
-							// the whole point of a sheet rather than a pushed screen.
-							presentationBackgroundInteraction('enabled'),
-							// Apple Maps' sheet has no dismissed state, and neither has
-							// this one: the collapsed stop is as small as it goes.
-							interactiveDismissDisabled(true),
+							opacity(covered ? 0 : 1),
+							disabled(covered),
+							accessibilityHidden(covered),
 						]}
 					>
-						{/* The picker stays mounted under a card, so closing the card
-						    returns to the list as it was left: the same category, query
-						    and scroll. Hidden by opacity rather than `hidden()`, which
-						    @expo/ui applies in an if/else -- a new view identity each time
-						    it flips, and a list scrolled back to the top.
-
-						    A ZStack is as tall as its tallest child, and at the largest
-						    text size the picker's header is taller than the collapsed
-						    stop. The sheet would then centre the stack and cut off the
-						    card's header, so a covered picker takes no height -- at the
-						    collapsed stop only. Elsewhere it keeps its height: a list
-						    squeezed to nothing lays its rows out again from estimates
-						    when it returns, and where rows above wrap, the rows in view
-						    jump. Always the flexible frame: @expo/ui switches to a fixed
-						    one, and a new identity, once `height` is set. */}
-						<ZStack alignment="top">
-							<Group
-								modifiers={[
-									frame({
-										maxHeight: covered && sheet.current === 'collapsed' ? 0 : undefined,
-										alignment: 'top',
-									}),
-									opacity(covered ? 0 : 1),
-									disabled(covered),
-									accessibilityHidden(covered),
-								]}
-							>
-								<BuildingPicker
-									campus={campus}
-									compact={sheet.current === 'collapsed'}
-									covered={covered}
-									onHeaderHeightChange={setPickerHeaderHeight}
-									onGroupOpen={makeRoomForGroup}
-									onPinsChange={setPins}
-									onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
-									onSearchFocusChange={(focused, hasText) =>
-										dispatchSheet(
-											focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
-										)
-									}
-									onSelect={(id, from) => {
-										dispatchStack({type: 'start', id})
-										dispatchSheet({type: 'row-tapped'})
-										setSearchedId(from === 'search' ? id : null)
-									}}
-								/>
-							</Group>
-							{covered ? (
-								<PlaceStackCard
-									campus={campus}
-									depth={0}
-									dispatch={dispatchStack}
-									stack={stack}
-									stop={sheet.current}
-								/>
-							) : null}
-						</ZStack>
+						<BuildingPicker
+							campus={campus}
+							compact={sheet.current === 'collapsed'}
+							covered={covered}
+							onHeaderHeightChange={setPickerHeaderHeight}
+							onGroupOpen={makeRoomForGroup}
+							onPinsChange={setPins}
+							onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
+							onSearchFocusChange={(focused, hasText) =>
+								dispatchSheet(
+									focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
+								)
+							}
+							onSelect={(id, from) => {
+								dispatchStack({type: 'start', id})
+								dispatchSheet({type: 'row-tapped'})
+								setSearchedId(from === 'search' ? id : null)
+							}}
+						/>
 					</Group>
-				</BottomSheet>
-			</Host>
+					{covered ? (
+						<PlaceStackCard
+							campus={campus}
+							depth={0}
+							dispatch={dispatchStack}
+							stack={stack}
+							stop={sheet.current}
+						/>
+					) : null}
+				</ZStack>
+			</MapSheet>
 
 			{error ? (
 				<SafeAreaView edges={['left', 'right']} style={styles.banner}>
