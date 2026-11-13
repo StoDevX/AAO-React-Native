@@ -1,7 +1,12 @@
 import * as React from 'react'
 import type {ImageSourcePropType} from 'react-native'
 
-import {Text as ComposeText, TextButton} from '@expo/ui/jetpack-compose'
+import {
+	DropdownMenuItem,
+	HorizontalDivider,
+	Text as ComposeText,
+	TextButton,
+} from '@expo/ui/jetpack-compose'
 // Named by their Android files: Expo Router's export map resolves the bare
 // names past Metro's platform extensions, to stubs that draw nothing.
 import {NativeToolbarButton as UpstreamButton} from 'expo-router/build/layouts/stack-utils/toolbar/StackToolbarButton/native.android'
@@ -66,13 +71,64 @@ export function NativeToolbarButton(props: NativeToolbarButtonProps): React.Reac
 	)
 }
 
+/** Whether a menu is drawn inside another, and so is a submenu or an inline group. */
+const InsideMenu = React.createContext(false)
+
+/** Marks the inline group that opens a menu, which no divider precedes. */
+type GroupProps = NativeToolbarMenuProps & {androidLeadingGroup?: boolean}
+
+/**
+ * Marks a menu's first item when it is an inline group. `Stack.Toolbar.Menu`
+ * passes its props through to this module, so the mark reaches the group.
+ */
+function markLeadingGroup(children: React.ReactNode): React.ReactNode {
+	let marked = false
+	return React.Children.map(children, (child) => {
+		if (marked || !React.isValidElement<GroupProps>(child)) {
+			return child
+		}
+		marked = true
+		return child.props.inline ? React.cloneElement(child, {androidLeadingGroup: true}) : child
+	})
+}
+
 /**
  * `Stack.Toolbar.Menu` on Android, with its SF Symbol drawn as a Material
  * Symbol for the same reason as `NativeToolbarButton`: Expo Router's own menu
  * draws no trigger without an image source.
+ *
+ * An inline group is drawn here rather than by Expo Router, which puts a
+ * divider before every group -- the first included, a rule along the top of
+ * the menu -- and drops the group's title. Here a divider only separates
+ * groups, and a titled group opens with its title, as a section of an
+ * Android menu does and as iOS draws one.
  */
-export function NativeToolbarMenu(props: NativeToolbarMenuProps): React.ReactNode {
-	return <UpstreamMenu {...props} source={sourceFor(props.icon, props.source)} />
+export function NativeToolbarMenu(props: GroupProps): React.ReactNode {
+	let inside = React.useContext(InsideMenu)
+	if (inside && props.inline) {
+		let {androidLeadingGroup, title, children} = props
+		return (
+			<>
+				{androidLeadingGroup ? null : <HorizontalDivider />}
+				{title ? (
+					<DropdownMenuItem enabled={false}>
+						<DropdownMenuItem.Text>
+							<ComposeText style={{typography: 'labelMedium'}}>{title}</ComposeText>
+						</DropdownMenuItem.Text>
+					</DropdownMenuItem>
+				) : null}
+				{children}
+			</>
+		)
+	}
+	let {androidLeadingGroup: _androidLeadingGroup, ...rest} = props
+	return (
+		<InsideMenu.Provider value={true}>
+			<UpstreamMenu {...rest} source={sourceFor(props.icon, props.source)}>
+				{markLeadingGroup(props.children)}
+			</UpstreamMenu>
+		</InsideMenu.Provider>
+	)
 }
 
 /**
