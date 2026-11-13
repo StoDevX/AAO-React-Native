@@ -16,17 +16,21 @@ properties:
       minProperties: 1
       properties:
         # the hours file the scrape writes, from the repo root
-        file: {type: string, pattern: '^data/building-hours/[^/]+\.yaml$'}
+        file: {type: string, pattern: '^data/building-hours/[^/]+\.yaml$', title: File}
         # Bon Appétit's meal name -> the section title the app shows
         dayparts:
           type: object
           additionalProperties: {type: string, minLength: 1}
+          title: Meal Sections
         skip:
           type: array
           items: {type: string, minLength: 1}
+          title: Skip
         # section title -> a note shown on that section
         notes:
           type: object
           additionalProperties: {type: string, minLength: 1}
+          title: Notes
         # why the run only reports this venue and never writes it
-        watch_only: {type: string, minLength: 1}
+        watch_only: {type: string, minLength: 1, title: 'Only Report It, Because'}
+    title: Venues

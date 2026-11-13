@@ -43,10 +43,11 @@ function formatError(err, data) {
 /**
  * A validator over the schemas in `schemaDir`: its shared definitions, and the
  * `editor` keyword, which tells the data editor which control draws a field
- * and changes nothing about what is valid.
+ * and changes nothing about what is valid. `options` are Ajv's, such as
+ * `allErrors` for every problem rather than the first.
  */
-export function createValidator(schemaDir) {
-	let validator = new AJV()
+export function createValidator(schemaDir, options = {}) {
+	let validator = new AJV(options)
 	addFormats(validator)
 	addKeywords(validator)
 	validator.addKeyword({keyword: 'editor', schemaType: 'string'})

@@ -10,6 +10,7 @@ properties:
   stop_names:
     type: object
     additionalProperties: {type: string, minLength: 1}
+    title: Stop Names
   # keyed by GTFS route_id
   routes:
     type: object
@@ -18,18 +19,20 @@ properties:
       additionalProperties: false
       required: [expect_name, file, line, colors]
       properties:
-        expect_name: {type: string, minLength: 1}
-        file: {$ref: '#/definitions/file'}
-        line: {type: string, minLength: 1}
+        expect_name: {type: string, minLength: 1, title: Name in the Feed}
+        file: {$ref: '#/definitions/file', title: File}
+        line: {type: string, minLength: 1, title: Line}
         colors:
           type: object
           additionalProperties: false
           required: [bar, dot]
           properties:
-            bar: {type: string}
-            dot: {type: string}
-        notice: {type: string}
-        hidden: {type: boolean}
+            bar: {type: string, title: Bar}
+            dot: {type: string, title: Dot}
+          title: Colors
+        notice: {type: string, title: Notice, editor: multiline}
+        hidden: {type: boolean, title: Hidden}
+    title: Routes
   # keyed by GTFS route_id: routes kept by hand, watched for the feed to run them again
   watched_routes:
     type: object
@@ -38,8 +41,9 @@ properties:
       additionalProperties: false
       required: [line, file]
       properties:
-        line: {type: string, minLength: 1}
-        file: {$ref: '#/definitions/file'}
+        line: {type: string, minLength: 1, title: Line}
+        file: {$ref: '#/definitions/file', title: File}
+    title: Watched Routes
 
 definitions:
   # a file in data/bus-times/, whose numeric prefix orders the lines in the app

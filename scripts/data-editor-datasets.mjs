@@ -11,7 +11,23 @@ const readYaml = (filename) => load(readFileSync(filename, 'utf8'), {filename})
 
 const fileOrder = new Intl.Collator(undefined, {numeric: true}).compare
 
-/** `dataDir`'s catalog, checked against its schema. Throws naming the first problem. */
+/**
+ * @typedef {{files: string[], by: string}} FilesBy
+ * @typedef {{
+ *   title: string, record: string, shape: 'folder' | 'list' | 'file' | 'document', path: string,
+ *   list?: (string | number)[], schema?: string, titleField?: string, subtitleField?: string,
+ *   sectionField?: string, ordered?: boolean, form?: 'generated' | 'hours' | 'breaks',
+ *   scraped?: FilesBy & {fields: string[]}, generated?: FilesBy, readOnly?: string,
+ *   maintainedBy?: string, stampOnSave?: string,
+ * }} DataSet
+ * @typedef {{groups: {title: string, sets: string[]}[], sets: Record<string, DataSet>}} Catalog
+ */
+
+/**
+ * `dataDir`'s catalog, checked against its schema. Throws naming the first problem.
+ * @param {string} dataDir
+ * @returns {Catalog}
+ */
 export function loadCatalog(dataDir) {
 	let catalog = readYaml(path.join(dataDir, '_datasets.yaml'))
 	let schemaDir = path.join(dataDir, '_schemas')
@@ -109,15 +125,32 @@ function inlined(schema, root, defs, seen = new Set()) {
 	return result
 }
 
-/** The schema for one record of the set `name`, with its references inlined. */
-export function recordSchema(dataDir, catalog, name) {
+/** The schema for a whole file of the set `name`, with its references inlined. */
+export function fileSchema(dataDir, catalog, name) {
 	let set = described(catalog, name)
 	if (set.schema === undefined) return {}
 	let schemaDir = path.join(dataDir, '_schemas')
 	let root = readYaml(path.join(schemaDir, `${set.schema}.yaml`))
-	let defs = readYaml(path.join(schemaDir, '_defs.yaml'))
-	let schema = inlined(root, root, defs)
+	return inlined(root, root, readYaml(path.join(schemaDir, '_defs.yaml')))
+}
+
+/** The schema for one record of the set `name`, with its references inlined. */
+export function recordSchema(dataDir, catalog, name) {
+	let set = described(catalog, name)
+	let schema = fileSchema(dataDir, catalog, name)
 	if (set.shape !== 'list') return schema
 	let container = set.list.reduce((inner, key) => inner?.properties?.[key], schema)
 	return container.items ?? container.additionalProperties
+}
+
+/**
+ * The set whose records `file` holds, by name, or undefined if no set holds it.
+ * @param {Catalog} catalog
+ * @param {string} file
+ * @returns {string | undefined}
+ */
+export function setForFile(catalog, file) {
+	return Object.entries(catalog.sets).find(([, set]) =>
+		set.shape === 'folder' ? path.dirname(file) === set.path : file === set.path,
+	)?.[0]
 }

@@ -4,6 +4,9 @@ import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
 import {load} from 'js-yaml'
 import {isDataEntry} from './data-entries.mjs'
+import {fileSchema, loadCatalog, setForFile} from './data-editor-datasets.mjs'
+import {wordProblems} from './data-editor-wording.mjs'
+import {createValidator} from './validate.mjs'
 import {hoursFileOrder, loadScheduleData} from './schedule-data.ts'
 
 /** Something wrong with the data, at a path inside `file` when the message names one. */
@@ -61,16 +64,39 @@ export function problemsFrom(error: unknown, dataDir: string): Problem[] {
 	})
 }
 
-/** `file` checked as `mise run validate-data` checks it: its schema, then the whole schedule graph. */
+/**
+ * `file` checked as `mise run validate-data` checks it. An hours file or the
+ * break calendar is checked against its schema and then the whole schedule
+ * graph; any other file against the schema of the set that holds it, its
+ * problems worded with the schema's field titles. A file no set holds, or one
+ * without a schema, has nothing to check.
+ */
 export function validate(dataDir: string, file: string): Problem[] {
-	let filename = path.join(dataDir, file)
-	const kind = file === 'breaks.yaml' ? 'calendar' : 'space'
-	try {
-		loadScheduleData(dataDir, {kind, filename})
-		return []
-	} catch (error) {
-		return problemsFrom(error, dataDir)
+	if (file === 'breaks.yaml' || file.startsWith('building-hours/')) {
+		const kind = file === 'breaks.yaml' ? 'calendar' : 'space'
+		try {
+			loadScheduleData(dataDir, {kind, filename: path.join(dataDir, file)})
+			return []
+		} catch (error) {
+			return problemsFrom(error, dataDir)
+		}
 	}
+	let catalog = loadCatalog(dataDir)
+	let name = setForFile(catalog, file)
+	let schemaName = name === undefined ? undefined : catalog.sets[name].schema
+	if (name === undefined || schemaName === undefined) return []
+	let schemaDir = path.join(dataDir, '_schemas')
+	let check = createValidator(schemaDir, {allErrors: true}).compile(
+		readYaml(path.join(schemaDir, `${schemaName}.yaml`)) as object,
+	)
+	if (check(readYaml(path.join(dataDir, file)))) return []
+	return wordProblems(check.errors, fileSchema(dataDir, catalog, name)).map(
+		({message, instancePath}: {message: string; instancePath: string}) => ({
+			file,
+			message,
+			path: instancePath === '' ? [] : keysOf(instancePath),
+		}),
+	)
 }
 
 const readYaml = (filename: string): unknown => load(readFileSync(filename, 'utf8'), {filename})

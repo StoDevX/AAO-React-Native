@@ -7,14 +7,17 @@ properties:
   stationMenus:
     type: array
     items: {$ref: '#/definitions/menu'}
+    title: Stations
 
   foodItems:
     type: array
     items: {$ref: '#/definitions/food-item'}
+    title: Food Items
 
   corIcons:
     type: object
     additionalProperties: false
+    title: Icons
 
 definitions:
   menu:
@@ -22,15 +25,15 @@ definitions:
     additionalProperties: false
     required: [label]
     properties:
-      label: {type: string}
-      note: {type: string}
+      label: {type: string, title: Label}
+      note: {type: string, title: Note}
 
   food-item:
     type: object
     additionalProperties: false
     required: [label, station]
     properties:
-      label: {type: string}
-      station: {type: string}
-      description: {type: string}
-      special: {type: boolean}
+      label: {type: string, title: Label}
+      station: {type: string, title: Station}
+      description: {type: string, title: Description, editor: multiline}
+      special: {type: boolean, title: Special}

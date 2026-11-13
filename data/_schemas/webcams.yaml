@@ -4,15 +4,16 @@ type: object
 additionalProperties: false
 required: [name, pageUrl, streamUrl, thumbnail, tagline, textColor, accentColor]
 properties:
-  name: {type: string}
-  pageUrl: {type: string, format: uri}
-  streamUrl: {type: string, format: uri}
-  thumbnail: {type: string}
-  thumbnailUrl: {type: string}
-  tagline: {type: string}
-  textColor: {type: string}
+  name: {type: string, title: Name}
+  pageUrl: {type: string, format: uri, title: Page Link, editor: url}
+  streamUrl: {type: string, format: uri, title: Stream Link, editor: url}
+  thumbnail: {type: string, title: Thumbnail, editor: image}
+  thumbnailUrl: {type: string, title: Thumbnail Url}
+  tagline: {type: string, title: Tagline}
+  textColor: {type: string, title: Text Color}
   accentColor:
     type: array
     items: [{type: number}, {type: number}, {type: number}]
     minItems: 3
     maxItems: 3
+    title: Accent Color

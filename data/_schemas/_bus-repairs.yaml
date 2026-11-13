@@ -13,13 +13,13 @@ properties:
       additionalProperties: false
       required: [id, reason, written_against, set]
       properties:
-        id: {type: string, minLength: 1}
-        reason: {type: string, minLength: 1}
+        id: {type: string, minLength: 1, title: ID}
+        reason: {type: string, minLength: 1, title: Reason}
         # the feed_version the repair was written for; a newer feed warns
-        written_against: {type: string, minLength: 1}
-        expires: {type: string, format: date}
+        written_against: {type: string, minLength: 1, title: Written Against Feed}
+        expires: {type: string, format: date, title: Expires}
         # a GTFS route_id; with none, the repair applies to every route
-        route: {type: string, minLength: 1}
+        route: {type: string, minLength: 1, title: Route}
         # HANDLED_REPAIR_KEYS in gtfs-to-bus-times.mjs
         set:
           type: object
@@ -30,3 +30,6 @@ properties:
               type: array
               minItems: 1
               items: {enum: [Mo, Tu, We, Th, Fr, Sa, Su]}
+              title: Days
+          title: Set
+    title: Repairs

@@ -9,3 +9,4 @@ properties:
     type: array
     uniqueItems: true
     items: {type: string, minLength: 1}
+    title: Color Printers

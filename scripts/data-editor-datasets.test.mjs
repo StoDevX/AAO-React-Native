@@ -90,6 +90,62 @@ describe('listRecords', () => {
 	})
 })
 
+/** The control hints the editor knows how to draw. */
+const EDITOR_HINTS = new Set([
+	'markdown',
+	'multiline',
+	'symbol',
+	'gradient',
+	'phone',
+	'url',
+	'date',
+	'color',
+	'image',
+	'hidden',
+])
+
+/** Every field below `schema` a form would show, as `[where, field schema]`. */
+function shownFields(schema, where) {
+	if (schema === null || typeof schema !== 'object' || schema.editor === 'hidden') return []
+	let fields = []
+	for (let [key, field] of Object.entries(schema.properties ?? {})) {
+		if (field.editor === 'hidden') continue
+		fields.push([`${where}.${key}`, field], ...shownFields(field, `${where}.${key}`))
+	}
+	if (typeof schema.items === 'object') fields.push(...shownFields(schema.items, `${where}[]`))
+	if (typeof schema.additionalProperties === 'object') {
+		fields.push(...shownFields(schema.additionalProperties, `${where}{}`))
+	}
+	for (let branch of [...(schema.oneOf ?? []), ...(schema.anyOf ?? [])]) {
+		fields.push(...shownFields(branch, where))
+	}
+	return fields
+}
+
+describe('the schemas behind generated forms', () => {
+	let generated = Object.entries(catalog.sets).filter(
+		([, set]) => set.schema !== undefined && (set.form ?? 'generated') === 'generated',
+	)
+
+	it('give every field a form shows a title', () => {
+		let untitled = generated.flatMap(([name]) =>
+			shownFields(recordSchema(DATA_BASE, catalog, name), name)
+				.filter(([, field]) => typeof field.title !== 'string')
+				.map(([where]) => where),
+		)
+		assert.deepEqual(untitled, [])
+	})
+
+	it('hint only at controls the editor draws', () => {
+		let unknown = generated.flatMap(([name]) =>
+			shownFields(recordSchema(DATA_BASE, catalog, name), name)
+				.filter(([, field]) => field.editor !== undefined && !EDITOR_HINTS.has(field.editor))
+				.map(([where, field]) => `${where}: ${field.editor}`),
+		)
+		assert.deepEqual(unknown, [])
+	})
+})
+
 describe('recordSchema', () => {
 	it('inlines the shared definitions', () => {
 		let phone = recordSchema(DATA_BASE, catalog, 'contact-info').properties.phoneNumber
