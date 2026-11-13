@@ -6,8 +6,13 @@ extension XCTestCase {
     /// as an update leaves one, `submissions` is planted as the pull requests
     /// submitted before, and `arguments` follow the workspace's. Returns
     /// the app and its data folder, for a test that changes a file under it.
+    ///
+    /// The hours tests edit The Cage's and Stav Hall's usual hours, which a
+    /// scrape owns and the editor therefore locks. They test the hours editor,
+    /// not that lock, so the workspace's catalog drops the scrape's claim
+    /// unless `keepsScrapes` asks for it.
     @MainActor
-    func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil,
+    func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil, keepsScrapes: Bool = false,
                             arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let support = FileManager.default.temporaryDirectory.appending(path: "ui \(UUID().uuidString)")
@@ -40,6 +45,14 @@ extension XCTestCase {
         }
         if let submissions {
             try Data(submissions.utf8).write(to: support.appending(path: "submissions.json"))
+        }
+        if !keepsScrapes {
+            // in the base too, so the change is not one of the contributor's
+            for data in [workspace.appending(path: "data"), workspace.appending(path: "base/data")] {
+                let catalog = data.appending(path: "_datasets.yaml")
+                let text = try String(contentsOf: catalog, encoding: .utf8)
+                try text.replacing(/\n    scraped:\n(      .*\n)+/, with: "\n").write(to: catalog, atomically: true, encoding: .utf8)
+            }
         }
         let app = XCUIApplication()
         // the app quits first, so nothing writes into the folder as it goes

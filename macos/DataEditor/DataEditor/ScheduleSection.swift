@@ -68,7 +68,7 @@ struct ScheduleSection: View {
 /// focus, and the draft must still land in its own file. Until the helper
 /// takes the text the field keeps it: nothing reloads over it, and it is sent
 /// again on Return or when focus leaves.
-private struct DraftField: View {
+struct DraftField: View {
     @Environment(AppModel.self) private var model
     let label: String
     /// the file on screen

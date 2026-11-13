@@ -57,7 +57,15 @@ struct HoursDetailView: View {
 
             Section("This week") { WeekTimeline(services: document.services) }
 
+            let hours = model.catalog?.sets["building-hours"]
+            let scraped = hours.map { AppModel.scrapedFields(set: $0, file: model.documentFile ?? "") } ?? []
+            if scraped.contains("schedule"), let by = hours?.scraped?.by {
+                // a hand edit here is reverted by the scrape's next run; its overrides are where to change these hours
+                Section { Label("\(by). Change these hours in Dining Scrape.", systemImage: "lock") }
+                    .accessibilityIdentifier("scraped-lock")
+            }
             ScheduleSection(title: "Usual hours", document: document, editor: ScheduleEditor(base: ["schedule"], services: document.services))
+                .disabled(scraped.contains("schedule"))
                 .disabled(locked)
 
             Section("Exceptions") {

@@ -67,9 +67,12 @@ struct ChangesetWindow: View {
                 } else {
                     ProgressView()
                 }
+            } else if let dataSet = model.catalog?.sets[set], dataSet.shape == .document {
+                DocumentEditorView(file: ref.file)
+            } else if let dataSet = model.catalog?.sets[set], let record = model.records[set]?.first(where: { $0.ref == ref }) {
+                RecordFormView(setName: set, set: dataSet, record: record)
             } else {
-                // the record's form comes with the generated forms
-                ContentUnavailableView(model.records[set]?.first { $0.ref == ref }?.title ?? "", systemImage: "doc.text")
+                ProgressView()
             }
         case (.pullRequest(let number), .overview):
             PullRequestDetailView(number: number)

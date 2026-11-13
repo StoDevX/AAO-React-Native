@@ -55,6 +55,8 @@ final class AppModel {
     private(set) var records: [String: [RecordSummary]] = [:]
     /// The data set the record column lists: Hours until another is chosen.
     private(set) var chosenSet = "building-hours"
+    /// Each set's record schema, once asked for; a schema changes only with the app's data.
+    private var schemas: [String: JSONValue] = [:]
     /// The file `document` was read from. `selection` changes first, while the
     /// new file loads, so an edit drawn from the document on screen names this.
     private(set) var documentFile: String?
@@ -369,6 +371,8 @@ final class AppModel {
     @discardableResult
     func apply(_ ops: [EditOp], to file: String) async -> Bool {
         guard !updating, !sending, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
+        let set = catalog?.set(for: file).flatMap { catalog?.sets[$0] }
+        let ops = Self.stamped(ops, field: set?.stampOnSave, today: Self.stampForToday())
         let edited: Loaded
         do {
             edited = try await edits.run { try await helper.edit(file, ops) }
@@ -726,6 +730,30 @@ final class AppModel {
         }
         self.item = item
         if case .record(_, let ref) = item { selection = ref.file }
+    }
+
+    /// The schema of one record of `set`, asked once.
+    func schema(for set: String) async -> JSONValue? {
+        if let known = schemas[set] { return known }
+        guard let schema = try? await helper?.schema(set: set) else { return nil }
+        schemas[set] = schema
+        return schema
+    }
+
+    /// A document's text, as the workspace holds it now.
+    func readText(_ file: String) async -> String? { try? await helper?.readText(file) }
+
+    /// Replaces a document's text, then refreshes what follows from a changed file.
+    func writeText(_ file: String, _ text: String) async -> Bool {
+        guard !updating, !sending, let helper, !isConflicted(file) else { return false }
+        do {
+            try await helper.writeText(file, text)
+        } catch {
+            return false
+        }
+        changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        await builds.schedule { await self.rebuild() }
+        return true
     }
 
     /// Lists `set`'s records afresh.

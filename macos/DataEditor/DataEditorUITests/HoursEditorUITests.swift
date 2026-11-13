@@ -12,6 +12,16 @@ final class HoursEditorUITests: XCTestCase {
         return launched.app
     }
 
+    /// A hand edit to The Cage's usual hours would be reverted by the Bon Appétit scrape, so they read only.
+    func testTheCagesUsualHoursFollowTheScrape() throws {
+        let app = try launchWithRepoData(keepsScrapes: true).app
+        selectTheCage(in: app)
+        let window = currentChanges(in: app)
+        XCTAssertTrue(window.descendants(matching: .any)["scraped-lock"].firstMatch.waitForExistence(timeout: 10))
+        XCTAssertFalse(window.textFields["service-title-0"].isEnabled)
+        attachScreenshot(of: window, named: "The Cage's usual hours, kept by the scrape")
+    }
+
     func testEditingATimeListsTheFileInChanges() throws {
         let app = try launch()
         selectTheCage(in: app)
