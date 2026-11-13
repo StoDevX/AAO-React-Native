@@ -28,6 +28,8 @@ import type {MessIssue} from './types'
 import {usePageWidth} from './use-column-width'
 import {useMessIssues} from './use-mess-issues'
 import {usePaperQueries} from './use-paper-queries'
+import brushIcon from '@expo/material-symbols/brush.xml'
+import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 
 /** The name each view goes by in the menu, and in the menu button's label. */
 const VIEW_NAMES = {issues: 'By Issue', latest: 'Latest'} as const
@@ -69,10 +71,13 @@ function ViewMenu({
 		<Stack.Toolbar placement="right">
 			<Stack.Toolbar.Button
 				accessibilityLabel={CUSTOMIZE_LABEL}
-				icon="paintbrush"
+				icon={process.env.EXPO_OS === 'ios' ? 'paintbrush' : brushIcon}
 				onPress={onCustomize}
 			/>
-			<Stack.Toolbar.Menu accessibilityLabel={`More, ${VIEW_NAMES[view.mode]}`} icon="ellipsis">
+			<Stack.Toolbar.Menu
+				accessibilityLabel={`More, ${VIEW_NAMES[view.mode]}`}
+				icon={process.env.EXPO_OS === 'ios' ? 'ellipsis' : moreVertIcon}
+			>
 				<Stack.Toolbar.Menu inline={true} title="View">
 					<Stack.Toolbar.MenuAction
 						isOn={view.mode === 'issues'}

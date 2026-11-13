@@ -6,6 +6,7 @@ import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 import {GlassView} from 'expo-glass-effect'
 import {NativeTabs} from 'expo-router/native-tabs'
+import {FILLED_SYMBOL_WEIGHT} from '../../../lib/filled-symbol-weight'
 import {useImageFailure} from '../../../lib/use-image-failure'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
@@ -107,7 +108,7 @@ function MiniControl({station}: {station: Station}): React.ReactNode {
 			onPress={press}
 			style={styles.control}
 		>
-			<SymbolView name={icon} size={20} tintColor={c.label} />
+			<SymbolView name={icon} size={20} tintColor={c.label} weight={FILLED_SYMBOL_WEIGHT} />
 		</Touchable>
 	)
 }
@@ -147,7 +148,11 @@ function IdleMiniPlayer(): React.ReactNode {
 		>
 			<View style={styles.station}>
 				<View style={[styles.artwork, styles.blankArtwork]}>
-					<SymbolView name="radio" size={16} tintColor={c.tertiaryLabel} />
+					<SymbolView
+						name={{ios: 'radio', android: 'radio'}}
+						size={16}
+						tintColor={c.tertiaryLabel}
+					/>
 				</View>
 				<View style={styles.titles}>
 					<Text numberOfLines={1} style={styles.name}>
@@ -156,7 +161,12 @@ function IdleMiniPlayer(): React.ReactNode {
 				</View>
 			</View>
 			<View style={styles.control}>
-				<SymbolView name="play.fill" size={20} tintColor={c.tertiaryLabel} />
+				<SymbolView
+					name={{ios: 'play.fill', android: 'play_arrow'}}
+					size={20}
+					tintColor={c.tertiaryLabel}
+					weight={FILLED_SYMBOL_WEIGHT}
+				/>
 			</View>
 		</Touchable>
 	)

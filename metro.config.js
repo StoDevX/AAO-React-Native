@@ -34,9 +34,6 @@ const upstreamResolve = defaultConfig.resolver.resolveRequest
 /** The Android stand-in for @expo/ui/swift-ui; see resolveRequest below. */
 const ANDROID_UI = `${__dirname}/source/android-ui/index.tsx`
 
-/** The Android stand-in for expo-symbols' SymbolView; see resolveRequest below. */
-const ANDROID_SYMBOL_VIEW = `${__dirname}/source/android-ui/symbol-view.tsx`
-
 /** The Android stand-in for Expo Router's toolbar items; see resolveRequest below. */
 const ANDROID_TOOLBAR = `${__dirname}/source/android-ui/toolbar.tsx`
 
@@ -62,18 +59,12 @@ const config = {
 			if (platform === 'android' && moduleName === '@expo/ui/swift-ui') {
 				return {type: 'sourceFile', filePath: ANDROID_UI}
 			}
-			// SymbolView draws a Material Symbol on Android only for an `android`
-			// name, and the screens name SF Symbols, so it drew nothing. On Android
-			// it resolves to one that draws the SF Symbol's Material counterpart.
-			if (platform === 'android' && moduleName === 'expo-symbols') {
-				return {type: 'sourceFile', filePath: ANDROID_SYMBOL_VIEW}
-			}
 			let resolution = upstreamResolve(context, moduleName, platform)
-			// Expo Router's Android toolbar draws an item only from an image
-			// source, and the screens name SF Symbols, so every icon button and
-			// menu in a top app bar went missing. Its button and menu modules
-			// resolve to wrappers that hand them the Material Symbol instead,
-			// except from the wrappers themselves, which import the originals.
+			// Expo Router's Android toolbar draws nothing for a text-only button,
+			// and draws an inline menu group with a divider above it and without
+			// its title. Its button and menu modules resolve to wrappers that draw
+			// those as Android does, except from the wrappers themselves, which
+			// import the originals.
 			if (
 				platform === 'android' &&
 				resolution.type === 'sourceFile' &&

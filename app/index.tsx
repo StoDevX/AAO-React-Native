@@ -65,6 +65,8 @@ import {
 	useRadioBarVisible,
 	useRadioStore,
 } from '../source/features/streaming/radio'
+import brushIcon from '@expo/material-symbols/brush.xml'
+import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 
 const styles = StyleSheet.create({
 	host: {
@@ -251,13 +253,16 @@ export default function HomePage(): React.ReactNode {
 				<Stack.Toolbar placement="left">
 					<Stack.Toolbar.Button
 						accessibilityLabel={CUSTOMIZE_LABEL}
-						icon="paintbrush"
+						icon={process.env.EXPO_OS === 'ios' ? 'paintbrush' : brushIcon}
 						onPress={() => router.navigate('/customize')}
 					/>
 				</Stack.Toolbar>
 			)}
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="ellipsis">
+				<Stack.Toolbar.Menu
+					accessibilityLabel={HOME_MENU_LABEL}
+					icon={process.env.EXPO_OS === 'ios' ? 'ellipsis' : moreVertIcon}
+				>
 					{Platform.OS === 'android' ? (
 						<Stack.Toolbar.Menu inline={true}>
 							<Stack.Toolbar.MenuAction

@@ -3,6 +3,8 @@ import {AccessibilityInfo, StyleSheet, Text, View} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 
+import {FILLED_SYMBOL_WEIGHT} from '../../../../lib/filled-symbol-weight'
+
 import {PLAYBACK_ERROR} from '../describe-playback'
 import type {Station} from '../stations'
 import {useStationPlayback} from '../store'
@@ -20,7 +22,7 @@ export function PlayStopButton({station}: {station: Station}): React.ReactNode {
 			onPress={press}
 			style={styles.button}
 		>
-			<SymbolView name={icon} size={44} tintColor={palette.primary} />
+			<SymbolView name={icon} size={44} tintColor={palette.primary} weight={FILLED_SYMBOL_WEIGHT} />
 		</Touchable>
 	)
 }
@@ -45,7 +47,12 @@ export function PlaybackError({station}: {station: Station}): React.ReactNode {
 	}
 	return (
 		<View style={styles.error}>
-			<SymbolView name="exclamationmark.triangle.fill" size={15} tintColor={palette.primary} />
+			<SymbolView
+				name={{ios: 'exclamationmark.triangle.fill', android: 'warning'}}
+				size={15}
+				tintColor={palette.primary}
+				weight={FILLED_SYMBOL_WEIGHT}
+			/>
 			<Text style={[styles.errorText, palette.styles.primary]}>{PLAYBACK_ERROR}</Text>
 		</View>
 	)

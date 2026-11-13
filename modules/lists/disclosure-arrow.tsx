@@ -19,7 +19,11 @@ export function DisclosureArrow({style}: {style?: StyleProp<ViewStyle>}): React.
 	}
 	return (
 		<View style={[arrowStyles.wrapper, style]}>
-			<SymbolView name="chevron.right" size={20} tintColor={c.secondaryLabel} />
+			<SymbolView
+				name={{ios: 'chevron.right', android: 'chevron_right'}}
+				size={20}
+				tintColor={c.secondaryLabel}
+			/>
 		</View>
 	)
 }

@@ -24,6 +24,10 @@ import {
 	hasDefinition,
 	useDictionaryDraftStore,
 } from '../../../source/features/dictionary/store'
+import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
+import visibilityIcon from '@expo/material-symbols/visibility.xml'
+import checkIcon from '@expo/material-symbols/check.xml'
+import swapVertIcon from '@expo/material-symbols/swap_vert.xml'
 
 const styles = StyleSheet.create({
 	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
@@ -134,7 +138,7 @@ function DictionaryEditForm(): React.ReactNode {
 				    caught, rather than sharing a dispatch with it up front. */}
 				<Stack.Toolbar.Button
 					accessibilityLabel="Back"
-					icon="chevron.left"
+					icon={process.env.EXPO_OS === 'ios' ? 'chevron.left' : arrowBackIcon}
 					onPress={() => navigation.goBack()}
 				/>
 			</Stack.Toolbar>
@@ -142,7 +146,15 @@ function DictionaryEditForm(): React.ReactNode {
 				{manySenses ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Reorder"
-						icon={reordering ? 'checkmark' : 'arrow.up.arrow.down'}
+						icon={
+							reordering
+								? process.env.EXPO_OS === 'ios'
+									? 'checkmark'
+									: checkIcon
+								: process.env.EXPO_OS === 'ios'
+									? 'arrow.up.arrow.down'
+									: swapVertIcon
+						}
 						onPress={() => setReordering((on) => !on)}
 					/>
 				) : null}
@@ -152,7 +164,7 @@ function DictionaryEditForm(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Preview"
 					disabled={!previewable}
-					icon="eye"
+					icon={process.env.EXPO_OS === 'ios' ? 'eye' : visibilityIcon}
 					onPress={() => router.navigate('/dictionary/entry/preview')}
 				/>
 			</Stack.Toolbar>

@@ -50,6 +50,8 @@ import {
 	requestLabel,
 	type QueryRow,
 } from '../../../source/features/developer/api-test/util/request-path'
+import moreVertIcon from '@expo/material-symbols/more_vert.xml'
+import sendIcon from '@expo/material-symbols/send.xml'
 
 /** A query row as the form holds it, with an id that outlives edits to its name. */
 type EditableRow = QueryRow & {id: number}
@@ -163,7 +165,7 @@ export default function APITestComposePage(): React.ReactNode {
 		<>
 			<Stack.Title>{path}</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu icon="ellipsis.circle">
+				<Stack.Toolbar.Menu icon={process.env.EXPO_OS === 'ios' ? 'ellipsis.circle' : moreVertIcon}>
 					<Stack.Toolbar.MenuAction destructive={true} onPress={clear}>
 						Forget All Saved Requests
 					</Stack.Toolbar.MenuAction>
@@ -171,7 +173,7 @@ export default function APITestComposePage(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel={`Send ${method}`}
 					disabled={missing.length > 0 || problem !== undefined}
-					icon="paperplane"
+					icon={process.env.EXPO_OS === 'ios' ? 'paperplane' : sendIcon}
 					onPress={confirmAndSend}
 				/>
 			</Stack.Toolbar>

@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 
 import {useDismissOnce} from '../lib/use-dismiss-once'
+import closeIcon from '@expo/material-symbols/close.xml'
 
 /**
  * The Close button every sheet carries at the top left of its first screen,
@@ -19,7 +20,7 @@ export function SheetCloseButton(): React.ReactNode {
 		<Stack.Toolbar placement="left">
 			<Stack.Toolbar.Button
 				accessibilityLabel="Close"
-				icon="xmark"
+				icon={process.env.EXPO_OS === 'ios' ? 'xmark' : closeIcon}
 				onPress={dismiss}
 				separateBackground={true}
 			/>

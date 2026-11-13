@@ -1,6 +1,4 @@
 import * as React from 'react'
-import type {ImageSourcePropType} from 'react-native'
-
 import {
 	DropdownMenuItem,
 	HorizontalDivider,
@@ -20,46 +18,19 @@ import type {
 	NativeToolbarMenuProps,
 } from 'expo-router/build/layouts/stack-utils/toolbar/StackToolbarMenu/types'
 
-import {symbolSource} from './components/symbol'
-
-/**
- * SF Symbols a toolbar names whose Android counterpart is a different glyph
- * from the one `symbol-table.ts` gives them elsewhere. A toolbar's leading
- * `chevron.left` is a screen's own Back button, and Android's Back is the
- * arrow, not a chevron.
- */
-const TOOLBAR_SYMBOLS: Readonly<Record<string, string>> = {
-	'chevron.left': 'arrow.left',
-}
-
-/**
- * The Material Symbol for a toolbar item's SF Symbol, when it names one and
- * no image of its own. Expo Router's Android toolbar draws only an image
- * source, and skips an item named by SF Symbol altogether.
- */
-function sourceFor(
-	icon: string | ImageSourcePropType | undefined,
-	source: ImageSourcePropType | undefined,
-): ImageSourcePropType | undefined {
-	if (source || typeof icon !== 'string') {
-		return source
-	}
-	return symbolSource(TOOLBAR_SYMBOLS[icon] ?? icon)
-}
-
 /**
  * `Stack.Toolbar.Button` on Android. Expo Router's own draws an icon button
- * from an image source and nothing otherwise, so an SF Symbol button here
- * gets its Material Symbol, and a text-only button -- "Today", "Add to
- * Calendar" -- a Material text button, as a top app bar draws a text action.
+ * from an image source -- each screen names a Material Symbol for Android --
+ * and nothing otherwise, so a text-only button -- "Today", "Add to Calendar"
+ * -- is drawn here as a Material text button, as a top app bar draws a text
+ * action.
  *
  * Metro substitutes this for Expo Router's module on Android (see
  * `metro.config.js`).
  */
 export function NativeToolbarButton(props: NativeToolbarButtonProps): React.ReactNode {
-	let source = sourceFor(props.icon, props.source)
-	if (source || !props.label) {
-		return <UpstreamButton {...props} source={source} />
+	if (props.source || !props.label) {
+		return <UpstreamButton {...props} />
 	}
 	if (props.hidden) {
 		return null
@@ -93,11 +64,7 @@ function markLeadingGroup(children: React.ReactNode): React.ReactNode {
 }
 
 /**
- * `Stack.Toolbar.Menu` on Android, with its SF Symbol drawn as a Material
- * Symbol for the same reason as `NativeToolbarButton`: Expo Router's own menu
- * draws no trigger without an image source.
- *
- * An inline group is drawn here rather than by Expo Router, which puts a
+ * `Stack.Toolbar.Menu` on Android. An inline group is drawn here rather than by Expo Router, which puts a
  * divider before every group -- the first included, a rule along the top of
  * the menu -- and drops the group's title. Here a divider only separates
  * groups, and a titled group opens with its title, as a section of an
@@ -124,9 +91,7 @@ export function NativeToolbarMenu(props: GroupProps): React.ReactNode {
 	let {androidLeadingGroup: _androidLeadingGroup, ...rest} = props
 	return (
 		<InsideMenu.Provider value={true}>
-			<UpstreamMenu {...rest} source={sourceFor(props.icon, props.source)}>
-				{markLeadingGroup(props.children)}
-			</UpstreamMenu>
+			<UpstreamMenu {...rest}>{markLeadingGroup(props.children)}</UpstreamMenu>
 		</InsideMenu.Provider>
 	)
 }

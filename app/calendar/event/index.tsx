@@ -40,6 +40,7 @@ import {
 import {Host} from '@expo/ui/swift-ui'
 import {useEvent, useNeighbours} from '../../../source/database/calendar/read'
 import type {Window} from '../../../source/database/calendar/queries'
+import shareIcon from '@expo/material-symbols/share.xml'
 
 type EventSource =
 	| 'stolaf'
@@ -243,7 +244,7 @@ export default function EventDetailPage(): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"
-					icon="square.and.arrow.up"
+					icon={process.env.EXPO_OS === 'ios' ? 'square.and.arrow.up' : shareIcon}
 					onPress={() => shareEvent(event)}
 					separateBackground={true}
 				/>
