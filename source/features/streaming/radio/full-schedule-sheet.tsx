@@ -5,7 +5,6 @@ import {
 	Button,
 	Group,
 	HStack,
-	Host,
 	Image,
 	RNHostView,
 	Spacer,
@@ -25,7 +24,9 @@ import {ScheduleView} from '@frogpond/ccc-calendar'
 import type {EventType} from '@frogpond/event-type'
 import {useQuery} from '@tanstack/react-query'
 
+import {FollowBell, ReminderPermissionSheet, useFollowToggle} from './reminders'
 import {ScheduleEventSheet} from './schedule-event-sheet'
+import {SheetHost} from './sheet-host'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 import {stationScheduleOptions} from './use-station-schedule'
@@ -47,13 +48,20 @@ export function FullScheduleSheet(): React.ReactNode {
 	// The event is kept past its sheet's closing, so it does not empty while sliding away.
 	let [event, setEvent] = React.useState<EventType | null>(null)
 	let [eventOpen, setEventOpen] = React.useState(false)
+	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('full_schedule')
+	let bell = React.useCallback(
+		(shown: EventType) => (
+			<FollowBell onToggle={toggle} show={{stationId: station.id, title: shown.title}} />
+		),
+		[toggle, station.id],
+	)
 	let showEvent = React.useCallback((shown: EventType) => {
 		setEvent(shown)
 		setEventOpen(true)
 	}, [])
 
 	return (
-		<Host pointerEvents="none" style={styles.host}>
+		<SheetHost>
 			<BottomSheet
 				isPresented={open}
 				onIsPresentedChange={(presented) => {
@@ -86,7 +94,7 @@ export function FullScheduleSheet(): React.ReactNode {
 						</HStack>
 						<RNHostView>
 							<View style={styles.list}>
-								<ScheduleView onPressEvent={showEvent} query={query} />
+								<ScheduleView onPressEvent={showEvent} query={query} rowAccessory={bell} />
 							</View>
 						</RNHostView>
 						<ScheduleEventSheet
@@ -95,15 +103,18 @@ export function FullScheduleSheet(): React.ReactNode {
 							onClose={() => setEventOpen(false)}
 							station={station}
 						/>
+						<ReminderPermissionSheet
+							onClose={dismissPrompt}
+							onConfirm={confirmPrompt}
+							prompt={prompt}
+						/>
 					</VStack>
 				</Group>
 			</BottomSheet>
-		</Host>
+		</SheetHost>
 	)
 }
 
 const styles = StyleSheet.create({
-	// Nothing to see or touch until the sheet is presented.
-	host: {position: 'absolute', width: 0, height: 0},
 	list: {flex: 1},
 })
