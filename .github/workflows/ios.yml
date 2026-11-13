@@ -134,6 +134,20 @@ jobs:
             | sed 's/^/fingerprint=/' \
             | tee -a "$GITHUB_OUTPUT"
 
+      # Autolinking reads its settings from package.json's "expo" key, and
+      # ios.exclude there decides which pods are linked into the app at all.
+      # Hashing the whole of package.json would rebuild for every script or
+      # version bump, so fingerprint just that key, as above for the job.
+      - name: Fingerprint the autolinking config
+        id: autolinking
+        run: |
+          set -o pipefail
+          jq -S '.expo' package.json \
+            | sha256sum \
+            | cut -d ' ' -f 1 \
+            | sed 's/^/fingerprint=/' \
+            | tee -a "$GITHUB_OUTPUT"
+
       # pnpm-lock.yaml belongs in this hash even though it doesn't live under
       # ios/: patched dependencies (patches/*.patch, applied by pnpm itself)
       # rewrite node_modules sources that CocoaPods copies into ios/Pods at
@@ -160,9 +174,9 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
+          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/autolink=${{ steps.autolinking.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
+            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/autolink=${{ steps.autolinking.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
 
       # ios-build is skipped on a hit, so nothing else would publish an
       # artifact for the shards and they would be back to restoring a cache
