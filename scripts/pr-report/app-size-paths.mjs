@@ -8,7 +8,11 @@ import {readFileSync} from 'node:fs'
 
 import {CODE_FILE, CONFIG_FILE} from './native-changes.mjs'
 
-/** Paths whose change can change what Xcode builds into the app. */
+/**
+ * Paths whose change can change what Xcode builds into the app. The iOS
+ * workflow's cached-app key (.github/workflows/ios.yml, "Check for cached iOS
+ * app") hashes the same set; a path that belongs in one belongs in the other.
+ */
 const NATIVE = [
 	CONFIG_FILE,
 	CODE_FILE,
