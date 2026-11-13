@@ -1,0 +1,892 @@
+11-13 03:55:27.661  2742  2742 W SoLoader: Initializing SoLoader: 0
+11-13 03:55:27.661  2742  2742 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:55:27.661  2742  2742 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:55:27.662  2742  2742 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:55:27.662  2742  2742 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:55:27.662  2742  2742 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:55:27.671  2742  2742 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:55:27.671  2742  2742 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:55:27.672  2742  2742 W SoLoader: SoLoader initialized: 8
+11-13 03:55:41.616  3324  3324 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:55:41.639  3324  3324 I AndroidRuntime: Using default boot image
+11-13 03:55:41.639  3324  3324 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:55:42.060  3324  3324 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-13 03:55:42.642  3324  3324 I AndroidRuntime: VM exiting with result code 0.
+11-13 03:55:43.371  3397  3397 W SoLoader: Initializing SoLoader: 0
+11-13 03:55:43.373  3397  3397 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:55:43.373  3397  3397 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:55:43.375  3397  3397 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:55:43.378  3397  3397 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:55:43.378  3397  3397 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:55:43.405  3397  3397 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:55:43.405  3397  3397 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:55:43.406  3397  3397 W SoLoader: SoLoader initialized: 8
+11-13 03:55:50.487  3763  3763 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:55:50.503  3763  3763 I AndroidRuntime: Using default boot image
+11-13 03:55:50.503  3763  3763 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:55:50.767  3763  3763 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:55:52.106  3763  3763 D AndroidRuntime: Shutting down VM
+11-13 03:55:53.954  3915  3915 W SoLoader: Initializing SoLoader: 0
+11-13 03:55:53.958  3915  3915 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:55:53.958  3915  3915 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:55:53.959  3915  3915 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:55:53.959  3915  3915 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:55:53.959  3915  3915 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:55:53.968  3915  3915 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:55:53.971  3915  3915 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:55:53.971  3915  3915 W SoLoader: SoLoader initialized: 8
+11-13 03:56:01.537  4200  4200 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:56:01.554  4200  4200 I AndroidRuntime: Using default boot image
+11-13 03:56:01.554  4200  4200 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:56:01.908  4200  4200 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:56:03.292  4200  4200 D AndroidRuntime: Shutting down VM
+11-13 03:56:05.907  4274  4274 W SoLoader: Initializing SoLoader: 0
+11-13 03:56:05.911  4274  4274 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:56:05.911  4274  4274 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:56:05.912  4274  4274 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:56:05.913  4274  4274 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:56:05.913  4274  4274 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:56:05.918  4274  4274 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:56:05.918  4274  4274 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:56:05.919  4274  4274 W SoLoader: SoLoader initialized: 8
+11-13 03:56:14.177  4413  4413 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:56:14.185  4413  4413 I AndroidRuntime: Using default boot image
+11-13 03:56:14.190  4413  4413 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:56:14.597  4413  4413 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:56:15.856  4413  4413 D AndroidRuntime: Shutting down VM
+11-13 03:56:17.333  4472  4472 W SoLoader: Initializing SoLoader: 0
+11-13 03:56:17.336  4472  4472 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:56:17.336  4472  4472 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:56:17.336  4472  4472 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:56:17.336  4472  4472 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:56:17.336  4472  4472 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:56:17.343  4472  4472 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:56:17.343  4472  4472 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:56:17.343  4472  4472 W SoLoader: SoLoader initialized: 8
+11-13 03:56:25.721  4675  4675 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:56:25.811  4675  4675 I AndroidRuntime: Using default boot image
+11-13 03:56:25.811  4675  4675 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:56:26.320  4675  4675 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:56:27.791  4675  4675 D AndroidRuntime: Shutting down VM
+11-13 03:56:29.430  4774  4774 W SoLoader: Initializing SoLoader: 0
+11-13 03:56:29.430  4774  4774 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:56:29.430  4774  4774 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:56:29.431  4774  4774 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:56:29.431  4774  4774 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:56:29.431  4774  4774 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:56:29.442  4774  4774 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:56:29.446  4774  4774 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:56:29.447  4774  4774 W SoLoader: SoLoader initialized: 8
+11-13 03:56:37.387  4915  4915 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:56:37.395  4915  4915 I AndroidRuntime: Using default boot image
+11-13 03:56:37.395  4915  4915 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:56:37.611  4915  4915 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:56:41.676  4915  4915 D AndroidRuntime: Shutting down VM
+11-13 03:56:44.636  5001  5001 W SoLoader: Initializing SoLoader: 0
+11-13 03:56:44.636  5001  5001 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:56:44.636  5001  5001 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:56:44.636  5001  5001 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:56:44.636  5001  5001 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:56:44.636  5001  5001 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:56:44.657  5001  5001 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:56:44.657  5001  5001 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:56:44.657  5001  5001 W SoLoader: SoLoader initialized: 8
+11-13 03:56:51.782  5164  5164 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:56:51.790  5164  5164 I AndroidRuntime: Using default boot image
+11-13 03:56:51.790  5164  5164 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:56:51.980  5164  5164 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:56:53.113  5164  5164 D AndroidRuntime: Shutting down VM
+11-13 03:56:54.412  5200  5200 W SoLoader: Initializing SoLoader: 0
+11-13 03:56:54.412  5200  5200 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:56:54.412  5200  5200 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:56:54.412  5200  5200 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:56:54.412  5200  5200 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:56:54.412  5200  5200 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:56:54.415  5200  5200 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:56:54.415  5200  5200 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:56:54.415  5200  5200 W SoLoader: SoLoader initialized: 8
+11-13 03:57:01.384  5298  5298 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:57:01.388  5298  5298 I AndroidRuntime: Using default boot image
+11-13 03:57:01.388  5298  5298 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:57:01.469  5298  5298 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:57:02.612  5298  5298 D AndroidRuntime: Shutting down VM
+11-13 03:57:04.477  5333  5333 W SoLoader: Initializing SoLoader: 0
+11-13 03:57:04.483  5333  5333 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:57:04.483  5333  5333 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:57:04.485  5333  5333 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:57:04.485  5333  5333 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:57:04.485  5333  5333 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:57:04.530  5333  5333 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:57:04.534  5333  5333 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:57:04.534  5333  5333 W SoLoader: SoLoader initialized: 8
+11-13 03:57:11.261  5410  5410 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:57:11.265  5410  5410 I AndroidRuntime: Using default boot image
+11-13 03:57:11.265  5410  5410 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:57:11.341  5410  5410 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:57:12.433  5410  5410 D AndroidRuntime: Shutting down VM
+11-13 03:57:14.388  5445  5445 W SoLoader: Initializing SoLoader: 0
+11-13 03:57:14.388  5445  5445 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:57:14.388  5445  5445 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:57:14.389  5445  5445 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:57:14.389  5445  5445 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:57:14.389  5445  5445 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:57:14.392  5445  5445 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:57:14.392  5445  5445 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:57:14.395  5445  5445 W SoLoader: SoLoader initialized: 8
+11-13 03:57:21.213  5568  5568 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:57:21.217  5568  5568 I AndroidRuntime: Using default boot image
+11-13 03:57:21.217  5568  5568 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:57:21.301  5568  5568 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:57:22.341  5568  5568 D AndroidRuntime: Shutting down VM
+11-13 03:57:24.280  5605  5605 W SoLoader: Initializing SoLoader: 0
+11-13 03:57:24.281  5605  5605 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:57:24.281  5605  5605 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:57:24.281  5605  5605 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:57:24.282  5605  5605 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:57:24.282  5605  5605 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:57:24.285  5605  5605 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:57:24.285  5605  5605 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:57:24.285  5605  5605 W SoLoader: SoLoader initialized: 8
+11-13 03:57:31.506  5705  5705 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:57:31.509  5705  5705 I AndroidRuntime: Using default boot image
+11-13 03:57:31.509  5705  5705 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:57:31.586  5705  5705 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:57:32.715  5705  5705 D AndroidRuntime: Shutting down VM
+11-13 03:57:34.378  5741  5741 W SoLoader: Initializing SoLoader: 0
+11-13 03:57:34.383  5741  5741 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:57:34.383  5741  5741 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:57:34.383  5741  5741 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:57:34.383  5741  5741 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:57:34.383  5741  5741 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:57:34.392  5741  5741 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:57:34.392  5741  5741 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:57:34.392  5741  5741 W SoLoader: SoLoader initialized: 8
+11-13 03:57:41.701  5884  5884 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:57:41.706  5884  5884 I AndroidRuntime: Using default boot image
+11-13 03:57:41.706  5884  5884 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:57:41.786  5884  5884 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:57:42.939  5884  5884 D AndroidRuntime: Shutting down VM
+11-13 03:57:44.515  5916  5916 W SoLoader: Initializing SoLoader: 0
+11-13 03:57:44.523  5916  5916 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:57:44.523  5916  5916 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:57:44.523  5916  5916 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:57:44.524  5916  5916 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:57:44.524  5916  5916 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:57:44.540  5916  5916 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:57:44.540  5916  5916 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:57:44.540  5916  5916 W SoLoader: SoLoader initialized: 8
+11-13 03:57:53.368  6011  6011 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:57:53.374  6011  6011 I AndroidRuntime: Using default boot image
+11-13 03:57:53.374  6011  6011 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:57:53.493  6011  6011 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:57:56.101  6011  6011 D AndroidRuntime: Shutting down VM
+11-13 03:57:57.366  6046  6046 W SoLoader: Initializing SoLoader: 0
+11-13 03:57:57.367  6046  6046 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:57:57.367  6046  6046 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:57:57.369  6046  6046 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:57:57.369  6046  6046 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:57:57.369  6046  6046 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:57:57.372  6046  6046 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:57:57.372  6046  6046 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:57:57.372  6046  6046 W SoLoader: SoLoader initialized: 8
+11-13 03:58:04.191  6143  6143 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:58:04.194  6143  6143 I AndroidRuntime: Using default boot image
+11-13 03:58:04.194  6143  6143 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:58:04.274  6143  6143 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:58:05.413  6143  6143 D AndroidRuntime: Shutting down VM
+11-13 03:58:07.596  6179  6179 W SoLoader: Initializing SoLoader: 0
+11-13 03:58:07.596  6179  6179 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:58:07.596  6179  6179 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:58:07.597  6179  6179 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:58:07.597  6179  6179 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:58:07.597  6179  6179 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:58:07.600  6179  6179 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:58:07.600  6179  6179 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:58:07.600  6179  6179 W SoLoader: SoLoader initialized: 8
+11-13 03:58:14.308  6301  6301 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:58:14.311  6301  6301 I AndroidRuntime: Using default boot image
+11-13 03:58:14.311  6301  6301 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:58:14.391  6301  6301 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:58:15.722  6301  6301 D AndroidRuntime: Shutting down VM
+11-13 03:58:17.357  6335  6335 W SoLoader: Initializing SoLoader: 0
+11-13 03:58:17.357  6335  6335 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:58:17.357  6335  6335 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:58:17.357  6335  6335 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:58:17.357  6335  6335 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:58:17.357  6335  6335 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:58:17.361  6335  6335 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:58:17.369  6335  6335 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:58:17.369  6335  6335 W SoLoader: SoLoader initialized: 8
+11-13 03:58:24.680  6430  6430 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:58:24.683  6430  6430 I AndroidRuntime: Using default boot image
+11-13 03:58:24.683  6430  6430 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:58:24.762  6430  6430 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:58:25.857  6430  6430 D AndroidRuntime: Shutting down VM
+11-13 03:58:27.578  6464  6464 W SoLoader: Initializing SoLoader: 0
+11-13 03:58:27.580  6464  6464 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:58:27.580  6464  6464 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:58:27.581  6464  6464 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:58:27.581  6464  6464 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:58:27.581  6464  6464 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:58:27.648  6464  6464 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:58:27.655  6464  6464 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:58:27.655  6464  6464 W SoLoader: SoLoader initialized: 8
+11-13 03:58:34.949  6542  6542 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:58:34.952  6542  6542 I AndroidRuntime: Using default boot image
+11-13 03:58:34.952  6542  6542 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:58:35.033  6542  6542 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:58:36.116  6542  6542 D AndroidRuntime: Shutting down VM
+11-13 03:58:38.013  6576  6576 W SoLoader: Initializing SoLoader: 0
+11-13 03:58:38.014  6576  6576 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:58:38.014  6576  6576 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:58:38.019  6576  6576 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:58:38.019  6576  6576 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:58:38.019  6576  6576 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:58:38.022  6576  6576 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:58:38.026  6576  6576 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:58:38.027  6576  6576 W SoLoader: SoLoader initialized: 8
+11-13 03:58:45.101  6665  6665 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:58:45.105  6665  6665 I AndroidRuntime: Using default boot image
+11-13 03:58:45.105  6665  6665 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:58:45.186  6665  6665 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:58:46.264  6665  6665 D AndroidRuntime: Shutting down VM
+11-13 03:58:48.247  6699  6699 W SoLoader: Initializing SoLoader: 0
+11-13 03:58:48.248  6699  6699 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:58:48.248  6699  6699 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:58:48.249  6699  6699 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:58:48.250  6699  6699 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:58:48.250  6699  6699 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:58:48.254  6699  6699 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:58:48.269  6699  6699 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:58:48.270  6699  6699 W SoLoader: SoLoader initialized: 8
+11-13 03:58:55.274  6776  6776 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:58:55.278  6776  6776 I AndroidRuntime: Using default boot image
+11-13 03:58:55.278  6776  6776 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:58:55.356  6776  6776 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:58:56.381  6776  6776 D AndroidRuntime: Shutting down VM
+11-13 03:58:57.527  6811  6811 W SoLoader: Initializing SoLoader: 0
+11-13 03:58:57.527  6811  6811 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:58:57.527  6811  6811 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:58:57.527  6811  6811 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:58:57.527  6811  6811 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:58:57.527  6811  6811 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:58:57.530  6811  6811 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:58:57.530  6811  6811 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:58:57.530  6811  6811 W SoLoader: SoLoader initialized: 8
+11-13 03:59:04.412  6887  6887 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:59:04.416  6887  6887 I AndroidRuntime: Using default boot image
+11-13 03:59:04.416  6887  6887 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:59:04.496  6887  6887 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:59:05.546  6887  6887 D AndroidRuntime: Shutting down VM
+11-13 03:59:06.802  6922  6922 W SoLoader: Initializing SoLoader: 0
+11-13 03:59:06.802  6922  6922 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:59:06.802  6922  6922 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:59:06.803  6922  6922 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:59:06.803  6922  6922 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:59:06.803  6922  6922 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:59:06.806  6922  6922 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:59:06.806  6922  6922 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:59:06.806  6922  6922 W SoLoader: SoLoader initialized: 8
+11-13 03:59:13.724  6995  6995 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:59:13.727  6995  6995 I AndroidRuntime: Using default boot image
+11-13 03:59:13.727  6995  6995 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:59:13.805  6995  6995 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:59:14.849  6995  6995 D AndroidRuntime: Shutting down VM
+11-13 03:59:16.471  7028  7028 W SoLoader: Initializing SoLoader: 0
+11-13 03:59:16.471  7028  7028 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:59:16.471  7028  7028 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:59:16.471  7028  7028 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:59:16.472  7028  7028 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:59:16.472  7028  7028 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:59:16.524  7028  7028 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:59:16.589  7028  7028 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:59:16.590  7028  7028 W SoLoader: SoLoader initialized: 8
+11-13 03:59:23.555  7118  7118 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:59:23.559  7118  7118 I AndroidRuntime: Using default boot image
+11-13 03:59:23.559  7118  7118 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:59:23.636  7118  7118 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:59:24.679  7118  7118 D AndroidRuntime: Shutting down VM
+11-13 03:59:26.877  7152  7152 W SoLoader: Initializing SoLoader: 0
+11-13 03:59:26.877  7152  7152 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:59:26.877  7152  7152 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:59:26.877  7152  7152 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:59:26.884  7152  7152 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:59:26.884  7152  7152 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:59:26.892  7152  7152 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:59:26.892  7152  7152 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:59:26.892  7152  7152 W SoLoader: SoLoader initialized: 8
+11-13 03:59:33.817  7262  7262 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:59:33.820  7262  7262 I AndroidRuntime: Using default boot image
+11-13 03:59:33.821  7262  7262 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:59:33.903  7262  7262 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:59:35.111  7262  7262 D AndroidRuntime: Shutting down VM
+11-13 03:59:36.720  7294  7294 W SoLoader: Initializing SoLoader: 0
+11-13 03:59:36.720  7294  7294 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:59:36.720  7294  7294 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:59:36.721  7294  7294 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:59:36.721  7294  7294 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:59:36.721  7294  7294 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:59:36.725  7294  7294 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:59:36.728  7294  7294 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:59:36.728  7294  7294 W SoLoader: SoLoader initialized: 8
+11-13 03:59:43.831  7424  7424 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:59:43.834  7424  7424 I AndroidRuntime: Using default boot image
+11-13 03:59:43.834  7424  7424 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:59:43.911  7424  7424 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:59:45.082  7424  7424 D AndroidRuntime: Shutting down VM
+11-13 03:59:47.007  7456  7456 W SoLoader: Initializing SoLoader: 0
+11-13 03:59:47.007  7456  7456 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:59:47.007  7456  7456 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:59:47.008  7456  7456 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:59:47.008  7456  7456 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:59:47.008  7456  7456 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:59:47.010  7456  7456 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:59:47.010  7456  7456 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:59:47.010  7456  7456 W SoLoader: SoLoader initialized: 8
+11-13 03:59:53.964  7531  7531 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 03:59:53.967  7531  7531 I AndroidRuntime: Using default boot image
+11-13 03:59:53.967  7531  7531 I AndroidRuntime: Leaving lock profiling enabled
+11-13 03:59:54.046  7531  7531 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 03:59:55.127  7531  7531 D AndroidRuntime: Shutting down VM
+11-13 03:59:56.312  7566  7566 W SoLoader: Initializing SoLoader: 0
+11-13 03:59:56.312  7566  7566 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 03:59:56.312  7566  7566 W SoLoader: Previously recorded 0 base apk paths.
+11-13 03:59:56.312  7566  7566 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 03:59:56.313  7566  7566 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 03:59:56.313  7566  7566 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 03:59:56.317  7566  7566 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 03:59:56.317  7566  7566 I SoLoader: init finish: 4 SO sources prepared
+11-13 03:59:56.317  7566  7566 W SoLoader: SoLoader initialized: 8
+11-13 04:00:03.145  7650  7650 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:00:03.148  7650  7650 I AndroidRuntime: Using default boot image
+11-13 04:00:03.148  7650  7650 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:00:03.224  7650  7650 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:00:04.258  7650  7650 D AndroidRuntime: Shutting down VM
+11-13 04:00:06.117  7688  7688 W SoLoader: Initializing SoLoader: 0
+11-13 04:00:06.127  7688  7688 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:00:06.127  7688  7688 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:00:06.127  7688  7688 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:00:06.128  7688  7688 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:00:06.128  7688  7688 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:00:06.150  7688  7688 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:00:06.151  7688  7688 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:00:06.151  7688  7688 W SoLoader: SoLoader initialized: 8
+11-13 04:00:13.092  7765  7765 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:00:13.095  7765  7765 I AndroidRuntime: Using default boot image
+11-13 04:00:13.095  7765  7765 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:00:13.180  7765  7765 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:00:14.220  7765  7765 D AndroidRuntime: Shutting down VM
+11-13 04:00:15.402  7797  7797 W SoLoader: Initializing SoLoader: 0
+11-13 04:00:15.402  7797  7797 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:00:15.402  7797  7797 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:00:15.402  7797  7797 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:00:15.403  7797  7797 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:00:15.406  7797  7797 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:00:15.412  7797  7797 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:00:15.412  7797  7797 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:00:15.412  7797  7797 W SoLoader: SoLoader initialized: 8
+11-13 04:00:22.331  7876  7876 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:00:22.335  7876  7876 I AndroidRuntime: Using default boot image
+11-13 04:00:22.335  7876  7876 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:00:22.422  7876  7876 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:00:23.465  7876  7876 D AndroidRuntime: Shutting down VM
+11-13 04:00:24.627  7911  7911 W SoLoader: Initializing SoLoader: 0
+11-13 04:00:24.627  7911  7911 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:00:24.627  7911  7911 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:00:24.628  7911  7911 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:00:24.628  7911  7911 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:00:24.628  7911  7911 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:00:24.630  7911  7911 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:00:24.630  7911  7911 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:00:24.630  7911  7911 W SoLoader: SoLoader initialized: 8
+11-13 04:00:31.578  8024  8024 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:00:31.581  8024  8024 I AndroidRuntime: Using default boot image
+11-13 04:00:31.581  8024  8024 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:00:31.664  8024  8024 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:00:32.761  8024  8024 D AndroidRuntime: Shutting down VM
+11-13 04:00:34.292  8058  8058 W SoLoader: Initializing SoLoader: 0
+11-13 04:00:34.295  8058  8058 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:00:34.295  8058  8058 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:00:34.295  8058  8058 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:00:34.295  8058  8058 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:00:34.295  8058  8058 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:00:34.298  8058  8058 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:00:34.298  8058  8058 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:00:34.298  8058  8058 W SoLoader: SoLoader initialized: 8
+11-13 04:00:41.761  8166  8166 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:00:41.765  8166  8166 I AndroidRuntime: Using default boot image
+11-13 04:00:41.765  8166  8166 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:00:41.845  8166  8166 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:00:42.927  8166  8166 D AndroidRuntime: Shutting down VM
+11-13 04:00:44.159  8199  8199 W SoLoader: Initializing SoLoader: 0
+11-13 04:00:44.159  8199  8199 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:00:44.159  8199  8199 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:00:44.159  8199  8199 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:00:44.159  8199  8199 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:00:44.159  8199  8199 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:00:44.165  8199  8199 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:00:44.165  8199  8199 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:00:44.165  8199  8199 W SoLoader: SoLoader initialized: 8
+11-13 04:00:51.162  8289  8289 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:00:51.165  8289  8289 I AndroidRuntime: Using default boot image
+11-13 04:00:51.165  8289  8289 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:00:51.245  8289  8289 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:00:52.304  8289  8289 D AndroidRuntime: Shutting down VM
+11-13 04:00:53.818  8323  8323 W SoLoader: Initializing SoLoader: 0
+11-13 04:00:53.818  8323  8323 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:00:53.818  8323  8323 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:00:53.819  8323  8323 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:00:53.819  8323  8323 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:00:53.819  8323  8323 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:00:53.822  8323  8323 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:00:53.823  8323  8323 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:00:53.823  8323  8323 W SoLoader: SoLoader initialized: 8
+11-13 04:01:00.921  8396  8396 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:01:00.925  8396  8396 I AndroidRuntime: Using default boot image
+11-13 04:01:00.925  8396  8396 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:01:01.004  8396  8396 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:01:02.098  8396  8396 D AndroidRuntime: Shutting down VM
+11-13 04:01:03.840  8430  8430 W SoLoader: Initializing SoLoader: 0
+11-13 04:01:03.859  8430  8430 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:01:03.859  8430  8430 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:01:03.860  8430  8430 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:01:03.860  8430  8430 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:01:03.860  8430  8430 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:01:03.888  8430  8430 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:01:03.899  8430  8430 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:01:03.900  8430  8430 W SoLoader: SoLoader initialized: 8
+11-13 04:01:10.801  8556  8556 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:01:10.805  8556  8556 I AndroidRuntime: Using default boot image
+11-13 04:01:10.805  8556  8556 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:01:10.884  8556  8556 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:01:12.023  8556  8556 D AndroidRuntime: Shutting down VM
+11-13 04:01:13.776  8591  8591 W SoLoader: Initializing SoLoader: 0
+11-13 04:01:13.777  8591  8591 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:01:13.777  8591  8591 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:01:13.777  8591  8591 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:01:13.778  8591  8591 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:01:13.779  8591  8591 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:01:13.781  8591  8591 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:01:13.784  8591  8591 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:01:13.784  8591  8591 W SoLoader: SoLoader initialized: 8
+11-13 04:01:20.798  8666  8666 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:01:20.802  8666  8666 I AndroidRuntime: Using default boot image
+11-13 04:01:20.802  8666  8666 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:01:20.880  8666  8666 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:01:21.975  8666  8666 D AndroidRuntime: Shutting down VM
+11-13 04:01:24.049  8701  8701 W SoLoader: Initializing SoLoader: 0
+11-13 04:01:24.050  8701  8701 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:01:24.050  8701  8701 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:01:24.050  8701  8701 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:01:24.051  8701  8701 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:01:24.054  8701  8701 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:01:24.057  8701  8701 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:01:24.057  8701  8701 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:01:24.058  8701  8701 W SoLoader: SoLoader initialized: 8
+11-13 04:01:30.702  8787  8787 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:01:30.706  8787  8787 I AndroidRuntime: Using default boot image
+11-13 04:01:30.706  8787  8787 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:01:30.795  8787  8787 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:01:31.871  8787  8787 D AndroidRuntime: Shutting down VM
+11-13 04:01:33.142  8817  8817 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:01:33.145  8817  8817 I AndroidRuntime: Using default boot image
+11-13 04:01:33.145  8817  8817 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:01:33.378  8817  8817 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-13 04:01:34.152  8817  8817 I AndroidRuntime: VM exiting with result code 0.
+11-13 04:01:34.412  8839  8839 W SoLoader: Initializing SoLoader: 0
+11-13 04:01:34.414  8839  8839 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:01:34.414  8839  8839 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:01:34.414  8839  8839 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:01:34.414  8839  8839 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:01:34.414  8839  8839 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:01:34.421  8839  8839 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:01:34.421  8839  8839 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:01:34.422  8839  8839 W SoLoader: SoLoader initialized: 8
+11-13 04:01:41.361  8937  8937 W SoLoader: Initializing SoLoader: 0
+11-13 04:01:41.369  8937  8937 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:01:41.369  8937  8937 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:01:41.370  8937  8937 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:01:41.370  8937  8937 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:01:41.372  8937  8937 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:01:41.387  8937  8937 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:01:41.392  8937  8937 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:01:41.392  8937  8937 W SoLoader: SoLoader initialized: 8
+11-13 04:01:48.546  9031  9031 W SoLoader: Initializing SoLoader: 0
+11-13 04:01:48.546  9031  9031 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:01:48.546  9031  9031 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:01:48.546  9031  9031 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:01:48.546  9031  9031 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:01:48.546  9031  9031 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:01:48.549  9031  9031 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:01:48.549  9031  9031 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:01:48.549  9031  9031 W SoLoader: SoLoader initialized: 8
+11-13 04:01:56.179  9123  9123 W SoLoader: Initializing SoLoader: 0
+11-13 04:01:56.191  9123  9123 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:01:56.191  9123  9123 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:01:56.191  9123  9123 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:01:56.191  9123  9123 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:01:56.192  9123  9123 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:01:56.199  9123  9123 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:01:56.199  9123  9123 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:01:56.199  9123  9123 W SoLoader: SoLoader initialized: 8
+11-13 04:02:03.788  9213  9213 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:03.805  9213  9213 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:03.805  9213  9213 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:03.806  9213  9213 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:03.806  9213  9213 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:03.806  9213  9213 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:03.816  9213  9213 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:03.816  9213  9213 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:03.816  9213  9213 W SoLoader: SoLoader initialized: 8
+11-13 04:02:11.433  9318  9318 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:11.434  9318  9318 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:11.434  9318  9318 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:11.434  9318  9318 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:11.435  9318  9318 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:11.435  9318  9318 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:11.438  9318  9318 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:11.443  9318  9318 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:11.443  9318  9318 W SoLoader: SoLoader initialized: 8
+11-13 04:02:18.935  9414  9414 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:18.936  9414  9414 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:18.936  9414  9414 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:18.936  9414  9414 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:18.936  9414  9414 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:18.937  9414  9414 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:18.943  9414  9414 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:18.943  9414  9414 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:18.943  9414  9414 W SoLoader: SoLoader initialized: 8
+11-13 04:02:27.033  9509  9509 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:27.043  9509  9509 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:27.043  9509  9509 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:27.043  9509  9509 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:27.043  9509  9509 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:27.043  9509  9509 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:27.046  9509  9509 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:27.046  9509  9509 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:27.046  9509  9509 W SoLoader: SoLoader initialized: 8
+11-13 04:02:34.218  9609  9609 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:34.218  9609  9609 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:34.218  9609  9609 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:34.218  9609  9609 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:34.219  9609  9609 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:34.219  9609  9609 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:34.222  9609  9609 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:34.222  9609  9609 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:34.222  9609  9609 W SoLoader: SoLoader initialized: 8
+11-13 04:02:42.372  9733  9733 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:42.373  9733  9733 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:42.373  9733  9733 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:42.373  9733  9733 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:42.373  9733  9733 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:42.373  9733  9733 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:42.384  9733  9733 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:42.384  9733  9733 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:42.384  9733  9733 W SoLoader: SoLoader initialized: 8
+11-13 04:02:49.740  9831  9831 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:49.740  9831  9831 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:49.740  9831  9831 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:49.741  9831  9831 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:49.741  9831  9831 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:49.741  9831  9831 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:49.743  9831  9831 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:49.743  9831  9831 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:49.743  9831  9831 W SoLoader: SoLoader initialized: 8
+11-13 04:02:57.623  9934  9934 W SoLoader: Initializing SoLoader: 0
+11-13 04:02:57.623  9934  9934 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:02:57.623  9934  9934 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:02:57.623  9934  9934 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:02:57.623  9934  9934 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:02:57.623  9934  9934 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:02:57.625  9934  9934 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:02:57.625  9934  9934 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:02:57.625  9934  9934 W SoLoader: SoLoader initialized: 8
+11-13 04:03:06.152 10037 10037 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:06.152 10037 10037 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:06.152 10037 10037 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:06.152 10037 10037 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:06.153 10037 10037 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:06.153 10037 10037 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:06.156 10037 10037 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:06.156 10037 10037 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:06.156 10037 10037 W SoLoader: SoLoader initialized: 8
+11-13 04:03:13.897 10129 10129 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:13.900 10129 10129 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:13.900 10129 10129 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:13.900 10129 10129 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:13.900 10129 10129 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:13.900 10129 10129 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:13.905 10129 10129 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:13.905 10129 10129 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:13.906 10129 10129 W SoLoader: SoLoader initialized: 8
+11-13 04:03:21.296 10225 10225 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:21.296 10225 10225 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:21.296 10225 10225 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:21.296 10225 10225 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:21.297 10225 10225 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:21.297 10225 10225 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:21.300 10225 10225 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:21.300 10225 10225 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:21.300 10225 10225 W SoLoader: SoLoader initialized: 8
+11-13 04:03:29.281 10324 10324 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:29.281 10324 10324 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:29.281 10324 10324 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:29.281 10324 10324 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:29.282 10324 10324 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:29.282 10324 10324 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:29.286 10324 10324 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:29.286 10324 10324 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:29.286 10324 10324 W SoLoader: SoLoader initialized: 8
+11-13 04:03:36.680 10420 10420 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:36.680 10420 10420 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:36.680 10420 10420 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:36.680 10420 10420 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:36.683 10420 10420 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:36.683 10420 10420 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:36.688 10420 10420 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:36.688 10420 10420 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:36.688 10420 10420 W SoLoader: SoLoader initialized: 8
+11-13 04:03:44.050 10528 10528 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:44.050 10528 10528 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:44.050 10528 10528 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:44.051 10528 10528 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:44.051 10528 10528 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:44.051 10528 10528 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:44.055 10528 10528 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:44.055 10528 10528 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:44.055 10528 10528 W SoLoader: SoLoader initialized: 8
+11-13 04:03:51.631 10621 10621 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:51.631 10621 10621 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:51.631 10621 10621 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:51.631 10621 10621 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:51.631 10621 10621 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:51.631 10621 10621 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:51.639 10621 10621 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:51.639 10621 10621 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:51.640 10621 10621 W SoLoader: SoLoader initialized: 8
+11-13 04:03:58.979 10715 10715 W SoLoader: Initializing SoLoader: 0
+11-13 04:03:58.979 10715 10715 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:03:58.979 10715 10715 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:03:58.980 10715 10715 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:03:58.983 10715 10715 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:03:58.983 10715 10715 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:03:58.993 10715 10715 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:03:58.993 10715 10715 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:03:58.993 10715 10715 W SoLoader: SoLoader initialized: 8
+11-13 04:04:06.901 10808 10808 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:06.901 10808 10808 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:06.901 10808 10808 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:06.902 10808 10808 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:06.902 10808 10808 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:06.902 10808 10808 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:06.905 10808 10808 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:06.905 10808 10808 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:06.905 10808 10808 W SoLoader: SoLoader initialized: 8
+11-13 04:04:14.161 10914 10914 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:14.162 10914 10914 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:14.162 10914 10914 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:14.162 10914 10914 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:14.162 10914 10914 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:14.163 10914 10914 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:14.166 10914 10914 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:14.166 10914 10914 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:14.167 10914 10914 W SoLoader: SoLoader initialized: 8
+11-13 04:04:21.845 11016 11016 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:21.846 11016 11016 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:21.846 11016 11016 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:21.851 11016 11016 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:21.851 11016 11016 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:21.851 11016 11016 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:21.854 11016 11016 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:21.854 11016 11016 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:21.854 11016 11016 W SoLoader: SoLoader initialized: 8
+11-13 04:04:29.253 11119 11119 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:29.253 11119 11119 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:29.253 11119 11119 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:29.254 11119 11119 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:29.254 11119 11119 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:29.254 11119 11119 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:29.257 11119 11119 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:29.257 11119 11119 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:29.257 11119 11119 W SoLoader: SoLoader initialized: 8
+11-13 04:04:36.300 11207 11207 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:36.311 11207 11207 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:36.311 11207 11207 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:36.311 11207 11207 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:36.312 11207 11207 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:36.312 11207 11207 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:36.332 11207 11207 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:36.332 11207 11207 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:36.332 11207 11207 W SoLoader: SoLoader initialized: 8
+11-13 04:04:43.541 11296 11296 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:43.541 11296 11296 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:43.541 11296 11296 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:43.541 11296 11296 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:43.541 11296 11296 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:43.541 11296 11296 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:43.544 11296 11296 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:43.544 11296 11296 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:43.544 11296 11296 W SoLoader: SoLoader initialized: 8
+11-13 04:04:51.003 11390 11390 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:51.011 11390 11390 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:51.011 11390 11390 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:51.012 11390 11390 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:51.012 11390 11390 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:51.012 11390 11390 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:51.027 11390 11390 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:51.027 11390 11390 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:51.027 11390 11390 W SoLoader: SoLoader initialized: 8
+11-13 04:04:58.501 11486 11486 W SoLoader: Initializing SoLoader: 0
+11-13 04:04:58.503 11486 11486 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:04:58.503 11486 11486 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:04:58.503 11486 11486 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:04:58.503 11486 11486 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:04:58.503 11486 11486 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:04:58.509 11486 11486 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:04:58.510 11486 11486 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:04:58.510 11486 11486 W SoLoader: SoLoader initialized: 8
+11-13 04:05:06.047 11602 11602 W SoLoader: Initializing SoLoader: 0
+11-13 04:05:06.047 11602 11602 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:05:06.047 11602 11602 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:05:06.048 11602 11602 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:05:06.048 11602 11602 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:05:06.048 11602 11602 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:05:06.052 11602 11602 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:05:06.052 11602 11602 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:05:06.052 11602 11602 W SoLoader: SoLoader initialized: 8
+11-13 04:05:13.244 11697 11697 W SoLoader: Initializing SoLoader: 0
+11-13 04:05:13.244 11697 11697 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:05:13.244 11697 11697 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:05:13.245 11697 11697 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:05:13.245 11697 11697 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:05:13.245 11697 11697 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:05:13.247 11697 11697 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:05:13.247 11697 11697 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:05:13.248 11697 11697 W SoLoader: SoLoader initialized: 8
+11-13 04:05:20.960 11790 11790 W SoLoader: Initializing SoLoader: 0
+11-13 04:05:20.961 11790 11790 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:05:20.961 11790 11790 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:05:20.966 11790 11790 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:05:20.966 11790 11790 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:05:20.966 11790 11790 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:05:20.976 11790 11790 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:05:20.976 11790 11790 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:05:20.976 11790 11790 W SoLoader: SoLoader initialized: 8
+11-13 04:05:28.376 11881 11881 W SoLoader: Initializing SoLoader: 0
+11-13 04:05:28.387 11881 11881 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:05:28.387 11881 11881 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:05:28.387 11881 11881 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:05:28.391 11881 11881 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:05:28.391 11881 11881 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:05:28.394 11881 11881 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:05:28.394 11881 11881 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:05:28.394 11881 11881 W SoLoader: SoLoader initialized: 8
+11-13 04:05:36.095 11980 11980 W SoLoader: Initializing SoLoader: 0
+11-13 04:05:36.100 11980 11980 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:05:36.100 11980 11980 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:05:36.101 11980 11980 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:05:36.101 11980 11980 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:05:36.101 11980 11980 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:05:36.110 11980 11980 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:05:36.110 11980 11980 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:05:36.110 11980 11980 W SoLoader: SoLoader initialized: 8
+11-13 04:05:43.449 12084 12084 W SoLoader: Initializing SoLoader: 0
+11-13 04:05:43.449 12084 12084 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:05:43.449 12084 12084 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:05:43.449 12084 12084 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:05:43.449 12084 12084 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:05:43.449 12084 12084 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:05:43.453 12084 12084 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:05:43.453 12084 12084 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:05:43.453 12084 12084 W SoLoader: SoLoader initialized: 8
+11-13 04:05:50.603 12172 12172 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:05:50.608 12172 12172 I AndroidRuntime: Using default boot image
+11-13 04:05:50.608 12172 12172 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:05:51.258 12172 12172 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-13 04:05:51.476 12172 12172 I AndroidRuntime: VM exiting with result code 0.
+11-13 04:05:51.977 12195 12195 W SoLoader: Initializing SoLoader: 0
+11-13 04:05:51.977 12195 12195 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:05:51.977 12195 12195 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:05:51.977 12195 12195 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:05:51.977 12195 12195 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:05:51.977 12195 12195 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:05:51.987 12195 12195 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:05:51.988 12195 12195 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:05:51.988 12195 12195 W SoLoader: SoLoader initialized: 8
+11-13 04:05:59.691 12284 12284 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:05:59.694 12284 12284 I AndroidRuntime: Using default boot image
+11-13 04:05:59.694 12284 12284 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:05:59.771 12284 12284 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:06:00.893 12284 12284 D AndroidRuntime: Shutting down VM
+11-13 04:06:05.108 12337 12337 W SoLoader: Initializing SoLoader: 0
+11-13 04:06:05.110 12337 12337 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:06:05.110 12337 12337 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:06:05.110 12337 12337 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:06:05.111 12337 12337 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:06:05.111 12337 12337 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:06:05.114 12337 12337 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:06:05.120 12337 12337 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:06:05.121 12337 12337 W SoLoader: SoLoader initialized: 8
+11-13 04:06:11.759 12406 12406 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:11.763 12406 12406 I AndroidRuntime: Using default boot image
+11-13 04:06:11.763 12406 12406 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:11.839 12406 12406 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:06:12.880 12406 12406 D AndroidRuntime: Shutting down VM
+11-13 04:06:15.836 12430 12430 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:15.839 12430 12430 I AndroidRuntime: Using default boot image
+11-13 04:06:15.839 12430 12430 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:15.918 12430 12430 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:06:16.933 12430 12430 D AndroidRuntime: Shutting down VM
+11-13 04:06:20.246 12462 12462 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:20.262 12462 12462 I AndroidRuntime: Using default boot image
+11-13 04:06:20.262 12462 12462 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:20.758 12462 12462 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-13 04:06:20.809 12462 12462 I AndroidRuntime: VM exiting with result code 0.
+11-13 04:06:21.167 12477 12477 W SoLoader: Initializing SoLoader: 0
+11-13 04:06:21.168 12477 12477 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:06:21.168 12477 12477 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:06:21.168 12477 12477 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:06:21.168 12477 12477 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:06:21.168 12477 12477 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:06:21.174 12477 12477 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:06:21.174 12477 12477 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:06:21.174 12477 12477 W SoLoader: SoLoader initialized: 8
+11-13 04:06:32.937 12583 12583 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:32.945 12583 12583 I AndroidRuntime: Using default boot image
+11-13 04:06:32.945 12583 12583 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:33.284 12583 12583 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-13 04:06:33.604 12583 12583 I AndroidRuntime: VM exiting with result code 0.
+11-13 04:06:34.018 12606 12606 W SoLoader: Initializing SoLoader: 0
+11-13 04:06:34.018 12606 12606 W SoLoader: Recording new base apk path: /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk
+11-13 04:06:34.018 12606 12606 W SoLoader: Previously recorded 0 base apk paths.
+11-13 04:06:34.018 12606 12606 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-13 04:06:34.026 12606 12606 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-13 04:06:34.026 12606 12606 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/base.apk!/lib/x86_64]]
+11-13 04:06:34.039 12606 12606 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~SE8VFZW9YsFHVCj54zjEYQ==/com.drewvolz.stolaf-Yq0qfd8b_tHKWIz3f7TKAg==/lib/x86_64 flags = 0]]
+11-13 04:06:34.044 12606 12606 I SoLoader: init finish: 4 SO sources prepared
+11-13 04:06:34.044 12606 12606 W SoLoader: SoLoader initialized: 8
+11-13 04:06:41.881 12682 12682 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:41.885 12682 12682 I AndroidRuntime: Using default boot image
+11-13 04:06:41.885 12682 12682 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:41.961 12682 12682 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:06:43.058 12682 12682 D AndroidRuntime: Shutting down VM
+11-13 04:06:45.345 12704 12704 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:45.348 12704 12704 I AndroidRuntime: Using default boot image
+11-13 04:06:45.348 12704 12704 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:45.425 12704 12704 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:06:46.491 12704 12704 D AndroidRuntime: Shutting down VM
+11-13 04:06:50.973 12746 12746 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:50.976 12746 12746 I AndroidRuntime: Using default boot image
+11-13 04:06:50.976 12746 12746 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:51.057 12746 12746 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:06:52.079 12746 12746 D AndroidRuntime: Shutting down VM
+11-13 04:06:56.025 12769 12769 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:06:56.029 12769 12769 I AndroidRuntime: Using default boot image
+11-13 04:06:56.029 12769 12769 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:06:56.109 12769 12769 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:06:57.195 12769 12769 D AndroidRuntime: Shutting down VM
+11-13 04:07:03.532 12817 12817 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-13 04:07:03.535 12817 12817 I AndroidRuntime: Using default boot image
+11-13 04:07:03.535 12817 12817 I AndroidRuntime: Leaving lock profiling enabled
+11-13 04:07:03.616 12817 12817 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-13 04:07:04.925 12817 12817 D AndroidRuntime: Shutting down VM
