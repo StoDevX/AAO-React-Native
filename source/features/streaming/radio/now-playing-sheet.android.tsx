@@ -5,6 +5,7 @@ import {Host, Icon, IconButton} from '@expo/ui/jetpack-compose'
 import tinycolor from 'tinycolor2'
 
 import {FullScheduleSheet} from './full-schedule-sheet'
+import {ShowRemindersSheet} from './reminders/show-reminders-sheet'
 import {FullLayout, StationMenu, useLogoCycle} from './player-view'
 import {palette} from './player-view/palette'
 import {STATIONS} from './stations'
@@ -64,6 +65,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 					/>
 				</ScrollView>
 				<FullScheduleSheet />
+				<ShowRemindersSheet />
 			</View>
 		</Modal>
 	)

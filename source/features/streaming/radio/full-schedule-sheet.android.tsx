@@ -13,6 +13,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {addToCalendarEvents} from '../../telemetry/calendar-events'
 import {track} from '../../telemetry/track'
 import {KRLX_POWERED_BY, KSTO_POWERED_BY} from './constants'
+import {FollowBell, HostedReminderPermissionSheet, useFollowToggle} from './reminders'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import {stationScheduleOptions} from './use-station-schedule'
@@ -40,6 +41,13 @@ export function FullScheduleSheet(): React.ReactNode {
 		closeFullSchedule()
 	}
 	let back = () => (event ? setEvent(null) : close())
+	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('full_schedule')
+	let bell = React.useCallback(
+		(shown: EventType) => (
+			<FollowBell onToggle={toggle} show={{stationId: station.id, title: shown.title}} />
+		),
+		[toggle, station.id],
+	)
 	let insets = useSafeAreaInsets()
 
 	return (
@@ -67,9 +75,14 @@ export function FullScheduleSheet(): React.ReactNode {
 					<EventPage event={event} station={station} />
 				) : (
 					<View style={styles.fill}>
-						<ScheduleView onPressEvent={setEvent} query={query} />
+						<ScheduleView onPressEvent={setEvent} query={query} rowAccessory={bell} />
 					</View>
 				)}
+				<HostedReminderPermissionSheet
+					onClose={dismissPrompt}
+					onConfirm={confirmPrompt}
+					prompt={prompt}
+				/>
 			</View>
 		</Modal>
 	)
