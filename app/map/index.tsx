@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+	Platform,
 	StyleSheet,
 	Text,
 	useColorScheme,
@@ -8,18 +9,8 @@ import {
 	type NativeSyntheticEvent,
 } from 'react-native'
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
-import {BottomSheet, Group, Host, ZStack} from '@expo/ui/swift-ui'
-import {
-	accessibilityHidden,
-	background,
-	disabled,
-	frame,
-	interactiveDismissDisabled,
-	opacity,
-	presentationBackgroundInteraction,
-	presentationDetents,
-	presentationDragIndicator,
-} from '@expo/ui/swift-ui/modifiers'
+import {Group, ZStack} from '@expo/ui/swift-ui'
+import {accessibilityHidden, disabled, frame, opacity} from '@expo/ui/swift-ui/modifiers'
 import {
 	Camera,
 	GeoJSONSource,
@@ -33,7 +24,7 @@ import {
 	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
-import {Stack, useIsFocused, useLocalSearchParams} from 'expo-router'
+import {Stack, useIsFocused, useLocalSearchParams, useNavigation} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 
@@ -41,6 +32,12 @@ import {campusById, type CampusId} from '../../source/campuses'
 import type {MapSection} from '../../source/features/map/campus-section'
 import {useCampusParam} from '../../source/features/campus/campus-param'
 import {cardVenuesOptions} from '../../source/features/map/card-queries'
+import {MapSheet} from '../../source/features/map/map-sheet'
+import {MapTopBar} from '../../source/features/map/map-top-bar'
+import {LocateButton} from '../../source/features/map/locate-button'
+import {mapCategoriesOptions} from '../../source/features/map/category-groups-query'
+import {groupsFor} from '../../source/features/map/lib/category-groups'
+import type {MapGroupLabel} from '../../source/features/telemetry/catalog'
 import {PlaceStackCard} from '../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../source/features/map/building-picker'
@@ -68,7 +65,7 @@ import {
 	type SheetEvent,
 	type SheetState,
 } from '../../source/features/map/lib/sheet-moves'
-import {collapsedDetentFor, detentsFor, nameOf} from '../../source/features/map/lib/sheet-detents'
+import {collapsedDetentFor, detentsFor} from '../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../source/features/map/query'
 import {useRecentPlacesStore} from '../../source/features/map/store'
 import type {Building, Feature} from '../../source/features/map/types'
@@ -91,6 +88,9 @@ const LINE_TOUCH_RADIUS = 8
 /// Room kept around framed pins, and above them for the floating header.
 const PIN_MARGIN = 40
 const HEADER_CLEARANCE = 44
+/** On Android the search bar and its chips float over the map's top instead. */
+const ANDROID_HEADER_CLEARANCE = 128
+const ANDROID = Platform.OS === 'android'
 
 /// The footprints are drawn by the tileset, so this layer paints only the open
 /// place's building, tinted under its dot. It stays for every building
@@ -132,9 +132,23 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	// A card covers the picker while any place is open.
 	let covered = stack.length > 0
 	let [sheetPresented, setSheetPresented] = React.useState(true)
+	// Android's search and category chips float over the map, outside the
+	// sheet, so the screen holds what they choose and hands it to the picker.
+	let [searchText, setSearchText] = React.useState('')
+	// Raised as the floating search bar loses focus holding a query, so the
+	// picker frames the results; see `BuildingPicker`'s `searchEnds`.
+	let [searchEnds, setSearchEnds] = React.useState(0)
+	let [openedLabel, setOpenedLabel] = React.useState<MapGroupLabel | null>(null)
+	let {data: categories} = useQuery({...mapCategoriesOptions, enabled: ANDROID})
+	let groupLabels = React.useMemo(
+		() => (categories ? groupsFor(categories, campus, buildings).map((group) => group.label) : []),
+		[categories, campus, buildings],
+	)
+	let navigation = useNavigation()
 	// Back closes the card on top, one place at a time, before it leaves the
 	// map, as Android users expect of Back.
-	useBackHandler(covered, () => dispatchStack({type: 'pop', depth: stack.length - 1}))
+	let closeCard = () => dispatchStack({type: 'pop', depth: stack.length - 1})
+	useBackHandler(covered, closeCard)
 	// The sheet is presented in a window of its own, above the whole
 	// navigation stack, so a screen pushed over the map -- by a deep link or a
 	// Home Screen quick action -- would sit under it. It is presented only
@@ -302,7 +316,7 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 		if (framing?.kind === 'fit') {
 			cameraRef.current?.fitBounds(framing.bounds, {
 				padding: {
-					top: insets.top + HEADER_CLEARANCE,
+					top: insets.top + (ANDROID ? ANDROID_HEADER_CLEARANCE : HEADER_CLEARANCE),
 					bottom: sheetHeight + PIN_MARGIN,
 					left: PIN_MARGIN,
 					right: PIN_MARGIN,
@@ -381,26 +395,37 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 			{/* The map runs up under a clear header, as Maps' does: only the Back
 			    button and the About menu float over it. The title stays for the
 			    next screen's Back button, but the header draws none. */}
-			<Stack.Screen options={{title: map.title, headerTitle: '', headerTransparent: true}} />
+			<Stack.Screen
+				options={{
+					title: map.title,
+					headerTitle: '',
+					headerTransparent: true,
+					// Android's Back is in the search bar floating over the map.
+					headerShown: !ANDROID,
+				}}
+			/>
 			{/* The credits the tiles' licence requires, in place of MapLibre's own
-			    button, which would sit loose on the map beside Back. */}
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu
-					accessibilityLabel="About this map"
-					icon={process.env.EXPO_OS === 'ios' ? 'info.circle' : infoIcon}
-				>
-					{mapCredits(map).map((credit) => (
-						// The compass says the item opens a site, as Safari's own icon does.
-						<Stack.Toolbar.MenuAction
-							key={credit.url}
-							icon="safari"
-							onPress={() => openUrl(credit.url)}
-						>
-							{credit.label}
-						</Stack.Toolbar.MenuAction>
-					))}
-				</Stack.Toolbar.Menu>
-			</Stack.Toolbar>
+			    button, which would sit loose on the map beside Back. Android's are
+			    behind the search bar's info button. */}
+			{ANDROID ? null : (
+				<Stack.Toolbar placement="right">
+					<Stack.Toolbar.Menu
+						accessibilityLabel="About this map"
+						icon={process.env.EXPO_OS === 'ios' ? 'info.circle' : infoIcon}
+					>
+						{mapCredits(map).map((credit) => (
+							// The compass says the item opens a site, as Safari's own icon does.
+							<Stack.Toolbar.MenuAction
+								key={credit.url}
+								icon="safari"
+								onPress={() => openUrl(credit.url)}
+							>
+								{credit.label}
+							</Stack.Toolbar.MenuAction>
+						))}
+					</Stack.Toolbar.Menu>
+				</Stack.Toolbar>
+			)}
 			<Map
 				ref={mapRef}
 				attribution={false}
@@ -454,99 +479,115 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 
 				<MapSelectionLayer font={map.labelFont} selection={selection} />
 			</Map>
-			{/* Covers the map, and lets every touch through. The sheet is
-			    presented rather than laid out, so the Host needs no size of its
-			    own -- but the info card hosts a React Native image through
-			    RNHostView, and a zero-sized Host gives that image no bounds to
-			    draw into, so the photo came out blank. Full-bleed and
-			    `pointerEvents="none"` satisfies both: the image gets a box, and
-			    the taps that select a building still reach the map. The sheet is
-			    presented in its own window, so it stays interactive. */}
-			<Host pointerEvents="none" style={StyleSheet.absoluteFill}>
-				<BottomSheet
-					isPresented={sheetPresented && isFocused}
-					onIsPresentedChange={setSheetPresented}
-				>
+			<MapSheet
+				current={sheet.current}
+				detents={detents}
+				onDragged={(to) => dispatchSheet({type: 'dragged', to})}
+				onPresentedChange={setSheetPresented}
+				presented={sheetPresented && isFocused}
+			>
+				{/* The picker stays mounted under a card, so closing the card
+					    returns to the list as it was left: the same category, query
+					    and scroll. Hidden by opacity rather than `hidden()`, which
+					    @expo/ui applies in an if/else -- a new view identity each time
+					    it flips, and a list scrolled back to the top.
+
+					    A ZStack is as tall as its tallest child, and at the largest
+					    text size the picker's header is taller than the collapsed
+					    stop. The sheet would then centre the stack and cut off the
+					    card's header, so a covered picker takes no height -- at the
+					    collapsed stop only. Elsewhere it keeps its height: a list
+					    squeezed to nothing lays its rows out again from estimates
+					    when it returns, and where rows above wrap, the rows in view
+					    jump. Always the flexible frame: @expo/ui switches to a fixed
+					    one, and a new identity, once `height` is set. */}
+				<ZStack alignment="top">
 					<Group
 						modifiers={[
-							// The sheet's own chrome is a translucent material, and the
-							// map read straight through the list. A PlatformColor rather
-							// than the hex `presentationBackground` wants, so the sheet
-							// still follows the system appearance.
-							background(c.systemGroupedBackground),
-							presentationDetents([detents.collapsed, detents.medium, detents.large], {
-								selection: detents[sheet.current],
-								onSelectionChange: (to) => dispatchSheet({type: 'dragged', to: nameOf(to)}),
+							frame({
+								maxHeight: covered && sheet.current === 'collapsed' ? 0 : undefined,
+								alignment: 'top',
 							}),
-							presentationDragIndicator('visible'),
-							// The map behind the sheet stays live at every stop, which is
-							// the whole point of a sheet rather than a pushed screen.
-							presentationBackgroundInteraction('enabled'),
-							// Apple Maps' sheet has no dismissed state, and neither has
-							// this one: the collapsed stop is as small as it goes.
-							interactiveDismissDisabled(true),
+							opacity(covered ? 0 : 1),
+							disabled(covered),
+							accessibilityHidden(covered),
 						]}
 					>
-						{/* The picker stays mounted under a card, so closing the card
-						    returns to the list as it was left: the same category, query
-						    and scroll. Hidden by opacity rather than `hidden()`, which
-						    @expo/ui applies in an if/else -- a new view identity each time
-						    it flips, and a list scrolled back to the top.
-
-						    A ZStack is as tall as its tallest child, and at the largest
-						    text size the picker's header is taller than the collapsed
-						    stop. The sheet would then centre the stack and cut off the
-						    card's header, so a covered picker takes no height -- at the
-						    collapsed stop only. Elsewhere it keeps its height: a list
-						    squeezed to nothing lays its rows out again from estimates
-						    when it returns, and where rows above wrap, the rows in view
-						    jump. Always the flexible frame: @expo/ui switches to a fixed
-						    one, and a new identity, once `height` is set. */}
-						<ZStack alignment="top">
-							<Group
-								modifiers={[
-									frame({
-										maxHeight: covered && sheet.current === 'collapsed' ? 0 : undefined,
-										alignment: 'top',
-									}),
-									opacity(covered ? 0 : 1),
-									disabled(covered),
-									accessibilityHidden(covered),
-								]}
-							>
-								<BuildingPicker
-									campus={campus}
-									compact={sheet.current === 'collapsed'}
-									covered={covered}
-									onHeaderHeightChange={setPickerHeaderHeight}
-									onGroupOpen={makeRoomForGroup}
-									onPinsChange={setPins}
-									onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
-									onSearchFocusChange={(focused, hasText) =>
-										dispatchSheet(
-											focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
-										)
-									}
-									onSelect={(id, from) => {
-										dispatchStack({type: 'start', id})
-										dispatchSheet({type: 'row-tapped'})
-										setSearchedId(from === 'search' ? id : null)
-									}}
-								/>
-							</Group>
-							{covered ? (
-								<PlaceStackCard
-									campus={campus}
-									depth={0}
-									dispatch={dispatchStack}
-									stack={stack}
-									stop={sheet.current}
-								/>
-							) : null}
-						</ZStack>
+						<BuildingPicker
+							campus={campus}
+							compact={sheet.current === 'collapsed'}
+							covered={covered}
+							onHeaderHeightChange={setPickerHeaderHeight}
+							onGroupOpen={makeRoomForGroup}
+							onPinsChange={setPins}
+							onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
+							onSearchFocusChange={(focused, hasText) =>
+								dispatchSheet(
+									focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
+								)
+							}
+							onSelect={(id, from) => {
+								dispatchStack({type: 'start', id})
+								dispatchSheet({type: 'row-tapped'})
+								setSearchedId(from === 'search' ? id : null)
+							}}
+							{...(ANDROID
+								? {searchText, searchEnds, openedLabel, onOpenedChange: setOpenedLabel}
+								: null)}
+						/>
 					</Group>
-				</BottomSheet>
-			</Host>
+					{covered ? (
+						<PlaceStackCard
+							campus={campus}
+							depth={0}
+							dispatch={dispatchStack}
+							stack={stack}
+							stop={sheet.current}
+						/>
+					) : null}
+				</ZStack>
+			</MapSheet>
+			{sheet.current === 'large' ? null : (
+				<LocateButton
+					// The Android sheet's handle strip and the gesture bar ride above
+					// a collapsed sheet's content.
+					onLocate={(longitude, latitude) =>
+						cameraRef.current?.easeTo({
+							center: [longitude, latitude],
+							duration: CAMERA_ANIMATION_MS,
+							padding: {bottom: sheetHeight},
+							zoom: SELECTION_ZOOM,
+						})
+					}
+					sheetHeight={sheetHeight + (sheet.current === 'collapsed' ? 36 + insets.bottom : 0)}
+				/>
+			)}
+			<MapTopBar
+				credits={mapCredits(map)}
+				groups={groupLabels}
+				// The bar's Back goes the way the system's does: the card on top,
+				// then the open category, then off the map.
+				onBack={() => {
+					if (covered) {
+						closeCard()
+					} else if (openedLabel !== null) {
+						setOpenedLabel(null)
+					} else {
+						navigation.goBack()
+					}
+				}}
+				onOpen={setOpenedLabel}
+				onOpenCredit={(credit) => openUrl(credit.url)}
+				onQueryChange={setSearchText}
+				onSearchFocusChange={(focused, hasText) => {
+					if (!focused && hasText) {
+						setSearchEnds((count) => count + 1)
+					}
+					dispatchSheet(focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText})
+				}}
+				opened={openedLabel}
+				query={searchText}
+			/>
 
 			{error ? (
 				<SafeAreaView edges={['left', 'right']} style={styles.banner}>
