@@ -31,6 +31,8 @@ final class RecordFormUITests: XCTestCase {
         let missing = NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", "Phone Number or Button Link is missing", "Phone Number or Button Link is missing")
         XCTAssertTrue(window.descendants(matching: .any).matching(missing).firstMatch.waitForExistence(timeout: 10))
         attachScreenshot(of: window, named: "A new contact, with its problems")
+        // leaving it for another record does not let it through
+        window.outlines["record-list"].staticTexts["PubSafe"].click()
         openOverview(in: app)
         XCTAssertFalse(window.buttons["Submit for Review…"].isEnabled)
     }

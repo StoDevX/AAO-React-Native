@@ -197,6 +197,19 @@ export class DocumentStore {
 	async reorderList(file, listPath, keys) {
 		let {filename, doc} = await this.#parse(file)
 		let list = listPath.length === 0 ? doc.contents : doc.getIn(listPath, true)
+		let known = isSeq(list)
+			? list.items.map((_, index) => index)
+			: isMap(list)
+				? list.items.map((pair) => pair.key?.value)
+				: []
+		// a stale order would drop items, or write one twice
+		if (
+			keys.length !== known.length ||
+			new Set(keys).size !== keys.length ||
+			!keys.every((key) => known.includes(key))
+		) {
+			throw new Error(`An order of ${file} must hold every item once`)
+		}
 		if (isSeq(list)) {
 			list.items = keys.map((index) => list.items[index])
 		} else if (isMap(list)) {
@@ -212,8 +225,16 @@ export class DocumentStore {
 		return readFile(inside(this.#root, file), 'utf8')
 	}
 
-	/** Replaces `file` with `text`. */
-	async writeText(file, text) {
-		await this.#replace(inside(this.#root, file), text)
+	/**
+	 * Replaces `file` with `text`, unless it no longer holds `expected`, the
+	 * text the editor began from: an update or a revert since then is not
+	 * written over.
+	 */
+	async writeText(file, text, expected) {
+		let filename = inside(this.#root, file)
+		if (expected !== undefined && (await readFile(filename, 'utf8')) !== expected) {
+			throw new Error(`${file} changed since it was opened`)
+		}
+		await this.#replace(filename, text)
 	}
 }

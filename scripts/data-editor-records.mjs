@@ -33,27 +33,45 @@ export function slugFor(title, taken) {
 
 /**
  * The names `names` take in the order given. A folder whose every name has a
- * two-part prefix (`1-2-pubsafe.yaml`) is sectioned by the first number: its
- * sections keep the order they first appear in, and the records number from 1
- * within each. Otherwise records number from 1 in order. A name without a
- * prefix keeps its name.
+ * two-part prefix (`1-2-pubsafe.yaml`) is sectioned: its sections, by
+ * `sections` (each name's section as the list shows it) or else by the first
+ * number, take the order they first appear in, and the records number from 1
+ * within each. Otherwise records number from 1 in order, and only a one-part
+ * prefix is replaced, so a title beginning with digits keeps them. A name
+ * without a prefix keeps its name.
  */
-export function orderedNames(names) {
+export function orderedNames(names, sections = []) {
 	let sectioned = names.length > 0 && names.every((name) => PREFIX.exec(name)?.[2] !== undefined)
-	let sections = new Map()
+	let numbers = new Map()
 	let counts = new Map()
 	return names.map((name, index) => {
+		if (!sectioned) {
+			let one = /^\d+-/u.exec(name)
+			return one ? `${index + 1}-${name.slice(one[0].length)}` : name
+		}
 		let match = PREFIX.exec(name)
-		if (!match) return name
-		let rest = name.slice(match[0].length)
-		if (!sectioned) return `${index + 1}-${rest}`
-		if (!sections.has(match[1])) sections.set(match[1], sections.size + 1)
-		let section = sections.get(match[1])
+		let key = sections[index] ?? match[1]
+		if (!numbers.has(key)) numbers.set(key, numbers.size + 1)
+		let section = numbers.get(key)
 		let count = (counts.get(section) ?? 0) + 1
 		counts.set(section, count)
-		return `${section}-${count}-${rest}`
+		return `${section}-${count}-${name.slice(match[0].length)}`
 	})
 }
+
+/** Why a set's files must keep their names, when a scrape or generator names them, or null. */
+function namedElsewhere(set) {
+	if (set.scraped) return `a scrape writes ${set.title} files by name`
+	if (set.generated) return `a generator writes ${set.title} files by name`
+	return null
+}
+
+/** A record as an order names it: its file and its path in the file. */
+const recordKey = (record) => JSON.stringify([record.file, record.path])
+
+/** Whether `file` is one a scrape or generator writes, which must stay where it is. */
+const pinned = (set, file) =>
+	[...(set.scraped?.files ?? []), ...(set.generated?.files ?? [])].includes(path.basename(file))
 
 /** `value` with the dotted `field` set to `text`, as `titles.und` names a nested one. */
 function withField(value, field, text) {
@@ -138,6 +156,7 @@ export async function removeRecord(dataDir, name, {file, path: recordPath}) {
 	let set = catalog.sets[name]
 	let store = new DocumentStore(dataDir)
 	if (set.shape === 'folder') {
+		if (pinned(set, file)) throw new Error(`${path.basename(file)} stays: ${namedElsewhere(set)}`)
 		await store.remove(file)
 		return reply(dataDir, catalog, name, [])
 	}
@@ -157,9 +176,24 @@ export async function reorderRecords(dataDir, name, order) {
 	let catalog = loadCatalog(dataDir)
 	let set = catalog.sets[name]
 	let store = new DocumentStore(dataDir)
+	let reason = namedElsewhere(set)
+	if (reason) throw new Error(`${set.title} keeps its order: ${reason}`)
+	// a stale or partial order would drop records, or rename one onto another
+	let current = listRecords(dataDir, catalog, name)
+	let given = new Set(order.map(recordKey))
+	if (
+		given.size !== order.length ||
+		given.size !== current.length ||
+		!current.every((record) => given.has(recordKey(record)))
+	) {
+		throw new Error(`An order of ${set.title} must hold every record once`)
+	}
 	if (set.shape === 'folder') {
 		let names = order.map((record) => path.basename(record.file))
-		let moves = orderedNames(names)
+		let sections = order.map(
+			(record) => current.find((known) => recordKey(known) === recordKey(record))?.section ?? '',
+		)
+		let moves = orderedNames(names, sections)
 			.map((to, index) => ({from: path.join(set.path, names[index]), to: path.join(set.path, to)}))
 			.filter(({from, to}) => from !== to)
 		await store.rename(moves)

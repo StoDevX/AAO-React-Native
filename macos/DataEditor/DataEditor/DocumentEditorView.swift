@@ -9,14 +9,19 @@ struct DocumentEditorView: View {
     /// What the file held when last read or saved; the text is unsaved while it differs.
     @State private var saved: String?
     @State private var saveFailed = false
+    @State private var id = UUID()
 
-    private func save() {
-        guard let saved, text != saved else { return }
+    /// Writes what is typed, if it differs from the file, and reports whether
+    /// nothing is left unsaved. The write is refused if the file changed since
+    /// it was read, as an update or a revert changes it, and the text stays.
+    @discardableResult
+    private func save() async -> Bool {
+        guard let saved, text != saved else { return true }
         let typed = text
-        Task {
-            saveFailed = !(await model.writeText(file, typed))
-            if !saveFailed { self.saved = typed }
-        }
+        let wrote = await model.writeText(file, typed, expected: saved)
+        saveFailed = !wrote
+        if wrote { self.saved = typed }
+        return wrote
     }
 
     var body: some View {
@@ -26,9 +31,9 @@ struct DocumentEditorView: View {
                     .font(.body.monospaced())
                     .accessibilityIdentifier("document-text")
                 HStack {
-                    if saveFailed { Label("Not saved", systemImage: "exclamationmark.triangle.fill") }
+                    if saveFailed { Label("Not saved: the policy changed since you opened it", systemImage: "exclamationmark.triangle.fill") }
                     Spacer()
-                    Button("Save", action: save)
+                    Button("Save") { Task { await save() } }
                         .keyboardShortcut("s")
                         .disabled(saved == nil || text == saved)
                 }
@@ -46,7 +51,13 @@ struct DocumentEditorView: View {
             text = read
             saved = read
         }
-        // what is typed is saved when the editor goes, as a text field's draft is
-        .onDisappear(perform: save)
+        // what is typed is saved before Submit, quitting or choosing elsewhere, as a text field's draft is
+        .onAppear { model.registerDraftSaver(id) { await save() } }
+        .onChange(of: text != saved) { _, unsaved in model.noteDraft(id, unsaved: unsaved && saved != nil) }
+        .onDisappear {
+            Task { await save() }
+            model.noteDraft(id, unsaved: false)
+            model.unregisterDraftSaver(id)
+        }
     }
 }

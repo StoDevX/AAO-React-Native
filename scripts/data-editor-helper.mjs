@@ -58,9 +58,16 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 		create: ({set, title, section}) => createRecord(dataDir, set, {title, section}),
 		remove: ({set, file, path: recordPath}) => removeRecord(dataDir, set, {file, path: recordPath}),
 		reorder: ({set, order}) => reorderRecords(dataDir, set, order),
+		// every changed file's problems, so Submit waits for a record the contributor has left
+		check: ({files}) => files.flatMap((file) => validate(dataDir, file)),
+		// a list's items in a new order, moved as nodes so their comments go with them
+		move: async ({file, path: listPath, order}) => {
+			await store.reorderList(file, listPath, order)
+			return {value: await store.load(file), problems: validate(dataDir, file)}
+		},
 		readText: ({file}) => store.readText(file),
-		writeText: async ({file, text}) => {
-			await store.writeText(file, text)
+		writeText: async ({file, text, expected}) => {
+			await store.writeText(file, text, expected)
 		},
 	}
 }

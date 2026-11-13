@@ -35,6 +35,20 @@ extension AppModel {
         return String(format: "%04d-%02d-%02dT00:00:00Z", day.year!, day.month!, day.day!)
     }
 
+    /// Whether `file` must keep its name: a scrape or generator writes it by
+    /// name, so renaming or removing it would bring back a second copy at the next run.
+    static func keepsItsName(set: DataSet, file: String) -> Bool {
+        let name = (file as NSString).lastPathComponent
+        return (set.scraped?.files ?? []).contains(name) || (set.generated?.files ?? []).contains(name)
+    }
+
+    /// Whether the contributor may put `set`'s records in another order: a set
+    /// ordered by its file names or list, none of whose files are named elsewhere.
+    static func reorders(_ set: DataSet) -> Bool {
+        guard set.scraped == nil, set.generated == nil else { return false }
+        return set.ordered && set.shape == .folder || set.shape == .list
+    }
+
     /// Whether `file` is data the helper reads, rather than a prose document edited as text.
     static func loadsAsData(_ file: String, catalog: DataSetCatalog?) -> Bool {
         guard let set = catalog?.set(for: file) else { return true }

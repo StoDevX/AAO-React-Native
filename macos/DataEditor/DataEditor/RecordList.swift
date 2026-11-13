@@ -23,7 +23,7 @@ struct RecordList: View {
 
     /// Whether the order of the set's records is the contributor's to change.
     private var reorders: Bool {
-        changesRecords && (set?.ordered == true || set?.shape == .list)
+        changesRecords && set.map(AppModel.reorders) == true
     }
 
     /// The whole set's order once `section`'s records move as `List` asks.
@@ -72,7 +72,7 @@ struct RecordList: View {
             }
             .tag(record.ref)
             .contextMenu {
-                if changesRecords, record.editable {
+                if changesRecords, record.editable, let set, !AppModel.keepsItsName(set: set, file: record.ref.file) {
                     Button("Delete \(record.title)…", role: .destructive) { removing = record }
                 }
             }
@@ -98,7 +98,8 @@ struct RecordList: View {
         // tells Current changes' window from a pull request's, whose titles follow the record chosen
         .accessibilityIdentifier(changeset == .current ? "record-list" : "pull-request-record-list")
         .onDeleteCommand {
-            guard changesRecords, let selection, let record = records.first(where: { $0.ref == selection }), record.editable else { return }
+            guard changesRecords, let set, let selection, let record = records.first(where: { $0.ref == selection }), record.editable,
+                  !AppModel.keepsItsName(set: set, file: record.ref.file) else { return }
             removing = record
         }
         if changesRecords, let set {

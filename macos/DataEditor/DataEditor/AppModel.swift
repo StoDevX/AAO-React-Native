@@ -52,6 +52,16 @@ final class AppModel {
     private(set) var catalog: DataSetCatalog?
     /// Each data set's records, by set, once the record column has listed it.
     private(set) var records: [String: [RecordSummary]] = [:]
+    /// What is wrong in every changed file, not only the open one: a schema
+    /// set's check covers one file, and Submit waits for each of them.
+    private(set) var changedProblems: [Problem] = []
+
+    /// Checks every changed file afresh.
+    func checkChangedFiles() async {
+        guard let helper else { return }
+        changedProblems = (try? await helper.check(files: changedFiles)) ?? changedProblems
+    }
+
     /// The data set the record column lists: Hours until another is chosen.
     private(set) var chosenSet = "building-hours"
     /// What a UI test asked the launch to open in Current changes, until it is opened.
@@ -212,6 +222,7 @@ final class AppModel {
             calendar = try await helper.calendar()
             catalog = try await helper.datasets()
             records[chosenSet] = try await helper.records(set: chosenSet).records
+            changedProblems = (try? await helper.check(files: try workspace.changedFiles())) ?? []
             changedFiles = try workspace.changedFiles()
             conflicts = workspace.conflicts
             phase = .ready
@@ -407,6 +418,7 @@ final class AppModel {
         }
         // an edit may rename a record, as a contact's title does
         if let set = catalog?.set(for: file), records[set] != nil { await loadRecords(set) }
+        await checkChangedFiles()
         if edited.problems.isEmpty {
             await builds.schedule { await self.rebuild() }
         }
@@ -545,7 +557,7 @@ final class AppModel {
     /// What Current changes' Overview shows, and what its list and the Changesets window mark.
     var overviewParts: OverviewParts {
         OverviewParts.make(history: submissions, newerCommit: newerCommit, conflicts: conflicts, changedFiles: changedFiles,
-                           checkProblems: problems, buildProblems: buildProblems, hasBuilt: hasBuilt)
+                           checkProblems: problems + changedProblems, buildProblems: buildProblems, hasBuilt: hasBuilt)
     }
 
     func revert(_ file: String) async {
@@ -762,14 +774,15 @@ final class AppModel {
     func readText(_ file: String) async -> String? { try? await helper?.readText(file) }
 
     /// Replaces a document's text, then refreshes what follows from a changed file.
-    func writeText(_ file: String, _ text: String) async -> Bool {
+    func writeText(_ file: String, _ text: String, expected: String) async -> Bool {
         guard !updating, !sending, let helper, !isConflicted(file) else { return false }
         do {
-            try await helper.writeText(file, text)
+            try await helper.writeText(file, text, expected: expected)
         } catch {
             return false
         }
         changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        await checkChangedFiles()
         await builds.schedule { await self.rebuild() }
         return true
     }
@@ -805,6 +818,7 @@ final class AppModel {
         let before = records[set] ?? []
         records[set] = reply.records
         changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        await checkChangedFiles()
         if let created {
             item = .record(set: set, created)
             selection = created.file
@@ -832,6 +846,21 @@ final class AppModel {
         guard mayChangeRecords, let helper, await mayChoose(),
               let reply = try? await helper.remove(set: set, record: ref) else { return }
         await took(reply, in: set)
+    }
+
+    /// Puts the items of the list at `path` in `file` in `order`, moving them
+    /// with their comments, as a form's Move Up and Move Down do.
+    func moveItems(in file: String, path: [PathKey], order: [PathKey]) async {
+        guard mayChangeRecords, let helper, !isConflicted(file),
+              let moved = try? await edits.run({ try await helper.move(file, path: path, order: order) }) else { return }
+        changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        if file == selection {
+            value = moved.value
+            document = HoursDocument(value: moved.value)
+            problems = moved.problems
+        }
+        await checkChangedFiles()
+        await builds.schedule { await self.rebuild() }
     }
 
     /// Puts `set`'s records in the order of `order`.
@@ -921,6 +950,7 @@ final class AppModel {
         changedFiles = (try? workspace.changedFiles()) ?? []
         calendar = (try? await helper?.calendar()) ?? calendar
         for set in records.keys { await loadRecords(set) }
+        await checkChangedFiles()
         if let selection { await select(selection) }
         await rebuild()
     }

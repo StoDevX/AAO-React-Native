@@ -164,7 +164,9 @@ private struct CreateParams: Encodable, Sendable { let set: String; let title: S
 private struct RecordParams: Encodable, Sendable { let set: String; let file: String; let path: [PathKey] }
 private struct ReorderParams: Encodable, Sendable { let set: String; let order: [RecordRef] }
 private struct FileOnlyParams: Encodable, Sendable { let file: String }
-private struct WriteTextParams: Encodable, Sendable { let file: String; let text: String }
+private struct WriteTextParams: Encodable, Sendable { let file: String; let text: String; let expected: String }
+private struct CheckParams: Encodable, Sendable { let files: [String] }
+private struct MoveParams: Encodable, Sendable { let file: String; let path: [PathKey]; let order: [PathKey] }
 
 extension HelperClient {
     public func datasets() async throws -> DataSetCatalog { try await call("datasets", [String: String]()) }
@@ -181,7 +183,14 @@ extension HelperClient {
         try await call("reorder", ReorderParams(set: set, order: order))
     }
     public func readText(_ file: String) async throws -> String { try await call("readText", FileOnlyParams(file: file)) }
-    public func writeText(_ file: String, _ text: String) async throws {
-        let _: JSONValue = try await call("writeText", WriteTextParams(file: file, text: text))
+    /// Replaces a document with `text`, unless it no longer holds `expected`, the text the editor began from.
+    public func writeText(_ file: String, _ text: String, expected: String) async throws {
+        let _: JSONValue = try await call("writeText", WriteTextParams(file: file, text: text, expected: expected))
+    }
+    /// Every problem in `files`, which Submit waits on whichever record is open.
+    public func check(files: [String]) async throws -> [Problem] { try await call("check", CheckParams(files: files)) }
+    /// Puts the items of the list at `path` in `file` in `order`, their indexes or keys, moving them with their comments.
+    public func move(_ file: String, path: [PathKey], order: [PathKey]) async throws -> Loaded {
+        try await call("move", MoveParams(file: file, path: path, order: order))
     }
 }

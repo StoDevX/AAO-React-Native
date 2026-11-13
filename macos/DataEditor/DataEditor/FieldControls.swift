@@ -157,10 +157,11 @@ private struct ListField: View {
 
     private func apply(_ ops: [EditOp]) { Task { await model.apply(ops, to: file) } }
 
-    private func moved(_ from: Int, by offset: Int) -> [EditOp] {
-        var reordered = items
-        reordered.swapAt(from, from + offset)
-        return [.set(path, .array(reordered))]
+    /// Swaps item `from` with its neighbour, moving the items themselves so their comments go with them.
+    private func move(_ from: Int, by offset: Int) {
+        var order = Array(items.indices)
+        order.swapAt(from, from + offset)
+        Task { await model.moveItems(in: file, path: path, order: order.map { .index($0) }) }
     }
 
     var body: some View {
@@ -177,9 +178,9 @@ private struct ListField: View {
                                     required: true, file: file, recordPath: recordPath)
                     }
                     Spacer()
-                    Button("Move Up", systemImage: "arrow.up") { apply(moved(index, by: -1)) }
+                    Button("Move Up", systemImage: "arrow.up") { move(index, by: -1) }
                         .labelStyle(.iconOnly).disabled(index == 0)
-                    Button("Move Down", systemImage: "arrow.down") { apply(moved(index, by: 1)) }
+                    Button("Move Down", systemImage: "arrow.down") { move(index, by: 1) }
                         .labelStyle(.iconOnly).disabled(index == items.count - 1)
                     Button("Remove \(itemTitle) \(index + 1)", systemImage: "minus.circle", role: .destructive) {
                         if !isRepeatClick() { apply([.delete(itemPath)]) }
