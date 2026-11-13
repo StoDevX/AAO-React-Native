@@ -724,16 +724,25 @@ jobs:
           # and turns them on for a debug run.
           cat > "$RUNNER_TEMP/run-uitests.sh" <<'SCRIPT'
           set -o pipefail
-          NSUnbufferedIO=YES xcodebuild test-without-building \
-            -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
-            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
-            $MATRIX_TESTS \
-            -test-iterations 15 \
-            -test-timeouts-enabled YES \
-            -default-test-execution-time-allowance 120 \
-            -collect-test-diagnostics ${{ runner.debug == '1' && 'on-failure' || 'never' }} \
-            -resultBundlePath uitest-results \
-            2>&1 | xcbeautify --renderer github-actions
+          # EXPERIMENT (do not merge): separate invocations, so a test the time
+          # allowance stops does not end the run.
+          failed=0
+          for i in 1 2 3 4 5 6 7 8; do
+            status=0
+            NSUnbufferedIO=YES xcodebuild test-without-building \
+              -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
+              -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+              $MATRIX_TESTS \
+              -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 120 \
+              -collect-test-diagnostics never \
+              -resultBundlePath "uitest-results-$i" \
+              2>&1 | xcbeautify --renderer github-actions || status=$?
+            echo "EXPERIMENT iteration $i exit=$status at $(date -u +%FT%TZ)"
+            [ "$status" -eq 0 ] || failed=1
+          done
+          mv uitest-results-1.xcresult uitest-results.xcresult
+          exit "$failed"
           SCRIPT
           script -q /dev/null bash "$RUNNER_TEMP/run-uitests.sh" < /dev/null
 
