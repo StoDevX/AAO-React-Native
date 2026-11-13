@@ -12,5 +12,5 @@ Pod::Spec.new do |s|
 
   s.dependency 'ExpoModulesCore'
 
-  s.source_files = '**/*.swift'
+  s.source_files = '**/*.{swift,m}' # EXPERIMENT: AnimationProbe.m
 end

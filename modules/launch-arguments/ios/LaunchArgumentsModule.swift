@@ -11,7 +11,6 @@ public class LaunchArgumentsModule: Module {
 		Events("onResetRequested")
 
 		OnCreate {
-			AnimationProbe.start() // EXPERIMENT (do not merge)
 			self.resetChannel = UITestResetChannel.open { [weak self] request in
 				self?.sendEvent("onResetRequested", ["id": request.id, "url": request.url])
 			}
