@@ -13,7 +13,7 @@ on:
   # Without this the workflow could only be exercised by merging it.
   pull_request:
     paths:
-      - scripts/bonapp-overrides.yaml
+      - data/_scrapes/bonapp-overrides.yaml
       - scripts/bonapp-schedule.mjs
       - scripts/html-text.mjs
       - scripts/scrape-bonapp.mjs

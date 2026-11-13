@@ -367,7 +367,7 @@ The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been li
 
 `data/building-hours/1-3-stav.yaml` and `1-1-cage.yaml` are maintained by a
 weekly scrape of Bon Appétit's café pages, which opens a pull request when they
-fall behind. Edit `scripts/bonapp-overrides.yaml` rather than those two files —
+fall behind. Edit `data/_scrapes/bonapp-overrides.yaml` rather than those two files —
 a hand edit to a `schedule:` block in them is reverted by the next run.
 
 ```bash
