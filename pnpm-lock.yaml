@@ -53,7 +53,7 @@ overrides:
 patchedDependencies:
   '@expo/ui@58.0.20': 9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf
   react-native-change-icon@5.0.0: 5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306
-  react-native-screens@4.30.0: 3d14a51a16657fed86c72a486b2f703ed2ca34688d44a0a472d038c84dc96451
+  react-native-screens@4.30.0: b632503ad258f9b744b36cd7b6441dd944fafb8f685af6e0b1a5a1b886d7138e
   react-native-webview@14.0.1: 0113b3bcb1b9b15013f0d42cd486bc3c1e21e03161f55325e7819bab770e4caa
   react-native@0.88.0: 5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077
 
@@ -363,7 +363,7 @@ importers:
         version: 5.10.1(react-native@0.88.0)(react@19.3.0)
       react-native-screens:
         specifier: 4.30.0
-        version: 4.30.0(patch_hash=3d14a51a16657fed86c72a486b2f703ed2ca34688d44a0a472d038c84dc96451)(react-native@0.88.0)(react@19.3.0)
+        version: 4.30.0(patch_hash=b632503ad258f9b744b36cd7b6441dd944fafb8f685af6e0b1a5a1b886d7138e)(react-native@0.88.0)(react@19.3.0)
       react-native-url-polyfill:
         specifier: 4.0.0
         version: 4.0.0(react-native@0.88.0)
@@ -8931,7 +8931,7 @@ snapshots:
       react-native: 0.88.0(patch_hash=5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077)(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.3.0)(supports-color@8.1.1)
       react-native-drawer-layout: 4.2.12(react-native-gesture-handler@3.3.0)(react-native-reanimated@4.7.1)(react-native@0.88.0)(react@19.3.0)
       react-native-safe-area-context: 5.10.1(react-native@0.88.0)(react@19.3.0)
-      react-native-screens: 4.30.0(patch_hash=3d14a51a16657fed86c72a486b2f703ed2ca34688d44a0a472d038c84dc96451)(react-native@0.88.0)(react@19.3.0)
+      react-native-screens: 4.30.0(patch_hash=b632503ad258f9b744b36cd7b6441dd944fafb8f685af6e0b1a5a1b886d7138e)(react-native@0.88.0)(react@19.3.0)
       server-only: 0.0.1
       sf-symbols-typescript: 2.2.0
       standard-navigation: 0.0.5
@@ -10262,7 +10262,7 @@ snapshots:
       react: 19.3.0
       react-native: 0.88.0(patch_hash=5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077)(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.3.0)(supports-color@8.1.1)
 
-  react-native-screens@4.30.0(patch_hash=3d14a51a16657fed86c72a486b2f703ed2ca34688d44a0a472d038c84dc96451)(react-native@0.88.0)(react@19.3.0):
+  react-native-screens@4.30.0(patch_hash=b632503ad258f9b744b36cd7b6441dd944fafb8f685af6e0b1a5a1b886d7138e)(react-native@0.88.0)(react@19.3.0):
     dependencies:
       react: 19.3.0
       react-freeze: 1.0.4(react@19.3.0)
