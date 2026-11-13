@@ -55,7 +55,7 @@ These patterns are especially important in this codebase:
 - **Offline:** Handle network unavailability gracefully — use cached data as fallback
 - **Performance:** Minimize bridge traffic; use `requestIdleCallback()` for heavy work
 - **Memory:** Clean up subscriptions/listeners in `useEffect` cleanup functions
-- **Platform testing:** Test on iOS — verify platform-specific UI patterns. Android has no emulator in cloud sessions; the Android workflow screenshots every route on an emulator and pushes them to the `android-screenshots` branch
+- **Platform testing:** Test on iOS — verify platform-specific UI patterns. Android has no emulator in cloud sessions; the Android workflow screenshots every route on an emulator and uploads them as the `android-screenshots` artifact of the run
 
 ## Testing
 

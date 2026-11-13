@@ -78,10 +78,6 @@ jobs:
     needs: android-build
     runs-on: ubuntu-26.04
     timeout-minutes: 45
-    permissions:
-      # Pushes the screenshots to the android-screenshots branch, where they
-      # can be read without downloading an artifact.
-      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -118,33 +114,3 @@ jobs:
           name: android-screenshots
           path: shots
           retention-days: 14
-
-      - name: Publish the screenshots to a branch
-        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SOURCE_REF: ${{ github.head_ref || github.ref_name }}
-          REPOSITORY: ${{ github.repository }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        # One commit per run on an orphan branch, each in a directory named for
-        # the branch it screenshots, so a run never touches the source tree.
-        run: |
-          set -euo pipefail
-          test -d shots || exit 0
-          dir="${SOURCE_REF//\//-}"
-          git init -q publish
-          cd publish
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          remote="https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git"
-          if git fetch -q --depth 1 "$remote" android-screenshots; then
-            git checkout -q FETCH_HEAD
-          else
-            git checkout -q --orphan android-screenshots
-          fi
-          rm -rf "$dir"
-          cp -r ../shots "$dir"
-          echo "$RUN_URL" >"$dir/run.txt"
-          git add -A
-          git commit -q -m "Screenshots for $SOURCE_REF at ${GITHUB_SHA::7}"
-          git push -q "$remote" HEAD:refs/heads/android-screenshots
