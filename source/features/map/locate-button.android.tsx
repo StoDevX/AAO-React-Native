@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {PermissionsAndroid, StyleSheet, View} from 'react-native'
 import {FloatingActionButton, Host, Icon} from '@expo/ui/jetpack-compose'
 import {LocationManager} from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
@@ -20,8 +20,7 @@ const MARGIN = 16
  */
 export function LocateButton({sheetHeight, onLocate}: LocateButtonProps): React.ReactNode {
 	let locate = async () => {
-		let allowed = await LocationManager.requestPermissions()
-		if (!allowed) {
+		if (!(await requestLocation())) {
 			return
 		}
 		let position = await LocationManager.getCurrentPosition()
@@ -46,6 +45,21 @@ export function LocateButton({sheetHeight, onLocate}: LocateButtonProps): React.
 			</Host>
 		</View>
 	)
+}
+
+/**
+ * Asks for location, and says whether any was granted. Android 12 and later
+ * let the reader choose Approximate, which grants coarse location alone, and
+ * that is enough to find someone on a campus map. MapLibre's own
+ * `requestPermissions` counts only a grant of both as a yes.
+ */
+async function requestLocation(): Promise<boolean> {
+	let {ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION} = PermissionsAndroid.PERMISSIONS
+	let result = await PermissionsAndroid.requestMultiple([
+		ACCESS_FINE_LOCATION,
+		ACCESS_COARSE_LOCATION,
+	])
+	return Object.values(result).some((answer) => answer === PermissionsAndroid.RESULTS.GRANTED)
 }
 
 const styles = StyleSheet.create({

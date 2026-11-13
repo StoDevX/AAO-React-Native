@@ -137,6 +137,10 @@ type Props = {
 	/// field in the sheet: when set, this is what has been typed there, and
 	/// the picker draws no field of its own.
 	searchText?: string
+	/// With `searchText`: a count the floating bar's owner raises each time
+	/// that bar loses focus holding a query. Each rise frames the search's
+	/// results, as ending a search in the picker's own field does.
+	searchEnds?: number
 	/// Android's map opens a group from a row of chips over the map, not from
 	/// a grid in the sheet: when `onOpenedChange` is set, this is the open
 	/// group (null for none), and the picker draws no grid -- every place is
@@ -208,6 +212,7 @@ function PickerContents({
 	onGroupOpen,
 	covered,
 	searchText,
+	searchEnds = 0,
 	openedLabel = null,
 	onOpenedChange,
 }: Props): React.ReactNode {
@@ -281,6 +286,11 @@ function PickerContents({
 	// so pressing Search inside the debounce frames what was typed.
 	let [frameKey, setFrameKey] = React.useState(0)
 	let [searchEnded, setSearchEnded] = React.useState(false)
+	let [seenSearchEnds, setSeenSearchEnds] = React.useState(searchEnds)
+	if (searchEnds !== seenSearchEnds) {
+		setSeenSearchEnds(searchEnds)
+		setSearchEnded(true)
+	}
 	if (searchEnded && query === typedQuery.trim()) {
 		setSearchEnded(false)
 		setFrameKey((key) => key + 1)

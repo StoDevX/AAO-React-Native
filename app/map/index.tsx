@@ -135,6 +135,9 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	// Android's search and category chips float over the map, outside the
 	// sheet, so the screen holds what they choose and hands it to the picker.
 	let [searchText, setSearchText] = React.useState('')
+	// Raised as the floating search bar loses focus holding a query, so the
+	// picker frames the results; see `BuildingPicker`'s `searchEnds`.
+	let [searchEnds, setSearchEnds] = React.useState(0)
 	let [openedLabel, setOpenedLabel] = React.useState<MapGroupLabel | null>(null)
 	let {data: categories} = useQuery({...mapCategoriesOptions, enabled: ANDROID})
 	let groupLabels = React.useMemo(
@@ -144,7 +147,8 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	let navigation = useNavigation()
 	// Back closes the card on top, one place at a time, before it leaves the
 	// map, as Android users expect of Back.
-	useBackHandler(covered, () => dispatchStack({type: 'pop', depth: stack.length - 1}))
+	let closeCard = () => dispatchStack({type: 'pop', depth: stack.length - 1})
+	useBackHandler(covered, closeCard)
 	// The sheet is presented in a window of its own, above the whole
 	// navigation stack, so a screen pushed over the map -- by a deep link or a
 	// Home Screen quick action -- would sit under it. It is presented only
@@ -527,7 +531,9 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 								dispatchSheet({type: 'row-tapped'})
 								setSearchedId(from === 'search' ? id : null)
 							}}
-							{...(ANDROID ? {searchText, openedLabel, onOpenedChange: setOpenedLabel} : null)}
+							{...(ANDROID
+								? {searchText, searchEnds, openedLabel, onOpenedChange: setOpenedLabel}
+								: null)}
 						/>
 					</Group>
 					{covered ? (
@@ -559,13 +565,26 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 			<MapTopBar
 				credits={mapCredits(map)}
 				groups={groupLabels}
-				onBack={() => navigation.goBack()}
+				// The bar's Back goes the way the system's does: the card on top,
+				// then the open category, then off the map.
+				onBack={() => {
+					if (covered) {
+						closeCard()
+					} else if (openedLabel !== null) {
+						setOpenedLabel(null)
+					} else {
+						navigation.goBack()
+					}
+				}}
 				onOpen={setOpenedLabel}
 				onOpenCredit={(credit) => openUrl(credit.url)}
 				onQueryChange={setSearchText}
-				onSearchFocusChange={(focused, hasText) =>
+				onSearchFocusChange={(focused, hasText) => {
+					if (!focused && hasText) {
+						setSearchEnds((count) => count + 1)
+					}
 					dispatchSheet(focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText})
-				}
+				}}
 				opened={openedLabel}
 				query={searchText}
 			/>
