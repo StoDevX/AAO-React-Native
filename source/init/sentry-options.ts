@@ -3,7 +3,7 @@ import type {ReactNativeOptions} from '@sentry/react-native'
 import {ANONYMOUS_MARKER} from '../features/telemetry/catalog'
 import {scrubBreadcrumb, scrubEvent, scrubSpan} from './scrub'
 
-/** What ties a log to a device or a trace. Removed from anonymous logs, with the marker. */
+/** What ties a log or metric to a device or a trace. Removed from anonymous ones, with the marker. */
 const LINKING_ATTRIBUTES = [
 	'user.id',
 	'user.email',
@@ -12,16 +12,16 @@ const LINKING_ATTRIBUTES = [
 	ANONYMOUS_MARKER,
 ]
 
-/** Strips the device ID and span link from a log `track()` marked anonymous; passes others through. */
-function stripAnonymous<T extends {attributes?: Record<string, unknown>}>(log: T): T {
-	if (log.attributes?.[ANONYMOUS_MARKER] !== true) {
-		return log
+/** Strips the device ID and span link from a log or metric `track()` marked anonymous; passes others through. */
+function stripAnonymous<T extends {attributes?: Record<string, unknown>}>(item: T): T {
+	if (item.attributes?.[ANONYMOUS_MARKER] !== true) {
+		return item
 	}
-	let attributes = {...log.attributes}
+	let attributes = {...item.attributes}
 	for (let key of LINKING_ATTRIBUTES) {
 		delete attributes[key]
 	}
-	return {...log, attributes}
+	return {...item, attributes}
 }
 
 type Gates = {
@@ -74,7 +74,10 @@ export function privacyOptions({
 			return kept && scrubEvent(kept)
 		},
 		beforeSendTransaction: unlessOptedOut,
-		beforeSendMetric: unlessOptedOut,
+		beforeSendMetric: (metric) => {
+			let kept = unlessOptedOut(metric)
+			return kept && stripAnonymous(kept)
+		},
 		beforeSendLog: (log) => {
 			let kept = unlessOptedOut(log)
 			return kept && stripAnonymous(kept)
