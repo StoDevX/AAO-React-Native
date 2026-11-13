@@ -6,7 +6,11 @@ import {formatCompactTime} from '@frogpond/time-format'
 import {palette} from './palette'
 import {scheduleNote, type ScheduleStatus} from './schedule-note'
 
-const ScheduleRow = React.memo(function ScheduleRow({show}: {show: EventType}): React.ReactNode {
+export const ScheduleRow = React.memo(function ScheduleRow({
+	show,
+}: {
+	show: EventType
+}): React.ReactNode {
 	return (
 		<View style={styles.row}>
 			<Text style={[styles.time, palette.styles.secondary]}>
