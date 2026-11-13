@@ -134,12 +134,45 @@ jobs:
             | sed 's/^/fingerprint=/' \
             | tee -a "$GITHUB_OUTPUT"
 
+      # package.json holds native build settings outside any dependency:
+      # autolinking reads its "expo" key (ios.exclude there decides which pods
+      # are linked into the app at all), and react-native-enriched-markdown's
+      # podspec reads "enriched-markdown" to choose what it compiles. Other
+      # packages may read keys of their own, so fingerprint all of it but
+      # "version", which only stamps CFBundleShortVersionString and changes on
+      # every release. A dependency change rewrites pnpm-lock.yaml anyway.
+      - name: Fingerprint package.json's native settings
+        id: package-json
+        run: |
+          set -o pipefail
+          jq -S 'del(.version)' package.json \
+            | sha256sum \
+            | cut -d ' ' -f 1 \
+            | sed 's/^/fingerprint=/' \
+            | tee -a "$GITHUB_OUTPUT"
+
       # pnpm-lock.yaml belongs in this hash even though it doesn't live under
       # ios/: patched dependencies (patches/*.patch, applied by pnpm itself)
       # rewrite node_modules sources that CocoaPods copies into ios/Pods at
       # build time, so they change the compiled binary without touching any
       # tracked iOS file, and pnpm-lock.yaml records each patch's checksum.
       # Omitting it meant a patch-only change reused a cache built without it.
+      #
+      # Our own native code doesn't come through pnpm, so it needs its own
+      # entries: the Swift and podspecs under modules/*/ios/ that autolinking
+      # compiles into the app, and the expo-module.config.json that decides
+      # whether it links a module at all (react-native.config.js, which
+      # autolinking also reads, can leave a package's pods out). Without them
+      # a Swift-only change in modules/ hit the cache, skipped ios-build, and
+      # the UI tests ran the previous binary. (dir/**/x, not dir/**x -- see
+      # the jsbundle cache.)
+      # The rest is what prebuild reads besides app.config.ts and plugins/:
+      # assets/ holds the app icons and symbol sets the plugins copy into the
+      # project (assets/android/ only feeds the Android build), and
+      # Gemfile.lock pins the CocoaPods that generates the Pods project.
+      # scripts/pr-report/app-size-paths.mjs keeps the same list for the size
+      # report; a path that belongs in one belongs in the other.
+      #
       # Restores rather than merely looking up, so that a hit can be republished
       # as this run's artifact below. On a miss there is nothing to download and
       # this costs nothing.
@@ -148,9 +181,9 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/package=${{ steps.package-json.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'react-native.config.js', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/package=${{ steps.package-json.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'react-native.config.js', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
 
       # ios-build is skipped on a hit, so nothing else would publish an
       # artifact for the shards and they would be back to restoring a cache
