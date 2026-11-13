@@ -1,21 +1,15 @@
 import * as React from 'react'
 import {Platform} from 'react-native'
 import {Stack} from 'expo-router'
-import {Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
-import {
-	accessibilityLabel,
-	foregroundStyle,
-	menuActionDismissBehavior,
-	menuOrder,
-} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import filterListIcon from '@expo/material-symbols/filter_list.xml'
 
 /**
  * Category picker for one feed: All Stories, then each category. Deselecting a
  * category shows every story.
  *
- * `menuOrder('fixed')` keeps the rows in the order they are written here; a
- * menu opened from the bottom bar otherwise draws its contents bottom to top.
+ * Every entry keeps the menu up (`unstable_keepPresented`), as the filters
+ * elsewhere do. The menu is tinted while it narrows the feed.
  */
 type Props = {
 	/** The feed's categories, in the order the menu lists them */
@@ -24,27 +18,15 @@ type Props = {
 	onSelect: (category: string | null) => void
 }
 
-const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
-
 /**
  * Where the filter sits: iOS's bottom toolbar, or on Android the top app
  * bar's trailing actions, where Material puts a screen's actions. Android has
  * no bottom toolbar, and one floated over the list hides its last row.
  */
 const ON_ANDROID = Platform.OS === 'android'
-const LABEL = accessibilityLabel('News filter')
+const LABEL = 'News filter'
 
 export function NewsPicker({categories, selectedCategory, onSelect}: Props): React.ReactNode {
-	let isActive = selectedCategory !== null
-	// Keep the modifier list structurally identical every render — only the
-	// colour value changes. Swapping modifier types/count rebuilds the native
-	// Menu and closes it mid-interaction.
-	let menuModifiers = [
-		LABEL,
-		menuOrder('fixed'),
-		foregroundStyle(isActive ? c.systemBlue : c.label),
-	]
-
 	// Tapping the selected category deselects it → shows every story
 	let handleToggle = (category: string) => {
 		onSelect(category === selectedCategory ? null : category)
@@ -53,27 +35,29 @@ export function NewsPicker({categories, selectedCategory, onSelect}: Props): Rea
 	return (
 		<Stack.Toolbar placement={ON_ANDROID ? 'right' : 'bottom'}>
 			{ON_ANDROID ? null : <Stack.Toolbar.Spacer />}
-			<Stack.Toolbar.View>
-				<Host matchContents={true}>
-					<Menu label={<Image systemName="line.3.horizontal.decrease" />} modifiers={menuModifiers}>
-						<Section modifiers={STAYS_OPEN}>
-							<Toggle
-								isOn={selectedCategory === null}
-								label="All Stories"
-								onIsOnChange={() => onSelect(null)}
-							/>
-							{categories.map((category) => (
-								<Toggle
-									isOn={selectedCategory === category}
-									key={category}
-									label={category}
-									onIsOnChange={() => handleToggle(category)}
-								/>
-							))}
-						</Section>
-					</Menu>
-				</Host>
-			</Stack.Toolbar.View>
+			<Stack.Toolbar.Menu
+				accessibilityLabel={LABEL}
+				icon={process.env.EXPO_OS === 'ios' ? 'line.3.horizontal.decrease' : filterListIcon}
+				tintColor={selectedCategory !== null ? c.systemBlue : undefined}
+			>
+				<Stack.Toolbar.MenuAction
+					isOn={selectedCategory === null}
+					onPress={() => onSelect(null)}
+					unstable_keepPresented={true}
+				>
+					All Stories
+				</Stack.Toolbar.MenuAction>
+				{categories.map((category) => (
+					<Stack.Toolbar.MenuAction
+						key={category}
+						isOn={selectedCategory === category}
+						onPress={() => handleToggle(category)}
+						unstable_keepPresented={true}
+					>
+						{category}
+					</Stack.Toolbar.MenuAction>
+				))}
+			</Stack.Toolbar.Menu>
 		</Stack.Toolbar>
 	)
 }

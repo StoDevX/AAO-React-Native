@@ -1,6 +1,11 @@
+import type {SymbolViewProps} from 'expo-symbols'
+
 import {track} from '../../telemetry/track'
 import type {Station} from './stations'
 import {radioControl, useRadioStore, useStationPlayback} from './store'
+
+const PLAY_ICON = {ios: 'play.fill', android: 'play_arrow'} as const
+const PAUSE_ICON = {ios: 'pause.fill', android: 'pause'} as const
 
 /**
  * The station's play, pause or stop control: what to call it, which glyph it
@@ -14,7 +19,7 @@ export function useRadioControl(
 	surface: 'bar' | 'sheet',
 ): {
 	label: string
-	icon: 'play.fill' | 'pause.fill'
+	icon: SymbolViewProps['name']
 	press: () => void
 } {
 	let {playState, error} = useStationPlayback(station.id)
@@ -25,7 +30,7 @@ export function useRadioControl(
 	let press = action === 'play' ? () => play(station.id) : action === 'pause' ? pause : stop
 	return {
 		label: `${action === 'play' ? 'Play' : action === 'pause' ? 'Pause' : 'Stop'} ${station.stationName}`,
-		icon: action === 'play' ? 'play.fill' : 'pause.fill',
+		icon: action === 'play' ? PLAY_ICON : PAUSE_ICON,
 		press: () => {
 			track({name: 'radio.control', attributes: {action, station: station.id, surface}})
 			press()

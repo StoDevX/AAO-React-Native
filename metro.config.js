@@ -60,11 +60,11 @@ const config = {
 				return {type: 'sourceFile', filePath: ANDROID_UI}
 			}
 			let resolution = upstreamResolve(context, moduleName, platform)
-			// Expo Router's Android toolbar draws an item only from an image
-			// source, and the screens name SF Symbols, so every icon button and
-			// menu in a top app bar went missing. Its button and menu modules
-			// resolve to wrappers that hand them the Material Symbol instead,
-			// except from the wrappers themselves, which import the originals.
+			// Expo Router's Android toolbar draws nothing for a text-only button,
+			// and draws an inline menu group with a divider above it and without
+			// its title. Its button and menu modules resolve to wrappers that draw
+			// those as Android does, except from the wrappers themselves, which
+			// import the originals.
 			if (
 				platform === 'android' &&
 				resolution.type === 'sourceFile' &&

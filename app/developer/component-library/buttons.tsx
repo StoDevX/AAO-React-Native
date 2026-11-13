@@ -41,6 +41,7 @@ import {
 	playgroundModifiers,
 	type ButtonPlayground,
 } from '../../../source/features/developer/component-library/lib/button-playground'
+import tuneIcon from '@expo/material-symbols/tune.xml'
 
 const tapped = (what: string) => () => Alert.alert('Tapped', what)
 
@@ -307,7 +308,7 @@ export default function ButtonLibraryPage(): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Adjust the Playground Button"
-					icon="slider.horizontal.3"
+					icon={process.env.EXPO_OS === 'ios' ? 'slider.horizontal.3' : tuneIcon}
 					onPress={() => setIsAdjusting(true)}
 				/>
 			</Stack.Toolbar>

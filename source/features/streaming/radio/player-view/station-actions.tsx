@@ -24,7 +24,7 @@ export function StationActionRow({
 		<View style={styles.row}>
 			<ActionButton
 				accessibilityLabel={`Call ${station.stationName}`}
-				icon="phone"
+				icon={{ios: 'phone', android: 'call'}}
 				label="Call"
 				onPress={() => {
 					track({name: 'radio.action', attributes: {action: 'call', station: station.id}})
@@ -33,7 +33,7 @@ export function StationActionRow({
 			/>
 			<ActionButton
 				accessibilityLabel={chatUrl ? `Chat with ${station.stationName}` : 'Chat unavailable'}
-				icon="bubble.left.and.text.bubble.right"
+				icon={{ios: 'bubble.left.and.text.bubble.right', android: 'forum'}}
 				label="Chat"
 				onPress={
 					chatUrl
@@ -48,7 +48,7 @@ export function StationActionRow({
 			<AirPlayButton />
 			<ActionButton
 				accessibilityLabel="Today's schedule"
-				icon="calendar.day.timeline.trailing"
+				icon={{ios: 'calendar.day.timeline.trailing', android: 'calendar_view_day'}}
 				label="Schedule"
 				onPress={() => {
 					track({name: 'radio.action', attributes: {action: 'schedule', station: station.id}})

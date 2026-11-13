@@ -19,6 +19,7 @@ import apartmentOutlined from '@expo/material-symbols/apartment.xml'
 import appBadgingOutlined from '@expo/material-symbols/app_badging.xml'
 import appsOutlined from '@expo/material-symbols/apps.xml'
 import arrowBackOutlined from '@expo/material-symbols/arrow_back.xml'
+import arrowDropDownOutlined from '@expo/material-symbols/arrow_drop_down.xml'
 import arrowForwardOutlined from '@expo/material-symbols/arrow_forward.xml'
 import autoStoriesOutlined from '@expo/material-symbols/auto_stories.xml'
 import backHandOutlined from '@expo/material-symbols/back_hand.xml'
@@ -120,12 +121,10 @@ import openInNewOutlined from '@expo/material-symbols/open_in_new.xml'
 import paletteOutlined from '@expo/material-symbols/palette.xml'
 import parkOutlined from '@expo/material-symbols/park.xml'
 import pauseOutlined from '@expo/material-symbols/pause.xml'
-import pauseFilled from './symbols/pause_fill.xml'
 import pedalBikeOutlined from '@expo/material-symbols/pedal_bike.xml'
 import personOutlined from '@expo/material-symbols/person.xml'
 import petsOutlined from '@expo/material-symbols/pets.xml'
 import playArrowOutlined from '@expo/material-symbols/play_arrow.xml'
-import playArrowFilled from './symbols/play_arrow_fill.xml'
 import printOutlined from '@expo/material-symbols/print.xml'
 import priorityHighOutlined from '@expo/material-symbols/priority_high.xml'
 import psychologyOutlined from '@expo/material-symbols/psychology.xml'
@@ -194,6 +193,7 @@ export const SYMBOL_ASSETS: Readonly<
 	app_badging: [appBadgingOutlined],
 	apps: [appsOutlined],
 	arrow_back: [arrowBackOutlined],
+	arrow_drop_down: [arrowDropDownOutlined],
 	arrow_forward: [arrowForwardOutlined],
 	auto_stories: [autoStoriesOutlined],
 	back_hand: [backHandOutlined],
@@ -291,11 +291,11 @@ export const SYMBOL_ASSETS: Readonly<
 	open_in_new: [openInNewOutlined],
 	palette: [paletteOutlined],
 	park: [parkOutlined],
-	pause: [pauseOutlined, pauseFilled],
+	pause: [pauseOutlined],
 	pedal_bike: [pedalBikeOutlined],
 	person: [personOutlined],
 	pets: [petsOutlined],
-	play_arrow: [playArrowOutlined, playArrowFilled],
+	play_arrow: [playArrowOutlined],
 	print: [printOutlined],
 	priority_high: [priorityHighOutlined],
 	psychology: [psychologyOutlined],

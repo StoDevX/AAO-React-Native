@@ -22,6 +22,7 @@ import {credentialsOptions, invalidateCredentials, resetCredentials} from '../..
 import {useQuery} from '@tanstack/react-query'
 import {groupBy, sortBy} from '@frogpond/collections'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import logoutIcon from '@expo/material-symbols/logout.xml'
 
 function PrintJobsView(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
@@ -151,7 +152,7 @@ function PrintJobsPage(): React.ReactNode {
 				<Stack.Toolbar placement="right">
 					<Stack.Toolbar.Button
 						accessibilityLabel="Sign out of St. Olaf"
-						icon="rectangle.portrait.and.arrow.right"
+						icon={process.env.EXPO_OS === 'ios' ? 'rectangle.portrait.and.arrow.right' : logoutIcon}
 						onPress={() => void signOut()}
 					/>
 				</Stack.Toolbar>

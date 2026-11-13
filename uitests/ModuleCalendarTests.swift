@@ -3,10 +3,10 @@ import XCTest
 /// Tags: campus:example.college
 class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 	/// Choosing a category from the toolbar picker narrows the day's list, and
-	/// Reset Filters brings it back. The picker is an `@expo/ui` Menu of
-	/// Toggles, so this is the round trip from a native menu to the filter
-	/// store and back to the list, which Jest's stand-in for the menu cannot
-	/// make.
+	/// Reset Filters brings it back. The picker is a `Stack.Toolbar.Menu` -- a
+	/// UIMenu of actions that stays presented while filters are set -- so this
+	/// is the round trip from a native menu to the filter store and back to
+	/// the list, which Jest's stand-in for the menu cannot make.
 	func testACategoryNarrowsTheListAndResetBringsItBack() throws {
 		CalendarScreen(app: app)
 			.navigate()

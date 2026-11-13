@@ -8,10 +8,10 @@ describe('materialSymbolFor', () => {
 		expect(materialSymbolFor('info.circle.fill')).toEqual({name: 'info', filled: false})
 	})
 
-	test('fills an on state, a media control and a dot', () => {
+	test('fills an on state and a dot, not a media control', () => {
 		expect(materialSymbolFor('heart.fill')).toEqual({name: 'favorite', filled: true})
 		expect(materialSymbolFor('checkmark.circle.fill')).toEqual({name: 'check_circle', filled: true})
-		expect(materialSymbolFor('play.fill')).toEqual({name: 'play_arrow', filled: true})
+		expect(materialSymbolFor('play.fill')).toEqual({name: 'play_arrow', filled: false})
 		expect(materialSymbolFor('circle.fill')).toEqual({name: 'circle', filled: true})
 	})
 

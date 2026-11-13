@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, useColorScheme} from 'react-native'
+import {Platform, StyleSheet, useColorScheme} from 'react-native'
 import {Form, Host, Toggle} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useFocusEffect, useRouter} from 'expo-router'
@@ -12,7 +12,12 @@ import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
 import {useCampusSection} from '../../source/features/campus/store'
 import {type LinkTarget, useOpenLinksIn} from '../../source/features/customize/open-links-in'
-import {type HomeLayout, useHomeLayoutStore} from '../../source/features/home/store'
+import {
+	type HomeLayout,
+	type HomeTileStyle,
+	useHomeLayoutStore,
+	useHomeTileStyleStore,
+} from '../../source/features/home/store'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 import {useRadioPlayerSetting} from '../../source/features/customize/radio-player-setting'
 
@@ -27,6 +32,13 @@ const HOME_LAYOUTS = [
 	['tiled', 'Tiled'],
 	['list', 'List'],
 ] as const satisfies ReadonlyArray<readonly [HomeLayout, string]>
+
+/// How Android can draw home's tiles, and what the menu calls each. iOS draws
+/// its gradient cards and offers no choice.
+const HOME_TILE_STYLES = [
+	['shapes', 'Shapes'],
+	['cards', 'Cards'],
+] as const satisfies ReadonlyArray<readonly [HomeTileStyle, string]>
 
 /// Settings' own row-icon size, as `rows.tsx` draws a gradient icon.
 const ROW_ICON_SIZE = 30
@@ -53,6 +65,8 @@ export default function CustomizePage(): React.ReactNode {
 	let [showRadio, setShowRadio] = useRadioPlayerSetting()
 	let homeLayout = useHomeLayoutStore((state) => state.layout)
 	let setHomeLayout = useHomeLayoutStore((state) => state.setLayout)
+	let tileStyle = useHomeTileStyleStore((state) => state.layout)
+	let setTileStyle = useHomeTileStyleStore((state) => state.setLayout)
 	let appIcons = useCampusSection('appIcons')
 	let quickActions = useCampusSection('quickActions')
 
@@ -94,6 +108,15 @@ export default function CustomizePage(): React.ReactNode {
 							options={HOME_LAYOUTS}
 							selection={homeLayout}
 						/>
+						{Platform.OS === 'android' && homeLayout === 'tiled' ? (
+							<MenuPickerRow
+								id="home-tile-style"
+								label="Tile Style"
+								onSelectionChange={setTileStyle}
+								options={HOME_TILE_STYLES}
+								selection={tileStyle}
+							/>
+						) : null}
 						<Toggle
 							isOn={showRadio}
 							label="Radio Player"

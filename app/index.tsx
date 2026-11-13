@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, useWindowDimensions} from 'react-native'
+import {Platform, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {
 	Button,
@@ -45,7 +45,12 @@ import {
 import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
 import {HomeListRows} from '../source/features/home/list-rows'
-import {useHomeLayoutStore} from '../source/features/home/store'
+import {
+	type HomeTileStyle,
+	useHomeLayoutStore,
+	useHomeTileStyleStore,
+} from '../source/features/home/store'
+import {MaterialHomeTile} from '../source/features/home/material-tile'
 import {openUrl} from '@frogpond/open-url'
 import {setDevModeOverride} from '../source/redux/parts/settings'
 import {FEATURE_REQUESTS} from '../source/lib/app-identity'
@@ -60,6 +65,8 @@ import {
 	useRadioBarVisible,
 	useRadioStore,
 } from '../source/features/streaming/radio'
+import brushIcon from '@expo/material-symbols/brush.xml'
+import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 
 const styles = StyleSheet.create({
 	host: {
@@ -183,6 +190,15 @@ const NOTICE_FOOTER_MODIFIERS = [
 	listRowInsets({top: TILE_SPACING * 2, leading: 0, bottom: 0, trailing: 0}),
 ]
 
+/**
+ * Android Home's columns: three of shapes, two of cards, one fewer each at
+ * the larger text sizes, where a title would wrap past its two lines.
+ */
+function materialColumnsFor(tileStyle: HomeTileStyle, fontScale: number): number {
+	let base = tileStyle === 'shapes' ? 3 : 2
+	return fontScale < 1.3 ? base : Math.max(1, base - 1)
+}
+
 /// Names the home's tile grid.
 const HOME_GRID_ID = 'home-tile-grid'
 /// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
@@ -213,13 +229,15 @@ export default function HomePage(): React.ReactNode {
 	let openView = useOpenView()
 	let {fontScale} = useWindowDimensions()
 	let layout = useHomeLayoutStore((state) => state.layout)
+	let tileStyle = useHomeTileStyleStore((state) => state.layout)
 	// The saved layout loads after the first render. Drawing before then would
 	// draw the default and jump.
 	let layoutHydrated = useHomeLayoutStore((state) => state.hydrated)
 	// The saved campus loads after the first render too, and drawing St. Olaf's
 	// tiles before it would jump on a Carleton install.
 	let campusHydrated = useCampusStore((state) => state.hydrated)
-	let hydrated = layoutHydrated && campusHydrated
+	let tileStyleHydrated = useHomeTileStyleStore((state) => state.hydrated)
+	let hydrated = layoutHydrated && campusHydrated && tileStyleHydrated
 	let {branding, home} = useCampus()
 	let barVisible = useRadioBarVisible()
 	let views = visibleViews(home.tiles, {isDev})
@@ -227,15 +245,34 @@ export default function HomePage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>{branding.appName}</Stack.Title>
-			<Stack.Toolbar placement="left">
-				<Stack.Toolbar.Button
-					accessibilityLabel={CUSTOMIZE_LABEL}
-					icon="paintbrush"
-					onPress={() => router.navigate('/customize')}
-				/>
-			</Stack.Toolbar>
+			{/* On Android the leading slot of a top app bar is for navigation, and
+			    an icon there read as the app's own; Customize -- the app's settings
+			    -- leads the overflow menu instead, as Settings does in Android's
+			    own apps. */}
+			{Platform.OS === 'android' ? null : (
+				<Stack.Toolbar placement="left">
+					<Stack.Toolbar.Button
+						accessibilityLabel={CUSTOMIZE_LABEL}
+						icon={process.env.EXPO_OS === 'ios' ? 'paintbrush' : brushIcon}
+						onPress={() => router.navigate('/customize')}
+					/>
+				</Stack.Toolbar>
+			)}
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="ellipsis">
+				<Stack.Toolbar.Menu
+					accessibilityLabel={HOME_MENU_LABEL}
+					icon={process.env.EXPO_OS === 'ios' ? 'ellipsis' : moreVertIcon}
+				>
+					{Platform.OS === 'android' ? (
+						<Stack.Toolbar.Menu inline={true}>
+							<Stack.Toolbar.MenuAction
+								icon="paintpalette"
+								onPress={() => router.navigate('/customize')}
+							>
+								{CUSTOMIZE_LABEL}
+							</Stack.Toolbar.MenuAction>
+						</Stack.Toolbar.Menu>
+					) : null}
 					<Stack.Toolbar.Menu inline={true}>
 						<Stack.Toolbar.MenuAction
 							icon="lifepreserver"
@@ -325,15 +362,32 @@ export default function HomePage(): React.ReactNode {
 							/>
 
 							<VStack spacing={TILE_SPACING}>
-								<TileGrid
-									accessibilityId={HOME_GRID_ID}
-									columns={homeColumnsForFontScale(fontScale)}
-									items={views}
-									keyForItem={(view) => view.title}
-									renderItem={(view) => (
-										<HomeScreenButton onPress={() => openView(view)} view={view} />
-									)}
-								/>
+								{Platform.OS === 'android' ? (
+									<TileGrid
+										accessibilityId={HOME_GRID_ID}
+										columns={materialColumnsFor(tileStyle, fontScale)}
+										items={views}
+										keyForItem={(view) => view.title}
+										renderItem={(view) => (
+											<MaterialHomeTile
+												index={views.indexOf(view)}
+												onPress={() => openView(view)}
+												tileStyle={tileStyle}
+												view={view}
+											/>
+										)}
+									/>
+								) : (
+									<TileGrid
+										accessibilityId={HOME_GRID_ID}
+										columns={homeColumnsForFontScale(fontScale)}
+										items={views}
+										keyForItem={(view) => view.title}
+										renderItem={(view) => (
+											<HomeScreenButton onPress={() => openView(view)} view={view} />
+										)}
+									/>
+								)}
 
 								<UnofficialAppNotice />
 							</VStack>

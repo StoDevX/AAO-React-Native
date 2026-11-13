@@ -20,10 +20,14 @@ const LOUD_OPTICAL_SHIFT = 8
 export function VolumeSlider(): React.ReactNode {
 	return (
 		<View style={styles.row}>
-			<SymbolView name="speaker.fill" size={QUIET_SIZE} tintColor={palette.secondary} />
+			<SymbolView
+				name={{ios: 'speaker.fill', android: 'volume_down'}}
+				size={QUIET_SIZE}
+				tintColor={palette.secondary}
+			/>
 			<VolumeSliderView style={styles.slider} tint={palette.primary} trackTint={palette.track} />
 			<SymbolView
-				name="speaker.wave.3.fill"
+				name={{ios: 'speaker.wave.3.fill', android: 'volume_up'}}
 				size={LOUD_SIZE}
 				style={styles.loud}
 				tintColor={palette.secondary}

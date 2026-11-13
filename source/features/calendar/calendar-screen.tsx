@@ -3,8 +3,8 @@ import {useMemo} from 'react'
 import {useRouter} from 'expo-router'
 
 import {
-	CalendarModePicker,
-	CalendarPicker,
+	CalendarFilterChips,
+	CalendarToolbar,
 	type SourcedEvent,
 	useMergedEvents,
 } from '@frogpond/ccc-calendar'
@@ -103,6 +103,18 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 
 	return (
 		<>
+			{/* Android's filters, as chips above the list; iOS's are in the toolbar. */}
+			{adjustable ? (
+				<CalendarFilterChips
+					categories={categories}
+					enabledIds={enabledIds}
+					filter={filter}
+					onSelectFilter={saved.selectFilter}
+					onToggleSource={toggle}
+					organizations={organizations}
+					sources={all}
+				/>
+			) : null}
 			<Body
 				ref={bodyRef}
 				events={events}
@@ -117,19 +129,18 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 			{/* An organization's view has nothing for the reader to choose: its
 			    filter, mode and calendars are all its own. */}
 			{adjustable ? (
-				<>
-					<CalendarModePicker mode={mode} onSelectMode={saved.selectMode} />
-					<CalendarPicker
-						categories={categories}
-						enabledIds={enabledIds}
-						filter={filter}
-						onSelectFilter={saved.selectFilter}
-						onToggleSource={toggle}
-						onTodayPress={mode === 'day' ? onTodayPress : undefined}
-						organizations={organizations}
-						sources={all}
-					/>
-				</>
+				<CalendarToolbar
+					categories={categories}
+					enabledIds={enabledIds}
+					filter={filter}
+					mode={mode}
+					onSelectFilter={saved.selectFilter}
+					onSelectMode={saved.selectMode}
+					onToggleSource={toggle}
+					onTodayPress={mode === 'day' ? onTodayPress : undefined}
+					organizations={organizations}
+					sources={all}
+				/>
 			) : null}
 		</>
 	)

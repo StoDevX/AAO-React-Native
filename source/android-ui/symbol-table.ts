@@ -24,6 +24,8 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	'arrow.right': 'arrow_forward',
 	'arrow.triangle.2.circlepath': 'sync',
 	'arrow.up.arrow.down': 'swap_vert',
+	// A dropdown chip's trailing caret.
+	'arrowtriangle.down': 'arrow_drop_down',
 	'arrow.up.left.and.arrow.down.right': 'open_in_full',
 	// An external link, on Android, is the open-in-new glyph.
 	'arrow.up.right': 'open_in_new',
@@ -217,16 +219,16 @@ export const FALLBACK_SYMBOL = 'category'
  * The Material Symbols Android draws filled, when the SF Symbol asks for its
  * `.fill` form. Material Symbols are outlined by default, and Android fills
  * one only where filling means something: an on state (a favourite, a
- * rating, a ticked item), a media control, and a dot. iOS fills symbols for
+ * rating, a ticked item) and a dot. iOS fills symbols for
  * weight -- a tile's graduation cap, a map category's tree -- which Android
- * draws outlined, as its own apps do.
+ * draws outlined, as its own apps do. The radio's play and pause are filled
+ * too, but drawn by `SymbolView` with a filled font (see
+ * `lib/filled-symbol-weight.android.ts`), so they need no filled drawable here.
  */
 export const FILLED_SYMBOLS: ReadonlySet<string> = new Set([
 	'check_circle',
 	'circle',
 	'favorite',
-	'pause',
-	'play_arrow',
 	'star',
 ])
 

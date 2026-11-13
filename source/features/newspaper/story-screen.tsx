@@ -26,6 +26,8 @@ import {usePaper} from './paper-context'
 import type {MessStory} from './types'
 import {useColumnWidth} from './use-column-width'
 import {useMessStory} from './use-mess-story'
+import exploreIcon from '@expo/material-symbols/explore.xml'
+import shareIcon from '@expo/material-symbols/share.xml'
 
 /** A quiet page's wider margins, a poem's or a feature's, which give its words and pictures more air. */
 const QUIET_MARGIN = 28
@@ -100,12 +102,12 @@ export function StoryScreen({id}: Props): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Story"
-					icon="square.and.arrow.up"
+					icon={process.env.EXPO_OS === 'ios' ? 'square.and.arrow.up' : shareIcon}
 					onPress={() => Share.share({url: story.link}).catch(() => undefined)}
 				/>
 				<Stack.Toolbar.Button
 					accessibilityLabel="Open in Safari"
-					icon="safari"
+					icon={process.env.EXPO_OS === 'ios' ? 'safari' : exploreIcon}
 					onPress={() => Linking.openURL(story.link).catch(() => undefined)}
 				/>
 			</Stack.Toolbar>

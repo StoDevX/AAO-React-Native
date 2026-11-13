@@ -1,0 +1,88 @@
+diff --git a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
+index e0762e87bc2080805bec5e9f25523fc6d42afae6..9e271adfb035330ab2251d939172e4cc271cc59f 100644
+--- a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
++++ b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
+@@ -6,6 +6,9 @@ import android.os.Build
+ import android.view.Choreographer
+ import android.view.WindowInsets
+ import android.view.WindowManager
++import android.widget.ImageButton
++import android.widget.TextView
++import androidx.appcompat.widget.ActionMenuView
+ import androidx.appcompat.widget.Toolbar
+ import androidx.core.view.WindowInsetsCompat
+ import com.facebook.react.modules.core.ReactChoreographer
+@@ -58,6 +61,15 @@ open class CustomToolbar(
+         // This guarantees that all size-dependent children are present during the first layout pass,
+         // resulting in correct height determination from the beginning.
+         menu
++
++        // Material 3's small top app bar is 64dp. Without a minimum the Toolbar
++        // takes its tallest child's height -- a 48dp header subview -- and centres
++        // the title and subviews in that, while the 56dp navigation button keeps
++        // its own height from the top: the back arrow sat about 4dp below the
++        // title and actions. At 64dp every child centres on the same line.
++        // A View's minimum height includes its padding, and the top inset is
++        // padding here, so `applyExactPadding` keeps it 64dp plus the insets.
++        minimumHeight = contentMinHeight
+     }
+ 
+     private val layoutCallback: Choreographer.FrameCallback =
+@@ -206,6 +218,7 @@ open class CustomToolbar(
+         b: Int,
+     ) {
+         super.onLayout(hasSizeChanged, l, t, r, b)
++        alignNavigationButton()
+ 
+         config.onNativeToolbarLayout(
+             this,
+@@ -219,6 +232,41 @@ open class CustomToolbar(
+         setContentInsetsRelative(config.preferredContentInsetStart, config.preferredContentInsetEnd)
+     }
+ 
++    /**
++     * Centres the navigation button and the action menu on the title's line.
++     * Toolbar places both by their own measure -- the 56dp button, and the
++     * menu holding a search action, from the top of a bar that may be shorter
++     * or taller -- so the back arrow and the search icon sat below the title
++     * and the header's own actions, which centre in the bar. Without a title
++     * they centre in the bar.
++     */
++    private fun alignNavigationButton() {
++        var titleView: TextView? = null
++        val toAlign = mutableListOf<android.view.View>()
++        for (index in 0 until childCount) {
++            val child = getChildAt(index)
++            if (child is ImageButton && child.drawable != null && child.drawable === navigationIcon) {
++                toAlign.add(child)
++            } else if (child is ActionMenuView) {
++                toAlign.add(child)
++            } else if (titleView == null && child is TextView && title != null && child.text?.toString() == title?.toString()) {
++                titleView = child
++            }
++        }
++        val target =
++            titleView?.let { (it.top + it.bottom) / 2 }
++                ?: ((paddingTop + height - paddingBottom) / 2)
++        for (view in toAlign) {
++            val offset = target - (view.top + view.bottom) / 2
++            if (offset != 0) {
++                view.offsetTopAndBottom(offset)
++            }
++        }
++    }
++
++    private val contentMinHeight: Int
++        get() = (64 * resources.displayMetrics.density).toInt()
++
+     private fun applyExactPadding(
+         left: Int,
+         top: Int,
+@@ -226,6 +274,7 @@ open class CustomToolbar(
+         bottom: Int,
+     ) {
+         requestForceShadowStateUpdateOnLayout()
++        minimumHeight = top + bottom + contentMinHeight
+         setPadding(left, top, right, bottom)
+     }
+ 

@@ -495,6 +495,23 @@ LazyHStack.ForEach = LazyForEach
 /** The spacing a `Grid` sets between its rows and cells. */
 const GridSpacing = React.createContext<number>(DEFAULT_SPACING)
 
+/** Where a `Grid` puts each cell's content within its share of the row. */
+const GridAlignment = React.createContext<NonNullable<GridProps['alignment']>>('center')
+
+/**
+ * A grid's alignment as its rows' vertical alignment: only the top or bottom
+ * part counts, since every cell is centred across its column's width.
+ */
+function gridVertical(alignment: NonNullable<GridProps['alignment']>): 'top' | 'center' | 'bottom' {
+	if (alignment.startsWith('top')) {
+		return 'top'
+	}
+	if (alignment.startsWith('bottom')) {
+		return 'bottom'
+	}
+	return 'center'
+}
+
 /**
  * SwiftUI's `Grid`, as a Column of Rows whose cells share each row's width
  * equally -- the even columns the app's grids are. Cells that are Compose
@@ -504,6 +521,7 @@ const GridSpacing = React.createContext<number>(DEFAULT_SPACING)
 export function Grid({
 	children,
 	modifiers,
+	alignment = 'center',
 	horizontalSpacing,
 	verticalSpacing,
 }: GridProps): React.ReactNode {
@@ -511,27 +529,34 @@ export function Grid({
 	let element = (
 		<Column modifiers={chain} verticalArrangement={{spacedBy: verticalSpacing ?? DEFAULT_SPACING}}>
 			<GridSpacing.Provider value={horizontalSpacing ?? DEFAULT_SPACING}>
-				<Inherit axis="column" env={env}>
-					{children}
-				</Inherit>
+				<GridAlignment.Provider value={alignment}>
+					<Inherit axis="column" env={env}>
+						{children}
+					</Inherit>
+				</GridAlignment.Provider>
 			</GridSpacing.Provider>
 		</Column>
 	)
 	return asRow(slot, element, modifiers)
 }
 
-/** One `Grid` row: each child in an equal share of the width. */
+/**
+ * One `Grid` row: each child in an equal share of the width, placed in it by
+ * the grid's `alignment` -- `top` lines up the tops of a row's cells, as a
+ * row of tiles whose labels differ in length needs.
+ */
 Grid.Row = function GridRow({children}: {children: React.ReactNode}): React.ReactNode {
 	let spacing = React.useContext(GridSpacing)
+	let vertical = gridVertical(React.useContext(GridAlignment))
 	return (
 		<Row
 			horizontalArrangement={{spacedBy: spacing}}
 			modifiers={[fillMaxWidth()]}
-			verticalAlignment="center"
+			verticalAlignment={vertical}
 		>
 			{React.Children.toArray(children).map((child, index) => (
 				// oxlint-disable-next-line react/no-array-index-key -- a cell's column is its identity
-				<Box contentAlignment="center" key={index} modifiers={[weight(1)]}>
+				<Box contentAlignment={BOX_ALIGNMENT[vertical]} key={index} modifiers={[weight(1)]}>
 					<AxisContext.Provider value="box">{child}</AxisContext.Provider>
 				</Box>
 			))}
