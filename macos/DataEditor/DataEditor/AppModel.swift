@@ -47,6 +47,14 @@ final class AppModel {
     var calendar: BreakCalendar?
     var selection: String? { didSet { if let selection, selection != oldValue { Task { await select(selection) } } } }
     var document: HoursDocument?
+    /// The selected file's value, which a record's form reads its record from.
+    private(set) var value: JSONValue?
+    /// The data sets the editor offers, from the workspace's `_datasets.yaml`.
+    private(set) var catalog: DataSetCatalog?
+    /// Each data set's records, by set, once the record column has listed it.
+    private(set) var records: [String: [RecordSummary]] = [:]
+    /// The data set the record column lists: Hours until another is chosen.
+    private(set) var chosenSet = "building-hours"
     /// The file `document` was read from. `selection` changes first, while the
     /// new file loads, so an edit drawn from the document on screen names this.
     private(set) var documentFile: String?
@@ -189,6 +197,8 @@ final class AppModel {
             // the list appears with the phase that enables it, so no row shows unclickable
             let listed = try await helper.buildings()
             calendar = try await helper.calendar()
+            catalog = try await helper.datasets()
+            records[chosenSet] = try await helper.records(set: chosenSet).records
             changedFiles = try workspace.changedFiles()
             conflicts = workspace.conflicts
             buildings = listed
@@ -332,11 +342,13 @@ final class AppModel {
             // a later selection's load owns the document now
             guard selection == file else { return }
             document = HoursDocument(value: loaded.value)
+            value = loaded.value
             documentFile = file
             problems = loaded.problems
         } catch {
             guard selection == file else { return }
             document = nil
+            value = nil
             documentFile = nil
             problems = [Problem(file: file, message: error.localizedDescription, path: nil)]
         }
@@ -367,9 +379,12 @@ final class AppModel {
         changedFiles = (try? workspace.changedFiles()) ?? changedFiles
         if file == selection {
             document = HoursDocument(value: edited.value)
+            value = edited.value
             documentFile = file
             problems = edited.problems
         }
+        // an edit may rename a record, as a contact's title does
+        if let set = catalog?.set(for: file), records[set] != nil { await loadRecords(set) }
         if edited.problems.isEmpty {
             await builds.schedule { await self.rebuild() }
         }
@@ -695,12 +710,47 @@ final class AppModel {
         return saved && choice == choices
     }
 
-    /// Shows `item` in the Current changes window. A building's file opens
-    /// for editing, unless it is already open.
+    /// Shows `item` in the Current changes window. A record's file opens for
+    /// editing, unless it is already open. A set lists its records, and a set
+    /// that is one record, as a whole file or a document is, opens it.
     func choose(_ item: ChangesetItem) async {
         guard await mayChoose() else { return }
+        if let set = item.set {
+            chosenSet = set
+            if records[set] == nil { await loadRecords(set) }
+        }
+        var item = item
+        if case .set(let set) = item, let only = records[set], only.count == 1,
+           let shape = catalog?.sets[set]?.shape, shape != .folder, shape != .list {
+            item = .record(set: set, only[0].ref)
+        }
         self.item = item
-        if case .building(let file) = item { selection = file }
+        if case .record(_, let ref) = item { selection = ref.file }
+    }
+
+    /// Lists `set`'s records afresh.
+    func loadRecords(_ set: String) async {
+        guard let helper, let listed = try? await helper.records(set: set).records else { return }
+        records[set] = listed
+    }
+
+    /// Where the record at `ref` is in `after`, a set's records once one
+    /// before it was removed or they were reordered: the record in the same
+    /// file with the same title. Nil when there is none, and the item falls
+    /// back to the set.
+    static func follow(_ ref: RecordRef, before: [RecordSummary], after: [RecordSummary]) -> RecordRef? {
+        guard let title = before.first(where: { $0.ref == ref })?.title else { return nil }
+        return after.first { $0.ref.file == ref.file && $0.title == title }?.ref
+    }
+
+    /// What shows `file` for editing: its record, when its set lists it whole,
+    /// or else its set.
+    func item(showing file: String) -> ChangesetItem {
+        guard let set = catalog?.set(for: file) else { return .set(chosenSet) }
+        if catalog?.sets[set]?.shape == .folder || records[set]?.count == 1 {
+            return .record(set: set, records[set]?.first { $0.ref.file == file }?.ref ?? RecordRef(file: file, path: []))
+        }
+        return .set(set)
     }
 
     /// Asks Pages whether master's data deploy has moved past the data being edited, so
@@ -773,6 +823,7 @@ final class AppModel {
         changedFiles = (try? workspace.changedFiles()) ?? []
         buildings = (try? await helper?.buildings()) ?? buildings
         calendar = (try? await helper?.calendar()) ?? calendar
+        for set in records.keys { await loadRecords(set) }
         if let selection { await select(selection) }
         await rebuild()
     }

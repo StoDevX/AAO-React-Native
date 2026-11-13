@@ -49,7 +49,7 @@ final class HoursEditorUITests: XCTestCase {
         title.typeKey("a", modifierFlags: .command)
         // no Return: choosing another building is as good as done
         title.typeText("Weekday hours")
-        currentChanges(in: app).outlines["building-list"].staticTexts["Stav Hall"].click()
+        currentChanges(in: app).outlines["record-list"].staticTexts["Stav Hall"].click()
         XCTAssertTrue(title.wait(until: NSPredicate(format: "value != %@", "Weekday hours"), timeout: 10))
 
         // what the file holds, once The Cage is opened afresh
@@ -84,7 +84,7 @@ final class HoursEditorUITests: XCTestCase {
         XCTAssertTrue(currentChanges(in: app).staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
 
         // Stav Hall's file is fine, and its editor shows only its own problems
-        currentChanges(in: app).outlines["building-list"].staticTexts["Stav Hall"].click()
+        currentChanges(in: app).outlines["record-list"].staticTexts["Stav Hall"].click()
         XCTAssertTrue(currentChanges(in: app).textFields["service-title-0"].wait(until: NSPredicate(format: "value != %@", ""), timeout: 10))
         XCTAssertFalse(currentChanges(in: app).staticTexts["The Cage: The title can't be empty."].exists)
         attachScreenshot(of: currentChanges(in: app), named: "Stav Hall shows none of The Cage's problems")

@@ -162,9 +162,8 @@ final class OverviewUITests: XCTestCase {
     func testOpeningCurrentChangesBringsItsWindow() throws {
         let app = try launchWithRepoData().app
         let window = openCurrentChanges(in: app)
-        let buildings = window.outlines["building-list"]
-        XCTAssertTrue(buildings.staticTexts["Overview"].exists)
-        XCTAssertTrue(buildings.staticTexts["The Cage"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.outlines["data-set-list"].staticTexts["Overview"].exists)
+        XCTAssertTrue(window.outlines["record-list"].staticTexts["The Cage"].waitForExistence(timeout: 5))
         XCTAssertTrue(window.staticTexts["No changes"].exists)
         attachScreenshot(of: window, named: "Current changes window on its Overview")
     }
@@ -173,7 +172,7 @@ final class OverviewUITests: XCTestCase {
     func testTheChangesetsOverviewShowsTextBeingTyped() throws {
         let app = try launchWithRepoData().app
         let window = openCurrentChanges(in: app)
-        window.outlines["building-list"].staticTexts["The Cage"].click()
+        window.outlines["record-list"].staticTexts["The Cage"].click()
         let title = window.textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -201,7 +200,7 @@ final class OverviewUITests: XCTestCase {
     func testShowingABuildingFromTheChangesetsWindow() throws {
         let app = try launchWithRepoData().app
         let window = openCurrentChanges(in: app)
-        window.outlines["building-list"].staticTexts["The Cage"].click()
+        window.outlines["record-list"].staticTexts["The Cage"].click()
         let title = window.textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -209,7 +208,7 @@ final class OverviewUITests: XCTestCase {
         title.typeKey(.delete, modifierFlags: [])
         title.typeKey(.return, modifierFlags: [])
         XCTAssertTrue(window.staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
-        window.outlines["building-list"].staticTexts["Stav Hall"].click()
+        window.outlines["record-list"].staticTexts["Stav Hall"].click()
 
         let changesets = app.windows["Changesets"]
         // ⌘0 brings it back in front of Current changes, which opened over it

@@ -201,7 +201,7 @@ struct OverviewView: View {
     /// Opens `file` for editing in the Current changes window, from whichever window this page is in.
     private func show(_ file: String) {
         openWindow(value: Changeset.current)
-        Task { await model.choose(ChangesetItem.building(file: file)) }
+        Task { await model.choose(model.item(showing: file)) }
     }
 
     /// A problem that names its building opens it; one that names none only reads.

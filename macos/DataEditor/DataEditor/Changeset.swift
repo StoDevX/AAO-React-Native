@@ -7,10 +7,20 @@ enum Changeset: Hashable, Codable {
     case pullRequest(number: Int)
 }
 
-/// What a changeset's window shows: its Overview or one of its buildings.
+/// What a changeset's window shows: its Overview, a data set whose record
+/// is still to be chosen, or one record of a set.
 enum ChangesetItem: Hashable {
     case overview
-    case building(file: String)
+    case set(String)
+    case record(set: String, RecordRef)
+
+    /// The data set the record column lists for this item, if it names one.
+    var set: String? {
+        switch self {
+        case .overview: nil
+        case .set(let set), .record(let set, _): set
+        }
+    }
 }
 
 /// The Overview's line about the phone preview.
@@ -93,4 +103,23 @@ func changesetBuildings(_ changeset: Changeset, all: [BuildingSummary], history:
 func stillListed(_ changeset: Changeset?, in records: [SubmissionRecord]) -> Changeset? {
     guard case .pullRequest(let number)? = changeset, !records.contains(where: { $0.id == number }) else { return changeset }
     return .current
+}
+
+/// The records each data set lists for `changeset`, by set: every record for
+/// Current changes; for a pull request, the files it changed, each named as
+/// the set's records name it, or by its file name when none does.
+func changesetRecords(_ changeset: Changeset, catalog: DataSetCatalog?, records: [String: [RecordSummary]],
+                      history: SubmissionHistory) -> [String: [RecordSummary]] {
+    guard case .pullRequest(let number) = changeset else { return records }
+    let files = history.records.first { $0.id == number }?.changedFiles ?? []
+    var listed: [String: [RecordSummary]] = [:]
+    for file in files {
+        let set = catalog?.set(for: file) ?? ""
+        let known = records[set]?.first { $0.ref.file == file && $0.ref.path.isEmpty }
+        let title = known?.title ?? catalog?.sets[set].flatMap { $0.shape == .folder ? nil : $0.title }
+            ?? (file as NSString).lastPathComponent
+        listed[set, default: []].append(RecordSummary(set: set, ref: RecordRef(file: file, path: []), title: title,
+                                                      subtitle: nil, section: known?.section, editable: false))
+    }
+    return listed
 }

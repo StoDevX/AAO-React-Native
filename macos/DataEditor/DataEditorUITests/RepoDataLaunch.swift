@@ -68,11 +68,11 @@ extension XCTestCase {
         return window
     }
 
-    /// The Current changes window, found by its list of every building: its
-    /// title follows the building chosen.
+    /// The Current changes window, found by its list of data sets: its
+    /// title follows the record chosen.
     @MainActor
     func currentChangesWindow(in app: XCUIApplication) -> XCUIElement {
-        app.windows.containing(.outline, identifier: "building-list").firstMatch
+        app.windows.containing(.outline, identifier: "data-set-list").firstMatch
     }
 
     /// The Current changes window, opened if it is not.
@@ -85,7 +85,7 @@ extension XCTestCase {
     /// Opens The Cage's hours in the Current changes window.
     @MainActor
     func selectTheCage(in app: XCUIApplication) {
-        let cage = currentChanges(in: app).outlines["building-list"].staticTexts["The Cage"]
+        let cage = currentChanges(in: app).outlines["record-list"].staticTexts["The Cage"]
         XCTAssertTrue(cage.waitForExistence(timeout: 20))
         cage.click()
     }
@@ -94,7 +94,7 @@ extension XCTestCase {
     @MainActor
     func openOverview(in app: XCUIApplication) {
         let window = currentChanges(in: app)
-        let overview = window.outlines["building-list"].staticTexts["Overview"]
+        let overview = window.outlines["data-set-list"].staticTexts["Overview"]
         XCTAssertTrue(overview.waitForExistence(timeout: 5))
         overview.click()
         XCTAssertTrue(window.descendants(matching: .any)["overview-page"].firstMatch.waitForExistence(timeout: 5))
