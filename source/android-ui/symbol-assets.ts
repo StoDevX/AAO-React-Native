@@ -115,6 +115,7 @@ import myLocationOutlined from '@expo/material-symbols/my_location.xml'
 import nearMeOutlined from '@expo/material-symbols/near_me.xml'
 import newspaperOutlined from '@expo/material-symbols/newspaper.xml'
 import notificationsOutlined from '@expo/material-symbols/notifications.xml'
+import notificationsFilled from './symbols/notifications_fill.xml'
 import notificationsOffOutlined from '@expo/material-symbols/notifications_off.xml'
 import openInFullOutlined from '@expo/material-symbols/open_in_full.xml'
 import openInNewOutlined from '@expo/material-symbols/open_in_new.xml'
@@ -288,7 +289,7 @@ export const SYMBOL_ASSETS: Readonly<
 	my_location: [myLocationOutlined],
 	near_me: [nearMeOutlined],
 	newspaper: [newspaperOutlined],
-	notifications: [notificationsOutlined],
+	notifications: [notificationsOutlined, notificationsFilled],
 	notifications_off: [notificationsOffOutlined],
 	open_in_full: [openInFullOutlined],
 	open_in_new: [openInNewOutlined],

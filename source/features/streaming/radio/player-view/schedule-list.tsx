@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native'
 import {SymbolView} from 'expo-symbols'
+
+import {FILLED_SYMBOL_WEIGHT} from '../../../../lib/filled-symbol-weight'
 import type {EventType} from '@frogpond/event-type'
 import {formatCompactTime, formatTime} from '@frogpond/time-format'
 
@@ -15,6 +17,10 @@ const PRESSED_OPACITY = 0.3
 
 /** What UI tests find a show's bell by, after the show's title. */
 export const BELL_ID_PREFIX = 'radio-schedule-bell-'
+
+/** The bell, ringing or not: Android's is Material's, filled while it reminds, as Material marks an on state. */
+const BELL_ON = {ios: 'bell.fill', android: 'notifications'} as const
+const BELL_OFF = {ios: 'bell', android: 'notifications'} as const
 
 /** Follows or unfollows a show, saying which it will do. */
 function ReminderBell({
@@ -37,9 +43,10 @@ function ReminderBell({
 			{({pressed}) => (
 				<View style={pressed ? styles.pressed : undefined}>
 					<SymbolView
-						name={reminding ? 'bell.fill' : 'bell'}
+						name={reminding ? BELL_ON : BELL_OFF}
 						size={20}
 						tintColor={reminding ? palette.primary : palette.secondary}
+						weight={reminding ? FILLED_SYMBOL_WEIGHT : undefined}
 					/>
 				</View>
 			)}

@@ -532,7 +532,18 @@ const config: ExpoConfig = {
 		// Radio show reminders are local notifications, which need no push. The
 		// plugin applies itself even when unlisted and adds the aps-environment
 		// entitlement, which every variant's App ID would then have to carry.
-		['expo-notifications', {enableRemoteNotifications: false}],
+		// Android draws a notification's small icon as a silhouette in the
+		// status bar, so the full-colour app icon would be a white blob: the
+		// windmill, cut from the themed icon's monochrome layer, and the
+		// college's gold to tint it in the shade.
+		[
+			'expo-notifications',
+			{
+				enableRemoteNotifications: false,
+				icon: './assets/android/notification-icon.png',
+				color: '#8B7512',
+			},
+		],
 		// Adding an event goes through the system editor, which needs no
 		// calendar access, but the module links EventKit, and App Store Connect
 		// rejects an upload that does so without a calendar usage string

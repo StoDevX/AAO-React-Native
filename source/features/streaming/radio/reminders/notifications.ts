@@ -1,3 +1,4 @@
+import {Platform} from 'react-native'
 import * as Notifications from 'expo-notifications'
 
 import {
@@ -10,6 +11,26 @@ import {LISTEN_ACTION} from './present'
 
 /** The category every reminder is scheduled in, which gives it the Listen button. */
 const REMINDER_CATEGORY = 'radio-reminder'
+
+/**
+ * Android's notification channel for show reminders: what Settings lists
+ * them under, so someone can silence them alone rather than every
+ * notification the app sends. Without one they go to Expo's catch-all
+ * "Miscellaneous" channel.
+ */
+const REMINDER_CHANNEL = 'radio-show-reminders'
+
+/** Makes the reminders' channel on Android; creating one that exists changes nothing. */
+async function ensureReminderChannel(): Promise<void> {
+	if (Platform.OS !== 'android') {
+		return
+	}
+	await Notifications.setNotificationChannelAsync(REMINDER_CHANNEL, {
+		name: 'Radio show reminders',
+		description: 'A notification a minute before each radio show you follow starts.',
+		importance: Notifications.AndroidImportance.DEFAULT,
+	})
+}
 
 /** Gives reminders their Listen button, which brings the app forward to play. */
 export async function registerReminderActions(): Promise<void> {
@@ -70,6 +91,9 @@ export async function applyReminderChanges(changes: {
 	await Promise.all(
 		changes.cancel.map((identifier) => Notifications.cancelScheduledNotificationAsync(identifier)),
 	)
+	if (changes.schedule.length > 0) {
+		await ensureReminderChannel()
+	}
 	await Promise.all(
 		changes.schedule.map((request) =>
 			Notifications.scheduleNotificationAsync({
@@ -80,7 +104,11 @@ export async function applyReminderChanges(changes: {
 					data: {stationId: request.stationId, title: request.title},
 					categoryIdentifier: REMINDER_CATEGORY,
 				},
-				trigger: {type: Notifications.SchedulableTriggerInputTypes.WEEKLY, ...request.slot},
+				trigger: {
+					type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+					...request.slot,
+					channelId: REMINDER_CHANNEL,
+				},
 			}),
 		),
 	)

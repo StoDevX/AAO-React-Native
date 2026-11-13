@@ -219,7 +219,7 @@ export const FALLBACK_SYMBOL = 'category'
  * The Material Symbols Android draws filled, when the SF Symbol asks for its
  * `.fill` form. Material Symbols are outlined by default, and Android fills
  * one only where filling means something: an on state (a favourite, a
- * rating, a ticked item), a media control, and a dot. iOS fills symbols for
+ * rating, a ticked item, a reminder's bell), a media control, and a dot. iOS fills symbols for
  * weight -- a tile's graduation cap, a map category's tree -- which Android
  * draws outlined, as its own apps do.
  */
@@ -227,6 +227,7 @@ export const FILLED_SYMBOLS: ReadonlySet<string> = new Set([
 	'check_circle',
 	'circle',
 	'favorite',
+	'notifications',
 	'pause',
 	'play_arrow',
 	'radio_button_checked',
