@@ -153,6 +153,12 @@ describe('recordSchema', () => {
 		assert.equal(typeof phone.pattern, 'string')
 	})
 
+	it("lists each object's properties in the order the schema writes them", () => {
+		let schema = recordSchema(DATA_BASE, catalog, 'contact-info')
+		assert.deepEqual(schema.propertyOrder, Object.keys(schema.properties))
+		assert.equal(schema.propertyOrder[0], 'title')
+	})
+
 	it('is the item schema for a list set', () => {
 		let schema = recordSchema(DATA_BASE, catalog, 'faqs')
 		assert.ok(schema.required.includes('question'))

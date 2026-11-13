@@ -102,6 +102,8 @@ export function listRecords(dataDir, catalog, name) {
  * the schema's own definitions, since the app has no resolver. A definition
  * that refers back to itself, as a FAQ's nested conditions do, is cut off
  * there as `{}`: the form leaves such a field to an `editor: hidden` hint.
+ * Each object schema also lists its properties' keys, in order, as
+ * `propertyOrder`.
  */
 function inlined(schema, root, defs, seen = new Set()) {
 	if (Array.isArray(schema)) return schema.map((item) => inlined(item, root, defs, seen))
@@ -120,8 +122,16 @@ function inlined(schema, root, defs, seen = new Set()) {
 	let result = {}
 	for (let [key, value] of Object.entries(schema)) {
 		if (key === 'definitions' || key === '$schema' || key === '$id') continue
-		result[key] = inlined(value, root, defs, seen)
+		// a map of field names, not a schema, though a field may be named `properties`
+		result[key] =
+			key === 'properties'
+				? Object.fromEntries(
+						Object.entries(value).map(([name, field]) => [name, inlined(field, root, defs, seen)]),
+					)
+				: inlined(value, root, defs, seen)
 	}
+	// the app reads JSON objects into dictionaries, so the order goes as a list
+	if (typeof schema.properties === 'object') result.propertyOrder = Object.keys(schema.properties)
 	return result
 }
 
