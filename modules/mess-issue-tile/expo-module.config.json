@@ -1,6 +1,10 @@
 {
-  "platforms": ["apple"],
+  "platforms": ["apple", "android"],
+  "coreFeatures": ["compose"],
   "apple": {
     "modules": ["MessIssueTileModule"]
+  },
+  "android": {
+    "modules": ["tech.frogpond.messissuetile.MessIssueTileModule"]
   }
 }
