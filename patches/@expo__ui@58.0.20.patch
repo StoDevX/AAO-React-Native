@@ -1,3 +1,59 @@
+diff --git a/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt b/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt
+index 9ca09321e7068ced9a490fdd06dac7a2d8ec3949..b77778bd67b97405c16929426b7f51a515c08458 100644
+--- a/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt
++++ b/android/src/main/java/expo/modules/ui/ModalBottomSheetView.kt
+@@ -8,6 +8,9 @@ import android.content.Context
+ import android.graphics.Color
+ import android.view.KeyEvent
+ import android.view.inputmethod.InputMethodManager
++import androidx.activity.ComponentActivity
++import androidx.activity.ComponentDialog
++import androidx.activity.OnBackPressedCallback
+ import androidx.compose.material3.BottomSheetDefaults
+ import androidx.compose.material3.ExperimentalMaterial3Api
+ import androidx.compose.material3.MaterialTheme
+@@ -94,6 +97,33 @@ private fun ForwardKeyEventsToActivity(activity: Activity?) {
+   }
+ }
+ 
++/**
++ * A sheet that Back may not dismiss passes Back on to the activity, rather
++ * than swallowing it: the screen under it still hears Back, and can close
++ * what the sheet shows or leave. Without this a sheet that is always up
++ * left Back doing nothing at all.
++ */
++@Composable
++private fun ForwardBackToActivity(activity: Activity?, enabled: Boolean) {
++  val dialog = (LocalView.current.parent as? DialogWindowProvider)?.window?.callback as? ComponentDialog
++  val host = activity as? ComponentActivity
++  if (dialog == null || host == null || !enabled) {
++    return
++  }
++
++  DisposableEffect(dialog, host) {
++    val callback = object : OnBackPressedCallback(true) {
++      override fun handleOnBackPressed() {
++        host.onBackPressedDispatcher.onBackPressed()
++      }
++    }
++    dialog.onBackPressedDispatcher.addCallback(callback)
++    onDispose {
++      callback.remove()
++    }
++  }
++}
++
+ @Composable
+ fun FunctionalComposableScope.ModalBottomSheetContent(
+   props: ModalBottomSheetViewProps,
+@@ -177,6 +207,7 @@ fun FunctionalComposableScope.ModalBottomSheetContent(
+     modifier = ModifierRegistry.applyModifiers(props.modifiers, appContext, composableScope, globalEventDispatcher)
+   ) {
+     ForwardKeyEventsToActivity(appContext.currentActivity)
++    ForwardBackToActivity(appContext.currentActivity, !props.properties.shouldDismissOnBackPress)
+     Children(UIComposableScope(), filter = { !isSlotView(it) })
+   }
+ 
 diff --git a/android/src/main/java/expo/modules/ui/ModifierRegistry.kt b/android/src/main/java/expo/modules/ui/ModifierRegistry.kt
 index 68b3df6d42fd65a982c3926e5500f5e9e06e7a56..bdf195ffe266e0568c1bb5fa1d026a4bad6f1480 100644
 --- a/android/src/main/java/expo/modules/ui/ModifierRegistry.kt

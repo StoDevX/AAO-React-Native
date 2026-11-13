@@ -1,5 +1,5 @@
 import type {Coordinate} from '../types'
-import {appleMapsDirectionsUrl} from '../urls'
+import {mapsDirectionsUrl} from '../urls'
 
 /// One button in the card's actions row. Directions is the only kind the
 /// feeds support today; Call, Website and a venue's own action (Menus, Shows)
@@ -23,7 +23,7 @@ export function cardActions({
 }): Array<CardAction> {
 	let actions: Array<CardAction> = []
 	if (point && walkingDirections) {
-		actions.push({kind: 'directions', url: appleMapsDirectionsUrl(point)})
+		actions.push({kind: 'directions', url: mapsDirectionsUrl(point)})
 	}
 	return actions.slice(0, MAX_CARD_ACTIONS)
 }

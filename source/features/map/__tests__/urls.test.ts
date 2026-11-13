@@ -1,6 +1,6 @@
 import {
-	appleMapsDirectionsUrl,
-	appleMapsSearchUrl,
+	mapsDirectionsUrl,
+	mapsSearchUrl,
 	basemapScheme,
 	buildingPhotoUrl,
 	mapCredits,
@@ -18,9 +18,9 @@ describe('buildingPhotoUrl', () => {
 	})
 })
 
-describe('appleMapsSearchUrl', () => {
+describe('mapsSearchUrl', () => {
 	it('hands the address to Maps over https', () => {
-		expect(appleMapsSearchUrl('1520 St Olaf Ave')).toBe(
+		expect(mapsSearchUrl('1520 St Olaf Ave', 'ios')).toBe(
 			'https://maps.apple.com/?q=1520%20St%20Olaf%20Ave',
 		)
 	})
@@ -28,8 +28,14 @@ describe('appleMapsSearchUrl', () => {
 	// Northfield addresses carry commas and hashes; an unescaped `#` would
 	// truncate the query at the fragment.
 	it('escapes a punctuated address rather than truncating it', () => {
-		expect(appleMapsSearchUrl('1 Old Main Dr, #200')).toBe(
+		expect(mapsSearchUrl('1 Old Main Dr, #200', 'ios')).toBe(
 			'https://maps.apple.com/?q=1%20Old%20Main%20Dr%2C%20%23200',
+		)
+	})
+
+	it("hands the address to Android's maps app as a geo: URI", () => {
+		expect(mapsSearchUrl('1 Old Main Dr, #200', 'android')).toBe(
+			'geo:0,0?q=1%20Old%20Main%20Dr%2C%20%23200',
 		)
 	})
 })
@@ -48,10 +54,16 @@ describe('basemapScheme', () => {
 	})
 })
 
-describe('appleMapsDirectionsUrl', () => {
+describe('mapsDirectionsUrl', () => {
 	it('asks for walking directions to a point, latitude first', () => {
-		expect(appleMapsDirectionsUrl([-93.1839, 44.4618])).toBe(
+		expect(mapsDirectionsUrl([-93.1839, 44.4618], 'ios')).toBe(
 			'https://maps.apple.com/?daddr=44.4618,-93.1839&dirflg=w',
+		)
+	})
+
+	it('asks Google Maps for walking directions on Android', () => {
+		expect(mapsDirectionsUrl([-93.1839, 44.4618], 'android')).toBe(
+			'https://www.google.com/maps/dir/?api=1&destination=44.4618,-93.1839&travelmode=walking',
 		)
 	})
 })

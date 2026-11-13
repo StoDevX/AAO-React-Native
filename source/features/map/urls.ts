@@ -1,4 +1,4 @@
-import type {ColorSchemeName} from 'react-native'
+import {Platform, type ColorSchemeName} from 'react-native'
 import type {MapCredit, MapSection} from './campus-section'
 import type {Coordinate} from './types'
 
@@ -48,20 +48,34 @@ export function buildingPhotoUrl(root: string, filename: string): string {
 }
 
 /**
- * A search for an address in Maps.
+ * A search for an address in the device's maps app.
  *
- * A universal link rather than the `maps://` scheme: iOS hands this straight
- * to Maps.app, and a device without it still lands somewhere sensible.
+ * iOS: a universal link rather than the `maps://` scheme, which iOS hands
+ * straight to Maps.app; a device without it still lands somewhere sensible.
+ * Android: a `geo:` URI, which opens whichever maps app the reader uses, or
+ * asks them to choose, as Android's own apps do.
  */
-export function appleMapsSearchUrl(address: string): string {
+export function mapsSearchUrl(address: string, os: string = Platform.OS): string {
+	if (os === 'android') {
+		return `geo:0,0?q=${encodeURIComponent(address)}`
+	}
 	return `https://maps.apple.com/?q=${encodeURIComponent(address)}`
 }
 
 /**
- * Walking directions to a point in Maps: campus is walked, and `dirflg=w`
- * asks for walking rather than driving. `daddr` takes "latitude,longitude";
- * GeoJSON stores the pair the other way round.
+ * Walking directions to a point in the device's maps app: campus is walked.
+ * GeoJSON stores the pair longitude first; both URLs take latitude first.
+ *
+ * iOS: Maps' `daddr`, with `dirflg=w` for walking. Android: Google's
+ * cross-platform Maps URL, which opens the Google Maps app on Android (`geo:`
+ * has no way to ask for directions).
  */
-export function appleMapsDirectionsUrl([longitude, latitude]: Coordinate): string {
+export function mapsDirectionsUrl(
+	[longitude, latitude]: Coordinate,
+	os: string = Platform.OS,
+): string {
+	if (os === 'android') {
+		return `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=walking`
+	}
 	return `https://maps.apple.com/?daddr=${latitude},${longitude}&dirflg=w`
 }

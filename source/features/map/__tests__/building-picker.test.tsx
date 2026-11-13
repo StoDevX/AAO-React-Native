@@ -86,6 +86,7 @@ async function renderPicker({
 			<BuildingPicker
 				campus={props.campus}
 				compact={props.compact}
+				covered={false}
 				onHeaderHeightChange={onHeaderHeightChange}
 				onSearchCancel={onSearchCancel}
 				onSearchFocusChange={onSearchFocusChange}
