@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Linking} from 'react-native'
+import {Linking, Platform} from 'react-native'
 import {Button, HStack, Image, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
@@ -19,6 +19,7 @@ import {CARD_INSET} from '../../../components/place-card/card-style'
 
 /// Maps' action buttons are 53pt tall with 12pt corners; the label's height
 /// plus the bordered style's own padding comes to that.
+const ANDROID = Platform.OS === 'android'
 const LABEL_HEIGHT = 37
 const CORNER_RADIUS = 12
 
@@ -49,7 +50,9 @@ export function ActionsRow({actions}: {actions: Array<CardAction>}): React.React
 							key={action.kind}
 							modifiers={[
 								buttonStyle(index === 0 ? 'borderedProminent' : 'bordered'),
-								buttonBorderShape('roundedRectangle', CORNER_RADIUS),
+								ANDROID
+									? buttonBorderShape('capsule')
+									: buttonBorderShape('roundedRectangle', CORNER_RADIUS),
 								accessibilityLabel(title),
 								accessibilityIdentifier(`card-action-${action.kind}`),
 							]}
@@ -59,15 +62,24 @@ export function ActionsRow({actions}: {actions: Array<CardAction>}): React.React
 								})
 							}}
 						>
-							<VStack
-								modifiers={[frame({maxWidth: FILL_WIDTH, minHeight: LABEL_HEIGHT})]}
-								spacing={2}
-							>
-								<Image modifiers={[font({textStyle: 'title3'})]} systemName={symbol} />
-								<Text modifiers={[font({textStyle: 'subheadline', weight: 'semibold'})]}>
-									{title}
-								</Text>
-							</VStack>
+							{ANDROID ? (
+								// Google Maps' place actions: a round button with its icon
+								// beside its label.
+								<HStack spacing={8}>
+									<Image systemName={symbol} />
+									<Text>{title}</Text>
+								</HStack>
+							) : (
+								<VStack
+									modifiers={[frame({maxWidth: FILL_WIDTH, minHeight: LABEL_HEIGHT})]}
+									spacing={2}
+								>
+									<Image modifiers={[font({textStyle: 'title3'})]} systemName={symbol} />
+									<Text modifiers={[font({textStyle: 'subheadline', weight: 'semibold'})]}>
+										{title}
+									</Text>
+								</VStack>
+							)}
 						</Button>
 					)
 				})}

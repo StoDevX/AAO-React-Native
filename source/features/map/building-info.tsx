@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
 import {
 	Button,
 	ContentUnavailableView,
@@ -267,7 +268,10 @@ export function PlaceCard({
 	stacked?: React.ReactNode
 	children: React.ReactNode
 }): React.ReactNode {
-	let large = stop === 'large'
+	// At its full stop Apple Maps trades the header's title for a big centred
+	// one that scrolls under the header; Google Maps keeps one title, at the
+	// start, at every stop, so Android never makes the trade.
+	let large = stop === 'large' && Platform.OS !== 'android'
 	// Both edges are in window coordinates, so comparing them is exact at any
 	// stop and text size. Each is kept as it reports and the verdict derived
 	// here, so whichever of the two frames arrives last decides it.

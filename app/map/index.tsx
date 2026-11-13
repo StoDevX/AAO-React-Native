@@ -34,6 +34,7 @@ import {useCampusParam} from '../../source/features/campus/campus-param'
 import {cardVenuesOptions} from '../../source/features/map/card-queries'
 import {MapSheet} from '../../source/features/map/map-sheet'
 import {MapTopBar} from '../../source/features/map/map-top-bar'
+import {LocateButton} from '../../source/features/map/locate-button'
 import {mapCategoriesOptions} from '../../source/features/map/category-groups-query'
 import {groupsFor} from '../../source/features/map/lib/category-groups'
 import type {MapGroupLabel} from '../../source/features/telemetry/catalog'
@@ -540,6 +541,21 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 					) : null}
 				</ZStack>
 			</MapSheet>
+			{sheet.current === 'large' ? null : (
+				<LocateButton
+					// The Android sheet's handle strip and the gesture bar ride above
+					// a collapsed sheet's content.
+					onLocate={(longitude, latitude) =>
+						cameraRef.current?.easeTo({
+							center: [longitude, latitude],
+							duration: CAMERA_ANIMATION_MS,
+							padding: {bottom: sheetHeight},
+							zoom: SELECTION_ZOOM,
+						})
+					}
+					sheetHeight={sheetHeight + (sheet.current === 'collapsed' ? 36 + insets.bottom : 0)}
+				/>
+			)}
 			<MapTopBar
 				credits={mapCredits(map)}
 				groups={groupLabels}
