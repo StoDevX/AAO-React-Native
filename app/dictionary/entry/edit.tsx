@@ -26,8 +26,6 @@ import {
 } from '../../../source/features/dictionary/store'
 import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
 import visibilityIcon from '@expo/material-symbols/visibility.xml'
-import checkIcon from '@expo/material-symbols/check.xml'
-import swapVertIcon from '@expo/material-symbols/swap_vert.xml'
 
 const styles = StyleSheet.create({
 	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
@@ -143,18 +141,12 @@ function DictionaryEditForm(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 			<Stack.Toolbar placement="right">
-				{manySenses ? (
+				{/* Android moves a sense from its row's long-press menu: it has
+				    no edit mode to drag rows in. */}
+				{manySenses && process.env.EXPO_OS === 'ios' ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Reorder"
-						icon={
-							reordering
-								? process.env.EXPO_OS === 'ios'
-									? 'checkmark'
-									: checkIcon
-								: process.env.EXPO_OS === 'ios'
-									? 'arrow.up.arrow.down'
-									: swapVertIcon
-						}
+						icon={reordering ? 'checkmark' : 'arrow.up.arrow.down'}
 						onPress={() => setReordering((on) => !on)}
 					/>
 				) : null}

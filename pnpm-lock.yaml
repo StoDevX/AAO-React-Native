@@ -51,7 +51,7 @@ overrides:
   simple-plist@1>bplist-parser: 0.3.2
 
 patchedDependencies:
-  '@expo/ui@58.0.20': 9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf
+  '@expo/ui@58.0.20': 5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592
   react-native-change-icon@5.0.0: 5753f46585c931a0782b70923145a1bee15c3ae2405285f7b2718feb276b0306
   react-native-screens@4.30.0: 13d50cd6ce06652846e791cc7279c93c4ab3a5413927eade853a0d8027bf4506
   react-native-webview@14.0.1: 0113b3bcb1b9b15013f0d42cd486bc3c1e21e03161f55325e7819bab770e4caa
@@ -78,7 +78,7 @@ importers:
         version: 58.0.14(@expo/log-box@58.0.12)(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/add-to-device-calendar':
         specifier: workspace:*
         version: link:modules/add-to-device-calendar
@@ -316,6 +316,9 @@ importers:
       expo-router:
         specifier: 58.0.23
         version: 58.0.23(@expo/log-box@58.0.12)(@expo/metro-runtime@58.0.14)(@expo/ui@58.0.20)(@testing-library/react-native@14.1.0)(@types/react@19.2.18)(expo-constants@58.0.12)(expo-linking@58.0.13)(expo-symbols@58.0.4)(expo@58.0.14)(react-native-gesture-handler@3.3.0)(react-native-reanimated@4.7.1)(react-native-safe-area-context@5.10.1)(react-native-screens@4.30.0)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+      expo-sharing:
+        specifier: 58.0.22
+        version: 58.0.22(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)(typescript@7.0.2)
       expo-sqlite:
         specifier: 58.0.13
         version: 58.0.13(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)
@@ -615,7 +618,7 @@ importers:
         version: 0.1.1
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -799,7 +802,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/collections':
         specifier: workspace:*
         version: link:../collections
@@ -866,7 +869,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/collections':
         specifier: workspace:*
         version: link:../collections
@@ -897,7 +900,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -985,7 +988,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -1043,7 +1046,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -1073,7 +1076,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -1159,7 +1162,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 58.0.20
-        version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+        version: 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -1940,6 +1943,9 @@ packages:
     resolution: {integrity: sha512-zP0tnfqrFFRL8INtOaQ6XwEYfdIpIH9vrEo7y0bHQGQa50z4/QWXE5CI4nRUHxqFW4MVWOwXFg1hom1aAZHNkQ==}
     engines: {node: '>=22.13.0'}
 
+  '@expo/config-plugins@58.0.12':
+    resolution: {integrity: sha512-nqnoPBARpKdKLY8+c+N2mizJgiWjlQGWeDhEOqMOZnQcpMmU79H1Svc9QOzcE1yX7obzw0Hf2YVlfW67g58Ucg==}
+
   '@expo/config-plugins@58.0.9':
     resolution: {integrity: sha512-HyP7V1QgDxeHcOEh4qQH7cfK7cI7wNp0y9lszAu98SRYCshhDbwB9gWpFfnpX1GQUtgiqG4Hvgh1z3ntcGwAjw==}
 
@@ -2059,8 +2065,8 @@ packages:
   '@expo/prebuild-config@58.0.14':
     resolution: {integrity: sha512-2wVzVDfXjRB3LzUbW5shOM/A+6eUUCfR+2bpZiWRBBZBtZP2HA5Zq1YgCio1tDqMGAHf2NQQDhvy/Rz1U6aC3A==}
 
-  '@expo/require-utils@58.0.4':
-    resolution: {integrity: sha512-DvjS5NCitXYcad2Woe1EMHJKcbhTbE77HX0BgOQGL2LFHE3q2H0n8kCWDPBOCVJ63Drap3c35nwoJwF5TQL7Tw==}
+  '@expo/require-utils@58.0.5':
+    resolution: {integrity: sha512-14dGubYUBmJjK9aqVSGnwSDs9uaxfzvtqJugtMCEWyuTa/eIvToUbzUwpKCSek6S/hYSEYcgds23vDJhXSBpbQ==}
     peerDependencies:
       typescript: ^5.0.0 || ^5.0.0-0 || ^6.0.0 || ^7.0.0
     peerDependenciesMeta:
@@ -4200,6 +4206,13 @@ packages:
     resolution: {integrity: sha512-FHYecxfGOuAhacHcanR6qCN8Cln9S+FFulcYetLu3ddDg55ohuCsMZ9U4Egzwdm+A2o6N+MdSoJKquBC5F9NIg==}
     engines: {node: ^22.13.0 || ^24.3.0 || ^26.0.0 || >=27.0.0}
 
+  expo-sharing@58.0.22:
+    resolution: {integrity: sha512-s9/hFsGIZR+M8xRicKKKdV5/+TVSvEHze58yu3x9962lLvxkGY1aJ4vojg1RszSTesPJaNiCg7DRA2H8f47/9w==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+      react-native: '*'
+
   expo-sqlite@58.0.13:
     resolution: {integrity: sha512-EqYQTJUJ2Ub+Q/PwM8UTQBeg1/+piuhG8KQTO8HOhZfYu8e34bB3sOkGsM0HQ7KNesvWLlN8UmbrajRQRyE3gg==}
     peerDependencies:
@@ -5864,6 +5877,10 @@ packages:
     resolution: {integrity: sha512-kCz5k7J7XbJtjABOvkc5lJmkiDh8VhjVCGNiqdKCscmVpdVUpEAyXv1xmCLkQJ5dsHqx3IPO4XW+NTDhU/fatA==}
     engines: {node: '>=10.0.0'}
 
+  xcode@4.0.0:
+    resolution: {integrity: sha512-dDaoWzc9EP2fp9FS9PVZUkyvFxY4y1TOV9pcKaKLk++Ei/qb97XDFEVP7GnW7Osii/TzVABJ0jq2F+9/lq0TVA==}
+    engines: {node: '>=14.17.0'}
+
   xml2js@0.6.0:
     resolution: {integrity: sha512-eLTh0kA8uHceqesPqSE+VvO1CDDJWMwlQfB6LuN6T8w6MaDJ8Txm8P7s5cHD0miF0V+GGTZrDQfxPZQVsur33w==}
     engines: {node: '>=4.0.0'}
@@ -6627,7 +6644,7 @@ snapshots:
       '@expo/platforms': 58.0.1
       '@expo/plist': 0.10.1
       '@expo/prebuild-config': 58.0.14(supports-color@8.1.1)(typescript@7.0.2)
-      '@expo/require-utils': 58.0.4(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/router-server': 58.0.14(@expo/metro-runtime@58.0.14)(expo-constants@58.0.12)(expo-font@58.0.8)(expo-router@58.0.23)(expo-server@58.0.5)(expo@58.0.14)(react@19.3.0)(supports-color@8.1.1)
       '@expo/schema-utils': 58.0.2
       '@expo/spawn-async': 1.8.0
@@ -6691,12 +6708,31 @@ snapshots:
     dependencies:
       node-forge: 1.4.0
 
+  '@expo/config-plugins@58.0.12(supports-color@8.1.1)(typescript@7.0.2)':
+    dependencies:
+      '@expo/config-types': 58.0.3
+      '@expo/json-file': 11.2.1
+      '@expo/plist': 0.10.1
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/sdk-runtime-versions': 1.0.1
+      chalk: 4.1.2
+      debug: 4.4.3(supports-color@8.1.1)
+      getenv: 2.0.0
+      semver: 7.8.5
+      slugify: 1.6.9
+      tinyglobby: 0.2.17
+      xcode: 4.0.0
+      xml2js: 0.6.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   '@expo/config-plugins@58.0.9(supports-color@8.1.1)(typescript@7.0.2)':
     dependencies:
       '@expo/config-types': 58.0.3
       '@expo/json-file': 11.2.1
       '@expo/plist': 0.10.1
-      '@expo/require-utils': 58.0.4(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/sdk-runtime-versions': 1.0.1
       chalk: 4.1.2
       debug: 4.4.3(supports-color@8.1.1)
@@ -6718,7 +6754,7 @@ snapshots:
       '@expo/config-types': 58.0.3
       '@expo/json-file': 11.2.1
       '@expo/platforms': 58.0.1
-      '@expo/require-utils': 58.0.4(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
       deepmerge: 4.3.1
       getenv: 2.0.0
       glob: 13.0.6
@@ -6776,7 +6812,7 @@ snapshots:
 
   '@expo/image-utils@0.12.5(supports-color@8.1.1)(typescript@7.0.2)':
     dependencies:
-      '@expo/require-utils': 58.0.4(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       getenv: 2.0.0
@@ -6833,7 +6869,7 @@ snapshots:
       '@expo/json-file': 11.2.1
       '@expo/metro': 58.0.0(supports-color@8.1.1)
       '@expo/platforms': 58.0.1
-      '@expo/require-utils': 58.0.4(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/spawn-async': 1.8.0
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/remapping': 2.3.5
@@ -6947,7 +6983,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@expo/require-utils@58.0.4(supports-color@8.1.1)(typescript@7.0.2)':
+  '@expo/require-utils@58.0.5(supports-color@8.1.1)(typescript@7.0.2)':
     dependencies:
       '@babel/code-frame': 7.29.7
       '@babel/core': 7.29.7(supports-color@8.1.1)
@@ -6981,7 +7017,7 @@ snapshots:
 
   '@expo/sudo-prompt@9.3.2': {}
 
-  '@expo/ui@58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)':
+  '@expo/ui@58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)':
     dependencies:
       expo: 58.0.14(@babel/core@7.29.7)(@expo/metro-runtime@58.0.14)(expo-router@58.0.23)(react-native-webview@14.0.1)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.3.0
@@ -8819,7 +8855,7 @@ snapshots:
   expo-constants@58.0.12(expo@58.0.14)(react-native@0.88.0)(supports-color@8.1.1)(typescript@7.0.2):
     dependencies:
       '@expo/env': 2.5.2(supports-color@8.1.1)
-      '@expo/require-utils': 58.0.4(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
       expo: 58.0.14(@babel/core@7.29.7)(@expo/metro-runtime@58.0.14)(expo-router@58.0.23)(react-native-webview@14.0.1)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)(typescript@7.0.2)
       react-native: 0.88.0(patch_hash=5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077)(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.3.0)(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -8897,7 +8933,7 @@ snapshots:
   expo-modules-autolinking@58.0.13(supports-color@8.1.1)(typescript@7.0.2):
     dependencies:
       '@expo/platforms': 58.0.1
-      '@expo/require-utils': 58.0.4(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/require-utils': 58.0.5(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       commander: 7.2.0
@@ -8951,7 +8987,7 @@ snapshots:
       sf-symbols-typescript: 2.2.0
       standard-navigation: 0.0.5
     optionalDependencies:
-      '@expo/ui': 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
+      '@expo/ui': 58.0.20(patch_hash=5ec70eaf508605490094c4da2227ab6105eb817de87fdf927e8872a541926592)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)
       '@testing-library/react-native': 14.1.0(jest@30.5.2)(react-native@0.88.0)(react@19.3.0)(test-renderer@1.3.1)
       expo-symbols: 58.0.4(expo-font@58.0.8)(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)
       react-native-gesture-handler: 3.3.0(react-native@0.88.0)(react@19.3.0)
@@ -8962,6 +8998,18 @@ snapshots:
       - '@types/react-dom'
 
   expo-server@58.0.5: {}
+
+  expo-sharing@58.0.22(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)(typescript@7.0.2):
+    dependencies:
+      '@expo/config-plugins': 58.0.12(supports-color@8.1.1)(typescript@7.0.2)
+      '@expo/config-types': 58.0.3
+      '@expo/plist': 0.10.1
+      expo: 58.0.14(@babel/core@7.29.7)(@expo/metro-runtime@58.0.14)(expo-router@58.0.23)(react-native-webview@14.0.1)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)(supports-color@8.1.1)(typescript@7.0.2)
+      react: 19.3.0
+      react-native: 0.88.0(patch_hash=5ca8a32fae9fb5da7a2d2649204442989acb85dfac0ecad130ed5687d19c4077)(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.3.0)(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   expo-sqlite@58.0.13(expo@58.0.14)(react-native@0.88.0)(react@19.3.0):
     dependencies:
@@ -10832,6 +10880,10 @@ snapshots:
     dependencies:
       simple-plist: 1.3.1
       uuid: 7.0.3
+
+  xcode@4.0.0:
+    dependencies:
+      simple-plist: 1.3.1
 
   xml2js@0.6.0:
     dependencies:

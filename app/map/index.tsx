@@ -76,6 +76,7 @@ import {useMapStyleUrl} from '../../source/features/map/style-query'
 import {mapCredits} from '../../source/features/map/urls'
 import {requiresSection} from '../../source/features/campus/section-gate'
 import infoIcon from '@expo/material-symbols/info.xml'
+import {useBackHandler} from '../../source/lib/use-back-handler'
 
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
@@ -131,6 +132,9 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	// A card covers the picker while any place is open.
 	let covered = stack.length > 0
 	let [sheetPresented, setSheetPresented] = React.useState(true)
+	// Back closes the card on top, one place at a time, before it leaves the
+	// map, as Android users expect of Back.
+	useBackHandler(covered, () => dispatchStack({type: 'pop', depth: stack.length - 1}))
 	// The sheet is presented in a window of its own, above the whole
 	// navigation stack, so a screen pushed over the map -- by a deep link or a
 	// Home Screen quick action -- would sit under it. It is presented only
@@ -513,6 +517,7 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 								<BuildingPicker
 									campus={campus}
 									compact={sheet.current === 'collapsed'}
+									covered={covered}
 									onHeaderHeightChange={setPickerHeaderHeight}
 									onGroupOpen={makeRoomForGroup}
 									onPinsChange={setPins}

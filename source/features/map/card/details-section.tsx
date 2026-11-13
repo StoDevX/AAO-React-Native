@@ -9,7 +9,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 
-import {appleMapsSearchUrl} from '../urls'
+import {mapsSearchUrl} from '../urls'
 import {LAST_ROW} from '../../../components/place-card/card-style'
 import {SectionHeading} from '../../../components/place-card/section-heading'
 
@@ -21,11 +21,11 @@ export function DetailsSection({address}: {address: string | null}): React.React
 	if (!address) {
 		return null
 	}
-	// Linking rather than openUrl: maps.apple.com is a universal link that iOS
-	// hands to Maps.app, and openUrl would offer to show it in the in-app
-	// browser instead, which lands on Apple's web fallback page.
+	// Linking rather than openUrl: the URL is for the maps app (a universal
+	// link iOS hands to Maps.app, a geo: URI on Android), and openUrl would
+	// offer to show it in the in-app browser instead.
 	let openAddress = () => {
-		let url = appleMapsSearchUrl(address)
+		let url = mapsSearchUrl(address)
 		Linking.openURL(url).catch((err: unknown) => {
 			console.warn(`could not open ${url}`, err)
 		})

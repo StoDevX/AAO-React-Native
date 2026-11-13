@@ -48,6 +48,11 @@ jest.mock('expo-web-browser', () => ({
 		CURRENT_CONTEXT: 'currentContext',
 	},
 }))
+// Android's image share goes through expo-sharing, whose native module Jest has no copy of.
+jest.mock('expo-sharing', () => ({
+	shareAsync: jest.fn(() => Promise.resolve()),
+	isAvailableAsync: jest.fn(() => Promise.resolve(true)),
+}))
 jest.mock('expo-clipboard', () => ({
 	getStringAsync: jest.fn(() => Promise.resolve('')),
 	setStringAsync: jest.fn(() => Promise.resolve(true)),

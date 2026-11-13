@@ -54,6 +54,7 @@ import {useRecentPlacesStore} from './store'
 import type {Building, Feature} from './types'
 import type {MapGroupLabel} from '../telemetry/catalog'
 import {track} from '../telemetry/track'
+import {useBackHandler} from '../../lib/use-back-handler'
 
 /// Matches the debounce every other search screen in the app uses.
 const SEARCH_DEBOUNCE_MS = 200
@@ -130,6 +131,8 @@ type Props = {
 	/// A group was opened from its tile, so the screen can make room for the
 	/// pins it is about to frame.
 	onGroupOpen: () => void
+	/// A place's card covers the picker, and Back is the card's to handle.
+	covered: boolean
 }
 
 /// The picker, or a row to draw it again if drawing it throws: a place or a
@@ -193,6 +196,7 @@ function PickerContents({
 	onHeaderHeightChange,
 	onPinsChange,
 	onGroupOpen,
+	covered,
 }: Props): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
@@ -224,6 +228,9 @@ function PickerContents({
 	if (opened && !openGroup) {
 		setOpened(null)
 	}
+	// Back closes the open group before it leaves the map. Not while a card
+	// covers the picker: Back closes the card first.
+	useBackHandler(openGroup !== undefined && !covered, () => setOpened(null))
 
 	let searchResults = React.useMemo(
 		() => (query ? searchPlaces(buildings, query) : []),
