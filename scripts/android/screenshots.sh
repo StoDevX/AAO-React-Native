@@ -12,6 +12,11 @@ scheme="$2"
 out="$3"
 mkdir -p "$out/light" "$out/dark"
 
+# Set when a screenshot fails or the app has left the front, which is how a
+# crash shows. Every route is still tried, so one run shows them all, and the
+# script then exits with it, so the job fails.
+failed=0
+
 # The screens a reader reaches from Home, and the ones a deep link opens on
 # its own, and a detail screen or two opened by its parameter in the path.
 routes=(
@@ -69,10 +74,20 @@ shoot() {
 		launch "$route"
 		# A cold start loads the bundle, then the screen fetches its (mocked) data.
 		sleep 6
-		adb exec-out screencap -p >"$out/$mode/$name.png"
+		if ! adb exec-out screencap -p >"$out/$mode/$name.png"; then
+			echo "$mode $name: the screenshot failed" >&2
+			failed=1
+		fi
 		# Whether the app is still in front, so a crash reads as one rather than as the launcher.
 		top=$(adb shell dumpsys activity activities | grep -m1 -E 'topResumedActivity|mResumedActivity' || true)
 		echo "$mode $name: $top" >>"$out/foreground.txt"
+		case "$top" in
+		*"$package/"*) ;;
+		*)
+			echo "$mode $name: the app is not in front" >&2
+			failed=1
+			;;
+		esac
 	done
 }
 
@@ -93,4 +108,4 @@ adb logcat -d >"$out/logcat.txt"
 # Crashes and JS errors, separated out so they are the first thing read.
 grep -E 'FATAL EXCEPTION|AndroidRuntime|ReactNativeJS.*(Error|error|Warning)|E ReactNative|E unknown:ReactNative|SoLoader|UnsatisfiedLink' "$out/logcat.txt" >"$out/errors.txt" || true
 echo "errors: $(wc -l <"$out/errors.txt") lines"
-exit 0
+exit "$failed"
