@@ -149,3 +149,35 @@ describe('the helper process', () => {
 		assert.ok(Array.isArray(second.result.breaks))
 	})
 })
+
+describe('the data-set methods', () => {
+	const ask = async (target, method, params) =>
+		(await handle(target, JSON.stringify({id: 1, method, params}))).result
+
+	it("list the catalog's sets", async () => {
+		let catalog = await ask(await handlers(), 'datasets', {})
+		assert.equal(catalog.sets['contact-info'].title, 'Important Contacts')
+	})
+
+	it("answer a set's records with their problems", async () => {
+		let reply = await ask(await handlers(), 'records', {set: 'faqs'})
+		assert.equal(reply.records[0].title, 'Say hello to us')
+		assert.deepEqual(reply.problems, [])
+	})
+
+	it("give a record's schema with its titles", async () => {
+		let schema = await ask(await handlers(), 'schema', {set: 'contact-info'})
+		assert.equal(schema.properties.phoneNumber.title, 'Phone Number')
+	})
+
+	it('add a record and name it in the reply', async () => {
+		let reply = await ask(await handlers(), 'create', {set: 'faqs', title: 'Where is the Pause?'})
+		assert.equal(reply.created.title, 'Where is the Pause?')
+	})
+
+	it('write a document and read it back', async () => {
+		let target = await handlers()
+		await ask(target, 'writeText', {file: 'privacy.md', text: '# Privacy\n'})
+		assert.equal(await ask(target, 'readText', {file: 'privacy.md'}), '# Privacy\n')
+	})
+})

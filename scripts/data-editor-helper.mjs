@@ -7,7 +7,9 @@ import path from 'node:path'
 import {createInterface} from 'node:readline'
 import {parseArgs} from 'node:util'
 import {parse} from 'yaml'
+import {listRecords, loadCatalog, recordSchema} from './data-editor-datasets.mjs'
 import {DocumentStore} from './data-editor-documents.mjs'
+import {createRecord, removeRecord, reorderRecords} from './data-editor-records.mjs'
 import {build, listBuildings, pruneBuilds, readCalendar, validate} from './data-editor-pipeline.ts'
 import {serve} from './data-editor-serve.mjs'
 
@@ -16,7 +18,7 @@ import {serve} from './data-editor-serve.mjs'
  * one it speaks (`HelperRuntime.protocolVersion`) and refuses a helper with
  * another. Changing a handler's parameters or its reply's shape bumps both.
  */
-export const PROTOCOL = 2
+export const PROTOCOL = 3
 
 /** The protocol's methods over one data directory and its build folder. */
 export function createHandlers({dataDir, outDir, bundleData}) {
@@ -50,6 +52,16 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 		close: () => server?.close(),
 		// a file's base version, which the app holds as text, to compare with the file now
 		parse: ({text}) => parse(text),
+		datasets: () => loadCatalog(dataDir),
+		records: ({set}) => ({records: listRecords(dataDir, loadCatalog(dataDir), set), problems: []}),
+		schema: ({set}) => recordSchema(dataDir, loadCatalog(dataDir), set),
+		create: ({set, title, section}) => createRecord(dataDir, set, {title, section}),
+		remove: ({set, file, path: recordPath}) => removeRecord(dataDir, set, {file, path: recordPath}),
+		reorder: ({set, order}) => reorderRecords(dataDir, set, order),
+		readText: ({file}) => store.readText(file),
+		writeText: async ({file, text}) => {
+			await store.writeText(file, text)
+		},
 	}
 }
 

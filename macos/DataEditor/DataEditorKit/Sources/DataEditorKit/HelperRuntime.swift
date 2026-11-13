@@ -16,7 +16,7 @@ public final class HelperRuntime: @unchecked Sendable {
 
     /// The version of the handlers' parameters and replies this app speaks.
     /// `PROTOCOL` in `scripts/data-editor-helper.mjs` changes with it.
-    public static let protocolVersion = 2
+    public static let protocolVersion = 3
 
     /// The loaded helper's `PROTOCOL`.
     public let helperProtocol: Int
