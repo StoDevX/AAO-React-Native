@@ -1,0 +1,76 @@
+# data/_datasets.yaml: the data sets the Mac data editor offers.
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+additionalProperties: false
+required: [groups, sets]
+properties:
+  groups:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [title, sets]
+      properties:
+        title: {type: string, minLength: 1}
+        sets: {type: array, minItems: 1, items: {type: string}}
+  sets:
+    type: object
+    additionalProperties: {$ref: '#/definitions/set'}
+
+definitions:
+  files-by:
+    type: object
+    additionalProperties: false
+    required: [files, by]
+    properties:
+      files: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+      by: {type: string, minLength: 1}
+
+  set:
+    type: object
+    additionalProperties: false
+    required: [title, record, shape, path]
+    properties:
+      title: {type: string, minLength: 1}
+      # what one record is called: "New Contact", "Untitled Contact"
+      record: {type: string, minLength: 1}
+      shape: {enum: [folder, list, file, document]}
+      # a folder, or a file, under data/
+      path: {type: string, minLength: 1}
+      # list shape: where the array or map of records is in the file
+      list:
+        type: array
+        items: {anyOf: [{type: string}, {type: integer}]}
+      # a schema in _schemas/, by name without its extension
+      schema: {type: string, minLength: 1}
+      # the field a record is named by, a dotted path; a map entry with none is named by its key
+      titleField: {type: string, minLength: 1}
+      subtitleField: {type: string, minLength: 1}
+      sectionField: {type: string, minLength: 1}
+      # folder shape: a numeric file-name prefix orders the records
+      ordered: {type: boolean}
+      form: {enum: [generated, hours, breaks]}
+      # these fields of these files are written by a scrape
+      scraped:
+        type: object
+        additionalProperties: false
+        required: [files, fields, by]
+        properties:
+          files: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+          fields: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+          by: {type: string, minLength: 1}
+      # these files are written by a generator
+      generated: {$ref: '#/definitions/files-by'}
+      # why nothing in the set can be edited
+      readOnly: {type: string, minLength: 1}
+      # what else writes or reads the set, shown above its records
+      maintainedBy: {type: string, minLength: 1}
+      # a field set to today's date on every edit
+      stampOnSave: {type: string, minLength: 1}
+    if: {properties: {shape: {const: list}}}
+    then: {required: [list, schema]}
+    else:
+      if: {properties: {shape: {const: document}}}
+      then: {}
+      else: {required: [schema]}

@@ -1,0 +1,241 @@
+# The data sets the Mac data editor offers, and how it shows each. Named with a
+# leading `_` so bundle-data never publishes it. Its schema is
+# _schemas/_datasets.yaml; scripts/data-editor-datasets.mjs reads it.
+#
+# A set is one of four shapes:
+#   folder    one record per file in `path`
+#   list      one record per item of the array or map at `list` in the file `path`
+#   file      the whole file at `path` is one record
+#   document  the file at `path` is prose, edited as text
+#
+# Adding a set is an entry here and, for any shape but document, a schema in
+# _schemas/ whose fields carry a `title`.
+
+groups:
+  - title: On campus
+    sets:
+      - building-hours
+      - bonapp-overrides
+      - breaks
+      - building-directory
+      - map-categories
+      - webcams
+      - pause-menu
+      - color-printers
+  - title: Help
+    sets: [contact-info, faqs, help, dictionary, a-to-z]
+  - title: Getting around
+    sets: [transportation, bus-times, bus-curation, bus-repairs]
+  - title: Work & radio
+    sets: [student-work-areas, student-wages, ksto-schedule]
+  - title: Organisations
+    sets: [org-categories]
+  - title: App
+    sets: [sources, privacy]
+
+sets:
+  building-hours:
+    title: Hours
+    record: Building
+    shape: folder
+    path: building-hours
+    schema: building-hours
+    titleField: name
+    sectionField: category
+    ordered: true
+    form: hours
+    scraped:
+      files: [1-1-cage.yaml, 1-3-stav.yaml]
+      fields: [schedule]
+      by: Updated weekly from Bon Appétit's café pages
+
+  bonapp-overrides:
+    title: Dining Scrape
+    record: Venue
+    shape: list
+    path: _scrapes/bonapp-overrides.yaml
+    list: [venues]
+    schema: _bonapp-overrides
+    maintainedBy: Steers the weekly Bon Appétit scrape of Stav and the Cage
+
+  breaks:
+    title: Breaks
+    record: Break Calendar
+    shape: file
+    path: breaks.yaml
+    schema: breaks
+    form: breaks
+
+  building-directory:
+    title: Building Directory
+    record: Building
+    shape: folder
+    path: building-directory
+    schema: building-directory
+    titleField: building
+
+  map-categories:
+    title: Map Categories
+    record: Map Categories
+    shape: file
+    path: map-categories.yaml
+    schema: map-categories
+
+  webcams:
+    title: Webcams
+    record: Webcam
+    shape: folder
+    path: webcams
+    schema: webcams
+    titleField: name
+    subtitleField: tagline
+    ordered: true
+
+  pause-menu:
+    title: Pause Menu
+    record: Pause Menu
+    shape: file
+    path: pause-menu.yaml
+    schema: pause-menu
+
+  color-printers:
+    title: Color Printers
+    record: Color Printers
+    shape: file
+    path: color-printers.yaml
+    schema: color-printers
+
+  contact-info:
+    title: Important Contacts
+    record: Contact
+    shape: folder
+    path: contact-info
+    schema: contact-info
+    titleField: title
+    subtitleField: synopsis
+    sectionField: category
+    ordered: true
+
+  faqs:
+    title: FAQs & Notices
+    record: FAQ
+    shape: list
+    path: faqs.yaml
+    list: [faqs]
+    schema: faqs
+    titleField: question
+    subtitleField: bannerTitle
+
+  help:
+    title: Help
+    record: Help Card
+    shape: folder
+    path: help
+    schema: help
+    titleField: title
+    ordered: true
+
+  dictionary:
+    title: Dictionary
+    record: Word
+    shape: folder
+    path: dictionary
+    schema: dictionary
+    titleField: word
+
+  a-to-z:
+    title: A–Z Extras
+    record: Letter
+    shape: folder
+    path: a-to-z
+    schema: a-to-z
+    titleField: letter
+
+  transportation:
+    title: Transportation
+    record: Option
+    shape: folder
+    path: transportation
+    schema: transportation
+    titleField: name
+    subtitleField: synopsis
+    sectionField: category
+    ordered: true
+
+  bus-times:
+    title: Bus Times
+    record: Bus Line
+    shape: folder
+    path: bus-times
+    schema: bus-times
+    titleField: line
+    ordered: true
+    generated:
+      files: [3-red-line.yaml, 4-blue-line.yaml]
+      by: Generated weekly from the Hiawathaland GTFS feed; Bus Curation sets their notice and colours
+
+  bus-curation:
+    title: Bus Curation
+    record: Bus Curation
+    shape: file
+    path: bus-times/_curation.yaml
+    schema: _bus-curation
+    maintainedBy: Steers the weekly bus timetable refresh
+
+  bus-repairs:
+    title: Bus Repairs
+    record: Bus Repairs
+    shape: file
+    path: bus-times/_repairs.yaml
+    schema: _bus-repairs
+    maintainedBy: Patches the GTFS feed's mistakes during the weekly refresh
+
+  student-work-areas:
+    title: Student Work Areas
+    record: Area
+    shape: list
+    path: student-work-areas.yaml
+    list: []
+    schema: student-work-areas
+    titleField: name
+
+  student-wages:
+    title: Student Wages
+    record: Wage Table
+    shape: file
+    path: student-wages.yaml
+    schema: student-wages
+    readOnly: Updated monthly from St. Olaf's student compensation page
+
+  ksto-schedule:
+    title: KSTO Schedule
+    record: KSTO Schedule
+    shape: file
+    path: ksto-schedule.yaml
+    schema: ksto-schedule
+    maintainedBy: Updated weekly from KSTO's Now Playing post, unless edited after it
+    stampOnSave: updated
+
+  org-categories:
+    title: Org Categories
+    record: Category
+    shape: list
+    path: org-categories.yaml
+    list: []
+    schema: org-categories
+    titleField: name
+
+  sources:
+    title: Sources
+    record: Source
+    shape: list
+    path: sources.yaml
+    list: [links]
+    schema: sources
+    titleField: titles.und
+
+  privacy:
+    title: Privacy Policy
+    record: Privacy Policy
+    shape: document
+    path: privacy.md
