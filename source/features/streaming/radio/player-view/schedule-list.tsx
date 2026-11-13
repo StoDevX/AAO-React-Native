@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native'
 import {SymbolView} from 'expo-symbols'
+
+import {FILLED_SYMBOL_WEIGHT} from '../../../../lib/filled-symbol-weight'
 import type {EventType} from '@frogpond/event-type'
 import {formatCompactTime, formatTime} from '@frogpond/time-format'
 
@@ -10,10 +12,58 @@ import {useIsReminding, useRadioStore, type FollowedShow} from '../store'
 import {palette} from './palette'
 import {scheduleNote, type ScheduleStatus} from './schedule-note'
 
+/** How far a control dims under a finger, as the player's other controls do. */
+const PRESSED_OPACITY = 0.3
+
+/** What UI tests find a show's bell by, after the show's title. */
+export const BELL_ID_PREFIX = 'radio-schedule-bell-'
+
+/** The bell, ringing or not: Android's is Material's, filled while it reminds, as Material marks an on state. */
+const BELL_ON = {ios: 'bell.fill', android: 'notifications'} as const
+const BELL_OFF = {ios: 'bell', android: 'notifications'} as const
+
+/** Follows or unfollows a show, saying which it will do. */
+function ReminderBell({
+	show,
+	onToggle,
+}: {
+	show: FollowedShow
+	onToggle: (show: FollowedShow) => void
+}): React.ReactNode {
+	let reminding = useIsReminding(show)
+	return (
+		<Pressable
+			accessibilityLabel={bellLabel(show, reminding)}
+			accessibilityRole="button"
+			hitSlop={8}
+			onPress={() => onToggle(show)}
+			style={styles.bell}
+			testID={`${BELL_ID_PREFIX}${show.title}`}
+		>
+			{({pressed}) => (
+				<View style={pressed ? styles.pressed : undefined}>
+					<SymbolView
+						name={reminding ? BELL_ON : BELL_OFF}
+						size={20}
+						tintColor={reminding ? palette.primary : palette.secondary}
+						weight={reminding ? FILLED_SYMBOL_WEIGHT : undefined}
+					/>
+				</View>
+			)}
+		</Pressable>
+	)
+}
+
 export const ScheduleRow = React.memo(function ScheduleRow({
 	show,
+	station,
+	onPress,
+	onToggle,
 }: {
 	show: EventType
+	station: Station
+	onPress: (show: EventType) => void
+	onToggle: (show: FollowedShow) => void
 }): React.ReactNode {
 	return (
 		<View style={styles.row}>

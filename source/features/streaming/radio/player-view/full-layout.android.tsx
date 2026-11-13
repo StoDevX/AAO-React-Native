@@ -4,6 +4,7 @@ import {SymbolView} from 'expo-symbols'
 import {TouchClaimView} from '@frogpond/touch-claim'
 
 import {FILLED_SYMBOL_WEIGHT} from '../../../../lib/filled-symbol-weight'
+import {HostedReminderPermissionSheet, useFollowToggle} from '../reminders'
 import {ScratchableLogo} from '../scratchable-logo'
 import {logoImage, type Station} from '../stations'
 import {useRadioStore, useStationPlayback} from '../store'
@@ -62,6 +63,7 @@ export function FullLayout({
 	let {text: airText} = airStatusText(schedule.current, schedule.status)
 	let note = scheduleNote(schedule.status, schedule.upcoming.length)
 	let openFullSchedule = useRadioStore((state) => state.openFullSchedule)
+	let follow = useFollowToggle('player')
 
 	return (
 		<View style={styles.screen}>
@@ -112,11 +114,22 @@ export function FullLayout({
 						schedule.upcoming
 							.slice(0, UP_NEXT)
 							.map((show) => (
-								<ScheduleRow key={`${show.startTime.valueOf()}|${show.title}`} show={show} />
+								<ScheduleRow
+									key={`${show.startTime.valueOf()}|${show.title}`}
+									onPress={openFullSchedule}
+									onToggle={follow.toggle}
+									show={show}
+									station={station}
+								/>
 							))
 					)}
 				</View>
 			</View>
+			<HostedReminderPermissionSheet
+				onClose={follow.dismissPrompt}
+				onConfirm={follow.confirmPrompt}
+				prompt={follow.prompt}
+			/>
 		</View>
 	)
 }
