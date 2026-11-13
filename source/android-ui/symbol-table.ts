@@ -7,11 +7,12 @@
  * `materialSymbolFor` trims its trailing parts until it finds a mapped
  * ancestor (`bell.badge` falls back to `bell`), and past that draws
  * `FALLBACK_SYMBOL`. The values are Material Symbols' own snake_case names,
- * which is also the name of the vector drawable `fetch-symbols.mjs` downloads
- * into `symbols/`. A `.fill` SF Symbol draws Material's filled variant.
+ * which are also the names `@expo/material-symbols` ships its icons under;
+ * `sync-symbols.mjs` writes the import table from them. A `.fill` SF Symbol
+ * draws Material's filled variant.
  *
- * This file is plain data with no imports, so the download script can read it
- * under Node directly.
+ * This file is plain data with no imports, so that script can read it under
+ * Node directly.
  */
 export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	a: 'title',
@@ -169,7 +170,8 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	shield: 'shield',
 	'shield.lefthalf.filled': 'shield',
 	'slider.horizontal.3': 'tune',
-	sparkles: 'auto_awesome',
+	// Google retired auto_awesome; star_shine is the sparkle it ships now.
+	sparkles: 'star_shine',
 	speaker: 'volume_down',
 	'speaker.wave.3': 'volume_up',
 	sportscourt: 'stadium',
@@ -191,7 +193,7 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 	trash: 'delete',
 	tray: 'inbox',
 	tree: 'park',
-	trophy: 'emoji_events',
+	trophy: 'trophy',
 	video: 'videocam',
 	'water.waves': 'waves',
 	waveform: 'graphic_eq',
