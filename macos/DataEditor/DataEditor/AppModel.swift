@@ -336,6 +336,14 @@ final class AppModel {
 
     func select(_ file: String) async {
         guard let helper else { return }
+        // a document's editor reads it as text; as YAML it would only be reported broken
+        guard Self.loadsAsData(file, catalog: catalog) else {
+            document = nil
+            value = nil
+            documentFile = file
+            problems = []
+            return
+        }
         do {
             let loaded = try await helper.load(file)
             // a later selection's load owns the document now

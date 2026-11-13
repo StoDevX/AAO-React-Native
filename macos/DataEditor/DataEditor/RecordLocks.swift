@@ -35,6 +35,12 @@ extension AppModel {
         return String(format: "%04d-%02d-%02dT00:00:00Z", day.year!, day.month!, day.day!)
     }
 
+    /// Whether `file` is data the helper reads, rather than a prose document edited as text.
+    static func loadsAsData(_ file: String, catalog: DataSetCatalog?) -> Bool {
+        guard let set = catalog?.set(for: file) else { return true }
+        return catalog?.sets[set]?.shape != .document
+    }
+
     /// What a set that steers a scrape or generator says above its records.
     static func steersNotice(_ steers: DataSet.Steers) -> String {
         "An edit here changes \(steers.what) the next time \(steers.run) runs. The preview won't show it."

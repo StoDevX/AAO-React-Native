@@ -58,3 +58,15 @@ struct LockTests {
             == "An edit here changes Stav and the Cage's hours the next time the weekly Bon Appétit scrape runs. The preview won't show it.")
     }
 }
+
+@MainActor
+struct DocumentFileTests {
+    private let catalog = try! JSONDecoder().decode(DataSetCatalog.self, from: Data(#"{"groups":[],"sets":{"privacy":{"title":"Privacy Policy","record":"Privacy Policy","shape":"document","path":"privacy.md"},"faqs":{"title":"FAQs & Notices","record":"FAQ","shape":"list","path":"faqs.yaml","list":["faqs"],"schema":"faqs"}}}"#.utf8))
+
+    /// A prose document is text, which the helper would read as YAML and report as broken.
+    @Test func aDocumentIsNotLoadedAsData() {
+        #expect(!AppModel.loadsAsData("privacy.md", catalog: catalog))
+        #expect(AppModel.loadsAsData("faqs.yaml", catalog: catalog))
+        #expect(AppModel.loadsAsData("building-hours/1-1-cage.yaml", catalog: nil))
+    }
+}
