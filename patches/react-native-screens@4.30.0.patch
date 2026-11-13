@@ -115,7 +115,7 @@ index c435fdd1dab11f39dc78367860e8f568c953ea8c..2aaf23bceadeba02527121bceddb989d
                             imageLoader:imageLoader
                         completionBlock:^(UIImage *img) {
 diff --git a/ios/RNSScreenStackHeaderConfig.mm b/ios/RNSScreenStackHeaderConfig.mm
-index e217b2411d20c85db3ec84bb87765c1e9407fd3b..52f156270de501ac37c0f39451fafaaa03aa56ad 100644
+index e217b2411d20c85db3ec84bb87765c1e9407fd3b..45c641eea6cf4bd55c6bf3f52e0d87790f089aa3 100644
 --- a/ios/RNSScreenStackHeaderConfig.mm
 +++ b/ios/RNSScreenStackHeaderConfig.mm
 @@ -48,6 +48,39 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
@@ -195,7 +195,7 @@ index e217b2411d20c85db3ec84bb87765c1e9407fd3b..52f156270de501ac37c0f39451fafaaa
          break;
        }
        case RNSScreenStackHeaderSubviewTypeCenter:
-@@ -696,10 +729,16 @@ RNS_IGNORE_SUPER_CALL_END
+@@ -696,10 +729,27 @@ RNS_IGNORE_SUPER_CALL_END
    // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
    // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
    navitem.title = config.title;
@@ -210,8 +210,19 @@ index e217b2411d20c85db3ec84bb87765c1e9407fd3b..52f156270de501ac37c0f39451fafaaa
 +  if (!RNSBarButtonItemsAreEquivalent(navitem.leftBarButtonItems, newLeftItems)) {
 +    navitem.leftBarButtonItems = newLeftItems.count > 0 ? newLeftItems : nil;
 +  }
++  BOOL menuProbeHadMenu = NO; // EXPERIMENT probe
++  for (UIBarButtonItem *item in navitem.rightBarButtonItems) {
++    if (item.menu != nil) {
++      menuProbeHadMenu = YES;
++    }
++  }
 +  if (!RNSBarButtonItemsAreEquivalent(navitem.rightBarButtonItems, newRightItems)) {
++    if (menuProbeHadMenu) {
++      NSLog(@"[menu-probe] rns header update: REPLACED the right menu item");
++    }
 +    navitem.rightBarButtonItems = newRightItems.count > 0 ? newRightItems : nil;
++  } else if (menuProbeHadMenu) {
++    NSLog(@"[menu-probe] rns header update: kept the right menu item");
 +  }
  
    // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
