@@ -43,6 +43,7 @@ const COUNT_MODIFIERS = [
 
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
+const NO_MODIFIERS: [] = []
 /// Two lines, with an ellipsis for whatever still doesn't fit, rather than
 /// one: most titles read better wrapped than clipped at this width. The
 /// `Grid`'s `alignment="top"` is what keeps a one-line tile's card level with
@@ -138,8 +139,9 @@ export function GradientTile({
 	// ratio. Compose's grid cell does not pass its width on that way, and the
 	// card collapsed to the symbol's height -- a circle the symbol filled -- so
 	// on Android the card takes its grid's tile width outright.
+	let sizedOnAndroid = Platform.OS === 'android' && tileWidth !== null
 	let cardFrame =
-		Platform.OS === 'android' && tileWidth !== null
+		sizedOnAndroid && tileWidth !== null
 			? [frame({width: tileWidth, height: tileWidth / ratio})]
 			: [frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]
 	let shownCount = count !== undefined && count > 0 ? count : undefined
@@ -170,7 +172,14 @@ export function GradientTile({
 				{/* The count sits in the card's corner, over the centred icon, as
 				    a Home Screen badge sits on an app icon. */}
 				<ZStack alignment="topTrailing" modifiers={cardFrame}>
-					<ZStack modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
+					{/* Compose turns a fill frame into fill-then-wrap, which shrank this
+					    stack -- and the card it paints -- to the symbol's size. Without a
+					    frame, a Compose stack holding a shape fills its parent. */}
+					<ZStack
+						modifiers={
+							sizedOnAndroid ? NO_MODIFIERS : [frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]
+						}
+					>
 						<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
 
 						<Image
