@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {
 	DynamicColorIOS,
+	Platform,
+	PlatformColor,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -14,8 +16,14 @@ import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {formatDate, formatDayOfMonth, formatWeekday} from '@frogpond/time-format'
 
-const selectionCircleFill = DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
-const selectionTextColor = DynamicColorIOS({light: '#FFFFFF', dark: '#000000'})
+// `DynamicColorIOS` throws on Android, so it is only called on iOS; Android
+// marks the selected day with the theme's accent.
+const selectionCircleFill =
+	Platform.OS === 'ios'
+		? DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
+		: PlatformColor('?android:attr/colorAccent')
+const selectionTextColor =
+	Platform.OS === 'ios' ? DynamicColorIOS({light: '#FFFFFF', dark: '#000000'}) : '#FFFFFF'
 
 import {DAYS_PER_WEEK} from './days'
 

@@ -5,3 +5,5 @@
 !0-source-icons/*.icon/Assets/*.png
 # The images of a static app icon set are what ships
 !*.xcassets/*.appiconset/*.png
+# The Android adaptive icon layers, rendered from the .icon documents.
+!android/*.png

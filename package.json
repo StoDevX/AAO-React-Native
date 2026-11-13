@@ -90,6 +90,7 @@
     "expo-router": "58.0.23",
     "expo-sqlite": "58.0.13",
     "expo-symbols": "58.0.4",
+    "expo-system-ui": "58.0.7",
     "expo-web-browser": "58.0.6",
     "fuzzyfind": "2.1.0",
     "ky": "2.2.0",
@@ -163,5 +164,14 @@
   "enriched-markdown": {
     "enableCodeHighlight": false,
     "enableMath": false
+  },
+  "expo": {
+    "autolinking": {
+      "ios": {
+        "exclude": [
+          "expo-system-ui"
+        ]
+      }
+    }
   }
 }
