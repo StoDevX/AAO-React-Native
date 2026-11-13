@@ -164,5 +164,14 @@
   "enriched-markdown": {
     "enableCodeHighlight": false,
     "enableMath": false
+  },
+  "expo": {
+    "autolinking": {
+      "ios": {
+        "exclude": [
+          "expo-system-ui"
+        ]
+      }
+    }
   }
 }
