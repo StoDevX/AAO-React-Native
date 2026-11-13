@@ -425,17 +425,44 @@ const config: ExpoConfig = {
 			backgroundImage: variant.androidIcon.background,
 		},
 		predictiveBackGestureEnabled: true,
+		// Android matches a link's scheme case by case, and a browser lowercases
+		// the scheme of a link it hands over, so `AllAboutOlaf://` from a web page
+		// arrives as `allaboutolaf://`. Prebuild registers `scheme` as written;
+		// this adds its lowercase spelling beside it. Expo Router reads the path
+		// whatever the scheme, so both open the same screen.
+		intentFilters:
+			variant.scheme === variant.scheme.toLowerCase()
+				? []
+				: [
+						{
+							action: 'VIEW',
+							category: ['BROWSABLE', 'DEFAULT'],
+							data: [{scheme: variant.scheme.toLowerCase()}],
+						},
+					],
+		// The map's location, and the radio's playback with the screen off. No
+		// POST_NOTIFICATIONS: the radio's lock-screen controls are a media
+		// session's notification, which Android shows without it, and nothing
+		// asks for it, so on Android 13 and later it would never be granted.
 		permissions: [
 			'android.permission.ACCESS_COARSE_LOCATION',
 			'android.permission.ACCESS_FINE_LOCATION',
 			'android.permission.FOREGROUND_SERVICE',
 			'android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK',
-			'android.permission.POST_NOTIFICATIONS',
 		],
 		blockedPermissions: [
 			'android.permission.RECORD_AUDIO',
 			'android.permission.READ_CALENDAR',
 			'android.permission.WRITE_CALENDAR',
+			// expo-image-picker declares these up to Android 12, but the library
+			// picker the problem report uses hands back a URI the app may read
+			// without them, and Play asks why an app holds broad storage access.
+			'android.permission.READ_EXTERNAL_STORAGE',
+			'android.permission.WRITE_EXTERNAL_STORAGE',
+			// Expo's template asks for it so a debug build can draw React Native's
+			// overlays; the app draws over nothing else, and Play treats it as a
+			// sensitive permission.
+			'android.permission.SYSTEM_ALERT_WINDOW',
 		],
 	},
 
@@ -460,6 +487,28 @@ const config: ExpoConfig = {
 					// asks for. A local build gets the plain compiler unless the
 					// environment opts in.
 					ccacheEnabled: process.env.USE_CCACHE === '1',
+				},
+				android: {
+					// R8, which Expo's template turns on already; said here so it
+					// cannot be switched off unnoticed. Every pull request's
+					// emulator screenshots run a minified release build, so a
+					// missing keep rule shows up there before it reaches Play.
+					// The libraries carry their own consumer rules (Expo modules,
+					// React Native, Reanimated and Worklets, Sentry, MapLibre's SDK),
+					// and so does expo-modules-core for the Kotlin modules in
+					// modules/, which keeps their Module and Record classes.
+					enableMinifyInReleaseBuilds: true,
+					// Not shrinkResources: React Native looks the bundle's images
+					// up as drawables by a name built at runtime, which the
+					// resource shrinker cannot see, so it can strip a picture
+					// that nothing misses until a screen draws it blank.
+					enableShrinkResourcesInReleaseBuilds: false,
+					// The MapLibre React Native wrapper ships no consumer rules of
+					// its own, and its GeoJSON types go through Gson by reflection.
+					extraProguardRules: [
+						'-keep class org.maplibre.reactnative.** { *; }',
+						'-keep class org.maplibre.geojson.** { *; }',
+					].join('\n'),
 				},
 			},
 		],
@@ -517,7 +566,24 @@ const config: ExpoConfig = {
 		['./plugins/with-app-variant', {variant: requested}],
 		[
 			'@sentry/react-native/expo',
-			{organization: variant.sentry.organization, project: variant.sentry.project},
+			{
+				organization: variant.sentry.organization,
+				project: variant.sentry.project,
+				// Sentry's Android Gradle plugin, which uploads R8's mapping and
+				// the native symbols so an obfuscated Android stack trace reads
+				// as source. It uploads only where the source maps do: not when
+				// SENTRY_DISABLE_AUTO_UPLOAD is set, as the pull-request build and
+				// a release without SENTRY_AUTH_TOKEN set it.
+				experimental_android: {
+					enableAndroidGradlePlugin: true,
+					autoUploadProguardMapping: true,
+					uploadNativeSymbols: true,
+					autoUploadNativeSymbols: true,
+					// Not the native libraries' C++ sources with every release:
+					// the symbols alone name the function and the line.
+					includeNativeSources: false,
+				},
+			},
 		],
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
 		// its options now live in the `enriched-markdown` block of package.json.
@@ -536,6 +602,11 @@ const config: ExpoConfig = {
 		// the fixed day/night colours @frogpond/colors reads as resources there.
 		// JSON, as this file cannot import the TypeScript that exports them.
 		['./plugins/with-material-theme', {colors: adaptiveColors}],
+		// The launcher's name, which Expo would otherwise take from `name` above.
+		['./plugins/with-android-app-name', {name: variant.displayName}],
+		// Play's upload key for a release build when CI provides one, and the
+		// debug key otherwise; see .github/workflows/android-release.yml.
+		'./plugins/with-android-release-signing',
 	],
 }
 

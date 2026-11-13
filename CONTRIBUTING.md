@@ -108,6 +108,7 @@ A change that needs no note (a CI tweak, a dependency bump) needs no changeset.
 Every push to `master` runs the Release workflow, which gathers the changesets into one pull request, "Version Packages".
 It bumps `version` in `package.json` and writes the entries into `CHANGELOG.md`.
 Merging it creates the `vX.Y.Z` tag and GitHub release, and Xcode Cloud builds that tag.
+The Release workflow then starts the Android Release workflow on the same tag for All About Olaf and CARLS, which uploads to Play's internal track.
 
 Add a label to the pull request to choose what kind of build it is:
 
@@ -128,3 +129,9 @@ To promote a release candidate with nothing new to say, add an empty one with `m
 The Release workflow opens that pull request with `RELEASE_TOKEN` when the repository has it, and with the default token otherwise.
 A pull request the default token opens starts no other workflows, so Check will not run on it.
 The workflow also labels the Version PR `ci/skip-e2e`, so the UI tests skip it.
+
+#### Android releases
+
+Play builds come from the [Android Release workflow](.github/workflows/android-release.yml), which builds one app's signed App Bundle and, once the repository has a Play service account, uploads it.
+Run it from the Actions tab to release All About Anything, or to send a build to a track other than internal.
+[Android releases](documentation/AllAboutAnything.docc/AndroidReleases.md) covers the rest: making the upload key, the secrets the workflow needs, Play App Signing, version codes, and the Play listing's data safety answers and permissions.

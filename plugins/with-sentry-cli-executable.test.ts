@@ -5,7 +5,10 @@ import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {describe, it} from 'node:test'
 
-import {defaultSentryCliExecutable} from './with-sentry-cli-executable.ts'
+import {
+	defaultSentryCliExecutable,
+	withCliExecutableProperty,
+} from './with-sentry-cli-executable.ts'
 
 /** Expo's template, as prebuild writes ios/.xcode.env. */
 const TEMPLATE = 'export NODE_BINARY=$(command -v node)\n'
@@ -49,5 +52,53 @@ describe('defaultSentryCliExecutable', () => {
 	it('changes nothing on a second run', () => {
 		let once = defaultSentryCliExecutable(TEMPLATE)
 		assert.equal(defaultSentryCliExecutable(once), once)
+	})
+})
+
+/** What @sentry/react-native/expo writes to android/sentry.properties. */
+const SENTRY_PROPERTIES = [
+	'defaults.url=https://sentry.io/',
+	'defaults.org=frog-pond-labs',
+	'defaults.project=all-about-olaf',
+	'# Using SENTRY_AUTH_TOKEN environment variable',
+].join('\n')
+
+/** The lines of a .properties text that set `key`. */
+function settings(properties: string, key: string): string[] {
+	return properties.split('\n').filter((line) => line.startsWith(`${key}=`))
+}
+
+describe('withCliExecutableProperty', () => {
+	it('names the binary for Gradle to run', () => {
+		let properties = withCliExecutableProperty(SENTRY_PROPERTIES, '/opt/sentry-cli')
+		assert.deepEqual(settings(properties, 'cli.executable'), ['cli.executable=/opt/sentry-cli'])
+		assert.ok(properties.startsWith(SENTRY_PROPERTIES))
+	})
+
+	// Sentry's plugin ends the file on a comment with no newline, which would
+	// otherwise swallow the setting.
+	it('starts the setting on a line of its own', () => {
+		let properties = withCliExecutableProperty(SENTRY_PROPERTIES, '/opt/sentry-cli')
+		assert.ok(properties.includes('variable\ncli.executable='))
+	})
+
+	// A Windows path would otherwise lose its separators to escapes.
+	it('keeps a backslash in the path', () => {
+		let properties = withCliExecutableProperty(SENTRY_PROPERTIES, 'C:\\tools\\sentry-cli.exe')
+		assert.deepEqual(settings(properties, 'cli.executable'), [
+			'cli.executable=C:\\\\tools\\\\sentry-cli.exe',
+		])
+	})
+
+	// Without a binary, Gradle has nothing to upload with, and the build that
+	// needs one sets SENTRY_DISABLE_AUTO_UPLOAD instead.
+	it('leaves the file alone when no binary is named', () => {
+		assert.equal(withCliExecutableProperty(SENTRY_PROPERTIES, undefined), SENTRY_PROPERTIES)
+	})
+
+	it('names the binary once over a second run', () => {
+		let once = withCliExecutableProperty(SENTRY_PROPERTIES, '/old/sentry-cli')
+		let twice = withCliExecutableProperty(once, '/new/sentry-cli')
+		assert.deepEqual(settings(twice, 'cli.executable'), ['cli.executable=/new/sentry-cli'])
 	})
 })
