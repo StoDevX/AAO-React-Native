@@ -80,7 +80,9 @@ import type {ImageRequireSource} from 'react-native'
 
 ${imports.join('\n')}
 
-export const SYMBOL_ASSETS: Readonly<Record<string, readonly [ImageRequireSource, ImageRequireSource]>> = {
+export const SYMBOL_ASSETS: Readonly<
+\tRecord<string, readonly [ImageRequireSource, ImageRequireSource]>
+> = {
 ${rows.join('\n')}
 }
 `
