@@ -18,6 +18,7 @@ import {displayTitle} from '../../../source/features/sis/student-work/posting'
 import {studentWagesOptions} from '../../../source/features/sis/student-work/wages-query'
 import {DetailRow, DisclosureRow, NavigationRow} from '../../../source/components/rows'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import shareIcon from '@expo/material-symbols/share.xml'
 
 const styles = StyleSheet.create({
 	screen: {
@@ -121,7 +122,7 @@ function JobDetailPage(): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Job"
-					icon="square.and.arrow.up"
+					icon={process.env.EXPO_OS === 'ios' ? 'square.and.arrow.up' : shareIcon}
 					onPress={() => shareJob(job)}
 				/>
 			</Stack.Toolbar>

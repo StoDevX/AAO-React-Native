@@ -7,6 +7,8 @@ import {filterAfterChoosing} from '../../source/features/calendar/picker-state'
 import type {CalendarFilter} from '../../source/features/calendar/store'
 import {calendarModeMenu} from './mode-picker'
 import type {CalendarFilterChipsProps, CalendarToolbarProps} from './toolbar'
+import calendarTodayIcon from '@expo/material-symbols/calendar_today.xml'
+import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 
 /**
  * The calendar's app-bar actions on Android: Today, then the overflow menu
@@ -25,9 +27,13 @@ export function CalendarToolbar({
 	return (
 		<Stack.Toolbar placement="right">
 			{onTodayPress ? (
-				<Stack.Toolbar.Button accessibilityLabel="Today" icon="calendar" onPress={onTodayPress} />
+				<Stack.Toolbar.Button
+					accessibilityLabel="Today"
+					icon={process.env.EXPO_OS === 'ios' ? 'calendar' : calendarTodayIcon}
+					onPress={onTodayPress}
+				/>
 			) : null}
-			{calendarModeMenu({mode, onSelectMode}, 'ellipsis')}
+			{calendarModeMenu({mode, onSelectMode}, moreVertIcon)}
 		</Stack.Toolbar>
 	)
 }

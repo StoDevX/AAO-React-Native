@@ -16,6 +16,8 @@ import {readAttachment} from '../source/features/support/report-problem/attachme
 import {composeEmail} from '../source/components/send-email'
 import {reportEmail, submitReport} from '../source/features/support/report-problem/submit'
 import {useTelemetryStore} from '../source/features/telemetry/store'
+import closeIcon from '@expo/material-symbols/close.xml'
+import sendIcon from '@expo/material-symbols/send.xml'
 
 const styles = StyleSheet.create({
 	host: {
@@ -133,7 +135,7 @@ export default function ReportProblemPage(): React.ReactNode {
 			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close Screen"
-					icon="xmark"
+					icon={process.env.EXPO_OS === 'ios' ? 'xmark' : closeIcon}
 					onPress={() => navigation.goBack()}
 				/>
 			</Stack.Toolbar>
@@ -141,7 +143,7 @@ export default function ReportProblemPage(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Submit"
 					disabled={message.trim().length === 0 || sending || attachments.picking}
-					icon="paperplane"
+					icon={process.env.EXPO_OS === 'ios' ? 'paperplane' : sendIcon}
 					onPress={() => void submit()}
 				/>
 			</Stack.Toolbar>

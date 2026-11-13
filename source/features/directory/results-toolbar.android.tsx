@@ -2,6 +2,8 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 
 import type {ResultsToolbarProps} from './results-toolbar'
+import formatListBulletedIcon from '@expo/material-symbols/format_list_bulleted.xml'
+import gridViewIcon from '@expo/material-symbols/grid_view.xml'
 
 /**
  * The directory's tiles-or-list toggle on Android: an action in the top app
@@ -21,7 +23,7 @@ export function ResultsToolbar({
 		<Stack.Toolbar placement="right">
 			<Stack.Toolbar.Button
 				accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
-				icon={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'}
+				icon={resultsView === 'tiles' ? formatListBulletedIcon : gridViewIcon}
 				onPress={onToggle}
 			/>
 		</Stack.Toolbar>

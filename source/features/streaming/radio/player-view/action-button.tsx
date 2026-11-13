@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Pressable, StyleSheet, Text, View} from 'react-native'
-import {SymbolView, type SFSymbol} from 'expo-symbols'
+import {SymbolView, type SymbolViewProps} from 'expo-symbols'
 
 import {palette} from './palette'
 
@@ -21,7 +21,7 @@ export function ActionButton({
 	onPress,
 	role = 'button',
 }: {
-	icon: SFSymbol
+	icon: SymbolViewProps['name']
 	label: string
 	accessibilityLabel: string
 	onPress?: () => void

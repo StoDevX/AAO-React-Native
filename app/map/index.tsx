@@ -75,6 +75,7 @@ import type {Building, Feature} from '../../source/features/map/types'
 import {useMapStyleUrl} from '../../source/features/map/style-query'
 import {mapCredits} from '../../source/features/map/urls'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import infoIcon from '@expo/material-symbols/info.xml'
 
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
@@ -380,7 +381,10 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 			{/* The credits the tiles' licence requires, in place of MapLibre's own
 			    button, which would sit loose on the map beside Back. */}
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu accessibilityLabel="About this map" icon="info.circle">
+				<Stack.Toolbar.Menu
+					accessibilityLabel="About this map"
+					icon={process.env.EXPO_OS === 'ios' ? 'info.circle' : infoIcon}
+				>
 					{mapCredits(map).map((credit) => (
 						// The compass says the item opens a site, as Safari's own icon does.
 						<Stack.Toolbar.MenuAction

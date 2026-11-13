@@ -46,6 +46,7 @@ import {submitReport} from '../../../source/features/building-hours/report/submi
 import type {BuildingAction} from '../../../source/features/building-hours/report/building-reducer'
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
 
 function useBuildingEditor(initialBuilding: BuildingType, campus: CampusId) {
 	let router = useRouter()
@@ -512,7 +513,7 @@ function HoursProblemReportPage(): React.ReactNode {
 				 * Discard button uses, keeps the pop and the guard in sync. */}
 				<Stack.Toolbar.Button
 					accessibilityLabel="Back"
-					icon="chevron.left"
+					icon={process.env.EXPO_OS === 'ios' ? 'chevron.left' : arrowBackIcon}
 					onPress={() => navigation.goBack()}
 				/>
 			</Stack.Toolbar>

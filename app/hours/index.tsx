@@ -24,6 +24,9 @@ import {useMomentTimer, useNowOverride} from '@frogpond/timer'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {HoursDevSheet} from '../../source/features/building-hours/dev/hours-dev-sheet'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import mapIcon from '@expo/material-symbols/map.xml'
+import historyToggleOffIcon from '@expo/material-symbols/history_toggle_off.xml'
+import scheduleIcon from '@expo/material-symbols/schedule.xml'
 
 type Props = {
 	campus: CampusId
@@ -98,14 +101,22 @@ function HoursView({campus, hours}: Props): React.ReactNode {
 				{isDevMode ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Dev overrides"
-						icon={overriding ? 'clock.badge.exclamationmark' : 'clock'}
+						icon={
+							overriding
+								? process.env.EXPO_OS === 'ios'
+									? 'clock.badge.exclamationmark'
+									: historyToggleOffIcon
+								: process.env.EXPO_OS === 'ios'
+									? 'clock'
+									: scheduleIcon
+						}
 						onPress={() => setDevSheetPresented(true)}
 					/>
 				) : null}
 				{hours.showsMapButton ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Map"
-						icon="map"
+						icon={process.env.EXPO_OS === 'ios' ? 'map' : mapIcon}
 						onPress={() => router.navigate({pathname: '/map', params: {campus}})}
 					/>
 				) : null}

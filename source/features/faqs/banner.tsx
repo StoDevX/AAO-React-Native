@@ -13,8 +13,9 @@ import {
 import {RNHostView, VStack} from '@expo/ui/swift-ui'
 import {frame} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {SymbolView} from 'expo-symbols'
-import type {SFSymbol} from 'sf-symbols-typescript'
+import {SymbolView, type AndroidSymbol, type SFSymbol, type SymbolViewProps} from 'expo-symbols'
+
+import {materialSymbolFor} from '../../android-ui/symbol-table'
 
 import {faqsOptionsFor} from './query'
 import {useCampus} from '../campus/store'
@@ -245,7 +246,7 @@ type Palette = {
 	text: ColorValue
 	secondaryText: ColorValue
 	link: ColorValue
-	icon: SFSymbol
+	icon: SymbolViewProps['name']
 	iconColor: ColorValue
 	dismissBackground: ColorValue
 	dismissText: ColorValue
@@ -258,7 +259,7 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 		text: c.label,
 		secondaryText: c.secondaryLabel,
 		link: c.link,
-		icon: 'info.circle',
+		icon: {ios: 'info.circle', android: 'info'},
 		iconColor: c.systemBlue,
 		dismissBackground: c.tertiarySystemGroupedBackground,
 		dismissText: c.systemBlue,
@@ -269,7 +270,7 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 		text: c.label,
 		secondaryText: c.secondaryLabel,
 		link: c.link,
-		icon: 'questionmark.circle',
+		icon: {ios: 'questionmark.circle', android: 'help'},
 		iconColor: c.systemBlue,
 		dismissBackground: c.tertiarySystemGroupedBackground,
 		dismissText: c.systemBlue,
@@ -280,7 +281,7 @@ const SEVERITY_MAP: Record<FaqSeverity, Palette> = {
 		text: c.label,
 		secondaryText: c.secondaryLabel,
 		link: c.systemRed,
-		icon: 'exclamationmark.circle',
+		icon: {ios: 'exclamationmark.circle', android: 'error'},
 		iconColor: c.systemRed,
 		dismissBackground: c.tertiarySystemGroupedBackground,
 		dismissText: c.systemRed,
@@ -357,6 +358,14 @@ export function FaqBannerPresentation({
 	)
 }
 
+/**
+ * An FAQ's own icon, which the server names by SF Symbol: on Android, its
+ * Material counterpart from the table the rest of the app uses.
+ */
+function serverIcon(sfName: string): SymbolViewProps['name'] {
+	return {ios: sfName as SFSymbol, android: materialSymbolFor(sfName).name as AndroidSymbol}
+}
+
 function buildPalette(faq: Faq): Palette {
 	let severity = faq.severity ?? 'notice'
 	let base = SEVERITY_MAP[severity]
@@ -366,7 +375,7 @@ function buildPalette(faq: Faq): Palette {
 		background: faq.backgroundColor ?? base.background,
 		text: faq.foregroundColor ?? base.text,
 		secondaryText: faq.foregroundColor ? faq.foregroundColor : base.secondaryText,
-		icon: (faq.icon as SFSymbol | undefined) ?? base.icon,
+		icon: faq.icon ? serverIcon(faq.icon) : base.icon,
 	}
 }
 

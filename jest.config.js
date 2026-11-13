@@ -60,6 +60,9 @@ const config = {
 	transform: {
 		'^.+\\.mjs$': 'babel-jest',
 		'^.+\\.yaml$': '<rootDir>/scripts/jest-yaml-transform.mjs',
+		// Android vector drawables (Material Symbols), which Metro bundles as
+		// assets: a test sees each as an asset, as it does an image.
+		'^.+\\.xml$': require.resolve('@react-native/jest-preset/jest/assetFileTransformer.js'),
 	},
 	// .yaml for Wiki Monkeys' fixtures; scripts/jest-yaml-transform.mjs reads them.
 	moduleFileExtensions: ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'json', 'node', 'yaml'],

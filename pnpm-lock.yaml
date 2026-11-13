@@ -67,6 +67,9 @@ importers:
       '@date-fns/tz':
         specifier: 1.5.0
         version: 1.5.0
+      '@expo-google-fonts/material-symbols':
+        specifier: 0.4.49
+        version: 0.4.49
       '@expo/log-box':
         specifier: 58.0.12
         version: 58.0.12(@expo/dom-webview@58.0.2)(expo@58.0.14)(react-native@0.88.0)(react@19.3.0)
@@ -613,6 +616,9 @@ importers:
 
   modules/ccc-calendar:
     dependencies:
+      '@expo/material-symbols':
+        specifier: 0.1.1
+        version: 0.1.1
       '@expo/ui':
         specifier: 58.0.20
         version: 58.0.20(patch_hash=9afea69512a95af57f77d7496f4dc0348666de6af571e50b48cd92bf8aeebfcf)(@babel/core@7.29.7)(expo@58.0.14)(react-native-worklets@0.13.0)(react-native@0.88.0)(react@19.3.0)

@@ -18,6 +18,7 @@ import {
 	TitleStack,
 } from '../../components/navigation-title'
 import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
+import filterListIcon from '@expo/material-symbols/filter_list.xml'
 
 /**
  * What a menu screen puts in its navigation bar: the cafe it is showing, the
@@ -232,7 +233,7 @@ export function MenuHeaderHost(): React.ReactNode {
 				<Stack.Toolbar placement="right">
 					<Stack.Toolbar.Button
 						accessibilityLabel="Filters"
-						icon="line.3.horizontal.decrease"
+						icon={process.env.EXPO_OS === 'ios' ? 'line.3.horizontal.decrease' : filterListIcon}
 						onPress={header.filters.toggle}
 						selected={header.filters.visible}
 					/>

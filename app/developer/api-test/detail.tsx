@@ -26,6 +26,8 @@ import {
 	type ApiResponse,
 } from '../../../source/features/developer/api-test/util/response'
 import {ResponseText} from '../../../source/features/developer/api-test/response-text'
+import editIcon from '@expo/material-symbols/edit.xml'
+import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 
 /** A body read as a `data:` URI, for an image to be drawn from what was fetched. */
 function dataUri(blob: Blob): Promise<string> {
@@ -134,7 +136,7 @@ export default function APITestDetailPage(): React.ReactNode {
 				{route ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Edit Request"
-						icon="pencil"
+						icon={process.env.EXPO_OS === 'ios' ? 'pencil' : editIcon}
 						onPress={() =>
 							router.navigate({
 								pathname: '/developer/api-test/compose',
@@ -149,7 +151,9 @@ export default function APITestDetailPage(): React.ReactNode {
 				) : null}
 				{/* a JSON body is the only one shown more than one way, or searchable */}
 				{isJson ? (
-					<Stack.Toolbar.Menu icon="ellipsis.circle">
+					<Stack.Toolbar.Menu
+						icon={process.env.EXPO_OS === 'ios' ? 'ellipsis.circle' : moreVertIcon}
+					>
 						{displayMode === 'raw' ? (
 							<Stack.Toolbar.MenuAction
 								icon="magnifyingglass"

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 import type {Layout} from '../lib/layout-store'
+import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 
 type Props = {
 	layout: Layout
@@ -12,7 +13,10 @@ type Props = {
 export function LayoutMenu({layout, onChange}: Props): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
-			<Stack.Toolbar.Menu accessibilityLabel="Layout" icon="ellipsis">
+			<Stack.Toolbar.Menu
+				accessibilityLabel="Layout"
+				icon={process.env.EXPO_OS === 'ios' ? 'ellipsis' : moreVertIcon}
+			>
 				<Stack.Toolbar.MenuAction
 					icon="square.grid.3x2"
 					isOn={layout === 'grid'}

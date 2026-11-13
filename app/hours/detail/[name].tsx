@@ -17,6 +17,9 @@ import {
 	toggleFavoriteBuilding,
 } from '../../../source/redux/parts/buildings'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import feedbackIcon from '@expo/material-symbols/feedback.xml'
+import favoriteIcon from '@expo/material-symbols/favorite.xml'
+import favoriteFilledIcon from '../../../source/android-ui/symbols/favorite_fill.xml'
 
 function HoursDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
@@ -61,12 +64,20 @@ function HoursDetailPage(): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel={favorited ? 'Remove from Favorites' : 'Add to Favorites'}
-					icon={favorited ? 'heart.fill' : 'heart'}
+					icon={
+						favorited
+							? process.env.EXPO_OS === 'ios'
+								? 'heart.fill'
+								: favoriteFilledIcon
+							: process.env.EXPO_OS === 'ios'
+								? 'heart'
+								: favoriteIcon
+					}
 					onPress={onFavorite}
 				/>
 				<Stack.Toolbar.Button
 					accessibilityLabel="Report a Problem"
-					icon="exclamationmark.bubble"
+					icon={process.env.EXPO_OS === 'ios' ? 'exclamationmark.bubble' : feedbackIcon}
 					onPress={reportProblem}
 				/>
 			</Stack.Toolbar>

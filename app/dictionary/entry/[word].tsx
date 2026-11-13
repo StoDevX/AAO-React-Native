@@ -13,6 +13,7 @@ import {wordByTermOptions} from '../../../source/features/dictionary/query'
 import {useCampusId, useCampusSection} from '../../../source/features/campus/store'
 import {sectionServer} from '../../../source/features/campus/section-server'
 import {useDictionaryDraftStore} from '../../../source/features/dictionary/store'
+import feedbackIcon from '@expo/material-symbols/feedback.xml'
 
 const styles = StyleSheet.create({
 	host: {
@@ -60,7 +61,7 @@ export default function DictionaryEntryPage(): React.ReactNode {
 				<Stack.Toolbar placement="right">
 					<Stack.Toolbar.Button
 						accessibilityLabel="Suggest an Edit"
-						icon="exclamationmark.bubble"
+						icon={process.env.EXPO_OS === 'ios' ? 'exclamationmark.bubble' : feedbackIcon}
 						onPress={suggestAnEdit}
 					/>
 				</Stack.Toolbar>

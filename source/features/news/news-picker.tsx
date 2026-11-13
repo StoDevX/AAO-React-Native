@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Platform} from 'react-native'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
+import filterListIcon from '@expo/material-symbols/filter_list.xml'
 
 /**
  * Category picker for one feed: All Stories, then each category. Deselecting a
@@ -36,7 +37,7 @@ export function NewsPicker({categories, selectedCategory, onSelect}: Props): Rea
 			{ON_ANDROID ? null : <Stack.Toolbar.Spacer />}
 			<Stack.Toolbar.Menu
 				accessibilityLabel={LABEL}
-				icon="line.3.horizontal.decrease"
+				icon={process.env.EXPO_OS === 'ios' ? 'line.3.horizontal.decrease' : filterListIcon}
 				tintColor={selectedCategory !== null ? c.systemBlue : undefined}
 			>
 				<Stack.Toolbar.MenuAction

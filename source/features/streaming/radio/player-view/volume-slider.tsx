@@ -3,6 +3,8 @@ import {StyleSheet, View} from 'react-native'
 import {VolumeSliderView} from '@frogpond/audio-route'
 import {SymbolView} from 'expo-symbols'
 
+import {FILLED_SYMBOL_WEIGHT} from '../../../../lib/filled-symbol-weight'
+
 import {palette} from './palette'
 
 /**
@@ -20,13 +22,19 @@ const LOUD_OPTICAL_SHIFT = 8
 export function VolumeSlider(): React.ReactNode {
 	return (
 		<View style={styles.row}>
-			<SymbolView name="speaker.fill" size={QUIET_SIZE} tintColor={palette.secondary} />
+			<SymbolView
+				name={{ios: 'speaker.fill', android: 'volume_down'}}
+				size={QUIET_SIZE}
+				tintColor={palette.secondary}
+				weight={FILLED_SYMBOL_WEIGHT}
+			/>
 			<VolumeSliderView style={styles.slider} tint={palette.primary} trackTint={palette.track} />
 			<SymbolView
-				name="speaker.wave.3.fill"
+				name={{ios: 'speaker.wave.3.fill', android: 'volume_up'}}
 				size={LOUD_SIZE}
 				style={styles.loud}
 				tintColor={palette.secondary}
+				weight={FILLED_SYMBOL_WEIGHT}
 			/>
 		</View>
 	)

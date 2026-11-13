@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/material-symbols": "0.1.1",
     "@expo/ui": "58.0.20",
     "@frogpond/colors": "workspace:*",
     "@frogpond/data-sources": "workspace:*",

@@ -24,6 +24,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
+import calendarTodayIcon from '@expo/material-symbols/calendar_today.xml'
 
 type Props = {
 	value: Date
@@ -54,7 +55,7 @@ export function DebugDatePicker({value, onDateChange, onReset}: Props): React.Re
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Debug Date"
-					icon="calendar"
+					icon={process.env.EXPO_OS === 'ios' ? 'calendar' : calendarTodayIcon}
 					onPress={() => setIsPresented(true)}
 				/>
 			</Stack.Toolbar>

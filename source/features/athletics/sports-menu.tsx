@@ -5,6 +5,7 @@ import * as c from '@frogpond/colors'
 import {isFilterActive} from './store'
 import type {SportSection} from './types'
 import {shortSportName} from './utils'
+import filterListIcon from '@expo/material-symbols/filter_list.xml'
 
 type Props = {
 	sections: SportSection[]
@@ -45,7 +46,7 @@ export function SportsMenu({
 			{ON_ANDROID ? null : <Stack.Toolbar.Spacer />}
 			<Stack.Toolbar.Menu
 				accessibilityLabel={LABEL}
-				icon="line.3.horizontal.decrease"
+				icon={process.env.EXPO_OS === 'ios' ? 'line.3.horizontal.decrease' : filterListIcon}
 				tintColor={isActive ? c.systemBlue : undefined}
 			>
 				{sections.map((section) => (

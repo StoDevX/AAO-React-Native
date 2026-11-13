@@ -5,6 +5,7 @@ import type {CalendarFilterOption} from '../../source/features/calendar/filter'
 import {axisLabel, filterAfterChoosing} from '../../source/features/calendar/picker-state'
 import type {CalendarFilter} from '../../source/features/calendar/store'
 import type {CalendarSource} from './sources'
+import calendarTodayIcon from '@expo/material-symbols/calendar_today.xml'
 
 /**
  * The calendar's bottom-toolbar menu: which calendars contribute events, and
@@ -54,7 +55,7 @@ export function CalendarPicker({
 			<Stack.Toolbar.Spacer />
 			<Stack.Toolbar.Menu
 				accessibilityLabel={LABEL}
-				icon="calendar"
+				icon={process.env.EXPO_OS === 'ios' ? 'calendar' : calendarTodayIcon}
 				tintColor={filter !== null ? c.systemBlue : undefined}
 			>
 				<Stack.Toolbar.Menu inline={true} title="Calendars">
