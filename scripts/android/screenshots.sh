@@ -128,17 +128,17 @@ shoot_radio() {
 	adb shell "cmd uimode night no" >/dev/null
 	launch ''
 	sleep 8
-	at=$(scroll_to 'home-notice') || { echo 'radio: no notice on Home' >"$out/radio.txt"; return; }
+	at=$(scroll_to 'home-notice') || { echo 'radio: no notice on Home' >>"$out/radio.txt"; return; }
 	read -r x y <<<"$at"
 	adb shell input swipe "$x" "$y" "$x" "$y" 1500
 	sleep 2
 	at=$(find_view 'Enable dev mode') || true
-	[ -n "$at" ] || { echo 'radio: no "Enable dev mode" in the notice menu' >"$out/radio.txt"; return; }
+	[ -n "$at" ] || { echo 'radio: no "Enable dev mode" in the notice menu' >>"$out/radio.txt"; return; }
 	read -r x y <<<"$at"
 	adb shell input tap "$x" "$y"
 	sleep 3
 	at=$(find_view '.*Not Playing.*') || true
-	[ -n "$at" ] || at=$(scroll_to '.*Not Playing.*') || { echo 'radio: no Now Playing bar on Home' >"$out/radio.txt"; return; }
+	[ -n "$at" ] || at=$(scroll_to '.*Not Playing.*') || { echo 'radio: no Now Playing bar on Home' >>"$out/radio.txt"; return; }
 	read -r x y <<<"$at"
 	adb shell input tap "$x" "$y"
 	sleep 5
@@ -148,7 +148,7 @@ shoot_radio() {
 	sleep 3
 	adb exec-out screencap -p >"$out/dark/radio.png"
 	adb shell "cmd uimode night no" >/dev/null
-	echo 'radio: shot' >"$out/radio.txt"
+	echo 'radio: shot' >>"$out/radio.txt"
 }
 
 # Home's overflow menu, open: no route shows a menu.
@@ -163,6 +163,29 @@ shoot_home_menu() {
 	adb shell input tap "$x" "$y"
 	sleep 2
 	adb exec-out screencap -p >"$out/light/home-menu.png"
+}
+
+# Home in its other tile style: Customize's Tile Style menu set to Cards.
+shoot_home_cards() {
+	local at x y
+	launch customize
+	sleep 6
+	at=$(scroll_to 'Tile Style') || { echo 'cards: no Tile Style row' >>"$out/radio.txt"; return 0; }
+	read -r x y <<<"$at"
+	adb shell input tap "$x" "$y"
+	sleep 2
+	at=$(find_view 'Cards') || true
+	[ -n "$at" ] || { echo 'cards: no Cards option' >>"$out/radio.txt"; return 0; }
+	read -r x y <<<"$at"
+	adb shell input tap "$x" "$y"
+	sleep 2
+	launch ''
+	sleep 8
+	adb exec-out screencap -p >"$out/light/home-cards.png"
+	adb shell "cmd uimode night yes" >/dev/null
+	sleep 3
+	adb exec-out screencap -p >"$out/dark/home-cards.png"
+	adb shell "cmd uimode night no" >/dev/null
 }
 
 adb logcat -c
@@ -181,6 +204,7 @@ sleep 10
 shoot light
 shoot dark
 shoot_home_menu
+shoot_home_cards
 shoot_radio
 adb shell "cmd uimode night no" >/dev/null
 
