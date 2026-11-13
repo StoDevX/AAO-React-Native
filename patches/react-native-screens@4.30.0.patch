@@ -86,3 +86,133 @@ index e0762e87bc2080805bec5e9f25523fc6d42afae6..9e271adfb035330ab2251d939172e4cc
          setPadding(left, top, right, bottom)
      }
  
+diff --git a/ios/RNSBarButtonItem.h b/ios/RNSBarButtonItem.h
+index a26d1254eafd89268f65d968988cf6a3b8c1e457..551a41b97482e9cb9bf58009e4c48d7971dbec97 100644
+--- a/ios/RNSBarButtonItem.h
++++ b/ios/RNSBarButtonItem.h
+@@ -10,6 +10,10 @@ typedef void (^RNSBarButtonMenuItemAction)(NSString *menuId);
+ 
+ @interface RNSBarButtonItem : UIBarButtonItem
+ 
++/// The configuration the item was built from. An update that hands the header
++/// an equal configuration keeps this item rather than building a new one.
++@property (nonatomic, copy, readonly) NSDictionary<NSString *, id> *rnsConfig;
++
+ #if defined(__cplusplus)
+ - (instancetype)initWithConfig:(NSDictionary<NSString *, id> *)dict
+                         action:(RNSBarButtonItemAction)action
+diff --git a/ios/RNSBarButtonItem.mm b/ios/RNSBarButtonItem.mm
+index c435fdd1dab11f39dc78367860e8f568c953ea8c..2aaf23bceadeba02527121bceddb989d039724f6 100644
+--- a/ios/RNSBarButtonItem.mm
++++ b/ios/RNSBarButtonItem.mm
+@@ -21,6 +21,8 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
+     return self;
+   }
+ 
++  _rnsConfig = [dict copy];
++
+   [[self class] resolveImageFromConfig:dict
+                            imageLoader:imageLoader
+                        completionBlock:^(UIImage *img) {
+diff --git a/ios/RNSScreenStackHeaderConfig.mm b/ios/RNSScreenStackHeaderConfig.mm
+index e217b2411d20c85db3ec84bb87765c1e9407fd3b..52f156270de501ac37c0f39451fafaaa03aa56ad 100644
+--- a/ios/RNSScreenStackHeaderConfig.mm
++++ b/ios/RNSScreenStackHeaderConfig.mm
+@@ -48,6 +48,39 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
+ @interface RNSScreenStackHeaderConfig () <RCTMountingTransactionObserving>
+ @end
+ 
++/// Whether `current` already shows what `proposed` would: the same items, or
++/// items built from equal configurations. A fixed space is rebuilt on every
++/// update, so two of the same width count as the same.
++static BOOL RNSBarButtonItemsAreEquivalent(NSArray<UIBarButtonItem *> *current, NSArray<UIBarButtonItem *> *proposed)
++{
++  NSUInteger count = current.count;
++  if (count != proposed.count) {
++    return NO;
++  }
++  for (NSUInteger i = 0; i < count; i++) {
++    UIBarButtonItem *a = current[i];
++    UIBarButtonItem *b = proposed[i];
++    if (a == b) {
++      continue;
++    }
++    if ([a isKindOfClass:[RNSBarButtonItem class]] && [b isKindOfClass:[RNSBarButtonItem class]]) {
++      NSDictionary *configA = ((RNSBarButtonItem *)a).rnsConfig;
++      NSDictionary *configB = ((RNSBarButtonItem *)b).rnsConfig;
++      if (configA != nil && [configA isEqualToDictionary:configB]) {
++        continue;
++      }
++      return NO;
++    }
++    if ([a class] == [UIBarButtonItem class] && [b class] == [UIBarButtonItem class] && a.customView == nil &&
++        b.customView == nil && a.width == b.width && a.title == nil && b.title == nil && a.image == nil &&
++        b.image == nil) {
++      continue;
++    }
++    return NO;
++  }
++  return YES;
++}
++
+ @implementation RNSScreenStackHeaderConfig {
+   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+   BOOL _initialPropsSet;
+@@ -607,8 +640,14 @@ RNS_IGNORE_SUPER_CALL_END
+   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
+ #endif
+   navitem.titleView = nil;
+-  navitem.leftBarButtonItems = nil;
+-  navitem.rightBarButtonItems = nil;
++  // The bar button items are gathered here and handed to the navigation item
++  // once, below, and only if they differ from what it already shows. Clearing
++  // and rebuilding them on every header update replaced each item even when
++  // nothing about it had changed, and replacing an item while UIKit presents
++  // its menu strands the presentation: the menu stays up but its animation
++  // never completes, so the app never reports its animations idle.
++  NSMutableArray<UIBarButtonItem *> *leftItems = [NSMutableArray new];
++  NSMutableArray<UIBarButtonItem *> *rightItems = [NSMutableArray new];
+ 
+ #if !TARGET_OS_TV
+   // We want to set navitem.searchController to nil only if we are sure
+@@ -621,17 +660,11 @@ RNS_IGNORE_SUPER_CALL_END
+     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
+     switch (subview.type) {
+       case RNSScreenStackHeaderSubviewTypeLeft: {
+-        NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
+-        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
+-        [mutableItems addObject:[subview getUIBarButtonItem]];
+-        navitem.leftBarButtonItems = mutableItems;
++        [leftItems addObject:[subview getUIBarButtonItem]];
+         break;
+       }
+       case RNSScreenStackHeaderSubviewTypeRight: {
+-        NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
+-        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
+-        [mutableItems addObject:[subview getUIBarButtonItem]];
+-        navitem.rightBarButtonItems = mutableItems;
++        [rightItems addObject:[subview getUIBarButtonItem]];
+         break;
+       }
+       case RNSScreenStackHeaderSubviewTypeCenter:
+@@ -696,10 +729,16 @@ RNS_IGNORE_SUPER_CALL_END
+   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
+   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
+   navitem.title = config.title;
+-  navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
+-                                                withCurrentItems:navitem.leftBarButtonItems];
+-  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+-                                                 withCurrentItems:navitem.rightBarButtonItems];
++  NSArray<UIBarButtonItem *> *newLeftItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
++                                                               withCurrentItems:leftItems];
++  NSArray<UIBarButtonItem *> *newRightItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
++                                                                withCurrentItems:rightItems];
++  if (!RNSBarButtonItemsAreEquivalent(navitem.leftBarButtonItems, newLeftItems)) {
++    navitem.leftBarButtonItems = newLeftItems.count > 0 ? newLeftItems : nil;
++  }
++  if (!RNSBarButtonItemsAreEquivalent(navitem.rightBarButtonItems, newRightItems)) {
++    navitem.rightBarButtonItems = newRightItems.count > 0 ? newRightItems : nil;
++  }
+ 
+   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
+   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).

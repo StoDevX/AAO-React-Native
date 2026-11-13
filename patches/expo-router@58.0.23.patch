@@ -1,0 +1,79 @@
+diff --git a/ios/Toolbar/RouterToolbarHostView.swift b/ios/Toolbar/RouterToolbarHostView.swift
+index b10810d4207786561e53aa93e77cfa0adb2d8d3f..7e5d09a19e7cd667a40480674828138ba38d3e03 100644
+--- a/ios/Toolbar/RouterToolbarHostView.swift
++++ b/ios/Toolbar/RouterToolbarHostView.swift
+@@ -10,6 +10,11 @@ class RouterToolbarHostView: RouterViewWithLogger, LinkPreviewMenuUpdatable {
+   var toolbarItemsArray: [String] = []
+   var toolbarItemsMap: [String: RouterToolbarItemView] = [:]
+   var menuItemsMap: [String: LinkPreviewNativeActionView] = [:]
++  // One bar button item per menu, kept across updates. Replacing the item
++  // while UIKit is presenting its menu strands the presentation: the menu
++  // stays up but its animation never completes, so the app never reports
++  // its animations idle (and XCUITest waits on it forever).
++  private var menuBarButtonItems: [String: UIBarButtonItem] = [:]
+ 
+   // Batching state for toolbar updates
+   private var hasPendingToolbarUpdate = false
+@@ -38,6 +43,7 @@ class RouterToolbarHostView: RouterViewWithLogger, LinkPreviewMenuUpdatable {
+       toolbarItemsArray.remove(at: index)
+       toolbarItemsMap.removeValue(forKey: id)
+       menuItemsMap.removeValue(forKey: id)
++      menuBarButtonItems.removeValue(forKey: id)
+     }
+   }
+ 
+@@ -72,12 +78,21 @@ class RouterToolbarHostView: RouterViewWithLogger, LinkPreviewMenuUpdatable {
+             if menu.routerHidden {
+               return nil
+             }
+-            let item = UIBarButtonItem(
+-              title: menu.label,
+-              image: menu.image,
+-              primaryAction: nil,
+-              menu: menu.uiAction as? UIMenu
+-            )
++            let item: UIBarButtonItem
++            if let existing = menuBarButtonItems[identifier] {
++              item = existing
++              item.title = menu.label
++              item.image = menu.image
++              item.menu = menu.uiAction as? UIMenu
++            } else {
++              item = UIBarButtonItem(
++                title: menu.label,
++                image: menu.image,
++                primaryAction: nil,
++                menu: menu.uiAction as? UIMenu
++              )
++              menuBarButtonItems[identifier] = item
++            }
+             // Otherwise, the menu items will be reversed in the toolbar
+             item.preferredMenuElementOrder = .fixed
+             if #available(iOS 26.0, *) {
+@@ -112,11 +127,21 @@ class RouterToolbarHostView: RouterViewWithLogger, LinkPreviewMenuUpdatable {
+           return nil
+         }
+ 
+-        controller.setToolbarItems(items, animated: true)
+-        controller.navigationController?.setToolbarHidden(
+-          false,
+-          animated: true
+-        )
++        // Only hand UIKit a new list when the items themselves changed: an
++        // update that only touched a menu's contents has already been applied
++        // to the item in place.
++        let current = controller.toolbarItems ?? []
++        let unchanged = current.count == items.count
++          && zip(current, items).allSatisfy { $0 === $1 }
++        if !unchanged {
++          controller.setToolbarItems(items, animated: true)
++        }
++        if controller.navigationController?.isToolbarHidden != false {
++          controller.navigationController?.setToolbarHidden(
++            false,
++            animated: true
++          )
++        }
+         return
+       }
+     }

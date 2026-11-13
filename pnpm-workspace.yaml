@@ -199,6 +199,7 @@ saveExact: true
 savePrefix: ''
 patchedDependencies:
   '@expo/ui@58.0.20': patches/@expo__ui@58.0.20.patch
+  expo-router@58.0.23: patches/expo-router@58.0.23.patch
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
   react-native-screens@4.30.0: patches/react-native-screens@4.30.0.patch
   react-native-webview@14.0.1: patches/react-native-webview@14.0.1.patch
