@@ -64,8 +64,16 @@ definitions:
       generated: {$ref: '#/definitions/files-by'}
       # why nothing in the set can be edited
       readOnly: {type: string, minLength: 1}
-      # what else writes or reads the set, shown above its records
+      # what else writes the set, shown above its records
       maintainedBy: {type: string, minLength: 1}
+      # the scrape or generator this set steers: an edit changes `what` when `run` next runs
+      steers:
+        type: object
+        additionalProperties: false
+        required: [what, run]
+        properties:
+          what: {type: string, minLength: 1}
+          run: {type: string, minLength: 1}
       # a field set to today's date on every edit
       stampOnSave: {type: string, minLength: 1}
     if: {properties: {shape: {const: list}}}

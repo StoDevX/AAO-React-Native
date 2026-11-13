@@ -8,6 +8,10 @@
 #   file      the whole file at `path` is one record
 #   document  the file at `path` is prose, edited as text
 #
+# A set that `steers` a scrape or generator holds none of what the app shows:
+# an edit to it changes `what` only when `run` next runs, and never the
+# editor's preview, which the editor says above its records.
+#
 # Adding a set is an entry here and, for any shape but document, a schema in
 # _schemas/ whose fields carry a `title`.
 
@@ -56,7 +60,7 @@ sets:
     path: _scrapes/bonapp-overrides.yaml
     list: [venues]
     schema: _bonapp-overrides
-    maintainedBy: Steers the weekly Bon Appétit scrape of Stav and the Cage. An edit here changes their hours at the scrape's next run, not in the preview
+    steers: {what: Stav and the Cage's hours, run: the weekly Bon Appétit scrape}
 
   breaks:
     title: Breaks
@@ -180,7 +184,7 @@ sets:
     shape: file
     path: bus-times/_curation.yaml
     schema: _bus-curation
-    maintainedBy: Steers the weekly bus timetable refresh. An edit here reaches the Red and Blue lines at its next run, not in the preview
+    steers: {what: the Red and Blue lines, run: the weekly bus timetable refresh}
 
   bus-repairs:
     title: Bus Repairs
@@ -188,7 +192,7 @@ sets:
     shape: file
     path: bus-times/_repairs.yaml
     schema: _bus-repairs
-    maintainedBy: Patches the GTFS feed's mistakes during the weekly refresh. An edit here reaches the timetables at its next run, not in the preview
+    steers: {what: the bus timetables, run: the weekly bus timetable refresh}
 
   student-work-areas:
     title: Student Work Areas
