@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {Host, HStack, Image, Menu, Section, Text as UIText, Toggle, VStack} from '@expo/ui/swift-ui'
@@ -297,7 +298,12 @@ function MealMenu(props: {
 			label={
 				<HStack modifiers={readAsOneTitle(spoken, {isButton: true})} spacing={6}>
 					{children}
-					<Image modifiers={CHEVRON_MODIFIERS} systemName="chevron.down" />
+					{/* Android's dropdown caret is a filled triangle, as a title
+					    that opens a menu draws it there (Calendar's month). */}
+					<Image
+						modifiers={CHEVRON_MODIFIERS}
+						systemName={Platform.OS === 'android' ? 'arrowtriangle.down.fill' : 'chevron.down'}
+					/>
 				</HStack>
 			}
 		>
