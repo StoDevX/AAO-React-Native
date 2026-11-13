@@ -51,7 +51,6 @@ export function PlaybackError({station}: {station: Station}): React.ReactNode {
 				name={{ios: 'exclamationmark.triangle.fill', android: 'warning'}}
 				size={15}
 				tintColor={palette.primary}
-				weight={FILLED_SYMBOL_WEIGHT}
 			/>
 			<Text style={[styles.errorText, palette.styles.primary]}>{PLAYBACK_ERROR}</Text>
 		</View>

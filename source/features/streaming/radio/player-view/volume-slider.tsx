@@ -3,7 +3,6 @@ import {StyleSheet, View} from 'react-native'
 import {VolumeSliderView} from '@frogpond/audio-route'
 import {SymbolView} from 'expo-symbols'
 
-import {FILLED_SYMBOL_WEIGHT} from '../../../../lib/filled-symbol-weight'
 
 import {palette} from './palette'
 
@@ -26,7 +25,6 @@ export function VolumeSlider(): React.ReactNode {
 				name={{ios: 'speaker.fill', android: 'volume_down'}}
 				size={QUIET_SIZE}
 				tintColor={palette.secondary}
-				weight={FILLED_SYMBOL_WEIGHT}
 			/>
 			<VolumeSliderView style={styles.slider} tint={palette.primary} trackTint={palette.track} />
 			<SymbolView
@@ -34,7 +32,6 @@ export function VolumeSlider(): React.ReactNode {
 				size={LOUD_SIZE}
 				style={styles.loud}
 				tintColor={palette.secondary}
-				weight={FILLED_SYMBOL_WEIGHT}
 			/>
 		</View>
 	)
