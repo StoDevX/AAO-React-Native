@@ -25,8 +25,8 @@ struct CalendarScreen: Screen {
 			named: "the Calendar picker")
 	}
 
-	/// Tap an item in whichever menu is open. A category and an organisation are
-	/// Toggles inside a Menu and Reset Filters is a Button; all three reach
+	/// Tap an item in whichever menu is open. A category, an organisation and
+	/// Reset Filters are all actions of the `Stack.Toolbar.Menu`, and reach
 	/// XCUITest as buttons labelled with their titles.
 	@discardableResult
 	func tapMenuItem(_ title: String) -> Self {
