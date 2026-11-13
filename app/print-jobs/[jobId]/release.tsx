@@ -200,6 +200,7 @@ function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.Re
 							<ActionRow
 								disabled={status !== 'pending'}
 								onPress={requestRelease}
+								prominent={true}
 								title={status === 'printing' ? 'Printing…' : 'Print'}
 							/>
 							{/* Destructive, and last: cancelling a job cannot be undone,

@@ -74,6 +74,7 @@ function BalancesPage(): React.ReactNode {
 				<Section>
 					<ActionRow
 						onPress={() => dispatch(acknowledgeAcknowledgement(true))}
+						prominent={true}
 						title={uiCase('I Agree')}
 					/>
 				</Section>

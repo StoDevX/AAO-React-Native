@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Image as RNImage, StyleSheet, useWindowDimensions} from 'react-native'
+import {Image as RNImage, Platform, StyleSheet, useWindowDimensions} from 'react-native'
 import type {ColorValue, ImageSourcePropType} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
@@ -51,6 +51,12 @@ type RowProps = {
 type ActionRowProps = RowProps & {
 	/** Draws the action in red, for one that destroys something. */
 	destructive?: boolean
+	/**
+	 * The action the screen is for -- I Agree, Sign In, Print. On Android it
+	 * is a filled button, as Material draws a screen's main action; iOS draws
+	 * every action row alike.
+	 */
+	prominent?: boolean
 }
 
 /**
@@ -133,7 +139,18 @@ export function NavigationRow(props: RowProps): React.ReactNode {
  * opens a URL is `external`: use a `DisclosureRow` for it.
  */
 export function ActionRow(props: ActionRowProps): React.ReactNode {
-	let {title, onPress, disabled = false, destructive = false} = props
+	let {title, onPress, disabled = false, destructive = false, prominent = false} = props
+
+	if (Platform.OS === 'android') {
+		return (
+			<MaterialActionRow
+				{...props}
+				destructive={destructive}
+				disabled={disabled}
+				prominent={prominent}
+			/>
+		)
+	}
 
 	return (
 		<Button
@@ -142,6 +159,47 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
 		>
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
 				<Text modifiers={[foregroundStyle(destructive ? c.systemRed : c.systemBlue)]}>{title}</Text>
+				<Spacer />
+			</HStack>
+		</Button>
+	)
+}
+
+/**
+ * `ActionRow` on Android. Material has no tinted-text button in a list: a
+ * screen's main action is a filled button, and any other action a list item
+ * in the list's own text colour (red for one that destroys something), as
+ * Android's Settings lists its actions.
+ */
+function MaterialActionRow({
+	title,
+	onPress,
+	disabled,
+	destructive,
+	prominent,
+}: Required<Pick<ActionRowProps, 'disabled' | 'destructive' | 'prominent'>> &
+	ActionRowProps): React.ReactNode {
+	if (prominent) {
+		return (
+			<Button
+				modifiers={[
+					buttonStyle('borderedProminent'),
+					accessibilityLabel(title),
+					disabledModifier(disabled),
+				]}
+				onPress={onPress}
+			>
+				<Text>{title}</Text>
+			</Button>
+		)
+	}
+	return (
+		<Button
+			modifiers={[buttonStyle('plain'), accessibilityLabel(title), disabledModifier(disabled)]}
+			onPress={onPress}
+		>
+			<HStack modifiers={[contentShape(shapes.rectangle())]}>
+				<Text modifiers={[foregroundStyle(destructive ? c.systemRed : c.label)]}>{title}</Text>
 				<Spacer />
 			</HStack>
 		</Button>
