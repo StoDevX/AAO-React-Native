@@ -1,3 +1,4 @@
+import {Platform} from 'react-native'
 import type {Moment} from 'moment-timezone'
 
 import type {CalendarSource, SourcedEvent} from './types'
@@ -13,6 +14,8 @@ export interface DayNotice {
 	readonly text: string
 	readonly detail?: string
 	readonly retry: boolean
+	/** The events are still on their way: a spinner on Android, which shows one for loading. */
+	readonly loading?: boolean
 }
 
 /** What the screen has to work with when it draws a day. */
@@ -57,7 +60,12 @@ export function emptyNotice(state: DayState, whenEmpty: DayNotice): DayNotice {
 	if (state.sources.length === 0) {
 		return {
 			text: 'No calendars are showing.',
-			detail: 'Choose some from the Calendars button below.',
+			// Android chooses calendars from a chip at the top of the screen,
+			// iOS from a toolbar button at the bottom.
+			detail:
+				Platform.OS === 'android'
+					? 'Choose some from the Calendars filter above.'
+					: 'Choose some from the Calendars button below.',
 			retry: false,
 		}
 	}
@@ -68,7 +76,7 @@ export function emptyNotice(state: DayState, whenEmpty: DayNotice): DayNotice {
 	}
 
 	if (state.events.length === 0 && state.isLoading) {
-		return {text: 'Loading…', retry: false}
+		return {text: 'Loading…', retry: false, loading: true}
 	}
 
 	return whenEmpty

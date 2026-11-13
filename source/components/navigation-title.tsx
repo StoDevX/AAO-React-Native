@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import {Stack} from 'expo-router'
 import {Host, Text, VStack} from '@expo/ui/swift-ui'
 import {
@@ -57,8 +57,10 @@ export function TitleStack(props: {
 	subtitle: React.ReactNode
 	titleModifiers?: ModifierConfig[]
 }): React.ReactNode {
+	// Android's top app bar sets its title at the start, after the navigation
+	// icon; iOS centres it.
 	return (
-		<VStack spacing={0}>
+		<VStack alignment={Platform.OS === 'android' ? 'leading' : 'center'} spacing={0}>
 			<Text modifiers={props.titleModifiers ?? TITLE_MODIFIERS}>{props.name}</Text>
 			{props.subtitle}
 		</VStack>
