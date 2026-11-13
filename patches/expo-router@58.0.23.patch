@@ -1,0 +1,17 @@
+diff --git a/ios/Toolbar/RouterToolbarHostView.swift b/ios/Toolbar/RouterToolbarHostView.swift
+index b10810d4207786561e53aa93e77cfa0adb2d8d3f..e6ac6efd98faeb5a4f5e47131046c8671f717655 100644
+--- a/ios/Toolbar/RouterToolbarHostView.swift
++++ b/ios/Toolbar/RouterToolbarHostView.swift
+@@ -112,6 +112,12 @@ class RouterToolbarHostView: RouterViewWithLogger, LinkPreviewMenuUpdatable {
+           return nil
+         }
+ 
++        // EXPERIMENT probe: report an update that swaps out a menu's item
++        let previous = controller.toolbarItems ?? []
++        if previous.contains(where: { $0.menu != nil }) {
++          let replaced = previous.contains { old in old.menu != nil && !items.contains { $0 === old } }
++          NSLog("[menu-probe] expo-router toolbar update: \(replaced ? "REPLACED" : "kept") the menu item")
++        }
+         controller.setToolbarItems(items, animated: true)
+         controller.navigationController?.setToolbarHidden(
+           false,

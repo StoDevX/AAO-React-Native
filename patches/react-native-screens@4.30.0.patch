@@ -86,3 +86,37 @@ index e0762e87bc2080805bec5e9f25523fc6d42afae6..9e271adfb035330ab2251d939172e4cc
          setPadding(left, top, right, bottom)
      }
  
+diff --git a/ios/RNSScreenStackHeaderConfig.mm b/ios/RNSScreenStackHeaderConfig.mm
+index e217b2411d20c85db3ec84bb87765c1e9407fd3b..b17a6157dd485555ef9077e2ed8bb335fdcf27f1 100644
+--- a/ios/RNSScreenStackHeaderConfig.mm
++++ b/ios/RNSScreenStackHeaderConfig.mm
+@@ -607,6 +607,7 @@ RNS_IGNORE_SUPER_CALL_END
+   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
+ #endif
+   navitem.titleView = nil;
++  NSArray<UIBarButtonItem *> *menuProbePreviousRight = navitem.rightBarButtonItems; // EXPERIMENT probe
+   navitem.leftBarButtonItems = nil;
+   navitem.rightBarButtonItems = nil;
+ 
+@@ -700,6 +701,21 @@ RNS_IGNORE_SUPER_CALL_END
+                                                 withCurrentItems:navitem.leftBarButtonItems];
+   navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                  withCurrentItems:navitem.rightBarButtonItems];
++  { // EXPERIMENT probe: report a header update that swaps out an item with a menu
++    BOOL hadMenu = NO;
++    BOOL replaced = NO;
++    for (UIBarButtonItem *item in menuProbePreviousRight) {
++      if (item.menu != nil) {
++        hadMenu = YES;
++        if (![navitem.rightBarButtonItems containsObject:item]) {
++          replaced = YES;
++        }
++      }
++    }
++    if (hadMenu) {
++      NSLog(@"[menu-probe] rns header update: %@ the right menu item", replaced ? @"REPLACED" : @"kept");
++    }
++  }
+ 
+   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
+   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
