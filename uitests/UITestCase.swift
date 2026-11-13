@@ -19,6 +19,9 @@ class UITestCaseUnbooted: XCTestCase {
 	/// gets to retry the test. Wait on an expectation with `wait(for:timeout:)`.
 	override func setUpWithError() throws {
 		continueAfterFailure = false
+		// A toolbar menu's first morph can leave an animation that never ends;
+		// see AnimationIdleWait.swift.
+		AnimationIdleWait.skip()
 
 		// Before the app launches: a run with no known JS source measures
 		// whatever is on 8081, which may be another checkout entirely.
