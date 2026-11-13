@@ -2,9 +2,10 @@ import {beforeEach, describe, expect, test} from '@jest/globals'
 import {act, renderHook} from '@testing-library/react-native'
 
 import {useCampusStore} from '../../../campus/store'
-import {radioControl, useRadioStore, useStationPlayback} from '../store'
+import {radioControl, useIsReminding, useRadioStore, useStationPlayback} from '../store'
 
 const ERROR = {code: 4, message: 'The stream could not be played.'}
+const CAFECITO = {stationId: 'ksto', title: 'Cafecito Hour'} as const
 
 function reset() {
 	useRadioStore.setState({
@@ -16,6 +17,8 @@ function reset() {
 		sheetOpen: false,
 		showOnHome: true,
 		logoIndexes: {},
+		followedShows: [],
+		reminderPermission: null,
 	})
 }
 
@@ -231,16 +234,66 @@ describe('showOnHome', () => {
 		expect(useRadioStore.getState()).toMatchObject({showOnHome: false, stationId: null})
 	})
 
-	test('the logo each station shows and the station last viewed are the only other state saved', () => {
+	test('the logo each station shows, the station last viewed and the shows followed are the only other state saved', () => {
 		useRadioStore.getState().play('krlx')
 		useRadioStore.getState().setLogoIndex('ksto', 1)
 		useRadioStore.getState().browse('krlx')
+		useRadioStore.getState().follow(CAFECITO)
 		let {partialize} = useRadioStore.persist.getOptions()
 		expect(partialize?.(useRadioStore.getState())).toStrictEqual({
 			showOnHome: true,
 			logoIndexes: {ksto: 1},
 			viewedStationId: 'krlx',
+			followedShows: [CAFECITO],
 		})
+	})
+})
+
+describe('followed shows', () => {
+	beforeEach(reset)
+
+	test('following a show adds it once', () => {
+		useRadioStore.getState().follow(CAFECITO)
+		useRadioStore.getState().follow({...CAFECITO})
+		expect(useRadioStore.getState().followedShows).toStrictEqual([CAFECITO])
+	})
+
+	test('the same title on another station is a different show', () => {
+		useRadioStore.getState().follow({stationId: 'ksto', title: 'Static'})
+		useRadioStore.getState().follow({stationId: 'krlx', title: 'Static'})
+		expect(useRadioStore.getState().followedShows).toHaveLength(2)
+	})
+
+	test('a show restyled by its station is still the show followed', () => {
+		useRadioStore.getState().follow({stationId: 'krlx', title: 'HOZ'})
+		useRadioStore.getState().follow({stationId: 'krlx', title: 'hoz!'})
+		expect(useRadioStore.getState().followedShows).toHaveLength(1)
+		useRadioStore.getState().unfollow({stationId: 'krlx', title: 'Hoz'})
+		expect(useRadioStore.getState().followedShows).toStrictEqual([])
+	})
+
+	test('unfollowing removes only that show', () => {
+		useRadioStore.getState().follow(CAFECITO)
+		useRadioStore.getState().follow({stationId: 'krlx', title: 'Cafecito Hour'})
+		useRadioStore.getState().unfollow({...CAFECITO})
+		expect(useRadioStore.getState().followedShows).toStrictEqual([
+			{stationId: 'krlx', title: 'Cafecito Hour'},
+		])
+	})
+
+	test('a followed show reminds only once notifications are allowed', async () => {
+		let {result} = await renderHook(() => useIsReminding(CAFECITO))
+		await act(() => useRadioStore.getState().follow(CAFECITO))
+		expect(result.current).toBe(false)
+
+		await act(() => useRadioStore.getState().setReminderPermission('denied'))
+		expect(result.current).toBe(false)
+
+		await act(() => useRadioStore.getState().setReminderPermission('granted'))
+		expect(result.current).toBe(true)
+
+		await act(() => useRadioStore.getState().unfollow(CAFECITO))
+		expect(result.current).toBe(false)
 	})
 })
 

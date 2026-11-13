@@ -57,6 +57,33 @@ jest.mock('expo-mail-composer', () => ({
 	isAvailableAsync: jest.fn(() => Promise.resolve(false)),
 	composeAsync: jest.fn(() => Promise.resolve({status: 'sent'})),
 }))
+// Radio show reminders: nothing scheduled, and permission not yet asked for.
+jest.mock('expo-notifications', () => ({
+	IosAuthorizationStatus: {
+		NOT_DETERMINED: 0,
+		DENIED: 1,
+		AUTHORIZED: 2,
+		PROVISIONAL: 3,
+		EPHEMERAL: 4,
+	},
+	PermissionStatus: {GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined'},
+	SchedulableTriggerInputTypes: {WEEKLY: 'weekly'},
+	getPermissionsAsync: jest.fn(() =>
+		Promise.resolve({granted: false, canAskAgain: true, ios: {status: 0}}),
+	),
+	requestPermissionsAsync: jest.fn(() =>
+		Promise.resolve({granted: false, canAskAgain: false, ios: {status: 1}}),
+	),
+	getAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve([])),
+	scheduleNotificationAsync: jest.fn(() => Promise.resolve('')),
+	cancelScheduledNotificationAsync: jest.fn(() => Promise.resolve()),
+	setNotificationHandler: jest.fn(),
+	setNotificationCategoryAsync: jest.fn(() => Promise.resolve({})),
+	DEFAULT_ACTION_IDENTIFIER: 'expo.modules.notifications.actions.DEFAULT',
+	addNotificationResponseReceivedListener: jest.fn(() => ({remove: jest.fn()})),
+	getLastNotificationResponse: jest.fn(() => null),
+	clearLastNotificationResponse: jest.fn(),
+}))
 jest.mock('expo-image-picker', () => ({
 	launchImageLibraryAsync: jest.fn(() => Promise.resolve({canceled: true, assets: null})),
 	UIImagePickerPreferredAssetRepresentationMode: {Compatible: 'compatible'},
