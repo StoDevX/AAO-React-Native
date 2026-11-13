@@ -278,7 +278,7 @@ private struct OneOfField: View {
                 Text(alternative.label).tag(index)
             }
         }
-        .pickerStyle(.segmented)
+        .pickerStyle(.menu)
         FieldRows(fields: alternatives[chosen].fields.map {
             FormField(key: $0.key, title: $0.title, help: $0.help, kind: $0.kind, required: true)
         }, base: base, value: parent, file: file, recordPath: recordPath)
