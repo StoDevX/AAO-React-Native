@@ -5,6 +5,7 @@ import type {
 	PublicEventTitle,
 	PublicTextIsAnonymous,
 	RoutePattern,
+	ShowTitle,
 } from './catalog'
 
 /** Literal unions and numbers pass. */
@@ -45,3 +46,15 @@ export type NamedTitleFails = Expect<PublicTextIsAnonymous<TitleBesideDeviceId>>
 
 /** A branded map group label passes. */
 export type MapGroupLabelPasses = Expect<IsClosed<{name: 'x'; attributes: {group: MapGroupLabel}}>>
+
+/** An anonymous event may carry a show's title. */
+export type AnonymousShowTitlePasses = Expect<
+	PublicTextIsAnonymous<{name: 'x'; anonymous: true; attributes: {title: ShowTitle}}>
+>
+
+/** A show's title on an ordinary event, which would sit beside the device ID. */
+type ShowTitleBesideDeviceId = {name: 'x'; attributes: {title: ShowTitle}}
+
+/** That event fails. */
+// @ts-expect-error -- a show title on an event that keeps the device ID
+export type NamedShowTitleFails = Expect<PublicTextIsAnonymous<ShowTitleBesideDeviceId>>
