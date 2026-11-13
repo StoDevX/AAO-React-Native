@@ -3,6 +3,7 @@ import {getIcon} from 'react-native-change-icon'
 
 import {type AppIconName, iconFor} from '../../../images/icons'
 import * as storage from '../../lib/storage'
+import {reminderPermission} from '../streaming/radio/reminders'
 import {useRadioStore} from '../streaming/radio/store'
 import {track} from '../telemetry/track'
 import type {LinkTarget} from './open-links-in'
@@ -27,14 +28,17 @@ function radioHydrated(): Promise<void> {
 
 /**
  * Tags Sentry's scope with the icon iOS has set, and counts the launch with
- * how Customize is set up, once per JavaScript start. Never throws: telemetry
- * must not break the launch reporting it.
+ * how Customize is set up and how many radio shows are followed, once per
+ * JavaScript start. Never throws: telemetry must not break the launch
+ * reporting it.
  */
 export async function reportLaunch(): Promise<void> {
 	try {
-		let [systemIcon, inApp] = await Promise.all([
+		let [systemIcon, inApp, reminders] = await Promise.all([
 			getIcon(),
 			storage.getInAppLinkPreference(),
+			// A permission that cannot be read must not cost the launch its count.
+			reminderPermission().catch(() => 'unknown' as const),
 			radioHydrated(),
 		])
 		let icon = iconFor(systemIcon)
@@ -45,6 +49,8 @@ export async function reportLaunch(): Promise<void> {
 				icon,
 				links: inApp ? 'app' : 'safari',
 				radio: useRadioStore.getState().showOnHome ? 'on' : 'off',
+				followed_shows: useRadioStore.getState().followedShows.length,
+				reminders,
 			},
 		})
 	} catch {
