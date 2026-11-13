@@ -154,13 +154,16 @@ export function recordSchema(dataDir, catalog, name) {
 }
 
 /**
- * The set whose records `file` holds, by name, or undefined if no set holds it.
+ * The set whose records `file` holds, by name, or undefined if no set holds it:
+ * the set named for the file itself first, as `bus-times/_curation.yaml` is,
+ * then the folder set it is in.
  * @param {Catalog} catalog
  * @param {string} file
  * @returns {string | undefined}
  */
 export function setForFile(catalog, file) {
-	return Object.entries(catalog.sets).find(([, set]) =>
-		set.shape === 'folder' ? path.dirname(file) === set.path : file === set.path,
-	)?.[0]
+	let sets = Object.entries(catalog.sets)
+	let named = sets.find(([, set]) => set.shape !== 'folder' && set.path === file)
+	let folder = sets.find(([, set]) => set.shape === 'folder' && set.path === path.dirname(file))
+	return (named ?? folder)?.[0]
 }

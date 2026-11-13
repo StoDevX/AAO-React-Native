@@ -143,6 +143,16 @@ describe('validate, for a data set with a generated form', () => {
 		)
 	})
 
+	it('checks a file a set is named for against that set, not its folder', async () => {
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, 'bus-times/_curation.yaml')
+		await writeFile(file, (await readFile(file, 'utf8')).replace('line: Blue Line', 'line: 5'))
+		assert.deepEqual(
+			validate(dataDir, 'bus-times/_curation.yaml').map((problem) => problem.path),
+			[['routes', '77627', 'line']],
+		)
+	})
+
 	it('finds nothing to check in a file no set describes', async () => {
 		let {dataDir} = await scratchData()
 		assert.deepEqual(validate(dataDir, 'news-styles.css'), [])

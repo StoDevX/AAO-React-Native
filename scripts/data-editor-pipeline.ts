@@ -89,14 +89,31 @@ export function validate(dataDir: string, file: string): Problem[] {
 	let check = createValidator(schemaDir, {allErrors: true}).compile(
 		readYaml(path.join(schemaDir, `${schemaName}.yaml`)) as object,
 	)
-	if (check(readYaml(path.join(dataDir, file)))) return []
+	let data = readYaml(path.join(dataDir, file))
+	if (check(data)) return []
 	return wordProblems(check.errors, fileSchema(dataDir, catalog, name)).map(
 		({message, instancePath}: {message: string; instancePath: string}) => ({
 			file,
 			message,
-			path: instancePath === '' ? [] : keysOf(instancePath),
+			path: keysIn(data, instancePath),
 		}),
 	)
+}
+
+/**
+ * The keys in an Ajv pointer such as `/routes/77627/line`, each an index only
+ * where `data` holds a list there: a map may be keyed by digits, as the bus
+ * routes are by GTFS id, and an index would point the editor into a list.
+ */
+export function keysIn(data: unknown, pointer: string): Key[] {
+	let keys: Key[] = []
+	let value = data
+	for (let key of keysOf(pointer)) {
+		let step = Array.isArray(value) ? Number(key) : String(key)
+		keys.push(step)
+		value = (value as Record<string | number, unknown> | null)?.[step]
+	}
+	return keys
 }
 
 const readYaml = (filename: string): unknown => load(readFileSync(filename, 'utf8'), {filename})

@@ -85,3 +85,21 @@ struct HelperClientTests {
         #expect(json == #"[{"path":["schedule",0,"to"],"value":"9:00pm"},{"delete":true,"path":["links",1]}]"#)
     }
 }
+
+struct DataSetCatalogTests {
+    private let catalog = try! JSONDecoder().decode(DataSetCatalog.self, from: Data(#"{"groups":[],"sets":{"contact-info":{"title":"Important Contacts","record":"Contact","shape":"folder","path":"contact-info","schema":"contact-info"},"bus-times":{"title":"Bus Times","record":"Bus Line","shape":"folder","path":"bus-times","schema":"bus-times"},"bus-curation":{"title":"Bus Curation","record":"Bus Curation","shape":"file","path":"bus-times/_curation.yaml","schema":"_bus-curation"}}}"#.utf8))
+
+    @Test func findsTheFolderSetAFileIsIn() {
+        #expect(catalog.set(for: "contact-info/1-1-pubsafe.yaml") == "contact-info")
+    }
+
+    /// `_curation.yaml` sits in the bus-times folder but is a set of its own.
+    @Test func prefersTheSetNamedForTheFileItself() {
+        #expect(catalog.set(for: "bus-times/_curation.yaml") == "bus-curation")
+        #expect(catalog.set(for: "bus-times/1-express.yaml") == "bus-times")
+    }
+
+    @Test func findsNoSetForAFileNoneHolds() {
+        #expect(catalog.set(for: "news-styles.css") == nil)
+    }
+}

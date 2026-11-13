@@ -18,6 +18,14 @@ public struct DataSetCatalog: Decodable, Hashable, Sendable {
         self.groups = groups
         self.sets = sets
     }
+
+    /// The set whose records `file` holds, by name: the set named for the file
+    /// itself first, as `bus-times/_curation.yaml` is, then the folder set it is in.
+    public func set(for file: String) -> String? {
+        if let exact = sets.first(where: { $0.value.shape != .folder && $0.value.path == file }) { return exact.key }
+        let folder = (file as NSString).deletingLastPathComponent
+        return sets.first { $0.value.shape == .folder && $0.value.path == folder }?.key
+    }
 }
 
 /// One data set: where its records live, how a record is named, and what may change it.
