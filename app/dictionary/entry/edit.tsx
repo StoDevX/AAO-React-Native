@@ -144,7 +144,7 @@ function DictionaryEditForm(): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				{/* Android moves a sense from its row's long-press menu: it has
 				    no edit mode to drag rows in. */}
-				{manySenses && process.env.EXPO_OS === 'ios' ? (
+				{manySenses && Platform.OS === 'ios' ? (
 					<Stack.Toolbar.Button
 						accessibilityLabel="Reorder"
 						icon={reordering ? 'checkmark' : 'arrow.up.arrow.down'}
