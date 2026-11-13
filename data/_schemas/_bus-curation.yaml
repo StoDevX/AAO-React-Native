@@ -1,0 +1,46 @@
+# data/bus-times/_curation.yaml, which scripts/gtfs-to-bus-times.mjs reads.
+# Named with a leading `_` so validate-data leaves it to the data editor.
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+additionalProperties: false
+required: [routes]
+properties:
+  # the feed's stop name -> the name the app shows
+  stop_names:
+    type: object
+    additionalProperties: {type: string, minLength: 1}
+  # keyed by GTFS route_id
+  routes:
+    type: object
+    additionalProperties:
+      type: object
+      additionalProperties: false
+      required: [expect_name, file, line, colors]
+      properties:
+        expect_name: {type: string, minLength: 1}
+        file: {$ref: '#/definitions/file'}
+        line: {type: string, minLength: 1}
+        colors:
+          type: object
+          additionalProperties: false
+          required: [bar, dot]
+          properties:
+            bar: {type: string}
+            dot: {type: string}
+        notice: {type: string}
+        hidden: {type: boolean}
+  # keyed by GTFS route_id: routes kept by hand, watched for the feed to run them again
+  watched_routes:
+    type: object
+    additionalProperties:
+      type: object
+      additionalProperties: false
+      required: [line, file]
+      properties:
+        line: {type: string, minLength: 1}
+        file: {$ref: '#/definitions/file'}
+
+definitions:
+  # a file in data/bus-times/, whose numeric prefix orders the lines in the app
+  file: {type: string, pattern: '^\d+-[a-z0-9-]+\.yaml$'}

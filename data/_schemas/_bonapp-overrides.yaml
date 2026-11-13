@@ -1,0 +1,32 @@
+# data/_scrapes/bonapp-overrides.yaml, which scripts/scrape-bonapp.mjs reads.
+# Named with a leading `_` so validate-data, which pairs each schema with the
+# data file of the same name, leaves it to the data editor.
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+additionalProperties: false
+required: [venues]
+properties:
+  venues:
+    type: object
+    # keyed by the slug of the venue's Bon Appétit café page
+    additionalProperties:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        # the hours file the scrape writes, from the repo root
+        file: {type: string, pattern: '^data/building-hours/[^/]+\.yaml$'}
+        # Bon Appétit's meal name -> the section title the app shows
+        dayparts:
+          type: object
+          additionalProperties: {type: string, minLength: 1}
+        skip:
+          type: array
+          items: {type: string, minLength: 1}
+        # section title -> a note shown on that section
+        notes:
+          type: object
+          additionalProperties: {type: string, minLength: 1}
+        # why the run only reports this venue and never writes it
+        watch_only: {type: string, minLength: 1}
