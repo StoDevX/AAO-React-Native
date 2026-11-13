@@ -134,15 +134,18 @@ jobs:
             | sed 's/^/fingerprint=/' \
             | tee -a "$GITHUB_OUTPUT"
 
-      # Autolinking reads its settings from package.json's "expo" key, and
-      # ios.exclude there decides which pods are linked into the app at all.
-      # Hashing the whole of package.json would rebuild for every script or
-      # version bump, so fingerprint just that key, as above for the job.
-      - name: Fingerprint the autolinking config
-        id: autolinking
+      # package.json holds native build settings outside any dependency:
+      # autolinking reads its "expo" key (ios.exclude there decides which pods
+      # are linked into the app at all), and react-native-enriched-markdown's
+      # podspec reads "enriched-markdown" to choose what it compiles. Other
+      # packages may read keys of their own, so fingerprint all of it but
+      # "version", which only stamps CFBundleShortVersionString and changes on
+      # every release. A dependency change rewrites pnpm-lock.yaml anyway.
+      - name: Fingerprint package.json's native settings
+        id: package-json
         run: |
           set -o pipefail
-          jq -S '.expo' package.json \
+          jq -S 'del(.version)' package.json \
             | sha256sum \
             | cut -d ' ' -f 1 \
             | sed 's/^/fingerprint=/' \
@@ -178,9 +181,9 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/autolink=${{ steps.autolinking.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'react-native.config.js', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
+          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/package=${{ steps.package-json.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'react-native.config.js', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/autolink=${{ steps.autolinking.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'react-native.config.js', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
+            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/package=${{ steps.package-json.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'assets/**', '!assets/android/**', 'modules/**/ios/**', 'modules/**/*.podspec', 'modules/**/expo-module.config.json', 'react-native.config.js', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml', 'Gemfile.lock') }}
 
       # ios-build is skipped on a hit, so nothing else would publish an
       # artifact for the shards and they would be back to restoring a cache
