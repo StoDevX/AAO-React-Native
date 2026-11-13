@@ -10,5 +10,5 @@ import {FALLBACK_SYMBOL, materialSymbolFor} from '../symbol-table'
 export function symbolSource(sfName: string | undefined | null): ImageSourcePropType {
 	let symbol = materialSymbolFor(sfName)
 	let assets = SYMBOL_ASSETS[symbol.name] ?? SYMBOL_ASSETS[FALLBACK_SYMBOL]
-	return symbol.filled ? assets[1] : assets[0]
+	return (symbol.filled ? assets[1] : undefined) ?? assets[0]
 }

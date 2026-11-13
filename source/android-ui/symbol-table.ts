@@ -216,32 +216,49 @@ export const SF_TO_MATERIAL: Readonly<Record<string, string>> = {
 export const FALLBACK_SYMBOL = 'category'
 
 /**
- * The Material Symbols drawn filled even where the SF Symbol is an outline:
- * those whose outlined form reads as a different glyph (an empty circle for a
- * dot, say).
+ * The Material Symbols Android draws filled, when the SF Symbol asks for its
+ * `.fill` form. Material Symbols are outlined by default, and Android fills
+ * one only where filling means something: an on state (a favourite, a
+ * rating, a ticked item), a media control, and a dot. iOS fills symbols for
+ * weight -- a tile's graduation cap, a map category's tree -- which Android
+ * draws outlined, as its own apps do.
  */
-export const ALWAYS_FILLED: ReadonlySet<string> = new Set(['circle'])
+export const FILLED_SYMBOLS: ReadonlySet<string> = new Set([
+	'check_circle',
+	'circle',
+	'favorite',
+	'pause',
+	'play_arrow',
+	'radio_button_checked',
+	'star',
+])
 
 /** One Material Symbol: its name, and whether to draw its filled variant. */
 export type MaterialSymbol = {name: string; filled: boolean}
 
 /**
- * The Material Symbol closest to an SF Symbol name. `.fill` anywhere in the
- * name asks for the filled variant; the remaining name is looked up as is,
+ * The Material Symbol closest to an SF Symbol name. The whole name is looked
+ * up first, so a `.fill` symbol with a counterpart of its own (`circle.fill`,
+ * a dot, against `circle`, a ring) finds it; then the name without `.fill`,
  * then with its last dot-separated part dropped, until a match or nothing is
- * left, when it falls back to `FALLBACK_SYMBOL`.
+ * left, when it falls back to `FALLBACK_SYMBOL`. A `.fill` name draws filled
+ * only if its symbol is one of `FILLED_SYMBOLS`.
  */
 export function materialSymbolFor(sfName: string | undefined | null): MaterialSymbol {
 	if (!sfName) {
 		return {name: FALLBACK_SYMBOL, filled: false}
 	}
 	let parts = sfName.split('.')
-	let filled = parts.includes('fill') || parts.includes('filled')
+	let wantsFill = parts.includes('fill')
+	let exact = SF_TO_MATERIAL[sfName]
+	if (exact) {
+		return {name: exact, filled: wantsFill && FILLED_SYMBOLS.has(exact)}
+	}
 	let base = parts.filter((part) => part !== 'fill')
 	while (base.length > 0) {
 		let candidate = SF_TO_MATERIAL[base.join('.')]
 		if (candidate) {
-			return {name: candidate, filled: filled || ALWAYS_FILLED.has(candidate)}
+			return {name: candidate, filled: wantsFill && FILLED_SYMBOLS.has(candidate)}
 		}
 		base = base.slice(0, -1)
 	}
