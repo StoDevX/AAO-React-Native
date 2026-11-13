@@ -8,6 +8,7 @@ import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../source/features
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {OFFLINE_MESSAGE, menuView} from '../../source/features/menus/lib/menu-view'
 import {campusFromParam} from '../../source/features/campus/campus-param'
+import {uiCase} from '../../source/lib/ui-case'
 
 export default function MenuItemDetailPage(): React.ReactNode {
 	let {
@@ -59,7 +60,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView systemImage="fork.knife" title="Menu Item Not Found" />
+				<NoticeView systemImage="fork.knife" title={uiCase('Menu Item Not Found')} />
 			</>
 		)
 	}
@@ -96,7 +97,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView systemImage="fork.knife" title="Menu Item Not Found" />
+				<NoticeView systemImage="fork.knife" title={uiCase('Menu Item Not Found')} />
 			</>
 		)
 	}

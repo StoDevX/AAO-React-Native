@@ -10,6 +10,7 @@ import {ServerUrlSection} from './server-url'
 import {DebugSwiftSection} from './debugswift-section'
 import {ActionRow, NavigationRow} from '../../components/rows'
 import {refreshApp} from '../../lib/refresh'
+import {uiCase} from '../../lib/ui-case'
 
 const onResetButton = () => {
 	Alert.alert('Reset Everything', 'Are you sure you want to clear everything?', [
@@ -56,14 +57,14 @@ export const DeveloperSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section>
-				<ActionRow onPress={onResetButton} title="Reset Everything" />
+				<ActionRow onPress={onResetButton} title={uiCase('Reset Everything')} />
 				<NavigationRow onPress={onComponentsButton} title="Components" />
-				<NavigationRow onPress={onAPIButton} title="API Tester" />
-				<NavigationRow onPress={onBonAppButton} title="Bon Appetit Picker" />
-				<NavigationRow onPress={onBannerBuilderButton} title="Banner Builder" />
+				<NavigationRow onPress={onAPIButton} title={uiCase('API Tester')} />
+				<NavigationRow onPress={onBonAppButton} title={uiCase('Bon Appetit Picker')} />
+				<NavigationRow onPress={onBannerBuilderButton} title={uiCase('Banner Builder')} />
 				<NavigationRow onPress={onDebugButton} title="Debug" />
-				<ActionRow onPress={sendSentryMessage} title="Send a Sentry Message" />
-				<ActionRow onPress={sendSentryException} title="Send a Sentry Exception" />
+				<ActionRow onPress={sendSentryMessage} title={uiCase('Send a Sentry Message')} />
+				<ActionRow onPress={sendSentryException} title={uiCase('Send a Sentry Exception')} />
 			</Section>
 
 			<DebugSwiftSection />

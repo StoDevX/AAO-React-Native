@@ -26,6 +26,7 @@ import type {
 } from '../../source/features/directory/types'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 function DirectoryDetailPage(): React.ReactNode {
 	let {index, query, type} = useLocalSearchParams<{
@@ -40,7 +41,7 @@ function DirectoryDetailPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Screen options={{title: ''}} />
-				<NoticeView systemImage="questionmark.circle" title="Entry Not Found" />
+				<NoticeView systemImage="questionmark.circle" title={uiCase('Entry Not Found')} />
 			</>
 		)
 	}
@@ -93,7 +94,7 @@ function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.Reac
 		return (
 			<>
 				{screenTitle}
-				<NoticeView systemImage="questionmark.circle" title="Entry Not Found" />
+				<NoticeView systemImage="questionmark.circle" title={uiCase('Entry Not Found')} />
 			</>
 		)
 	}

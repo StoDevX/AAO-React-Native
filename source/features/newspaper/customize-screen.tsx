@@ -10,6 +10,7 @@ import {SheetCloseButton} from '../../components/sheet-close-button'
 import {IssueStainsRow} from './issue-stains-row'
 import {PhotoToneRow} from './photo-tone-row'
 import {useMessStore} from './store'
+import {uiCase} from '../../lib/ui-case'
 
 const styles = StyleSheet.create({
 	// A sheet paints its own background; a Form left to the default shows glass.
@@ -37,7 +38,7 @@ export function CustomizeScreen(): React.ReactNode {
 					<SheetSection title="Stories">
 						<Toggle
 							isOn={keepPhotoStoriesDark}
-							label="Dark page for Photo stories"
+							label={uiCase('Dark page for Photo stories')}
 							modifiers={[accessibilityIdentifier('keep-photo-stories-dark')]}
 							onIsOnChange={setKeepPhotoStoriesDark}
 						/>

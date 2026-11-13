@@ -28,6 +28,7 @@ import {FILL_WIDTH} from '../../../source/components/tile-layout'
 import {SECTION_GAP, SHEET_ROW} from '../../../source/components/place-card/card-style'
 import {InsetImageRow} from '../../../source/components/inset-image-row'
 import {MarkdownRow} from '../../../source/components/markdown-row'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const ACTION_ROW = [frame({maxWidth: FILL_WIDTH}), ...SHEET_ROW]
 
@@ -83,7 +84,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView systemImage="questionmark.circle" title="Contact Not Found" />
+				<NoticeView systemImage="questionmark.circle" title={uiCase('Contact Not Found')} />
 			</>
 		)
 	}

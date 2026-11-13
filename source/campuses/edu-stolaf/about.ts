@@ -1,12 +1,12 @@
 import type {AboutSection, DataSource, TimelineEra} from '../../features/about/campus-section'
 import {GH_BASE_URL} from '../../lib/constants'
+import {Platform} from 'react-native'
 
 /** The app's history, newest first. */
 const timeline: Array<TimelineEra> = [
 	{
 		period: '🏡 October 2017 — Today',
-		story:
-			'Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop and support the app in its current form. Rewritten from top to bottom in Typescript, this is the version you see today in the iOS App Store. It remains self-published and open-source, shows no ads, and the anonymous usage and crash data it sends can be turned off.',
+		story: `Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop and support the app in its current form. Rewritten from top to bottom in Typescript, this is the version you see today in the ${Platform.OS === 'android' ? 'Google Play Store' : 'iOS App Store'}. It remains self-published and open-source, shows no ads, and the anonymous usage and crash data it sends can be turned off.`,
 	},
 	{
 		period: '🧱 July 2016 — September 2017',

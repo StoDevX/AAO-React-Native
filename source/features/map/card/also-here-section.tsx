@@ -5,6 +5,7 @@ import {useMomentTimer} from '@frogpond/timer'
 import type {StackEntry} from '../lib/also-here'
 import type {PlaceTile} from '../lib/place-tiles'
 import {PlacesSection} from './places-section'
+import {uiCase} from '../../../lib/ui-case'
 
 type Props = {
 	tiles: Array<PlaceTile>
@@ -30,7 +31,7 @@ function AlsoHereTiles({tiles, onOpen}: Props): React.ReactNode {
 			now={now}
 			onOpen={onOpen}
 			tiles={tiles}
-			title="Also at This Location"
+			title={uiCase('Also at This Location')}
 		/>
 	)
 }

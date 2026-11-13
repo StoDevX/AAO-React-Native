@@ -25,6 +25,7 @@ import {displayP3Components} from '@frogpond/colors'
 import {symbolSource} from '../../android-ui/components/symbol'
 import type {HomeTileStyle} from './store'
 import {opensInBrowser, type ViewType} from '../views'
+import {sentenceCase} from '../../lib/ui-case'
 
 /**
  * Material 3 Expressive shapes, dealt to the tiles in order, so neighbours
@@ -144,7 +145,7 @@ export function MaterialHomeTile({view, index, tileStyle, onPress}: Props): Reac
 					<Icon size={CARD_ICON_SIZE} source={symbol} tint={tile.onContainer} />
 				</Box>
 				<Text color={palette.onSurface} style={{typography: 'titleMedium'}}>
-					{view.title}
+					{sentenceCase(view.title)}
 				</Text>
 			</Column>
 		)
@@ -172,7 +173,7 @@ export function MaterialHomeTile({view, index, tileStyle, onPress}: Props): Reac
 				minLines={2}
 				style={{typography: 'labelLarge', textAlign: 'center'}}
 			>
-				{view.title}
+				{sentenceCase(view.title)}
 			</Text>
 		</Column>
 	)

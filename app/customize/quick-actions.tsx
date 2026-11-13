@@ -26,6 +26,8 @@ import {pickedFor, useQuickActionsStore} from '../../source/features/quick-actio
 import {useCampus} from '../../source/features/campus/store'
 import {iconImage} from '../../source/features/views'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {QUICK_ACTIONS_TITLE} from '../../source/features/customize/quick-actions-title'
+import {uiCase} from '../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	// Pushed inside the Customize sheet, which paints no background of its own.
@@ -59,7 +61,7 @@ function QuickActionsPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Quick Actions</Stack.Title>
+			<Stack.Title>{QUICK_ACTIONS_TITLE}</Stack.Title>
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-quick-actions')]}>
 				<Form>
 					<SheetSection
@@ -76,7 +78,7 @@ function QuickActionsPage(): React.ReactNode {
 						))}
 					</SheetSection>
 					<SheetSection>
-						<ActionRow onPress={reset} title="Reset to Defaults" />
+						<ActionRow onPress={reset} title={uiCase('Reset to Defaults')} />
 					</SheetSection>
 				</Form>
 			</Host>
@@ -122,6 +124,6 @@ const DestinationRow = React.memo(function DestinationRow(
 
 export default requiresSection(
 	'quickActions',
-	{title: 'Quick Actions', noun: 'quick actions', systemImage: 'bolt'},
+	{title: QUICK_ACTIONS_TITLE, noun: QUICK_ACTIONS_TITLE.toLowerCase(), systemImage: 'bolt'},
 	QuickActionsPage,
 )

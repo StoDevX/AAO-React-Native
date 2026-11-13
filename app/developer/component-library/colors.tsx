@@ -14,6 +14,7 @@ import {DynamicColorIOS, Platform, PlatformColor, StyleSheet, Text, View} from '
 import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 import {LibraryWrapper} from '../../../source/features/developer/component-library/base/library-wrapper'
+import {uiCase} from '../../../source/lib/ui-case'
 
 /** A swatch in a table: what it is called, and the colour. */
 type Swatch = {
@@ -283,18 +284,18 @@ export default function ColorsLibraryPage(): React.ReactNode {
 						<PlatformColorsExample />
 					</Section>
 
-					<Section title="Fallback Colors">
+					<Section title={uiCase('Fallback Colors')}>
 						<FallbackColorsExample />
 					</Section>
 
 					{/* DynamicColorIOS throws anywhere but iOS. */}
 					{Platform.OS === 'ios' ? (
 						<>
-							<Section title="iOS Dynamic Colors">
+							<Section title={uiCase('iOS Dynamic Colors')}>
 								<DynamicColorsExample />
 							</Section>
 
-							<Section title="Variant Colors">
+							<Section title={uiCase('Variant Colors')}>
 								<VariantColorsExample />
 							</Section>
 						</>

@@ -18,6 +18,7 @@ import {useFilterStore} from '../source/features/athletics/store'
 import type {DaySection, ProcessedScore} from '../source/features/athletics/types'
 import {daySections, filterBySport, sportFilterSections} from '../source/features/athletics/utils'
 import {requiresSection} from '../source/features/campus/section-gate'
+import {uiCase} from '../source/lib/ui-case'
 
 // Stable so a pending query's default `[]` doesn't invalidate the memos and
 // effect below on every render.
@@ -118,7 +119,7 @@ function AthleticsView(): React.ReactNode {
 		return (
 			<>
 				{datePicker}
-				<NoticeView systemImage="sportscourt" title="No Scores" />
+				<NoticeView systemImage="sportscourt" title={uiCase('No Scores')} />
 			</>
 		)
 	}

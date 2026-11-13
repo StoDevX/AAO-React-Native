@@ -42,6 +42,7 @@ import {
 	type ButtonPlayground,
 } from '../../../source/features/developer/component-library/lib/button-playground'
 import tuneIcon from '@expo/material-symbols/tune.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const tapped = (what: string) => () => Alert.alert('Tapped', what)
 
@@ -67,7 +68,11 @@ function StyleExamples(): React.ReactNode {
 		<Section title="Styles">
 			{BUTTON_STYLES.map((style) => (
 				<ExampleRow key={style} title={style}>
-					<Button label="Tap Me" modifiers={[buttonStyle(style)]} onPress={tapped(style)} />
+					<Button
+						label={uiCase('Tap Me')}
+						modifiers={[buttonStyle(style)]}
+						onPress={tapped(style)}
+					/>
 				</ExampleRow>
 			))}
 		</Section>
@@ -97,7 +102,7 @@ function SizeExamples(): React.ReactNode {
 			{CONTROL_SIZES.map((size) => (
 				<ExampleRow key={size} title={size}>
 					<Button
-						label="Tap Me"
+						label={uiCase('Tap Me')}
 						modifiers={[buttonStyle('borderedProminent'), controlSize(size)]}
 						onPress={tapped(size)}
 					/>
@@ -111,10 +116,13 @@ function StateExamples(): React.ReactNode {
 	return (
 		<Section title="States">
 			<ExampleRow title="Disabled">
-				<Button label="Tap Me" modifiers={[buttonStyle('bordered'), disabled(true)]} />
+				<Button label={uiCase('Tap Me')} modifiers={[buttonStyle('bordered'), disabled(true)]} />
 			</ExampleRow>
 			<ExampleRow title="Disabled, prominent">
-				<Button label="Tap Me" modifiers={[buttonStyle('borderedProminent'), disabled(true)]} />
+				<Button
+					label={uiCase('Tap Me')}
+					modifiers={[buttonStyle('borderedProminent'), disabled(true)]}
+				/>
 			</ExampleRow>
 			<ExampleRow title="With a symbol">
 				<Button
@@ -126,7 +134,7 @@ function StateExamples(): React.ReactNode {
 			</ExampleRow>
 			<ExampleRow title="Tinted">
 				<Button
-					label="Tap Me"
+					label={uiCase('Tap Me')}
 					modifiers={[buttonStyle('borderedProminent'), tint(sto.gold)]}
 					onPress={tapped('Tinted')}
 				/>

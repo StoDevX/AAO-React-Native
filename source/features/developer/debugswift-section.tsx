@@ -12,6 +12,7 @@ import {
 import {ActionRow} from '../../components/rows'
 import {refreshFloatingButton} from './floating-button'
 import {useDeveloperStore} from './store'
+import {uiCase} from '../../lib/ui-case'
 
 // A debugging aid; a failure is worth knowing about, not showing.
 const report = (error: unknown) => {
@@ -80,7 +81,7 @@ export function DebugSwiftSection(): React.ReactNode {
 					<ActionRow onPress={onOpenDebugSwift} title="Open DebugSwift" />
 					<Toggle
 						isOn={floatingButtonEnabled}
-						label="Floating Button"
+						label={uiCase('Floating Button')}
 						onIsOnChange={setFloatingButtonEnabled}
 					/>
 				</>

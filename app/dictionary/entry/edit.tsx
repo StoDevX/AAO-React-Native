@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, StyleSheet} from 'react-native'
+import {Alert, Platform, StyleSheet} from 'react-native'
 import {Button, Form, Host, List, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
 import {SheetSection} from '@frogpond/sheet-section'
 import {
@@ -26,6 +26,7 @@ import {
 } from '../../../source/features/dictionary/store'
 import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
 import visibilityIcon from '@expo/material-symbols/visibility.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
@@ -63,7 +64,7 @@ function DictionaryEditForm(): React.ReactNode {
 				'Discard changes?',
 				'You have made unsaved changes. Are you sure you want to discard them?',
 				[
-					{text: 'Edit', style: 'cancel'},
+					{text: Platform.OS === 'android' ? 'Keep editing' : 'Edit', style: 'cancel'},
 					{
 						text: 'Discard',
 						style: 'destructive',
@@ -97,7 +98,7 @@ function DictionaryEditForm(): React.ReactNode {
 			<NoticeView
 				description="Open an entry first."
 				systemImage="character.book.closed"
-				title="Nothing to Edit"
+				title={uiCase('Nothing to Edit')}
 			/>
 		)
 	}
@@ -123,7 +124,7 @@ function DictionaryEditForm(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Suggest an Edit</Stack.Title>
+			<Stack.Title>{uiCase('Suggest an Edit')}</Stack.Title>
 			{/* On device, the edge-swipe gesture did not reliably surface the
 			    unsaved-changes alert -- turned off here rather than guarded.
 			    See Hours/detail/report.tsx. */}
@@ -188,7 +189,7 @@ function DictionaryEditForm(): React.ReactNode {
 						<TextField
 							modifiers={[accessibilityLabel('Part of Speech')]}
 							onTextChange={store.setPartOfSpeech}
-							placeholder="Part of Speech"
+							placeholder={uiCase('Part of Speech')}
 							{...partOfSpeechField}
 							text={partOfSpeechText}
 						/>
@@ -237,7 +238,7 @@ function DictionaryEditForm(): React.ReactNode {
 
 						{/* Adding a sense and opening it are one action: the row it
 						    appends has nowhere to type a definition. */}
-						<Button label="Add Sense" onPress={openNewSense} systemImage="plus" />
+						<Button label={uiCase('Add Sense')} onPress={openNewSense} systemImage="plus" />
 					</SheetSection>
 				</Form>
 			</Host>

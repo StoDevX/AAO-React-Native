@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {MenuPickerRow} from '../../components/menu-picker-row'
 import {useMessStore, type PhotoTone} from './store'
+import {uiCase} from '../../lib/ui-case'
 
 /** Names the picker, for a UI test. */
 export const PHOTO_TONE_ID = 'photo-tone'
@@ -21,7 +22,7 @@ export function PhotoToneRow(): React.ReactNode {
 	return (
 		<MenuPickerRow
 			id={PHOTO_TONE_ID}
-			label="Front Page Photos"
+			label={uiCase('Front Page Photos')}
 			onSelectionChange={setTone}
 			options={TONES}
 			selection={tone}

@@ -110,7 +110,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 					}
 				/>
 				<Stack.Toolbar.Button
-					accessibilityLabel="Open in Safari"
+					accessibilityLabel={Platform.OS === 'android' ? 'Open in browser' : 'Open in Safari'}
 					icon={process.env.EXPO_OS === 'ios' ? 'safari' : exploreIcon}
 					onPress={() => Linking.openURL(story.link).catch(() => undefined)}
 				/>

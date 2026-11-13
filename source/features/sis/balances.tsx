@@ -21,6 +21,7 @@ import {FaqBannerSlot} from '../../features/faqs/banner'
 import {FAQ_TARGETS} from '../../features/faqs/constants'
 import {DetailRow} from '../../components/rows'
 import {balanceValue} from './lib'
+import {uiCase} from '../../lib/ui-case'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
@@ -66,12 +67,20 @@ export const BalancesView = (): React.ReactNode => {
 					</HStack>
 				</Section>
 
-				<Section footer={<Text>{DISCLAIMER}</Text>} title="Meal Plan">
+				<Section footer={<Text>{DISCLAIMER}</Text>} title={uiCase('Meal Plan')}>
 					<HStack spacing={0}>
-						<BalanceTile isLoading={isLoading} label="Daily Meals Left" value={data.daily} />
-						<BalanceTile isLoading={isLoading} label="Weekly Meals Left" value={data.weekly} />
+						<BalanceTile
+							isLoading={isLoading}
+							label={uiCase('Daily Meals Left')}
+							value={data.daily}
+						/>
+						<BalanceTile
+							isLoading={isLoading}
+							label={uiCase('Weekly Meals Left')}
+							value={data.weekly}
+						/>
 					</HStack>
-					{data.plan ? <DetailRow label="Meal Plan" value={data.plan} /> : null}
+					{data.plan ? <DetailRow label={uiCase('Meal Plan')} value={data.plan} /> : null}
 				</Section>
 
 				{/* A missing login is explained by the FAQ banner above; nowhere in the app signs in to Balances. */}

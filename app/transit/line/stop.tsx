@@ -30,6 +30,7 @@ import {useLineState} from '../../../source/features/transit/bus/use-line-state'
 import {formatDeparture} from '../../../source/features/transit/bus/components/times'
 import {TimetableRow} from '../../../source/features/transit/bus/components/timetable-row'
 import {useBusFooterMessage} from '../../../source/features/transit/bus/constants'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -155,7 +156,7 @@ function BusStopForLine({
 				<NoticeView
 					description={`No stop is called “${stopName}”.`}
 					systemImage="bus"
-					title="Stop Not Found"
+					title={uiCase('Stop Not Found')}
 				/>
 			</>
 		)
@@ -219,7 +220,7 @@ export default function BusStopPage(): React.ReactNode {
 				<NoticeView
 					description={`No bus line is called “${lineName}”.`}
 					systemImage="bus"
-					title="Line Not Found"
+					title={uiCase('Line Not Found')}
 				/>
 			</>
 		)

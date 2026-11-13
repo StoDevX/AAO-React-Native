@@ -23,6 +23,7 @@ import {sectionIndexLabel} from '../../lib/section-index-label'
 
 import {listNotice} from './lib/list-notice'
 import type {DictionaryGroup, NormalizedEntry} from './types'
+import {uiCase} from '../../lib/ui-case'
 
 /// How many lines of the definition a row previews before truncating.
 const PREVIEW_LINES = 2
@@ -58,7 +59,7 @@ export function EntryList({
 					systemImage="exclamationmark.triangle"
 					title="Couldn’t load the dictionary"
 				/>
-				<Button label="Try Again" onPress={() => void onRetry()} />
+				<Button label={uiCase('Try Again')} onPress={() => void onRetry()} />
 			</VStack>
 		)
 	}

@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Stack, useFocusEffect, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
-import {Alert, StyleSheet} from 'react-native'
+import {Alert, Platform, StyleSheet} from 'react-native'
 import {Host, List, Picker, Text, Toggle, VStack} from '@expo/ui/swift-ui'
 import {SheetSection} from '@frogpond/sheet-section'
 import {
@@ -47,6 +47,7 @@ import type {BuildingAction} from '../../../source/features/building-hours/repor
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
 import {requiresSection} from '../../../source/features/campus/section-gate'
 import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 function useBuildingEditor(initialBuilding: BuildingType, campus: CampusId) {
 	let router = useRouter()
@@ -87,7 +88,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: CampusId) {
 					'Discard changes?',
 					'You have made unsaved changes. Are you sure you want to discard them?',
 					[
-						{text: 'Edit', style: 'cancel'},
+						{text: Platform.OS === 'android' ? 'Keep editing' : 'Edit', style: 'cancel'},
 						{
 							text: 'Discard',
 							style: 'destructive',
@@ -274,7 +275,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 							onChangeText={(newSubtitle) =>
 								dispatch({type: 'UPDATE_BUILDING', data: {subtitle: newSubtitle}})
 							}
-							placeholder="Formal Name"
+							placeholder={uiCase('Formal Name')}
 							value={subtitle || ''}
 						/>
 						<SyncedTextField
@@ -317,7 +318,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 					<SheetSection>
 						<NavigationRow
 							onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
-							title="Add New Schedule"
+							title={uiCase('Add New Schedule')}
 						/>
 					</SheetSection>
 
@@ -333,7 +334,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 							/>
 						))}
 
-						<NavigationRow onPress={addLink} title="Add Link" />
+						<NavigationRow onPress={addLink} title={uiCase('Add Link')} />
 					</SheetSection>
 
 					<SheetSection title="What's Wrong?">
@@ -438,9 +439,9 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 				/>
 			))}
 
-			<NavigationRow onPress={addHoursRow} title="Add More Hours" />
+			<NavigationRow onPress={addHoursRow} title={uiCase('Add More Hours')} />
 
-			<ActionRow destructive={true} onPress={deleteSchedule} title="Delete Schedule" />
+			<ActionRow destructive={true} onPress={deleteSchedule} title={uiCase('Delete Schedule')} />
 		</SheetSection>
 	)
 }
@@ -486,7 +487,7 @@ function HoursProblemReportLoader(): React.ReactNode {
 			<NoticeView
 				description={`Nothing is called “${name}”.`}
 				systemImage="building.2"
-				title="Building Not Found"
+				title={uiCase('Building Not Found')}
 			/>
 		)
 	}
@@ -503,7 +504,7 @@ function HoursProblemReportPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Report a Problem</Stack.Title>
+			<Stack.Title>{uiCase('Report a Problem')}</Stack.Title>
 			{/* On device, the edge-swipe gesture did not reliably surface the
 			 * unsaved-changes alert -- turned off here rather than guarded. */}
 			<Stack.Screen options={{gestureEnabled: false}} />

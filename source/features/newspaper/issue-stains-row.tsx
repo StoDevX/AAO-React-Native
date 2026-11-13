@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {MenuPickerRow} from '../../components/menu-picker-row'
 import {useMessStore, type StainKind} from './store'
+import {uiCase} from '../../lib/ui-case'
 
 /** Names the picker, for a UI test. */
 export const ISSUE_STAINS_ID = 'issue-stains'
@@ -18,7 +19,7 @@ export function IssueStainsRow(): React.ReactNode {
 	return (
 		<MenuPickerRow
 			id={ISSUE_STAINS_ID}
-			label="Paper Stains"
+			label={uiCase('Paper Stains')}
 			onSelectionChange={setKind}
 			options={KINDS}
 			selection={kind}

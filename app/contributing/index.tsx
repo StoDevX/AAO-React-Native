@@ -12,6 +12,7 @@ import {useCampusSection} from '../../source/features/campus/store'
 import {openEmail} from '../../source/features/support/open-email'
 import {FEATURE_REQUESTS} from '../../source/lib/app-identity'
 import {GH_BASE_URL} from '../../source/lib/constants'
+import {uiCase} from '../../source/lib/ui-case'
 
 const OSM_URL = 'https://www.openstreetmap.org/'
 const CCC_SERVER_URL = 'https://github.com/frog-pond/ccc-server'
@@ -46,12 +47,12 @@ export default function ContributingPage(): React.ReactNode {
 					<SheetSection title="Send feedback">
 						<NavigationRow
 							onPress={() => router.navigate('/report-problem')}
-							title="Report a Problem"
+							title={uiCase('Report a Problem')}
 						/>
 						{FEATURE_REQUESTS ? (
 							<NavigationRow
 								onPress={() => router.navigate('/feature-requests')}
-								title="Feature Requests"
+								title={uiCase('Feature Requests')}
 							/>
 						) : null}
 					</SheetSection>

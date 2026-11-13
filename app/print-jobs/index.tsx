@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import {Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -23,6 +23,7 @@ import {useQuery} from '@tanstack/react-query'
 import {groupBy, sortBy} from '@frogpond/collections'
 import {requiresSection} from '../../source/features/campus/section-gate'
 import logoutIcon from '@expo/material-symbols/logout.xml'
+import {uiCase} from '../../source/lib/ui-case'
 
 function PrintJobsView(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
@@ -80,7 +81,11 @@ function PrintJobsView(): React.ReactNode {
 	}
 
 	if (jobsData.jobs.length === 0) {
-		let instructions = 'using the Print option in the Share Sheet'
+		// Android apps print from their own menu (often ⋮ › Print, or Share › Print).
+		let instructions =
+			Platform.OS === 'android'
+				? "using the Print option in an app's menu"
+				: 'using the Print option in the Share Sheet'
 		let descriptionText = `You can print from a computer, or by ${instructions}.`
 
 		return (
@@ -147,7 +152,7 @@ function PrintJobsPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Print Jobs</Stack.Title>
+			<Stack.Title>{uiCase('Print Jobs')}</Stack.Title>
 			{credentials ? (
 				<Stack.Toolbar placement="right">
 					<Stack.Toolbar.Button

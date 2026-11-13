@@ -12,6 +12,7 @@ import {submitReport} from '../../../source/features/dictionary/report/submit'
 import {useDictionaryDraftStore} from '../../../source/features/dictionary/store'
 import {track} from '../../../source/features/telemetry/track'
 import {useCampusSection} from '../../../source/features/campus/store'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
@@ -74,7 +75,7 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 	}, [draft, markSubmitted, original, supportEmail])
 
 	if (!diff) {
-		return <NoticeView systemImage="character.book.closed" title="Nothing to Preview" />
+		return <NoticeView systemImage="character.book.closed" title={uiCase('Nothing to Preview')} />
 	}
 
 	return (

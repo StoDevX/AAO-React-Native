@@ -3,6 +3,7 @@ import {Section} from '@expo/ui/swift-ui'
 
 import {DisclosureRow} from '../../components/rows'
 import {iconImage, opensInBrowser, type ViewType} from '../views'
+import {uiCase} from '../../lib/ui-case'
 
 /**
  * Home as a Settings-style list: a row per tile, in the tiled home's order,
@@ -31,7 +32,7 @@ export function HomeListRows({
 					destination={opensInBrowser(view) ? 'external' : 'push'}
 					image={{...iconImage(view.icon), gradient: view.gradient}}
 					onPress={() => onOpen(view)}
-					title={view.title}
+					title={uiCase(view.title)}
 				/>
 			))}
 		</Section>

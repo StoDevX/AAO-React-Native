@@ -30,6 +30,7 @@ import {
 	courseListState,
 } from '../../../source/features/sis/course-search/lib/list-state'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import {uiCase} from '../../../source/lib/ui-case'
 
 function CourseSearchResultsView(): React.ReactNode {
 	let dispatch = useAppDispatch()
@@ -217,7 +218,7 @@ let styles = StyleSheet.create({
 function CourseSearchResultsPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Title>Course Catalog</Stack.Title>
+			<Stack.Title>{uiCase('Course Catalog')}</Stack.Title>
 			<CourseSearchResultsView />
 		</>
 	)
@@ -225,6 +226,6 @@ function CourseSearchResultsPage(): React.ReactNode {
 
 export default requiresSection(
 	'courseCatalog',
-	{title: 'Course Catalog', noun: 'a course catalog', systemImage: 'graduationcap'},
+	{title: uiCase('Course Catalog'), noun: 'a course catalog', systemImage: 'graduationcap'},
 	CourseSearchResultsPage,
 )
