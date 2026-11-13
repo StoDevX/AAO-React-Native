@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+	Platform,
 	StyleSheet,
 	Text,
 	useColorScheme,
@@ -23,7 +24,7 @@ import {
 	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
-import {Stack, useIsFocused, useLocalSearchParams} from 'expo-router'
+import {Stack, useIsFocused, useLocalSearchParams, useNavigation} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 
@@ -32,6 +33,10 @@ import type {MapSection} from '../../source/features/map/campus-section'
 import {useCampusParam} from '../../source/features/campus/campus-param'
 import {cardVenuesOptions} from '../../source/features/map/card-queries'
 import {MapSheet} from '../../source/features/map/map-sheet'
+import {MapTopBar} from '../../source/features/map/map-top-bar'
+import {mapCategoriesOptions} from '../../source/features/map/category-groups-query'
+import {groupsFor} from '../../source/features/map/lib/category-groups'
+import type {MapGroupLabel} from '../../source/features/telemetry/catalog'
 import {PlaceStackCard} from '../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../source/features/map/building-picker'
@@ -82,6 +87,9 @@ const LINE_TOUCH_RADIUS = 8
 /// Room kept around framed pins, and above them for the floating header.
 const PIN_MARGIN = 40
 const HEADER_CLEARANCE = 44
+/** On Android the search bar and its chips float over the map's top instead. */
+const ANDROID_HEADER_CLEARANCE = 128
+const ANDROID = Platform.OS === 'android'
 
 /// The footprints are drawn by the tileset, so this layer paints only the open
 /// place's building, tinted under its dot. It stays for every building
@@ -123,6 +131,16 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 	// A card covers the picker while any place is open.
 	let covered = stack.length > 0
 	let [sheetPresented, setSheetPresented] = React.useState(true)
+	// Android's search and category chips float over the map, outside the
+	// sheet, so the screen holds what they choose and hands it to the picker.
+	let [searchText, setSearchText] = React.useState('')
+	let [openedLabel, setOpenedLabel] = React.useState<MapGroupLabel | null>(null)
+	let {data: categories} = useQuery({...mapCategoriesOptions, enabled: ANDROID})
+	let groupLabels = React.useMemo(
+		() => (categories ? groupsFor(categories, campus, buildings).map((group) => group.label) : []),
+		[categories, campus, buildings],
+	)
+	let navigation = useNavigation()
 	// Back closes the card on top, one place at a time, before it leaves the
 	// map, as Android users expect of Back.
 	useBackHandler(covered, () => dispatchStack({type: 'pop', depth: stack.length - 1}))
@@ -293,7 +311,7 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 		if (framing?.kind === 'fit') {
 			cameraRef.current?.fitBounds(framing.bounds, {
 				padding: {
-					top: insets.top + HEADER_CLEARANCE,
+					top: insets.top + (ANDROID ? ANDROID_HEADER_CLEARANCE : HEADER_CLEARANCE),
 					bottom: sheetHeight + PIN_MARGIN,
 					left: PIN_MARGIN,
 					right: PIN_MARGIN,
@@ -372,26 +390,37 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 			{/* The map runs up under a clear header, as Maps' does: only the Back
 			    button and the About menu float over it. The title stays for the
 			    next screen's Back button, but the header draws none. */}
-			<Stack.Screen options={{title: map.title, headerTitle: '', headerTransparent: true}} />
+			<Stack.Screen
+				options={{
+					title: map.title,
+					headerTitle: '',
+					headerTransparent: true,
+					// Android's Back is in the search bar floating over the map.
+					headerShown: !ANDROID,
+				}}
+			/>
 			{/* The credits the tiles' licence requires, in place of MapLibre's own
-			    button, which would sit loose on the map beside Back. */}
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu
-					accessibilityLabel="About this map"
-					icon={process.env.EXPO_OS === 'ios' ? 'info.circle' : infoIcon}
-				>
-					{mapCredits(map).map((credit) => (
-						// The compass says the item opens a site, as Safari's own icon does.
-						<Stack.Toolbar.MenuAction
-							key={credit.url}
-							icon="safari"
-							onPress={() => openUrl(credit.url)}
-						>
-							{credit.label}
-						</Stack.Toolbar.MenuAction>
-					))}
-				</Stack.Toolbar.Menu>
-			</Stack.Toolbar>
+			    button, which would sit loose on the map beside Back. Android's are
+			    behind the search bar's info button. */}
+			{ANDROID ? null : (
+				<Stack.Toolbar placement="right">
+					<Stack.Toolbar.Menu
+						accessibilityLabel="About this map"
+						icon={process.env.EXPO_OS === 'ios' ? 'info.circle' : infoIcon}
+					>
+						{mapCredits(map).map((credit) => (
+							// The compass says the item opens a site, as Safari's own icon does.
+							<Stack.Toolbar.MenuAction
+								key={credit.url}
+								icon="safari"
+								onPress={() => openUrl(credit.url)}
+							>
+								{credit.label}
+							</Stack.Toolbar.MenuAction>
+						))}
+					</Stack.Toolbar.Menu>
+				</Stack.Toolbar>
+			)}
 			<Map
 				ref={mapRef}
 				attribution={false}
@@ -497,6 +526,7 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 								dispatchSheet({type: 'row-tapped'})
 								setSearchedId(from === 'search' ? id : null)
 							}}
+							{...(ANDROID ? {searchText, openedLabel, onOpenedChange: setOpenedLabel} : null)}
 						/>
 					</Group>
 					{covered ? (
@@ -510,6 +540,19 @@ function CampusMap({campus, map, placeParam}: CampusMapProps): React.ReactNode {
 					) : null}
 				</ZStack>
 			</MapSheet>
+			<MapTopBar
+				credits={mapCredits(map)}
+				groups={groupLabels}
+				onBack={() => navigation.goBack()}
+				onOpen={setOpenedLabel}
+				onOpenCredit={(credit) => openUrl(credit.url)}
+				onQueryChange={setSearchText}
+				onSearchFocusChange={(focused, hasText) =>
+					dispatchSheet(focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText})
+				}
+				opened={openedLabel}
+				query={searchText}
+			/>
 
 			{error ? (
 				<SafeAreaView edges={['left', 'right']} style={styles.banner}>
