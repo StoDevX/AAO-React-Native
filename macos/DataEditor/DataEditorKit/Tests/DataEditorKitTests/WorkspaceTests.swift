@@ -87,6 +87,18 @@ struct WorkspaceTests {
         #expect(try workspace.changedFiles() == [])
     }
 
+    @Test func countsAnEditedUnderscoreFileButNotTheHelpersTemporaryFiles() async throws {
+        let (session, _) = stubRepo()
+        let workspace = Workspace(root: temporaryRoot(), session: session)
+        _ = try await workspace.download(commit: "c1")
+        let busTimes = workspace.dataDirectory.appending(path: "bus-times")
+        try FileManager.default.createDirectory(at: busTimes, withIntermediateDirectories: true)
+        try body("routes: {}\n").write(to: busTimes.appending(path: "_curation.yaml"))
+        try body("half").write(to: busTimes.appending(path: "_curation.yaml.next"))
+        try body("aside").write(to: busTimes.appending(path: "_1-express.yaml.moving"))
+        #expect(try workspace.changedFiles() == ["bus-times/_curation.yaml"])
+    }
+
     @Test func leavesTheWorkspaceAloneWhenADownloadFailsPartway() async throws {
         let root = temporaryRoot()
         let (good, _) = stubRepo()

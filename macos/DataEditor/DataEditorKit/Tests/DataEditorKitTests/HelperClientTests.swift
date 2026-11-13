@@ -23,6 +23,23 @@ private func client() throws -> HelperClient {
 private struct Echo: Decodable, Sendable { let echo: JSONValue }
 
 struct HelperClientTests {
+    @Test func decodesARecordByItsFileAndPath() throws {
+        let json = #"{"set":"faqs","file":"faqs.yaml","path":["faqs",0],"title":"Say hello to us","subtitle":null,"section":null,"editable":true}"#
+        let record = try JSONDecoder().decode(RecordSummary.self, from: Data(json.utf8))
+        #expect(record.ref == RecordRef(file: "faqs.yaml", path: ["faqs", 0]))
+        #expect(record.title == "Say hello to us")
+        #expect(record.subtitle == nil)
+    }
+
+    @Test func decodesACatalogSet() throws {
+        let json = #"{"groups":[{"title":"Help","sets":["faqs"]}],"sets":{"faqs":{"title":"FAQs & Notices","record":"FAQ","shape":"list","path":"faqs.yaml","list":["faqs"],"schema":"faqs","steers":{"what":"the timetables","run":"the refresh"}}}}"#
+        let catalog = try JSONDecoder().decode(DataSetCatalog.self, from: Data(json.utf8))
+        let faqs = try #require(catalog.sets["faqs"])
+        #expect(faqs.shape == .list)
+        #expect(faqs.form == .generated)
+        #expect(faqs.steers == DataSet.Steers(what: "the timetables", run: "the refresh"))
+    }
+
     @Test func returnsTheResultForItsRequest() async throws {
         let reply: Echo = try await client().call("load", ["file": "building-hours/1-1-cage.yaml"])
         #expect(reply.echo["method"] == .string("load"))
