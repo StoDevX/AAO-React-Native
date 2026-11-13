@@ -449,6 +449,11 @@ const config: ExpoConfig = {
 			'android.permission.ACCESS_FINE_LOCATION',
 			'android.permission.FOREGROUND_SERVICE',
 			'android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK',
+			// Radio show reminders arrive a minute before the show. Without this,
+			// Android 12+ sets them as inexact alarms, which it may hold back by
+			// minutes, until after the show has begun. Android 14+ leaves it off on
+			// a new install; the reminders' explainer offers its Settings page once.
+			'android.permission.SCHEDULE_EXACT_ALARM',
 		],
 		blockedPermissions: [
 			'android.permission.RECORD_AUDIO',

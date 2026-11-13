@@ -3,9 +3,20 @@ import * as React from 'react'
 import {showTitle, type ReminderSurface} from '../../../telemetry/catalog'
 import {track} from '../../../telemetry/track'
 import {isReminding, useRadioStore, type FollowedShow} from '../store'
-import {reminderPermission} from './notifications'
+import {reminderPermission, remindsOnTime} from './notifications'
 import {promptFor, type ReminderPrompt} from './prompt'
-import {turnOnReminders} from './turn-on'
+import {turnOnReminders, turnOnOnTimeReminders} from './turn-on'
+
+/**
+ * 'onTime' when Android would set reminders inexactly and has not yet been
+ * asked to set them on the minute; otherwise null. Asked once, ever.
+ */
+async function onTimePrompt(): Promise<ReminderPrompt | null> {
+	if (useRadioStore.getState().onTimeAsked) {
+		return null
+	}
+	return (await remindsOnTime()) ? null : 'onTime'
+}
 
 /**
  * Following and unfollowing shows from a bell. A bell unfollows only a show it
@@ -13,6 +24,11 @@ import {turnOnReminders} from './turn-on'
  * it raises `prompt`, for the surface to show its permission sheet. Not Now,
  * or iOS refusing, takes back every follow made while it asked, so no show is
  * followed that its bell does not show; one sent to Settings is kept, to remind once turned on there.
+ *
+ * On Android, once notifications are on, a follow may then raise 'onTime',
+ * offering the "Alarms & reminders" page so reminders arrive on the minute.
+ * That one is asked once, and declining it keeps the follow: the reminder
+ * still arrives, only perhaps a few minutes late.
  */
 export function useFollowToggle(surface: ReminderSurface): {
 	toggle: (show: FollowedShow) => void
@@ -48,8 +64,10 @@ export function useFollowToggle(surface: ReminderSurface): {
 				let next = promptFor(permission)
 				if (next !== null) {
 					asking.current.push(show)
+					setPrompt(next)
+					return
 				}
-				setPrompt(next)
+				void onTimePrompt().then(setPrompt)
 			})
 		},
 		[surface],
@@ -62,17 +80,32 @@ export function useFollowToggle(surface: ReminderSurface): {
 		if (prompt === null) {
 			return
 		}
+		if (prompt === 'onTime') {
+			void turnOnOnTimeReminders(surface)
+			return
+		}
 		let shows = takeAsking()
 		void turnOnReminders(prompt, surface).then((permission) => {
 			if (permission !== null && permission !== 'granted') {
 				shows.forEach(useRadioStore.getState().unfollow)
+				return
+			}
+			if (permission === 'granted') {
+				void onTimePrompt().then(setPrompt)
 			}
 		})
 	}, [prompt, surface, takeAsking])
 
 	// The sheet reports closing after Continue too, by when the prompt is already gone.
 	let dismissPrompt = React.useCallback(() => {
-		if (prompt !== null) {
+		if (prompt === 'onTime') {
+			// The follow stands: its reminder still arrives, if perhaps late.
+			useRadioStore.getState().markOnTimeAsked()
+			track({
+				name: 'radio.reminder.permission',
+				attributes: {outcome: 'not_now', surface, permission: 'exact_alarm'},
+			})
+		} else if (prompt !== null) {
 			track({name: 'radio.reminder.permission', attributes: {outcome: 'not_now', surface}})
 			takeAsking().forEach(useRadioStore.getState().unfollow)
 		}

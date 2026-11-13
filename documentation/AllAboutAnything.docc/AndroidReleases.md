@@ -190,6 +190,9 @@ decide what prebuild's manifest asks for. It asks for:
 | `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION` | The campus map shows where you are, while the app is open. No background location, so no location declaration |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | The radio keeps playing with the screen off, through expo-audio's media session service. Play Console's foreground service declaration asks for a description and a video of this |
 | `INTERNET` | Everything the app shows comes from the server |
+| `POST_NOTIFICATIONS` | Radio show reminders. expo-notifications declares it; Android 13+ asks after the reminders' own explainer |
+| `RECEIVE_BOOT_COMPLETED` | expo-notifications sets the reminders' alarms again after a restart; a normal permission no one is asked for |
+| `SCHEDULE_EXACT_ALARM` | A show reminder arrives a minute before the show. Without it, Android 12+ may hold the alarm back until the show has begun. Android 14+ leaves it off on a new install, and the reminders offer its "Alarms & reminders" page once. Not `USE_EXACT_ALARM`, which Play keeps for alarm-clock and calendar apps |
 | `MODIFY_AUDIO_SETTINGS` | expo-audio declares it for playback; a normal permission no one is asked for |
 | `VIBRATE` | Expo's template; a normal permission no one is asked for |
 

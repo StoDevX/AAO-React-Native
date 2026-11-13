@@ -8,7 +8,8 @@ export const PERMISSION_SHEET_ID = 'reminder-permission-sheet'
 /**
  * What the prompt says, as Android words it: sentence case, and the
  * system's own names -- Android asks to "allow notifications" in a dialog of
- * its own, and turns them back on in the app's notification settings.
+ * its own, turns them back on in the app's notification settings, and lets
+ * an app set alarms on the minute under "Alarms & reminders".
  */
 const COPY: Record<ReminderPrompt, {title: string; body: string; action: string}> = {
 	ask: {
@@ -19,6 +20,12 @@ const COPY: Record<ReminderPrompt, {title: string; body: string; action: string}
 	settings: {
 		title: 'Notifications are off',
 		body: 'To get show reminders, turn on notifications for this app in Settings.',
+		action: 'Open settings',
+	},
+	// Settings names the page "Alarms & reminders", so the dialog does too.
+	onTime: {
+		title: 'Get reminders on time?',
+		body: 'Android may hold a reminder back by a few minutes, until after the show has started. To get it a minute before, allow alarms & reminders for this app.',
 		action: 'Open settings',
 	},
 }

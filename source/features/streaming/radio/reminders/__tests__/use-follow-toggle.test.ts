@@ -1,6 +1,7 @@
-import {beforeEach, describe, expect, jest, test} from '@jest/globals'
+import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, renderHook, waitFor} from '@testing-library/react-native'
 import * as Notifications from 'expo-notifications'
+import {Platform} from 'react-native'
 
 import {useRadioStore} from '../../store'
 import {useFollowToggle} from '../use-follow-toggle'
@@ -27,7 +28,7 @@ async function followHoz() {
 
 describe('useFollowToggle', () => {
 	beforeEach(() => {
-		useRadioStore.setState({followedShows: [], reminderPermission: null})
+		useRadioStore.setState({followedShows: [], reminderPermission: null, onTimeAsked: false})
 	})
 
 	test('Not Now takes the follow back, leaving no follow the bell does not show', async () => {
@@ -65,6 +66,60 @@ describe('useFollowToggle', () => {
 		let {result} = await followHoz()
 		expect(result.current.prompt).toBe('settings')
 		await act(() => result.current.confirmPrompt())
+		expect(useRadioStore.getState().followedShows).toStrictEqual([HOZ])
+	})
+})
+
+describe('useFollowToggle on Android, with notifications on but exact alarms off', () => {
+	beforeEach(() => {
+		useRadioStore.setState({followedShows: [], reminderPermission: null, onTimeAsked: false})
+		jest.replaceProperty(Platform, 'OS', 'android')
+		jest.mocked(Notifications.getPermissionsAsync).mockResolvedValue(answer('granted'))
+		jest
+			.mocked(Notifications.getExactAlarmPermissionsAsync)
+			.mockResolvedValue({...answer('denied'), canAskAgain: true})
+	})
+
+	afterEach(() => {
+		jest.mocked(Notifications.getPermissionsAsync).mockReset()
+		jest.mocked(Notifications.getExactAlarmPermissionsAsync).mockReset()
+		jest.mocked(Notifications.requestExactAlarmPermissionsAsync).mockClear()
+	})
+
+	test('a follow offers on-time reminders', async () => {
+		let {result} = await followHoz()
+		expect(result.current.prompt).toBe('onTime')
+	})
+
+	test('Not now keeps the follow, whose reminder still arrives, and is not asked again', async () => {
+		let {result} = await followHoz()
+		await act(() => result.current.dismissPrompt())
+		expect(useRadioStore.getState()).toMatchObject({followedShows: [HOZ], onTimeAsked: true})
+
+		await act(() => result.current.toggle(LATE_LIFT))
+		await waitFor(() =>
+			expect(useRadioStore.getState().followedShows).toStrictEqual([HOZ, LATE_LIFT]),
+		)
+		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+		expect(result.current.prompt).toBeNull()
+	})
+
+	test('Open settings opens Alarms & reminders, keeps the follow and is not asked again', async () => {
+		let {result} = await followHoz()
+		await act(async () => {
+			result.current.confirmPrompt()
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		})
+		expect(Notifications.requestExactAlarmPermissionsAsync).toHaveBeenCalledTimes(1)
+		expect(useRadioStore.getState()).toMatchObject({followedShows: [HOZ], onTimeAsked: true})
+	})
+
+	test('nothing is offered once exact alarms are allowed', async () => {
+		jest.mocked(Notifications.getExactAlarmPermissionsAsync).mockResolvedValue(answer('granted'))
+		let hook = await renderHook(() => useFollowToggle('player'))
+		await act(() => hook.result.current.toggle(HOZ))
+		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+		expect(hook.result.current.prompt).toBeNull()
 		expect(useRadioStore.getState().followedShows).toStrictEqual([HOZ])
 	})
 })

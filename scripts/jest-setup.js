@@ -79,6 +79,8 @@ jest.mock('expo-notifications', () => ({
 	requestPermissionsAsync: jest.fn(() =>
 		Promise.resolve({granted: false, canAskAgain: false, ios: {status: 1}}),
 	),
+	getExactAlarmPermissionsAsync: jest.fn(() => Promise.resolve({granted: true})),
+	requestExactAlarmPermissionsAsync: jest.fn(() => Promise.resolve({granted: true})),
 	getAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve([])),
 	scheduleNotificationAsync: jest.fn(() => Promise.resolve('')),
 	cancelScheduledNotificationAsync: jest.fn(() => Promise.resolve()),

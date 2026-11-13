@@ -41,6 +41,11 @@ type RadioStore = {
 	followedShows: FollowedShow[]
 	/** Whether reminders can reach the person, as last read from iOS; null until read. */
 	reminderPermission: ReminderPermission | null
+	/**
+	 * Whether Android has been asked to let reminders arrive on the minute
+	 * ("Alarms & reminders"), so it is offered once, not on every follow. Persisted.
+	 */
+	onTimeAsked: boolean
 	/** Whether the saved preferences have been read, or could not be. */
 	hydrated: boolean
 
@@ -87,6 +92,8 @@ type RadioStore = {
 	follow: (show: FollowedShow) => void
 	unfollow: (show: FollowedShow) => void
 	setReminderPermission: (permission: ReminderPermission) => void
+	/** Records that Android has been asked about on-time reminders. */
+	markOnTimeAsked: () => void
 }
 
 /** Whether the station is starting or playing, which is when Pause has something to do. */
@@ -127,6 +134,7 @@ export const useRadioStore = create<RadioStore>()(
 				logoIndexes: {},
 				followedShows: [],
 				reminderPermission: null,
+				onTimeAsked: false,
 				hydrated: false,
 
 				play: (stationId) =>
@@ -190,6 +198,7 @@ export const useRadioStore = create<RadioStore>()(
 						followedShows: state.followedShows.filter((each) => !isSameShow(each, show)),
 					})),
 				setReminderPermission: (permission) => set({reminderPermission: permission}),
+				markOnTimeAsked: () => set({onTimeAsked: true}),
 			}
 		},
 		{
@@ -201,6 +210,7 @@ export const useRadioStore = create<RadioStore>()(
 				logoIndexes: state.logoIndexes,
 				viewedStationId: state.viewedStationId,
 				followedShows: state.followedShows,
+				onTimeAsked: state.onTimeAsked,
 			}),
 			// A follow on a station a later release dropped has no schedule to read
 			// and no row to unfollow it from, so it is left behind.

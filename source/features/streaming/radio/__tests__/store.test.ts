@@ -234,7 +234,7 @@ describe('showOnHome', () => {
 		expect(useRadioStore.getState()).toMatchObject({showOnHome: false, stationId: null})
 	})
 
-	test('the logo each station shows, the station last viewed and the shows followed are the only other state saved', () => {
+	test('the logo each station shows, the station last viewed, the shows followed and whether Android was asked about on-time reminders are the only other state saved', () => {
 		useRadioStore.getState().play('krlx')
 		useRadioStore.getState().setLogoIndex('ksto', 1)
 		useRadioStore.getState().browse('krlx')
@@ -245,6 +245,7 @@ describe('showOnHome', () => {
 			logoIndexes: {ksto: 1},
 			viewedStationId: 'krlx',
 			followedShows: [CAFECITO],
+			onTimeAsked: false,
 		})
 	})
 })

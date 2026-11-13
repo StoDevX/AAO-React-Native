@@ -69,6 +69,27 @@ export async function requestReminderPermission(): Promise<ReminderPermission> {
 }
 
 /**
+ * Whether a reminder will arrive on its minute. Android 12 and later set an
+ * alarm inexactly, and may hold it back by minutes, unless the app may set
+ * exact alarms ("Alarms & reminders" in Settings), which Android 14 leaves off
+ * on a new install. Always true off Android.
+ */
+export async function remindsOnTime(): Promise<boolean> {
+	if (Platform.OS !== 'android') {
+		return true
+	}
+	return (await Notifications.getExactAlarmPermissionsAsync()).granted
+}
+
+/**
+ * Opens Android's "Alarms & reminders" page for the app, and resolves on the
+ * return with whether reminders will now arrive on time.
+ */
+export async function requestOnTimeReminders(): Promise<boolean> {
+	return (await Notifications.requestExactAlarmPermissionsAsync()).granted
+}
+
+/**
  * The radio reminders already scheduled; other notifications are left out.
  * A reminder that cannot be read back is cancelled here, as nothing else could.
  */
@@ -81,6 +102,14 @@ export async function pendingReminders(): Promise<PendingReminder[]> {
 		),
 	)
 	return identifiers.flatMap((identifier) => parseReminderIdentifier(identifier) ?? [])
+}
+
+/** Cancels every scheduled radio reminder. */
+export async function cancelAllReminders(): Promise<void> {
+	let pending = await pendingReminders()
+	await Promise.all(
+		pending.map((reminder) => Notifications.cancelScheduledNotificationAsync(reminder.identifier)),
+	)
 }
 
 /** Cancels and schedules reminders as `planReminderChanges` decided. */

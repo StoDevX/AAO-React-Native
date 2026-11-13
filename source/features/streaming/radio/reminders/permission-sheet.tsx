@@ -31,6 +31,13 @@ const COPY: Record<ReminderPrompt, {title: string; body: string; action: string}
 		body: 'To get show reminders, turn on notifications for this app in Settings.',
 		action: 'Open Settings',
 	},
+	// Android's alone: iOS delivers a scheduled notification on its minute, so
+	// `remindsOnTime` is always true here and this is never shown.
+	onTime: {
+		title: 'Get Reminders on Time',
+		body: 'Allow alarms and reminders so each one arrives a minute before its show.',
+		action: 'Open Settings',
+	},
 }
 
 type Props = {
