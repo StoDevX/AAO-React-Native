@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {
 	ContentUnavailableView,
@@ -302,11 +302,17 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 												retry: false,
 											})
 											return dayRows.length === 0 ? (
-												<ContentUnavailableView
-													title={notice.text}
-													description={notice.detail}
-													systemImage="calendar"
-												/>
+												notice.loading && Platform.OS === 'android' ? (
+													<ProgressView
+														modifiers={[frame({maxWidth: Infinity}), padding({top: 48})]}
+													/>
+												) : (
+													<ContentUnavailableView
+														title={notice.text}
+														description={notice.detail}
+														systemImage="calendar"
+													/>
+												)
 											) : (
 												<LazyVStack alignment="leading">
 													<VStack

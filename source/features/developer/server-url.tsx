@@ -16,6 +16,7 @@ import {serverUrlOptions} from './query'
 import {useServerDiscovery} from './use-server-discovery'
 import {WorkerPreviewsSection} from './worker-previews-section'
 import {ActionRow, NavigationRow} from '../../components/rows'
+import {uiCase} from '../../lib/ui-case'
 
 const isHttpUrl = (value: string): boolean => {
 	try {
@@ -101,7 +102,7 @@ export const ServerUrlSection = ({campus}: Props): React.ReactElement => {
 				)}
 			</Section>
 			{discoveredServers.length > 0 && (
-				<Section title="Local Servers">
+				<Section title={uiCase('Local Servers')}>
 					{discoveredServers.map((server) => (
 						<NavigationRow
 							key={server.url}

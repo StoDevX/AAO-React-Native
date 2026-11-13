@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Linking, Share, StyleSheet} from 'react-native'
+import {Linking, Platform, Share, StyleSheet} from 'react-native'
 import {Stack} from 'expo-router'
 import {Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
 import {background, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
@@ -103,10 +103,14 @@ export function StoryScreen({id}: Props): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Story"
 					icon={process.env.EXPO_OS === 'ios' ? 'square.and.arrow.up' : shareIcon}
-					onPress={() => Share.share({url: story.link}).catch(() => undefined)}
+					onPress={() =>
+						Share.share(
+							Platform.OS === 'android' ? {message: story.link} : {url: story.link},
+						).catch(() => undefined)
+					}
 				/>
 				<Stack.Toolbar.Button
-					accessibilityLabel="Open in Safari"
+					accessibilityLabel={Platform.OS === 'android' ? 'Open in browser' : 'Open in Safari'}
 					icon={process.env.EXPO_OS === 'ios' ? 'safari' : exploreIcon}
 					onPress={() => Linking.openURL(story.link).catch(() => undefined)}
 				/>

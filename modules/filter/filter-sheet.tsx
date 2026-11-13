@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
 import {
 	BottomSheet,
 	Button,
@@ -268,6 +269,20 @@ function SheetHeader({
 	onClear: () => void
 	title: string
 }): React.ReactNode {
+	if (Platform.OS === 'android') {
+		// A Material bottom sheet: its title at the start, Clear as a text
+		// button at the end, and no Done -- a drag, a tap outside or Back
+		// closes it, and closing it applies the choice.
+		return (
+			<HStack modifiers={HEADER_MODIFIERS}>
+				<Text modifiers={HEADER_TITLE_MODIFIERS}>{title}</Text>
+				<Spacer />
+				{canClear ? (
+					<Button label="Clear" modifiers={CLEAR_HEADER_MODIFIERS} onPress={onClear} />
+				) : null}
+			</HStack>
+		)
+	}
 	return (
 		<ZStack alignment="center" modifiers={HEADER_MODIFIERS}>
 			<HStack modifiers={HEADER_ROW_FILL}>

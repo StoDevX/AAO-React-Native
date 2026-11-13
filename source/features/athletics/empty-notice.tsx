@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {selectShowChangeFiltersMessage, useFilterStore} from './store'
+import {uiCase} from '../../lib/ui-case'
 
 /** Stands in for the list when the sport filter leaves no game to show. */
 export function EmptyListNotice(): React.ReactNode {
@@ -13,7 +14,7 @@ export function EmptyListNotice(): React.ReactNode {
 			description={showChangeFiltersMessage ? 'Try changing the filters.' : undefined}
 			style={styles.notice}
 			systemImage="sportscourt"
-			title="No Games"
+			title={uiCase('No Games')}
 		/>
 	)
 }

@@ -24,6 +24,7 @@ import * as c from '@frogpond/colors'
 import {ActionRow} from '../../../components/rows'
 import {invalidateCredentials, storeCredentials} from '../../../lib/login'
 import {logIn} from '../../../lib/stoprint/api'
+import {uiCase} from '../../../lib/ui-case'
 
 /**
  * Asks for a St. Olaf username and password, checks them against PaperCut, and
@@ -55,7 +56,7 @@ export function StoPrintLoginForm(): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<Form>
-				<Section title="St. Olaf Login">
+				<Section title={uiCase('St. Olaf Login')}>
 					<TextField
 						ref={usernameInputRef}
 						modifiers={[
@@ -87,6 +88,7 @@ export function StoPrintLoginForm(): React.ReactNode {
 					<ActionRow
 						disabled={!canSubmit}
 						onPress={() => signIn.mutate()}
+						prominent={true}
 						title={signIn.isPending ? 'Signing in to St. Olaf' : 'Sign in to St. Olaf'}
 					/>
 

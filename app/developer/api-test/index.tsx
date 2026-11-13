@@ -15,6 +15,7 @@ import {inputSummary, nextStep} from '../../../source/features/developer/api-tes
 import {methodColor} from '../../../source/features/developer/api-test/util/method'
 import {routeParam} from '../../../source/features/developer/api-test/util/route-param'
 import {useCampusId} from '../../../source/features/campus/store'
+import {uiCase} from '../../../source/lib/ui-case'
 
 export default function APITestPage(): React.ReactNode {
 	let router = useRouter()
@@ -68,7 +69,7 @@ export default function APITestPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>API Tester</Stack.Title>
+			<Stack.Title>{uiCase('API Tester')}</Stack.Title>
 
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
@@ -93,7 +94,7 @@ export default function APITestPage(): React.ReactNode {
 				) : isRoutesError && routesError instanceof Error ? (
 					<LoadErrorView error={routesError} onRetry={routesRefetch} />
 				) : !groupedRoutes ? (
-					<NoticeView systemImage="questionmark.circle" title="No Routes" />
+					<NoticeView systemImage="questionmark.circle" title={uiCase('No Routes')} />
 				) : (
 					<Host style={styles.host}>
 						<List
@@ -118,7 +119,7 @@ export default function APITestPage(): React.ReactNode {
 											</ContextMenu.Trigger>
 											<ContextMenu.Items>
 												<Button
-													label="Edit Request…"
+													label={uiCase('Edit Request…')}
 													onPress={() => editRoute(route)}
 													systemImage="pencil"
 												/>

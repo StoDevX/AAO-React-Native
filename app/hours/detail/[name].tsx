@@ -20,6 +20,7 @@ import {requiresSection} from '../../../source/features/campus/section-gate'
 import feedbackIcon from '@expo/material-symbols/feedback.xml'
 import favoriteIcon from '@expo/material-symbols/favorite.xml'
 import favoriteFilledIcon from '../../../source/android-ui/symbols/favorite_fill.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 function HoursDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
@@ -109,7 +110,7 @@ function HoursDetailPage(): React.ReactNode {
 				<NoticeView
 					description={`Nothing is called “${name}”.`}
 					systemImage="building.2"
-					title="Building Not Found"
+					title={uiCase('Building Not Found')}
 				/>
 			</>
 		)

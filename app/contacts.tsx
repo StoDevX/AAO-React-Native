@@ -14,6 +14,7 @@ import {useCampusId, useCampusSection} from '../source/features/campus/store'
 import {ImportantContactsGrid} from '../source/features/directory/important-contacts-grid'
 import {requiresSection} from '../source/features/campus/section-gate'
 import {FILL_WIDTH} from '../source/components/tile-layout'
+import {uiCase} from '../source/lib/ui-case'
 
 /// The curated campus contacts on their own, for the Help group on home. The
 /// same grid heads the Directory, where it shares the screen with the
@@ -35,7 +36,7 @@ function ContactsPage(): React.ReactNode {
 				<NoticeView
 					description={`The app has no contacts for ${college}.`}
 					systemImage="phone"
-					title="No Contacts"
+					title={uiCase('No Contacts')}
 				/>
 			</>
 		)
@@ -96,7 +97,7 @@ function OpenDirectoryButton({url}: {url: string}): React.ReactNode {
 						<Label
 							modifiers={[frame({maxWidth: FILL_WIDTH})]}
 							systemImage="arrow.up.right"
-							title="Open the Directory"
+							title={uiCase('Open the Directory')}
 						/>
 					</Button>
 				</Host>

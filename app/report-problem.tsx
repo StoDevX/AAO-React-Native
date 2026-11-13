@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, StyleSheet} from 'react-native'
+import {Alert, Platform, StyleSheet} from 'react-native'
 import {Form, Host, Section, TextField} from '@expo/ui/swift-ui'
 import {
 	autocorrectionDisabled,
@@ -18,6 +18,7 @@ import {reportEmail, submitReport} from '../source/features/support/report-probl
 import {useTelemetryStore} from '../source/features/telemetry/store'
 import closeIcon from '@expo/material-symbols/close.xml'
 import sendIcon from '@expo/material-symbols/send.xml'
+import {uiCase} from '../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -121,7 +122,9 @@ export default function ReportProblemPage(): React.ReactNode {
 		if (result === 'disabled') {
 			Alert.alert(
 				'Sentry is disabled',
-				'Problem reporting only works in App Store and TestFlight builds.',
+				Platform.OS === 'android'
+					? 'Problem reporting only works in Google Play builds.'
+					: 'Problem reporting only works in App Store and TestFlight builds.',
 			)
 			return
 		}
@@ -131,7 +134,7 @@ export default function ReportProblemPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Report a Problem</Stack.Title>
+			<Stack.Title>{uiCase('Report a Problem')}</Stack.Title>
 			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close Screen"

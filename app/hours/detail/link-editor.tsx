@@ -11,6 +11,7 @@ import {SyncedTextField} from '../../../source/components/synced-text-field'
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
 import {useDismissOnce} from '../../../source/lib/use-dismiss-once'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import {uiCase} from '../../../source/lib/ui-case'
 
 /**
  * One of a venue's links: what it is called, and where it goes.
@@ -42,7 +43,7 @@ function BuildingLinkEditorPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Edit Link</Stack.Title>
+			<Stack.Title>{uiCase('Edit Link')}</Stack.Title>
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>

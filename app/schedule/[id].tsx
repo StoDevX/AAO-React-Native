@@ -10,6 +10,7 @@ import {campusById} from '../../source/campuses'
 import {useCampusParam} from '../../source/features/campus/campus-param'
 import {requiresSection} from '../../source/features/campus/section-gate'
 import {scheduleEntry} from '../../source/features/schedules/entries'
+import {uiCase} from '../../source/lib/ui-case'
 
 /**
  * One of a campus's schedules, by the id in the path: the campus `?campus=`
@@ -43,7 +44,7 @@ function SchedulePage(): React.ReactNode {
 				<NoticeView
 					description={`${appName} doesn't have that schedule for ${college}.`}
 					systemImage="calendar"
-					title="No Schedule"
+					title={uiCase('No Schedule')}
 				/>
 			</>
 		)

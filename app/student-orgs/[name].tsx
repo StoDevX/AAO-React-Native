@@ -28,6 +28,7 @@ import {decode} from '@frogpond/html-lib'
 import {orgByNameOptions, orgDetailOptions} from '../../source/features/student-orgs/query'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 /**
  * The org's name, at the top of its own screen.
@@ -104,7 +105,7 @@ function StudentOrgsDetailPage(): React.ReactNode {
 				<NoticeView
 					description={`No student org is called “${name}”.`}
 					systemImage="person.3"
-					title="Organization Not Found"
+					title={uiCase('Organization Not Found')}
 				/>
 			</>
 		)
@@ -156,7 +157,7 @@ function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					{additionalInformation ? (
-						<Section title="More Information">
+						<Section title={uiCase('More Information')}>
 							<MarkdownRow rowModifiers={[]} source={additionalInformation} />
 						</Section>
 					) : null}
@@ -174,7 +175,7 @@ function StudentOrgsDetailPage(): React.ReactNode {
 					{/* Always offered: Presence's own "has upcoming events" flag disagrees
 					    with its events feed, so the calendar is the one to say. */}
 					<Section>
-						<DisclosureRow onPress={openCalendar} title="Upcoming Events" />
+						<DisclosureRow onPress={openCalendar} title={uiCase('Upcoming Events')} />
 					</Section>
 
 					{website ? (
@@ -263,6 +264,6 @@ function StudentOrgsDetailPage(): React.ReactNode {
 
 export default requiresSection(
 	'studentOrgs',
-	{title: 'Student Orgs', noun: 'student organizations', systemImage: 'person.3'},
+	{title: uiCase('Student Orgs'), noun: 'student organizations', systemImage: 'person.3'},
 	StudentOrgsDetailPage,
 )

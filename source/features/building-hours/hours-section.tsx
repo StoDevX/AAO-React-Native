@@ -26,6 +26,7 @@ import {
 	statusWindow,
 } from './lib'
 import type {BuildingStatusType, BuildingType, NamedBuildingScheduleType} from './types'
+import {uiCase} from '../../lib/ui-case'
 
 /// The status's colour as text, as Maps writes a place's Open or Closed. The
 /// Hours list's yellow chapel bell is too faint as text, so chapel takes orange
@@ -105,7 +106,7 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 				<Section>
 					<SectionHeading title="Hours" />
 					{status}
-					<WeekRows block={first} heading="Normal Hours" now={now} />
+					<WeekRows block={first} heading={uiCase('Normal Hours')} now={now} />
 					{first.notes ? <Text modifiers={NOTE_ROW}>{first.notes}</Text> : null}
 				</Section>
 			) : status ? (

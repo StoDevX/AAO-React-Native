@@ -28,6 +28,7 @@ import {
 import {ResponseText} from '../../../source/features/developer/api-test/response-text'
 import editIcon from '@expo/material-symbols/edit.xml'
 import moreVertIcon from '@expo/material-symbols/more_vert.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 /** A body read as a `data:` URI, for an image to be drawn from what was fetched. */
 function dataUri(blob: Blob): Promise<string> {
@@ -203,7 +204,7 @@ export default function APITestDetailPage(): React.ReactNode {
 						heading={{text: 'Request Failed', color: c.systemRed}}
 					/>
 				) : !isLoading && !path ? (
-					<NoticeView systemImage="questionmark.circle" title="Route Not Found" />
+					<NoticeView systemImage="questionmark.circle" title={uiCase('Route Not Found')} />
 				) : isLoading || !data ? (
 					<LoadingView />
 				) : isErrorStatus(data.status) ? (
@@ -219,10 +220,14 @@ export default function APITestDetailPage(): React.ReactNode {
 					<NoticeView
 						description={`${statusLine(data)} · ${data.binary.contentType} · ${prettyBytes(data.binary.size)}`}
 						systemImage="doc.zipper"
-						title="Binary Response"
+						title={uiCase('Binary Response')}
 					/>
 				) : body.kind === 'empty' ? (
-					<NoticeView description={statusLine(data)} systemImage="tray" title="Empty Response" />
+					<NoticeView
+						description={statusLine(data)}
+						systemImage="tray"
+						title={uiCase('Empty Response')}
+					/>
 				) : body.kind === 'text' ? (
 					<ResponseText body={body.text} />
 				) : displayMode === 'raw' ? (

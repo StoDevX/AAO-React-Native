@@ -61,6 +61,7 @@ import {directoryFor} from './directory/directory'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Coordinate, Feature, LabelLink} from './types'
 import {anchorOf} from './lib/place-geometry'
+import {uiCase} from '../../lib/ui-case'
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
@@ -207,7 +208,7 @@ function BuildingCard({
 				id="accessible-parking"
 				onOpen={onOpen}
 				tiles={sections.accessibleParking}
-				title="Accessible Parking"
+				title={uiCase('Accessible Parking')}
 			/>
 			<AboutSection citations={citations} text={description} />
 			<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
@@ -240,7 +241,7 @@ function NoDetails(): React.ReactNode {
 			<ContentUnavailableView
 				description="There's no more information about this place yet."
 				systemImage="info.circle"
-				title="No Details"
+				title={uiCase('No Details')}
 			/>
 		</Section>
 	)

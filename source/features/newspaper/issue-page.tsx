@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Platform} from 'react-native'
 import {
 	Button,
 	Divider,
@@ -279,7 +280,7 @@ function ShelfHeading({title, onShowAll}: ShelfHeadingProps): React.ReactNode {
 						]}
 						onPress={onShowAll}
 					>
-						<Text modifiers={ALL_LINK}>All ›</Text>
+						<Text modifiers={ALL_LINK}>{Platform.OS === 'android' ? 'See all' : 'All ›'}</Text>
 					</Button>
 				) : null}
 			</HStack>
@@ -381,7 +382,9 @@ function MoreTile({hidden, section, onPress}: MoreTileProps): React.ReactNode {
 					</Text>
 				))}
 				<Spacer />
-				<Text modifiers={MORE_COUNT}>{`${hidden.length} more ›`}</Text>
+				<Text modifiers={MORE_COUNT}>
+					{Platform.OS === 'android' ? `${hidden.length} more` : `${hidden.length} more ›`}
+				</Text>
 			</VStack>
 		</Button>
 	)

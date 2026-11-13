@@ -20,6 +20,7 @@ import {credentialsOptions} from '../../../source/lib/login'
 import {RecentPopularPrintersResponse} from '../../../source/lib/stoprint/types'
 import {groupBy} from '@frogpond/collections'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -197,7 +198,7 @@ function PrinterListLoader(): React.ReactNode {
 	}
 
 	if (!job) {
-		return <NoticeView systemImage="printer" title="Print Job Not Found" />
+		return <NoticeView systemImage="printer" title={uiCase('Print Job Not Found')} />
 	}
 
 	return <PrinterListView job={job} />
@@ -206,7 +207,7 @@ function PrinterListLoader(): React.ReactNode {
 function PrinterListPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Title>Select Printer</Stack.Title>
+			<Stack.Title>{uiCase('Select Printer')}</Stack.Title>
 			<PrinterListLoader />
 		</>
 	)

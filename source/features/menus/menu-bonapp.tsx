@@ -25,6 +25,7 @@ import {usePublishMenuHeader} from './menu-header'
 import {OFFLINE_MESSAGE, menuView} from './lib/menu-view'
 import {sample} from '@frogpond/collections'
 import type {CampusId} from '../../campuses'
+import {uiCase} from '../../lib/ui-case'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -309,7 +310,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 				action={{label: 'Try Again', onPress: menuReload}}
 				description={description}
 				systemImage="exclamationmark.triangle"
-				title="Couldn’t Load the Menu"
+				title={uiCase('Couldn’t Load the Menu')}
 			/>
 		)
 	}
@@ -323,7 +324,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			<NoticeView
 				description={`There is no café with ID #${typeof props.cafe === 'string' ? props.cafe : props.cafe.id}.`}
 				systemImage="fork.knife"
-				title="Café Not Found"
+				title={uiCase('Café Not Found')}
 			/>
 		)
 	}
@@ -333,7 +334,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			<NoticeView
 				description={`${props.name} has not posted a menu for today.`}
 				systemImage="fork.knife"
-				title="No Menu Today"
+				title={uiCase('No Menu Today')}
 			/>
 		)
 	}

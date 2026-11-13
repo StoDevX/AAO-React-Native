@@ -19,6 +19,7 @@ import {sectionServer} from '../../source/features/campus/section-server'
 import {BusLineWidget} from '../../source/features/transit/bus/widget'
 import {otherModesGroupedOptionsFor} from '../../source/features/transit/other-modes/query'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -90,7 +91,7 @@ function TransitPage(): React.ReactNode {
 			<ContentUnavailableView
 				description="Check back once the college publishes its routes."
 				systemImage="bus"
-				title="No Bus Lines"
+				title={uiCase('No Bus Lines')}
 			/>
 		)
 	} else {
@@ -123,7 +124,7 @@ function TransitPage(): React.ReactNode {
 			<ContentUnavailableView
 				description="Check back once the college publishes its transit options."
 				systemImage="tram"
-				title="No Other Modes"
+				title={uiCase('No Other Modes')}
 			/>
 		)
 	} else {

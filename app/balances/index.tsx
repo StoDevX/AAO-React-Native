@@ -16,6 +16,7 @@ import {BalancesView} from '../../source/features/sis/balances'
 import {useAppDispatch, useAppSelector} from '../../source/redux'
 import {acknowledgeAcknowledgement, selectAcknowledgement} from '../../source/redux/parts/settings'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 /** What a student agrees to before the app shows their balances. */
 const TERMS: {symbol: SFSymbol; text: string}[] = [
@@ -71,7 +72,11 @@ function BalancesPage(): React.ReactNode {
 				</Section>
 
 				<Section>
-					<ActionRow onPress={() => dispatch(acknowledgeAcknowledgement(true))} title="I Agree" />
+					<ActionRow
+						onPress={() => dispatch(acknowledgeAcknowledgement(true))}
+						prominent={true}
+						title={uiCase('I Agree')}
+					/>
 				</Section>
 			</List>
 		</Host>

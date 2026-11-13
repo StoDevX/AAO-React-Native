@@ -7,6 +7,7 @@ import * as c from '@frogpond/colors'
 import {Stack, useRouter} from 'expo-router'
 
 import {DisclosureRow} from '../../../source/components/rows'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const LIBRARIES = [
 	{title: 'Badges', route: '/developer/component-library/badges'},
@@ -22,7 +23,7 @@ export default function ComponentLibraryRootPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Component Library</Stack.Title>
+			<Stack.Title>{uiCase('Component Library')}</Stack.Title>
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>

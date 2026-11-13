@@ -3,6 +3,7 @@ import {RefreshControl, ScrollView, StyleSheet} from 'react-native'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openEmail} from '../../support/open-email'
+import {uiCase} from '../../../lib/ui-case'
 
 const ERROR_MESSAGE =
 	'Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this.'
@@ -26,7 +27,7 @@ export function StoPrintErrorView(props: Props): React.ReactNode {
 				action={{label: 'Report', onPress: openEmail}}
 				description={`${props.statusMessage} ${ERROR_MESSAGE}`}
 				systemImage="exclamationmark.triangle"
-				title="Connection Issue"
+				title={uiCase('Connection Issue')}
 			/>
 		</ScrollView>
 	)

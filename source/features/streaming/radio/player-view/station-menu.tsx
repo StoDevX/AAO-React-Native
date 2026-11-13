@@ -7,6 +7,7 @@ import {track} from '../../../telemetry/track'
 import type {Station} from '../stations'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
+import {uiCase} from '../../../../lib/ui-case'
 
 /** Full Schedule, Notifications and Open Website, behind the title's ••• button. */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
@@ -43,7 +44,7 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 					systemImage="bell"
 				/>
 				<Button
-					label="Open Website"
+					label={uiCase('Open Website')}
 					onPress={() => {
 						track({name: 'radio.action', attributes: {action: 'website', station: station.id}})
 						void openUrl(station.websiteUrl)

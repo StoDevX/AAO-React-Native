@@ -89,16 +89,35 @@ type ElementsForEachProps = {
 /** Either form of `List.ForEach`. */
 type ForEachProps<T> = DataForEachProps<T> | ElementsForEachProps
 
+/** What a row's long press offers: Delete, and moving it a place up or down. */
+type RowActions = {
+	onDelete?: () => void
+	onMoveUp?: () => void
+	onMoveDown?: () => void
+}
+
 /**
- * A row that can be deleted. Android lists have no swipe-to-delete, so the
- * row's long press opens a menu with Delete, the way a Material list offers
- * an item's actions.
+ * A row with actions. Android lists have no swipe-to-delete and no edit mode
+ * to drag rows in, so the row's long press opens a menu with Move up, Move
+ * down and Delete, the way a Material list offers an item's actions.
  */
-function deletable(row: React.ReactNode, key: React.Key, onDelete: () => void): React.ReactElement {
+function withActions(
+	row: React.ReactNode,
+	key: React.Key,
+	actions: RowActions,
+): React.ReactElement {
+	let {onDelete, onMoveUp, onMoveDown} = actions
+	if (!onDelete && !onMoveUp && !onMoveDown) {
+		return <React.Fragment key={key}>{row}</React.Fragment>
+	}
 	return (
 		<ActionsMenu
 			actions={
-				<MenuEntry destructive={true} label="Delete" onPress={onDelete} systemImage="trash" />
+				<>
+					{onMoveUp ? <MenuEntry label="Move up" onPress={onMoveUp} /> : null}
+					{onMoveDown ? <MenuEntry label="Move down" onPress={onMoveDown} /> : null}
+					{onDelete ? <MenuEntry destructive={true} label="Delete" onPress={onDelete} /> : null}
+				</>
 			}
 			key={key}
 		>
@@ -107,28 +126,39 @@ function deletable(row: React.ReactNode, key: React.Key, onDelete: () => void): 
 	)
 }
 
-/** A `List.ForEach`'s rows, keyed, with Delete on their long press when it has `onDelete`. */
+/**
+ * The actions for the row at `index` of `count`. `onMove` takes SwiftUI's
+ * destination, an index into the list before the row leaves it, so a row
+ * moved down one place goes to `index + 2`.
+ */
+function rowActions(
+	index: number,
+	count: number,
+	{onDelete, onMove}: Pick<ElementsForEachProps, 'onDelete' | 'onMove'>,
+): RowActions {
+	return {
+		onDelete: onDelete ? () => onDelete([index]) : undefined,
+		onMoveUp: onMove && index > 0 ? () => onMove([index], index - 1) : undefined,
+		onMoveDown: onMove && index < count - 1 ? () => onMove([index], index + 2) : undefined,
+	}
+}
+
+/** A `List.ForEach`'s rows, keyed, with their actions on a long press. */
 function forEachRows<T>(props: ForEachProps<T>): React.ReactElement[] {
-	let {onDelete} = props
 	if (props.data) {
 		let {data, keyExtractor, children: render} = props
-		return data.map((item, index) => {
-			let key = keyExtractor(item, index)
-			let row = render({item, index})
-			return onDelete ? (
-				deletable(row, key, () => onDelete([index]))
-			) : (
-				<React.Fragment key={key}>{row}</React.Fragment>
-			)
-		})
-	}
-	return React.Children.toArray(props.children).map((row, index) => {
-		let key = React.isValidElement(row) && row.key !== null ? row.key : index
-		return onDelete ? (
-			deletable(row, key, () => onDelete([index]))
-		) : (
-			<React.Fragment key={key}>{row}</React.Fragment>
+		return data.map((item, index) =>
+			withActions(
+				render({item, index}),
+				keyExtractor(item, index),
+				rowActions(index, data.length, props),
+			),
 		)
+	}
+	let rows = React.Children.toArray(props.children)
+	return rows.map((row, index) => {
+		let key = React.isValidElement(row) && row.key !== null ? row.key : index
+		return withActions(row, key, rowActions(index, rows.length, props))
 	})
 }
 
