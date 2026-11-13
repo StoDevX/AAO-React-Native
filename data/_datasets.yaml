@@ -56,7 +56,7 @@ sets:
     path: _scrapes/bonapp-overrides.yaml
     list: [venues]
     schema: _bonapp-overrides
-    maintainedBy: Steers the weekly Bon Appétit scrape of Stav and the Cage
+    maintainedBy: Steers the weekly Bon Appétit scrape of Stav and the Cage. An edit here changes their hours at the scrape's next run, not in the preview
 
   breaks:
     title: Breaks
@@ -180,7 +180,7 @@ sets:
     shape: file
     path: bus-times/_curation.yaml
     schema: _bus-curation
-    maintainedBy: Steers the weekly bus timetable refresh
+    maintainedBy: Steers the weekly bus timetable refresh. An edit here reaches the Red and Blue lines at its next run, not in the preview
 
   bus-repairs:
     title: Bus Repairs
@@ -188,7 +188,7 @@ sets:
     shape: file
     path: bus-times/_repairs.yaml
     schema: _bus-repairs
-    maintainedBy: Patches the GTFS feed's mistakes during the weekly refresh
+    maintainedBy: Patches the GTFS feed's mistakes during the weekly refresh. An edit here reaches the timetables at its next run, not in the preview
 
   student-work-areas:
     title: Student Work Areas
