@@ -10,53 +10,10 @@ import {useIsReminding, useRadioStore, type FollowedShow} from '../store'
 import {palette} from './palette'
 import {scheduleNote, type ScheduleStatus} from './schedule-note'
 
-/** How far a control dims under a finger, as the player's other controls do. */
-const PRESSED_OPACITY = 0.3
-
-/** What UI tests find a show's bell by, after the show's title. */
-export const BELL_ID_PREFIX = 'radio-schedule-bell-'
-
-/** Follows or unfollows a show, saying which it will do. */
-function ReminderBell({
+export const ScheduleRow = React.memo(function ScheduleRow({
 	show,
-	onToggle,
-}: {
-	show: FollowedShow
-	onToggle: (show: FollowedShow) => void
-}): React.ReactNode {
-	let reminding = useIsReminding(show)
-	return (
-		<Pressable
-			accessibilityLabel={bellLabel(show, reminding)}
-			accessibilityRole="button"
-			hitSlop={8}
-			onPress={() => onToggle(show)}
-			style={styles.bell}
-			testID={`${BELL_ID_PREFIX}${show.title}`}
-		>
-			{({pressed}) => (
-				<View style={pressed ? styles.pressed : undefined}>
-					<SymbolView
-						name={reminding ? 'bell.fill' : 'bell'}
-						size={20}
-						tintColor={reminding ? palette.primary : palette.secondary}
-					/>
-				</View>
-			)}
-		</Pressable>
-	)
-}
-
-const ScheduleRow = React.memo(function ScheduleRow({
-	show,
-	station,
-	onPress,
-	onToggle,
 }: {
 	show: EventType
-	station: Station
-	onPress: (show: EventType) => void
-	onToggle: (show: FollowedShow) => void
 }): React.ReactNode {
 	return (
 		<View style={styles.row}>
