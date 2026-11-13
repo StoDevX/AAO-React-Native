@@ -168,6 +168,11 @@
   },
   "expo": {
     "autolinking": {
+      "android": {
+        "buildFromSource": [
+          "expo-ui"
+        ]
+      },
       "ios": {
         "exclude": [
           "expo-system-ui"

@@ -38,7 +38,8 @@ change was needed rather than restating the diff.
 - `source/features/` holds each feature's non-route code (e.g., `dining/`, `directory/`, `calendar/`); `app/` route files are the screens themselves
 - Barrel exports (`index.ts`) for clean imports
 - State: React Query for server state; a Zustand store in the feature's own `store.ts` for state that feature owns, persisted to AsyncStorage through `persist` when it must survive a relaunch; `useState` for component-local. Redux Toolkit holds the older shared slices in `source/redux/parts/` — don't add new state there
-- iOS is the only supported platform
+- iOS and Android. Android follows Android's conventions (Material 3, system back, top app bars and tabs) over matching the iOS screens; on Android, Metro resolves `@expo/ui/swift-ui` to `source/android-ui/`, a Jetpack Compose version of it
+- **Never put a platform file (`.android.tsx`, `.ios.tsx`) in `app/`.** Expo Router bundles every file in `app/` on every platform and chooses the platform file only at runtime, so an Android-only route ships to iOS with everything it imports (once, all of Jetpack Compose's components). Put the platform split under `source/` (`media-tabs.tsx` beside `media-tabs.android.tsx`), where Metro resolves it per platform, and have the route import it
 - Email via `sendEmail`, phone via `callPhone` components
 - Error logging via Sentry integration
 - React Error Boundaries for component error handling
@@ -54,7 +55,7 @@ These patterns are especially important in this codebase:
 - **Offline:** Handle network unavailability gracefully — use cached data as fallback
 - **Performance:** Minimize bridge traffic; use `requestIdleCallback()` for heavy work
 - **Memory:** Clean up subscriptions/listeners in `useEffect` cleanup functions
-- **Platform testing:** Test on iOS — verify platform-specific UI patterns
+- **Platform testing:** Test on iOS — verify platform-specific UI patterns. Android has no emulator in cloud sessions; the Android workflow screenshots every route on an emulator and uploads them as the `android-screenshots` artifact of the run
 
 ## Testing
 

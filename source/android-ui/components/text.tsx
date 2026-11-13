@@ -10,7 +10,7 @@ import type {
 import {Row, Text as ComposeText} from '@expo/ui/jetpack-compose'
 import {clickable, testID as testIDModifier} from '@expo/ui/jetpack-compose/modifiers'
 
-import {resolveColor, usePalette, type Palette} from '../colors'
+import {contentColor, resolveColor, usePalette, type Palette} from '../colors'
 import {Claimed, MenuContext} from '../context'
 import {
 	useAxis,
@@ -242,7 +242,7 @@ export function Text(props: SwiftTextProps): React.ReactNode {
 	let maxLines = env.lineLimit?.max
 	let element = (
 		<ComposeText
-			color={resolveColor(env.foreground, palette)}
+			color={contentColor(env.foreground, palette, env.colorScheme)}
 			key={identityOf(modifiers)}
 			maxLines={maxLines}
 			minLines={env.lineLimit?.min}
@@ -276,7 +276,7 @@ export function HangingText(props: HangingTextProps): React.ReactNode {
 	}
 	let element = (
 		<ComposeText
-			color={resolveColor(color ?? env.foreground, palette)}
+			color={contentColor(color ?? env.foreground, palette, env.colorScheme)}
 			modifiers={toCompose(modifiers, {palette, axis})}
 			style={style}
 		>
@@ -346,7 +346,7 @@ export function Label(props: LabelProps): React.ReactNode {
 	let axis = useAxis()
 	let slot = useRowSlot()
 	let menu = React.useContext(MenuContext)
-	let tint = resolveColor(env.foreground, palette)
+	let tint = contentColor(env.foreground, palette, env.colorScheme)
 	let size = Math.round(fontSizeOf(composeTextStyle(env)) * 1.4)
 
 	if (menu) {
@@ -355,7 +355,7 @@ export function Label(props: LabelProps): React.ReactNode {
 	let glyph =
 		icon ?? (systemImage ? <SymbolIcon color={tint} name={systemImage} size={size} /> : null)
 	let text = children ?? (
-		<ComposeText color={resolveColor(env.foreground, palette)} style={composeTextStyle(env)}>
+		<ComposeText color={tint} style={composeTextStyle(env)}>
 			{title ?? ''}
 		</ComposeText>
 	)

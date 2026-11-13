@@ -2,6 +2,7 @@ import {execFileSync} from 'node:child_process'
 
 import type {ExpoConfig} from 'expo/config'
 
+import adaptiveColors from './modules/colors/adaptive-colors.json'
 import {version as fullVersion} from './package.json'
 
 /**
@@ -531,6 +532,10 @@ const config: ExpoConfig = {
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',
 		'./plugins/with-inhibit-pod-warnings',
+		// Android's Material 3 theme, with Material You's dynamic colour, and
+		// the fixed day/night colours @frogpond/colors reads as resources there.
+		// JSON, as this file cannot import the TypeScript that exports them.
+		['./plugins/with-material-theme', {colors: adaptiveColors}],
 	],
 }
 
