@@ -5,6 +5,7 @@ import {SheetSection} from '@frogpond/sheet-section'
 
 import {ActionRow, DisclosureRow} from './rows'
 import {MAX_ATTACHMENTS, type ImageAttachments} from './use-image-attachments'
+import {uiCase} from '../lib/ui-case'
 
 /** The edge of an image's thumbnail, in points. */
 const THUMBNAIL_SIZE = 44
@@ -55,7 +56,7 @@ export function ImageAttachmentsSection({title, attachments}: Props): React.Reac
 			<ActionRow
 				disabled={picking || images.length >= MAX_ATTACHMENTS}
 				onPress={() => void addImages()}
-				title={picking ? 'Adding Images…' : 'Add Image'}
+				title={uiCase(picking ? 'Adding Images…' : 'Add Image')}
 			/>
 		</SheetSection>
 	)

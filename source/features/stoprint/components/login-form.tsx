@@ -88,6 +88,7 @@ export function StoPrintLoginForm(): React.ReactNode {
 					<ActionRow
 						disabled={!canSubmit}
 						onPress={() => signIn.mutate()}
+						prominent={true}
 						title={signIn.isPending ? 'Signing in to St. Olaf' : 'Sign in to St. Olaf'}
 					/>
 

@@ -3,6 +3,7 @@ import {
 	Image as RNImage,
 	type NativeScrollEvent,
 	type NativeSyntheticEvent,
+	Platform,
 	ScrollView,
 	StyleSheet,
 	View,
@@ -30,6 +31,8 @@ import {ViewerCaption} from './viewer-caption'
 import {TAP_TARGET} from '../lib/tap-target'
 
 /** A button's symbol over the picture: white on a dark circle, filling the tap target. */
+const ANDROID = Platform.OS === 'android'
+
 const BUTTON_ICON = [
 	font({textStyle: 'headline', weight: 'semibold'}),
 	foregroundStyle('white'),
@@ -154,33 +157,80 @@ export function ZoomImageViewer({
 						{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
 					]}
 				>
+					{/* Android keeps a screen's way out at its leading edge and its
+					    actions at the trailing one; iOS puts Close in the corner. */}
 					<View pointerEvents="box-none" style={styles.buttonRow}>
-						{image ? (
-							<Host alignment="center" style={[styles.buttonHost, styles.shareHost]}>
-								<Button
-									modifiers={[
-										buttonStyle('plain'),
-										accessibilityLabel('Share'),
-										accessibilityIdentifier(shareTestID),
-									]}
-									onPress={() => shareImage(image.uri).catch(() => undefined)}
-								>
-									<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
-								</Button>
-							</Host>
-						) : null}
-						<Host alignment="center" style={styles.buttonHost}>
-							<Button
-								modifiers={[
-									buttonStyle('plain'),
-									accessibilityLabel('Close'),
-									accessibilityIdentifier(closeTestID),
-								]}
-								onPress={onClose}
-							>
-								<Image modifiers={BUTTON_ICON} systemName="xmark" />
-							</Button>
-						</Host>
+						{ANDROID ? (
+							<>
+								<Host alignment="center" style={styles.buttonHost}>
+									<Button
+										modifiers={[
+											buttonStyle('plain'),
+											accessibilityLabel('Close'),
+											accessibilityIdentifier(closeTestID),
+										]}
+										onPress={onClose}
+									>
+										<Image modifiers={BUTTON_ICON} systemName="xmark" />
+									</Button>
+								</Host>
+								{image ? (
+									<Host
+										alignment="center"
+										style={[
+											styles.buttonHost,
+											ANDROID ? styles.shareHostTrailing : styles.shareHost,
+										]}
+									>
+										<Button
+											modifiers={[
+												buttonStyle('plain'),
+												accessibilityLabel('Share'),
+												accessibilityIdentifier(shareTestID),
+											]}
+											onPress={() => shareImage(image.uri).catch(() => undefined)}
+										>
+											<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
+										</Button>
+									</Host>
+								) : null}
+							</>
+						) : (
+							<>
+								{image ? (
+									<Host
+										alignment="center"
+										style={[
+											styles.buttonHost,
+											ANDROID ? styles.shareHostTrailing : styles.shareHost,
+										]}
+									>
+										<Button
+											modifiers={[
+												buttonStyle('plain'),
+												accessibilityLabel('Share'),
+												accessibilityIdentifier(shareTestID),
+											]}
+											onPress={() => shareImage(image.uri).catch(() => undefined)}
+										>
+											<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
+										</Button>
+									</Host>
+								) : null}
+								<Host alignment="center" style={styles.buttonHost}>
+									<Button
+										modifiers={[
+											buttonStyle('plain'),
+											accessibilityLabel('Close'),
+											accessibilityIdentifier(closeTestID),
+										]}
+										onPress={onClose}
+									>
+										<Image modifiers={BUTTON_ICON} systemName="xmark" />
+									</Button>
+								</Host>
+							</>
+						)}
 					</View>
 				</View>
 			) : null}
@@ -219,4 +269,5 @@ const styles = StyleSheet.create({
 	buttonHost: {width: TAP_TARGET, height: TAP_TARGET},
 	// Share sits in the corner opposite Close, so a tap meant for one never lands on the other.
 	shareHost: {marginRight: 'auto'},
+	shareHostTrailing: {marginLeft: 'auto'},
 })

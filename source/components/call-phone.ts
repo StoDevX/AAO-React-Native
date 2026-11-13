@@ -1,4 +1,4 @@
-import {Alert} from 'react-native'
+import {Alert, Platform} from 'react-native'
 import {openOrOfferCopy} from './open-or-offer-copy'
 
 type Options = {
@@ -10,7 +10,9 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 	const {prompt = true, title = ''} = opts || {}
 	let phoneNumberAsUrl = `tel:${phoneNumber}`
 
-	if (prompt) {
+	// Android's tel: opens the dialer with the number in it, which is already
+	// the step a call is confirmed on, so it asks nothing first.
+	if (prompt && Platform.OS !== 'android') {
 		promptCall(title, phoneNumberAsUrl, phoneNumber)
 	} else {
 		void placeCall(phoneNumberAsUrl, phoneNumber)

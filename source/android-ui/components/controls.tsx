@@ -1,12 +1,5 @@
 import * as React from 'react'
-import type {KeyboardTypeOptions, ReturnKeyTypeOptions} from 'react-native'
-
-import {
-	Picker as UniversalPicker,
-	Switch as UniversalSwitch,
-	TextInput,
-	type TextInputRef,
-} from '@expo/ui'
+import {Picker as UniversalPicker, Switch as UniversalSwitch} from '@expo/ui'
 import type {
 	ContentUnavailableViewProps,
 	DatePickerProps,
@@ -30,13 +23,19 @@ import {
 	SingleChoiceSegmentedButtonRow,
 	Surface,
 	Text as ComposeText,
+	OutlinedTextField,
 	TextButton,
+	TextField as ComposeTextField,
 	useNativeState,
 	type DisplayedComponents,
+	type TextFieldImeAction,
+	type TextFieldKeyboardType,
+	type TextFieldRef as ComposeFieldRef,
 } from '@expo/ui/jetpack-compose'
 import {
 	clip,
 	fillMaxSize,
+	testID,
 	fillMaxWidth,
 	padding,
 	Shapes,
@@ -314,6 +313,7 @@ export function DatePicker(props: DatePickerProps): React.ReactNode {
 	let axis = useAxis()
 	let slot = useRowSlot()
 	let [open, setOpen] = React.useState(false)
+	let [pending, setPending] = React.useState<Date | null>(null)
 	useLifecycle(modifiers)
 	let shown = displayedComponents(components)
 	let [openedAt] = React.useState(() => new Date())
@@ -343,17 +343,41 @@ export function DatePicker(props: DatePickerProps): React.ReactNode {
 			<ComposeText>{formatChoice(value, shown)}</ComposeText>
 		</TextButton>
 	)
+	// Material's date dialog: the date is only chosen on OK, and Cancel or
+	// a tap outside leaves it as it was.
+	let close = () => {
+		setOpen(false)
+		setPending(null)
+	}
 	let dialog = open ? (
-		<BasicAlertDialog onDismissRequest={() => setOpen(false)}>
+		<BasicAlertDialog onDismissRequest={close}>
 			<Surface
 				color={palette.colors.surfaceContainerHigh}
 				modifiers={[clip(Shapes.RoundedCorner(28)), wrapContentHeight()]}
 			>
 				<Column horizontalAlignment="end" modifiers={[padding(0, 0, 0, 8)]}>
-					{picker}
-					<TextButton modifiers={[padding(0, 0, 12, 0)]} onClick={() => setOpen(false)}>
-						<ComposeText>Done</ComposeText>
-					</TextButton>
+					<DateTimePicker
+						displayedComponents={shown}
+						initialDate={value.toISOString()}
+						onDateSelected={setPending}
+						selectableDates={selectable}
+						showVariantToggle={false}
+					/>
+					<Row modifiers={[padding(0, 0, 12, 0)]}>
+						<TextButton onClick={close}>
+							<ComposeText>Cancel</ComposeText>
+						</TextButton>
+						<TextButton
+							onClick={() => {
+								if (pending) {
+									onDateChange?.(pending)
+								}
+								close()
+							}}
+						>
+							<ComposeText>OK</ComposeText>
+						</TextButton>
+					</Row>
 				</Column>
 			</Surface>
 		</BasicAlertDialog>
@@ -388,8 +412,8 @@ const CAPITALIZATION: Readonly<Record<string, 'none' | 'sentences' | 'words' | '
 	characters: 'characters',
 }
 
-/** SwiftUI's submit labels, as React Native's return keys. */
-function returnKeyOf(label: string | undefined): ReturnKeyTypeOptions | undefined {
+/** SwiftUI's submit labels, as Compose's IME actions. */
+function imeActionOf(label: string | undefined): TextFieldImeAction | undefined {
 	switch (label) {
 		case 'go':
 		case 'next':
@@ -404,15 +428,33 @@ function returnKeyOf(label: string | undefined): ReturnKeyTypeOptions | undefine
 	}
 }
 
+/** SwiftUI's keyboard types, as Compose's. */
+const KEYBOARD: Readonly<Record<string, TextFieldKeyboardType>> = {
+	default: 'text',
+	asciiCapable: 'ascii',
+	numbersAndPunctuation: 'ascii',
+	URL: 'uri',
+	numberPad: 'number',
+	phonePad: 'phone',
+	namePhonePad: 'phone',
+	emailAddress: 'email',
+	decimalPad: 'decimal',
+	webSearch: 'uri',
+	asciiCapableNumberPad: 'number',
+}
+
 /** The props `TextField` and `SecureField` share. */
 type FieldProps = (TextFieldProps | SecureFieldProps) & {secure?: boolean}
 
 /**
- * A text field, on the universal `TextInput`: in a list it is the row's
- * content, as an inline field in a Form row is; elsewhere it sits on a filled
- * `surfaceContainerHighest` field shape. Modifiers for the keyboard
- * (`keyboardType`, `textInputAutocapitalization`, `submitLabel`, `onSubmit`…)
- * become its props, and its ref answers the SwiftUI field's methods.
+ * A text field, as Material draws one: its placeholder is the field's label,
+ * which sits in the empty field and floats above the text once there is
+ * some, so the field still says what it is for once filled in -- where iOS
+ * shows a placeholder that typing hides. In a list it is the row's content,
+ * a filled field on the row's own background; elsewhere an outlined field.
+ * Modifiers for the keyboard (`keyboardType`, `textInputAutocapitalization`,
+ * `submitLabel`, `onSubmit`…) become its keyboard options, and its ref
+ * answers the SwiftUI field's methods.
  */
 function Field(props: FieldProps & {ref?: React.Ref<TextFieldRef>}): React.ReactNode {
 	let {
@@ -431,7 +473,7 @@ function Field(props: FieldProps & {ref?: React.Ref<TextFieldRef>}): React.React
 	let env = useEnvironment(modifiers)
 	let axis = useAxis()
 	let slot = useRowSlot()
-	let input = React.useRef<TextInputRef>(null)
+	let input = React.useRef<ComposeFieldRef>(null)
 	let fallback = useNativeState('')
 	let state = text ?? fallback
 	useLifecycle(modifiers)
@@ -444,18 +486,9 @@ function Field(props: FieldProps & {ref?: React.Ref<TextFieldRef>}): React.React
 				onTextChange?.(value)
 				return Promise.resolve()
 			},
-			clear: () => {
-				input.current?.clear()
-				return Promise.resolve()
-			},
-			focus: () => {
-				input.current?.focus()
-				return Promise.resolve()
-			},
-			blur: () => {
-				input.current?.blur()
-				return Promise.resolve()
-			},
+			clear: () => input.current?.clear() ?? Promise.resolve(),
+			focus: () => input.current?.focus() ?? Promise.resolve(),
+			blur: () => input.current?.blur() ?? Promise.resolve(),
 			setSelection: (start: number, end: number) =>
 				input.current?.setSelection(start, end) ?? Promise.resolve(),
 		}),
@@ -463,58 +496,75 @@ function Field(props: FieldProps & {ref?: React.Ref<TextFieldRef>}): React.React
 	)
 
 	let submit = find(modifiers, 'onSubmit')
+	let onSubmit = submit
+		? () => (submit.eventListener as ((args: unknown) => void) | undefined)?.({})
+		: undefined
 	let multiline = axisProp === 'vertical'
 	let lines = env.lineLimit?.min ?? (multiline ? env.lineLimit?.max : undefined)
-	let field = (
-		<TextInput
-			autoCapitalize={
-				CAPITALIZATION[
-					stringParam(modifiers, 'textInputAutocapitalization', 'autocapitalization') ?? ''
-				]
-			}
-			autoCorrect={find(modifiers, 'autocorrectionDisabled') ? false : undefined}
-			autoFocus={autoFocus}
-			cursorColor={palette.colors.primary}
-			editable={env.disabled !== true}
-			keyboardType={
-				stringParam(modifiers, 'keyboardType', 'keyboardType') as KeyboardTypeOptions | undefined
-			}
-			maxLength={maxLength}
-			modifiers={[fillMaxWidth()]}
-			multiline={multiline}
-			numberOfLines={lines}
-			onBlur={() => onFocusChange?.(false)}
-			onChangeText={onTextChange}
-			onFocus={() => onFocusChange?.(true)}
-			onSubmitEditing={
-				submit
-					? () => (submit.eventListener as ((args: unknown) => void) | undefined)?.({})
-					: undefined
-			}
-			placeholder={placeholder}
-			placeholderTextColor={palette.colors.onSurfaceVariant}
-			ref={input}
-			returnKeyType={returnKeyOf(stringParam(modifiers, 'submitLabel', 'submitLabel'))}
-			secureTextEntry={secure}
-			testID={identifierOf(modifiers) ?? labelOf(modifiers)}
-			textStyle={{color: palette.colors.onSurface, fontSize: 16}}
-			value={state}
-		/>
-	)
+	let capitalization =
+		CAPITALIZATION[
+			stringParam(modifiers, 'textInputAutocapitalization', 'autocapitalization') ?? ''
+		]
+	let keyboardType = KEYBOARD[stringParam(modifiers, 'keyboardType', 'keyboardType') ?? '']
+	let imeAction = imeActionOf(stringParam(modifiers, 'submitLabel', 'submitLabel'))
+	let testTag = identifierOf(modifiers) ?? labelOf(modifiers)
+	let shared = {
+		ref: input,
+		value: state,
+		autoFocus,
+		enabled: env.disabled !== true,
+		singleLine: !multiline,
+		minLines: lines,
+		maxLines: multiline ? env.lineLimit?.max : undefined,
+		maxLength,
+		visualTransformation: secure ? ('password' as const) : undefined,
+		keyboardOptions: {
+			capitalization,
+			autoCorrectEnabled: find(modifiers, 'autocorrectionDisabled') ? false : undefined,
+			keyboardType: secure ? ('password' as const) : keyboardType,
+			imeAction,
+		},
+		keyboardActions: onSubmit
+			? {onDone: onSubmit, onGo: onSubmit, onNext: onSubmit, onSearch: onSubmit, onSend: onSubmit}
+			: undefined,
+		onValueChange: onTextChange,
+		onFocusChanged: (focused: boolean) => onFocusChange?.(focused),
+		textStyle: {color: palette.colors.onSurface, fontSize: 16},
+	}
+	let label = placeholder ? (
+		<ComposeTextField.Label>
+			<ComposeText>{placeholder}</ComposeText>
+		</ComposeTextField.Label>
+	) : null
+
 	if (slot) {
 		return (
 			<RowCard modifiers={modifiers} slot={slot}>
-				{field}
+				<ComposeTextField
+					{...shared}
+					colors={{
+						focusedContainerColor: 'transparent',
+						unfocusedContainerColor: 'transparent',
+						disabledContainerColor: 'transparent',
+					}}
+					modifiers={[fillMaxWidth(), ...(testTag ? [testID(testTag)] : [])]}
+				>
+					{label}
+				</ComposeTextField>
 			</RowCard>
 		)
 	}
 	return (
-		<Surface
-			color={palette.colors.surfaceContainerHighest}
-			modifiers={[...toCompose(modifiers, {palette, axis}), clip(Shapes.RoundedCorner(12))]}
+		<OutlinedTextField
+			{...shared}
+			modifiers={[
+				fillMaxWidth(),
+				...toCompose(modifiers, {palette, axis}),
+				...(testTag ? [testID(testTag)] : []),
+			]}
 		>
-			<Column modifiers={[padding(16, 14, 16, 14)]}>{field}</Column>
-		</Surface>
+			{label}
+		</OutlinedTextField>
 	)
 }
 
