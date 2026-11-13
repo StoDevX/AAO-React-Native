@@ -7,6 +7,7 @@ import {NO_AREAS, studentWorkAreasOptions} from '../../source/features/sis/stude
 import {prefillFromParams} from '../../source/features/sis/student-work/prefill'
 import {PostingsList} from '../../source/features/sis/student-work/postings-list'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 /// Mirrored by TestIdentifiers.StudentWork.postingsTitle.
 const TITLE = 'Job Postings'
@@ -46,6 +47,6 @@ function StudentWorkPostingsPage(): React.ReactNode {
 
 export default requiresSection(
 	'studentWork',
-	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	{title: uiCase('Student Work'), noun: 'student job postings', systemImage: 'briefcase'},
 	StudentWorkPostingsPage,
 )

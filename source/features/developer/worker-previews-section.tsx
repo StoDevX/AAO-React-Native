@@ -17,6 +17,7 @@ import * as c from '@frogpond/colors'
 import type {CampusId} from '../../campuses'
 import {ActionRow} from '../../components/rows'
 import {previewServerUrl, workerPreviewsOptions, type WorkerPreview} from './worker-previews'
+import {uiCase} from '../../lib/ui-case'
 
 type PreviewRowProps = {
 	preview: WorkerPreview
@@ -104,7 +105,7 @@ export const WorkerPreviewsSection = ({
 			: 'Fetch Previews'
 
 	return (
-		<Section footer={<Text>{footer}</Text>} title="Worker Previews">
+		<Section footer={<Text>{footer}</Text>} title={uiCase('Worker Previews')}>
 			<ActionRow disabled={isFetching} onPress={() => void refetch()} title={buttonTitle} />
 			{error ? <Text modifiers={[foregroundStyle(c.systemRed)]}>{error.message}</Text> : null}
 			{isFetched && !error && previews.length === 0 ? (

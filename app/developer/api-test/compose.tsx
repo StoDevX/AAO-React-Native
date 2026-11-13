@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import {
 	Button,
 	Form,
@@ -52,6 +52,7 @@ import {
 } from '../../../source/features/developer/api-test/util/request-path'
 import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 import sendIcon from '@expo/material-symbols/send.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 /** A query row as the form holds it, with an id that outlives edits to its name. */
 type EditableRow = QueryRow & {id: number}
@@ -193,7 +194,7 @@ export default function APITestComposePage(): React.ReactNode {
 					</Section>
 
 					{params.length ? (
-						<Section title="Path Parameters">
+						<Section title={uiCase('Path Parameters')}>
 							{params.map((name) => (
 								<HStack key={name} spacing={8}>
 									<Text>{name}</Text>
@@ -229,7 +230,15 @@ export default function APITestComposePage(): React.ReactNode {
 					) : null}
 
 					<Section
-						footer={rows.length ? <Text>Swipe a parameter to remove it.</Text> : undefined}
+						footer={
+							rows.length ? (
+								<Text>
+									{Platform.OS === 'android'
+										? 'Long-press a parameter to remove it.'
+										: 'Swipe a parameter to remove it.'}
+								</Text>
+							) : undefined
+						}
 						title="Query"
 					>
 						{rows.map((row) => (
@@ -262,7 +271,7 @@ export default function APITestComposePage(): React.ReactNode {
 						{/* A menu holding only Custom… would be a tap for nothing: with no
 						    other choice, the button adds a row to fill in straight away. */}
 						{usedBefore.length ? (
-							<Menu label="Add Parameter" systemImage="plus.circle">
+							<Menu label={uiCase('Add Parameter')} systemImage="plus.circle">
 								<Section title="Used before">
 									{usedBefore.map((suggestion) => (
 										<Button
@@ -280,7 +289,7 @@ export default function APITestComposePage(): React.ReactNode {
 							</Menu>
 						) : (
 							<Button
-								label="Add Parameter"
+								label={uiCase('Add Parameter')}
 								onPress={() => addRow({name: '', value: ''})}
 								systemImage="plus.circle"
 							/>

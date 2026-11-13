@@ -9,6 +9,7 @@ import * as c from '@frogpond/colors'
 import {jobDetailOptions} from '@frogpond/ccc-jobs'
 import {JOB_DESCRIPTION_TITLE} from '../../../source/features/sis/student-work/lib'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	screen: {
@@ -40,7 +41,7 @@ function JobDescriptionPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>{JOB_DESCRIPTION_TITLE}</Stack.Title>
-				<NoticeView systemImage="doc.text" title="No Description" />
+				<NoticeView systemImage="doc.text" title={uiCase('No Description')} />
 			</>
 		)
 	}
@@ -63,6 +64,6 @@ function JobDescriptionPage(): React.ReactNode {
 
 export default requiresSection(
 	'studentWork',
-	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	{title: uiCase('Student Work'), noun: 'student job postings', systemImage: 'briefcase'},
 	JobDescriptionPage,
 )

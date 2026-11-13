@@ -31,6 +31,7 @@ import {
 import {credentialsOptions} from '../../../source/lib/login'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -51,13 +52,13 @@ const DOCUMENT_NAME_MODIFIERS = [
 function JobInformation({job}: {job: PrintJob}) {
 	let wasPrintedAlready = job.statusFormatted === 'Sent to Printer'
 	return (
-		<Section title="Job Info">
+		<Section title={uiCase('Job Info')}>
 			<DetailRow label="Status" value={job.statusFormatted} />
 			<DetailRow label="Time" value={job.usageTimeFormatted} />
 			<DetailRow label="Pages" value={job.totalPages.toString()} />
 			<DetailRow label="Cost" value={job.usageCostFormatted} />
 			<DetailRow label="Grayscale" value={job.grayscaleFormatted} />
-			<DetailRow label="Paper Size" value={job.paperSizeFormatted} />
+			<DetailRow label={uiCase('Paper Size')} value={job.paperSizeFormatted} />
 			{wasPrintedAlready ? <DetailRow label="Printer" value={job.printerName} /> : null}
 		</Section>
 	)
@@ -65,7 +66,7 @@ function JobInformation({job}: {job: PrintJob}) {
 
 function PrinterInformation({printer}: {printer: Printer}) {
 	return (
-		<Section title="Printer Info">
+		<Section title={uiCase('Printer Info')}>
 			<DetailRow label="Name" value={printer.printerName} />
 			{Boolean(printer.location) && <DetailRow label="Location" value={printer.location ?? ''} />}
 		</Section>
@@ -249,7 +250,7 @@ function PrintJobReleaseLoader(): React.ReactNode {
 	}
 
 	if (!job) {
-		return <NoticeView systemImage="printer" title="Print Job Not Found" />
+		return <NoticeView systemImage="printer" title={uiCase('Print Job Not Found')} />
 	}
 
 	if (printerName !== undefined && printerError) {
@@ -257,7 +258,7 @@ function PrintJobReleaseLoader(): React.ReactNode {
 	}
 
 	if (printerName !== undefined && !printer) {
-		return <NoticeView systemImage="printer" title="Printer Not Found" />
+		return <NoticeView systemImage="printer" title={uiCase('Printer Not Found')} />
 	}
 
 	return <PrintJobReleaseView job={job} printer={printer} />

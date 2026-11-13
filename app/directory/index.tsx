@@ -25,6 +25,7 @@ import type {DirectoryItem, DirectorySearchTypeEnum} from '../../source/features
 import {ImportantContactsGrid} from '../../source/features/directory/important-contacts-grid'
 import {useDirectory} from '../../source/features/directory/use-directory'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 function DirectoryView(): React.ReactNode {
 	let router = useRouter()
@@ -106,7 +107,7 @@ function DirectoryView(): React.ReactNode {
 				<NoticeView
 					description="Type at least two letters to search the directory."
 					systemImage="magnifyingglass"
-					title="Keep Typing"
+					title={uiCase('Keep Typing')}
 				/>
 				{searchChrome}
 			</>
@@ -130,7 +131,7 @@ function DirectoryView(): React.ReactNode {
 				<NoticeView
 					description={error.message}
 					systemImage="exclamationmark.triangle"
-					title="Couldn’t Search"
+					title={uiCase('Couldn’t Search')}
 				/>
 			) : items.length === 0 ? (
 				<NoticeView

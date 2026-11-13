@@ -41,6 +41,7 @@ import {Host} from '@expo/ui/swift-ui'
 import {useEvent, useNeighbours} from '../../../source/database/calendar/read'
 import type {Window} from '../../../source/database/calendar/queries'
 import shareIcon from '@expo/material-symbols/share.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 type EventSource =
 	| 'stolaf'
@@ -202,7 +203,7 @@ export default function EventDetailPage(): React.ReactNode {
 				<NoticeView
 					description="This event comes from a calendar the app doesn’t know."
 					systemImage="questionmark.circle"
-					title="Unknown Calendar"
+					title={uiCase('Unknown Calendar')}
 				/>
 			</>
 		)
@@ -231,9 +232,9 @@ export default function EventDetailPage(): React.ReactNode {
 	if (!event) {
 		return (
 			<>
-				<Stack.Title>Unknown Event</Stack.Title>
+				<Stack.Title>{uiCase('Unknown Event')}</Stack.Title>
 				<SheetCloseButton />
-				<NoticeView systemImage="questionmark.circle" title="Event Not Found" />
+				<NoticeView systemImage="questionmark.circle" title={uiCase('Event Not Found')} />
 			</>
 		)
 	}

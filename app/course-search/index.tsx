@@ -11,6 +11,7 @@ import {RecentItemsList} from '../../source/features/sis/components/recents-list
 import {useFilters} from '../../source/features/sis/course-search/lib/build-filters'
 import {SearchBar} from '../../source/components/search-bar'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 const SEARCH_DEBOUNCE_MS = 1500
 const MIN_QUERY_LENGTH = 2
@@ -116,7 +117,7 @@ let styles = StyleSheet.create({
 function CourseSearchPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Title>Course Catalog</Stack.Title>
+			<Stack.Title>{uiCase('Course Catalog')}</Stack.Title>
 			<CourseSearchView />
 		</>
 	)
@@ -124,6 +125,6 @@ function CourseSearchPage(): React.ReactNode {
 
 export default requiresSection(
 	'courseCatalog',
-	{title: 'Course Catalog', noun: 'a course catalog', systemImage: 'graduationcap'},
+	{title: uiCase('Course Catalog'), noun: 'a course catalog', systemImage: 'graduationcap'},
 	CourseSearchPage,
 )

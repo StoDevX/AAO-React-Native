@@ -6,6 +6,7 @@ import {Stack} from 'expo-router'
 import {FaqBannerPresentation} from '../../../source/features/faqs/banner'
 import type {Faq} from '../../../source/features/faqs/types'
 import {LibraryWrapper} from '../../../source/features/developer/component-library/base/library-wrapper'
+import {uiCase} from '../../../source/lib/ui-case'
 
 /**
  * Builds a preview Faq. Only the fields a banner actually reads are worth
@@ -146,7 +147,7 @@ const BannerSection = ({header, faqs}: {header: string; faqs: Faq[]}): React.Rea
 export default function FaqBannerLibraryPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Title>FAQ Banners</Stack.Title>
+			<Stack.Title>{uiCase('FAQ Banners')}</Stack.Title>
 			<LibraryWrapper>
 				<>
 					<BannerSection faqs={severityExamples} header="Severity" />

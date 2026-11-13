@@ -7,6 +7,7 @@ import {reportFinding, useChaosFindings} from './findings'
 import {BEACON_ID, BEACON_QUIET, FATAL_BOUNDARY_ID, NETWORK_ID, VOCAB_ID} from './identifiers'
 import {networkLabel, useChaosNetwork} from './network'
 import {useChaosVocab, vocabLabel} from './vocab'
+import {uiCase} from '../lib/ui-case'
 
 /** The first stopping finding, as a label the monkey reads after every step. */
 function ChaosBeacon(): React.ReactNode {
@@ -76,7 +77,7 @@ class FatalBoundary extends React.Component<{children: React.ReactNode}, Boundar
 					<NoticeView
 						description={describeError(this.state.error)}
 						systemImage="exclamationmark.triangle"
-						title="Render Error"
+						title={uiCase('Render Error')}
 					/>
 				</View>
 			)

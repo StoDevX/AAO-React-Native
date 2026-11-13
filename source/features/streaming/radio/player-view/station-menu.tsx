@@ -7,6 +7,7 @@ import {track} from '../../../telemetry/track'
 import type {Station} from '../stations'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
+import {uiCase} from '../../../../lib/ui-case'
 
 /** Full Schedule and Open Website, behind the title's ••• button. */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
@@ -21,7 +22,7 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 				]}
 			>
 				<Button
-					label="Full Schedule"
+					label={uiCase('Full Schedule')}
 					onPress={() => {
 						// Stacked over the sheet, as the website is: a screen opened
 						// beneath the sheet could not be seen without closing it.
@@ -34,7 +35,7 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 					systemImage="calendar"
 				/>
 				<Button
-					label="Open Website"
+					label={uiCase('Open Website')}
 					onPress={() => {
 						track({name: 'radio.action', attributes: {action: 'website', station: station.id}})
 						void openUrl(station.websiteUrl)

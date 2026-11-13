@@ -11,6 +11,7 @@ import {noticesInForce} from '../../source/features/faqs/notices'
 import {useCampus} from '../../source/features/campus/store'
 import {faqsOptionsFor} from '../../source/features/faqs/query'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -39,7 +40,7 @@ function NoticesList(): React.ReactNode {
 			<NoticeView
 				description="Nothing needs your attention right now."
 				systemImage="bell.slash"
-				title="No Notices"
+				title={uiCase('No Notices')}
 			/>
 		)
 	}

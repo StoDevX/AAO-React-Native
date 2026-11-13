@@ -22,6 +22,7 @@ import {type IconEntry, galleryColumns, iconsByGroup} from '../../source/feature
 import {useCampusSection} from '../../source/features/campus/store'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 /// Three tiles fit across an iPhone 17e's inset section with room for captions.
 const TILE = 76
@@ -64,7 +65,7 @@ function AppIconPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>App Icon</Stack.Title>
+			<Stack.Title>{uiCase('App Icon')}</Stack.Title>
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-app-icon')]}>
 				<Form>
 					{iconsByGroup(appIcons).map(({group, icons}) => (
@@ -177,6 +178,6 @@ function IconTile({icon, isCurrent, onChoose}: IconTileProps): React.ReactNode {
 
 export default requiresSection(
 	'appIcons',
-	{title: 'App Icon', noun: 'alternate app icons', systemImage: 'app.badge'},
+	{title: uiCase('App Icon'), noun: 'alternate app icons', systemImage: 'app.badge'},
 	AppIconPage,
 )

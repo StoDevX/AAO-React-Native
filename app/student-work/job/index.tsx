@@ -19,6 +19,7 @@ import {studentWagesOptions} from '../../../source/features/sis/student-work/wag
 import {DetailRow, DisclosureRow, NavigationRow} from '../../../source/components/rows'
 import {requiresSection} from '../../../source/features/campus/section-gate'
 import shareIcon from '@expo/material-symbols/share.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	screen: {
@@ -110,8 +111,8 @@ function JobDetailPage(): React.ReactNode {
 	if (!job) {
 		return (
 			<>
-				<Stack.Title>Unknown Job</Stack.Title>
-				<NoticeView systemImage="questionmark.circle" title="Job Posting Not Found" />
+				<Stack.Title>{uiCase('Unknown Job')}</Stack.Title>
+				<NoticeView systemImage="questionmark.circle" title={uiCase('Job Posting Not Found')} />
 			</>
 		)
 	}
@@ -133,6 +134,6 @@ function JobDetailPage(): React.ReactNode {
 
 export default requiresSection(
 	'studentWork',
-	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	{title: uiCase('Student Work'), noun: 'student job postings', systemImage: 'briefcase'},
 	JobDetailPage,
 )

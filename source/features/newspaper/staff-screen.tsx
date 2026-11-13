@@ -29,6 +29,7 @@ import {usePaper, usePaperCampus} from './paper-context'
 import {NEWSPAPER_ROUTES} from './routes'
 import {SECTION_HEADING} from './story-blocks'
 import type {StaffProfile} from './types'
+import {uiCase} from '../../lib/ui-case'
 
 /** Begins the name of each tile of the staff directory, which ends in its profile's id, for a UI test. */
 export const STAFF_TILE_PREFIX = 'mess-staff-tile-'
@@ -142,7 +143,7 @@ export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
 				<NoticeView
 					style={styles.paper}
 					systemImage="questionmark.circle"
-					title="Staff Member Not Found"
+					title={uiCase('Staff Member Not Found')}
 				/>
 			</>
 		)

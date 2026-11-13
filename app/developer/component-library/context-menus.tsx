@@ -6,6 +6,7 @@ import {
 	Example,
 	LibraryWrapper,
 } from '../../../source/features/developer/component-library/base/library-wrapper'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const ANIMALS = ['bird', 'cat', 'cow', 'dog']
 const ANIMAL_MENU_TEST_ID = 'component-library-context-menu'
@@ -41,7 +42,7 @@ const capitalize = (word: string): string => word.charAt(0).toUpperCase() + word
 export default function ContextMenuLibraryPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Title>Context Menus</Stack.Title>
+			<Stack.Title>{uiCase('Context Menus')}</Stack.Title>
 			<LibraryWrapper>
 				<SingleMenu />
 			</LibraryWrapper>

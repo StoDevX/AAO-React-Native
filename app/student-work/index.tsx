@@ -19,6 +19,7 @@ import {
 } from '../../source/features/sis/student-work/store'
 import {useStudentWorkBoard} from '../../source/features/sis/student-work/use-board'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 /// Offline, with no board saved to show.
 const OFFLINE_NOTICE = 'Student Work needs a connection to load the job board the first time.'
@@ -55,7 +56,7 @@ function StudentWorkPage(): React.ReactNode {
 	// every branch: the student always has a field to type into or clear.
 	let chrome = (
 		<>
-			<Stack.Title>Student Work</Stack.Title>
+			<Stack.Title>{uiCase('Student Work')}</Stack.Title>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
@@ -168,6 +169,6 @@ const styles = StyleSheet.create({
 
 export default requiresSection(
 	'studentWork',
-	{title: 'Student Work', noun: 'student job postings', systemImage: 'briefcase'},
+	{title: uiCase('Student Work'), noun: 'student job postings', systemImage: 'briefcase'},
 	StudentWorkPage,
 )

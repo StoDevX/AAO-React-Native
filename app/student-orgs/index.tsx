@@ -16,6 +16,7 @@ import type {StudentOrgType} from '../../source/features/student-orgs/types'
 import {LayoutMenu} from '../../source/components/layout-menu'
 import {SearchBar} from '../../source/components/search-bar'
 import {requiresSection} from '../../source/features/campus/section-gate'
+import {uiCase} from '../../source/lib/ui-case'
 
 function StudentOrgsView(): React.ReactNode {
 	let router = useRouter()
@@ -160,7 +161,7 @@ function StudentOrgsView(): React.ReactNode {
 function StudentOrgsPage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Title>Student Orgs</Stack.Title>
+			<Stack.Title>{uiCase('Student Orgs')}</Stack.Title>
 			<StudentOrgsView />
 		</>
 	)
@@ -168,6 +169,6 @@ function StudentOrgsPage(): React.ReactNode {
 
 export default requiresSection(
 	'studentOrgs',
-	{title: 'Student Orgs', noun: 'student organizations', systemImage: 'person.3'},
+	{title: uiCase('Student Orgs'), noun: 'student organizations', systemImage: 'person.3'},
 	StudentOrgsPage,
 )

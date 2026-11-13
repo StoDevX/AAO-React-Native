@@ -14,6 +14,7 @@ import {useCampusId, useCampusSection} from '../../../source/features/campus/sto
 import {sectionServer} from '../../../source/features/campus/section-server'
 import {useDictionaryDraftStore} from '../../../source/features/dictionary/store'
 import feedbackIcon from '@expo/material-symbols/feedback.xml'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -85,7 +86,7 @@ export default function DictionaryEntryPage(): React.ReactNode {
 				<NoticeView
 					description={`Nothing in the dictionary is called “${word}”.`}
 					systemImage="character.book.closed"
-					title="Entry Not Found"
+					title={uiCase('Entry Not Found')}
 				/>
 			</>
 		)

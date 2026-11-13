@@ -18,6 +18,7 @@ import type {DraftExample} from '../../../source/features/dictionary/lib/draft'
 import {findSense} from '../../../source/features/dictionary/lib/draft'
 import {useDictionaryDraftStore} from '../../../source/features/dictionary/store'
 import {useDismissOnce} from '../../../source/lib/use-dismiss-once'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
@@ -45,7 +46,7 @@ export default function DictionarySensePage(): React.ReactNode {
 			<NoticeView
 				description="That sense is no longer part of this entry."
 				systemImage="character.book.closed"
-				title="Sense Removed"
+				title={uiCase('Sense Removed')}
 			/>
 		)
 	}
@@ -110,7 +111,7 @@ export default function DictionarySensePage(): React.ReactNode {
 							)}
 						</List.ForEach>
 						<Button
-							label="Add Example"
+							label={uiCase('Add Example')}
 							onPress={() => store.addExample(sense.id)}
 							systemImage="plus"
 						/>
@@ -133,7 +134,7 @@ export default function DictionarySensePage(): React.ReactNode {
 							/>
 						))}
 						<Button
-							label="Add Sub-sense"
+							label={uiCase('Add Sub-sense')}
 							onPress={() => {
 								let id = store.addSubsense(sense.id)
 								if (id) {
@@ -146,7 +147,7 @@ export default function DictionarySensePage(): React.ReactNode {
 
 					<SheetSection>
 						<Button
-							label="Delete Sense"
+							label={uiCase('Delete Sense')}
 							modifiers={[tint(c.red)]}
 							onPress={() => {
 								store.deleteSense(sense.id)

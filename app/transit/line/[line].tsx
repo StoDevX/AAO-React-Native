@@ -12,6 +12,7 @@ import {useCampusId, useCampusSection} from '../../../source/features/campus/sto
 import {sectionServer} from '../../../source/features/campus/section-server'
 import {DAYS_OF_WEEK} from '../../../source/features/transit/bus/components/days'
 import type {DayOfWeek} from '../../../source/features/transit/bus/types'
+import {uiCase} from '../../../source/lib/ui-case'
 
 export default function BusLinePage(): React.ReactNode {
 	let server = sectionServer(useCampusId(), useCampusSection('transit'))
@@ -81,7 +82,7 @@ export default function BusLinePage(): React.ReactNode {
 				<NoticeView
 					description={`No bus line is called “${lineName}”.`}
 					systemImage="bus"
-					title="Line Not Found"
+					title={uiCase('Line Not Found')}
 				/>
 			</>
 		)

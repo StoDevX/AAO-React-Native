@@ -22,6 +22,7 @@ import {FaqBannerPresentation} from '../../source/features/faqs/banner'
 import {useDevBannerStore} from '../../source/features/faqs/dev-banner-store'
 import type {Faq, FaqSeverity, FaqTarget} from '../../source/features/faqs/types'
 import {FAQ_TARGET_SCREENS} from '../../source/features/faqs/types'
+import {uiCase} from '../../source/lib/ui-case'
 
 const SEVERITY_OPTIONS: FaqSeverity[] = ['notice', 'info', 'alert']
 
@@ -129,7 +130,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Banner Builder</Stack.Title>
+			<Stack.Title>{uiCase('Banner Builder')}</Stack.Title>
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
@@ -176,14 +177,22 @@ export default function BannerBuilderPage(): React.ReactNode {
 						</Picker>
 					</Section>
 
-					<Section title="Colors & Icon">
+					<Section title={uiCase('Colors & Icon')}>
 						<FormField
 							label="Icon"
 							onChangeText={setIcon}
 							placeholder="e.g. alert-circle, help-circle"
 						/>
-						<FormField label="BG Color" onChangeText={setBackgroundColor} placeholder="#fef2f2" />
-						<FormField label="FG Color" onChangeText={setForegroundColor} placeholder="#7f1d1d" />
+						<FormField
+							label={uiCase('BG Color')}
+							onChangeText={setBackgroundColor}
+							placeholder="#fef2f2"
+						/>
+						<FormField
+							label={uiCase('FG Color')}
+							onChangeText={setForegroundColor}
+							placeholder="#7f1d1d"
+						/>
 					</Section>
 
 					<Section title="Behavior">
@@ -193,7 +202,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 					{/* Toggles rather than rows with checkmarks: any number of these
 					    can be on at once, which a checkmark does not say and a switch
 					    does. */}
-					<Section title="Target Screens">
+					<Section title={uiCase('Target Screens')}>
 						{TARGET_OPTIONS.map((target) => (
 							<Toggle
 								key={target}
@@ -205,7 +214,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 					</Section>
 
 					<Section title="Actions">
-						<ActionRow onPress={applyToApp} title="Apply Banner to App" />
+						<ActionRow onPress={applyToApp} title={uiCase('Apply Banner to App')} />
 						<ActionRow onPress={exportYaml} title="Export as YAML" />
 					</Section>
 				</List>

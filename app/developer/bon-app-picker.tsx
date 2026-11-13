@@ -8,6 +8,7 @@ import {Toolbar} from '@frogpond/toolbar'
 import {BonAppHostedMenu} from '../../source/features/menus/menu-bonapp'
 import {useCampusId, useCampusSection} from '../../source/features/campus/store'
 import {sectionServer} from '../../source/features/campus/section-server'
+import {uiCase} from '../../source/lib/ui-case'
 
 export default function BonAppPickerPage(): React.ReactNode {
 	// Asks the active campus's menus server.
@@ -23,7 +24,7 @@ export default function BonAppPickerPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Dev BonApp Picker</Stack.Title>
+			<Stack.Title>{uiCase('Dev BonApp Picker')}</Stack.Title>
 
 			<View style={styles.container}>
 				<Toolbar>
@@ -47,7 +48,7 @@ export default function BonAppPickerPage(): React.ReactNode {
 					<NoticeView
 						description="Enter a café’s ID to see its menu."
 						systemImage="fork.knife"
-						title="No Café ID"
+						title={uiCase('No Café ID')}
 					/>
 				)}
 			</View>

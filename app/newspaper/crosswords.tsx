@@ -5,6 +5,7 @@ import {NoticeView} from '@frogpond/notice'
 import {CrosswordsScreen} from '../../source/features/newspaper/crosswords-screen'
 import {newspaperRoute} from '../../source/features/newspaper/newspaper-route'
 import {usePaper} from '../../source/features/newspaper/paper-context'
+import {uiCase} from '../../source/lib/ui-case'
 
 /** The paper's crosswords; a paper that publishes none says so. */
 function NewspaperCrosswordsPage(): React.ReactNode {
@@ -16,7 +17,7 @@ function NewspaperCrosswordsPage(): React.ReactNode {
 				<NoticeView
 					description={`${paper.title} doesn't publish crosswords.`}
 					systemImage="square.grid.3x3"
-					title="No Crosswords"
+					title={uiCase('No Crosswords')}
 				/>
 			</>
 		)

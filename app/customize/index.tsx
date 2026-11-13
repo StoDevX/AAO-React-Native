@@ -20,11 +20,15 @@ import {
 } from '../../source/features/home/store'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 import {useRadioPlayerSetting} from '../../source/features/customize/radio-player-setting'
+import {QUICK_ACTIONS_TITLE} from '../../source/features/customize/quick-actions-title'
+import {uiCase} from '../../source/lib/ui-case'
 
-/// Where links open, and what the menu calls each.
+/// Where links open, and what the menu calls each: Android opens them in a
+/// Custom Tab or the reader's own browser, which need not be Safari's
+/// counterpart.
 const LINK_TARGETS = [
-	['app', 'In App'],
-	['safari', 'Safari'],
+	['app', Platform.OS === 'android' ? 'In app' : 'In App'],
+	['safari', Platform.OS === 'android' ? 'Browser' : 'Safari'],
 ] as const satisfies ReadonlyArray<readonly [LinkTarget, string]>
 
 /// How home can lay out its tiles, and what the menu calls each.
@@ -87,20 +91,21 @@ export default function CustomizePage(): React.ReactNode {
 									height: ROW_ICON_SIZE,
 								}}
 								onPress={() => router.navigate('/customize/app-icon')}
-								title="App Icon"
+								title={uiCase('App Icon')}
 							/>
 						</SheetSection>
 					) : null}
 					<SheetSection title="Browsing">
 						<MenuPickerRow
 							id="open-links-in"
-							label="Open Links"
+							label={uiCase('Open Links')}
 							onSelectionChange={setLinkTarget}
 							options={LINK_TARGETS}
 							selection={linkTarget}
 						/>
 					</SheetSection>
-					<SheetSection title="Home Screen">
+					{/* On Android the home screen is the launcher's, not this app's Home. */}
+					<SheetSection title={Platform.OS === 'android' ? 'Home' : 'Home Screen'}>
 						<MenuPickerRow
 							id="home-layout"
 							label="Layout"
@@ -111,7 +116,7 @@ export default function CustomizePage(): React.ReactNode {
 						{Platform.OS === 'android' && homeLayout === 'tiled' ? (
 							<MenuPickerRow
 								id="home-tile-style"
-								label="Tile Style"
+								label={uiCase('Tile Style')}
 								onSelectionChange={setTileStyle}
 								options={HOME_TILE_STYLES}
 								selection={tileStyle}
@@ -119,14 +124,14 @@ export default function CustomizePage(): React.ReactNode {
 						) : null}
 						<Toggle
 							isOn={showRadio}
-							label="Radio Player"
+							label={uiCase('Radio Player')}
 							modifiers={[accessibilityIdentifier('show-radio-player')]}
 							onIsOnChange={setShowRadio}
 						/>
 						{quickActions ? (
 							<NavigationRow
 								onPress={() => router.navigate('/customize/quick-actions')}
-								title="Quick Actions"
+								title={QUICK_ACTIONS_TITLE}
 							/>
 						) : null}
 					</SheetSection>

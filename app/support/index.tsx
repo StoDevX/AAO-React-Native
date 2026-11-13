@@ -25,6 +25,7 @@ import {FaqBannerSlot} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 import {ShareTelemetryToggle} from '../../source/features/telemetry/consent-toggle'
 import {FEATURE_REQUESTS} from '../../source/lib/app-identity'
+import {uiCase} from '../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -107,12 +108,12 @@ export default function SupportPage(): React.ReactNode {
 							) : null}
 							<NavigationRow
 								onPress={() => router.navigate('/report-problem')}
-								title="Send Feedback"
+								title={uiCase('Send Feedback')}
 							/>
 							{FEATURE_REQUESTS ? (
 								<NavigationRow
 									onPress={() => router.navigate('/feature-requests')}
-									title="Feature Requests"
+									title={uiCase('Feature Requests')}
 								/>
 							) : null}
 						</Section>
@@ -128,14 +129,14 @@ export default function SupportPage(): React.ReactNode {
 									destination="external"
 									detail={helpdesk.covers}
 									onPress={() => openUrl(helpdesk.serviceCatalog)}
-									title="Open a Ticket"
+									title={uiCase('Open a Ticket')}
 								/>
 								<DisclosureRow
 									destination="action"
 									onPress={() =>
 										callPhone(helpdesk.phoneNumber, {title: `Call the ${helpdesk.name} Helpdesk`})
 									}
-									title="Call the Helpdesk"
+									title={uiCase('Call the Helpdesk')}
 								/>
 							</Section>
 						) : null}

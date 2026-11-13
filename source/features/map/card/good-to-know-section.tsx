@@ -15,6 +15,7 @@ import {
 import type {GoodToKnowRow} from '../lib/good-to-know'
 import {CARD_INSET} from '../../../components/place-card/card-style'
 import {SectionHeading} from '../../../components/place-card/section-heading'
+import {uiCase} from '../../../lib/ui-case'
 
 /// Maps' amenity rows sit close together, with no hairlines between them.
 const ROW = [
@@ -45,7 +46,7 @@ export function GoodToKnowSection({rows}: {rows: Array<GoodToKnowRow>}): React.R
 	}
 	return (
 		<Section>
-			<SectionHeading title="Good to Know" />
+			<SectionHeading title={uiCase('Good to Know')} />
 			{rows.map((row) => (
 				// One element per fact, so VoiceOver reads a nickname's older
 				// names with the current one.

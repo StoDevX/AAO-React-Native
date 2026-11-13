@@ -20,6 +20,7 @@ import {
 import {useBuildingReport} from '../../../source/features/building-hours/report/context'
 import {useDismissOnce} from '../../../source/lib/use-dismiss-once'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const ALL_DAYS: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
@@ -54,7 +55,7 @@ function BuildingHoursScheduleEditorPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>Edit Schedule</Stack.Title>
+			<Stack.Title>{uiCase('Edit Schedule')}</Stack.Title>
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>

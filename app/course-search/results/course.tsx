@@ -23,6 +23,7 @@ import {
 } from '../../../source/features/sis/course-search/lib/list-state'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {requiresSection} from '../../../source/features/campus/section-gate'
+import {uiCase} from '../../../source/lib/ui-case'
 
 const styles = StyleSheet.create({
 	host: {
@@ -212,7 +213,7 @@ function CourseDetailPage(): React.ReactNode {
 			return (
 				<>
 					{screenTitle}
-					<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
+					<NoticeView systemImage="questionmark.circle" title={uiCase('Course Not Found')} />
 				</>
 			)
 	}
@@ -220,6 +221,6 @@ function CourseDetailPage(): React.ReactNode {
 
 export default requiresSection(
 	'courseCatalog',
-	{title: 'Course Catalog', noun: 'a course catalog', systemImage: 'graduationcap'},
+	{title: uiCase('Course Catalog'), noun: 'a course catalog', systemImage: 'graduationcap'},
 	CourseDetailPage,
 )

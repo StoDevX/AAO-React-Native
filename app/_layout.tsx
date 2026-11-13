@@ -39,6 +39,7 @@ import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radi
 import {useUITestReset} from '../source/lib/uitest-reset'
 import {useCampusStore} from '../source/features/campus/store'
 import {CampusPicker} from '../source/features/campus/campus-picker'
+import {uiCase} from '../source/lib/ui-case'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
@@ -160,7 +161,7 @@ function RootLayout(): React.ReactNode {
 									<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
 									<Stack.Screen
 										name="streaming-media"
-										options={{title: 'Streaming Media', headerTransparent: false}}
+										options={{title: uiCase('Streaming Media'), headerTransparent: false}}
 									/>
 									<Stack.Screen
 										name="edu.carleton/convocations"
