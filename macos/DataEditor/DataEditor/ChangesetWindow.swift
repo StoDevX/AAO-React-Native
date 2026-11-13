@@ -68,6 +68,12 @@ struct ChangesetWindow: View {
                 } else {
                     ProgressView()
                 }
+            } else if model.catalog?.sets[set]?.form == .breaks {
+                if let value = model.value, model.documentFile == ref.file {
+                    BreaksEditorView(calendar: BreaksDocument(value: value))
+                } else {
+                    ProgressView()
+                }
             } else if let dataSet = model.catalog?.sets[set], dataSet.shape == .document {
                 DocumentEditorView(file: ref.file)
             } else if let dataSet = model.catalog?.sets[set], let record = model.records[set]?.first(where: { $0.ref == ref }) {

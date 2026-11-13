@@ -87,7 +87,7 @@ public struct Service: Hashable, Sendable {
     public let rows: [HoursRow]
 }
 
-func services(in value: JSONValue?) -> [Service] {
+public func services(in value: JSONValue?) -> [Service] {
     (value?.array ?? []).map { block in
         Service(
             title: block["title"]?.string ?? "",
