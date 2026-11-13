@@ -68,8 +68,7 @@ final class OverviewUITests: XCTestCase {
     }
 
     func testANoticeOfTextNotSavedDoesNotStopSubmitting() throws {
-        let (app, data) = try launchWithRepoData()
-        selectTheCage(in: app)
+        let (app, data) = try launchWithRepoData(opening: theCage)
         // an edit through the app, so the Overview lists the file; the write below is not one
         let to = currentChanges(in: app).popUpButtons["row-time-to-0-0"]
         XCTAssertTrue(to.waitForExistence(timeout: 10))

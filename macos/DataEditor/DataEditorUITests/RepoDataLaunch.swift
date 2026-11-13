@@ -1,5 +1,8 @@
 import XCTest
 
+/// The Cage's hours, as `launchWithRepoData(opening:)` takes a record.
+let theCage = "building-hours:building-hours/1-1-cage.yaml"
+
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
     /// the helper built from the checkout, and the oxfmt the app bundles. A `conflicted` file is set aside as a conflict,
@@ -12,8 +15,12 @@ extension XCTestCase {
     /// not that lock, so the workspace's catalog drops the scrape's claim
     /// unless `keepsScrapes` asks for it.
     @MainActor
+    ///
+    /// `opening` is a data set, or a record as `set:file` (`theCage`), that
+    /// the app opens in Current changes once it is ready, so a test about a
+    /// record begins on it rather than clicking its way there.
     func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil, keepsScrapes: Bool = false,
-                            arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
+                            opening: String? = nil, arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let support = FileManager.default.temporaryDirectory.appending(path: "ui \(UUID().uuidString)")
         let workspace = support.appending(path: "workspace")
@@ -62,8 +69,11 @@ extension XCTestCase {
         }
         // each test starts from the Changesets window alone, not the windows an earlier test left open
         app.launchArguments = ["-UITestWorkspace", support.path, "-UITestOxfmt", oxfmt.path,
-                               "-ApplePersistenceIgnoreState", "YES"] + arguments
+                               "-ApplePersistenceIgnoreState", "YES"] + (opening.map { ["-UITestOpen", $0] } ?? []) + arguments
         app.launch()
+        if opening != nil {
+            XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 20))
+        }
         return (app, workspace.appending(path: "data"))
     }
 

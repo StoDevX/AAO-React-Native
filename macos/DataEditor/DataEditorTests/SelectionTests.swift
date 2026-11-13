@@ -78,3 +78,20 @@ struct SelectionTests {
         #expect(model.item == .overview)
     }
 }
+
+@MainActor
+struct UITestOpenTests {
+    @Test func opensASetByName() {
+        #expect(AppModel.uiTestItem("contact-info") == .set("contact-info"))
+    }
+
+    @Test func opensARecordByItsSetAndFile() {
+        #expect(AppModel.uiTestItem("building-hours:building-hours/1-1-cage.yaml")
+            == .record(set: "building-hours", RecordRef(file: "building-hours/1-1-cage.yaml", path: [])))
+    }
+
+    @Test func opensNothingForNothing() {
+        #expect(AppModel.uiTestItem(nil) == nil)
+        #expect(AppModel.uiTestItem("") == nil)
+    }
+}

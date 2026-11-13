@@ -54,6 +54,18 @@ final class AppModel {
     private(set) var records: [String: [RecordSummary]] = [:]
     /// The data set the record column lists: Hours until another is chosen.
     private(set) var chosenSet = "building-hours"
+    /// What a UI test asked the launch to open in Current changes, until it is opened.
+    var uiTestOpen: ChangesetItem?
+
+    /// A UI test's `-UITestOpen`: a set by name, or one record as `set:file`,
+    /// which a UI test opens to begin where it tests rather than click its way there.
+    nonisolated static func uiTestItem(_ text: String?) -> ChangesetItem? {
+        guard let text, !text.isEmpty else { return nil }
+        let parts = text.split(separator: ":", maxSplits: 1).map(String.init)
+        guard parts.count == 2 else { return .set(text) }
+        return .record(set: parts[0], RecordRef(file: parts[1], path: []))
+    }
+
     /// Each set's record schema, once asked for; a schema changes only with the app's data.
     private var schemas: [String: JSONValue] = [:]
     /// The file `document` was read from. `selection` changes first, while the
@@ -147,6 +159,7 @@ final class AppModel {
             ?? Self.supportFolder(in: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0],
                                   bundleIdentifier: Bundle.main.bundleIdentifier)
         testOxfmt = defaults.string(forKey: "UITestOxfmt").map { URL(filePath: $0) }
+        uiTestOpen = Self.uiTestItem(defaults.string(forKey: "UITestOpen"))
         // Checking a branch whose helper no deploy has published: serve a folder
         // holding data-editor/ from `node scripts/build-data-editor-helper.mjs
         // --out <folder>/data-editor --commit <a pushed commit>`, and point

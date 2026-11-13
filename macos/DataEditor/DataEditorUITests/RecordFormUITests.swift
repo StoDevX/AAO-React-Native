@@ -2,22 +2,8 @@ import XCTest
 
 @MainActor
 final class RecordFormUITests: XCTestCase {
-    /// Opens `record` of the data set titled `set` in the Current changes window.
-    private func open(_ record: String?, of set: String, in app: XCUIApplication) {
-        let window = currentChanges(in: app)
-        let row = window.outlines["data-set-list"].staticTexts[set]
-        XCTAssertTrue(row.waitForExistence(timeout: 20))
-        row.click()
-        if let record {
-            let recordRow = window.outlines["record-list"].staticTexts[record]
-            XCTAssertTrue(recordRow.waitForExistence(timeout: 10))
-            recordRow.click()
-        }
-    }
-
     func testEditingAContactShowsInTheOverview() throws {
-        let app = try launchWithRepoData().app
-        open("PubSafe", of: "Important Contacts", in: app)
+        let app = try launchWithRepoData(opening: "contact-info:contact-info/1-1-pubsafe.yaml").app
         let button = currentChanges(in: app).textFields["field-buttonText"]
         XCTAssertTrue(button.waitForExistence(timeout: 10))
         attachScreenshot(of: currentChanges(in: app), named: "PubSafe's form")
@@ -31,8 +17,7 @@ final class RecordFormUITests: XCTestCase {
 
     /// A new contact holds only its title and section, so it is listed with its problems and holds up Submit.
     func testAddingAContactListsItWithItsProblems() throws {
-        let app = try launchWithRepoData().app
-        open(nil, of: "Important Contacts", in: app)
+        let app = try launchWithRepoData(opening: "contact-info").app
         let window = currentChanges(in: app)
         let new = window.buttons["new-record"]
         XCTAssertTrue(new.waitForExistence(timeout: 10))
@@ -51,8 +36,7 @@ final class RecordFormUITests: XCTestCase {
     }
 
     func testAReadOnlySetCannotBeEdited() throws {
-        let app = try launchWithRepoData().app
-        open(nil, of: "Student Wages", in: app)
+        let app = try launchWithRepoData(opening: "student-wages").app
         let window = currentChanges(in: app)
         XCTAssertTrue(window.staticTexts["Updated monthly from St. Olaf's student compensation page"].waitForExistence(timeout: 10))
         let tier = window.textFields["field-ST.1"]

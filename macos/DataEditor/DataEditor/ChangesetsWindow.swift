@@ -21,6 +21,13 @@ struct ChangesetsWindow: View {
             detail
         }
         .frame(minWidth: 800, minHeight: 500)
+        // a UI test that asked to begin on a record finds Current changes open on it
+        .task(id: ready) {
+            guard ready, let item = model.uiTestOpen else { return }
+            model.uiTestOpen = nil
+            openWindow(value: Changeset.current)
+            await model.choose(item)
+        }
         // a pull request forgotten while chosen gives way to Current changes
         .onChange(of: model.submissions.records.map(\.id)) { selection = stillListed(selection, in: model.submissions.records) }
         // asked once as it is chosen, not again on each look
