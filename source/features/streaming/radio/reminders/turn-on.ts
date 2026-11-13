@@ -3,9 +3,13 @@ import {Linking} from 'react-native'
 import type {ReminderSurface} from '../../../telemetry/catalog'
 import {track} from '../../../telemetry/track'
 import {useRadioStore} from '../store'
-import {requestReminderPermission, type ReminderPermission} from './notifications'
+import {
+	requestOnTimeReminders,
+	requestReminderPermission,
+	type ReminderPermission,
+} from './notifications'
 import type {ReminderPrompt} from './prompt'
-import {syncShowReminders} from './sync'
+import {rescheduleShowReminders, syncShowReminders} from './sync'
 
 /**
  * Turns reminders on as `prompt` offers: opens Settings once iOS will no
@@ -28,4 +32,21 @@ export async function turnOnReminders(
 	track({name: 'radio.reminder.permission', attributes: {outcome, surface}})
 	await syncShowReminders()
 	return permission
+}
+
+/**
+ * Opens Android's "Alarms & reminders" page for the app. On the return, if
+ * exact alarms are now allowed, sets every reminder again, as one already set
+ * stays inexact until it next fires. Asked once, whatever the answer.
+ */
+export async function turnOnOnTimeReminders(surface: ReminderSurface): Promise<void> {
+	useRadioStore.getState().markOnTimeAsked()
+	let granted = await requestOnTimeReminders()
+	track({
+		name: 'radio.reminder.permission',
+		attributes: {outcome: granted ? 'granted' : 'denied', surface, permission: 'exact_alarm'},
+	})
+	if (granted) {
+		await rescheduleShowReminders()
+	}
 }

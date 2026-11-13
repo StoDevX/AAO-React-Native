@@ -6,7 +6,12 @@ import {queryClient} from '../../../../init/tanstack-query'
 import {STATIONS, type StationId} from '../stations'
 import {useRadioStore} from '../store'
 import {stationScheduleOptions} from '../use-station-schedule'
-import {applyReminderChanges, pendingReminders, reminderPermission} from './notifications'
+import {
+	applyReminderChanges,
+	cancelAllReminders,
+	pendingReminders,
+	reminderPermission,
+} from './notifications'
 import {planReminderChanges, type StationFeed} from './plan'
 
 /** How old a loaded schedule may be before a sync asks for it again. */
@@ -56,7 +61,14 @@ async function stationFeed(stationId: StationId): Promise<StationFeed | null> {
 	}
 }
 
+/** Whether the next sync sets every reminder afresh; see `rescheduleShowReminders`. */
+let rescheduling = false
+
 async function syncOnce(): Promise<void> {
+	if (rescheduling) {
+		rescheduling = false
+		await cancelAllReminders()
+	}
 	// The bells read this, so one turned on or off in Settings shows on return.
 	// It is stored first, as a bell read as off would follow a show it should
 	// unfollow, and the schedules may take a while or never load.
@@ -85,6 +97,16 @@ async function syncOnce(): Promise<void> {
 		zone,
 	})
 	await applyReminderChanges(changes)
+}
+
+/**
+ * Syncs after cancelling every reminder, so each is set again. Android picks
+ * an alarm's kind when it is set, so the reminders set before exact alarms
+ * were allowed would otherwise stay inexact until each next fires.
+ */
+export function rescheduleShowReminders(): Promise<void> {
+	rescheduling = true
+	return syncShowReminders()
 }
 
 let running: Promise<void> | null = null

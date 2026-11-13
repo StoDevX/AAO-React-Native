@@ -1,3 +1,4 @@
+import {Platform} from 'react-native'
 import * as Notifications from 'expo-notifications'
 
 import {
@@ -10,6 +11,26 @@ import {LISTEN_ACTION} from './present'
 
 /** The category every reminder is scheduled in, which gives it the Listen button. */
 const REMINDER_CATEGORY = 'radio-reminder'
+
+/**
+ * Android's notification channel for show reminders: what Settings lists
+ * them under, so someone can silence them alone rather than every
+ * notification the app sends. Without one they go to Expo's catch-all
+ * "Miscellaneous" channel.
+ */
+const REMINDER_CHANNEL = 'radio-show-reminders'
+
+/** Makes the reminders' channel on Android; creating one that exists changes nothing. */
+async function ensureReminderChannel(): Promise<void> {
+	if (Platform.OS !== 'android') {
+		return
+	}
+	await Notifications.setNotificationChannelAsync(REMINDER_CHANNEL, {
+		name: 'Radio show reminders',
+		description: 'A notification a minute before each radio show you follow starts.',
+		importance: Notifications.AndroidImportance.DEFAULT,
+	})
+}
 
 /** Gives reminders their Listen button, which brings the app forward to play. */
 export async function registerReminderActions(): Promise<void> {
@@ -48,6 +69,27 @@ export async function requestReminderPermission(): Promise<ReminderPermission> {
 }
 
 /**
+ * Whether a reminder will arrive on its minute. Android 12 and later set an
+ * alarm inexactly, and may hold it back by minutes, unless the app may set
+ * exact alarms ("Alarms & reminders" in Settings), which Android 14 leaves off
+ * on a new install. Always true off Android.
+ */
+export async function remindsOnTime(): Promise<boolean> {
+	if (Platform.OS !== 'android') {
+		return true
+	}
+	return (await Notifications.getExactAlarmPermissionsAsync()).granted
+}
+
+/**
+ * Opens Android's "Alarms & reminders" page for the app, and resolves on the
+ * return with whether reminders will now arrive on time.
+ */
+export async function requestOnTimeReminders(): Promise<boolean> {
+	return (await Notifications.requestExactAlarmPermissionsAsync()).granted
+}
+
+/**
  * The radio reminders already scheduled; other notifications are left out.
  * A reminder that cannot be read back is cancelled here, as nothing else could.
  */
@@ -62,6 +104,14 @@ export async function pendingReminders(): Promise<PendingReminder[]> {
 	return identifiers.flatMap((identifier) => parseReminderIdentifier(identifier) ?? [])
 }
 
+/** Cancels every scheduled radio reminder. */
+export async function cancelAllReminders(): Promise<void> {
+	let pending = await pendingReminders()
+	await Promise.all(
+		pending.map((reminder) => Notifications.cancelScheduledNotificationAsync(reminder.identifier)),
+	)
+}
+
 /** Cancels and schedules reminders as `planReminderChanges` decided. */
 export async function applyReminderChanges(changes: {
 	schedule: readonly ReminderRequest[]
@@ -70,6 +120,9 @@ export async function applyReminderChanges(changes: {
 	await Promise.all(
 		changes.cancel.map((identifier) => Notifications.cancelScheduledNotificationAsync(identifier)),
 	)
+	if (changes.schedule.length > 0) {
+		await ensureReminderChannel()
+	}
 	await Promise.all(
 		changes.schedule.map((request) =>
 			Notifications.scheduleNotificationAsync({
@@ -80,7 +133,11 @@ export async function applyReminderChanges(changes: {
 					data: {stationId: request.stationId, title: request.title},
 					categoryIdentifier: REMINDER_CATEGORY,
 				},
-				trigger: {type: Notifications.SchedulableTriggerInputTypes.WEEKLY, ...request.slot},
+				trigger: {
+					type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+					...request.slot,
+					channelId: REMINDER_CHANNEL,
+				},
 			}),
 		),
 	)

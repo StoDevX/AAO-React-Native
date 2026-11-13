@@ -171,6 +171,8 @@ export type TelemetryEvent =
 			attributes: {
 				outcome: 'granted' | 'denied' | 'not_now' | 'settings'
 				surface: ReminderSurface
+				// Absent for notifications; 'exact_alarm' for Android's on-time reminders.
+				permission?: 'exact_alarm'
 			}
 	  }
 	| {
