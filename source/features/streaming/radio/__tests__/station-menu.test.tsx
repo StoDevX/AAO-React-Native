@@ -17,7 +17,7 @@ describe('StationMenu', () => {
 
 	test('Full Schedule stacks over the sheet, which stays open beneath it', async () => {
 		await render(<StationMenu station={STATIONS.krlx} />)
-		await fireEvent.press(screen.getByRole('button', {name: 'Full Schedule'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'See full schedule'}))
 		expect(useRadioStore.getState().fullScheduleOpen).toBe(true)
 		expect(useRadioStore.getState().sheetOpen).toBe(true)
 	})
