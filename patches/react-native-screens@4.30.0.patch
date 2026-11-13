@@ -1,17 +1,18 @@
 diff --git a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
-index e0762e87bc2080805bec5e9f25523fc6d42afae6..28de86e0201225f78a53e5d8e28ddfd6ff4d6021 100644
+index e0762e87bc2080805bec5e9f25523fc6d42afae6..9e271adfb035330ab2251d939172e4cc271cc59f 100644
 --- a/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
 +++ b/android/src/main/java/com/swmansion/rnscreens/CustomToolbar.kt
-@@ -6,6 +6,8 @@ import android.os.Build
+@@ -6,6 +6,9 @@ import android.os.Build
  import android.view.Choreographer
  import android.view.WindowInsets
  import android.view.WindowManager
 +import android.widget.ImageButton
 +import android.widget.TextView
++import androidx.appcompat.widget.ActionMenuView
  import androidx.appcompat.widget.Toolbar
  import androidx.core.view.WindowInsetsCompat
  import com.facebook.react.modules.core.ReactChoreographer
-@@ -58,6 +60,15 @@ open class CustomToolbar(
+@@ -58,6 +61,15 @@ open class CustomToolbar(
          // This guarantees that all size-dependent children are present during the first layout pass,
          // resulting in correct height determination from the beginning.
          menu
@@ -27,7 +28,7 @@ index e0762e87bc2080805bec5e9f25523fc6d42afae6..28de86e0201225f78a53e5d8e28ddfd6
      }
  
      private val layoutCallback: Choreographer.FrameCallback =
-@@ -206,6 +217,7 @@ open class CustomToolbar(
+@@ -206,6 +218,7 @@ open class CustomToolbar(
          b: Int,
      ) {
          super.onLayout(hasSizeChanged, l, t, r, b)
@@ -35,34 +36,39 @@ index e0762e87bc2080805bec5e9f25523fc6d42afae6..28de86e0201225f78a53e5d8e28ddfd6
  
          config.onNativeToolbarLayout(
              this,
-@@ -219,6 +231,36 @@ open class CustomToolbar(
+@@ -219,6 +232,41 @@ open class CustomToolbar(
          setContentInsetsRelative(config.preferredContentInsetStart, config.preferredContentInsetEnd)
      }
  
 +    /**
-+     * Centres the navigation button on the title's line. Toolbar places the
-+     * button by its own measure -- 56dp tall, from the top of a bar that may be
-+     * shorter or taller -- so the back arrow sat below the title and the
-+     * actions, which centre in the bar. Without a title it centres in the bar.
++     * Centres the navigation button and the action menu on the title's line.
++     * Toolbar places both by their own measure -- the 56dp button, and the
++     * menu holding a search action, from the top of a bar that may be shorter
++     * or taller -- so the back arrow and the search icon sat below the title
++     * and the header's own actions, which centre in the bar. Without a title
++     * they centre in the bar.
 +     */
 +    private fun alignNavigationButton() {
-+        var navigationButton: ImageButton? = null
 +        var titleView: TextView? = null
++        val toAlign = mutableListOf<android.view.View>()
 +        for (index in 0 until childCount) {
 +            val child = getChildAt(index)
-+            if (navigationButton == null && child is ImageButton && child.drawable != null && child.drawable === navigationIcon) {
-+                navigationButton = child
++            if (child is ImageButton && child.drawable != null && child.drawable === navigationIcon) {
++                toAlign.add(child)
++            } else if (child is ActionMenuView) {
++                toAlign.add(child)
 +            } else if (titleView == null && child is TextView && title != null && child.text?.toString() == title?.toString()) {
 +                titleView = child
 +            }
 +        }
-+        val button = navigationButton ?: return
 +        val target =
 +            titleView?.let { (it.top + it.bottom) / 2 }
 +                ?: ((paddingTop + height - paddingBottom) / 2)
-+        val offset = target - (button.top + button.bottom) / 2
-+        if (offset != 0) {
-+            button.offsetTopAndBottom(offset)
++        for (view in toAlign) {
++            val offset = target - (view.top + view.bottom) / 2
++            if (offset != 0) {
++                view.offsetTopAndBottom(offset)
++            }
 +        }
 +    }
 +
@@ -72,7 +78,7 @@ index e0762e87bc2080805bec5e9f25523fc6d42afae6..28de86e0201225f78a53e5d8e28ddfd6
      private fun applyExactPadding(
          left: Int,
          top: Int,
-@@ -226,6 +268,7 @@ open class CustomToolbar(
+@@ -226,6 +274,7 @@ open class CustomToolbar(
          bottom: Int,
      ) {
          requestForceShadowStateUpdateOnLayout()
