@@ -3,7 +3,6 @@ import {StyleSheet, View} from 'react-native'
 import {VolumeSliderView} from '@frogpond/audio-route'
 import {SymbolView} from 'expo-symbols'
 
-
 import {palette} from './palette'
 
 /**
