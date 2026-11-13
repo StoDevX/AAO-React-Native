@@ -16,10 +16,24 @@ struct ProblemWordingTests {
         plainProblems(problems).map(\.message)
     }
 
-    private let buildings = try! JSONDecoder().decode([BuildingSummary].self, from: Data("""
-        [{"file": "building-hours/1-1-cage.yaml", "name": "The Cage", "category": "Food"},
-         {"file": "building-hours/1-3-stav.yaml", "name": "Stav Hall", "category": "Food"}]
+    private let catalog = try! JSONDecoder().decode(DataSetCatalog.self, from: Data("""
+        {"groups": [], "sets": {
+          "building-hours": {"title": "Hours", "record": "Building", "shape": "folder", "path": "building-hours", "schema": "building-hours"},
+          "contact-info": {"title": "Important Contacts", "record": "Contact", "shape": "folder", "path": "contact-info", "schema": "contact-info"},
+          "faqs": {"title": "FAQs & Notices", "record": "FAQ", "shape": "list", "path": "faqs.yaml", "list": ["faqs"], "schema": "faqs"}
+        }}
         """.utf8))
+
+    private func record(_ set: String, _ file: String, _ title: String) -> RecordSummary {
+        RecordSummary(set: set, ref: RecordRef(file: file, path: []), title: title, subtitle: nil, section: nil, editable: true)
+    }
+
+    private var records: [String: [RecordSummary]] {
+        ["building-hours": [record("building-hours", cage, "The Cage"), record("building-hours", "building-hours/1-3-stav.yaml", "Stav Hall")],
+         "contact-info": [record("contact-info", "contact-info/1-1-pubsafe.yaml", "PubSafe")]]
+    }
+
+    private func name(_ file: String) -> String { recordName(of: file, catalog: catalog, records: records) }
 
     @Test func saysAnEmptyTitleOrNoteCannotBeEmpty() {
         #expect(plain(problem(#"must match pattern "\S""#, ["schedule", 0, "title"])) == ["The title can't be empty."])
@@ -88,21 +102,27 @@ struct ProblemWordingTests {
         #expect(plainPlace(["breakSchedule", "fall", 0, "title"]) == "fall › schedule 1 › title")
     }
 
-    @Test func namesAFileByItsBuilding() {
-        #expect(buildingName(of: cage, in: buildings) == "The Cage")
-        #expect(buildingName(of: "breaks.yaml", in: buildings) == "breaks.yaml")
+    @Test func namesAFileByItsRecord() {
+        #expect(name(cage) == "The Cage")
+        #expect(name("contact-info/1-1-pubsafe.yaml") == "PubSafe")
+    }
+
+    /// A file holding a list of records is named for its set; a file no set holds, by its path.
+    @Test func namesAListFileBySetAndAnUnknownFileByItsPath() {
+        #expect(name("faqs.yaml") == "FAQs & Notices")
+        #expect(name("news-styles.css") == "news-styles.css")
     }
 
     /// A problem from the file on screen needs no name; one from another file
-    /// would send the contributor to the wrong building without it.
-    @Test func namesTheBuildingOfAProblemFromAnotherFile() {
+    /// would send the contributor to the wrong record without it.
+    @Test func namesTheRecordOfAProblemFromAnotherFile() {
         let title = problem("The title can't be empty.", ["schedule", 0, "title"])
-        #expect(problemLine(title, fileOnScreen: cage, buildings: buildings) == "The title can't be empty.")
-        #expect(problemLine(title, fileOnScreen: "building-hours/1-3-stav.yaml", buildings: buildings) == "The Cage: The title can't be empty.")
-        #expect(problemLine(title, fileOnScreen: nil, buildings: buildings) == "The Cage: The title can't be empty.")
+        #expect(problemLine(title, fileOnScreen: cage, name: name) == "The title can't be empty.")
+        #expect(problemLine(title, fileOnScreen: "building-hours/1-3-stav.yaml", name: name) == "The Cage: The title can't be empty.")
+        #expect(problemLine(title, fileOnScreen: nil, name: name) == "The Cage: The title can't be empty.")
         let other = problem("Needs a title.", nil, file: "building-hours/9-9-new.yaml")
-        #expect(problemLine(other, fileOnScreen: nil, buildings: buildings) == "building-hours/9-9-new.yaml: Needs a title.")
+        #expect(problemLine(other, fileOnScreen: nil, name: name) == "building-hours/9-9-new.yaml: Needs a title.")
         let unplaced = problem("The build did not run", nil, file: nil)
-        #expect(problemLine(unplaced, fileOnScreen: nil, buildings: buildings) == "The build did not run")
+        #expect(problemLine(unplaced, fileOnScreen: nil, name: name) == "The build did not run")
     }
 }

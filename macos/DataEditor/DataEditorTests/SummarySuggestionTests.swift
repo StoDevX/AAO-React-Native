@@ -6,13 +6,13 @@ import Testing
 struct SummarySuggestionTests {
     /// The model is asked about one building at a time and never names it.
     @Test func listsWhatChangedInOneBuilding() {
-        let cage = ChangedFile(building: "The Cage", changes: ["Hours: no longer open Sat–Sun", "Hours: note removed"])
+        let cage = ChangedFile(record: "The Cage", changes: ["Hours: no longer open Sat–Sun", "Hours: note removed"])
         #expect(summaryPrompt(cage) == "- Hours: no longer open Sat–Sun\n- Hours: note removed")
     }
 
     /// The model reads a few thousand words at most; a large change is cut, not refused.
     @Test func stopsBeforeTheLimitWithoutSplittingALine() {
-        let long = ChangedFile(building: "The Cage", changes: (1...100).map { "line \($0)" })
+        let long = ChangedFile(record: "The Cage", changes: (1...100).map { "line \($0)" })
         #expect(summaryPrompt(long, limit: 26) == "- line 1\n- line 2\n- line 3")
     }
 

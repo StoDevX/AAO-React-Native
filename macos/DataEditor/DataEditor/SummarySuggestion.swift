@@ -2,9 +2,9 @@ import DataEditorKit
 import Foundation
 import FoundationModels
 
-/// A building the changeset changes, with what changed in it, in words.
+/// A record the changeset changes, with what changed in it, in words.
 struct ChangedFile {
-    let building: String
+    let record: String
     let changes: [String]
 }
 
@@ -74,7 +74,7 @@ func suggestSummary(for files: [ChangedFile]) async throws -> String {
     var phrases: [(building: String, phrase: String)] = []
     for file in files where !file.changes.isEmpty {
         let session = LanguageModelSession(instructions: instructions)
-        phrases.append((file.building, cleanSuggestion(try await session.respond(to: summaryPrompt(file)).content)))
+        phrases.append((file.record, cleanSuggestion(try await session.respond(to: summaryPrompt(file)).content)))
     }
     return summary(of: phrases)
 }

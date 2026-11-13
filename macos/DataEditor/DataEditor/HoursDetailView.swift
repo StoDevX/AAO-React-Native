@@ -189,7 +189,7 @@ struct ProblemLabel: View {
     var body: some View {
         Label {
             VStack(alignment: .leading) {
-                Text(problemLine(problem, fileOnScreen: fileOnScreen, buildings: model.buildings)).textSelection(.enabled)
+                Text(problemLine(problem, fileOnScreen: fileOnScreen, name: model.name(of:))).textSelection(.enabled)
                 if let path = problem.path { Text(plainPlace(path, breakNames: breakNames)).font(.caption).foregroundStyle(.secondary) }
             }
         } icon: { Image(systemName: systemImage).foregroundStyle(.orange) }

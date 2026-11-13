@@ -150,13 +150,13 @@ final class OverviewUITests: XCTestCase {
     func testNoChangesOffersTheEditor() throws {
         let app = try launchWithRepoData().app
         let changesets = app.windows["Changesets"]
-        let edit = changesets.buttons["Edit Building Hours"]
+        let edit = changesets.buttons["Edit Data"]
         XCTAssertTrue(edit.waitForExistence(timeout: 20))
         attachScreenshot(of: changesets, named: "No changes, with the way into the editor")
         edit.click()
         XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 5))
         // its own window lists the buildings beside the Overview, so it has no need of the button
-        XCTAssertFalse(currentChangesWindow(in: app).buttons["Edit Building Hours"].exists)
+        XCTAssertFalse(currentChangesWindow(in: app).buttons["Edit Data"].exists)
     }
 
     func testOpeningCurrentChangesBringsItsWindow() throws {

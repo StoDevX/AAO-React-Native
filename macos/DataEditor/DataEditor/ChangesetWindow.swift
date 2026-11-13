@@ -30,7 +30,8 @@ struct ChangesetWindow: View {
             DataSetList(changeset: changeset, only: changeset == .current ? nil : Set(listed.keys), selection: setSelection)
                 .disabled(!ready)
         } content: {
-            RecordList(changeset: changeset, records: listed[set] ?? [], selection: recordSelection)
+            RecordList(changeset: changeset, setName: set, set: model.catalog?.sets[set], records: listed[set] ?? [],
+                       selection: recordSelection)
                 .disabled(!ready)
         } detail: {
             if ready { detail(item.wrappedValue) } else { LaunchStatusView() }

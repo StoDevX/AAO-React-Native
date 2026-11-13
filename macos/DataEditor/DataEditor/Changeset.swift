@@ -31,11 +31,11 @@ enum PreviewLine: Equatable {
     /// the build did not run at all
     case failed
 
-    /// - Parameter buildings: names the file that stops the build, when it is listed
-    func text(buildings: [BuildingSummary]) -> String {
+    /// - Parameter name: names the file that stops the build
+    func text(name: (String) -> String) -> String {
         switch self {
         case .upToDate: "The preview is up to date"
-        case .stopsAt(let file): "The preview stops at \(buildings.first { $0.file == file }?.name ?? file)"
+        case .stopsAt(let file): "The preview stops at \(name(file))"
         case .failed: "The preview couldn't be updated"
         }
     }
@@ -85,17 +85,6 @@ struct OverviewParts: Equatable {
         let newerData = newerCommit != nil && !(pullRequest?.isFinished ?? false)
         return OverviewParts(pullRequest: pullRequest, newerData: newerData, conflicts: conflicts, preview: preview,
                              problems: problems, changed: changedFiles)
-    }
-}
-
-/// The buildings the second column lists for `changeset`: every one for
-/// Current changes; for a pull request, the files it changed, each named as
-/// the data names it, or by its file name when the data no longer lists it.
-func changesetBuildings(_ changeset: Changeset, all: [BuildingSummary], history: SubmissionHistory) -> [BuildingSummary] {
-    guard case .pullRequest(let number) = changeset else { return all }
-    let files = history.records.first { $0.id == number }?.changedFiles ?? []
-    return files.map { file in
-        all.first { $0.file == file } ?? BuildingSummary(file: file, name: (file as NSString).lastPathComponent, category: "")
     }
 }
 

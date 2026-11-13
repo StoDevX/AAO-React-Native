@@ -29,6 +29,27 @@ final class RecordFormUITests: XCTestCase {
         XCTAssertTrue(currentChanges(in: app).staticTexts["+ buttonText: Call PubSafe"].exists)
     }
 
+    /// A new contact holds only its title and section, so it is listed with its problems and holds up Submit.
+    func testAddingAContactListsItWithItsProblems() throws {
+        let app = try launchWithRepoData().app
+        open(nil, of: "Important Contacts", in: app)
+        let window = currentChanges(in: app)
+        let new = window.buttons["new-record"]
+        XCTAssertTrue(new.waitForExistence(timeout: 10))
+        new.click()
+        let title = app.textFields["new-record-title"]
+        XCTAssertTrue(title.waitForExistence(timeout: 5))
+        title.click()
+        title.typeText("Title IX")
+        app.buttons["new-record-add"].click()
+        XCTAssertTrue(window.outlines["record-list"].staticTexts["Title IX"].waitForExistence(timeout: 10))
+        let missing = NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", "Phone Number or Button Link is missing", "Phone Number or Button Link is missing")
+        XCTAssertTrue(window.descendants(matching: .any).matching(missing).firstMatch.waitForExistence(timeout: 10))
+        attachScreenshot(of: window, named: "A new contact, with its problems")
+        openOverview(in: app)
+        XCTAssertFalse(window.buttons["Submit for Review…"].isEnabled)
+    }
+
     func testAReadOnlySetCannotBeEdited() throws {
         let app = try launchWithRepoData().app
         open(nil, of: "Student Wages", in: app)
