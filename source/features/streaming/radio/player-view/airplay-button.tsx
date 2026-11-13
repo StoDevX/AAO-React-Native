@@ -1,10 +1,17 @@
 import * as React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
+import {Platform, StyleSheet, Text, View} from 'react-native'
 import {AirPlayButtonView} from '@frogpond/audio-route'
 
 import {LABEL_MAX_SCALE} from './action-button'
 import {palette} from './palette'
 import {TAP_TARGET} from '../../../../lib/tap-target'
+
+/**
+ * The button's name: AirPlay on iOS, and on Android "Output", for the system
+ * Output Switcher it opens -- which lists phone, headphones, Bluetooth and
+ * cast devices -- as the native view describes itself ("Audio output").
+ */
+const LABEL = Platform.OS === 'android' ? 'Output' : 'AirPlay'
 
 /** The height the other actions give their icon, which the picker's icon lines up with. */
 const ICON_BOX = 24
@@ -27,7 +34,7 @@ export function AirPlayButton(): React.ReactNode {
 				numberOfLines={1}
 				style={[styles.label, palette.styles.primary]}
 			>
-				AirPlay
+				{LABEL}
 			</Text>
 		</View>
 	)
