@@ -15,6 +15,8 @@ const HANDLE_AREA = 36
 /** How fast a fling has to be, in points per millisecond, to carry the sheet past the nearest stop. */
 const FLING_VELOCITY = 0.5
 const STOPS: readonly SheetDetent[] = ['collapsed', 'medium', 'large']
+/** The search bar floating over the map's top, with its margins, which the full sheet stops under. */
+const SEARCH_BAR_CLEARANCE = 72
 
 /**
  * The map's sheet on Android: a Material *standard* bottom sheet, laid out in
@@ -36,7 +38,7 @@ export function MapSheet({detents, current, onDragged, children}: MapSheetProps)
 		() => ({
 			collapsed: sheetHeightFor(detents.collapsed, available) + HANDLE_AREA + insets.bottom,
 			medium: sheetHeightFor(detents.medium, available),
-			large: sheetHeightFor(detents.large, available),
+			large: Math.min(sheetHeightFor(detents.large, available), available - SEARCH_BAR_CLEARANCE),
 		}),
 		[detents, available, insets.bottom],
 	)

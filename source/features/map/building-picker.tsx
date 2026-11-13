@@ -133,6 +133,16 @@ type Props = {
 	onGroupOpen: () => void
 	/// A place's card covers the picker, and Back is the card's to handle.
 	covered: boolean
+	/// Android's map searches from a bar floating over the map, not from a
+	/// field in the sheet: when set, this is what has been typed there, and
+	/// the picker draws no field of its own.
+	searchText?: string
+	/// Android's map opens a group from a row of chips over the map, not from
+	/// a grid in the sheet: when `onOpenedChange` is set, this is the open
+	/// group (null for none), and the picker draws no grid -- every place is
+	/// listed under no group, as the chips already offer the groups.
+	openedLabel?: MapGroupLabel | null
+	onOpenedChange?: (label: MapGroupLabel | null) => void
 }
 
 /// The picker, or a row to draw it again if drawing it throws: a place or a
@@ -197,8 +207,14 @@ function PickerContents({
 	onPinsChange,
 	onGroupOpen,
 	covered,
+	searchText,
+	openedLabel = null,
+	onOpenedChange,
 }: Props): React.ReactNode {
-	let [typedQuery, setTypedQuery] = React.useState('')
+	let [ownQuery, setTypedQuery] = React.useState('')
+	let searchOutside = searchText !== undefined
+	let typedQuery = searchText ?? ownQuery
+	let groupsOutside = onOpenedChange !== undefined
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
 
 	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions(campus))
@@ -213,11 +229,25 @@ function PickerContents({
 
 	// Held with its campus, so a switch closes it; and looked up among the
 	// groups that have places, so a group a refetch emptied closes too.
-	let [opened, setOpened] = React.useState<{campus: CampusId; label: MapGroupLabel} | null>(null)
+	let [ownOpened, setOwnOpened] = React.useState<{campus: CampusId; label: MapGroupLabel} | null>(
+		null,
+	)
+	let opened = groupsOutside ? (openedLabel ? {campus, label: openedLabel} : null) : ownOpened
+	let setOpened = React.useCallback(
+		(next: {campus: CampusId; label: MapGroupLabel} | null) => {
+			if (onOpenedChange) {
+				onOpenedChange(next?.label ?? null)
+			} else {
+				setOwnOpened(next)
+			}
+		},
+		[onOpenedChange],
+	)
 	// Cleared during render rather than in an effect, as React recommends for
 	// state that follows a prop, so a switch never draws the old group first.
-	if (opened && opened.campus !== campus) {
-		setOpened(null)
+	// A group held outside is the holder's to clear.
+	if (!groupsOutside && opened && opened.campus !== campus) {
+		setOwnOpened(null)
 	}
 	let openGroup =
 		opened?.campus === campus ? groups.find((group) => group.label === opened.label) : undefined
@@ -225,8 +255,8 @@ function PickerContents({
 	// coming back later do not reopen it unasked -- even when the refetch
 	// emptied every group at once. Nothing can be open before the map data
 	// first loads, since the tiles to open it from come from that data.
-	if (opened && !openGroup) {
-		setOpened(null)
+	if (!groupsOutside && opened && !openGroup) {
+		setOwnOpened(null)
 	}
 	// Back closes the open group before it leaves the map. Not while a card
 	// covers the picker: Back closes the card first.
@@ -243,7 +273,8 @@ function PickerContents({
 	let allPlaces = React.useMemo(() => byName(buildings), [buildings])
 	// With no group to open -- a feed whose values the groups file does not
 	// name -- every place is listed, so the sheet is never empty of rows.
-	let listedPlaces = openGroup ? groupPlaces : groups.length === 0 ? allPlaces : []
+	let listsAll = groups.length === 0 || groupsOutside
+	let listedPlaces = openGroup ? groupPlaces : listsAll ? allPlaces : []
 
 	// Bumped when the camera should frame the pins: a tile tap, or a search
 	// that ended with text once its results have caught up with the typing,
@@ -262,8 +293,23 @@ function PickerContents({
 			onGroupOpen()
 			track({name: 'map.group.open', attributes: {group: group.label, campus}})
 		},
-		[campus, onGroupOpen],
+		[campus, onGroupOpen, setOpened],
 	)
+	// A group opened from outside -- a chip -- is framed and counted as a
+	// tile's is.
+	let [framedLabel, setFramedLabel] = React.useState<MapGroupLabel | null>(null)
+	if (groupsOutside && openedLabel !== framedLabel) {
+		setFramedLabel(openedLabel)
+		if (openedLabel) {
+			setFrameKey((key) => key + 1)
+		}
+	}
+	React.useEffect(() => {
+		if (groupsOutside && openedLabel) {
+			onGroupOpen()
+			track({name: 'map.group.open', attributes: {group: openedLabel, campus}})
+		}
+	}, [groupsOutside, openedLabel, onGroupOpen, campus])
 
 	// The fallback list of every place is not pinned: it is a list to scroll,
 	// not a set of places someone asked to see.
@@ -320,34 +366,39 @@ function PickerContents({
 
 	return (
 		<VStack spacing={0}>
+			{searchOutside ? (
+				<SheetHeading text={query ? 'Results' : (openGroup?.label ?? 'All places')} />
+			) : null}
 			{/* CampusSearchBar takes no modifiers, so its margins live on the
 			    stack around it. */}
-			<VStack
-				modifiers={[
-					padding({horizontal: SEARCH_BAR_HORIZONTAL_PADDING, vertical: SEARCH_MARGIN}),
-					onGeometryChange(({height}) => onHeaderHeightChange(height)),
-				]}
-			>
-				<CampusSearchBar
-					onCancel={cancelSearch}
-					onFocusChange={(focused, fieldHasText) => {
-						// A field of only spaces searches nothing, so ending it is
-						// not a search that ended with text.
-						let hasText = fieldHasText && typedQuery.trim() !== ''
-						if (!focused && hasText) {
-							setSearchEnded(true)
-						}
-						onSearchFocusChange(focused, hasText)
-					}}
-					onTextChange={setTypedQuery}
-					placeholder={SEARCH_PLACEHOLDER}
-					testID={SEARCH_PLACEHOLDER}
-				/>
-			</VStack>
+			{searchOutside ? null : (
+				<VStack
+					modifiers={[
+						padding({horizontal: SEARCH_BAR_HORIZONTAL_PADDING, vertical: SEARCH_MARGIN}),
+						onGeometryChange(({height}) => onHeaderHeightChange(height)),
+					]}
+				>
+					<CampusSearchBar
+						onCancel={cancelSearch}
+						onFocusChange={(focused, fieldHasText) => {
+							// A field of only spaces searches nothing, so ending it is
+							// not a search that ended with text.
+							let hasText = fieldHasText && typedQuery.trim() !== ''
+							if (!focused && hasText) {
+								setSearchEnded(true)
+							}
+							onSearchFocusChange(focused, hasText)
+						}}
+						onTextChange={setTypedQuery}
+						placeholder={SEARCH_PLACEHOLDER}
+						testID={SEARCH_PLACEHOLDER}
+					/>
+				</VStack>
+			)}
 
 			{/* Pinned under the field rather than scrolling with the list, so
 			    the header reads as one block: grabber, field, group name. */}
-			{compact || query || !openGroup ? null : (
+			{compact || query || !openGroup || groupsOutside ? null : (
 				<GroupHeader label={openGroup.label} onBack={() => setOpened(null)} />
 			)}
 
@@ -380,7 +431,7 @@ function PickerContents({
 						)
 					) : buildings.length === 0 ? (
 						<Text>No places to show.</Text>
-					) : openGroup || groups.length === 0 ? (
+					) : openGroup || listsAll ? (
 						listedPlaces.map((building) => (
 							<BuildingRow
 								key={building.id}
@@ -455,6 +506,18 @@ function RecentsSection({
 				</SwipeActions>
 			))}
 		</Section>
+	)
+}
+
+/// What the sheet is listing, as its heading, where the search and the groups
+/// are chosen outside it (Android's map): a Material sheet names its content
+/// at its top, at the start.
+function SheetHeading({text}: {text: string}): React.ReactNode {
+	return (
+		<HStack modifiers={[padding({horizontal: 24, top: 4, bottom: 8})]}>
+			<Text modifiers={[font({textStyle: 'title2'})]}>{text}</Text>
+			<Spacer />
+		</HStack>
 	)
 }
 
