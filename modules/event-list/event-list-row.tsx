@@ -74,6 +74,11 @@ type Props = {
 	 * earlier day shows its start date as well as its time.
 	 */
 	shownOn?: Moment
+	/**
+	 * A control drawn after the row, such as a bell, beside the row's button
+	 * rather than inside it, where a tap would reach the row instead.
+	 */
+	accessory?: React.ReactNode
 }
 
 /**
@@ -154,12 +159,13 @@ export function EventListRow({
 	isLastInSection,
 	color,
 	shownOn,
+	accessory,
 }: Props): React.ReactNode {
 	let title = event.title
 	let subtitle = event[event.config.subtitle]?.trim()
 	let {first, second, firstIsTime} = trailingText(event, shownOn)
 
-	return (
+	let row = (
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
@@ -236,5 +242,15 @@ export function EventListRow({
 				</VStack>
 			</HStack>
 		</Button>
+	)
+
+	if (accessory === undefined) {
+		return row
+	}
+	return (
+		<HStack spacing={4}>
+			{row}
+			{accessory}
+		</HStack>
 	)
 }
