@@ -454,7 +454,9 @@ jobs:
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 2 --granularity method --durations uitest-durations.json --plan uitest-plan.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
+          # EXPERIMENT (do not merge): only the two toolbar-menu tests, one per shard.
+          node scripts/split-uitests.mjs --test-dir uitests --shards 2 --granularity method --durations uitest-durations.json --plan uitest-plan.json > /dev/null
+          echo 'matrix={"include":[{"shard":1,"tests":"-only-testing:AllAboutAnythingUITests/ModuleCalendarDayModeTests/testACategoryNarrowsTheListAndResetBringsItBack"},{"shard":2,"tests":"-only-testing:AllAboutAnythingUITests/ModuleNewsTests/testHoroscopesOpenOnAChosenSign"}]}' >> "$GITHUB_OUTPUT"
 
       - name: Upload the shard plan
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -726,7 +728,7 @@ jobs:
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
             -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
             $MATRIX_TESTS \
-            -retry-tests-on-failure \
+            -test-iterations 15 \
             -test-timeouts-enabled YES \
             -default-test-execution-time-allowance 120 \
             -collect-test-diagnostics ${{ runner.debug == '1' && 'on-failure' || 'never' }} \
