@@ -342,7 +342,9 @@ import wifiOffFilled from './symbols/wifi_off_fill.xml'
 import workOutlined from '@expo/material-symbols/work.xml'
 import workFilled from './symbols/work_fill.xml'
 
-export const SYMBOL_ASSETS: Readonly<Record<string, readonly [ImageRequireSource, ImageRequireSource]>> = {
+export const SYMBOL_ASSETS: Readonly<
+	Record<string, readonly [ImageRequireSource, ImageRequireSource]>
+> = {
 	accessibility_new: [accessibilityNewOutlined, accessibilityNewFilled],
 	accessible: [accessibleOutlined, accessibleFilled],
 	account_balance: [accountBalanceOutlined, accountBalanceFilled],
