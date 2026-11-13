@@ -2,10 +2,10 @@ import {MaterialSymbols_400Regular_Filled} from '@expo-google-fonts/material-sym
 import type {SymbolViewProps} from 'expo-symbols'
 
 /**
- * The `weight` that draws a `SymbolView`'s Android glyph filled. expo-symbols
- * draws Material Symbols from Google's outlined font, where Play and Stop are
- * hollow; this is the same weight from Google's filled font, which iOS's
- * `.fill` symbols match.
+ * The `weight` that draws a `SymbolView`'s Android glyph filled, for the
+ * radio's Play and Pause: Android draws media controls solid, as its own
+ * players do, and expo-symbols draws from Google's outlined font, where they
+ * are hollow. Everything else stays outlined, Material's default.
  */
 export const FILLED_SYMBOL_WEIGHT: SymbolViewProps['weight'] = {
 	ios: 'unspecified',
