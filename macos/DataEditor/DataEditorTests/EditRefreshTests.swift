@@ -45,6 +45,19 @@ struct EditRefreshTests {
         #expect(AppModel.fieldProblems(at: ["phoneNumber"], among: [phone, record, link]) == [phone])
     }
 
+    /// A new contact's missing fields are one line above the form, each also marked at its field.
+    @Test func missingFieldsAreSummedUpInOneLine() {
+        let missing = ["Button Label", "Text", "Summary"].map { Problem(file: "a.yaml", message: "\($0) is missing", path: [.key($0)], missing: $0) }
+        let other = Problem(file: "a.yaml", message: "Phone Number or Button Link is missing", path: [])
+        let summary = RecordFormView.summary(of: [other] + missing)
+        #expect(summary.fillIn == "Fill in Button Label, Text, and Summary")
+        #expect(summary.others == [other])
+    }
+
+    @Test func noMissingFieldsNeedNoLine() {
+        #expect(RecordFormView.summary(of: []).fillIn == nil)
+    }
+
     @Test func anEditReplacesOnlyItsOwnFilesProblems() {
         let other = Problem(file: "b.yaml", message: "Title is missing", path: [])
         let old = Problem(file: "a.yaml", message: "Phone Number or Button Link is missing", path: [])

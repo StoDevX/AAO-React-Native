@@ -35,37 +35,54 @@ final class FieldControlUITests: XCTestCase {
         attachScreenshot(of: window, named: "East Quad's accent colour in a well")
     }
 
-    func testASymbolIsChosenFromTheChooser() throws {
+    /// The icon is a button showing its symbol, which opens a grid of symbols to search.
+    func testASymbolIsChosenFromTheGrid() throws {
         let (app, data) = try launchWithRepoData(opening: "student-work-areas")
         let window = currentChanges(in: app)
         let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
         XCTAssertTrue(dining.waitForExistence(timeout: 10))
         dining.click()
-        let choose = window.buttons["choose-field-icon"]
-        XCTAssertTrue(choose.waitForExistence(timeout: 10))
-        choose.click()
+        let icon = window.buttons["field-icon"]
+        XCTAssertTrue(icon.waitForExistence(timeout: 10))
+        icon.click()
         let search = app.textFields["symbol-search"]
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         search.typeText("cup")
-        attachScreenshot(of: window, named: "Symbols matching cup")
+        attachScreenshot(of: app.windows.firstMatch, named: "Symbols matching cup")
         app.buttons["symbol-cup.and.saucer"].click()
         XCTAssertTrue(waitFor("icon: cup.and.saucer", in: "student-work-areas.yaml", data: data))
     }
 
-    func testANameThatIsNoSymbolIsFlagged() throws {
+    /// A symbol the grid doesn't list is offered once its whole name is typed.
+    func testASymbolTheGridLacksIsOfferedByName() throws {
         let app = try launchWithRepoData(opening: "student-work-areas").app
         let window = currentChanges(in: app)
         let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
         XCTAssertTrue(dining.waitForExistence(timeout: 10))
         dining.click()
-        let icon = window.textFields["field-icon"]
+        let icon = window.buttons["field-icon"]
         XCTAssertTrue(icon.waitForExistence(timeout: 10))
         icon.click()
-        icon.typeKey("a", modifierFlags: .command)
-        icon.typeText("not.a.symbol\r")
+        let search = app.textFields["symbol-search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.typeText("tortoise.fill")
+        XCTAssertTrue(app.buttons["symbol-tortoise.fill"].waitForExistence(timeout: 5))
+    }
+
+    /// An icon the file names that no symbol has is shown, and said to be wrong.
+    func testANameThatIsNoSymbolIsFlagged() throws {
+        let (app, data) = try launchWithRepoData(opening: "student-work-areas")
+        let file = data.appending(path: "student-work-areas.yaml")
+        let text = try String(contentsOf: file, encoding: .utf8)
+        try text.replacingOccurrences(of: "icon: fork.knife", with: "icon: not.a.symbol").write(to: file, atomically: true, encoding: .utf8)
+        let window = currentChanges(in: app)
+        let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
+        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        dining.click()
         let flag = window.staticTexts["symbol-problem-field-icon"]
         XCTAssertTrue(flag.waitForExistence(timeout: 10))
-        XCTAssertEqual(flag.value as? String, "No SF Symbol is called not.a.symbol")
+        XCTAssertEqual(flag.value as? String, "“not.a.symbol” isn't an SF Symbol. Choose one from the list.")
+        attachScreenshot(of: window, named: "An icon that is no symbol")
     }
 
     /// A generated bus line can't be edited, its pickers included.

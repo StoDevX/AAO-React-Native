@@ -78,6 +78,13 @@ describe('wordProblem', () => {
 })
 
 describe('wordProblems', () => {
+	it('places a missing field at the field, named by its title', () => {
+		let error = {instancePath: '/links/0', keyword: 'required', params: {missingProperty: 'url'}}
+		assert.deepEqual(wordProblems([error], contact), [
+			{message: 'Address is missing', instancePath: '/links/0/url', missing: 'Address'},
+		])
+	})
+
 	it('says once that one of two fields is needed', () => {
 		let errors = [
 			{

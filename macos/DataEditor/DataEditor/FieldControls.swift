@@ -32,7 +32,8 @@ private struct FieldProblems: View {
 
     var body: some View {
         ForEach(Array(AppModel.fieldProblems(at: path, among: model.shownProblems).enumerated()), id: \.offset) { _, problem in
-            Text(problem.message)
+            // beside the field, a missing one needs no name
+            Text(problem.missing == nil ? problem.message : "Required")
                 .font(.caption)
                 .foregroundStyle(.red)
                 .accessibilityIdentifier("problem-" + identifier(path, below: recordPath))
@@ -106,7 +107,6 @@ private struct ScalarField: View {
     let required: Bool
     let file: String
     let recordPath: [PathKey]
-    @State private var choosingSymbol = false
 
     /// The identifier of the field's own control, which a UI test finds it by.
     private var fieldID: String { identifier(path, below: recordPath) }
@@ -164,26 +164,7 @@ private struct ScalarField: View {
             ColorWell(title: title, value: value, editing: model.edits.isShown) { apply($0) }
                 .accessibilityIdentifier(fieldID)
         case .symbol:
-            VStack(alignment: .trailing) {
-                HStack {
-                    textField
-                    Button("Choose…") { choosingSymbol = true }
-                        .accessibilityIdentifier("choose-" + fieldID)
-                        .disabled(model.edits.isShown)
-                        .popover(isPresented: $choosingSymbol) {
-                            SymbolGrid { name in
-                                choosingSymbol = false
-                                apply(.string(name))
-                            }
-                        }
-                }
-                if let name = value?.string, !name.isEmpty, !SymbolChooser.isSymbol(name) {
-                    Text("No SF Symbol is called \(name)")
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .accessibilityIdentifier("symbol-problem-" + fieldID)
-                }
-            }
+            SymbolField(title: title, value: value?.string, editing: model.edits.isShown, identifier: fieldID) { apply(.string($0)) }
         case .date, .dateTime:
             DateField(title: title, kind: kind, value: value?.string, editing: model.edits.isShown) { apply($0.map(JSONValue.string)) }
                 .accessibilityIdentifier(fieldID)
@@ -239,9 +220,6 @@ private struct ScalarField: View {
                     return await model.applyDraft(op, to: file, replacing: expected, schedule: nil)
                 }
                 .accessibilityIdentifier(fieldID)
-                if kind == .symbol, let name = value?.string, !name.isEmpty {
-                    Image(systemName: name).accessibilityHidden(true)
-                }
             }
     }
 }

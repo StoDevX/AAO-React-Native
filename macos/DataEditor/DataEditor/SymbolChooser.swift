@@ -49,10 +49,65 @@ enum SymbolChooser {
         let words = search.lowercased().split(separator: " ")
         return curated.filter { name in words.allSatisfy { name.contains($0) } }
     }
+
+    /// What the grid offers for `search`: the curated matches, led by the
+    /// symbol `search` names exactly when the list lacks it.
+    static func offered(_ search: String) -> [String] {
+        let name = search.trimmingCharacters(in: .whitespaces)
+        let found = matching(name)
+        return !name.isEmpty && !found.contains(name) && isSymbol(name) ? [name] + found : found
+    }
+}
+
+/// An icon field: a button showing the symbol and its name, which opens a grid
+/// to choose another from. A name the file holds that no symbol has is shown,
+/// with a word on what to do.
+struct SymbolField: View {
+    let title: String
+    let value: String?
+    /// whether an edit is in flight, which a change would have to wait behind
+    let editing: Bool
+    let identifier: String
+    let set: (String) -> Void
+    @State private var choosing = false
+
+    var body: some View {
+        LabeledContent(title) {
+            VStack(alignment: .trailing, spacing: 4) {
+                Button { choosing = true } label: {
+                    HStack(spacing: 6) {
+                        if let value, SymbolChooser.isSymbol(value) {
+                            Image(systemName: value)
+                        } else {
+                            Image(systemName: "questionmark.square.dashed").foregroundStyle(.secondary)
+                        }
+                        Text(value ?? "None")
+                        Image(systemName: "chevron.up.chevron.down").imageScale(.small).foregroundStyle(.secondary)
+                    }
+                }
+                .accessibilityIdentifier(identifier)
+                .disabled(editing)
+                .popover(isPresented: $choosing, arrowEdge: .leading) {
+                    SymbolGrid(current: value) { name in
+                        choosing = false
+                        if name != value { set(name) }
+                    }
+                }
+                if let value, !value.isEmpty, !SymbolChooser.isSymbol(value) {
+                    Text("“\(value)” isn't an SF Symbol. Choose one from the list.")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .accessibilityIdentifier("symbol-problem-" + identifier)
+                }
+            }
+        }
+    }
 }
 
 /// A searchable grid of symbols; choosing one hands its name to `choose`.
 struct SymbolGrid: View {
+    /// the symbol chosen now, marked in the grid
+    let current: String?
     let choose: (String) -> Void
     @State private var search = ""
 
@@ -63,9 +118,11 @@ struct SymbolGrid: View {
                 .accessibilityIdentifier("symbol-search")
             ScrollView {
                 LazyVGrid(columns: Array(repeating: GridItem(.fixed(36)), count: 8)) {
-                    ForEach(SymbolChooser.matching(search), id: \.self) { name in
+                    ForEach(SymbolChooser.offered(search), id: \.self) { name in
                         Button { choose(name) } label: {
                             Image(systemName: name).font(.title3).frame(width: 32, height: 32)
+                                .background(name == current ? AnyShapeStyle(.tint.opacity(0.25)) : AnyShapeStyle(.clear),
+                                            in: RoundedRectangle(cornerRadius: 6))
                         }
                         .buttonStyle(.borderless)
                         .help(name)
@@ -76,7 +133,7 @@ struct SymbolGrid: View {
             }
             .frame(height: 240)
         }
-        .padding()
-        .frame(width: 340)
+        .padding(12)
+        .frame(width: 8 * 36 + 7 * 8 + 24)
     }
 }

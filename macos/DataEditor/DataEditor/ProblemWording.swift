@@ -102,7 +102,7 @@ func plainProblems(_ problems: [Problem]) -> [Problem] {
         let message = problem.message == "must match a schema in anyOf" && noHours.contains(Place(file: problem.file, path: problem.path))
             ? "Has no hours. Add hours, turn on Closed, or add a note such as “By appointment”."
             : plainMessage(problem.message, path: problem.path) ?? problem.message
-        let plain = Problem(file: problem.file, message: message, path: problem.path)
+        let plain = Problem(file: problem.file, message: message, path: problem.path, missing: problem.missing)
         return seen.insert(plain).inserted ? plain : nil
     }
 }

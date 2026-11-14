@@ -93,6 +93,12 @@ struct ProblemWordingTests {
         #expect(plainProblems([title, title]).count == 1)
     }
 
+    /// The form sums up missing fields by their titles, so plain wording keeps them.
+    @Test func keepsWhichFieldIsMissing() {
+        let missing = Problem(file: "contact-info/9-1-x.yaml", message: "Text is missing", path: ["text"], missing: "Text")
+        #expect(plainProblems([missing]).map(\.missing) == ["Text"])
+    }
+
     @Test func wordsThePlaceInTheFile() {
         #expect(plainPlace(["schedule", 0, "title"]) == "Usual hours › schedule 1 › title")
         #expect(plainPlace(["schedule", 1, "hours", 0, "to"]) == "Usual hours › schedule 2 › row 1 › closing time")

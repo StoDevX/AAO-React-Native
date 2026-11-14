@@ -58,7 +58,8 @@ export function wordProblem(error, schema) {
 /**
  * Every error in plain words, once each. A `oneOf` whose choices are each one
  * required field ("a phone number or a link") is said as one problem, and the
- * errors Ajv gave for its choices are left out.
+ * errors Ajv gave for its choices are left out. A missing field's problem is at
+ * the field, with its title as `missing`.
  */
 export function wordProblems(errors, schema) {
 	let choices = errors.filter((error) => error.keyword === 'oneOf' || error.keyword === 'anyOf')
@@ -92,10 +93,23 @@ export function wordProblems(errors, schema) {
 						: `${titles} is missing`
 			}
 		}
+		let problem = {message, instancePath: error.instancePath}
+		if (error.keyword === 'required') {
+			// placed at the field that is missing, so the form shows it there, and named for the summary above
+			let missing = error.params.missingProperty
+			let escaped = missing.replaceAll('~', '~0').replaceAll('/', '~1')
+			problem = {
+				message,
+				instancePath: `${error.instancePath}/${escaped}`,
+				missing: titleAt(schema, [...pointerKeys(error.instancePath), missing]),
+			}
+		}
 		if (
-			!worded.some((seen) => seen.message === message && seen.instancePath === error.instancePath)
+			!worded.some(
+				(seen) => seen.message === problem.message && seen.instancePath === problem.instancePath,
+			)
 		) {
-			worded.push({message, instancePath: error.instancePath})
+			worded.push(problem)
 		}
 	}
 	return worded

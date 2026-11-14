@@ -113,11 +113,14 @@ public struct Problem: Decodable, Hashable, Sendable {
     public let file: String?
     public let message: String
     public let path: [PathKey]?
+    /// The title of the field this problem says is missing, which `path` names.
+    public let missing: String?
 
-    public init(file: String?, message: String, path: [PathKey]?) {
+    public init(file: String?, message: String, path: [PathKey]?, missing: String? = nil) {
         self.file = file
         self.message = message
         self.path = path
+        self.missing = missing
     }
 }
 

@@ -13,7 +13,13 @@ import {pointerKeys, wordProblems} from './data-editor-wording.mjs'
 import {loadScheduleData} from './schedule-data.ts'
 
 /** Something wrong with the data, at a path inside `file` when the message names one. */
-export type Problem = {file: string | null; message: string; path: (string | number)[] | null}
+export type Problem = {
+	file: string | null
+	message: string
+	path: (string | number)[] | null
+	/** the title of the field this problem says is missing, which is at `path` */
+	missing?: string
+}
 
 /** The break calendar as the break-schedule editor offers it. */
 export type Calendar = {
@@ -92,10 +98,19 @@ export function validate(dataDir: string, file: string): Problem[] {
 	let data = readYaml(path.join(dataDir, file))
 	if (check(data)) return []
 	return wordProblems(check.errors, fileSchema(dataDir, catalog, name)).map(
-		({message, instancePath}: {message: string; instancePath: string}) => ({
+		({
+			message,
+			instancePath,
+			missing,
+		}: {
+			message: string
+			instancePath: string
+			missing?: string
+		}) => ({
 			file,
 			message,
 			path: keysIn(data, instancePath),
+			...(missing === undefined ? {} : {missing}),
 		}),
 	)
 }
