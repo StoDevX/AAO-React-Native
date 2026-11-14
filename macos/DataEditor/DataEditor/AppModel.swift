@@ -76,7 +76,7 @@ final class AppModel {
         return .record(set: parts[0], RecordRef(file: parts[1], path: []))
     }
 
-    /// Each set's record schema, once asked for; a schema changes only with the app's data.
+    /// Each set's record schema, once asked for; let go when the files change, as an update may change a schema.
     private var schemas: [String: JSONValue] = [:]
     /// The file `document` was read from. `selection` changes first, while the
     /// new file loads, so an edit drawn from the document on screen names this.
@@ -162,13 +162,14 @@ final class AppModel {
     }
 
     /// - Parameter support: the folder for the workspace and the history, where unit tests give their own
-    init(runtime: Runtime = .bundled, support: URL? = nil) {
+    /// - Parameter oxfmt: the oxfmt a test formats with, which also keeps the app from reaching GitHub
+    init(runtime: Runtime = .bundled, support: URL? = nil, oxfmt: URL? = nil) {
         self.runtime = runtime
         let defaults = UserDefaults.standard
         self.support = support ?? defaults.string(forKey: "UITestWorkspace").map { URL(filePath: $0) }
             ?? Self.supportFolder(in: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0],
                                   bundleIdentifier: Bundle.main.bundleIdentifier)
-        testOxfmt = defaults.string(forKey: "UITestOxfmt").map { URL(filePath: $0) }
+        testOxfmt = oxfmt ?? defaults.string(forKey: "UITestOxfmt").map { URL(filePath: $0) }
         uiTestOpen = Self.uiTestItem(defaults.string(forKey: "UITestOpen"))
         // Checking a branch whose helper no deploy has published: serve a folder
         // holding data-editor/ from `node scripts/build-data-editor-helper.mjs
@@ -477,13 +478,13 @@ final class AppModel {
             } catch {
                 return .notSaved
             }
-            let held = current[path: op.path]?.string ?? ""
+            let held = current[path: op.path]?.fieldText ?? ""
             // the file unchanged at the draft's place keeps it there, though
             // the contributor's own edits to the schedule since make it unlike `schedule`
             guard let target = schedule.flatMap({ Self.draftPath(op.path, schedule: $0, in: current) })
                 ?? (held == expected ? op.path : nil) else {
                 if file == selection { await select(file) }
-                let typed = op.value?.string ?? ""
+                let typed = op.value?.fieldText ?? ""
                 draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because its schedule changed while you typed.", path: op.path))
                 return .letGo(current: held)
             }
@@ -749,9 +750,12 @@ final class AppModel {
     /// that is one record, as a whole file or a document is, opens it.
     func choose(_ item: ChangesetItem) async {
         guard await mayChoose() else { return }
+        let choice = choices
         if let set = item.set {
             chosenSet = set
             if records[set] == nil { await loadRecords(set) }
+            // a choice made while the records loaded is the newer
+            guard choice == choices else { return }
         }
         var item = item
         if case .set(let set) = item, let only = records[set], only.count == 1,
@@ -761,6 +765,9 @@ final class AppModel {
         self.item = item
         if case .record(_, let ref) = item { selection = ref.file }
     }
+
+    /// The schema of one record of `set`, if it has been asked for since the files last changed.
+    func loadedSchema(for set: String) -> JSONValue? { schemas[set] }
 
     /// The schema of one record of `set`, asked once.
     func schema(for set: String) async -> JSONValue? {
@@ -777,7 +784,8 @@ final class AppModel {
     func writeText(_ file: String, _ text: String, expected: String) async -> Bool {
         guard !updating, !sending, let helper, !isConflicted(file) else { return false }
         do {
-            try await helper.writeText(file, text, expected: expected)
+            // an update waits for edits, so it does not save data/ while this writes into it
+            try await edits.run { try await helper.writeText(file, text, expected: expected) }
         } catch {
             return false
         }
@@ -786,6 +794,22 @@ final class AppModel {
         await builds.schedule { await self.rebuild() }
         return true
     }
+
+    /// Text typed into a document that would not save as its editor closed,
+    /// by file, given back when the document opens again.
+    private var keptDocuments: [String: String] = [:]
+
+    /// Saves a document's text as its editor closes. Text that will not save,
+    /// as the file changed since it was read, is kept for the editor to give
+    /// back, and a notice says so.
+    func leaveDocument(_ file: String, text: String, expected: String) async {
+        guard text != expected, await !writeText(file, text, expected: expected) else { return }
+        keptDocuments[file] = text
+        draftNotices.append(Problem(file: file, message: "Your changes to \(name(of: file)) weren't saved because it changed while you typed. They're back when you open it.", path: nil))
+    }
+
+    /// The text kept for `file` when its editor last closed, if any, which is then let go.
+    func takeKeptDocument(_ file: String) -> String? { keptDocuments.removeValue(forKey: file) }
 
     /// What a contributor calls `file`. See `recordName(of:catalog:records:)`.
     func name(of file: String) -> String { recordName(of: file, catalog: catalog, records: records) }
@@ -809,7 +833,9 @@ final class AppModel {
     }
 
     /// Whether records may be added, removed or moved now: not while the data
-    /// updates, a submission sends, or an edit waits for its reply.
+    /// updates, a submission sends, or an edit waits for its reply. Asked again
+    /// once drafts are saved, since an update may have begun meanwhile; the
+    /// change itself then runs as an edit, which an update waits for.
     var mayChangeRecords: Bool { !updating && !sending && !editing && helper != nil }
 
     /// Takes a set's records after an add, remove or move, keeps the record on
@@ -821,7 +847,8 @@ final class AppModel {
         await checkChangedFiles()
         if let created {
             item = .record(set: set, created)
-            selection = created.file
+            // a set listed in one file adds the record to the file already open
+            if selection != created.file { selection = created.file } else { await select(created.file) }
         } else if case .record(set, let ref) = item {
             if let followed = Self.follow(ref, before: before, after: reply.records) {
                 item = .record(set: set, followed)
@@ -836,15 +863,15 @@ final class AppModel {
 
     /// Adds a record titled `title` to `set`, in `section` when the set has sections, and opens it.
     func createRecord(in set: String, title: String, section: String?) async {
-        guard mayChangeRecords, let helper, await mayChoose(),
-              let reply = try? await helper.create(set: set, title: title, section: section) else { return }
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper,
+              let reply = try? await edits.run({ try await helper.create(set: set, title: title, section: section) }) else { return }
         await took(reply, in: set, showing: reply.created?.ref)
     }
 
     /// Removes the record at `ref` from `set`.
     func removeRecord(_ ref: RecordRef, from set: String) async {
-        guard mayChangeRecords, let helper, await mayChoose(),
-              let reply = try? await helper.remove(set: set, record: ref) else { return }
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper,
+              let reply = try? await edits.run({ try await helper.remove(set: set, record: ref) }) else { return }
         await took(reply, in: set)
     }
 
@@ -865,8 +892,8 @@ final class AppModel {
 
     /// Puts `set`'s records in the order of `order`.
     func reorderRecords(in set: String, order: [RecordRef]) async {
-        guard mayChangeRecords, let helper, await mayChoose(),
-              let reply = try? await helper.reorder(set: set, order: order) else { return }
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper,
+              let reply = try? await edits.run({ try await helper.reorder(set: set, order: order) }) else { return }
         await took(reply, in: set)
     }
 
@@ -949,6 +976,9 @@ final class AppModel {
     private func afterFilesChanged() async {
         changedFiles = (try? workspace.changedFiles()) ?? []
         calendar = (try? await helper?.calendar()) ?? calendar
+        // master may have added a set or changed a schema
+        catalog = (try? await helper?.datasets()) ?? catalog
+        schemas = [:]
         for set in records.keys { await loadRecords(set) }
         await checkChangedFiles()
         if let selection { await select(selection) }

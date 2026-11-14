@@ -87,8 +87,8 @@ jobs:
         working-directory: macos/DataEditor/DataEditorKit
         run: DATA_EDITOR_NODE="$(mise which node)" swift test
 
-      # The UI tests load the helper the way the app downloads it, and refuse
-      # one older than the scripts it was built from.
+      # The app's tests and UI tests load the helper the way the app downloads
+      # it; the UI tests refuse one older than the scripts it was built from.
       - name: Build the helper
         run: mise run data-editor:helper
 

@@ -48,14 +48,15 @@ struct DocumentEditorView: View {
         }
         .task(id: file) {
             let read = await model.readText(file) ?? ""
-            text = read
+            // text that would not save when the editor last closed comes back, unsaved
+            text = model.takeKeptDocument(file) ?? read
             saved = read
         }
         // what is typed is saved before Submit, quitting or choosing elsewhere, as a text field's draft is
         .onAppear { model.registerDraftSaver(id) { await save() } }
         .onChange(of: text != saved) { _, unsaved in model.noteDraft(id, unsaved: unsaved && saved != nil) }
         .onDisappear {
-            Task { await save() }
+            if let saved { Task { [file, text] in await model.leaveDocument(file, text: text, expected: saved) } }
             model.noteDraft(id, unsaved: false)
             model.unregisterDraftSaver(id)
         }

@@ -59,7 +59,8 @@ private func kind(of schema: JSONValue, title: String) -> FieldKind {
     case "boolean": return .toggle
     case "number", "integer": return .number
     case "array":
-        let item = schema["items"] ?? .object([:])
+        // a tuple gives each place its own schema, as an accent colour's three numbers; the first speaks for them
+        let item = schema["items"].map { $0.array?.first ?? $0 } ?? .object([:])
         return .list(item: kind(of: item, title: title), itemTitle: item["title"]?.string ?? title)
     case "object":
         if schema["properties"] != nil { return .object(formFields(schema: schema)) }
@@ -124,4 +125,18 @@ public func fieldOps(at base: [PathKey], key: String, old: JSONValue?, new: JSON
     if cleared, !required { return old == nil ? [] : [.delete(path)] }
     let value = new ?? .string("")
     return value == old ? [] : [.set(path, value)]
+}
+
+extension JSONValue {
+    /// The text a form's text field shows for this value: a whole number
+    /// without a fraction, and nothing for a list, an object or null. An edit
+    /// compares what the file holds with what was typed in these terms.
+    public var fieldText: String {
+        switch self {
+        case .string(let text): text
+        case .number(let number): number == number.rounded() && abs(number) < 1e15 ? String(Int(number)) : String(number)
+        case .bool(let bool): bool ? "true" : "false"
+        default: ""
+        }
+    }
 }

@@ -82,4 +82,19 @@ struct FormFieldsTests {
     @Test func anUnchangedFieldSendsNothing() {
         #expect(fieldOps(at: [], key: "title", old: .string("PubSafe"), new: .string("PubSafe"), required: true).isEmpty)
     }
+
+    /// Webcams' accent colour lists its three components as a tuple, one schema per place.
+    @Test func drawsATuplesItemsByTheirOwnSchema() throws {
+        let schema = try JSONDecoder().decode(JSONValue.self, from: Data(#"{"type": "object", "properties": {"accentColor": {"type": "array", "title": "Accent Color", "items": [{"type": "number"}, {"type": "number"}, {"type": "number"}]}}}"#.utf8))
+        #expect(formFields(schema: schema).first?.kind == .list(item: .number, itemTitle: "Accent Color"))
+    }
+
+    /// A number is shown, and compared with what was typed, as its digits.
+    @Test func showsAWholeNumberWithoutAFraction() {
+        #expect(JSONValue.number(12).fieldText == "12")
+        #expect(JSONValue.number(12.5).fieldText == "12.5")
+        #expect(JSONValue.string("PubSafe").fieldText == "PubSafe")
+        #expect(JSONValue.bool(true).fieldText == "true")
+        #expect(JSONValue.null.fieldText == "")
+    }
 }

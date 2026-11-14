@@ -24,16 +24,6 @@ private func identifier(_ path: [PathKey], below recordPath: [PathKey]) -> Strin
     "field-" + path.dropFirst(recordPath.count).map(\.description).joined(separator: ".")
 }
 
-/// The text a scalar shows in a text field.
-private func text(of value: JSONValue?) -> String {
-    switch value {
-    case .string(let text): text
-    case .number(let number): number == number.rounded() && abs(number) < 1e15 ? String(Int(number)) : String(number)
-    case .bool(let bool): bool ? "true" : "false"
-    default: ""
-    }
-}
-
 /// The value a text field's `text` saves as, for a field of `kind`.
 private func saved(_ text: String, as kind: FieldKind) -> JSONValue? {
     if text.isEmpty { return nil }
@@ -112,7 +102,7 @@ private struct ScalarField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             control.accessibilityIdentifier(identifier(path, below: recordPath))
-            if kind == .markdown, let rendered = try? AttributedString(markdown: text(of: value)), !text(of: value).isEmpty {
+            if kind == .markdown, let text = value?.fieldText, !text.isEmpty, let rendered = try? AttributedString(markdown: text) {
                 Text(rendered).font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
             }
             if let help { Text(help).font(.caption).foregroundStyle(.secondary) }
@@ -130,7 +120,7 @@ private struct ScalarField: View {
             }
         default:
             HStack {
-                DraftField(label: title, file: file, value: text(of: value), schedule: nil,
+                DraftField(label: title, file: file, value: value?.fieldText ?? "", schedule: nil,
                            axis: kind == .markdown || kind == .multiline ? .vertical : .horizontal) { file, typed, expected, _ in
                     let new = saved(typed, as: kind)
                     let op: EditOp = if new == nil, !required, case .key? = path.last { .delete(path) } else { .set(path, new ?? .string("")) }

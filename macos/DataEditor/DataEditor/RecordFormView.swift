@@ -8,7 +8,6 @@ struct RecordFormView: View {
     let setName: String
     let set: DataSet
     let record: RecordSummary
-    @State private var schema: JSONValue?
 
     private var lockReason: String? {
         AppModel.lockReason(set: set, file: record.ref.file, updating: model.updating, conflicted: model.isConflicted(record.ref.file))
@@ -36,7 +35,8 @@ struct RecordFormView: View {
                 }
                 .accessibilityIdentifier("problems")
             }
-            if let schema, model.documentFile == file {
+            // the model's schema for this set, never the last set's while this one's loads
+            if let schema = model.loadedSchema(for: setName), model.documentFile == file {
                 FieldRows(fields: formFields(schema: schema), base: record.ref.path, value: model.value?[path: record.ref.path],
                           file: file, recordPath: record.ref.path)
                     .disabled(lockReason != nil)
@@ -45,6 +45,9 @@ struct RecordFormView: View {
             }
         }
         .formStyle(.grouped)
-        .task(id: setName) { schema = await model.schema(for: setName) }
+        // asks again once the files change and the model lets the schema go
+        .task(id: [setName, model.loadedSchema(for: setName) == nil ? "asking" : "loaded"]) {
+            _ = await model.schema(for: setName)
+        }
     }
 }

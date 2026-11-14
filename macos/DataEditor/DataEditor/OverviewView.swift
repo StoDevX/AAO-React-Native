@@ -33,7 +33,7 @@ struct SubmitControl: Equatable {
 }
 
 /// Everything about Current changes in one place: the pull request, newer
-/// data, conflicts, the preview, problems, each changed building's diff, and Submit.
+/// data, conflicts, the preview, problems, each changed file's diff, and Submit.
 struct OverviewView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
@@ -45,7 +45,7 @@ struct OverviewView: View {
     @State private var reverting: String?
     @State private var discardingAll = false
 
-    /// The question that confirms a revert, naming the building where its file is known.
+    /// The question that confirms a revert, naming the record where its file is known.
     static func revertQuestion(file: String, name: String?) -> String {
         "Revert \(name ?? file)?"
     }
@@ -143,8 +143,8 @@ struct OverviewView: View {
                 .accessibilityIdentifier("confirm-discard-all")
         } message: {
             Text(model.currentSubmission == nil
-                ? "Your changes to every building will be lost."
-                : "Your changes to every building will be lost. The pull request stays on GitHub.")
+                ? "Every change you made will be lost."
+                : "Every change you made will be lost. The pull request stays on GitHub.")
         }
         .sheet(isPresented: $submitting) { SubmitSheet() }
         .task {
@@ -204,7 +204,7 @@ struct OverviewView: View {
         Task { await model.choose(model.item(showing: file)) }
     }
 
-    /// A problem that names its building opens it; one that names none only reads.
+    /// A problem that names its file opens it; one that names none only reads.
     @ViewBuilder private func problemRow(_ problem: Problem) -> some View {
         let label = ProblemLabel(problem: problem, fileOnScreen: nil, systemImage: "exclamationmark.triangle.fill")
         if let file = problem.file {
