@@ -65,8 +65,7 @@ struct HomeScreen: Screen {
 			if item.waitUntilExists(timeout: 5) { break }
 		}
 		XCTAssertTrue(item.exists, "Long-pressing Home's notice should offer \"Enable dev mode\"")
-		item.tap()
-		XCTAssertTrue(item.waitUntilGone(timeout: 10), "The menu should close once dev mode is on")
+		tap(item, untilGone: item, named: "\"Enable dev mode\"")
 		return self
 	}
 }

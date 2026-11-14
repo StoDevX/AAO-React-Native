@@ -144,6 +144,32 @@ extension Screen {
 		return self
 	}
 
+	/// Tap `element` until `marker` is gone, up to three times: a menu item or
+	/// a sheet's button that should close what it sits on.
+	///
+	/// Taps do not wait for animations (see AnimationIdleWait.swift), so a
+	/// menu or sheet can be tapped while it is still coming in, and that tap
+	/// is dropped. Each attempt waits for `element` to be hittable first, and
+	/// a retry goes only while it still is.
+	@discardableResult
+	func tap(_ element: XCUIElement, untilGone marker: XCUIElement, named name: String) -> Self {
+		XCTAssertTrue(element.waitForHittable(timeout: 30), "\(name) should be ready to tap")
+		for attempt in 1...3 {
+			if attempt > 1 && !marker.exists {
+				return self
+			}
+			if element.waitForHittable(timeout: 5) {
+				element.tap()
+			}
+			if marker.waitUntilGone(timeout: 5) {
+				return self
+			}
+			XCTContext.runActivity(named: "Tap \(attempt) on \(name) left \(marker) up; retrying") { _ in }
+		}
+		XCTFail("Tapping \(name) never closed \(marker)")
+		return self
+	}
+
 	/// Attach a screenshot of the whole screen to the test report, for as long
 	/// as `captureLifetime` says.
 	@discardableResult

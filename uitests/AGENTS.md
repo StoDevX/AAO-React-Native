@@ -99,6 +99,13 @@ URL, and a tap that only shows a screen opened earns no slot (see below).
 typing it; confirm a row exists before tapping. A test that silently did nothing
 otherwise passes exactly like one that worked.
 
+**A tap does not wait for animations to finish.** XCUITest normally waits for
+the app's animations to be idle before each event; this target turns that off
+(`AnimationIdleWait.swift`), because UIKit sometimes leaves a toolbar menu's
+morph animating forever and the wait never ends. The main run loop is still
+waited for. Wait for the state you need -- an element existing, hittable, or
+labelled as expected -- rather than for an animation to settle.
+
 **A test gets two minutes.** CI stops a test that runs longer and fails it,
 with a spindump attached; it is not retried, so a stall fails the shard. A test
 that needs longer is two tests, or is waiting
