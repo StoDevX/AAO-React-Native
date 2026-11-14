@@ -12,13 +12,14 @@ import {DocumentStore} from './data-editor-documents.mjs'
 import {createRecord, removeRecord, reorderRecords} from './data-editor-records.mjs'
 import {build, pruneBuilds, readCalendar, validate} from './data-editor-pipeline.ts'
 import {serve} from './data-editor-serve.mjs'
+import * as gradientColors from '../modules/colors/gradients.ts'
 
 /**
  * The version of the handlers' parameters and replies. The Mac app holds the
  * one it speaks (`HelperRuntime.protocolVersion`) and refuses a helper with
  * another. Changing a handler's parameters or its reply's shape bumps both.
  */
-export const PROTOCOL = 3
+export const PROTOCOL = 4
 
 /** The protocol's methods over one data directory and its build folder. */
 export function createHandlers({dataDir, outDir, bundleData}) {
@@ -28,6 +29,16 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 	let current
 	return {
 		calendar: () => readCalendar(dataDir),
+		// each gradient the app draws, by the name a data file gives it: `lightBlueGradient` is `light-blue`
+		gradients: () =>
+			Object.fromEntries(
+				Object.entries(gradientColors).map(([name, colors]) => [
+					name
+						.replace(/Gradient$/u, '')
+						.replaceAll(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`),
+					colors,
+				]),
+			),
 		load: async ({file}) => ({value: await store.load(file), problems: validate(dataDir, file)}),
 		edit: async ({file, ops}) => ({
 			value: await store.edit(file, ops),

@@ -108,6 +108,8 @@ private struct ScalarField: View {
     let recordPath: [PathKey]
 
     private func apply(_ new: JSONValue?) {
+        // a control may set what it already shows; that is no edit
+        guard new != value else { return }
         guard let key = path.last, case .key(let name) = key else {
             // an item of a list, set in place
             Task { await model.apply([.set(path, new ?? .string(""))], to: file) }
@@ -132,12 +134,59 @@ private struct ScalarField: View {
         switch kind {
         case .toggle:
             Toggle(title, isOn: Binding(get: { value?.bool ?? false }, set: { apply(.bool($0)) }))
+                .disabled(model.edits.isShown)
         case .choice(let values):
-            Picker(title, selection: Binding(get: { value?.string ?? "" }, set: { apply($0.isEmpty ? nil : .string($0)) })) {
-                if !required { Text("None").tag("") }
-                ForEach(values, id: \.self) { Text($0).tag($0) }
+            choicePicker(values)
+        case .reference(let pointer):
+            choicePicker(model.value.map { choices(pointer, in: $0, at: path) } ?? [])
+        case .gradient(let names):
+            choicePicker(names) { name in
+                model.gradients[name].flatMap { GradientSwatch(stops: $0).image }
+            }
+        case .date, .dateTime:
+            DateField(title: title, kind: kind, value: value?.string, editing: model.edits.isShown) { apply($0.map(JSONValue.string)) }
+        case .url:
+            HStack {
+                textField
+                Button("Open", systemImage: "arrow.up.forward.square") {
+                    if let text = value?.string, let url = URL(string: text) { NSWorkspace.shared.open(url) }
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .disabled(value?.string.flatMap(URL.init(string:))?.scheme == nil)
+            }
+        case .phone:
+            DraftField(label: title, file: file, value: PhoneNumber.display(value?.fieldText ?? ""), schedule: nil) { file, typed, expected, _ in
+                let digits = PhoneNumber.digits(typed)
+                let op: EditOp = digits.isEmpty && !required ? .delete(path) : .set(path, .string(digits))
+                return await model.applyDraft(op, to: file, replacing: PhoneNumber.digits(expected), schedule: nil)
             }
         default:
+            textField
+        }
+    }
+
+    /// A choice of `values`, each drawn with `image` when it gives one. A value
+    /// the file holds that isn't among them is shown, marked, until another is chosen.
+    private func choicePicker(_ values: [String], image: @escaping (String) -> Image? = { _ in nil }) -> some View {
+        let current = value?.string ?? ""
+        let unlisted = !current.isEmpty && !values.contains(current)
+        return Picker(title, selection: Binding(get: { current }, set: { apply($0.isEmpty ? nil : .string($0)) })) {
+            // a value that isn't a name, such as a gradient's own pair of colours
+            if value != nil, value?.string == nil {
+                Text("Custom").tag("")
+            } else if !required || current.isEmpty {
+                Text("None").tag("")
+            }
+            if unlisted { Text("\(current) (not listed)").tag(current) }
+            ForEach(values, id: \.self) { name in
+                if let image = image(name) { Label { Text(name) } icon: { image }.tag(name) } else { Text(name).tag(name) }
+            }
+        }
+        .disabled(model.edits.isShown)
+    }
+
+    @ViewBuilder private var textField: some View {
             HStack {
                 DraftField(label: title, file: file, value: value?.fieldText ?? "", schedule: nil,
                            axis: kind == .markdown || kind == .multiline ? .vertical : .horizontal) { file, typed, expected, _ in
@@ -149,7 +198,6 @@ private struct ScalarField: View {
                     Image(systemName: name).accessibilityHidden(true)
                 }
             }
-        }
     }
 }
 

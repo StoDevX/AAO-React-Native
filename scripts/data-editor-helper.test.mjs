@@ -155,6 +155,15 @@ describe('the data-set methods', () => {
 	const ask = async (target, method, params) =>
 		(await handle(target, JSON.stringify({id: 1, method, params}))).result
 
+	it('name each gradient with its two colours', async () => {
+		let gradients = await ask(await handlers(), 'gradients', {})
+		assert.deepEqual(gradients['light-blue'], [
+			'color(display-p3 0.3647 0.7961 0.9765)',
+			'color(display-p3 0.3059 0.6784 0.9412)',
+		])
+		assert.equal(gradients.red.length, 2)
+	})
+
 	it("list the catalog's sets", async () => {
 		let catalog = await ask(await handlers(), 'datasets', {})
 		assert.equal(catalog.sets['contact-info'].title, 'Important Contacts')

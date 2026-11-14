@@ -55,6 +55,8 @@ final class AppModel {
     /// What is wrong in every changed file, not only the open one: a schema
     /// set's check covers one file, and Submit waits for each of them.
     private(set) var changedProblems: [Problem] = []
+    /// Each gradient the app draws, by its name in the data, as its two colour stops.
+    private(set) var gradients: [String: [String]] = [:]
 
     /// Checks every changed file afresh.
     func checkChangedFiles() async {
@@ -223,6 +225,7 @@ final class AppModel {
             self.helper = helper
             // the list appears with the phase that enables it, so no row shows unclickable
             calendar = try await helper.calendar()
+            gradients = (try? await helper.gradients()) ?? [:]
             catalog = try await helper.datasets()
             records[chosenSet] = try await helper.records(set: chosenSet).records
             changedProblems = (try? await helper.check(files: try workspace.changedFiles())) ?? []

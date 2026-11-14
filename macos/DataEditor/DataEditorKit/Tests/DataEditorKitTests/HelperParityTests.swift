@@ -15,6 +15,7 @@ private let node = ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"]
 /// sets' calls, among them a contact edit Ajv refuses.
 private let steps: [(method: String, params: String)] = [
     ("calendar", "{}"),
+    ("gradients", "{}"),
     ("load", #"{"file":"building-hours/1-1-cage.yaml"}"#),
     ("load", #"{"file":"building-hours/not-a-building.yaml"}"#),
     ("build", "{}"),
@@ -142,9 +143,9 @@ struct HelperParityTests {
             #expect(files(in: URL(filePath: jsc)) == files(in: URL(filePath: node)))
         }
         // the steps meant to be refused were: the schema's and the overlap check's
-        #expect(nodeReplies[5].contains("problems") && !nodeReplies[5].contains(#""problems":[]"#))
-        #expect(nodeReplies[7].contains("problems") && !nodeReplies[7].contains(#""problems":[]"#))
+        #expect(nodeReplies[6].contains("problems") && !nodeReplies[6].contains(#""problems":[]"#))
+        #expect(nodeReplies[8].contains("problems") && !nodeReplies[8].contains(#""problems":[]"#))
         // and the contact without a phone number, which Ajv checks
-        #expect(nodeReplies[13].contains("Phone Number or Button Link is missing"))
+        #expect(nodeReplies[14].contains("Phone Number or Button Link is missing"))
     }
 }

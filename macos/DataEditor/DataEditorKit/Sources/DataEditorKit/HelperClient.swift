@@ -72,6 +72,8 @@ private struct BuildParams: Encodable, Sendable { let serving: String? }
 
 extension HelperClient {
     public func calendar() async throws -> BreakCalendar { try await call("calendar", NoParams()) }
+    /// Each gradient the app draws, by its name in the data, as its two `color(display-p3 …)` stops.
+    public func gradients() async throws -> [String: [String]] { try await call("gradients", NoParams()) }
     public func load(_ file: String) async throws -> Loaded { try await call("load", FileParams(file: file)) }
     public func edit(_ file: String, _ ops: [EditOp]) async throws -> Loaded { try await call("edit", EditParams(file: file, ops: ops)) }
     /// Builds into a new folder. `serving` is the build the app serves, which the helper keeps.
