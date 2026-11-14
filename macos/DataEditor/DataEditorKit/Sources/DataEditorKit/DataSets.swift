@@ -73,6 +73,9 @@ public struct DataSet: Decodable, Hashable, Sendable {
     public let path: String
     public let list: [PathKey]?
     public let schema: String?
+    /// The dotted fields a record's title and subtitle in the record list come from.
+    public let titleField: String?
+    public let subtitleField: String?
     public let sectionField: String?
     public let ordered: Bool
     public let form: Form
@@ -84,7 +87,7 @@ public struct DataSet: Decodable, Hashable, Sendable {
     public let stampOnSave: String?
 
     private enum CodingKeys: String, CodingKey {
-        case title, record, shape, path, list, schema, sectionField, ordered, form, scraped, generated
+        case title, record, shape, path, list, schema, titleField, subtitleField, sectionField, ordered, form, scraped, generated
         case readOnly, maintainedBy, steers, stampOnSave
     }
 
@@ -96,6 +99,8 @@ public struct DataSet: Decodable, Hashable, Sendable {
         path = try container.decode(String.self, forKey: .path)
         list = try container.decodeIfPresent([PathKey].self, forKey: .list)
         schema = try container.decodeIfPresent(String.self, forKey: .schema)
+        titleField = try container.decodeIfPresent(String.self, forKey: .titleField)
+        subtitleField = try container.decodeIfPresent(String.self, forKey: .subtitleField)
         sectionField = try container.decodeIfPresent(String.self, forKey: .sectionField)
         ordered = try container.decodeIfPresent(Bool.self, forKey: .ordered) ?? false
         form = try container.decodeIfPresent(Form.self, forKey: .form) ?? .generated

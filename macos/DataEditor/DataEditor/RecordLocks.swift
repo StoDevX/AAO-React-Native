@@ -47,6 +47,27 @@ extension AppModel {
         return set.ordered && set.shape == .folder || set.shape == .list
     }
 
+    /// Whether `ops` change what the record list shows of `set`: a record's
+    /// title, subtitle or section, or a whole record added or removed.
+    static func relists(after ops: [EditOp], in set: DataSet) -> Bool {
+        // where a record's own fields begin in its file
+        let depth = set.shape == .list ? (set.list?.count ?? 0) + 1 : 0
+        let shown = [set.titleField, set.subtitleField, set.sectionField].compactMap { $0?.split(separator: ".").first.map(String.init) }
+        return ops.contains { op in
+            guard op.path.count > depth, case .key(let field) = op.path[depth] else { return true }
+            return shown.contains(field)
+        }
+    }
+
+    /// The changed files' problems after an edit to `file` found `found` in it:
+    /// the others' as they were, and none for a file no longer changed.
+    static func problems(_ known: [Problem], after file: String, found: [Problem], changed: [String]) -> [Problem] {
+        var seen = Set<Problem>()
+        return (known.filter { $0.file != file } + found).filter { problem in
+            (problem.file.map(changed.contains) ?? true) && seen.insert(problem).inserted
+        }
+    }
+
     /// Whether `file` is data the helper reads, rather than a prose document edited as text.
     static func loadsAsData(_ file: String, catalog: DataSetCatalog?) -> Bool {
         guard let set = catalog?.set(for: file) else { return true }

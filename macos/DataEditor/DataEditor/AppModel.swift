@@ -419,8 +419,15 @@ final class AppModel {
             problems = edited.problems
         }
         // an edit may rename a record, as a contact's title does
-        if let set = catalog?.set(for: file), records[set] != nil { await loadRecords(set) }
-        await checkChangedFiles()
+        let set = catalog?.set(for: file)
+        let dataSet = set.flatMap { catalog?.sets[$0] }
+        if let set, let dataSet, records[set] != nil, Self.relists(after: ops, in: dataSet) { await loadRecords(set) }
+        // every building is checked against the break calendar; any other edit changes only its own file's problems
+        if dataSet?.form == .breaks {
+            await checkChangedFiles()
+        } else {
+            changedProblems = Self.problems(changedProblems, after: file, found: edited.problems, changed: changedFiles)
+        }
         if edited.problems.isEmpty {
             await builds.schedule { await self.rebuild() }
         }
