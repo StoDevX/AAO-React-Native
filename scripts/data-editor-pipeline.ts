@@ -25,14 +25,19 @@ type Key = string | number
 
 const keyOf = (text: string): Key => (/^\d+$/u.test(text) ? Number(text) : text)
 
+/** The keys a JSON pointer names, unescaped; an empty key is a map's key too, and `''` points at the whole file. */
+const pointerKeys = (pointer: string): string[] =>
+	pointer === ''
+		? []
+		: pointer
+				.slice(1)
+				.split('/')
+				.map((key) => key.replaceAll('~1', '/').replaceAll('~0', '~'))
+
 /** The keys in `/schedule/0/hours` (Ajv's pointers) or `.breakSchedule.fall[0]` (the schedule checks'). */
 export function keysOf(rest: string): Key[] {
 	if (rest.startsWith('/')) {
-		return rest
-			.slice(1)
-			.split('/')
-			.filter(Boolean)
-			.map((key) => keyOf(key.replaceAll('~1', '/').replaceAll('~0', '~')))
+		return pointerKeys(rest).map(keyOf)
 	}
 	return [...rest.matchAll(/\.([^.[\]]+)|\[(\d+)\]/gu)].map((match) =>
 		match[1] !== undefined ? match[1] : Number(match[2]),
@@ -110,12 +115,7 @@ export function validate(dataDir: string, file: string): Problem[] {
 export function keysIn(data: unknown, pointer: string): Key[] {
 	let keys: Key[] = []
 	let value = data
-	let raw = pointer
-		.slice(1)
-		.split('/')
-		.filter(Boolean)
-		.map((key) => key.replaceAll('~1', '/').replaceAll('~0', '~'))
-	for (let key of raw) {
+	for (let key of pointerKeys(pointer)) {
 		let step = Array.isArray(value) ? Number(key) : key
 		keys.push(step)
 		value = (value as Record<string | number, unknown> | null)?.[step]

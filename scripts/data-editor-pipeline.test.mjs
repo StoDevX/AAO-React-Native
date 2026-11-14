@@ -47,6 +47,15 @@ describe('keysIn', () => {
 	it('reads an index into a list as a number', () => {
 		assert.deepEqual(keysIn({faqs: [{}, {title: 5}]}, '/faqs/1/title'), ['faqs', 1, 'title'])
 	})
+
+	it('keeps an empty map key', () => {
+		let data = {routes: {'': {line: 5}}}
+		assert.deepEqual(keysIn(data, '/routes//line'), ['routes', '', 'line'])
+	})
+
+	it('finds no keys in the pointer to the whole file', () => {
+		assert.deepEqual(keysIn({}, ''), [])
+	})
 })
 
 describe('problemsFrom', () => {
