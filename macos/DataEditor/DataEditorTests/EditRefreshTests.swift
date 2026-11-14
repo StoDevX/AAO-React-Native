@@ -38,6 +38,13 @@ struct EditRefreshTests {
         #expect(AppModel.relists(after: [.delete(["faqs", 2])], in: set("faqs")))
     }
 
+    @Test func aFieldShowsOnlyItsOwnProblems() {
+        let phone = Problem(file: "a.yaml", message: "Phone Number should be a 10-digit phone number", path: ["phoneNumber"])
+        let record = Problem(file: "a.yaml", message: "Phone Number or Button Link is missing", path: [])
+        let link = Problem(file: "a.yaml", message: "Address is not in the expected form", path: ["links", 0, "url"])
+        #expect(AppModel.fieldProblems(at: ["phoneNumber"], among: [phone, record, link]) == [phone])
+    }
+
     @Test func anEditReplacesOnlyItsOwnFilesProblems() {
         let other = Problem(file: "b.yaml", message: "Title is missing", path: [])
         let old = Problem(file: "a.yaml", message: "Phone Number or Button Link is missing", path: [])

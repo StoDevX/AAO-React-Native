@@ -61,6 +61,21 @@ final class RecordFormUITests: XCTestCase {
         attachScreenshot(of: window, named: "The Express's schedule open, every timetable row expanded")
     }
 
+    /// A field's problem shows under the field, and in the list at the top too.
+    func testAFieldsProblemShowsBesideIt() throws {
+        let app = try launchWithRepoData(opening: "contact-info:contact-info/1-1-pubsafe.yaml").app
+        let window = currentChanges(in: app)
+        let phone = window.textFields["field-phoneNumber"]
+        XCTAssertTrue(phone.waitForExistence(timeout: 10))
+        phone.click()
+        phone.typeKey("a", modifierFlags: .command)
+        phone.typeText("12\r")
+        let problem = window.staticTexts["problem-field-phoneNumber"]
+        XCTAssertTrue(problem.waitForExistence(timeout: 10))
+        XCTAssertEqual(problem.value as? String, "Phone Number should be a 10-digit phone number")
+        attachScreenshot(of: window, named: "PubSafe's phone number with its problem beside it")
+    }
+
     /// Clicks on a group's title, past the chevron before it.
     private func clickTitle(of group: XCUIElement) {
         group.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0.5)).withOffset(CGVector(dx: 40, dy: 0)).click()

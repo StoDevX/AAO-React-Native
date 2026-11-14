@@ -550,6 +550,11 @@ final class AppModel {
     /// file's problems show on the Overview, not in this file's editor.
     var shownProblems: [Problem] { plainProblems(Self.editorProblems(of: documentFile, open: problems, build: buildProblems)) }
 
+    /// The problems at exactly `path`, which the field there shows beside itself.
+    static func fieldProblems(at path: [PathKey], among problems: [Problem]) -> [Problem] {
+        problems.filter { $0.path == path }
+    }
+
     /// The problems an editor of `file` shows: its own, from the last check
     /// and the last build, each once. A check walks the whole schedule graph,
     /// so it reports other files' problems too, which the Overview lists.

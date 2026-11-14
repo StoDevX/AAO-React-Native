@@ -24,6 +24,22 @@ private func identifier(_ path: [PathKey], below recordPath: [PathKey]) -> Strin
     "field-" + path.dropFirst(recordPath.count).map(\.description).joined(separator: ".")
 }
 
+/// The problems at `path`, under its field, as the contributor works.
+private struct FieldProblems: View {
+    @Environment(AppModel.self) private var model
+    let path: [PathKey]
+    let recordPath: [PathKey]
+
+    var body: some View {
+        ForEach(Array(AppModel.fieldProblems(at: path, among: model.shownProblems).enumerated()), id: \.offset) { _, problem in
+            Text(problem.message)
+                .font(.caption)
+                .foregroundStyle(.red)
+                .accessibilityIdentifier("problem-" + identifier(path, below: recordPath))
+        }
+    }
+}
+
 /// The value a text field's `text` saves as, for a field of `kind`.
 private func saved(_ text: String, as kind: FieldKind) -> JSONValue? {
     if text.isEmpty { return nil }
@@ -107,6 +123,7 @@ private struct ScalarField: View {
             if kind == .markdown, let text = value?.fieldText, !text.isEmpty, let rendered = try? AttributedString(markdown: text) {
                 Text(rendered).font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
             }
+            FieldProblems(path: path, recordPath: recordPath)
             if let help { Text(help).font(.caption).foregroundStyle(.secondary) }
         }
     }
