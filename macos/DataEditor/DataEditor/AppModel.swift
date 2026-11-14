@@ -582,11 +582,20 @@ final class AppModel {
         await afterFilesChanged()
     }
 
+    /// The files among `files` Suggest can describe: hours files, which its
+    /// wording and its model's instructions are made for.
+    static func describable(_ files: [String], catalog: DataSetCatalog?) -> [String] {
+        files.filter { file in catalog?.set(for: file).flatMap { catalog?.sets[$0]?.form } == .hours }
+    }
+
+    /// The changed files Suggest can describe.
+    var describableFiles: [String] { Self.describable(changedFiles, catalog: catalog) }
+
     /// Each changed building with what changed in it, in words, for Suggest.
     func changeDescriptions() async -> [ChangedFile] {
         guard let helper else { return [] }
         var files: [ChangedFile] = []
-        for file in changedFiles {
+        for file in describableFiles {
             // a file the contributor deleted has nothing to describe
             guard let now = try? await helper.load(file).value else { continue }
             var before: HoursDocument?
