@@ -61,8 +61,10 @@ struct StreamingMediaScreen: Screen {
 	func declineReminderSheetLeavingBellOff() -> Self {
 		let ids = TestIdentifiers.StreamingMedia.self
 		let bell = app.element(matching: ids.kmnkShowBell)
-		app.buttonLabelled(ids.reminderSheetNotNow).tap()
-		checkGone(app.elementWithLabel(startingWith: ids.reminderSheetTitle), named: "The reminder sheet")
+		tap(
+			app.buttonLabelled(ids.reminderSheetNotNow),
+			untilGone: app.elementWithLabel(startingWith: ids.reminderSheetTitle),
+			named: "The reminder sheet's Not Now")
 		XCTAssertTrue(
 			bell.waitForLabel(ids.notRemindingLabel, timeout: 10),
 			"\(ids.kmnkShow)'s bell should not claim reminders that cannot arrive",
