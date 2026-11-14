@@ -486,7 +486,8 @@ final class AppModel {
                 ?? (held == expected ? op.path : nil) else {
                 if file == selection { await select(file) }
                 let typed = op.value?.fieldText ?? ""
-                draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because its schedule changed while you typed.", path: op.path))
+                let changed = schedule == nil ? "the field" : "its schedule"
+                draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because \(changed) changed while you typed.", path: op.path))
                 return .letGo(current: held)
             }
             if await apply([op.moved(to: target)], to: file) {
@@ -812,19 +813,19 @@ final class AppModel {
 
     /// Text typed into a document that would not save as its editor closed,
     /// by file, given back when the document opens again.
-    private var keptDocuments: [String: String] = [:]
+    private var keptDocuments: [String: KeptDocument] = [:]
 
     /// Saves a document's text as its editor closes. Text that will not save,
     /// as the file changed since it was read, is kept for the editor to give
     /// back, and a notice says so.
     func leaveDocument(_ file: String, text: String, expected: String) async {
         guard text != expected, await !writeText(file, text, expected: expected) else { return }
-        keptDocuments[file] = text
+        keptDocuments[file] = KeptDocument(text: text, readAs: expected)
         draftNotices.append(Problem(file: file, message: "Your changes to \(name(of: file)) weren't saved because it changed while you typed. They're back when you open it.", path: nil))
     }
 
     /// The text kept for `file` when its editor last closed, if any, which is then let go.
-    func takeKeptDocument(_ file: String) -> String? { keptDocuments.removeValue(forKey: file) }
+    func takeKeptDocument(_ file: String) -> KeptDocument? { keptDocuments.removeValue(forKey: file) }
 
     /// What a contributor calls `file`. See `recordName(of:catalog:records:)`.
     func name(of file: String) -> String { recordName(of: file, catalog: catalog, records: records) }

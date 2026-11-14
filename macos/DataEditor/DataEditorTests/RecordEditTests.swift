@@ -32,6 +32,15 @@ struct RecordEditTests {
         #expect(stamped >= before.addingTimeInterval(-1))
     }
 
+    /// A field outside the hours editor has no schedule to blame.
+    @Test func aDraftLetGoOutsideASchedulesSaysTheFieldChanged() async throws {
+        let (model, _) = try await modelOnRepoData()
+        let outcome = await model.applyDraft(.set(["faqs", 0, "question"], .string("Where?")), to: "faqs.yaml",
+                                             replacing: "not what it holds", schedule: nil)
+        guard case .letGo = outcome else { Issue.record("the draft was \(outcome)"); return }
+        #expect(model.draftNotices.map(\.message) == ["“Where?” wasn't saved because the field changed while you typed."])
+    }
+
     /// Every FAQ is in faqs.yaml, so the new one's file is the file already open.
     @Test func aNewRecordInTheOpenFileShowsInItsForm() async throws {
         let (model, _) = try await modelOnRepoData()
@@ -86,8 +95,20 @@ struct RecordEditTests {
         let text = try #require(await model.readText("privacy.md"))
         await model.leaveDocument("privacy.md", text: text + "\nOne more line.\n", expected: "what it held before")
         #expect(model.draftNotices.map(\.file) == ["privacy.md"])
-        #expect(model.takeKeptDocument("privacy.md") == text + "\nOne more line.\n")
+        #expect(model.takeKeptDocument("privacy.md")
+            == KeptDocument(text: text + "\nOne more line.\n", readAs: "what it held before"))
         #expect(model.takeKeptDocument("privacy.md") == nil)
+    }
+
+    /// Kept text saved against the file it was typed over, not the file as it is now,
+    /// is refused, so a change the file had meanwhile is never written over unseen.
+    @Test func keptTextDoesNotSaveOverTheFilesNewerChange() async throws {
+        let (model, _) = try await modelOnRepoData()
+        let text = try #require(await model.readText("privacy.md"))
+        await model.leaveDocument("privacy.md", text: text + "\nOne more line.\n", expected: "what it held before")
+        let kept = try #require(model.takeKeptDocument("privacy.md"))
+        #expect(await !model.writeText("privacy.md", kept.text, expected: kept.readAs))
+        #expect(await model.readText("privacy.md") == text)
     }
 
     @Test func aDocumentsTextThatSavesIsNotKept() async throws {
