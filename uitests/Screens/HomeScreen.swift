@@ -65,8 +65,15 @@ struct HomeScreen: Screen {
 			if item.waitUntilExists(timeout: 5) { break }
 		}
 		XCTAssertTrue(item.exists, "Long-pressing Home's notice should offer \"Enable dev mode\"")
-		item.tap()
-		XCTAssertTrue(item.waitUntilGone(timeout: 10), "The menu should close once dev mode is on")
+		// The tap does not wait for the menu to finish appearing (see
+		// AnimationIdleWait.swift), and a tap that lands while it is still
+		// animating in is dropped. So wait for the item to take taps, and tap
+		// again if the menu is still up.
+		for _ in 1...3 {
+			if item.waitForHittable(timeout: 10) { item.tap() }
+			if item.waitUntilGone(timeout: 5) { break }
+		}
+		XCTAssertFalse(item.exists, "The menu should close once dev mode is on")
 		return self
 	}
 }
