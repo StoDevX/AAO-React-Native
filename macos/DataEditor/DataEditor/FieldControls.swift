@@ -134,10 +134,74 @@ private struct ScalarField: View {
     }
 }
 
+/// How a list item or map entry is drawn: a group, list or map opens to show
+/// its own fields, and anything else is one field.
+enum ItemControl {
+    case group([FormField])
+    case list(item: FieldKind, itemTitle: String)
+    case map(value: FieldKind)
+    case field
+
+    init(_ kind: FieldKind) {
+        switch kind {
+        case .object(let fields): self = .group(fields)
+        case .list(let item, let itemTitle): self = .list(item: item, itemTitle: itemTitle)
+        case .map(let value): self = .map(value: value)
+        default: self = .field
+        }
+    }
+}
+
+/// One list item or map entry, drawn by its kind: a group, list or map opens to show its own fields.
+private struct ItemField: View {
+    let title: String
+    let kind: FieldKind
+    let path: [PathKey]
+    let value: JSONValue?
+    let file: String
+    let recordPath: [PathKey]
+
+    var body: some View {
+        switch ItemControl(kind) {
+        case .group(let fields):
+            DisclosureGroup(title) {
+                FieldRows(fields: fields, base: path, value: value, file: file, recordPath: recordPath)
+            }
+        case .list(let item, let itemTitle):
+            DisclosureGroup(title) {
+                ListItems(item: item, itemTitle: itemTitle, path: path, items: value?.array ?? [], file: file, recordPath: recordPath)
+            }
+        case .map(let valueKind):
+            DisclosureGroup(title) {
+                MapEntries(valueKind: valueKind, path: path, entries: value, file: file, recordPath: recordPath)
+            }
+        case .field:
+            ScalarField(title: title, help: nil, kind: kind, path: path, value: value,
+                        required: true, file: file, recordPath: recordPath)
+        }
+    }
+}
+
 /// A list of values or groups, each removable and movable, with a button to add one.
 private struct ListField: View {
-    @Environment(AppModel.self) private var model
     let title: String
+    let item: FieldKind
+    let itemTitle: String
+    let path: [PathKey]
+    let items: [JSONValue]
+    let file: String
+    let recordPath: [PathKey]
+
+    var body: some View {
+        Section(title) {
+            ListItems(item: item, itemTitle: itemTitle, path: path, items: items, file: file, recordPath: recordPath)
+        }
+    }
+}
+
+/// A list's items and its Add button.
+private struct ListItems: View {
+    @Environment(AppModel.self) private var model
     let item: FieldKind
     let itemTitle: String
     let path: [PathKey]
@@ -155,44 +219,51 @@ private struct ListField: View {
     }
 
     var body: some View {
-        Section(title) {
-            ForEach(Array(items.enumerated()), id: \.offset) { index, value in
-                let itemPath = path + [.index(index)]
-                HStack(alignment: .top) {
-                    if case .object(let fields) = item {
-                        DisclosureGroup("\(itemTitle) \(index + 1)") {
-                            FieldRows(fields: fields, base: itemPath, value: value, file: file, recordPath: recordPath)
-                        }
-                    } else {
-                        ScalarField(title: "\(itemTitle) \(index + 1)", help: nil, kind: item, path: itemPath, value: value,
-                                    required: true, file: file, recordPath: recordPath)
-                    }
-                    Spacer()
-                    Button("Move Up", systemImage: "arrow.up") { move(index, by: -1) }
-                        .labelStyle(.iconOnly).disabled(index == 0)
-                    Button("Move Down", systemImage: "arrow.down") { move(index, by: 1) }
-                        .labelStyle(.iconOnly).disabled(index == items.count - 1)
-                    Button("Remove \(itemTitle) \(index + 1)", systemImage: "minus.circle", role: .destructive) {
-                        if !isRepeatClick() { apply([.delete(itemPath)]) }
-                    }
-                    .labelStyle(.iconOnly)
+        // each of these edits names an item by its place, which the edit in flight may move
+        let editing = model.edits.isShown
+        ForEach(Array(items.enumerated()), id: \.offset) { index, value in
+            HStack(alignment: .top) {
+                ItemField(title: "\(itemTitle) \(index + 1)", kind: item, path: path + [.index(index)], value: value,
+                          file: file, recordPath: recordPath)
+                Spacer()
+                Button("Move Up", systemImage: "arrow.up") { move(index, by: -1) }
+                    .labelStyle(.iconOnly).disabled(editing || index == 0)
+                Button("Move Down", systemImage: "arrow.down") { move(index, by: 1) }
+                    .labelStyle(.iconOnly).disabled(editing || index == items.count - 1)
+                Button("Remove \(itemTitle) \(index + 1)", systemImage: "minus.circle", role: .destructive) {
+                    if !isRepeatClick() { apply([.delete(path + [.index(index)])]) }
                 }
-                .buttonStyle(.borderless)
+                .labelStyle(.iconOnly).disabled(editing)
             }
-            Button("Add \(itemTitle)", systemImage: "plus") {
-                apply([.set(path + [.index(items.count)], starting(item))])
-            }
-            .accessibilityIdentifier("add-" + identifier(path, below: recordPath))
-            // each of these edits names an item by its place, which the edit in flight may move
-            .disabled(model.edits.isShown)
+            .buttonStyle(.borderless)
         }
+        Button("Add \(itemTitle)", systemImage: "plus") {
+            apply([.set(path + [.index(items.count)], starting(item))])
+        }
+        .accessibilityIdentifier("add-" + identifier(path, below: recordPath))
+        .disabled(editing)
     }
 }
 
 /// Entries keyed by a name the contributor writes, such as a meal's name and the section it goes in.
 private struct MapField: View {
-    @Environment(AppModel.self) private var model
     let title: String
+    let valueKind: FieldKind
+    let path: [PathKey]
+    let entries: JSONValue?
+    let file: String
+    let recordPath: [PathKey]
+
+    var body: some View {
+        Section(title) {
+            MapEntries(valueKind: valueKind, path: path, entries: entries, file: file, recordPath: recordPath)
+        }
+    }
+}
+
+/// A map's entries and the field that adds one.
+private struct MapEntries: View {
+    @Environment(AppModel.self) private var model
     let valueKind: FieldKind
     let path: [PathKey]
     let entries: JSONValue?
@@ -206,34 +277,26 @@ private struct MapField: View {
     }
 
     var body: some View {
-        Section(title) {
-            ForEach(keys, id: \.self) { key in
-                HStack(alignment: .top) {
-                    if case .object(let fields) = valueKind {
-                        DisclosureGroup(key) {
-                            FieldRows(fields: fields, base: path + [.key(key)], value: entries?[key], file: file, recordPath: recordPath)
-                        }
-                    } else {
-                        ScalarField(title: key, help: nil, kind: valueKind, path: path + [.key(key)], value: entries?[key],
-                                    required: true, file: file, recordPath: recordPath)
-                    }
-                    Button("Remove \(key)", systemImage: "minus.circle", role: .destructive) {
-                        Task { await model.apply([.delete(path + [.key(key)])], to: file) }
-                    }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.borderless)
+        ForEach(keys, id: \.self) { key in
+            HStack(alignment: .top) {
+                ItemField(title: key, kind: valueKind, path: path + [.key(key)], value: entries?[key],
+                          file: file, recordPath: recordPath)
+                Button("Remove \(key)", systemImage: "minus.circle", role: .destructive) {
+                    Task { await model.apply([.delete(path + [.key(key)])], to: file) }
                 }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
             }
-            HStack {
-                TextField("New name", text: $newName)
-                Button("Add", systemImage: "plus") {
-                    let name = newName.trimmingCharacters(in: .whitespaces)
-                    guard !name.isEmpty, !keys.contains(name) else { return }
-                    newName = ""
-                    Task { await model.apply([.set(path + [.key(name)], starting(valueKind))], to: file) }
-                }
-                .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+        HStack {
+            TextField("New name", text: $newName)
+            Button("Add", systemImage: "plus") {
+                let name = newName.trimmingCharacters(in: .whitespaces)
+                guard !name.isEmpty, !keys.contains(name) else { return }
+                newName = ""
+                Task { await model.apply([.set(path + [.key(name)], starting(valueKind))], to: file) }
             }
+            .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
     }
 }
