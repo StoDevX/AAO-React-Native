@@ -14,11 +14,11 @@ extension XCTestCase {
     /// scrape owns and the editor therefore locks. They test the hours editor,
     /// not that lock, so the workspace's catalog drops the scrape's claim
     /// unless `keepsScrapes` asks for it.
-    @MainActor
     ///
     /// `opening` is a data set, or a record as `set:file` (`theCage`), that
     /// the app opens in Current changes once it is ready, so a test about a
     /// record begins on it rather than clicking its way there.
+    @MainActor
     func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil, keepsScrapes: Bool = false,
                             opening: String? = nil, arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
