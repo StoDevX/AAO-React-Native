@@ -7,7 +7,8 @@ import {load} from 'js-yaml'
 import {isDataEntry} from './data-entries.mjs'
 import {createValidator} from './validate.mjs'
 
-const readYaml = (filename) => load(readFileSync(filename, 'utf8'), {filename})
+/** The YAML file `filename`, parsed. */
+export const readYaml = (filename) => load(readFileSync(filename, 'utf8'), {filename})
 
 const fileOrder = new Intl.Collator(undefined, {numeric: true}).compare
 
@@ -52,7 +53,7 @@ function described(catalog, name) {
 }
 
 /** The array or map of records at the set's `list` path. */
-const listIn = (value, set) => set.list.reduce((inner, key) => inner?.[key], value)
+export const listIn = (value, set) => set.list.reduce((inner, key) => inner?.[key], value)
 
 /**
  * Every record in the set `name`: for a folder, one per file in published

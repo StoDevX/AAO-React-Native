@@ -1,19 +1,14 @@
 import {spawn} from 'node:child_process'
-import {existsSync, readFileSync, readdirSync} from 'node:fs'
+import {existsSync} from 'node:fs'
 import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
-import {load} from 'js-yaml'
-import {isDataEntry} from './data-entries.mjs'
-import {fileSchema, loadCatalog, setForFile} from './data-editor-datasets.mjs'
+import {fileSchema, loadCatalog, readYaml, setForFile} from './data-editor-datasets.mjs'
 import {pointerKeys, wordProblems} from './data-editor-wording.mjs'
 import {createValidator} from './validate.mjs'
-import {hoursFileOrder, loadScheduleData} from './schedule-data.ts'
+import {loadScheduleData} from './schedule-data.ts'
 
 /** Something wrong with the data, at a path inside `file` when the message names one. */
 export type Problem = {file: string | null; message: string; path: (string | number)[] | null}
-
-/** An hours file as the editor's sidebar lists it. */
-export type Building = {file: string; name: string; category: string}
 
 /** The break calendar as the break-schedule editor offers it. */
 export type Calendar = {
@@ -114,29 +109,11 @@ export function keysIn(data: unknown, pointer: string): Key[] {
 	return keys
 }
 
-const readYaml = (filename: string): unknown => load(readFileSync(filename, 'utf8'), {filename})
-
 const text = (value: unknown, fallback: string): string =>
 	typeof value === 'string' ? value : fallback
 
 const asRecord = (value: unknown): Record<string, unknown> =>
 	typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {}
-
-/** Every hours file, in the order the data is published in. */
-export function listBuildings(dataDir: string): Building[] {
-	let dir = path.join(dataDir, 'building-hours')
-	return readdirSync(dir)
-		.filter(isDataEntry)
-		.sort(hoursFileOrder)
-		.map((entry) => {
-			let data = asRecord(readYaml(path.join(dir, entry)))
-			return {
-				file: path.join('building-hours', entry),
-				name: text(data['name'], entry),
-				category: text(data['category'], ''),
-			}
-		})
-}
 
 /** The breaks in `breaks.yaml` and the templates a building may name. */
 export function readCalendar(dataDir: string): Calendar {

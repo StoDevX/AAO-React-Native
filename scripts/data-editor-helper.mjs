@@ -10,7 +10,7 @@ import {parse} from 'yaml'
 import {listRecords, loadCatalog, recordSchema} from './data-editor-datasets.mjs'
 import {DocumentStore} from './data-editor-documents.mjs'
 import {createRecord, removeRecord, reorderRecords} from './data-editor-records.mjs'
-import {build, listBuildings, pruneBuilds, readCalendar, validate} from './data-editor-pipeline.ts'
+import {build, pruneBuilds, readCalendar, validate} from './data-editor-pipeline.ts'
 import {serve} from './data-editor-serve.mjs'
 
 /**
@@ -27,7 +27,6 @@ export function createHandlers({dataDir, outDir, bundleData}) {
 	/** The folder of the newest good build, which the server serves. */
 	let current
 	return {
-		list: () => listBuildings(dataDir),
 		calendar: () => readCalendar(dataDir),
 		load: async ({file}) => ({value: await store.load(file), problems: validate(dataDir, file)}),
 		edit: async ({file, ops}) => ({

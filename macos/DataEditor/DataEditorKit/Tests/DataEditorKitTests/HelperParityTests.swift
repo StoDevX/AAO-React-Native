@@ -14,7 +14,6 @@ private let node = ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"]
 /// refuses, a file that is not there, and builds between them; then the data
 /// sets' calls, among them a contact edit Ajv refuses.
 private let steps: [(method: String, params: String)] = [
-    ("list", "{}"),
     ("calendar", "{}"),
     ("load", #"{"file":"building-hours/1-1-cage.yaml"}"#),
     ("load", #"{"file":"building-hours/not-a-building.yaml"}"#),

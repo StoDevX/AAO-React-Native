@@ -140,14 +140,14 @@ describe('the helper process', () => {
 		// a failed assertion must not leave the helper waiting on stdin
 		t.after(() => child.kill())
 		let lines = createInterface({input: child.stdout})[Symbol.asyncIterator]()
-		child.stdin.write('{"id":1,"method":"list"}\n{"id":2,"method":"calendar"}\n')
+		child.stdin.write('{"id":1,"method":"calendar"}\n{"id":2,"method":"datasets"}\n')
 		let first = JSON.parse((await lines.next()).value)
 		let second = JSON.parse((await lines.next()).value)
 		child.stdin.end()
 		assert.equal(first.id, 1)
-		assert.ok(first.result.length > 10)
+		assert.ok(Array.isArray(first.result.breaks))
 		assert.equal(second.id, 2)
-		assert.ok(Array.isArray(second.result.breaks))
+		assert.ok(second.result.sets['contact-info'])
 	})
 })
 

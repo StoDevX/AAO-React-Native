@@ -9,14 +9,12 @@ import {
 	keysIn,
 	keysOf,
 	lastError,
-	listBuildings,
 	problemsFrom,
 	pruneBuilds,
 	readCalendar,
 	validate,
 } from './data-editor-pipeline.ts'
 import {scratchData} from './data-editor-test-support.mjs'
-import {loadScheduleData} from './schedule-data.ts'
 
 describe('keysOf', () => {
 	it('reads a JSON pointer', () => {
@@ -188,36 +186,6 @@ describe('validate, for a data set with a generated form', () => {
 	it('finds nothing to check in a file no set describes', async () => {
 		let {dataDir} = await scratchData()
 		assert.deepEqual(validate(dataDir, 'news-styles.css'), [])
-	})
-})
-
-describe('listBuildings', () => {
-	it('lists every hours file with its name and category', () => {
-		let buildings = listBuildings(DATA_BASE)
-		assert.ok(
-			buildings.some(
-				(b) =>
-					b.file === 'building-hours/1-1-cage.yaml' &&
-					b.name === 'The Cage' &&
-					b.category === 'Food',
-			),
-		)
-	})
-
-	// the phone app lists the buildings in the order the published data holds them
-	it('lists them in the order bundle-data publishes them', () => {
-		let published = loadScheduleData(DATA_BASE).spaces.map(({label}) =>
-			path.relative(DATA_BASE, label),
-		)
-		assert.deepEqual(
-			listBuildings(DATA_BASE).map((b) => b.file),
-			published,
-		)
-		// numbered prefixes count, so 10- follows 8-
-		assert.ok(
-			published.indexOf('building-hours/10-osa.yaml') >
-				published.indexOf('building-hours/8-toh.yaml'),
-		)
 	})
 })
 

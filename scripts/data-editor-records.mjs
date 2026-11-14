@@ -2,10 +2,8 @@
 // editor. A contributor names a record; the file names, numeric prefixes and
 // list positions that follow from that are worked out here.
 
-import {readFileSync} from 'node:fs'
 import path from 'node:path'
-import {load} from 'js-yaml'
-import {listRecords, loadCatalog} from './data-editor-datasets.mjs'
+import {listIn, listRecords, loadCatalog, readYaml} from './data-editor-datasets.mjs'
 import {DocumentStore} from './data-editor-documents.mjs'
 import {validate} from './data-editor-pipeline.ts'
 
@@ -33,10 +31,9 @@ export function slugFor(title, taken) {
 
 /**
  * The names `names` take in the order given. A folder whose every name has a
- * two-part prefix (`1-2-pubsafe.yaml`) is sectioned: its sections, by
- * `sections` (each name's section as the list shows it) or else by the first
- * number, take the order they first appear in, and the records number from 1
- * within each. Otherwise records number from 1 in order, and only a one-part
+ * two-part prefix (`1-2-pubsafe.yaml`) is sectioned: its sections, given
+ * by `sections` (each name's section as the list shows it), take the order
+ * they first appear in, and the records number from 1 within each. Otherwise records number from 1 in order, and only a one-part
  * prefix is replaced, so a title beginning with digits keeps them. A name
  * without a prefix keeps its name.
  */
@@ -50,9 +47,8 @@ export function orderedNames(names, sections = []) {
 			return one ? `${index + 1}-${name.slice(one[0].length)}` : name
 		}
 		let match = PREFIX.exec(name)
-		let key = sections[index] ?? match[1]
-		if (!numbers.has(key)) numbers.set(key, numbers.size + 1)
-		let section = numbers.get(key)
+		if (!numbers.has(sections[index])) numbers.set(sections[index], numbers.size + 1)
+		let section = numbers.get(sections[index])
 		let count = (counts.get(section) ?? 0) + 1
 		counts.set(section, count)
 		return `${section}-${count}-${name.slice(match[0].length)}`
@@ -84,8 +80,6 @@ function withField(value, field, text) {
 	inner[keys.at(-1)] = text
 	return value
 }
-
-const readYaml = (filename) => load(readFileSync(filename, 'utf8'))
 
 /** The set's records and what is wrong with `files`, as every operation replies. */
 function reply(dataDir, catalog, name, files) {
@@ -137,7 +131,7 @@ export async function createRecord(dataDir, name, {title, section}) {
 		return {...result, created: result.records.find((record) => record.file === file)}
 	}
 	if (set.shape === 'list') {
-		let list = set.list.reduce((inner, key) => inner?.[key], readYaml(path.join(dataDir, set.path)))
+		let list = listIn(readYaml(path.join(dataDir, set.path)), set)
 		let key = Array.isArray(list) ? list.length : slugFor(title, new Set(Object.keys(list ?? {})))
 		let recordPath = [...set.list, key]
 		await store.edit(set.path, [{path: recordPath, value}])

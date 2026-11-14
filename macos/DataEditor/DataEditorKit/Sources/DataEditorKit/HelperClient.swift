@@ -28,20 +28,6 @@ public struct HelperClient: Sendable {
     }
 }
 
-/// An hours file as the sidebar lists it.
-public struct BuildingSummary: Decodable, Hashable, Sendable, Identifiable {
-    public let file: String
-    public let name: String
-    public let category: String
-    public var id: String { file }
-
-    public init(file: String, name: String, category: String) {
-        self.file = file
-        self.name = name
-        self.category = category
-    }
-}
-
 /// The breaks a building may give its own hours for, and the templates it may name.
 public struct BreakCalendar: Decodable, Hashable, Sendable {
     public struct Break: Decodable, Hashable, Sendable, Identifiable {
@@ -85,7 +71,6 @@ private struct TextParams: Encodable, Sendable { let text: String }
 private struct BuildParams: Encodable, Sendable { let serving: String? }
 
 extension HelperClient {
-    public func buildings() async throws -> [BuildingSummary] { try await call("list", NoParams()) }
     public func calendar() async throws -> BreakCalendar { try await call("calendar", NoParams()) }
     public func load(_ file: String) async throws -> Loaded { try await call("load", FileParams(file: file)) }
     public func edit(_ file: String, _ ops: [EditOp]) async throws -> Loaded { try await call("edit", EditParams(file: file, ops: ops)) }
