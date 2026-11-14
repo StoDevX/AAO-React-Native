@@ -2,9 +2,14 @@ import {spawn} from 'node:child_process'
 import {existsSync} from 'node:fs'
 import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
-import {fileSchema, loadCatalog, readYaml, setForFile} from './data-editor-datasets.mjs'
+import {
+	compiledSchema,
+	fileSchema,
+	loadCatalog,
+	readYaml,
+	setForFile,
+} from './data-editor-datasets.mjs'
 import {pointerKeys, wordProblems} from './data-editor-wording.mjs'
-import {createValidator} from './validate.mjs'
 import {loadScheduleData} from './schedule-data.ts'
 
 /** Something wrong with the data, at a path inside `file` when the message names one. */
@@ -56,32 +61,34 @@ export function problemsFrom(error: unknown, dataDir: string): Problem[] {
 }
 
 /**
- * `file` checked as `mise run validate-data` checks it. An hours file or the
- * break calendar is checked against its schema and then the whole schedule
- * graph; any other file against the schema of the set that holds it, its
+ * `file` checked as `mise run validate-data` checks it. A file of a set
+ * whose form is hours or breaks is checked against its schema and then the
+ * whole schedule graph; any other file against the schema of the set that holds it, its
  * problems worded with the schema's field titles. A file no set holds, or one
  * without a schema, has nothing to check, nor has a file that is gone.
  */
 export function validate(dataDir: string, file: string): Problem[] {
 	// a record the contributor removed has nothing left to check
 	if (!existsSync(path.join(dataDir, file))) return []
-	if (file === 'breaks.yaml' || file.startsWith('building-hours/')) {
-		const kind = file === 'breaks.yaml' ? 'calendar' : 'space'
+	let catalog = loadCatalog(dataDir)
+	let name = setForFile(catalog, file)
+	if (name === undefined) return []
+	let {form, schema: schemaName} = catalog.sets[name]
+	if (form === 'hours' || form === 'breaks') {
 		try {
-			loadScheduleData(dataDir, {kind, filename: path.join(dataDir, file)})
+			loadScheduleData(dataDir, {
+				kind: form === 'breaks' ? 'calendar' : 'space',
+				filename: path.join(dataDir, file),
+			})
 			return []
 		} catch (error) {
 			return problemsFrom(error, dataDir)
 		}
 	}
-	let catalog = loadCatalog(dataDir)
-	let name = setForFile(catalog, file)
-	let schemaName = name === undefined ? undefined : catalog.sets[name].schema
-	if (name === undefined || schemaName === undefined) return []
-	let schemaDir = path.join(dataDir, '_schemas')
-	let check = createValidator(schemaDir, {allErrors: true}).compile(
-		readYaml(path.join(schemaDir, `${schemaName}.yaml`)) as object,
-	)
+	if (schemaName === undefined) return []
+	let check = compiledSchema(path.join(dataDir, '_schemas'), `${schemaName}.yaml`, {
+		allErrors: true,
+	})
 	let data = readYaml(path.join(dataDir, file))
 	if (check(data)) return []
 	return wordProblems(check.errors, fileSchema(dataDir, catalog, name)).map(

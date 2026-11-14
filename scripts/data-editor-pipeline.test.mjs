@@ -153,6 +153,20 @@ describe('validate, for a data set with a generated form', () => {
 		])
 	})
 
+	it('checks against a schema edited since the last check', async () => {
+		let {dataDir} = await scratchData()
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [])
+		let schema = path.join(dataDir, '_schemas/contact-info.yaml')
+		await writeFile(
+			schema,
+			(await readFile(schema, 'utf8')).replace('required: [title,', 'required: [hours, title,'),
+		)
+		assert.deepEqual(
+			validate(dataDir, 'contact-info/1-1-pubsafe.yaml').map((problem) => problem.message),
+			['hours is missing'],
+		)
+	})
+
 	it('places a problem in the scrape overrides', async () => {
 		let {dataDir} = await scratchData()
 		let file = path.join(dataDir, '_scrapes/bonapp-overrides.yaml')

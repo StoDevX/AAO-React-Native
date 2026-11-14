@@ -24,6 +24,28 @@ const fileOrder = new Intl.Collator(undefined, {numeric: true}).compare
  * @typedef {{groups: {title: string, sets: string[]}[], sets: Record<string, DataSet>}} Catalog
  */
 
+/** Each schema compiled, with the texts it was compiled from, by its folder, file and options. */
+const compiled = new Map()
+
+/**
+ * The schema `file` in `schemaDir`, compiled. Compiling is slow and every
+ * edit checks its file, so a schema is compiled again only when it, or a
+ * file of definitions it may refer to, has changed.
+ */
+export function compiledSchema(schemaDir, file, options = {}) {
+	let texts = [file, '_defs.yaml', '_schedules.yaml'].map((name) =>
+		readFileSync(path.join(schemaDir, name), 'utf8'),
+	)
+	let key = JSON.stringify([schemaDir, file, options])
+	let known = compiled.get(key)
+	if (known?.texts.every((text, index) => text === texts[index])) return known.check
+	let check = createValidator(schemaDir, options).compile(
+		load(texts[0], {filename: path.join(schemaDir, file)}),
+	)
+	compiled.set(key, {texts, check})
+	return check
+}
+
 /**
  * `dataDir`'s catalog, checked against its schema. Throws naming the first problem.
  * @param {string} dataDir
@@ -31,8 +53,7 @@ const fileOrder = new Intl.Collator(undefined, {numeric: true}).compare
  */
 export function loadCatalog(dataDir) {
 	let catalog = readYaml(path.join(dataDir, '_datasets.yaml'))
-	let schemaDir = path.join(dataDir, '_schemas')
-	let check = createValidator(schemaDir).compile(readYaml(path.join(schemaDir, '_datasets.yaml')))
+	let check = compiledSchema(path.join(dataDir, '_schemas'), '_datasets.yaml')
 	if (!check(catalog)) {
 		let [error] = check.errors
 		throw new Error(`_datasets.yaml${error.instancePath}: ${error.message}`)
