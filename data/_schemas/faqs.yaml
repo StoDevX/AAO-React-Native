@@ -29,6 +29,7 @@ definitions:
       # The screens whose banner shows this FAQ.
       targets:
         type: array
+        uniqueItems: true
         items: {type: string, minLength: 1}
         title: Targets
       severity: {enum: [notice, info, alert], title: Severity}

@@ -39,10 +39,54 @@ struct FormFieldsTests {
         let kinds = Dictionary(uniqueKeysWithValues: try fields().map { ($0.key, $0.kind) })
         #expect(kinds["text"] == .markdown)
         #expect(kinds["icon"] == .symbol)
-        #expect(kinds["gradient"] == .gradient)
+        #expect(kinds["gradient"] == .gradient(names: []))
         #expect(kinds["category"] == .choice(["Safety", "Wellness"]))
         #expect(kinds["hidden"] == .toggle)
         #expect(kinds["dayparts"] == .map(value: .text))
+    }
+
+    /// The kind of a lone field whose schema is `json`.
+    private func kind(_ json: String) throws -> FieldKind {
+        let property = try JSONDecoder().decode(JSONValue.self, from: Data(json.utf8))
+        return try #require(formFields(schema: .object(["properties": .object(["f": property])])).first).kind
+    }
+
+    @Test func aGradientOffersItsNames() throws {
+        #expect(try kind(#"{"enum":["red","blue"],"editor":"gradient"}"#) == .gradient(names: ["red", "blue"]))
+        // a custom gradient is the second choice; the names are the first
+        #expect(try kind(#"{"editor":"gradient","oneOf":[{"enum":["red"]},{"type":"array"}]}"#) == .gradient(names: ["red"]))
+    }
+
+    @Test func aFormatPicksItsControl() throws {
+        #expect(try kind(#"{"type":"string","format":"date-time"}"#) == .dateTime)
+        #expect(try kind(#"{"type":"string","format":"date"}"#) == .date)
+        #expect(try kind(#"{"type":"string","format":"email"}"#) == .email)
+        #expect(try kind(#"{"type":"string","format":"uri"}"#) == .url)
+        #expect(try kind(#"{"type":"string","format":"uri-reference"}"#) == .url)
+    }
+
+    @Test func aTimeAndDaysHaveTheirOwnControls() throws {
+        #expect(try kind(#"{"type":"string","editor":"time"}"#) == .time)
+        #expect(try kind(#"{"type":"array","items":{"enum":["Mo","Tu"]},"editor":"days"}"#) == .days)
+    }
+
+    @Test func aReferenceIsChosenFromThePlaceItNames() throws {
+        #expect(try kind(#"{"type":"string","x-choices":"/stationMenus/*/label"}"#) == .reference(pointer: "/stationMenus/*/label"))
+    }
+
+    /// A set of names, or names chosen from elsewhere, are tokens; a list of sentences stays a list.
+    @Test func aSetOfNamesIsTokens() throws {
+        #expect(try kind(#"{"type":"array","uniqueItems":true,"items":{"type":"string"}}"#) == .tokens(choices: nil))
+        #expect(try kind(#"{"type":"array","items":{"type":"string","x-choices":"1/coordinates"}}"#) == .tokens(choices: "1/coordinates"))
+        #expect(try kind(#"{"type":"array","items":{"type":"string"}}"#) == .list(item: .text, itemTitle: "f"))
+    }
+
+    @Test func threeNumbersTaggedAsAColourAreAColour() throws {
+        #expect(try kind(#"{"type":"array","items":[{"type":"number"},{"type":"number"},{"type":"number"}],"editor":"color"}"#) == .color)
+    }
+
+    @Test func aListOfGroupsStaysAList() throws {
+        #expect(try kind(#"{"type":"array","items":{"type":"object","properties":{}}}"#) == .list(item: .object([]), itemTitle: "f"))
     }
 
     @Test func offersAPhoneNumberOrALinkAsOneChoice() throws {

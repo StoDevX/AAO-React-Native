@@ -32,8 +32,8 @@ struct ItemControlTests {
         guard case .list = ItemControl(pair) else { Issue.record("a coordinate pair is \(ItemControl(pair))"); return }
     }
 
-    @Test func aStopIsOneField() async throws {
-        guard case .list(let stop, _) = try kind(of: "stops", in: try await scheduleFields()) else { throw Unexpected() }
-        guard case .field = ItemControl(stop) else { Issue.record("a stop is \(ItemControl(stop))"); return }
+    /// Each stop is one of the schedule's coordinate names.
+    @Test func aStopIsChosenFromTheCoordinates() async throws {
+        #expect(try kind(of: "stops", in: try await scheduleFields()) == .tokens(choices: "1/coordinates"))
     }
 }

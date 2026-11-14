@@ -2,9 +2,17 @@ import Foundation
 
 /// How a form draws one field, decided by its schema and its `editor` hint.
 public indirect enum FieldKind: Hashable, Sendable {
-    case text, multiline, markdown, symbol, gradient, phone, url, date, color, image, toggle, number
+    case text, multiline, markdown, symbol, phone, url, email, date, dateTime, time, color, image, toggle, number
     /// one of a fixed set of values
     case choice([String])
+    /// one of the app's named gradients, or a pair of colours
+    case gradient(names: [String])
+    /// days of the week, any number of them
+    case days
+    /// one of the values found at `pointer` in the same file (see `choices(_:in:at:)`)
+    case reference(pointer: String)
+    /// a set of short names, each chosen from the values at `choices` when given
+    case tokens(choices: String?)
     /// a group of fields
     case object([FormField])
     /// a list of values or groups, each called `itemTitle`
@@ -47,20 +55,38 @@ public struct FormField: Hashable, Sendable, Identifiable {
 
 /// The control an `editor` hint names.
 private let hinted: [String: FieldKind] = [
-    "markdown": .markdown, "multiline": .multiline, "symbol": .symbol, "gradient": .gradient,
+    "markdown": .markdown, "multiline": .multiline, "symbol": .symbol, "days": .days, "time": .time,
     "phone": .phone, "url": .url, "date": .date, "color": .color, "image": .image,
 ]
 
 /// How `schema` draws, with `title` as the name of one list item when it names none of its own.
 private func kind(of schema: JSONValue, title: String) -> FieldKind {
+    if schema["editor"]?.string == "gradient" {
+        // the names are the schema's own, or its first choice's when a pair of colours is the other
+        let names = schema["enum"] ?? (schema["oneOf"] ?? schema["anyOf"])?[0]?["enum"]
+        return .gradient(names: names?.array?.compactMap(\.string) ?? [])
+    }
     if let hint = schema["editor"]?.string, let kind = hinted[hint] { return kind }
+    if let pointer = schema["x-choices"]?.string { return .reference(pointer: pointer) }
     if let values = schema["enum"]?.array { return .choice(values.compactMap(\.string)) }
+    switch schema["format"]?.string {
+    case "date": return .date
+    case "date-time": return .dateTime
+    case "email": return .email
+    case "uri", "uri-reference": return .url
+    default: break
+    }
     switch schema["type"]?.string {
     case "boolean": return .toggle
     case "number", "integer": return .number
     case "array":
         // a tuple gives each place its own schema, as an accent colour's three numbers; the first speaks for them
         let item = schema["items"].map { $0.array?.first ?? $0 } ?? .object([:])
+        // plain names: a set of them, or each one chosen from elsewhere in the file
+        if item["type"]?.string == "string", item["enum"] == nil, item["editor"] == nil, item["format"] == nil {
+            if let pointer = item["x-choices"]?.string { return .tokens(choices: pointer) }
+            if schema["uniqueItems"]?.bool == true { return .tokens(choices: nil) }
+        }
         return .list(item: kind(of: item, title: title), itemTitle: item["title"]?.string ?? title)
     case "object":
         if schema["properties"] != nil { return .object(formFields(schema: schema)) }

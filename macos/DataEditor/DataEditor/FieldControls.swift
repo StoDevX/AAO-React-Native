@@ -35,7 +35,8 @@ private func saved(_ text: String, as kind: FieldKind) -> JSONValue? {
 private func starting(_ kind: FieldKind) -> JSONValue {
     switch kind {
     case .object, .oneOf: .object([:])
-    case .list: .array([])
+    case .list, .tokens, .days: .array([])
+    case .time: .string("12:00pm")
     case .map: .object([:])
     case .toggle: .bool(false)
     case .number: .number(0)
@@ -63,7 +64,8 @@ private struct FieldRow: View {
             Section(field.title) {
                 FieldRows(fields: fields, base: path, value: value, file: file, recordPath: recordPath)
             }
-        case .list(let item, let itemTitle):
+        case .list, .tokens, .days:
+            let (item, itemTitle) = field.kind.listed(title: field.title)!
             ListField(title: field.title, item: item, itemTitle: itemTitle, path: path, items: value?.array ?? [],
                       file: file, recordPath: recordPath)
         case .map(let valueKind):
@@ -134,6 +136,19 @@ private struct ScalarField: View {
     }
 }
 
+extension FieldKind {
+    /// The list a field of this kind is drawn as, its items and what each is
+    /// called: tokens and days are lists of names until they have controls of their own.
+    func listed(title: String) -> (item: FieldKind, itemTitle: String)? {
+        switch self {
+        case .list(let item, let itemTitle): (item, itemTitle)
+        case .tokens(let pointer): (pointer.map { .reference(pointer: $0) } ?? .text, title)
+        case .days: (.choice(Weekday.allCases.map(\.rawValue)), title)
+        default: nil
+        }
+    }
+}
+
 /// How a list item or map entry is drawn: a group, list or map opens to show
 /// its own fields, and anything else is one field.
 enum ItemControl {
@@ -145,7 +160,9 @@ enum ItemControl {
     init(_ kind: FieldKind) {
         switch kind {
         case .object(let fields): self = .group(fields)
-        case .list(let item, let itemTitle): self = .list(item: item, itemTitle: itemTitle)
+        case .list, .tokens, .days:
+            let (item, itemTitle) = kind.listed(title: "")!
+            self = .list(item: item, itemTitle: itemTitle)
         case .map(let value): self = .map(value: value)
         default: self = .field
         }
