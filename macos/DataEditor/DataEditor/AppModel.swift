@@ -216,6 +216,8 @@ final class AppModel {
             if shuttingDown { return }
             // edits an update failed to put back are put back before anything reads data/
             _ = try workspace.resumeReplay()
+            // and a reorder the helper never finished leaves no record set aside out of sight
+            try workspace.putBackSetAsideFiles()
             // a helper that will not load, or that an older app downloaded, gives way to master's
             let helper = try await workspace.loadHelper(oxfmt: testOxfmt ?? runtime.oxfmt)
             self.helper = helper
