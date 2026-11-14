@@ -34,6 +34,7 @@ definitions:
     required: [label, station]
     properties:
       label: {type: string, title: Label}
-      station: {type: string, title: Station}
+      # one of the stations in stationMenus
+      station: {type: string, title: Station, x-choices: /stationMenus/*/label}
       description: {type: string, title: Description, editor: multiline}
       special: {type: boolean, title: Special}

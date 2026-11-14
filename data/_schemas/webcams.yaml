@@ -17,3 +17,4 @@ properties:
     minItems: 3
     maxItems: 3
     title: Accent Color
+    editor: color

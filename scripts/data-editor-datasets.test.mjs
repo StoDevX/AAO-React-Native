@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import {cpSync, existsSync, mkdtempSync, readFileSync, writeFileSync} from 'node:fs'
+import {cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import path from 'node:path'
 import {describe, it} from 'node:test'
@@ -102,6 +102,8 @@ const EDITOR_HINTS = new Set([
 	'color',
 	'image',
 	'hidden',
+	'time',
+	'days',
 ])
 
 /** Every field below `schema` a form would show, as `[where, field schema]`. */
@@ -143,6 +145,28 @@ describe('the schemas behind generated forms', () => {
 				.map(([where, field]) => `${where}: ${field.editor}`),
 		)
 		assert.deepEqual(unknown, [])
+	})
+})
+
+describe('x-choices', () => {
+	/** Every `x-choices` in the schemas, with the file it is in. */
+	function pointers(value, file) {
+		if (value === null || typeof value !== 'object') return []
+		return Object.entries(value).flatMap(([key, inner]) =>
+			key === 'x-choices' ? [[file, inner]] : pointers(inner, file),
+		)
+	}
+
+	it('takes x-choices as a JSON pointer, relative when it begins with a number', () => {
+		let dir = path.join(DATA_BASE, '_schemas')
+		let found = readdirSync(dir).flatMap((file) =>
+			pointers(load(readFileSync(path.join(dir, file), 'utf8')), file),
+		)
+		assert.ok(found.length >= 2, JSON.stringify(found))
+		assert.deepEqual(
+			found.filter(([, pointer]) => !/^(\d+)?\/.*$/u.test(pointer)),
+			[],
+		)
 	})
 })
 

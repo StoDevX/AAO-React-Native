@@ -41,16 +41,25 @@ function formatError(err, data) {
 }
 
 /**
+ * The keywords the data editor reads from a schema: `editor`, the control a
+ * field draws with, and `x-choices`, where in the file a field's allowed values
+ * are. A check of the data itself ignores both.
+ */
+export function addEditorKeywords(validator) {
+	validator.addKeyword({keyword: 'editor', schemaType: 'string'})
+	validator.addKeyword({keyword: 'x-choices', schemaType: 'string'})
+}
+
+/**
  * A validator over the schemas in `schemaDir`: its shared definitions, and the
- * `editor` keyword, which tells the data editor which control draws a field
- * and changes nothing about what is valid. `options` are Ajv's, such as
- * `allErrors` for every problem rather than the first.
+ * data editor's keywords, which change nothing about what is valid. `options`
+ * are Ajv's, such as `allErrors` for every problem rather than the first.
  */
 export function createValidator(schemaDir, options = {}) {
 	let validator = new AJV(options)
 	addFormats(validator)
 	addKeywords(validator)
-	validator.addKeyword({keyword: 'editor', schemaType: 'string'})
+	addEditorKeywords(validator)
 	validator.addSchema(load(fs.readFileSync(path.join(schemaDir, '_defs.yaml'), 'utf8')))
 	validator.addSchema(load(fs.readFileSync(path.join(schemaDir, '_schedules.yaml'), 'utf8')))
 	return validator

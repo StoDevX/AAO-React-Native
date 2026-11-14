@@ -33,7 +33,8 @@ definitions:
 
   stops:
     type: array
-    items: {type: string}
+    # each stop is one the schedule has coordinates for
+    items: {type: string, x-choices: 1/coordinates}
 
   times:
     type: array
@@ -69,5 +70,5 @@ definitions:
     additionalProperties: false
     required: [bar, dot]
     properties:
-      bar: {type: string, title: Bar}
-      dot: {type: string, title: Dot}
+      bar: {type: string, title: Bar, editor: color}
+      dot: {type: string, title: Dot, editor: color}

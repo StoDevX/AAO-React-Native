@@ -27,6 +27,7 @@ definitions:
   time:
     type: string
     pattern: ^1?\d:[0-5]?\d[ap]m$
+    editor: time
 
   phone:
     type: string
@@ -39,6 +40,7 @@ definitions:
   days-of-week:
     type: array
     items: {$ref: '#/definitions/day-of-week'}
+    editor: days
 
   day:
     type: object

@@ -34,5 +34,6 @@ properties:
         items:
           type: string
           pattern: '^color\(display-p3 [0-9.]+ [0-9.]+ [0-9.]+\)$'
+          editor: color
     title: Color
     editor: gradient
