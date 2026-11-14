@@ -39,8 +39,9 @@ struct ChangesetWindow: View {
         .navigationTitle(title)
         // asked once as the window opens, not again on each row chosen in it
         .task(id: changeset) { if case .pullRequest(let number) = changeset { await model.loadDiffs(of: number) } }
-        // room for a row of hours below the week, which a window saved smaller would hide
-        .frame(minWidth: 1100, minHeight: 600)
+        // room for a row of hours below the week, which a window saved smaller would hide,
+        // on a screen 1024 wide, as a CI runner's is
+        .frame(minWidth: 1000, minHeight: 600)
         .toolbar {
             ToolbarItem { ServerStatusView().disabled(!ready) }
             ToolbarItem { Button("Data Browser", systemImage: "curlybraces") { openWindow(id: "browser") }.disabled(!ready) }
