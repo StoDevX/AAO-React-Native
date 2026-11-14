@@ -41,14 +41,24 @@ final class RecordFormUITests: XCTestCase {
     func testAGroupOpensFromItsTitle() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
         let window = currentChanges(in: app)
-        let schedule = window.disclosureTriangles["Schedules 1"]
-        XCTAssertTrue(schedule.waitForExistence(timeout: 10))
-        clickTitle(of: schedule)
+        // the one schedule is open already; its timetable rows are not
         let row = window.disclosureTriangles["Times 1"]
-        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        XCTAssertTrue(row.waitForExistence(timeout: 10))
         clickTitle(of: row)
         XCTAssertTrue(window.textFields["field-schedules.#1.times.#1.#1"].waitForExistence(timeout: 5))
         attachScreenshot(of: window, named: "The Express's first timetable row, opened from its title")
+    }
+
+    /// The Express Bus has one schedule, which opens by itself; its timetable rows open together.
+    func testAListOfOneOpensAndAListOfManyExpandsAtOnce() throws {
+        let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
+        let window = currentChanges(in: app)
+        let expand = window.links["expand-all-field-schedules.#1.times"]
+        XCTAssertTrue(expand.waitForExistence(timeout: 10))
+        expand.click()
+        XCTAssertTrue(window.textFields["field-schedules.#1.times.#2.#1"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.textFields["field-schedules.#1.times.#7.#1"].exists)
+        attachScreenshot(of: window, named: "The Express's schedule open, every timetable row expanded")
     }
 
     /// Clicks on a group's title, past the chevron before it.

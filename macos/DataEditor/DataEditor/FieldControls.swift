@@ -155,8 +155,8 @@ enum ItemControl {
 /// A group of fields that opens from its whole title, not only from the chevron before it.
 private struct ItemGroup<Content: View>: View {
     let title: String
+    @Binding var isExpanded: Bool
     @ViewBuilder let content: () -> Content
-    @State private var isExpanded = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded, content: content) {
@@ -171,6 +171,8 @@ private struct ItemGroup<Content: View>: View {
 /// One list item or map entry, drawn by its kind: a group, list or map opens to show its own fields.
 private struct ItemField: View {
     let title: String
+    /// whether its group is open, which its list keeps so Expand All can open them all
+    @Binding var isExpanded: Bool
     let kind: FieldKind
     let path: [PathKey]
     let value: JSONValue?
@@ -180,15 +182,15 @@ private struct ItemField: View {
     var body: some View {
         switch ItemControl(kind) {
         case .group(let fields):
-            ItemGroup(title: title) {
+            ItemGroup(title: title, isExpanded: $isExpanded) {
                 FieldRows(fields: fields, base: path, value: value, file: file, recordPath: recordPath)
             }
         case .list(let item, let itemTitle):
-            ItemGroup(title: title) {
+            ItemGroup(title: title, isExpanded: $isExpanded) {
                 ListItems(item: item, itemTitle: itemTitle, path: path, items: value?.array ?? [], file: file, recordPath: recordPath)
             }
         case .map(let valueKind):
-            ItemGroup(title: title) {
+            ItemGroup(title: title, isExpanded: $isExpanded) {
                 MapEntries(valueKind: valueKind, path: path, entries: value, file: file, recordPath: recordPath)
             }
         case .field:
@@ -215,7 +217,7 @@ private struct ListField: View {
     }
 }
 
-/// A list's items and its Add button.
+/// A list's items and its Add button, and Expand All when they are groups.
 private struct ListItems: View {
     @Environment(AppModel.self) private var model
     let item: FieldKind
@@ -224,6 +226,22 @@ private struct ListItems: View {
     let items: [JSONValue]
     let file: String
     let recordPath: [PathKey]
+    /// the items whose groups are open: a list of one starts open, as there is nothing to choose between
+    @State private var open: Set<Int>
+
+    init(item: FieldKind, itemTitle: String, path: [PathKey], items: [JSONValue], file: String, recordPath: [PathKey]) {
+        self.item = item
+        self.itemTitle = itemTitle
+        self.path = path
+        self.items = items
+        self.file = file
+        self.recordPath = recordPath
+        _open = State(initialValue: items.count == 1 ? [0] : [])
+    }
+
+    private func isOpen(_ index: Int) -> Binding<Bool> {
+        Binding(get: { open.contains(index) }, set: { if $0 { open.insert(index) } else { open.remove(index) } })
+    }
 
     private func apply(_ ops: [EditOp]) { Task { await model.apply(ops, to: file) } }
 
@@ -231,15 +249,25 @@ private struct ListItems: View {
     private func move(_ from: Int, by offset: Int) {
         var order = Array(items.indices)
         order.swapAt(from, from + offset)
+        // an open group stays open as it moves
+        open = Set(open.map { $0 == from ? from + offset : $0 == from + offset ? from : $0 })
         Task { await model.moveItems(in: file, path: path, order: order.map { .index($0) }) }
     }
 
     var body: some View {
         // each of these edits names an item by its place, which the edit in flight may move
         let editing = model.edits.isShown
+        if case .field = ItemControl(item) {} else if items.count > 1 {
+            let allOpen = open.count == items.count
+            Button(allOpen ? "Collapse All" : "Expand All") {
+                withAnimation { open = allOpen ? [] : Set(items.indices) }
+            }
+            .buttonStyle(.link)
+            .accessibilityIdentifier("expand-all-" + identifier(path, below: recordPath))
+        }
         ForEach(Array(items.enumerated()), id: \.offset) { index, value in
             HStack(alignment: .top) {
-                ItemField(title: "\(itemTitle) \(index + 1)", kind: item, path: path + [.index(index)], value: value,
+                ItemField(title: "\(itemTitle) \(index + 1)", isExpanded: isOpen(index), kind: item, path: path + [.index(index)], value: value,
                           file: file, recordPath: recordPath)
                 Spacer()
                 Button("Move Up", systemImage: "arrow.up") { move(index, by: -1) }
@@ -254,6 +282,8 @@ private struct ListItems: View {
             .buttonStyle(.borderless)
         }
         Button("Add \(itemTitle)", systemImage: "plus") {
+            // a new group opens, ready to fill in
+            open.insert(items.count)
             apply([.set(path + [.index(items.count)], starting(item))])
         }
         .accessibilityIdentifier("add-" + identifier(path, below: recordPath))
@@ -286,6 +316,22 @@ private struct MapEntries: View {
     let file: String
     let recordPath: [PathKey]
     @State private var newName = ""
+    /// the entries whose groups are open: a map of one starts open
+    @State private var open: Set<String>
+
+    init(valueKind: FieldKind, path: [PathKey], entries: JSONValue?, file: String, recordPath: [PathKey]) {
+        self.valueKind = valueKind
+        self.path = path
+        self.entries = entries
+        self.file = file
+        self.recordPath = recordPath
+        let keys: [String] = if case .object(let object)? = entries { Array(object.keys) } else { [] }
+        _open = State(initialValue: keys.count == 1 ? Set(keys) : [])
+    }
+
+    private func isOpen(_ key: String) -> Binding<Bool> {
+        Binding(get: { open.contains(key) }, set: { if $0 { open.insert(key) } else { open.remove(key) } })
+    }
 
     private var keys: [String] {
         guard case .object(let object)? = entries else { return [] }
@@ -293,9 +339,17 @@ private struct MapEntries: View {
     }
 
     var body: some View {
+        if case .field = ItemControl(valueKind) {} else if keys.count > 1 {
+            let allOpen = open.isSuperset(of: keys)
+            Button(allOpen ? "Collapse All" : "Expand All") {
+                withAnimation { open = allOpen ? [] : Set(keys) }
+            }
+            .buttonStyle(.link)
+            .accessibilityIdentifier("expand-all-" + identifier(path, below: recordPath))
+        }
         ForEach(keys, id: \.self) { key in
             HStack(alignment: .top) {
-                ItemField(title: key, kind: valueKind, path: path + [.key(key)], value: entries?[key],
+                ItemField(title: key, isExpanded: isOpen(key), kind: valueKind, path: path + [.key(key)], value: entries?[key],
                           file: file, recordPath: recordPath)
                 Button("Remove \(key)", systemImage: "minus.circle", role: .destructive) {
                     Task { await model.apply([.delete(path + [.key(key)])], to: file) }
@@ -310,6 +364,7 @@ private struct MapEntries: View {
                 let name = newName.trimmingCharacters(in: .whitespaces)
                 guard !name.isEmpty, !keys.contains(name) else { return }
                 newName = ""
+                open.insert(name)
                 Task { await model.apply([.set(path + [.key(name)], starting(valueKind))], to: file) }
             }
             .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
