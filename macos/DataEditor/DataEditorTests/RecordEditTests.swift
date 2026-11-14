@@ -18,6 +18,20 @@ struct RecordEditTests {
         #expect(text.contains("accentColor: [90, 87, 54]"))
     }
 
+    /// The KSTO scrape leaves alone a file stamped after the post, so a reorder is stamped as an edit is.
+    @Test func movingKSTOShowsStampsTheSchedule() async throws {
+        let (model, data) = try await modelOnRepoData()
+        let file = data.appending(path: "ksto-schedule.yaml")
+        let count = try String(contentsOf: file, encoding: .utf8).matches(of: /\n  - day:/).count
+        let before = Date()
+        await model.moveItems(in: "ksto-schedule.yaml", path: ["shows"],
+                              order: [.index(1), .index(0)] + (2..<count).map { .index($0) })
+        let text = try String(contentsOf: file, encoding: .utf8)
+        let stamp = try #require(text.firstMatch(of: /updated: '(.*)'/)?.1)
+        let stamped = try #require(try? Date(String(stamp), strategy: .iso8601))
+        #expect(stamped >= before.addingTimeInterval(-1))
+    }
+
     /// Every FAQ is in faqs.yaml, so the new one's file is the file already open.
     @Test func aNewRecordInTheOpenFileShowsInItsForm() async throws {
         let (model, _) = try await modelOnRepoData()

@@ -43,14 +43,20 @@ struct LockTests {
 
     @Test func kstoEditsAreStamped() {
         let ops: [EditOp] = [.set(["shows", 0, "title"], .string("Jazz"))]
-        #expect(AppModel.stamped(ops, field: "updated", today: "2026-11-12T00:00:00Z")
+        #expect(AppModel.stamped(ops, field: "updated", stamp: "2026-11-12T00:00:00Z")
             == ops + [.set(["updated"], .string("2026-11-12T00:00:00Z"))])
     }
 
     @Test func anEditThatSetsTheStampIsLeftAlone() {
         let ops: [EditOp] = [.set(["updated"], .string("2026-10-08T00:00:00Z"))]
-        #expect(AppModel.stamped(ops, field: "updated", today: "2026-11-12T00:00:00Z") == ops)
-        #expect(AppModel.stamped(ops, field: nil, today: "2026-11-12T00:00:00Z") == ops)
+        #expect(AppModel.stamped(ops, field: "updated", stamp: "2026-11-12T00:00:00Z") == ops)
+        #expect(AppModel.stamped(ops, field: nil, stamp: "2026-11-12T00:00:00Z") == ops)
+    }
+
+    /// 3:20pm in Minnesota, not midnight UTC, which is the evening before.
+    @Test func theStampIsTheMomentOfTheSave() {
+        let afternoon = Date(timeIntervalSince1970: 1_794_000_000)
+        #expect(AppModel.saveStamp(afternoon) == "2026-11-06T21:20:00Z")
     }
 
     @Test func saysWhenASteeringEditTakesEffect() {

@@ -401,8 +401,7 @@ final class AppModel {
     @discardableResult
     func apply(_ ops: [EditOp], to file: String) async -> Bool {
         guard !updating, !sending, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
-        let set = catalog?.set(for: file).flatMap { catalog?.sets[$0] }
-        let ops = Self.stamped(ops, field: set?.stampOnSave, today: Self.stampForToday())
+        let ops = Self.stamped(ops, field: stampField(for: file), stamp: Self.saveStamp())
         let edited: Loaded
         do {
             edited = try await edits.run { try await helper.edit(file, ops) }
@@ -880,11 +879,20 @@ final class AppModel {
         await took(reply, in: set)
     }
 
+    /// The field of `file` stamped on every save, when its set has one.
+    private func stampField(for file: String) -> String? {
+        catalog?.set(for: file).flatMap { catalog?.sets[$0]?.stampOnSave }
+    }
+
     /// Puts the items of the list at `path` in `file` in `order`, moving them
     /// with their comments, as a form's Move Up and Move Down do.
     func moveItems(in file: String, path: [PathKey], order: [PathKey]) async {
+        let stamp = Self.stamped([], field: stampField(for: file), stamp: Self.saveStamp())
         guard mayChangeRecords, let helper, !isConflicted(file),
-              let moved = try? await edits.run({ try await helper.move(file, path: path, order: order) }) else { return }
+              let moved = try? await edits.run({
+                  let moved = try await helper.move(file, path: path, order: order)
+                  return stamp.isEmpty ? moved : try await helper.edit(file, stamp)
+              }) else { return }
         changedFiles = (try? workspace.changedFiles()) ?? changedFiles
         if file == selection {
             value = moved.value

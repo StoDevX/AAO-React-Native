@@ -20,19 +20,17 @@ extension AppModel {
         return Set(scraped.fields)
     }
 
-    /// `ops` with `field` set to `today` as well, unless they set it already:
+    /// `ops` with `field` set to `stamp` as well, unless they set it already:
     /// a set whose scrape keeps a hand edit dated after its source is stamped on every edit.
-    static func stamped(_ ops: [EditOp], field: String?, today: String) -> [EditOp] {
+    static func stamped(_ ops: [EditOp], field: String?, stamp: String) -> [EditOp] {
         guard let field, !ops.contains(where: { $0.path == [.key(field)] }) else { return ops }
-        return ops + [.set([.key(field)], .string(today))]
+        return ops + [.set([.key(field)], .string(stamp))]
     }
 
-    /// Today's date in Minnesota, at midnight UTC, the form the KSTO schedule's `updated` takes.
-    static func stampForToday(_ now: Date = Date()) -> String {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "America/Chicago")!
-        let day = calendar.dateComponents([.year, .month, .day], from: now)
-        return String(format: "%04d-%02d-%02dT00:00:00Z", day.year!, day.month!, day.day!)
+    /// The moment of a save, in UTC to the second, the form the KSTO schedule's
+    /// `updated` takes; it outdates any edit to the post made before the save.
+    static func saveStamp(_ now: Date = Date()) -> String {
+        now.formatted(.iso8601)
     }
 
     /// Whether `file` must keep its name: a scrape or generator writes it by
