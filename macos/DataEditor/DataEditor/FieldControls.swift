@@ -140,9 +140,23 @@ private struct ScalarField: View {
         case .reference(let pointer):
             choicePicker(model.value.map { choices(pointer, in: $0, at: path) } ?? [])
         case .gradient(let names):
-            choicePicker(names) { name in
-                model.gradients[name].flatMap { GradientSwatch(stops: $0).image }
+            VStack(alignment: .trailing) {
+                choicePicker(names) { name in
+                    model.gradients[name].flatMap { GradientSwatch(stops: $0).image }
+                }
+                // a gradient of its own: a well for each of its two colours
+                if case .array(let stops)? = value {
+                    ForEach(Array(stops.enumerated()), id: \.offset) { index, stop in
+                        ColorWell(title: index == 0 ? "From" : "To", value: stop, editing: model.edits.isShown) { chosen in
+                            var changed = stops
+                            changed[index] = chosen
+                            apply(.array(changed))
+                        }
+                    }
+                }
             }
+        case .color:
+            ColorWell(title: title, value: value, editing: model.edits.isShown) { apply($0) }
         case .date, .dateTime:
             DateField(title: title, kind: kind, value: value?.string, editing: model.edits.isShown) { apply($0.map(JSONValue.string)) }
         case .url:

@@ -27,6 +27,14 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("gradient: mint", in: "student-work-areas.yaml", data: data))
     }
 
+    /// A colour is chosen in a well, whatever form the file writes it in.
+    func testColoursAreChosenInWells() throws {
+        let app = try launchWithRepoData(opening: "webcams:webcams/2-east-quad.yaml").app
+        let window = currentChanges(in: app)
+        XCTAssertTrue(window.colorWells["field-accentColor"].waitForExistence(timeout: 10))
+        attachScreenshot(of: window, named: "East Quad's accent colour in a well")
+    }
+
     /// A generated bus line can't be edited, its pickers included.
     func testALockedSetsPickersAreDisabled() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app
