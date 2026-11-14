@@ -115,6 +115,13 @@ struct OverviewTests {
         #expect(shown["building-hours"]?.map(\.title) == ["The Cage", "9-9-gone.yaml"])
     }
 
+    /// The pull request's Overview shows a file no set holds; the record list has nowhere to put it.
+    @Test func aPullRequestsFileInNoSetIsNotListedAsARecord() {
+        let history = history(record(7, .open, paths: ["data/building-hours/1-1-cage.yaml", "data/news-styles.css"]))
+        let shown = changesetRecords(.pullRequest(number: 7), catalog: hours, records: [:], history: history)
+        #expect(Array(shown.keys) == ["building-hours"])
+    }
+
     /// The editor shows its own file's problems; the Overview shows the rest.
     /// A check of one file reports every file's, since it walks the whole schedule graph.
     @Test func theEditorShowsOnlyItsOwnFilesProblems() {

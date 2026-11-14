@@ -96,14 +96,15 @@ func stillListed(_ changeset: Changeset?, in records: [SubmissionRecord]) -> Cha
 
 /// The records each data set lists for `changeset`, by set: every record for
 /// Current changes; for a pull request, the files it changed, each named as
-/// the set's records name it, or by its file name when none does.
+/// the set's records name it, or by its file name when none does. A file no
+/// set holds is left to the Overview, which shows every file's changes.
 func changesetRecords(_ changeset: Changeset, catalog: DataSetCatalog?, records: [String: [RecordSummary]],
                       history: SubmissionHistory) -> [String: [RecordSummary]] {
     guard case .pullRequest(let number) = changeset else { return records }
     let files = history.records.first { $0.id == number }?.changedFiles ?? []
     var listed: [String: [RecordSummary]] = [:]
     for file in files {
-        let set = catalog?.set(for: file) ?? ""
+        guard let set = catalog?.set(for: file) else { continue }
         let known = records[set]?.first { $0.ref.file == file && $0.ref.path.isEmpty }
         let title = known?.title ?? catalog?.sets[set].flatMap { $0.shape == .folder ? nil : $0.title }
             ?? (file as NSString).lastPathComponent
