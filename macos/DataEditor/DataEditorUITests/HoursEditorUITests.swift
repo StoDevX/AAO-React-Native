@@ -6,15 +6,23 @@ final class HoursEditorUITests: XCTestCase {
     private var data: URL?
 
     /// Launches on the repo's data, keeping its data folder in `data`.
-    private func launch(conflicted: String? = nil) throws -> XCUIApplication {
-        let launched = try launchWithRepoData(conflicted: conflicted)
+    private func launch(conflicted: String? = nil, opening: String? = nil) throws -> XCUIApplication {
+        let launched = try launchWithRepoData(conflicted: conflicted, opening: opening)
         data = launched.data
         return launched.app
     }
 
+    /// A hand edit to The Cage's usual hours would be reverted by the Bon Appétit scrape, so they read only.
+    func testTheCagesUsualHoursFollowTheScrape() throws {
+        let app = try launchWithRepoData(keepsScrapes: true, opening: theCage).app
+        let window = currentChanges(in: app)
+        XCTAssertTrue(window.descendants(matching: .any)["scraped-lock"].firstMatch.waitForExistence(timeout: 10))
+        XCTAssertFalse(window.textFields["service-title-0"].isEnabled)
+        attachScreenshot(of: window, named: "The Cage's usual hours, kept by the scrape")
+    }
+
     func testEditingATimeListsTheFileInChanges() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
 
         let to = currentChanges(in: app).popUpButtons["row-time-to-0-0"]
         XCTAssertTrue(to.waitForExistence(timeout: 10))
@@ -29,8 +37,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testAddingARowAddsItToTheTimeline() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let add = currentChanges(in: app).buttons["add-row-0"]
         XCTAssertTrue(add.waitForExistence(timeout: 10))
         let before = currentChanges(in: app).popUpButtons.matching(identifier: "row-time-from-0-2").count
@@ -41,15 +48,14 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testATitleTypedBeforeChoosingAnotherBuildingStaysWithItsOwn() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
         title.typeKey("a", modifierFlags: .command)
         // no Return: choosing another building is as good as done
         title.typeText("Weekday hours")
-        currentChanges(in: app).outlines["building-list"].staticTexts["Stav Hall"].click()
+        currentChanges(in: app).outlines["record-list"].staticTexts["Stav Hall"].click()
         XCTAssertTrue(title.wait(until: NSPredicate(format: "value != %@", "Weekday hours"), timeout: 10))
 
         // what the file holds, once The Cage is opened afresh
@@ -58,8 +64,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testEmptyingATitleShowsAProblem() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -73,8 +78,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testAProblemInAnotherBuildingNamesThatBuilding() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -84,7 +88,7 @@ final class HoursEditorUITests: XCTestCase {
         XCTAssertTrue(currentChanges(in: app).staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
 
         // Stav Hall's file is fine, and its editor shows only its own problems
-        currentChanges(in: app).outlines["building-list"].staticTexts["Stav Hall"].click()
+        currentChanges(in: app).outlines["record-list"].staticTexts["Stav Hall"].click()
         XCTAssertTrue(currentChanges(in: app).textFields["service-title-0"].wait(until: NSPredicate(format: "value != %@", ""), timeout: 10))
         XCTAssertFalse(currentChanges(in: app).staticTexts["The Cage: The title can't be empty."].exists)
         attachScreenshot(of: currentChanges(in: app), named: "Stav Hall shows none of The Cage's problems")
@@ -101,8 +105,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testATitleBeingTypedIsSavedBeforeTheOverviewOpens() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -115,8 +118,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testQuittingSavesATitleBeingTyped() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -129,8 +131,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testTogglingADayMovesItOnTheTimeline() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         // a segmented control that takes any number of days reads as a group of checkboxes
         let days = currentChanges(in: app).groups["days-0-0"]
         XCTAssertTrue(days.waitForExistence(timeout: 10))
@@ -145,8 +146,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testClosingAServiceAndOpeningItAgain() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let closed = currentChanges(in: app).descendants(matching: .any)["closed-0"].firstMatch
         XCTAssertTrue(closed.waitForExistence(timeout: 10))
         closed.click()
@@ -158,8 +158,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testDoubleClickingRemoveTakesOneRow() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let remove = currentChanges(in: app).buttons["remove-row-0-0"]
         XCTAssertTrue(remove.waitForExistence(timeout: 10))
         remove.doubleClick()
@@ -168,8 +167,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testRemovingAServiceWaitsForATitleBeingTyped() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-1"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         let remove = currentChanges(in: app).buttons["remove-service-0"]
@@ -183,8 +181,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testATitleWhoseScheduleChangedIsLetGoAndKeptInSight() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -216,8 +213,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testATitleWhoseScheduleMovedIsSavedWhereItWent() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
         XCTAssertTrue(title.waitForExistence(timeout: 10))
         title.click()
@@ -250,8 +246,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testReturnSavesANote() throws {
-        let app = try launch()
-        selectTheCage(in: app)
+        let app = try launch(opening: theCage)
         let notes = currentChanges(in: app).textFields["service-notes-0"]
         XCTAssertTrue(notes.waitForExistence(timeout: 10))
         notes.click()
@@ -263,8 +258,7 @@ final class HoursEditorUITests: XCTestCase {
     }
 
     func testAConflictedFileCannotBeEdited() throws {
-        let app = try launch(conflicted: "building-hours/1-1-cage.yaml")
-        selectTheCage(in: app)
+        let app = try launch(conflicted: "building-hours/1-1-cage.yaml", opening: theCage)
         XCTAssertTrue(currentChanges(in: app).descendants(matching: .any)["edit-lock"].firstMatch.waitForExistence(timeout: 10))
         XCTAssertFalse(currentChanges(in: app).buttons["add-row-0"].isEnabled)
         attachScreenshot(of: currentChanges(in: app), named: "Conflicted file locked")

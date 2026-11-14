@@ -1,6 +1,7 @@
 # Everything the scrape cannot know, for scripts/scrape-bonapp.mjs.
 #
-# Lives outside data/ so bundle-data never ships it to the app.
+# Lives under data/_scrapes/, which bundle-data skips, so it never ships to
+# the app.
 #
 # `dayparts` maps Bon Appétit's meal names onto our section titles, and is
 # many-to-one: Stav's Brunch and Lunch are one row to someone reading the

@@ -11,7 +11,8 @@ private let node = ProcessInfo.processInfo.environment["DATA_EDITOR_NODE"]
 
 /// The helper calls both engines make, in order: each kind of reply, an edit
 /// oxfmt reformats, an edit the schema refuses, one the overlap check
-/// refuses, a file that is not there, and builds between them.
+/// refuses, a file that is not there, and builds between them; then the data
+/// sets' calls, among them a contact edit Ajv refuses.
 private let steps: [(method: String, params: String)] = [
     ("list", "{}"),
     ("calendar", "{}"),
@@ -24,6 +25,16 @@ private let steps: [(method: String, params: String)] = [
     ("edit", #"{"file":"building-hours/1-1-cage.yaml","ops":[{"path":["name"],"value":"The Cage"},{"path":["schedule",0,"hours",1,"days"],"value":["Fr","Sa"]}]}"#),
     ("edit", #"{"file":"building-hours/1-1-cage.yaml","ops":[{"path":["schedule",0,"hours",1,"days"],"value":["Sa","Su"]}]}"#),
     ("build", "{}"),
+    ("datasets", "{}"),
+    ("records", #"{"set":"contact-info"}"#),
+    ("schema", #"{"set":"faqs"}"#),
+    ("edit", #"{"file":"contact-info/1-1-pubsafe.yaml","ops":[{"path":["phoneNumber"],"delete":true}]}"#),
+    ("create", #"{"set":"contact-info","title":"Title IX","section":"Wellness"}"#),
+    ("create", #"{"set":"faqs","title":"Where is the Pause?"}"#),
+    ("reorder", #"{"set":"transportation","order":[{"file":"transportation/2-ole-bikes.yaml","path":[]},{"file":"transportation/1-hiawathaland-transit.yaml","path":[]},{"file":"transportation/3-campus-go.yaml","path":[]},{"file":"transportation/4-break-airport-shuttles.yaml","path":[]},{"file":"transportation/5-first-choice-shuttle.yaml","path":[]},{"file":"transportation/6-all-options.yaml","path":[]}]}"#),
+    ("remove", #"{"set":"faqs","file":"faqs.yaml","path":["faqs",0]}"#),
+    ("writeText", ##"{"file":"privacy.md","text":"# Privacy\n"}"##),
+    ("readText", #"{"file":"privacy.md"}"#),
 ]
 
 /// A copy of the data and the published images, as the app downloads them.
@@ -134,5 +145,7 @@ struct HelperParityTests {
         // the steps meant to be refused were: the schema's and the overlap check's
         #expect(nodeReplies[6].contains("problems") && !nodeReplies[6].contains(#""problems":[]"#))
         #expect(nodeReplies[8].contains("problems") && !nodeReplies[8].contains(#""problems":[]"#))
+        // and the contact without a phone number, which Ajv checks
+        #expect(nodeReplies[14].contains("Phone Number or Button Link is missing"))
     }
 }

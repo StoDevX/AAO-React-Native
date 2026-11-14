@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import {spawn} from 'node:child_process'
 import {readdirSync} from 'node:fs'
+import {readFile, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {createInterface} from 'node:readline'
 import {describe, it} from 'node:test'
@@ -147,5 +148,87 @@ describe('the helper process', () => {
 		assert.ok(first.result.length > 10)
 		assert.equal(second.id, 2)
 		assert.ok(Array.isArray(second.result.breaks))
+	})
+})
+
+describe('the data-set methods', () => {
+	const ask = async (target, method, params) =>
+		(await handle(target, JSON.stringify({id: 1, method, params}))).result
+
+	it("list the catalog's sets", async () => {
+		let catalog = await ask(await handlers(), 'datasets', {})
+		assert.equal(catalog.sets['contact-info'].title, 'Important Contacts')
+	})
+
+	it("answer a set's records with their problems", async () => {
+		let reply = await ask(await handlers(), 'records', {set: 'faqs'})
+		assert.equal(reply.records[0].title, 'Say hello to us')
+		assert.deepEqual(reply.problems, [])
+	})
+
+	it("give a record's schema with its titles", async () => {
+		let schema = await ask(await handlers(), 'schema', {set: 'contact-info'})
+		assert.equal(schema.properties.phoneNumber.title, 'Phone Number')
+	})
+
+	it('add a record and name it in the reply', async () => {
+		let reply = await ask(await handlers(), 'create', {set: 'faqs', title: 'Where is the Pause?'})
+		assert.equal(reply.created.title, 'Where is the Pause?')
+	})
+
+	it('write a document and read it back', async () => {
+		let target = await handlers()
+		await ask(target, 'writeText', {file: 'privacy.md', text: '# Privacy\n'})
+		assert.equal(await ask(target, 'readText', {file: 'privacy.md'}), '# Privacy\n')
+	})
+})
+
+describe('the fix-pass methods', () => {
+	const ask = (target, method, params) => handle(target, JSON.stringify({id: 1, method, params}))
+
+	it('check every file it is given, so a record left behind still holds up Submit', async () => {
+		let target = await handlers()
+		await ask(target, 'create', {set: 'contact-info', title: 'Title IX', section: 'Safety'})
+		let reply = await ask(target, 'check', {files: ['contact-info/5-1-title-ix.yaml', 'faqs.yaml']})
+		assert.ok(reply.result.some((problem) => problem.file === 'contact-info/5-1-title-ix.yaml'))
+		assert.ok(!reply.result.some((problem) => problem.file === 'faqs.yaml'))
+	})
+
+	it("move a list's items as nodes, keeping a comment with its item", async () => {
+		let {root, dataDir} = await scratchData()
+		let target = createHandlers({dataDir, outDir: path.join(root, 'out'), bundleData: BUNDLE_DATA})
+		let file = path.join(dataDir, 'pause-menu.yaml')
+		let text = await readFile(file, 'utf8')
+		await writeFile(
+			file,
+			text.replace('  - {label: Toppings}', '  # extra charge\n  - {label: Toppings}'),
+		)
+		let count = (await ask(target, 'load', {file: 'pause-menu.yaml'})).result.value.stationMenus
+			.length
+		// Toppings, third, goes first
+		let order = [2, 0, 1, ...Array.from({length: count - 3}, (_, index) => index + 3)]
+		await ask(target, 'move', {file: 'pause-menu.yaml', path: ['stationMenus'], order})
+		let after = await readFile(file, 'utf8')
+		assert.match(after, /stationMenus:\n {2}# extra charge\n {2}- \{label: Toppings\}/u)
+	})
+
+	it('refuse to write a document that changed since it was read', async () => {
+		let target = await handlers()
+		let read = (await ask(target, 'readText', {file: 'privacy.md'})).result
+		await ask(target, 'writeText', {
+			file: 'privacy.md',
+			text: '# Changed elsewhere\n',
+			expected: read,
+		})
+		let stale = await ask(target, 'writeText', {
+			file: 'privacy.md',
+			text: '# Mine\n',
+			expected: read,
+		})
+		assert.match(stale.error.message, /changed/u)
+		assert.equal(
+			(await ask(target, 'readText', {file: 'privacy.md'})).result,
+			'# Changed elsewhere\n',
+		)
 	})
 })

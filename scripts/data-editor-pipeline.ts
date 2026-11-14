@@ -4,6 +4,9 @@ import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
 import {load} from 'js-yaml'
 import {isDataEntry} from './data-entries.mjs'
+import {fileSchema, loadCatalog, setForFile} from './data-editor-datasets.mjs'
+import {wordProblems} from './data-editor-wording.mjs'
+import {createValidator} from './validate.mjs'
 import {hoursFileOrder, loadScheduleData} from './schedule-data.ts'
 
 /** Something wrong with the data, at a path inside `file` when the message names one. */
@@ -61,16 +64,56 @@ export function problemsFrom(error: unknown, dataDir: string): Problem[] {
 	})
 }
 
-/** `file` checked as `mise run validate-data` checks it: its schema, then the whole schedule graph. */
+/**
+ * `file` checked as `mise run validate-data` checks it. An hours file or the
+ * break calendar is checked against its schema and then the whole schedule
+ * graph; any other file against the schema of the set that holds it, its
+ * problems worded with the schema's field titles. A file no set holds, or one
+ * without a schema, has nothing to check.
+ */
 export function validate(dataDir: string, file: string): Problem[] {
-	let filename = path.join(dataDir, file)
-	const kind = file === 'breaks.yaml' ? 'calendar' : 'space'
-	try {
-		loadScheduleData(dataDir, {kind, filename})
-		return []
-	} catch (error) {
-		return problemsFrom(error, dataDir)
+	if (file === 'breaks.yaml' || file.startsWith('building-hours/')) {
+		const kind = file === 'breaks.yaml' ? 'calendar' : 'space'
+		try {
+			loadScheduleData(dataDir, {kind, filename: path.join(dataDir, file)})
+			return []
+		} catch (error) {
+			return problemsFrom(error, dataDir)
+		}
 	}
+	let catalog = loadCatalog(dataDir)
+	let name = setForFile(catalog, file)
+	let schemaName = name === undefined ? undefined : catalog.sets[name].schema
+	if (name === undefined || schemaName === undefined) return []
+	let schemaDir = path.join(dataDir, '_schemas')
+	let check = createValidator(schemaDir, {allErrors: true}).compile(
+		readYaml(path.join(schemaDir, `${schemaName}.yaml`)) as object,
+	)
+	let data = readYaml(path.join(dataDir, file))
+	if (check(data)) return []
+	return wordProblems(check.errors, fileSchema(dataDir, catalog, name)).map(
+		({message, instancePath}: {message: string; instancePath: string}) => ({
+			file,
+			message,
+			path: keysIn(data, instancePath),
+		}),
+	)
+}
+
+/**
+ * The keys in an Ajv pointer such as `/routes/77627/line`, each an index only
+ * where `data` holds a list there: a map may be keyed by digits, as the bus
+ * routes are by GTFS id, and an index would point the editor into a list.
+ */
+export function keysIn(data: unknown, pointer: string): Key[] {
+	let keys: Key[] = []
+	let value = data
+	for (let key of keysOf(pointer)) {
+		let step = Array.isArray(value) ? Number(key) : String(key)
+		keys.push(step)
+		value = (value as Record<string | number, unknown> | null)?.[step]
+	}
+	return keys
 }
 
 const readYaml = (filename: string): unknown => load(readFileSync(filename, 'utf8'), {filename})

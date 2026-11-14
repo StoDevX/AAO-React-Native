@@ -40,22 +40,26 @@ function formatError(err, data) {
 	return `Error at ${err.dataPath || err.instancePath || '(unknown)'}:\n${contents}`
 }
 
+/**
+ * A validator over the schemas in `schemaDir`: its shared definitions, and the
+ * `editor` keyword, which tells the data editor which control draws a field
+ * and changes nothing about what is valid. `options` are Ajv's, such as
+ * `allErrors` for every problem rather than the first.
+ */
+export function createValidator(schemaDir, options = {}) {
+	let validator = new AJV(options)
+	addFormats(validator)
+	addKeywords(validator)
+	validator.addKeyword({keyword: 'editor', schemaType: 'string'})
+	validator.addSchema(load(fs.readFileSync(path.join(schemaDir, '_defs.yaml'), 'utf8')))
+	validator.addSchema(load(fs.readFileSync(path.join(schemaDir, '_schedules.yaml'), 'utf8')))
+	return validator
+}
+
 let validator = null
 
 function init() {
-	if (validator) return validator
-
-	// load the common definitions
-	let defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
-	let defs = load(fs.readFileSync(defsPath, 'utf-8'))
-
-	// set up the validator
-	validator = new AJV()
-	addFormats(validator)
-	addKeywords(validator)
-	validator.addSchema(defs)
-	validator.addSchema(load(fs.readFileSync(path.join(SCHEMA_BASE, '_schedules.yaml'), 'utf8')))
-
+	validator ??= createValidator(SCHEMA_BASE)
 	return validator
 }
 

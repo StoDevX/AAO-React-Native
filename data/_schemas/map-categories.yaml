@@ -12,7 +12,7 @@ definitions:
     additionalProperties: false
     required: [label, categories, icon, gradient]
     properties:
-      label: {type: string, minLength: 1}
+      label: {type: string, minLength: 1, title: Label}
       # Raw values from the campus's map/geojson `categories`. A place
       # matching any of them belongs to the group.
       categories:
@@ -20,10 +20,11 @@ definitions:
         minItems: 1
         uniqueItems: true
         items: {type: string, minLength: 1}
+        title: Categories
       # An SF Symbol name. Nothing can check one here; a wrong name draws a
       # blank circle.
-      icon: {type: string, minLength: 1}
-      gradient: {$ref: '_defs.json#/definitions/gradient-name'}
+      icon: {type: string, minLength: 1, title: Icon, editor: symbol}
+      gradient: {$ref: '_defs.json#/definitions/gradient-name', title: Color, editor: gradient}
   groups:
     type: array
     items: {$ref: '#/definitions/group'}
@@ -40,21 +41,23 @@ definitions:
         minItems: 1
         uniqueItems: true
         items: {type: string, minLength: 1}
-      icon: {type: string, minLength: 1}
-      gradient: {$ref: '_defs.json#/definitions/gradient-name'}
+        title: Categories
+      icon: {type: string, minLength: 1, title: Icon, editor: symbol}
+      gradient: {$ref: '_defs.json#/definitions/gradient-name', title: Color, editor: gradient}
   campus:
     type: object
     additionalProperties: false
     required: [groups, icons]
     properties:
-      groups: {$ref: '#/definitions/groups'}
+      groups: {$ref: '#/definitions/groups', title: Groups}
       icons:
         type: array
         items: {$ref: '#/definitions/icon'}
+        title: Icons
 
 type: object
 additionalProperties: false
 required: [stolaf, carleton]
 properties:
-  stolaf: {$ref: '#/definitions/campus'}
-  carleton: {$ref: '#/definitions/campus'}
+  stolaf: {$ref: '#/definitions/campus', title: St. Olaf}
+  carleton: {$ref: '#/definitions/campus', title: Carleton}

@@ -240,15 +240,18 @@ public final class Workspace: Sendable {
     }
 
     /// The data files that differ from the base commit: changed, added or removed.
-    /// A name that starts with `.` or `_` is not data (the helper's `isDataEntry`):
-    /// Finder's `.DS_Store`, or a `_<file>.next` the helper left half written.
+    /// A file the editor edits may start with `_` (`bus-times/_curation.yaml`), so
+    /// only these are left out: a name starting with `.`, such as Finder's
+    /// `.DS_Store`, and the helper's own temporary files, a `_<file>.next` it
+    /// left half written or a `_<file>.moving` it set aside to rename.
     public func changedFiles() throws -> [String] {
         let current = relativeFiles(in: dataDirectory)
         let base = relativeFiles(in: baseDataDirectory)
         return current.union(base)
             .filter { file in
                 let name = file.split(separator: "/").last ?? ""
-                return !name.hasPrefix(".") && !name.hasPrefix("_")
+                let temporary = name.hasPrefix("_") && (name.hasSuffix(".next") || name.hasSuffix(".moving"))
+                return !name.hasPrefix(".") && !temporary
             }
             .filter { try! contents(of: $0) != baseContents(of: $0) }.sorted()
     }

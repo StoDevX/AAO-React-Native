@@ -1,8 +1,9 @@
 import DataEditorKit
 import SwiftUI
 
-/// One changeset's window: its Overview and buildings on the left, and on the
-/// right the Overview, a building's editor, or for a pull request its diff.
+/// One changeset's window: its Overview and data sets, the chosen set's
+/// records, and on the right the Overview, a record's editor, or for a pull
+/// request its diff.
 struct ChangesetWindow: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
@@ -12,21 +13,34 @@ struct ChangesetWindow: View {
 
     var body: some View {
         let ready = model.phase == .ready
-        let selection: Binding<ChangesetItem?> = switch changeset {
-        case .current: Binding(get: { model.item }, set: { item in Task { await model.choose(item ?? .overview) } })
-        case .pullRequest: Binding(get: { pullRequestItem }, set: { pullRequestItem = $0 ?? .overview })
+        let item: Binding<ChangesetItem> = switch changeset {
+        case .current: Binding(get: { model.item }, set: { item in Task { await model.choose(item) } })
+        case .pullRequest: $pullRequestItem
         }
+        let listed = changesetRecords(changeset, catalog: model.catalog, records: model.records, history: model.submissions)
+        // a pull request's window opens on the first set it changed
+        let set = item.wrappedValue.set ?? (changeset == .current ? model.chosenSet : listed.keys.sorted().first) ?? ""
+        let setSelection = Binding<ChangesetItem?>(
+            get: { if case .record(let set, _) = item.wrappedValue { .set(set) } else { item.wrappedValue } },
+            set: { item.wrappedValue = $0 ?? .overview })
+        let recordSelection = Binding<RecordRef?>(
+            get: { if case .record(_, let ref) = item.wrappedValue { ref } else { nil } },
+            set: { ref in if let ref { item.wrappedValue = .record(set: set, ref) } })
         NavigationSplitView {
-            BuildingList(changeset: changeset, selection: selection)
+            DataSetList(changeset: changeset, only: changeset == .current ? nil : Set(listed.keys), selection: setSelection)
+                .disabled(!ready)
+        } content: {
+            RecordList(changeset: changeset, setName: set, set: model.catalog?.sets[set], records: listed[set] ?? [],
+                       selection: recordSelection)
                 .disabled(!ready)
         } detail: {
-            if ready { detail(selection.wrappedValue ?? .overview) } else { LaunchStatusView() }
+            if ready { detail(item.wrappedValue) } else { LaunchStatusView() }
         }
         .navigationTitle(title)
         // asked once as the window opens, not again on each row chosen in it
         .task(id: changeset) { if case .pullRequest(let number) = changeset { await model.loadDiffs(of: number) } }
         // room for a row of hours below the week, which a window saved smaller would hide
-        .frame(minWidth: 900, minHeight: 600)
+        .frame(minWidth: 1100, minHeight: 600)
         .toolbar {
             ToolbarItem { ServerStatusView().disabled(!ready) }
             ToolbarItem { Button("Data Browser", systemImage: "curlybraces") { openWindow(id: "browser") }.disabled(!ready) }
@@ -45,16 +59,32 @@ struct ChangesetWindow: View {
         switch (changeset, item) {
         case (.current, .overview):
             OverviewView(offersEditor: false)
-        case (.current, .building):
-            if let document = model.document {
-                HoursDetailView(document: document)
+        case (_, .set(let set)):
+            ContentUnavailableView("Choose a \(model.catalog?.sets[set]?.record ?? "record")", systemImage: "sidebar.left")
+        case (.current, .record(let set, let ref)):
+            if model.catalog?.sets[set]?.form == .hours {
+                if let document = model.document, model.documentFile == ref.file {
+                    HoursDetailView(document: document)
+                } else {
+                    ProgressView()
+                }
+            } else if model.catalog?.sets[set]?.form == .breaks {
+                if let value = model.value, model.documentFile == ref.file {
+                    BreaksEditorView(calendar: BreaksDocument(value: value))
+                } else {
+                    ProgressView()
+                }
+            } else if let dataSet = model.catalog?.sets[set], dataSet.shape == .document {
+                DocumentEditorView(file: ref.file)
+            } else if let dataSet = model.catalog?.sets[set], let record = model.records[set]?.first(where: { $0.ref == ref }) {
+                RecordFormView(setName: set, set: dataSet, record: record)
             } else {
                 ProgressView()
             }
         case (.pullRequest(let number), .overview):
             PullRequestDetailView(number: number)
-        case (.pullRequest(let number), .building(let file)):
-            PullRequestFileView(number: number, file: file)
+        case (.pullRequest(let number), .record(_, let ref)):
+            PullRequestFileView(number: number, file: ref.file)
         }
     }
 }

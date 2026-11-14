@@ -148,16 +148,19 @@ func plainPlace(_ path: [PathKey], breakNames: [String: String] = [:]) -> String
     return words.joined(separator: " › ")
 }
 
-/// The building whose hours `file` holds, or the file's path for one that is
-/// not a building's (breaks.yaml) or that the list does not hold yet.
-func buildingName(of file: String, in buildings: [BuildingSummary]) -> String {
-    buildings.first { $0.file == file }?.name ?? file
+/// What a contributor calls `file`: the record it holds, in a set with a file
+/// per record; the set it holds, for a file of many records or one record
+/// (FAQs & Notices); or else its path, for a file no listed set holds.
+func recordName(of file: String, catalog: DataSetCatalog?, records: [String: [RecordSummary]]) -> String {
+    guard let set = catalog?.set(for: file), let dataSet = catalog?.sets[set] else { return file }
+    if dataSet.shape == .folder { return records[set]?.first { $0.ref.file == file }?.title ?? file }
+    return dataSet.title
 }
 
-/// A problem's line: its message, after the building it belongs to when that
+/// A problem's line: its message, after the record it belongs to when that
 /// is not the file on screen, so a problem the check found in another file
-/// does not send the contributor to the wrong one.
-func problemLine(_ problem: Problem, fileOnScreen: String?, buildings: [BuildingSummary]) -> String {
+/// does not send the contributor to the wrong one. `name` names a file.
+func problemLine(_ problem: Problem, fileOnScreen: String?, name: (String) -> String) -> String {
     guard let file = problem.file, file != fileOnScreen else { return problem.message }
-    return "\(buildingName(of: file, in: buildings)): \(problem.message)"
+    return "\(name(file)): \(problem.message)"
 }

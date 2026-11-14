@@ -34,11 +34,11 @@ final class PullRequestUITests: XCTestCase {
         attachScreenshot(of: changesets, named: "Changesets window on a past pull request")
         newer.doubleClick()
 
-        let window = app.windows.containing(.outline, identifier: "pull-request-building-list").firstMatch
+        let window = app.windows.containing(.outline, identifier: "pull-request-record-list").firstMatch
         XCTAssertTrue(window.waitForExistence(timeout: 5))
         XCTAssertTrue(window.staticTexts["+       - {days: [Fr], from: '7:30am', to: '10:00pm'}"].exists)
         // its list holds only what it changed
-        let buildings = window.outlines["pull-request-building-list"]
+        let buildings = window.outlines["pull-request-record-list"]
         XCTAssertTrue(buildings.staticTexts["Stav Hall"].exists)
         XCTAssertTrue(buildings.staticTexts["The Cage"].exists)
         XCTAssertFalse(buildings.staticTexts["Boe Chapel"].exists)

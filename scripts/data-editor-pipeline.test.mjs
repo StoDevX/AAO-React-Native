@@ -110,6 +110,55 @@ describe('validate', () => {
 	})
 })
 
+describe('validate, for a data set with a generated form', () => {
+	it('finds nothing wrong with a contact as published', async () => {
+		let {dataDir} = await scratchData()
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [])
+	})
+
+	it('says once that a contact needs a phone number or a link', async () => {
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, 'contact-info/1-1-pubsafe.yaml')
+		await writeFile(file, (await readFile(file, 'utf8')).replace("phoneNumber: '5077863666'\n", ''))
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [
+			{
+				file: 'contact-info/1-1-pubsafe.yaml',
+				message: 'Phone Number or Button Link is missing',
+				path: [],
+			},
+		])
+	})
+
+	it('places a problem in the scrape overrides', async () => {
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, '_scrapes/bonapp-overrides.yaml')
+		await writeFile(
+			file,
+			(await readFile(file, 'utf8')).replace('skip: [Continuous Dining]', 'skip: 5'),
+		)
+		let problems = validate(dataDir, '_scrapes/bonapp-overrides.yaml')
+		assert.deepEqual(
+			problems.map((problem) => problem.path),
+			[['venues', 'stav-hall', 'skip']],
+		)
+	})
+
+	it('checks a file a set is named for against that set, not its folder', async () => {
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, 'bus-times/_curation.yaml')
+		await writeFile(file, (await readFile(file, 'utf8')).replace('line: Blue Line', 'line: 5'))
+		assert.deepEqual(
+			validate(dataDir, 'bus-times/_curation.yaml').map((problem) => problem.path),
+			[['routes', '77627', 'line']],
+		)
+	})
+
+	it('finds nothing to check in a file no set describes', async () => {
+		let {dataDir} = await scratchData()
+		assert.deepEqual(validate(dataDir, 'news-styles.css'), [])
+	})
+})
+
 describe('listBuildings', () => {
 	it('lists every hours file with its name and category', () => {
 		let buildings = listBuildings(DATA_BASE)

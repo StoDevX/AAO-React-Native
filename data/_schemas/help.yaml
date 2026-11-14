@@ -4,13 +4,13 @@ type: object
 additionalProperties: false
 required: [key, enabled, title, body]
 properties:
-  key: {type: string}
-  enabled: {type: boolean}
-  hidden: {type: boolean}
-  message: {type: string}
-  versionRange: {type: string}
-  title: {type: string}
-  body: {type: string}
+  key: {type: string, title: Key}
+  enabled: {type: boolean, title: Enabled}
+  hidden: {type: boolean, title: Hidden}
+  message: {type: string, title: Message}
+  versionRange: {type: string, title: Version Range}
+  title: {type: string, title: Title}
+  body: {type: string, title: Body, editor: markdown}
   buttons:
     type: array
     items:
@@ -20,7 +20,8 @@ properties:
         - $ref: '#/definitions/buttons/send-email'
         - $ref: '#/definitions/buttons/call-phone'
         - $ref: '#/definitions/buttons/custom'
-  x-defns: {type: object}
+    title: Buttons
+  x-defns: {type: object, title: X Defns}
 
 definitions:
   buttons:
@@ -29,56 +30,59 @@ definitions:
       additionalProperties: false
       required: [title, action, params]
       properties:
-        title: {type: string}
-        action: {const: open-url}
-        enabled: {type: boolean}
+        title: {type: string, title: Title}
+        action: {const: open-url, title: Action}
+        enabled: {type: boolean, title: Enabled}
         params:
           type: object
           additionalProperties: false
           required: [url]
           properties:
-            url: {type: string, format: uri}
+            url: {type: string, format: uri, title: Link, editor: url}
+          title: Params
     send-email:
       type: object
       additionalProperties: false
       required: [title, action, params]
       properties:
-        title: {type: string}
-        action: {const: send-email}
-        enabled: {type: boolean}
+        title: {type: string, title: Title}
+        action: {const: send-email, title: Action}
+        enabled: {type: boolean, title: Enabled}
         params:
           type: object
           additionalProperties: false
           required: [to, subject, body]
           properties:
-            to: {$ref: '#/definitions/setOfEmails'}
-            cc: {$ref: '#/definitions/setOfEmails'}
-            bcc: {$ref: '#/definitions/setOfEmails'}
-            subject: {type: string}
-            body: {type: string}
+            to: {$ref: '#/definitions/setOfEmails', title: To}
+            cc: {$ref: '#/definitions/setOfEmails', title: Cc}
+            bcc: {$ref: '#/definitions/setOfEmails', title: Bcc}
+            subject: {type: string, title: Subject}
+            body: {type: string, title: Body, editor: markdown}
+          title: Params
     call-phone:
       type: object
       additionalProperties: false
       required: [title, action, params]
       properties:
-        title: {type: string}
-        action: {const: call-phone}
-        enabled: {type: boolean}
+        title: {type: string, title: Title}
+        action: {const: call-phone, title: Action}
+        enabled: {type: boolean, title: Enabled}
         params:
           type: object
           additionalProperties: false
           required: [number]
           properties:
-            number: {$ref: '_defs.json#/definitions/phone'}
+            number: {$ref: '_defs.json#/definitions/phone', title: Number}
+          title: Params
     custom:
       type: object
       additionalProperties: false
       required: [title, action, params]
       properties:
-        title: {type: string}
-        enabled: {type: boolean}
-        action: {const: custom}
-        params: {type: object}
+        title: {type: string, title: Title}
+        enabled: {type: boolean, title: Enabled}
+        action: {const: custom, title: Action}
+        params: {type: object, title: Params}
 
   setOfEmails:
     oneOf:

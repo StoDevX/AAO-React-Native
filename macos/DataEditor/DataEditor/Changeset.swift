@@ -7,10 +7,20 @@ enum Changeset: Hashable, Codable {
     case pullRequest(number: Int)
 }
 
-/// What a changeset's window shows: its Overview or one of its buildings.
+/// What a changeset's window shows: its Overview, a data set whose record
+/// is still to be chosen, or one record of a set.
 enum ChangesetItem: Hashable {
     case overview
-    case building(file: String)
+    case set(String)
+    case record(set: String, RecordRef)
+
+    /// The data set the record column lists for this item, if it names one.
+    var set: String? {
+        switch self {
+        case .overview: nil
+        case .set(let set), .record(let set, _): set
+        }
+    }
 }
 
 /// The Overview's line about the phone preview.
@@ -21,11 +31,11 @@ enum PreviewLine: Equatable {
     /// the build did not run at all
     case failed
 
-    /// - Parameter buildings: names the file that stops the build, when it is listed
-    func text(buildings: [BuildingSummary]) -> String {
+    /// - Parameter name: names the file that stops the build
+    func text(name: (String) -> String) -> String {
         switch self {
         case .upToDate: "The preview is up to date"
-        case .stopsAt(let file): "The preview stops at \(buildings.first { $0.file == file }?.name ?? file)"
+        case .stopsAt(let file): "The preview stops at \(name(file))"
         case .failed: "The preview couldn't be updated"
         }
     }
@@ -78,19 +88,27 @@ struct OverviewParts: Equatable {
     }
 }
 
-/// The buildings the second column lists for `changeset`: every one for
-/// Current changes; for a pull request, the files it changed, each named as
-/// the data names it, or by its file name when the data no longer lists it.
-func changesetBuildings(_ changeset: Changeset, all: [BuildingSummary], history: SubmissionHistory) -> [BuildingSummary] {
-    guard case .pullRequest(let number) = changeset else { return all }
-    let files = history.records.first { $0.id == number }?.changedFiles ?? []
-    return files.map { file in
-        all.first { $0.file == file } ?? BuildingSummary(file: file, name: (file as NSString).lastPathComponent, category: "")
-    }
-}
-
 /// `changeset`, or Current changes once the pull request it names is no longer listed.
 func stillListed(_ changeset: Changeset?, in records: [SubmissionRecord]) -> Changeset? {
     guard case .pullRequest(let number)? = changeset, !records.contains(where: { $0.id == number }) else { return changeset }
     return .current
+}
+
+/// The records each data set lists for `changeset`, by set: every record for
+/// Current changes; for a pull request, the files it changed, each named as
+/// the set's records name it, or by its file name when none does.
+func changesetRecords(_ changeset: Changeset, catalog: DataSetCatalog?, records: [String: [RecordSummary]],
+                      history: SubmissionHistory) -> [String: [RecordSummary]] {
+    guard case .pullRequest(let number) = changeset else { return records }
+    let files = history.records.first { $0.id == number }?.changedFiles ?? []
+    var listed: [String: [RecordSummary]] = [:]
+    for file in files {
+        let set = catalog?.set(for: file) ?? ""
+        let known = records[set]?.first { $0.ref.file == file && $0.ref.path.isEmpty }
+        let title = known?.title ?? catalog?.sets[set].flatMap { $0.shape == .folder ? nil : $0.title }
+            ?? (file as NSString).lastPathComponent
+        listed[set, default: []].append(RecordSummary(set: set, ref: RecordRef(file: file, path: []), title: title,
+                                                      subtitle: nil, section: known?.section, editable: false))
+    }
+    return listed
 }

@@ -7,18 +7,18 @@ oneOf:
   - required: [phoneNumber]
   - required: [buttonLink]
 properties:
-  title: {type: string}
-  phoneNumber: {$ref: '_defs.json#/definitions/phone'}
-  buttonText: {type: string}
-  buttonLink: {type: string}
-  category: {type: string}
-  synopsis: {type: string}
-  image: {type: string}
-  text: {type: string}
+  title: {type: string, title: Title}
+  phoneNumber: {$ref: '_defs.json#/definitions/phone', title: Phone Number, editor: phone}
+  buttonText: {type: string, title: Button Label}
+  buttonLink: {type: string, title: Button Link, editor: url}
+  category: {type: string, title: Category}
+  synopsis: {type: string, title: Summary, editor: multiline}
+  image: {type: string, title: Image, editor: image}
+  text: {type: string, title: Text, editor: markdown}
   # An SF Symbol name. sf-symbols-typescript ships no runtime value -- the
   # package is one declaration file -- so nothing can check this name here.
   # A wrong one draws nothing; only a missing icon falls back.
-  icon: {type: string}
+  icon: {type: string, title: Icon, editor: symbol}
   # Either a name from GRADIENT_NAMES in modules/colors/resolve-gradient.ts, or
   # an explicit [inner, outer] pair. The pair must be written in the CSS Color 4
   # display-p3 syntax: a P3 colour written as hex is syntactically valid but
@@ -34,3 +34,5 @@ properties:
         items:
           type: string
           pattern: '^color\(display-p3 [0-9.]+ [0-9.]+ [0-9.]+\)$'
+    title: Color
+    editor: gradient

@@ -1,14 +1,26 @@
 import XCTest
 
+/// The Cage's hours, as `launchWithRepoData(opening:)` takes a record.
+let theCage = "building-hours:building-hours/1-1-cage.yaml"
+
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
     /// the helper built from the checkout, and the oxfmt the app bundles. A `conflicted` file is set aside as a conflict,
     /// as an update leaves one, `submissions` is planted as the pull requests
     /// submitted before, and `arguments` follow the workspace's. Returns
     /// the app and its data folder, for a test that changes a file under it.
+    ///
+    /// The hours tests edit The Cage's and Stav Hall's usual hours, which a
+    /// scrape owns and the editor therefore locks. They test the hours editor,
+    /// not that lock, so the workspace's catalog drops the scrape's claim
+    /// unless `keepsScrapes` asks for it.
+    ///
+    /// `opening` is a data set, or a record as `set:file` (`theCage`), that
+    /// the app opens in Current changes once it is ready, so a test about a
+    /// record begins on it rather than clicking its way there.
     @MainActor
-    func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil,
-                            arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
+    func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil, keepsScrapes: Bool = false,
+                            opening: String? = nil, arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let support = FileManager.default.temporaryDirectory.appending(path: "ui \(UUID().uuidString)")
         let workspace = support.appending(path: "workspace")
@@ -41,6 +53,14 @@ extension XCTestCase {
         if let submissions {
             try Data(submissions.utf8).write(to: support.appending(path: "submissions.json"))
         }
+        if !keepsScrapes {
+            // in the base too, so the change is not one of the contributor's
+            for data in [workspace.appending(path: "data"), workspace.appending(path: "base/data")] {
+                let catalog = data.appending(path: "_datasets.yaml")
+                let text = try String(contentsOf: catalog, encoding: .utf8)
+                try text.replacing(/\n    scraped:\n(      .*\n)+/, with: "\n").write(to: catalog, atomically: true, encoding: .utf8)
+            }
+        }
         let app = XCUIApplication()
         // the app quits first, so nothing writes into the folder as it goes
         addTeardownBlock { @MainActor in
@@ -49,8 +69,11 @@ extension XCTestCase {
         }
         // each test starts from the Changesets window alone, not the windows an earlier test left open
         app.launchArguments = ["-UITestWorkspace", support.path, "-UITestOxfmt", oxfmt.path,
-                               "-ApplePersistenceIgnoreState", "YES"] + arguments
+                               "-ApplePersistenceIgnoreState", "YES"] + (opening.map { ["-UITestOpen", $0] } ?? []) + arguments
         app.launch()
+        if opening != nil {
+            XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 20))
+        }
         return (app, workspace.appending(path: "data"))
     }
 
@@ -68,11 +91,11 @@ extension XCTestCase {
         return window
     }
 
-    /// The Current changes window, found by its list of every building: its
-    /// title follows the building chosen.
+    /// The Current changes window, found by its list of data sets: its
+    /// title follows the record chosen.
     @MainActor
     func currentChangesWindow(in app: XCUIApplication) -> XCUIElement {
-        app.windows.containing(.outline, identifier: "building-list").firstMatch
+        app.windows.containing(.outline, identifier: "data-set-list").firstMatch
     }
 
     /// The Current changes window, opened if it is not.
@@ -85,7 +108,7 @@ extension XCTestCase {
     /// Opens The Cage's hours in the Current changes window.
     @MainActor
     func selectTheCage(in app: XCUIApplication) {
-        let cage = currentChanges(in: app).outlines["building-list"].staticTexts["The Cage"]
+        let cage = currentChanges(in: app).outlines["record-list"].staticTexts["The Cage"]
         XCTAssertTrue(cage.waitForExistence(timeout: 20))
         cage.click()
     }
@@ -94,7 +117,7 @@ extension XCTestCase {
     @MainActor
     func openOverview(in app: XCUIApplication) {
         let window = currentChanges(in: app)
-        let overview = window.outlines["building-list"].staticTexts["Overview"]
+        let overview = window.outlines["data-set-list"].staticTexts["Overview"]
         XCTAssertTrue(overview.waitForExistence(timeout: 5))
         overview.click()
         XCTAssertTrue(window.descendants(matching: .any)["overview-page"].firstMatch.waitForExistence(timeout: 5))

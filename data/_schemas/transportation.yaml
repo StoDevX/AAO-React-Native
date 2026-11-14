@@ -4,8 +4,8 @@ type: object
 additionalProperties: false
 required: [name, category, url, synopsis, description]
 properties:
-  name: {type: string}
-  category: {type: string}
-  url: {type: string, format: uri}
-  synopsis: {type: string}
-  description: {type: string}
+  name: {type: string, title: Name}
+  category: {type: string, title: Category}
+  url: {type: string, format: uri, title: Link, editor: url}
+  synopsis: {type: string, title: Summary, editor: multiline}
+  description: {type: string, title: Description, editor: multiline}

@@ -364,11 +364,32 @@ To use this:
 
 The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run prebuild`), discovery is silently skipped — the screen won't crash.
 
+### Data Editor
+
+The Mac data editor (`macos/DataEditor/`) edits `data/` without showing any
+YAML: a data set, then its records, then a form. Its submissions are pull
+requests from the contributor's GitHub account, through their fork when they
+cannot push here.
+
+`data/_datasets.yaml` lists the sets it offers and how each is shown; its
+header says what each field means. A set's form is drawn from its schema in
+`data/_schemas/`, so every field a form shows needs a `title`, and may take an
+`editor` hint for its control (`markdown`, `phone`, `symbol` and so on;
+`scripts/data-editor-datasets.test.mjs` lists them). To offer a new set, add an
+entry to the catalog and a schema; the editor needs no change unless the set
+wants a form of its own, as hours and breaks have.
+
+What a scrape or generator writes is shown but not edited: `readOnly`,
+`generated` and `scraped` in the catalog say which. The files that steer a
+scrape (`data/_scrapes/bonapp-overrides.yaml`, the bus curation and repairs)
+are edited instead, and take effect at the scrape's next run, not in the
+editor's preview.
+
 ### Dining Hours
 
 `data/building-hours/1-3-stav.yaml` and `1-1-cage.yaml` are maintained by a
 weekly scrape of Bon Appétit's café pages, which opens a pull request when they
-fall behind. Edit `scripts/bonapp-overrides.yaml` rather than those two files —
+fall behind. Edit `data/_scrapes/bonapp-overrides.yaml` rather than those two files —
 a hand edit to a `schedule:` block in them is reverted by the next run.
 
 ```bash

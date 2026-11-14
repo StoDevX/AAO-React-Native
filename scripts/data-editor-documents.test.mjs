@@ -185,3 +185,18 @@ describe('tempFileFor', () => {
 		assert.equal(isDataEntry(path.basename(temp)), false)
 	})
 })
+
+describe('DocumentStore.rename', () => {
+	it('swaps two names in use, leaving nothing half moved', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		await writeFile(path.join(root, 'a.yaml'), 'name: A\n')
+		await writeFile(path.join(root, 'b.yaml'), 'name: B\n')
+		await new DocumentStore(root).rename([
+			{from: 'a.yaml', to: 'b.yaml'},
+			{from: 'b.yaml', to: 'a.yaml'},
+		])
+		assert.equal(await readFile(path.join(root, 'a.yaml'), 'utf8'), 'name: B\n')
+		assert.equal(await readFile(path.join(root, 'b.yaml'), 'utf8'), 'name: A\n')
+		assert.deepEqual(readdirSync(root).toSorted(), ['a.yaml', 'b.yaml'])
+	})
+})

@@ -1,0 +1,85 @@
+# The FAQs and the banners they raise. source/features/faqs/schema.ts is what
+# the app parses them with; an item that fails it falls back to an unstyled
+# notice, so this schema holds the data to what that parser accepts.
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+additionalProperties: false
+required: [faqs]
+properties:
+  # Shown on the FAQ screen by app versions that predate `faqs`.
+  legacyText: {type: string, title: Legacy Text}
+  faqs:
+    type: array
+    items: {$ref: '#/definitions/faq'}
+    title: FAQs
+
+definitions:
+  faq:
+    type: object
+    additionalProperties: false
+    required: [id, question, answer, bannerTitle, bannerText, targets, updatedAt]
+    properties:
+      id: {type: string, minLength: 1, title: ID}
+      question: {type: string, minLength: 1, title: Question}
+      answer: {type: string, minLength: 1, title: Answer, editor: markdown}
+      bannerTitle: {type: string, minLength: 1, title: Banner Title}
+      bannerText: {type: string, minLength: 1, title: Banner Text, editor: markdown}
+      bannerCta: {type: string, minLength: 1, title: Banner Button}
+      # The screens whose banner shows this FAQ.
+      targets:
+        type: array
+        items: {type: string, minLength: 1}
+        title: Targets
+      severity: {enum: [notice, info, alert], title: Severity}
+      icon: {type: string, minLength: 1, title: Icon, editor: symbol}
+      backgroundColor: {type: string, minLength: 1, title: Background Color}
+      foregroundColor: {type: string, minLength: 1, title: Foreground Color}
+      dismissable: {type: boolean, title: Dismissable}
+      # `3 days`, `12h` or an ISO 8601 duration such as `P1D`.
+      repeatInterval: {type: string, minLength: 1, title: Show Again After}
+      conditions:
+        oneOf:
+          - $ref: '#/definitions/condition'
+          - type: array
+            minItems: 1
+            items: {$ref: '#/definitions/condition'}
+        title: Conditions
+        # nested conditions are edited in the file; the form keeps them as they are
+        editor: hidden
+      updatedAt: {type: string, format: date-time, title: Updated, editor: date}
+
+  condition:
+    oneOf:
+      - type: object
+        additionalProperties: false
+        required: [and]
+        properties:
+          and: {type: array, minItems: 1, items: {$ref: '#/definitions/condition'}, title: And}
+      - type: object
+        additionalProperties: false
+        required: [or]
+        properties:
+          or: {type: array, minItems: 1, items: {$ref: '#/definitions/condition'}, title: Or}
+      - type: object
+        additionalProperties: false
+        required: [not]
+        properties:
+          not: {$ref: '#/definitions/condition', title: Not}
+      - type: object
+        additionalProperties: false
+        minProperties: 1
+        properties:
+          platform: {$ref: '#/definitions/platform', title: Platform}
+          platforms:
+            {type: array, minItems: 1, items: {$ref: '#/definitions/platform'}, title: Platforms}
+          campus: {$ref: '#/definitions/campus', title: Campus}
+          campuses:
+            {type: array, minItems: 1, items: {$ref: '#/definitions/campus'}, title: Campuses}
+          versionRange: {type: string, minLength: 1, title: Version Range}
+          startDate: {type: string, format: date-time, title: Start Date}
+          endDate: {type: string, format: date-time, title: End Date}
+
+  platform: {enum: [ios, android, native]}
+  # CAMPUS_IDS in source/campuses/ids.ts.
+  campus: {enum: [edu.stolaf, edu.carleton, example.college]}

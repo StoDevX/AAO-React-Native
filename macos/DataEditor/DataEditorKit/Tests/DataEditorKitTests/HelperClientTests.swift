@@ -23,6 +23,23 @@ private func client() throws -> HelperClient {
 private struct Echo: Decodable, Sendable { let echo: JSONValue }
 
 struct HelperClientTests {
+    @Test func decodesARecordByItsFileAndPath() throws {
+        let json = #"{"set":"faqs","file":"faqs.yaml","path":["faqs",0],"title":"Say hello to us","subtitle":null,"section":null,"editable":true}"#
+        let record = try JSONDecoder().decode(RecordSummary.self, from: Data(json.utf8))
+        #expect(record.ref == RecordRef(file: "faqs.yaml", path: ["faqs", 0]))
+        #expect(record.title == "Say hello to us")
+        #expect(record.subtitle == nil)
+    }
+
+    @Test func decodesACatalogSet() throws {
+        let json = #"{"groups":[{"title":"Help","sets":["faqs"]}],"sets":{"faqs":{"title":"FAQs & Notices","record":"FAQ","shape":"list","path":"faqs.yaml","list":["faqs"],"schema":"faqs","steers":{"what":"the timetables","run":"the refresh"}}}}"#
+        let catalog = try JSONDecoder().decode(DataSetCatalog.self, from: Data(json.utf8))
+        let faqs = try #require(catalog.sets["faqs"])
+        #expect(faqs.shape == .list)
+        #expect(faqs.form == .generated)
+        #expect(faqs.steers == DataSet.Steers(what: "the timetables", run: "the refresh"))
+    }
+
     @Test func returnsTheResultForItsRequest() async throws {
         let reply: Echo = try await client().call("load", ["file": "building-hours/1-1-cage.yaml"])
         #expect(reply.echo["method"] == .string("load"))
@@ -66,5 +83,23 @@ struct HelperClientTests {
         let ops: [EditOp] = [.set(["schedule", 0, "to"], .string("9:00pm")), .delete(["links", 1])]
         let json = String(decoding: try JSONEncoder.sorted.encode(ops), as: UTF8.self)
         #expect(json == #"[{"path":["schedule",0,"to"],"value":"9:00pm"},{"delete":true,"path":["links",1]}]"#)
+    }
+}
+
+struct DataSetCatalogTests {
+    private let catalog = try! JSONDecoder().decode(DataSetCatalog.self, from: Data(#"{"groups":[],"sets":{"contact-info":{"title":"Important Contacts","record":"Contact","shape":"folder","path":"contact-info","schema":"contact-info"},"bus-times":{"title":"Bus Times","record":"Bus Line","shape":"folder","path":"bus-times","schema":"bus-times"},"bus-curation":{"title":"Bus Curation","record":"Bus Curation","shape":"file","path":"bus-times/_curation.yaml","schema":"_bus-curation"}}}"#.utf8))
+
+    @Test func findsTheFolderSetAFileIsIn() {
+        #expect(catalog.set(for: "contact-info/1-1-pubsafe.yaml") == "contact-info")
+    }
+
+    /// `_curation.yaml` sits in the bus-times folder but is a set of its own.
+    @Test func prefersTheSetNamedForTheFileItself() {
+        #expect(catalog.set(for: "bus-times/_curation.yaml") == "bus-curation")
+        #expect(catalog.set(for: "bus-times/1-express.yaml") == "bus-times")
+    }
+
+    @Test func findsNoSetForAFileNoneHolds() {
+        #expect(catalog.set(for: "news-styles.css") == nil)
     }
 }
