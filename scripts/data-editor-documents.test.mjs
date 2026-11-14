@@ -81,6 +81,46 @@ describe('DocumentStore.edit', () => {
 		assert.equal(await read(), FIXTURE + "      - {days: [Su], from: '9:00am', to: '10:30am'}\n")
 	})
 
+	/// A bus timetable writes each trip on one line, its times unquoted, and each stop's coordinates beside its name.
+	const TIMETABLE = `schedules:
+  - coordinates:
+      Library: [44.45, -93.15]
+    stops: [Library, Carleton]
+    times:
+      - [3:00pm, 3:08pm]
+`
+
+	async function storeWithTimetable() {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		await writeFile(path.join(root, 'express.yaml'), TIMETABLE)
+		return {
+			store: new DocumentStore(root),
+			read: () => readFile(path.join(root, 'express.yaml'), 'utf8'),
+		}
+	}
+
+	it('adds a trip in the style of the trips beside it', async () => {
+		let {store, read} = await storeWithTimetable()
+		await store.edit('express.yaml', [
+			{path: ['schedules', 0, 'times', 1], value: ['4:00pm', '4:08pm']},
+		])
+		assert.equal(await read(), TIMETABLE + '      - [4:00pm, 4:08pm]\n')
+	})
+
+	it("changes a trip's time without quoting it", async () => {
+		let {store, read} = await storeWithTimetable()
+		await store.edit('express.yaml', [{path: ['schedules', 0, 'times', 0, 1], value: '4:08pm'}])
+		assert.equal(await read(), TIMETABLE.replace('3:08pm', '4:08pm'))
+	})
+
+	it("adds a stop's coordinates in the style of the others", async () => {
+		let {store, read} = await storeWithTimetable()
+		await store.edit('express.yaml', [
+			{path: ['schedules', 0, 'coordinates', 'Carleton'], value: [44.46, -93.15]},
+		])
+		assert.match(await read(), /\n {6}Carleton: \[44\.46, -93\.15\]\n/u)
+	})
+
 	/// Closing writes `hours: []`; reopening adds a row to that list.
 	it('writes a row added to a closed schedule on a line of its own', async () => {
 		let {store, read} = await storeWithFixture()

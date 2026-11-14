@@ -172,6 +172,7 @@ sets:
     shape: folder
     path: bus-times
     schema: bus-times
+    form: bus
     titleField: line
     ordered: true
     generated:

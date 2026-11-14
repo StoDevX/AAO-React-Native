@@ -50,7 +50,7 @@ definitions:
       sectionField: {type: string, minLength: 1}
       # folder shape: a numeric file-name prefix orders the records
       ordered: {type: boolean}
-      form: {enum: [generated, hours, breaks]}
+      form: {enum: [generated, hours, breaks, bus]}
       # these fields of these files are written by a scrape
       scraped:
         type: object

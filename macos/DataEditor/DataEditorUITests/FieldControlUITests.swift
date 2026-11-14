@@ -86,36 +86,6 @@ final class FieldControlUITests: XCTestCase {
         attachScreenshot(of: window, named: "An icon that is no symbol")
     }
 
-    /// A bus time is set in a time field, not typed as text.
-    func testABusTimeIsSetInATimeField() throws {
-        let (app, data) = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml")
-        let window = currentChanges(in: app)
-        let expand = window.links["expand-all-field-schedules.#1.times"]
-        XCTAssertTrue(expand.waitForExistence(timeout: 10))
-        expand.click()
-        let time = window.datePickers["field-schedules.#1.times.#1.#1"]
-        XCTAssertTrue(time.waitForExistence(timeout: 5))
-        // the hour is first: a step up makes 3:00pm 4:00pm
-        time.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5)).click()
-        time.typeKey(.upArrow, modifierFlags: [])
-        time.typeKey(.return, modifierFlags: [])
-        attachScreenshot(of: window, named: "The Express's first trip, its times in time fields")
-        // the edited time may be quoted, as the helper writes a time it sets
-        XCTAssertTrue(waitFor("[4:00pm, 3:08pm", or: "['4:00pm', 3:08pm", in: "bus-times/1-express.yaml", data: data))
-    }
-
-    /// A schedule's days are one control, a segment a day.
-    func testAScheduleDaysAreOneControl() throws {
-        let (app, data) = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml")
-        let window = currentChanges(in: app)
-        // AppKit's select-any segmented control shows each segment as a checkbox
-        let days = window.groups["field-schedules.#1.days"]
-        XCTAssertTrue(days.waitForExistence(timeout: 10))
-        days.checkBoxes["Sun"].click()
-        attachScreenshot(of: window, named: "The Express's days in one control")
-        XCTAssertTrue(waitFor("- Su\n", in: "bus-times/1-express.yaml", data: data))
-    }
-
     /// FAQ targets are tokens: a new one is typed and Return adds it, keeping the others and their comments.
     func testAFAQsTargetsAreTokens() throws {
         let (app, data) = try launchWithRepoData(opening: "faqs")
@@ -152,7 +122,7 @@ final class FieldControlUITests: XCTestCase {
     func testALockedSetsPickersAreDisabled() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app
         let window = currentChanges(in: app)
-        let day = window.groups["field-schedules.#1.days"].checkBoxes.firstMatch
+        let day = window.groups["timetable-1-days"].checkBoxes.firstMatch
         XCTAssertTrue(day.waitForExistence(timeout: 10))
         XCTAssertFalse(day.isEnabled)
     }

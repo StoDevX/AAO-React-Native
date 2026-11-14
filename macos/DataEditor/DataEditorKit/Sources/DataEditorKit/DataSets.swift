@@ -41,7 +41,7 @@ public struct DataSet: Decodable, Hashable, Sendable {
         case document
     }
 
-    public enum Form: String, Decodable, Sendable { case generated, hours, breaks }
+    public enum Form: String, Decodable, Sendable { case generated, hours, breaks, bus }
 
     /// Files a scrape writes, and the fields of them it owns.
     public struct Scraped: Decodable, Hashable, Sendable {

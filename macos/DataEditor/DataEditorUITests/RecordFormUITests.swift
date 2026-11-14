@@ -39,26 +39,27 @@ final class RecordFormUITests: XCTestCase {
 
     /// A group opens from its title, not only from the chevron before it.
     func testAGroupOpensFromItsTitle() throws {
-        let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
+        let app = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml").app
         let window = currentChanges(in: app)
-        // the one schedule is open already; its timetable rows are not
-        let row = window.disclosureTriangles["Times 1"]
-        XCTAssertTrue(row.waitForExistence(timeout: 10))
-        clickTitle(of: row)
-        XCTAssertTrue(window.datePickers["field-schedules.#1.times.#1.#1"].waitForExistence(timeout: 5))
-        attachScreenshot(of: window, named: "The Express's first timetable row, opened from its title")
+        let item = window.disclosureTriangles["Food Items 1"]
+        XCTAssertTrue(item.waitForExistence(timeout: 10))
+        clickTitle(of: item)
+        XCTAssertTrue(window.textFields["field-foodItems.#1.label"].waitForExistence(timeout: 5))
+        attachScreenshot(of: window, named: "A food item, opened from its title")
     }
 
-    /// The Express Bus has one schedule, which opens by itself; its timetable rows open together.
+    /// A building with one floor shows it open; a menu's many food items open together.
     func testAListOfOneOpensAndAListOfManyExpandsAtOnce() throws {
-        let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
+        let one = try launchWithRepoData(opening: "building-directory:building-directory/bmc.yaml").app
+        XCTAssertTrue(currentChanges(in: one).textFields["field-floors.#1.name"].waitForExistence(timeout: 10))
+        one.terminate()
+        let app = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml").app
         let window = currentChanges(in: app)
-        let expand = window.links["expand-all-field-schedules.#1.times"]
+        let expand = window.links["expand-all-field-foodItems"]
         XCTAssertTrue(expand.waitForExistence(timeout: 10))
         expand.click()
-        XCTAssertTrue(window.datePickers["field-schedules.#1.times.#2.#1"].waitForExistence(timeout: 5))
-        XCTAssertTrue(window.datePickers["field-schedules.#1.times.#7.#1"].exists)
-        attachScreenshot(of: window, named: "The Express's schedule open, every timetable row expanded")
+        XCTAssertTrue(window.textFields["field-foodItems.#2.label"].waitForExistence(timeout: 5))
+        attachScreenshot(of: window, named: "Every food item expanded")
     }
 
     /// A field's problem shows under the field, and in the list at the top too.

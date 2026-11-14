@@ -60,9 +60,23 @@ export function roundTrip(file, text) {
 function styled(doc, parentPath, value) {
 	let node = doc.createNode(value)
 	let parent = doc.getIn(parentPath, true)
-	let sibling = isSeq(parent) ? parent.items[0] : undefined
+	let sibling = isSeq(parent) ? parent.items[0] : isMap(parent) ? parent.items[0]?.value : undefined
 	let inRows = FLOW_ROWS.has(String(parentPath.at(-1)))
 	if (isMap(node) && ((isMap(sibling) && sibling.flow) || inRows)) node.flow = true
+	// a list beside lists written on one line, as a timetable's trips or a stop's coordinates, is written so too
+	if (isSeq(node) && isSeq(sibling) && sibling.flow) node.flow = true
+	// a time is quoted as the times beside it are: an hours file quotes them, a bus timetable doesn't
+	let timeStyle = 'QUOTE_SINGLE'
+	if (sibling !== undefined) {
+		visit(sibling, {
+			Scalar(_, scalar) {
+				if (typeof scalar.value === 'string' && TIME.test(scalar.value)) {
+					timeStyle = scalar.type === 'PLAIN' ? 'PLAIN' : 'QUOTE_SINGLE'
+					return visit.BREAK
+				}
+			},
+		})
+	}
 	visit(node, {
 		Pair(_, pair) {
 			if (isScalar(pair.key) && FLOW_ROWS.has(String(pair.key.value)) && isSeq(pair.value)) {
@@ -70,7 +84,7 @@ function styled(doc, parentPath, value) {
 			}
 		},
 		Scalar(_, scalar) {
-			if (typeof scalar.value === 'string' && TIME.test(scalar.value)) scalar.type = 'QUOTE_SINGLE'
+			if (typeof scalar.value === 'string' && TIME.test(scalar.value)) scalar.type = timeStyle
 		},
 	})
 	return node
@@ -86,8 +100,13 @@ function apply(doc, op) {
 	if (!Object.hasOwn(op, 'value')) throw new Error('an edit needs a value or delete')
 	let existing = doc.getIn(op.path, true)
 	if (isScalar(existing) && (op.value === null || typeof op.value !== 'object')) {
+		// a time written bare, as a bus timetable writes them, stays bare; any other is quoted
+		let bareTime =
+			typeof existing.value === 'string' && TIME.test(existing.value) && existing.type === 'PLAIN'
 		existing.value = op.value
-		if (typeof op.value === 'string' && TIME.test(op.value)) existing.type = 'QUOTE_SINGLE'
+		if (typeof op.value === 'string' && TIME.test(op.value) && !bareTime) {
+			existing.type = 'QUOTE_SINGLE'
+		}
 		return
 	}
 	// an emptied list is written `hours: []`, and a row added to it goes on a line of its own

@@ -50,9 +50,21 @@ struct RecordFormView: View {
             }
             // the model's schema for this set, never the last set's while this one's loads
             if let schema = model.loadedSchema(for: setName), model.documentFile == file {
-                FieldRows(fields: formFields(schema: schema), base: record.ref.path, value: model.value?[path: record.ref.path],
-                          file: file, recordPath: record.ref.path)
-                    .disabled(lockReason != nil)
+                let fields = formFields(schema: schema)
+                let value = model.value?[path: record.ref.path]
+                if set.form == .bus, let schedules = fields.first(where: { $0.key == "schedules" }),
+                   case .list(.object(let scheduleFields), _) = schedules.kind {
+                    // a bus line's schedules are timetables, drawn as grids
+                    FieldRows(fields: fields.filter { $0.key != "schedules" }, base: record.ref.path, value: value,
+                              file: file, recordPath: record.ref.path)
+                        .disabled(lockReason != nil)
+                    BusTimetables(schedules: value?["schedules"]?.array ?? [], base: record.ref.path + ["schedules"],
+                                  scheduleFields: scheduleFields, file: file, recordPath: record.ref.path)
+                        .disabled(lockReason != nil)
+                } else {
+                    FieldRows(fields: fields, base: record.ref.path, value: value, file: file, recordPath: record.ref.path)
+                        .disabled(lockReason != nil)
+                }
             } else {
                 ProgressView()
             }
