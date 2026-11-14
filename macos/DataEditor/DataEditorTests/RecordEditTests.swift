@@ -85,6 +85,26 @@ struct RecordEditTests {
         #expect(await model.readText("privacy.md") == text + "\nOne more line.\n")
     }
 
+    /// Text kept from a document is an edit, so reverting the document lets it
+    /// go, and the notice promising it back goes with it.
+    @Test func revertingADocumentDropsItsKeptText() async throws {
+        let (model, _) = try await modelOnRepoData()
+        let text = try #require(await model.readText("privacy.md"))
+        await model.leaveDocument("privacy.md", text: text + "\nOne more line.\n", expected: "what it held before")
+        await model.revert("privacy.md")
+        #expect(model.takeKeptDocument("privacy.md") == nil)
+        #expect(model.draftNotices.isEmpty)
+    }
+
+    @Test func discardingEverythingDropsKeptText() async throws {
+        let (model, _) = try await modelOnRepoData()
+        let text = try #require(await model.readText("privacy.md"))
+        await model.leaveDocument("privacy.md", text: text + "\nOne more line.\n", expected: "what it held before")
+        await model.discardAll()
+        #expect(model.takeKeptDocument("privacy.md") == nil)
+        #expect(model.draftNotices.isEmpty)
+    }
+
     /// Choosing a set waits for its records; a choice made meanwhile is the newer, and wins.
     @Test func aChoiceMadeWhileASetsRecordsLoadWins() async throws {
         let (model, _) = try await modelOnRepoData()

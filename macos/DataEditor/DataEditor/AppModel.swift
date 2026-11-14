@@ -564,6 +564,9 @@ final class AppModel {
     func revert(_ file: String) async {
         guard !updating, !submitting else { return }
         try? workspace.revert(file)
+        // text kept from the file, and the notices about it, are edits the revert drops too
+        keptDocuments[file] = nil
+        draftNotices.removeAll { $0.file == file }
         await afterFilesChanged()
     }
 
@@ -572,6 +575,8 @@ final class AppModel {
     func discardAll() async {
         guard !updating, !submitting else { return }
         try? workspace.discardAll()
+        keptDocuments = [:]
+        draftNotices = []
         conflicts = workspace.conflicts
         await afterFilesChanged()
     }
