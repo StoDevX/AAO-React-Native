@@ -453,14 +453,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ai-edge-litert", specifier = ">=2.3.0" },
-    { name = "faster-whisper", specifier = ">=1.2.1" },
-    { name = "ffmpeg-python", specifier = ">=0.2.0" },
-    { name = "numpy", specifier = ">=2.5.4" },
+    { name = "ai-edge-litert", specifier = "==2.3.0" },
+    { name = "faster-whisper", specifier = "==1.2.1" },
+    { name = "ffmpeg-python", specifier = "==0.2.0" },
+    { name = "numpy", specifier = "==2.5.4" },
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=9.1.1" }]
+dev = [{ name = "pytest", specifier = "==9.1.1" }]
 
 [[package]]
 name = "tokenizers"

@@ -5,11 +5,11 @@ description = "Transcribes speech from live internet radio with an on-device Whi
 readme = "README.md"
 requires-python = "==3.14.*"
 dependencies = [
-	"ai-edge-litert>=2.3.0",
-	"faster-whisper>=1.2.1",
-	"ffmpeg-python>=0.2.0",
-	"numpy>=2.5.4",
+	"ai-edge-litert==2.3.0",
+	"faster-whisper==1.2.1",
+	"ffmpeg-python==0.2.0",
+	"numpy==2.5.4",
 ]
 
 [dependency-groups]
-dev = ["pytest>=9.1.1"]
+dev = ["pytest==9.1.1"]
