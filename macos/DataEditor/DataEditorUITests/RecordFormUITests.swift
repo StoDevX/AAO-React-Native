@@ -37,6 +37,25 @@ final class RecordFormUITests: XCTestCase {
         XCTAssertFalse(window.buttons["Submit for Review…"].isEnabled)
     }
 
+    /// A group opens from its title, not only from the chevron before it.
+    func testAGroupOpensFromItsTitle() throws {
+        let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
+        let window = currentChanges(in: app)
+        let schedule = window.disclosureTriangles["Schedules 1"]
+        XCTAssertTrue(schedule.waitForExistence(timeout: 10))
+        clickTitle(of: schedule)
+        let row = window.disclosureTriangles["Times 1"]
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        clickTitle(of: row)
+        XCTAssertTrue(window.textFields["field-schedules.#1.times.#1.#1"].waitForExistence(timeout: 5))
+        attachScreenshot(of: window, named: "The Express's first timetable row, opened from its title")
+    }
+
+    /// Clicks on a group's title, past the chevron before it.
+    private func clickTitle(of group: XCUIElement) {
+        group.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0.5)).withOffset(CGVector(dx: 40, dy: 0)).click()
+    }
+
     func testAReadOnlySetCannotBeEdited() throws {
         let app = try launchWithRepoData(opening: "student-wages").app
         let window = currentChanges(in: app)

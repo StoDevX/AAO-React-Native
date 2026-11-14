@@ -152,6 +152,22 @@ enum ItemControl {
     }
 }
 
+/// A group of fields that opens from its whole title, not only from the chevron before it.
+private struct ItemGroup<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: () -> Content
+    @State private var isExpanded = false
+
+    var body: some View {
+        DisclosureGroup(isExpanded: $isExpanded, content: content) {
+            Button(title) { withAnimation { isExpanded.toggle() } }
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+        }
+    }
+}
+
 /// One list item or map entry, drawn by its kind: a group, list or map opens to show its own fields.
 private struct ItemField: View {
     let title: String
@@ -164,15 +180,15 @@ private struct ItemField: View {
     var body: some View {
         switch ItemControl(kind) {
         case .group(let fields):
-            DisclosureGroup(title) {
+            ItemGroup(title: title) {
                 FieldRows(fields: fields, base: path, value: value, file: file, recordPath: recordPath)
             }
         case .list(let item, let itemTitle):
-            DisclosureGroup(title) {
+            ItemGroup(title: title) {
                 ListItems(item: item, itemTitle: itemTitle, path: path, items: value?.array ?? [], file: file, recordPath: recordPath)
             }
         case .map(let valueKind):
-            DisclosureGroup(title) {
+            ItemGroup(title: title) {
                 MapEntries(valueKind: valueKind, path: path, entries: value, file: file, recordPath: recordPath)
             }
         case .field:
