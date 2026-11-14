@@ -5,7 +5,7 @@ import path from 'node:path'
 import {load} from 'js-yaml'
 import {isDataEntry} from './data-entries.mjs'
 import {fileSchema, loadCatalog, setForFile} from './data-editor-datasets.mjs'
-import {wordProblems} from './data-editor-wording.mjs'
+import {pointerKeys, wordProblems} from './data-editor-wording.mjs'
 import {createValidator} from './validate.mjs'
 import {hoursFileOrder, loadScheduleData} from './schedule-data.ts'
 
@@ -24,15 +24,6 @@ export type Calendar = {
 type Key = string | number
 
 const keyOf = (text: string): Key => (/^\d+$/u.test(text) ? Number(text) : text)
-
-/** The keys a JSON pointer names, unescaped; an empty key is a map's key too, and `''` points at the whole file. */
-const pointerKeys = (pointer: string): string[] =>
-	pointer === ''
-		? []
-		: pointer
-				.slice(1)
-				.split('/')
-				.map((key) => key.replaceAll('~1', '/').replaceAll('~0', '~'))
 
 /** The keys in `/schedule/0/hours` (Ajv's pointers) or `.breakSchedule.fall[0]` (the schedule checks'). */
 export function keysOf(rest: string): Key[] {

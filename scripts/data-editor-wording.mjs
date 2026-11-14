@@ -1,11 +1,14 @@
 // Ajv's errors in the words the data editor shows: each field named by its
 // schema `title`, so a contributor never sees a key or a JSON pointer.
 
-const keysOfPointer = (pointer) =>
-	pointer
-		.split('/')
-		.filter(Boolean)
-		.map((key) => key.replaceAll('~1', '/').replaceAll('~0', '~'))
+/** The keys a JSON pointer names, unescaped; an empty key is a map's key too, and `''` points at the whole value. */
+export const pointerKeys = (pointer) =>
+	pointer === ''
+		? []
+		: pointer
+				.slice(1)
+				.split('/')
+				.map((key) => key.replaceAll('~1', '/').replaceAll('~0', '~'))
 
 /** The schema of the value at `keys` inside a value `schema` describes, or null. */
 function schemaAt(schema, keys) {
@@ -22,7 +25,7 @@ function schemaAt(schema, keys) {
 
 /** The schema node a JSON pointer such as `#/oneOf/0` names. */
 const schemaNode = (schema, pointer) =>
-	keysOfPointer(pointer.replace(/^#/u, '')).reduce((node, key) => node?.[key], schema)
+	pointerKeys(pointer.replace(/^#/u, '')).reduce((node, key) => node?.[key], schema)
 
 /** The field at `keys` as a contributor knows it: its title, or else its key. */
 function titleAt(schema, keys) {
@@ -33,7 +36,7 @@ function titleAt(schema, keys) {
 
 /** One Ajv error in plain words. `schema` is the file's, with its references inlined. */
 export function wordProblem(error, schema) {
-	let keys = keysOfPointer(error.instancePath)
+	let keys = pointerKeys(error.instancePath)
 	let field = titleAt(schema, keys)
 	switch (error.keyword) {
 		case 'required':
@@ -72,7 +75,7 @@ export function wordProblems(errors, schema) {
 		let message = wordProblem(error, schema)
 		if (error.keyword === 'oneOf' || error.keyword === 'anyOf') {
 			let branches = schemaNode(schema, error.schemaPath)
-			let keys = keysOfPointer(error.instancePath)
+			let keys = pointerKeys(error.instancePath)
 			let fields = Array.isArray(branches)
 				? branches.map((branch) =>
 						branch.required?.length === 1 && Object.keys(branch).length === 1

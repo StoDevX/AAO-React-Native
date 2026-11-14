@@ -59,6 +59,22 @@ describe('wordProblem', () => {
 		}
 		assert.equal(wordProblem(error, contact), 'Address: must be string')
 	})
+	it('finds a title under a map entry keyed by the empty string', () => {
+		let schema = {
+			type: 'object',
+			properties: {
+				meals: {
+					title: 'Meals',
+					additionalProperties: {
+						type: 'object',
+						properties: {name: {type: 'string', title: 'Name'}},
+					},
+				},
+			},
+		}
+		let error = {instancePath: '/meals/', keyword: 'required', params: {missingProperty: 'name'}}
+		assert.equal(wordProblem(error, schema), 'Name is missing')
+	})
 })
 
 describe('wordProblems', () => {
