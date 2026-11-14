@@ -142,9 +142,9 @@ struct HelperParityTests {
             #expect(files(in: URL(filePath: jsc)) == files(in: URL(filePath: node)))
         }
         // the steps meant to be refused were: the schema's and the overlap check's
-        #expect(nodeReplies[6].contains("problems") && !nodeReplies[6].contains(#""problems":[]"#))
-        #expect(nodeReplies[8].contains("problems") && !nodeReplies[8].contains(#""problems":[]"#))
+        #expect(nodeReplies[5].contains("problems") && !nodeReplies[5].contains(#""problems":[]"#))
+        #expect(nodeReplies[7].contains("problems") && !nodeReplies[7].contains(#""problems":[]"#))
         // and the contact without a phone number, which Ajv checks
-        #expect(nodeReplies[14].contains("Phone Number or Button Link is missing"))
+        #expect(nodeReplies[13].contains("Phone Number or Button Link is missing"))
     }
 }
