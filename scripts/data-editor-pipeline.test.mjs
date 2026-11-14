@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
 import {existsSync, readdirSync} from 'node:fs'
-import {readFile, writeFile} from 'node:fs/promises'
+import {readFile, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {describe, it} from 'node:test'
 import {DATA_BASE} from './paths.mjs'
 import {
 	build,
+	keysIn,
 	keysOf,
 	lastError,
 	listBuildings,
@@ -29,6 +30,22 @@ describe('keysOf', () => {
 			0,
 			'notes',
 		])
+	})
+})
+
+describe('keysIn', () => {
+	it('keeps a map key of digits as written', () => {
+		let data = {routes: {'001': {line: 5}}}
+		assert.deepEqual(keysIn(data, '/routes/001/line'), ['routes', '001', 'line'])
+	})
+
+	it('keeps a key of more digits than a number holds', () => {
+		let id = '123456789012345678901'
+		assert.deepEqual(keysIn({routes: {[id]: {}}}, `/routes/${id}`), ['routes', id])
+	})
+
+	it('reads an index into a list as a number', () => {
+		assert.deepEqual(keysIn({faqs: [{}, {title: 5}]}, '/faqs/1/title'), ['faqs', 1, 'title'])
 	})
 })
 
@@ -151,6 +168,12 @@ describe('validate, for a data set with a generated form', () => {
 			validate(dataDir, 'bus-times/_curation.yaml').map((problem) => problem.path),
 			[['routes', '77627', 'line']],
 		)
+	})
+
+	it('finds nothing to check in a file the contributor removed', async () => {
+		let {dataDir} = await scratchData()
+		await rm(path.join(dataDir, 'contact-info/1-1-pubsafe.yaml'))
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [])
 	})
 
 	it('finds nothing to check in a file no set describes', async () => {

@@ -81,7 +81,12 @@ export function wordProblems(errors, schema) {
 					)
 				: []
 			if (fields.length > 0 && fields.every((field) => field !== undefined)) {
-				message = `${fields.map((field) => titleAt(schema, [...keys, field])).join(' or ')} is missing`
+				let titles = fields.map((field) => titleAt(schema, [...keys, field])).join(' or ')
+				// a oneOf fails when no choice is there, or when more than one is
+				message =
+					(error.params?.passingSchemas?.length ?? 0) > 1
+						? `Fill in ${titles}, not both`
+						: `${titles} is missing`
 			}
 		}
 		if (

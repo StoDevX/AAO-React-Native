@@ -1,5 +1,5 @@
 import {spawn} from 'node:child_process'
-import {readFileSync, readdirSync} from 'node:fs'
+import {existsSync, readFileSync, readdirSync} from 'node:fs'
 import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
 import {load} from 'js-yaml'
@@ -69,9 +69,11 @@ export function problemsFrom(error: unknown, dataDir: string): Problem[] {
  * break calendar is checked against its schema and then the whole schedule
  * graph; any other file against the schema of the set that holds it, its
  * problems worded with the schema's field titles. A file no set holds, or one
- * without a schema, has nothing to check.
+ * without a schema, has nothing to check, nor has a file that is gone.
  */
 export function validate(dataDir: string, file: string): Problem[] {
+	// a record the contributor removed has nothing left to check
+	if (!existsSync(path.join(dataDir, file))) return []
 	if (file === 'breaks.yaml' || file.startsWith('building-hours/')) {
 		const kind = file === 'breaks.yaml' ? 'calendar' : 'space'
 		try {
@@ -108,8 +110,13 @@ export function validate(dataDir: string, file: string): Problem[] {
 export function keysIn(data: unknown, pointer: string): Key[] {
 	let keys: Key[] = []
 	let value = data
-	for (let key of keysOf(pointer)) {
-		let step = Array.isArray(value) ? Number(key) : String(key)
+	let raw = pointer
+		.slice(1)
+		.split('/')
+		.filter(Boolean)
+		.map((key) => key.replaceAll('~1', '/').replaceAll('~0', '~'))
+	for (let key of raw) {
+		let step = Array.isArray(value) ? Number(key) : key
 		keys.push(step)
 		value = (value as Record<string | number, unknown> | null)?.[step]
 	}

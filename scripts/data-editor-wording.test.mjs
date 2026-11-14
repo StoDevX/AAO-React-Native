@@ -82,4 +82,13 @@ describe('wordProblems', () => {
 			{message: 'Phone or Button Link is missing', instancePath: ''},
 		])
 	})
+
+	it('says to keep one of two fields when both are filled in', () => {
+		let errors = [
+			{instancePath: '', schemaPath: '#/oneOf', keyword: 'oneOf', params: {passingSchemas: [0, 1]}},
+		]
+		assert.deepEqual(wordProblems(errors, contact), [
+			{message: 'Fill in Phone or Button Link, not both', instancePath: ''},
+		])
+	})
 })
