@@ -45,7 +45,7 @@ final class RecordFormUITests: XCTestCase {
         let row = window.disclosureTriangles["Times 1"]
         XCTAssertTrue(row.waitForExistence(timeout: 10))
         clickTitle(of: row)
-        XCTAssertTrue(window.textFields["field-schedules.#1.times.#1.#1"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.datePickers["field-schedules.#1.times.#1.#1"].waitForExistence(timeout: 5))
         attachScreenshot(of: window, named: "The Express's first timetable row, opened from its title")
     }
 
@@ -56,8 +56,8 @@ final class RecordFormUITests: XCTestCase {
         let expand = window.links["expand-all-field-schedules.#1.times"]
         XCTAssertTrue(expand.waitForExistence(timeout: 10))
         expand.click()
-        XCTAssertTrue(window.textFields["field-schedules.#1.times.#2.#1"].waitForExistence(timeout: 5))
-        XCTAssertTrue(window.textFields["field-schedules.#1.times.#7.#1"].exists)
+        XCTAssertTrue(window.datePickers["field-schedules.#1.times.#2.#1"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.datePickers["field-schedules.#1.times.#7.#1"].exists)
         attachScreenshot(of: window, named: "The Express's schedule open, every timetable row expanded")
     }
 

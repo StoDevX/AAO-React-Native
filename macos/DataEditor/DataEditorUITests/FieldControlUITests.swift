@@ -116,13 +116,45 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("- Su\n", in: "bus-times/1-express.yaml", data: data))
     }
 
+    /// FAQ targets are tokens: a new one is typed and Return adds it, keeping the others and their comments.
+    func testAFAQsTargetsAreTokens() throws {
+        let (app, data) = try launchWithRepoData(opening: "faqs")
+        let window = currentChanges(in: app)
+        let faq = window.outlines["record-list"].staticTexts["Why can't I log in and see my balances?"]
+        XCTAssertTrue(faq.waitForExistence(timeout: 10))
+        faq.click()
+        let targets = window.textFields["field-targets"]
+        XCTAssertTrue(targets.waitForExistence(timeout: 10))
+        targets.click()
+        targets.typeKey(.rightArrow, modifierFlags: .command)
+        targets.typeText("Home\r")
+        attachScreenshot(of: window, named: "An FAQ's targets as tokens")
+        XCTAssertTrue(waitFor("- Home\n", in: "faqs.yaml", data: data))
+        let text = try String(contentsOf: data.appending(path: "faqs.yaml"), encoding: .utf8)
+        XCTAssertTrue(text.contains("# the same screen, under its name in app versions already installed"))
+    }
+
+    /// A food item's station is chosen from the stations the menu lists.
+    func testAFoodItemsStationIsChosenFromTheStations() throws {
+        let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")
+        let window = currentChanges(in: app)
+        let expand = window.links["expand-all-field-foodItems"]
+        XCTAssertTrue(expand.waitForExistence(timeout: 10))
+        expand.click()
+        let station = window.popUpButtons["field-foodItems.#1.station"]
+        XCTAssertTrue(station.waitForExistence(timeout: 10))
+        station.click()
+        app.menuItems["Pita"].click()
+        XCTAssertTrue(waitFor("station: Pita", in: "pause-menu.yaml", data: data))
+    }
+
     /// A generated bus line can't be edited, its pickers included.
     func testALockedSetsPickersAreDisabled() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app
         let window = currentChanges(in: app)
-        let picker = window.popUpButtons.firstMatch
-        XCTAssertTrue(picker.waitForExistence(timeout: 10))
-        XCTAssertFalse(picker.isEnabled)
+        let day = window.groups["field-schedules.#1.days"].checkBoxes.firstMatch
+        XCTAssertTrue(day.waitForExistence(timeout: 10))
+        XCTAssertFalse(day.isEnabled)
     }
 
     /// No control writes a value just by being drawn: opening each set's first record leaves the data as it was.

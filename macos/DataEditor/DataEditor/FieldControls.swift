@@ -83,7 +83,15 @@ private struct FieldRow: View {
             }
         case .days:
             DaysField(title: field.title, path: path, value: value, file: file, recordPath: recordPath)
-        case .list, .tokens:
+        case .tokens(let pointer):
+            TokenListField(title: field.title, values: value?.array?.compactMap(\.string) ?? [],
+                           choices: pointer.map { pointer in model.value.map { choices(pointer, in: $0, at: path + [.index(0)]) } ?? [] },
+                           editing: model.edits.isShown, identifier: identifier(path, below: recordPath)) { tokens in
+                let old = value?.array?.compactMap(\.string) ?? []
+                Task { await model.apply(TokenListField.ops(at: path, from: old, to: tokens), to: file) }
+            }
+            FieldProblems(path: path, recordPath: recordPath)
+        case .list:
             let (item, itemTitle) = field.kind.listed(title: field.title)!
             ListField(title: field.title, item: item, itemTitle: itemTitle, path: path, items: value?.array ?? [],
                       file: file, recordPath: recordPath)
