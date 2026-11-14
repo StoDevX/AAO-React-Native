@@ -106,6 +106,10 @@ private struct ScalarField: View {
     let required: Bool
     let file: String
     let recordPath: [PathKey]
+    @State private var choosingSymbol = false
+
+    /// The identifier of the field's own control, which a UI test finds it by.
+    private var fieldID: String { identifier(path, below: recordPath) }
 
     private func apply(_ new: JSONValue?) {
         // a control may set what it already shows; that is no edit
@@ -121,7 +125,7 @@ private struct ScalarField: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            control.accessibilityIdentifier(identifier(path, below: recordPath))
+            control
             if kind == .markdown, let text = value?.fieldText, !text.isEmpty, let rendered = try? AttributedString(markdown: text) {
                 Text(rendered).font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
             }
@@ -135,6 +139,7 @@ private struct ScalarField: View {
         case .toggle:
             Toggle(title, isOn: Binding(get: { value?.bool ?? false }, set: { apply(.bool($0)) }))
                 .disabled(model.edits.isShown)
+                .accessibilityIdentifier(fieldID)
         case .choice(let values):
             choicePicker(values)
         case .reference(let pointer):
@@ -157,8 +162,31 @@ private struct ScalarField: View {
             }
         case .color:
             ColorWell(title: title, value: value, editing: model.edits.isShown) { apply($0) }
+                .accessibilityIdentifier(fieldID)
+        case .symbol:
+            VStack(alignment: .trailing) {
+                HStack {
+                    textField
+                    Button("Choose…") { choosingSymbol = true }
+                        .accessibilityIdentifier("choose-" + fieldID)
+                        .disabled(model.edits.isShown)
+                        .popover(isPresented: $choosingSymbol) {
+                            SymbolGrid { name in
+                                choosingSymbol = false
+                                apply(.string(name))
+                            }
+                        }
+                }
+                if let name = value?.string, !name.isEmpty, !SymbolChooser.isSymbol(name) {
+                    Text("No SF Symbol is called \(name)")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .accessibilityIdentifier("symbol-problem-" + fieldID)
+                }
+            }
         case .date, .dateTime:
             DateField(title: title, kind: kind, value: value?.string, editing: model.edits.isShown) { apply($0.map(JSONValue.string)) }
+                .accessibilityIdentifier(fieldID)
         case .url:
             HStack {
                 textField
@@ -175,6 +203,7 @@ private struct ScalarField: View {
                 let op: EditOp = digits.isEmpty && !required ? .delete(path) : .set(path, .string(digits))
                 return await model.applyDraft(op, to: file, replacing: PhoneNumber.digits(expected), schedule: nil)
             }
+            .accessibilityIdentifier(fieldID)
         default:
             textField
         }
@@ -198,6 +227,7 @@ private struct ScalarField: View {
             }
         }
         .disabled(model.edits.isShown)
+        .accessibilityIdentifier(fieldID)
     }
 
     @ViewBuilder private var textField: some View {
@@ -208,6 +238,7 @@ private struct ScalarField: View {
                     let op: EditOp = if new == nil, !required, case .key? = path.last { .delete(path) } else { .set(path, new ?? .string("")) }
                     return await model.applyDraft(op, to: file, replacing: expected, schedule: nil)
                 }
+                .accessibilityIdentifier(fieldID)
                 if kind == .symbol, let name = value?.string, !name.isEmpty {
                     Image(systemName: name).accessibilityHidden(true)
                 }

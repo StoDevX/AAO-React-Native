@@ -35,6 +35,39 @@ final class FieldControlUITests: XCTestCase {
         attachScreenshot(of: window, named: "East Quad's accent colour in a well")
     }
 
+    func testASymbolIsChosenFromTheChooser() throws {
+        let (app, data) = try launchWithRepoData(opening: "student-work-areas")
+        let window = currentChanges(in: app)
+        let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
+        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        dining.click()
+        let choose = window.buttons["choose-field-icon"]
+        XCTAssertTrue(choose.waitForExistence(timeout: 10))
+        choose.click()
+        let search = app.textFields["symbol-search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.typeText("cup")
+        attachScreenshot(of: window, named: "Symbols matching cup")
+        app.buttons["symbol-cup.and.saucer"].click()
+        XCTAssertTrue(waitFor("icon: cup.and.saucer", in: "student-work-areas.yaml", data: data))
+    }
+
+    func testANameThatIsNoSymbolIsFlagged() throws {
+        let app = try launchWithRepoData(opening: "student-work-areas").app
+        let window = currentChanges(in: app)
+        let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
+        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        dining.click()
+        let icon = window.textFields["field-icon"]
+        XCTAssertTrue(icon.waitForExistence(timeout: 10))
+        icon.click()
+        icon.typeKey("a", modifierFlags: .command)
+        icon.typeText("not.a.symbol\r")
+        let flag = window.staticTexts["symbol-problem-field-icon"]
+        XCTAssertTrue(flag.waitForExistence(timeout: 10))
+        XCTAssertEqual(flag.value as? String, "No SF Symbol is called not.a.symbol")
+    }
+
     /// A generated bus line can't be edited, its pickers included.
     func testALockedSetsPickersAreDisabled() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app
