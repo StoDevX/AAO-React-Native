@@ -81,7 +81,9 @@ private struct FieldRow: View {
             Section(field.title) {
                 FieldRows(fields: fields, base: path, value: value, file: file, recordPath: recordPath)
             }
-        case .list, .tokens, .days:
+        case .days:
+            DaysField(title: field.title, path: path, value: value, file: file, recordPath: recordPath)
+        case .list, .tokens:
             let (item, itemTitle) = field.kind.listed(title: field.title)!
             ListField(title: field.title, item: item, itemTitle: itemTitle, path: path, items: value?.array ?? [],
                       file: file, recordPath: recordPath)
@@ -93,6 +95,28 @@ private struct FieldRow: View {
             ScalarField(title: field.title, help: field.help, kind: field.kind, path: path, value: value,
                         required: field.required, file: file, recordPath: recordPath)
         }
+    }
+}
+
+/// Days of the week as one control, a segment a day, written Monday first.
+private struct DaysField: View {
+    @Environment(AppModel.self) private var model
+    let title: String
+    let path: [PathKey]
+    let value: JSONValue?
+    let file: String
+    let recordPath: [PathKey]
+
+    var body: some View {
+        let days = value?.array?.compactMap { $0.string.flatMap(Weekday.init(rawValue:)) } ?? []
+        LabeledContent(title) {
+            DayPicker(week: model.week, days: days) { chosen in
+                Task { await model.apply([.set(path, .array(chosen.map { .string($0.rawValue) }))], to: file) }
+            }
+            .accessibilityIdentifier(identifier(path, below: recordPath))
+            .disabled(model.edits.isShown)
+        }
+        FieldProblems(path: path, recordPath: recordPath)
     }
 }
 
@@ -162,6 +186,9 @@ private struct ScalarField: View {
             }
         case .color:
             ColorWell(title: title, value: value, editing: model.edits.isShown) { apply($0) }
+                .accessibilityIdentifier(fieldID)
+        case .time:
+            TimeField(title: title, value: value, editing: model.edits.isShown) { apply(.string($0)) }
                 .accessibilityIdentifier(fieldID)
         case .symbol:
             SymbolField(title: title, value: value?.string, editing: model.edits.isShown, identifier: fieldID) { apply(.string($0)) }

@@ -4,10 +4,11 @@ import XCTest
 @MainActor
 final class FieldControlUITests: XCTestCase {
     /// Waits until `file` in `data` holds `text`, as an edit reaches it after the helper writes.
-    private func waitFor(_ text: String, in file: String, data: URL) -> Bool {
+    private func waitFor(_ text: String, or other: String? = nil, in file: String, data: URL) -> Bool {
         let deadline = Date().addingTimeInterval(10)
         while Date() < deadline {
-            if let held = try? String(contentsOf: data.appending(path: file), encoding: .utf8), held.contains(text) { return true }
+            if let held = try? String(contentsOf: data.appending(path: file), encoding: .utf8),
+               held.contains(text) || other.map(held.contains) == true { return true }
             RunLoop.current.run(until: Date().addingTimeInterval(0.2))
         }
         return false
@@ -83,6 +84,36 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(flag.waitForExistence(timeout: 10))
         XCTAssertEqual(flag.value as? String, "“not.a.symbol” isn't an SF Symbol. Choose one from the list.")
         attachScreenshot(of: window, named: "An icon that is no symbol")
+    }
+
+    /// A bus time is set in a time field, not typed as text.
+    func testABusTimeIsSetInATimeField() throws {
+        let (app, data) = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml")
+        let window = currentChanges(in: app)
+        let expand = window.links["expand-all-field-schedules.#1.times"]
+        XCTAssertTrue(expand.waitForExistence(timeout: 10))
+        expand.click()
+        let time = window.datePickers["field-schedules.#1.times.#1.#1"]
+        XCTAssertTrue(time.waitForExistence(timeout: 5))
+        // the hour is first: a step up makes 3:00pm 4:00pm
+        time.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5)).click()
+        time.typeKey(.upArrow, modifierFlags: [])
+        time.typeKey(.return, modifierFlags: [])
+        attachScreenshot(of: window, named: "The Express's first trip, its times in time fields")
+        // the edited time may be quoted, as the helper writes a time it sets
+        XCTAssertTrue(waitFor("[4:00pm, 3:08pm", or: "['4:00pm', 3:08pm", in: "bus-times/1-express.yaml", data: data))
+    }
+
+    /// A schedule's days are one control, a segment a day.
+    func testAScheduleDaysAreOneControl() throws {
+        let (app, data) = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml")
+        let window = currentChanges(in: app)
+        // AppKit's select-any segmented control shows each segment as a checkbox
+        let days = window.groups["field-schedules.#1.days"]
+        XCTAssertTrue(days.waitForExistence(timeout: 10))
+        days.checkBoxes["Sun"].click()
+        attachScreenshot(of: window, named: "The Express's days in one control")
+        XCTAssertTrue(waitFor("- Su\n", in: "bus-times/1-express.yaml", data: data))
     }
 
     /// A generated bus line can't be edited, its pickers included.
