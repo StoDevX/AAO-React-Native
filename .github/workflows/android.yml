@@ -73,8 +73,11 @@ jobs:
           path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 7
 
+  # Screenshots run only when asked for from the Actions tab: an emulator run
+  # is slow, and nothing reads its screenshots unless someone asked for them.
   android-screenshots:
     name: Android Screenshots
+    if: github.event_name == 'workflow_dispatch'
     needs: android-build
     runs-on: ubuntu-26.04
     timeout-minutes: 45
