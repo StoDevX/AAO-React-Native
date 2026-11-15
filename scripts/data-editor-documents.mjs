@@ -1,7 +1,8 @@
 import {mkdir, readFile, rename, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
+import {isDeepStrictEqual} from 'node:util'
 import {format} from 'oxfmt'
-import {Document, isMap, isScalar, isSeq, parseDocument, visit} from 'yaml'
+import {CST, Document, isMap, isScalar, isSeq, parseDocument, Scalar, visit} from 'yaml'
 
 /** How a document is serialized before formatting: unwrapped, so the formatter decides the wrapping. */
 export const TO_STRING_OPTIONS = {lineWidth: 0, flowCollectionPadding: false}
@@ -19,9 +20,61 @@ export const FORMAT_OPTIONS = {
 	semi: false,
 }
 
+/** Each folded paragraph's value as parsed, which tells one an edit left alone. */
+const foldedAsParsed = new WeakMap()
+
+/** `text` parsed, each node keeping its source, which `written` copies an unchanged folded paragraph from. */
+function parsed(text) {
+	let doc = parseDocument(text, {keepSourceTokens: true})
+	visit(doc, {
+		Scalar(_, node) {
+			if (node.type === Scalar.BLOCK_FOLDED && node.srcToken) {
+				foldedAsParsed.set(node, node.value)
+			}
+		},
+	})
+	return doc
+}
+
+/**
+ * `doc` as text, each folded paragraph it did not change wrapped where the
+ * file wrapped it. Written unwrapped, a folded paragraph would come out on one
+ * line, which the formatter leaves as it is.
+ */
+function unwrappedKeepingFolds(doc) {
+	let kept = []
+	visit(doc, {
+		Scalar(_, node) {
+			if (node.type === Scalar.BLOCK_FOLDED && foldedAsParsed.get(node) === node.value) {
+				kept.push(node)
+			}
+		},
+	})
+	let text = doc.toString(TO_STRING_OPTIONS)
+	if (kept.length === 0) return text
+	// each paragraph is written as a plain mark, which its source then replaces
+	let marks = kept.map((_, index) => `dataEditorFolded${index}x${Date.now()}`)
+	let marked
+	try {
+		kept.forEach((node, index) => Object.assign(node, {value: marks[index], type: Scalar.PLAIN}))
+		marked = doc.toString(TO_STRING_OPTIONS)
+	} finally {
+		kept.forEach((node) =>
+			Object.assign(node, {value: foldedAsParsed.get(node), type: Scalar.BLOCK_FOLDED}),
+		)
+	}
+	let spliced = kept.reduce(
+		(sofar, node, index) =>
+			sofar.replace(marks[index], () => CST.stringify(node.srcToken).replace(/\n$/u, '')),
+		marked,
+	)
+	// a paragraph moved to another depth would be indented wrongly, so it is written unwrapped instead
+	return isDeepStrictEqual(parseDocument(spliced).toJS(), doc.toJS()) ? spliced : text
+}
+
 /** `doc` written the way the repo's formatter writes `file`. */
 async function written(file, doc) {
-	let {code, errors} = await format(file, doc.toString(TO_STRING_OPTIONS), FORMAT_OPTIONS)
+	let {code, errors} = await format(file, unwrappedKeepingFolds(doc), FORMAT_OPTIONS)
 	if (errors.length > 0) throw new Error(`${file}: ${errors[0].message}`)
 	return code
 }
@@ -51,7 +104,7 @@ export function tempFileFor(filename) {
 
 /** `text` parsed and written back, which for a file in the repo's style is `text` again. */
 export function roundTrip(file, text) {
-	let doc = parseDocument(text)
+	let doc = parsed(text)
 	if (doc.errors.length > 0) throw new Error(doc.errors[0].message)
 	return written(file, doc)
 }
@@ -132,7 +185,7 @@ export class DocumentStore {
 
 	async #parse(file) {
 		let filename = inside(this.#root, file)
-		let doc = parseDocument(await readFile(filename, 'utf8'))
+		let doc = parsed(await readFile(filename, 'utf8'))
 		if (doc.errors.length > 0) throw new Error(`${file}: ${doc.errors[0].message}`)
 		return {filename, doc}
 	}

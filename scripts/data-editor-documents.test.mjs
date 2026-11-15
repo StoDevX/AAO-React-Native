@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os'
 import path from 'node:path'
 import {describe, it} from 'node:test'
 import {isDataEntry} from './data-entries.mjs'
+import {isNotJunk} from './junk.mjs'
 import {DATA_BASE} from './paths.mjs'
 import {
 	DocumentStore,
@@ -40,10 +41,13 @@ async function storeWithFixture() {
 }
 
 describe('roundTrip', () => {
-	let hours = readdirSync(path.join(DATA_BASE, 'building-hours'))
-		.filter(isDataEntry)
-		.map((file) => path.join('building-hours', file))
-	for (let file of [...hours, 'breaks.yaml']) {
+	// every file the editor may write and the formatter checks, the files steering
+	// a scrape among them; .prettierignore leaves the bus times unformatted
+	let files = readdirSync(DATA_BASE, {recursive: true}).filter(
+		(file) =>
+			file.endsWith('.yaml') && isNotJunk(path.basename(file)) && !file.startsWith('bus-times/'),
+	)
+	for (let file of files) {
 		it(`leaves ${file} as it is`, async () => {
 			let text = readFileSync(path.join(DATA_BASE, file), 'utf8')
 			assert.equal(await roundTrip(file, text), text)
@@ -70,6 +74,25 @@ describe('DocumentStore.edit', () => {
 		assert.equal(
 			await read(),
 			FIXTURE.replace("Fr], from: '7:30am', to: '8:00pm'", "Fr], from: '7:30am', to: '9:00pm'"),
+		)
+	})
+
+	it('leaves a folded paragraph it did not change wrapped as it was', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		let text = `venues:
+  the-kings-room:
+    watch_only: >-
+      Sushirito, Cage Express and Med-Express all serve this room's lunch.
+      They are not separate venues in AAO.
+    file: kings.yaml
+`
+		await writeFile(path.join(root, 'overrides.yaml'), text)
+		await new DocumentStore(root).edit('overrides.yaml', [
+			{path: ['venues', 'the-kings-room', 'file'], value: 'cage.yaml'},
+		])
+		assert.equal(
+			await readFile(path.join(root, 'overrides.yaml'), 'utf8'),
+			text.replace('kings.yaml', 'cage.yaml'),
 		)
 	})
 
