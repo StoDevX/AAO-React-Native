@@ -195,6 +195,17 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("label: Food Trucks", in: "map-categories.yaml", data: data))
     }
 
+    /// A help button shows the fields of its own kind: an email button its subject, not a link.
+    func testAHelpButtonShowsItsOwnKindsFields() throws {
+        let app = try launchWithRepoData(opening: "help:help/0-app.yaml").app
+        let window = currentChanges(in: app)
+        let subject = window.textFields["field-buttons.#1.params.subject"]
+        XCTAssertTrue(subject.waitForExistence(timeout: 10))
+        XCTAssertEqual(subject.value as? String, "A Thing")
+        XCTAssertFalse(window.textFields["field-buttons.#1.params.url"].exists)
+        attachScreenshot(of: window, named: "The app card's Email Us button")
+    }
+
     /// A food item's station is chosen from the stations the menu lists.
     func testAFoodItemsStationIsChosenFromTheStations() throws {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")

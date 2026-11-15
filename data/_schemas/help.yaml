@@ -27,6 +27,7 @@ definitions:
   buttons:
     open-url:
       type: object
+      title: Open a Link
       additionalProperties: false
       required: [title, action, params]
       properties:
@@ -42,6 +43,7 @@ definitions:
           title: Params
     send-email:
       type: object
+      title: Send an Email
       additionalProperties: false
       required: [title, action, params]
       properties:
@@ -61,6 +63,7 @@ definitions:
           title: Params
     call-phone:
       type: object
+      title: Call a Number
       additionalProperties: false
       required: [title, action, params]
       properties:
@@ -76,6 +79,7 @@ definitions:
           title: Params
     custom:
       type: object
+      title: Something Else
       additionalProperties: false
       required: [title, action, params]
       properties:
