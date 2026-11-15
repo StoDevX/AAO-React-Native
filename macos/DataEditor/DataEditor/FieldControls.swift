@@ -28,6 +28,19 @@ struct FieldRows: View {
     }
 }
 
+/// A group of fields' title: a heading, from the left, wherever the group is
+/// nested. A section inside another would otherwise title it in body text.
+private struct GroupHeading: View {
+    let title: String
+
+    var body: some View {
+        Text(title)
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityAddTraits(.isHeader)
+    }
+}
+
 /// `path` below the record, as a field's accessibility identifier names it: `field-ST.1`.
 private func identifier(_ path: [PathKey], below recordPath: [PathKey]) -> String {
     "field-" + path.dropFirst(recordPath.count).map(\.description).joined(separator: ".")
@@ -88,8 +101,10 @@ private struct FieldRow: View {
     var body: some View {
         switch field.kind {
         case .object(let fields):
-            Section(field.title) {
+            Section {
                 FieldRows(fields: fields, base: path, value: value, file: file, recordPath: recordPath)
+            } header: {
+                GroupHeading(title: field.title)
             }
         case .days:
             DaysField(title: field.title, path: path, value: value, file: file, recordPath: recordPath)
@@ -355,7 +370,7 @@ private struct ItemField: View {
             }
         case .map(let valueKind):
             ItemGroup(title: title, isExpanded: $isExpanded) {
-                MapEntries(valueKind: valueKind, path: path, entries: value, file: file, recordPath: recordPath)
+                MapEntries(title: title, valueKind: valueKind, path: path, entries: value, file: file, recordPath: recordPath)
             }
         case .field:
             ScalarField(title: title, help: nil, kind: kind, path: path, value: value,
@@ -375,8 +390,10 @@ private struct ListField: View {
     let recordPath: [PathKey]
 
     var body: some View {
-        Section(title) {
+        Section {
             ListItems(item: item, itemTitle: itemTitle, path: path, items: items, file: file, recordPath: recordPath)
+        } header: {
+            GroupHeading(title: title)
         }
     }
 }
@@ -469,8 +486,10 @@ private struct MapField: View {
     let recordPath: [PathKey]
 
     var body: some View {
-        Section(title) {
-            MapEntries(valueKind: valueKind, path: path, entries: entries, file: file, recordPath: recordPath)
+        Section {
+            MapEntries(title: title, valueKind: valueKind, path: path, entries: entries, file: file, recordPath: recordPath)
+        } header: {
+            GroupHeading(title: title)
         }
     }
 }
@@ -478,6 +497,8 @@ private struct MapField: View {
 /// A map's entries and the field that adds one.
 private struct MapEntries: View {
     @Environment(AppModel.self) private var model
+    /// what the entries are, as the field that holds them is titled
+    let title: String
     let valueKind: FieldKind
     let path: [PathKey]
     let entries: JSONValue?
@@ -487,7 +508,8 @@ private struct MapEntries: View {
     /// the entries whose groups are open: a map of one starts open
     @State private var open: Set<String>
 
-    init(valueKind: FieldKind, path: [PathKey], entries: JSONValue?, file: String, recordPath: [PathKey]) {
+    init(title: String, valueKind: FieldKind, path: [PathKey], entries: JSONValue?, file: String, recordPath: [PathKey]) {
+        self.title = title
         self.valueKind = valueKind
         self.path = path
         self.entries = entries
@@ -504,6 +526,16 @@ private struct MapEntries: View {
     private var keys: [String] {
         guard case .object(let object)? = entries else { return [] }
         return object.keys.sorted()
+    }
+
+    /// Adds an entry under the name typed, opens it, and focuses its first field.
+    private func addEntry() {
+        let name = newName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty, !keys.contains(name) else { return }
+        newName = ""
+        open.insert(name)
+        let place = path + [.key(name)]
+        Task { if await model.apply([.set(place, starting(valueKind))], to: file) { model.focusRequest = place } }
     }
 
     var body: some View {
@@ -527,17 +559,13 @@ private struct MapEntries: View {
                 .buttonStyle(.borderless)
             }
         }
+        // one field across the row, named by its placeholder; Return adds as the button does
         HStack {
-            TextField("New name", text: $newName)
-            Button("Add", systemImage: "plus") {
-                let name = newName.trimmingCharacters(in: .whitespaces)
-                guard !name.isEmpty, !keys.contains(name) else { return }
-                newName = ""
-                open.insert(name)
-                let place = path + [.key(name)]
-                Task { if await model.apply([.set(place, starting(valueKind))], to: file) { model.focusRequest = place } }
-            }
-            .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
+            TextField("Add to \(title)", text: $newName, prompt: Text("Add to \(title)…"))
+                .labelsHidden()
+                .onSubmit(addEntry)
+            Button("Add", systemImage: "plus", action: addEntry)
+                .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
     }
 }

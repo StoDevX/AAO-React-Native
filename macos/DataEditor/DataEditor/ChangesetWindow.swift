@@ -61,7 +61,7 @@ struct ChangesetWindow: View {
         case (.current, .overview):
             OverviewView(offersEditor: false)
         case (_, .set(let set)):
-            ContentUnavailableView("Choose a \(model.catalog?.sets[set]?.record ?? "record")", systemImage: "sidebar.left")
+            ContentUnavailableView("Choose \(withArticle(model.catalog?.sets[set]?.record ?? "record"))", systemImage: "sidebar.left")
         case (.current, .record(let set, let ref)):
             if model.catalog?.sets[set]?.form == .hours {
                 if let document = model.document, model.documentFile == ref.file {

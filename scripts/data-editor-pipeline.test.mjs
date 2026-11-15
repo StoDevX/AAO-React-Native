@@ -211,6 +211,11 @@ describe('readCalendar', () => {
 		)
 		assert.ok(calendar.templates.includes('library-fall-closed'))
 	})
+
+	it('gives a one-day break its date as its start and end', () => {
+		let easter = readCalendar(DATA_BASE).breaks.find((b) => b.key === 'easter')
+		assert.deepEqual([easter?.start, easter?.end], ['2027-03-28', '2027-03-28'])
+	})
 })
 
 const BUNDLE_DATA = path.join(import.meta.dirname, 'bundle-data.mjs')

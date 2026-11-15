@@ -37,9 +37,8 @@ struct BreaksEditorView: View {
             }
             Section("Breaks") {
                 ForEach(calendar.breaks) { entry in
-                    HStack {
-                        Text(entry.name)
-                        Spacer()
+                    // the break's name in the label column, its dates beside it from the left
+                    LabeledContent(entry.name) { HStack {
                         if entry.start == nil, entry.end == nil, let date = entry.date {
                             DatePicker("Date", selection: Binding(get: { Self.day(date) }, set: { apply([calendar.setDate(key: entry.key, date: Self.text($0))]) }),
                                        displayedComponents: .date)
@@ -60,11 +59,12 @@ struct BreaksEditorView: View {
                         }
                         .labelStyle(.iconOnly)
                         .buttonStyle(.borderless)
-                    }
+                    } }
                     .accessibilityIdentifier("break-\(entry.key)")
                 }
                 HStack {
-                    TextField("New break", text: $newName)
+                    TextField("Add a break", text: $newName, prompt: Text("Add a break…"))
+                        .labelsHidden()
                     Button("Add", systemImage: "plus") {
                         let name = newName.trimmingCharacters(in: .whitespaces)
                         let key = name.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber }).joined(separator: "-")

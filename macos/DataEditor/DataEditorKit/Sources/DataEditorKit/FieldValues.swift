@@ -165,3 +165,26 @@ public func markdownPreview(_ text: String) -> AttributedString? {
           String(rendered.characters) != text || rendered.runs.count > 1 else { return nil }
     return rendered
 }
+
+/// `noun` after "a" or "an", as it is said: an Option, a Building, and for an
+/// initialism said letter by letter, an FAQ but a KSTO Schedule.
+public func withArticle(_ noun: String) -> String {
+    let word = noun.prefix { !$0.isWhitespace }
+    let initialism = word.count > 1 && word.allSatisfy(\.isUppercase)
+    // letters whose names begin with a vowel sound: eff, aitch, el, em, en, ar, ess, ex
+    let vowelSound = initialism ? "AEFHILMNORSX".contains(word.first ?? " ") : "AEIOUaeiou".contains(word.first ?? " ")
+    return (vowelSound ? "an " : "a ") + noun
+}
+
+/// A break's days as a reader says them: "Oct 10 – 13, 2026", or one day,
+/// "Mar 28, 2027". Days that are not `yyyy-mm-dd` are written as they are.
+public func breakDates(start: String, end: String, locale: Locale = .current) -> String {
+    let day = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
+    guard let from = try? day.parse(start), let to = try? day.parse(end) else {
+        return start.isEmpty && end.isEmpty ? "" : start == end ? start : "\(start) – \(end)"
+    }
+    var style = Date.IntervalFormatStyle().month(.abbreviated).day().year().locale(locale)
+    style.timeZone = .gmt
+    return from == to ? from.formatted(Date.FormatStyle(date: .abbreviated, time: .omitted, locale: locale, timeZone: .gmt))
+        : (from..<to).formatted(style)
+}

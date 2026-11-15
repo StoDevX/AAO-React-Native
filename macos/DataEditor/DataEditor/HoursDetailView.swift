@@ -137,7 +137,8 @@ private struct BreaksSection: View {
                 let entry = document.breakSchedule[item.key]
                 let path: [PathKey] = ["breakSchedule", .key(item.key)]
                 VStack(alignment: .leading) {
-                    Picker("\(item.name) (\(item.start) to \(item.end))", selection: Binding<String>(
+                    // the break's name over its days in the label column, its choice beside them
+                    LabeledContent { Picker(item.name, selection: Binding<String>(
                         get: {
                             switch entry {
                             case .template(let name)?: "template:\(name)"
@@ -162,8 +163,16 @@ private struct BreaksSection: View {
                         Text("Hours of its own").tag("custom")
                         if case .other? = entry { Text("Set in the file").tag("other") }
                     }
+                    .labelsHidden()
+                    .fixedSize()
                     // leaving hours of its own takes away fields that may hold a draft
                     .disabled(model.edits.isShown || !model.unsavedDrafts.isEmpty)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.name)
+                            Text(breakDates(start: item.start, end: item.end)).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
                     if case .custom(let services)? = entry {
                         ScheduleSection(title: nil, document: document, editor: ScheduleEditor(base: path, services: services))
                     }

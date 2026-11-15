@@ -145,8 +145,9 @@ export function readCalendar(dataDir: string): Calendar {
 		return {
 			key,
 			name: text(entry['name'], key),
-			start: text(entry['start'], ''),
-			end: text(entry['end'], ''),
+			// a one-day break, such as Easter, has a date and no range: that day is its start and end
+			start: text(entry['start'] ?? entry['date'], ''),
+			end: text(entry['end'] ?? entry['date'], ''),
 			templates: Object.keys(asRecord(entry['templates'])),
 		}
 	})

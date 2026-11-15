@@ -21,7 +21,8 @@ properties:
         - $ref: '#/definitions/buttons/call-phone'
         - $ref: '#/definitions/buttons/custom'
     title: Buttons
-  x-defns: {type: object, title: X Defns}
+  # room for shared definitions, which the app never reads; no help file uses it
+  x-defns: {type: object, title: X Defns, editor: hidden}
 
 definitions:
   buttons:

@@ -102,3 +102,33 @@ struct MarkdownPreviewTests {
         #expect(String(preview.characters) == "Email us.\n\nOr call.")
     }
 }
+
+struct ArticleTests {
+    @Test func aNounTakesTheArticleItsSoundWants() {
+        #expect(withArticle("Option") == "an Option")
+        #expect(withArticle("Area") == "an Area")
+        #expect(withArticle("Building") == "a Building")
+        // an initialism is said letter by letter: eff, kay
+        #expect(withArticle("FAQ") == "an FAQ")
+        #expect(withArticle("KSTO Schedule") == "a KSTO Schedule")
+    }
+}
+
+struct BreakDatesTests {
+    private let us = Locale(identifier: "en_US")
+
+    /// thin spaces either side of the dash, as Foundation writes a range
+    @Test func aBreaksDaysAreWrittenAsARange() {
+        #expect(breakDates(start: "2026-10-10", end: "2026-10-13", locale: us) == "Oct 10\u{2009}–\u{2009}13, 2026")
+        #expect(breakDates(start: "2026-12-23", end: "2027-01-03", locale: us) == "Dec 23, 2026\u{2009}–\u{2009}Jan 3, 2027")
+    }
+
+    @Test func aOneDayBreakIsItsDay() {
+        #expect(breakDates(start: "2027-03-28", end: "2027-03-28", locale: us) == "Mar 28, 2027")
+    }
+
+    @Test func datesItCannotReadAreWrittenAsTheyAre() {
+        #expect(breakDates(start: "", end: "", locale: us) == "")
+        #expect(breakDates(start: "soon", end: "2027-01-03", locale: us) == "soon – 2027-01-03")
+    }
+}

@@ -34,8 +34,8 @@ definitions:
         title: Targets
       severity: {enum: [notice, info, alert], title: Severity}
       icon: {type: string, minLength: 1, title: Icon, editor: symbol}
-      backgroundColor: {type: string, minLength: 1, title: Background Color}
-      foregroundColor: {type: string, minLength: 1, title: Foreground Color}
+      backgroundColor: {type: string, minLength: 1, title: Background Color, editor: color}
+      foregroundColor: {type: string, minLength: 1, title: Foreground Color, editor: color}
       dismissable: {type: boolean, title: Dismissable}
       # `3 days`, `12h` or an ISO 8601 duration such as `P1D`.
       repeatInterval: {type: string, minLength: 1, title: Show Again After}
