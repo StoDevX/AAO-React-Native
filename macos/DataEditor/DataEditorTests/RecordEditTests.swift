@@ -211,6 +211,16 @@ struct RecordEditTests {
         try text.replacingOccurrences(of: from, with: to).write(to: file, atomically: true, encoding: .utf8)
     }
 
+    /// A document's save waits its turn: while an edit is in flight it is refused, not run beside it.
+    @Test func savingADocumentIsRefusedWhileAnEditIsInFlight() async throws {
+        let (model, _) = try await modelOnRepoData()
+        let text = try #require(await model.readText("privacy.md"))
+        let edit = Task { await model.apply([.set(["accentColor", 0], .number(1))], to: "webcams/2-east-quad.yaml") }
+        while !model.editing { await Task.yield() }
+        #expect(await !model.writeText("privacy.md", text + "\nMore.", expected: text))
+        await edit.value
+    }
+
     /// Whether `model` began editing while `work` ran, however briefly.
     private func countsAsEditing(_ model: AppModel, during work: () async -> Void) async -> Bool {
         final class Seen: @unchecked Sendable { var editing = false }
