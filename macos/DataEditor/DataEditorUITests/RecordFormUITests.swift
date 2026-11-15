@@ -43,6 +43,7 @@ final class RecordFormUITests: XCTestCase {
         let window = currentChanges(in: app)
         let item = window.disclosureTriangles["Single Slice"]
         XCTAssertTrue(item.waitForExistence(timeout: 10))
+        reveal(item, in: window)
         clickTitle(of: item)
         XCTAssertTrue(window.textFields["field-foodItems.#1.label"].waitForExistence(timeout: 5))
         attachScreenshot(of: window, named: "A food item, opened from its title")

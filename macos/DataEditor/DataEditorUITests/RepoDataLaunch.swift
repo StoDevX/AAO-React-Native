@@ -3,6 +3,10 @@ import XCTest
 /// The Cage's hours, as `launchWithRepoData(opening:)` takes a record.
 let theCage = "building-hours:building-hours/1-1-cage.yaml"
 
+/// Where AppKit keeps the Current changes window's size, which a UI test
+/// launch overrides so a test sees the window CI sees.
+private let mainWindowFrameKey = "NSWindow Frame SwiftUI.WindowGroup<SwiftUI.PresentedWindowContent<DataEditor.Changeset, SwiftUI.ModifiedContent<DataEditor.ChangesetWindow, SwiftUI._EnvironmentKeyWritingModifier<Swift.Optional<DataEditor.AppModel>>>>>-1-AppWindow-1"
+
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
     /// the helper built from the checkout, and the oxfmt the app bundles. A `conflicted` file is set aside as a conflict,
@@ -69,7 +73,11 @@ extension XCTestCase {
         }
         // each test starts from the Changesets window alone, not the windows an earlier test left open
         app.launchArguments = ["-UITestWorkspace", support.path, "-UITestOxfmt", oxfmt.path,
-                               "-ApplePersistenceIgnoreState", "YES"] + (opening.map { ["-UITestOpen", $0] } ?? []) + arguments
+                               "-ApplePersistenceIgnoreState", "YES",
+                               // the window at its smallest, as CI opens it with nothing saved, rather than at
+                               // whatever size this Mac's own copy of the app last left it
+                               "-\(mainWindowFrameKey)", "120 120 1000 652 0 0 1440 900"]
+            + (opening.map { ["-UITestOpen", $0] } ?? []) + arguments
         app.launch()
         if opening != nil {
             XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 20))
@@ -96,6 +104,15 @@ extension XCTestCase {
     @MainActor
     func currentChangesWindow(in app: XCUIApplication) -> XCUIElement {
         app.windows.containing(.outline, identifier: "data-set-list").firstMatch
+    }
+
+    /// Scrolls `window`'s form, or what is at `across` of its width, such as
+    /// the sidebar, until `element` can be clicked. A window at its smallest,
+    /// as CI opens it, shows only the top of a long form or list.
+    @MainActor
+    func reveal(_ element: XCUIElement, in window: XCUIElement, across: CGFloat = 0.75) {
+        let form = window.coordinate(withNormalizedOffset: CGVector(dx: across, dy: 0.5))
+        for _ in 0..<30 where !element.isHittable { form.scroll(byDeltaX: 0, deltaY: -300) }
     }
 
     /// The Current changes window, opened if it is not.

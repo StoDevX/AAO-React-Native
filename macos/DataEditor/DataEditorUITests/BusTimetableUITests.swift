@@ -20,6 +20,7 @@ final class BusTimetableUITests: XCTestCase {
         let window = currentChanges(in: app)
         let cell = window.datePickers["timetable-1-cell-0-1"]
         XCTAssertTrue(cell.waitForExistence(timeout: 10))
+        reveal(cell, in: window)
         attachScreenshot(of: window, named: "The Express's timetable")
         cell.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).click()
         cell.typeKey(.upArrow, modifierFlags: [])
@@ -32,6 +33,7 @@ final class BusTimetableUITests: XCTestCase {
         let window = currentChanges(in: app)
         let cell = window.datePickers["timetable-1-cell-0-1"]
         XCTAssertTrue(cell.waitForExistence(timeout: 10))
+        reveal(cell, in: window)
         cell.rightClick()
         app.menuItems["Doesn't Stop Here"].click()
         XCTAssertTrue(waitFor("3:00pm, false,", in: data))
@@ -136,7 +138,9 @@ final class BusTimetableUITests: XCTestCase {
         XCTAssertTrue(add.waitForExistence(timeout: 10))
         XCTAssertFalse(add.isEnabled)
         // nor does a cell's menu open
-        window.datePickers["timetable-1-cell-0-0"].rightClick()
+        let cell = window.datePickers["timetable-1-cell-0-0"]
+        reveal(cell, in: window)
+        cell.rightClick()
         XCTAssertFalse(app.menuItems["Doesn't Stop Here"].waitForExistence(timeout: 2))
     }
 }
