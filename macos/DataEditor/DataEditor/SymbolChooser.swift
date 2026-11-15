@@ -112,6 +112,8 @@ struct SymbolGrid: View {
         VStack(alignment: .leading) {
             TextField("Search", text: $search, prompt: Text("Search symbols"))
                 .textFieldStyle(.roundedBorder)
+                // the popover takes the form's alignment, which right-aligns its fields
+                .multilineTextAlignment(.leading)
                 .accessibilityIdentifier("symbol-search")
             ScrollView {
                 LazyVGrid(columns: Array(repeating: GridItem(.fixed(36)), count: 8)) {

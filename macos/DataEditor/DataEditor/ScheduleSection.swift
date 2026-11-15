@@ -131,6 +131,18 @@ struct DraftField: View {
     }
 
     var body: some View {
+        if axis == .vertical {
+            // a paragraph sits under its name and reads from the left, across the whole row
+            VStack(alignment: .leading, spacing: 4) {
+                Text(label)
+                field.labelsHidden().multilineTextAlignment(.leading)
+            }
+        } else {
+            field
+        }
+    }
+
+    private var field: some View {
         TextField(label, text: $draft, axis: axis)
             .focused($focused)
             .onSubmit(commitIfChanged)

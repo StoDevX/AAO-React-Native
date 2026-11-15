@@ -136,6 +136,18 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("Library: [44.5, -93.158715]", in: "bus-times/1-express.yaml", data: data))
     }
 
+    /// A paragraph's field sits under its name, both from the left, so a sentence reads as one.
+    func testAParagraphsFieldSitsUnderItsName() throws {
+        let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
+        let window = currentChanges(in: app)
+        let notice = window.textFields["field-notice"]
+        XCTAssertTrue(notice.waitForExistence(timeout: 10))
+        let name = window.staticTexts["Notice"]
+        attachScreenshot(of: window, named: "The Express's notice under its name")
+        XCTAssertGreaterThanOrEqual(notice.frame.minY, name.frame.maxY)
+        XCTAssertEqual(notice.frame.minX, name.frame.minX, accuracy: 8)
+    }
+
     /// A food item's station is chosen from the stations the menu lists.
     func testAFoodItemsStationIsChosenFromTheStations() throws {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")
