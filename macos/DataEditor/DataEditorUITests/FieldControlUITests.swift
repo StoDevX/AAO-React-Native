@@ -262,7 +262,9 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(sidebar.waitForExistence(timeout: 10))
         for set in ["Student Work Areas", "Webcams", "Bus Times", "Important Contacts", "FAQs & Notices", "Pause Menu",
                     "KSTO Schedule", "Org Categories", "Map Categories", "Sources", "Dictionary", "Color Printers"] {
-            sidebar.staticTexts[set].click()
+            let item = sidebar.staticTexts[set]
+            reveal(item, in: window, across: 0.08)
+            item.click()
             let first = window.outlines["record-list"].cells.firstMatch
             if first.waitForExistence(timeout: 5) { first.click() }
             RunLoop.current.run(until: Date().addingTimeInterval(1))
