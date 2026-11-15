@@ -140,24 +140,18 @@ struct DraftField: View {
         if !isEnabled {
             // a value that can't be edited reads as text: a dimmed field looks empty
             readOnly
-        } else if axis == .vertical {
-            // a paragraph sits under its name and reads from the left, across the whole row
-            VStack(alignment: .leading, spacing: 4) {
-                Text(label)
-                field.labelsHidden()
-            }
         } else {
+            // beside its name in the label column, a paragraph's box growing downward as it wraps
             field
         }
     }
 
-    /// The value as text beside its name, or for a paragraph under it.
-    @ViewBuilder private var readOnly: some View {
-        let shown = Text(value.isEmpty ? "—" : value).textSelection(.enabled).foregroundStyle(value.isEmpty ? .secondary : .primary)
-        if axis == .vertical {
-            VStack(alignment: .leading, spacing: 4) { Text(label); shown }
-        } else {
-            LabeledContent { shown } label: { Text(label) }
+    /// The value as text beside its name.
+    private var readOnly: some View {
+        LabeledContent {
+            Text(value.isEmpty ? "—" : value).textSelection(.enabled).foregroundStyle(value.isEmpty ? .secondary : .primary)
+        } label: {
+            Text(label)
         }
     }
 

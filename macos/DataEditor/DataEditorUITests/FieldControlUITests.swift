@@ -157,16 +157,16 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("Library: [44.5, -93.158715]", in: "bus-times/1-express.yaml", data: data))
     }
 
-    /// A paragraph's field sits under its name, both from the left, so a sentence reads as one.
-    func testAParagraphsFieldSitsUnderItsName() throws {
+    /// A paragraph's field sits beside its name, in line with the fields above and below it.
+    func testAParagraphsFieldSitsBesideItsName() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
         let window = currentChanges(in: app)
         let notice = window.textFields["field-notice"]
         XCTAssertTrue(notice.waitForExistence(timeout: 10))
         let name = window.staticTexts["Notice"]
-        attachScreenshot(of: window, named: "The Express's notice under its name")
-        XCTAssertGreaterThanOrEqual(notice.frame.minY, name.frame.maxY)
-        XCTAssertEqual(notice.frame.minX, name.frame.minX, accuracy: 8)
+        attachScreenshot(of: window, named: "The Express's notice beside its name")
+        XCTAssertGreaterThan(notice.frame.minX, name.frame.maxX)
+        XCTAssertEqual(notice.frame.minX, window.textFields["field-line"].frame.minX, accuracy: 1)
     }
 
     /// An empty field says what goes in it, so a new group shows where to type.
