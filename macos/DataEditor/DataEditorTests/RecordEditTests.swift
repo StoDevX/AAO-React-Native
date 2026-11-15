@@ -221,6 +221,33 @@ struct RecordEditTests {
         await edit.value
     }
 
+    /// A change queued for an item while the list is reordered is let go: its
+    /// place now holds another item, which it must not be written to.
+    @Test func aQueuedChangeIsLetGoWhenItsListIsReordered() async throws {
+        let (model, data) = try await modelOnRepoData()
+        let file = "pause-menu.yaml"
+        let count = try #require(await currentFoodItems(in: data)).count
+        let order: [PathKey] = [.index(1), .index(0)] + (2..<count).map { .index($0) }
+        let move = Task { await model.moveItems(in: file, path: ["foodItems"], order: order) }
+        while !model.editing { await Task.yield() }
+        let change = Task {
+            await model.applyLatest(to: file, at: ["foodItems", 0, "label"]) { _ in [.set(["foodItems", 0, "label"], .string("Changed"))] }
+        }
+        await move.value
+        await change.value
+        let labels = try #require(await currentFoodItems(in: data))
+        #expect(labels.prefix(2) == ["Small Pizza (12 in)", "Single Slice"], "\(labels.prefix(3))")
+    }
+
+    /// The food items' labels in the order the workspace's file holds them.
+    private func currentFoodItems(in data: URL) async -> [String]? {
+        let text = try? String(contentsOf: data.appending(path: "pause-menu.yaml"), encoding: .utf8)
+        // from the food items on, past the stations' own labels
+        return text?.components(separatedBy: "\nfoodItems:\n").last?.split(separator: "\n").compactMap { line in
+            line.hasPrefix("  - label: ") ? String(line.dropFirst("  - label: ".count)) : nil
+        }
+    }
+
     /// Whether `model` began editing while `work` ran, however briefly.
     private func countsAsEditing(_ model: AppModel, during work: () async -> Void) async -> Bool {
         final class Seen: @unchecked Sendable { var editing = false }

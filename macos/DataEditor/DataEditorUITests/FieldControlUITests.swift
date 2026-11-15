@@ -206,6 +206,28 @@ final class FieldControlUITests: XCTestCase {
         attachScreenshot(of: window, named: "The app card's Email Us button")
     }
 
+    /// An optional date, once added, can be removed again.
+    func testAnOptionalDateIsRemoved() throws {
+        let (app, data) = try launchWithRepoData(opening: "bus-repairs:bus-times/_repairs.yaml")
+        let window = currentChanges(in: app)
+        let add = window.buttons["add-field-repairs"]
+        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        add.click()
+        let addDate = window.buttons["Add Date"]
+        XCTAssertTrue(addDate.waitForExistence(timeout: 10))
+        addDate.click()
+        let file = data.appending(path: "bus-times/_repairs.yaml")
+        XCTAssertTrue(waitFor("expires:", in: "bus-times/_repairs.yaml", data: data))
+        let remove = window.buttons["remove-date-field-repairs.#1.expires"]
+        XCTAssertTrue(remove.waitForExistence(timeout: 10))
+        remove.click()
+        let deadline = Date().addingTimeInterval(10)
+        while (try? String(contentsOf: file, encoding: .utf8))?.contains("expires:") == true, Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        XCTAssertFalse(try String(contentsOf: file, encoding: .utf8).contains("expires:"))
+    }
+
     /// A food item's station is chosen from the stations the menu lists.
     func testAFoodItemsStationIsChosenFromTheStations() throws {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")

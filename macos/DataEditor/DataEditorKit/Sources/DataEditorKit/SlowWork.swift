@@ -9,12 +9,15 @@ public final class SlowWork {
     public private(set) var isRunning = false
     /// Whether the running work has outlasted the delay.
     public private(set) var isShown = false
+    /// How many runs have begun, so a reader can tell whether one ran while it looked away.
+    public private(set) var runs = 0
     private let delay: Duration
 
     public init(delay: Duration) { self.delay = delay }
 
     public func run<T, Failure: Error>(_ work: () async throws(Failure) -> T) async throws(Failure) -> T {
         isRunning = true
+        runs += 1
         let reveal = Task { [delay] in
             try? await Task.sleep(for: delay)
             if !Task.isCancelled { isShown = true }

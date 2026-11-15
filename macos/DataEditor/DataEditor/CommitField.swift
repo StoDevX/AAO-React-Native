@@ -2,21 +2,23 @@ import DataEditorKit
 import SwiftUI
 
 /// A text field saved when the contributor presses Return or leaves it, not
-/// at each keystroke. `save` says whether it took what was typed; when it
-/// doesn't, or nothing changed, the field shows `text` again.
+/// at each keystroke. `save` says, once the save is done, whether it took what
+/// was typed; when it doesn't, or nothing changed, the field shows `text` again.
 struct CommitField: View {
     let label: String
     let text: String
     let identifier: String
     /// where the field's value is in the file, so it can take focus when something is added there
     var place: [PathKey]? = nil
-    let save: (String) -> Bool
+    let save: (String) async -> Bool
     @State private var draft = ""
     @FocusState private var focused: Bool
 
     private func commit() {
         let typed = draft.trimmingCharacters(in: .whitespaces)
-        if typed == text || !save(typed) { draft = text }
+        guard typed != text else { draft = text; return }
+        // a save refused, as one beside another edit is, shows the file's text again rather than seeming saved
+        Task { if await !save(typed), draft == typed { draft = text } }
     }
 
     var body: some View {

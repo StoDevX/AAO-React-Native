@@ -46,8 +46,15 @@ public struct BusSchedule: Equatable, Sendable {
     }
 
     /// Sets trip `trip`'s time at stop `stop`, or marks the stop skipped when `time` is nil.
+    /// A stop past the end of a short row is reached by writing the whole row, the stops between it skipped.
     public func setTime(trip: Int, stop: Int, _ time: ClockTime?, at base: [PathKey]) -> [EditOp] {
-        [.set(base + ["times", .index(trip), .index(stop)], Self.json(time))]
+        if raw.indices.contains(trip), stop >= raw[trip].count {
+            var row = raw[trip]
+            while row.count < stop { row.append(.bool(false)) }
+            row.append(Self.json(time))
+            return [.set(base + ["times", .index(trip)], .array(row))]
+        }
+        return [.set(base + ["times", .index(trip), .index(stop)], Self.json(time))]
     }
 
     /// A trip after the last: the last again, as far after it as it is after

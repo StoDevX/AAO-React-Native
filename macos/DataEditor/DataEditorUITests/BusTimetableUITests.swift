@@ -125,7 +125,9 @@ final class BusTimetableUITests: XCTestCase {
         XCTAssertTrue(insert.waitForExistence(timeout: 10))
         insert.click()
         XCTAssertTrue(waitFor("      - St. Olaf College\n      - New Stop\n      - Library\n", in: data))
-        // the new stop's name is ready to type over
+        // the new stop's name is ready to type over, once it has focus
+        let name = window.textFields["timetable-1-stop-1"]
+        XCTAssertTrue(name.wait(until: NSPredicate(format: "hasKeyboardFocus == true"), timeout: 5))
         app.typeText("Northfield Depot\r")
         XCTAssertTrue(waitFor("      - St. Olaf College\n      - Northfield Depot\n      - Library\n", in: data))
     }
