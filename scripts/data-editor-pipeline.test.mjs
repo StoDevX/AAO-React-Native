@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
-import {existsSync, readdirSync, readFileSync} from 'node:fs'
+import {existsSync, readdirSync} from 'node:fs'
 import {readFile, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {describe, it} from 'node:test'
-import {parse} from 'yaml'
+import {parseDocument} from 'yaml'
 import {DATA_BASE} from './paths.mjs'
 import {
 	build,
@@ -213,12 +213,15 @@ describe('readCalendar', () => {
 		assert.ok(calendar.templates.includes('library-fall-closed'))
 	})
 
-	it('gives a one-day break its date as its start and end', () => {
-		// whichever break the file gives a single date, so a new year's dates keep the test
-		let breaks = parse(readFileSync(path.join(DATA_BASE, 'breaks.yaml'), 'utf8')).breaks
-		let [key, entry] = Object.entries(breaks).find(([, b]) => b.date !== undefined)
-		let oneDay = readCalendar(DATA_BASE).breaks.find((b) => b.key === key)
-		assert.deepEqual([oneDay?.start, oneDay?.end], [entry.date, entry.date])
+	it('gives a one-day break its date as its start and end', async () => {
+		// a break of its own, so the test holds whether or not this year's calendar has a one-day break
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, 'breaks.yaml')
+		let calendar = parseDocument(await readFile(file, 'utf8'))
+		calendar.setIn(['breaks', 'oneDay'], {name: 'One Day', date: '2027-03-28'})
+		await writeFile(file, calendar.toString())
+		let oneDay = readCalendar(dataDir).breaks.find((b) => b.key === 'oneDay')
+		assert.deepEqual([oneDay?.start, oneDay?.end], ['2027-03-28', '2027-03-28'])
 	})
 })
 
