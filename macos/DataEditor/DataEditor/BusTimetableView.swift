@@ -92,8 +92,7 @@ private struct BusTimetable: View {
                     CommitField(label: "Stop", text: name, identifier: "timetable-\(number)-stop-\(index)",
                                 place: base + ["stops", .index(index)]) { renamed in
                         guard !renamed.isEmpty else { return false }
-                        apply(timetable.renameStop(at: index, to: renamed, at: base))
-                        return true
+                        return await model.apply(timetable.renameStop(at: index, to: renamed, at: base), to: file)
                     }
                     Group {
                         Button("Add a Stop After \(name)", systemImage: "plus.circle") {

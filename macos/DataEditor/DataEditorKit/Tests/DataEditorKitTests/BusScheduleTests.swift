@@ -105,6 +105,15 @@ struct BusScheduleTests {
         #expect(odd.addTrip(at: base) == [.set(base + ["times", 1], .array([.string("9:00am"), .string("3:8pm")]))])
     }
 
+    /// A time set past the end of a short row writes the whole row, the stops between skipped, not left as holes.
+    @Test func aTimePastTheEndOfAShortRowFillsTheStopsBetween() {
+        let short = BusSchedule(.object(["stops": .array(["A", "B", "C"].map(JSONValue.string)),
+                                         "times": .array([.array([.string("9:00am")])])]))
+        #expect(short.setTime(trip: 0, stop: 2, ClockTime("9:20am"), at: base) == [
+            .set(base + ["times", 0], .array([.string("9:00am"), .bool(false), .string("9:20am")])),
+        ])
+    }
+
     /// Where a stop the trip skips starts when it is given a time: the time at the stop before, or noon.
     @Test func aSkippedStopStartsFromTheStopBefore() {
         #expect(schedule.startingTime(trip: 0, stop: 2) == ClockTime("3:08pm"))

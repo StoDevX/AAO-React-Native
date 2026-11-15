@@ -269,8 +269,8 @@ private struct ScalarField: View {
         case .symbol:
             SymbolField(title: title, value: value?.string, identifier: fieldID) { apply(.string($0)) }
         case .date, .dateTime:
-            DateField(title: title, kind: kind, value: value?.string) { apply($0.map(JSONValue.string)) }
-                .accessibilityIdentifier(fieldID)
+            // its identifier set inside, on the picker, so its Remove button keeps its own
+            DateField(title: title, kind: kind, value: value?.string, identifier: fieldID, removable: !required) { apply($0.map(JSONValue.string)) }
         case .url:
             HStack {
                 textField

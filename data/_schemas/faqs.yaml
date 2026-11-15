@@ -48,7 +48,7 @@ definitions:
         title: Conditions
         # nested conditions are edited in the file; the form keeps them as they are
         editor: hidden
-      updatedAt: {type: string, format: date-time, title: Updated, editor: date}
+      updatedAt: {type: string, format: date-time, title: Updated}
 
   condition:
     oneOf:

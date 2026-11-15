@@ -408,6 +408,9 @@ final class AppModel {
     @discardableResult
     func apply(_ ops: [EditOp], to file: String) async -> Bool {
         guard !updating, !sending, !editing, let helper, !isConflicted(file), !isLocked(file), !ops.isEmpty else { return false }
+        // a list item removed moves the items after it to other places; counted once done
+        let reshaping = ops.contains { $0.delete && $0.path.last.map { if case .index = $0 { true } else { false } } == true }
+        defer { if reshaping { reshapes += 1 } }
         let ops = Self.stamped(ops, field: stampField(for: file), stamp: Self.saveStamp())
         let edited: Loaded
         do {
@@ -452,14 +455,21 @@ final class AppModel {
         let key = file + "#" + path.map(\.description).joined(separator: ".")
         let change = (latestChanges[key] ?? 0) + 1
         latestChanges[key] = change
+        let shape = reshapes
+        // overtaken by a newer change to the same place, or the file reshaped under it,
+        // as a move, a removal, a revert or an update does: its place may now be another's
+        let stale = { self.latestChanges[key] != change || self.reshapes != shape }
         while true {
             while editing || updating || sending {
                 if shuttingDown { return }
                 try? await Task.sleep(for: .milliseconds(30))
             }
-            guard latestChanges[key] == change, let current = await currentValue(of: file) else { return }
-            // another change may have begun its edit while the file was read; this one waits for it too
-            guard !editing, !updating, !sending else { continue }
+            if stale() { return }
+            let runs = edits.runs
+            guard let current = await currentValue(of: file) else { return }
+            if stale() { return }
+            // another edit may have begun, or begun and ended, while the file was read; this one reads again
+            guard !editing, !updating, !sending, edits.runs == runs else { continue }
             let ops = build(current)
             if !ops.isEmpty { await apply(ops, to: file) }
             return
@@ -891,6 +901,10 @@ final class AppModel {
     private var keptDocuments: [String: KeptDocument] = [:]
     /// How many reverts and discards have run, so text left as one ran is not kept after it.
     private var discards = 0
+    /// How many times a file may have been reshaped under a waiting change: an
+    /// item moved or removed, a record reordered or removed, or the files reverted,
+    /// discarded or updated. A change to a place in the file is let go after one.
+    private var reshapes = 0
 
     /// Saves a document's text as its editor closes. Text that will not save,
     /// as the file changed since it was read, is kept for the editor to give
@@ -966,8 +980,10 @@ final class AppModel {
 
     /// Removes the record at `ref` from `set`.
     func removeRecord(_ ref: RecordRef, from set: String) async {
-        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper,
-              let reply = try? await edits.run({ try await helper.remove(set: set, record: ref) }) else { return }
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper else { return }
+        // counted once done, so a change that waited through it sees it
+        defer { reshapes += 1 }
+        guard let reply = try? await edits.run({ try await helper.remove(set: set, record: ref) }) else { return }
         await took(reply, in: set)
     }
 
@@ -980,8 +996,9 @@ final class AppModel {
     /// with their comments, as a form's Move Up and Move Down do.
     func moveItems(in file: String, path: [PathKey], order: [PathKey]) async {
         let stamp = Self.stamped([], field: stampField(for: file), stamp: Self.saveStamp())
-        guard mayChangeRecords, let helper, !isConflicted(file), !isLocked(file),
-              let moved = try? await edits.run({
+        guard mayChangeRecords, let helper, !isConflicted(file), !isLocked(file) else { return }
+        defer { reshapes += 1 }
+        guard let moved = try? await edits.run({
                   let moved = try await helper.move(file, path: path, order: order)
                   return stamp.isEmpty ? moved : try await helper.edit(file, stamp)
               }) else { return }
@@ -997,8 +1014,9 @@ final class AppModel {
 
     /// Puts `set`'s records in the order of `order`.
     func reorderRecords(in set: String, order: [RecordRef]) async {
-        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper,
-              let reply = try? await edits.run({ try await helper.reorder(set: set, order: order) }) else { return }
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper else { return }
+        defer { reshapes += 1 }
+        guard let reply = try? await edits.run({ try await helper.reorder(set: set, order: order) }) else { return }
         await took(reply, in: set)
     }
 
@@ -1079,6 +1097,7 @@ final class AppModel {
 
     /// The helper reads files afresh for each request, so only the lists, the open file and the build need refreshing.
     private func afterFilesChanged() async {
+        reshapes += 1
         changedFiles = (try? workspace.changedFiles()) ?? []
         calendar = (try? await helper?.calendar()) ?? calendar
         // master may have added a set or changed a schema
