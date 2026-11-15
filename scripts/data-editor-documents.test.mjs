@@ -77,6 +77,21 @@ describe('DocumentStore.edit', () => {
 		)
 	})
 
+	it('writes a list it replaces on one line, as the file had it', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		let text = `name: St. Olaf Avenue
+accentColor: [48, 63, 102]
+`
+		await writeFile(path.join(root, 'webcam.yaml'), text)
+		await new DocumentStore(root).edit('webcam.yaml', [
+			{path: ['accentColor'], value: [50, 60, 100]},
+		])
+		assert.equal(
+			await readFile(path.join(root, 'webcam.yaml'), 'utf8'),
+			text.replace('[48, 63, 102]', '[50, 60, 100]'),
+		)
+	})
+
 	it('leaves a folded paragraph it did not change wrapped as it was', async () => {
 		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
 		let text = `venues:

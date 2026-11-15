@@ -109,8 +109,8 @@ export function roundTrip(file, text) {
 	return written(file, doc)
 }
 
-/** A node for `value` styled like the data files: flow rows, quoted times. */
-function styled(doc, parentPath, value) {
+/** A node for `value` styled like the data files: flow rows, quoted times, and the style of the node it `replaced`. */
+function styled(doc, parentPath, value, replaced) {
 	let node = doc.createNode(value)
 	let parent = doc.getIn(parentPath, true)
 	let sibling = isSeq(parent) ? parent.items[0] : isMap(parent) ? parent.items[0]?.value : undefined
@@ -118,6 +118,10 @@ function styled(doc, parentPath, value) {
 	if (isMap(node) && ((isMap(sibling) && sibling.flow) || inRows)) node.flow = true
 	// a list beside lists written on one line, as a timetable's trips or a stop's coordinates, is written so too
 	if (isSeq(node) && isSeq(sibling) && sibling.flow) node.flow = true
+	// a list or map replacing one keeps its style, as a colour's `[48, 63, 102]` does; an
+	// empty one is written `[]` in any style, so says nothing
+	let sameKind = (isSeq(node) && isSeq(replaced)) || (isMap(node) && isMap(replaced))
+	if (sameKind && replaced.items.length > 0) node.flow = Boolean(replaced.flow)
 	// a time is quoted as the times beside it are: an hours file quotes them, a bus timetable doesn't
 	let timeStyle = 'QUOTE_SINGLE'
 	if (sibling !== undefined) {
@@ -165,7 +169,7 @@ function apply(doc, op) {
 	// an emptied list is written `hours: []`, and a row added to it goes on a line of its own
 	let parent = doc.getIn(op.path.slice(0, -1), true)
 	if (isSeq(parent) && FLOW_ROWS.has(String(op.path.at(-2)))) parent.flow = false
-	doc.setIn(op.path, styled(doc, op.path.slice(0, -1), op.value))
+	doc.setIn(op.path, styled(doc, op.path.slice(0, -1), op.value, existing))
 }
 
 /** Why the first of `Promise.allSettled`'s results failed, or undefined if none did. */
