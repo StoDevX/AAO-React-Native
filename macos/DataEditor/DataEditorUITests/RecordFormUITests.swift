@@ -44,6 +44,7 @@ final class RecordFormUITests: XCTestCase {
         // the one schedule is open already; its timetable rows are not
         let row = window.disclosureTriangles["Times 1"]
         XCTAssertTrue(row.waitForExistence(timeout: 10))
+        reveal(row, in: window)
         clickTitle(of: row)
         XCTAssertTrue(window.textFields["field-schedules.#1.times.#1.#1"].waitForExistence(timeout: 5))
         attachScreenshot(of: window, named: "The Express's first timetable row, opened from its title")
