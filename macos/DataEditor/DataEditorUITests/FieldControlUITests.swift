@@ -104,6 +104,23 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(text.contains("# the same screen, under its name in app versions already installed"))
     }
 
+    /// A list of tokens too long for one line wraps onto more, all of them shown.
+    func testTokensTooManyForOneLineWrapOntoMore() throws {
+        let app = try launchWithRepoData(opening: "map-categories:map-categories.yaml").app
+        let window = currentChanges(in: app)
+        let expand = window.links["expand-all-field-stolaf.groups"]
+        XCTAssertTrue(expand.waitForExistence(timeout: 10))
+        expand.click()
+        // Services lists five categories; Bike Racks one
+        let five = window.textFields["field-stolaf.groups.#9.categories"]
+        let one = window.textFields["field-stolaf.groups.#7.categories"]
+        XCTAssertTrue(five.waitForExistence(timeout: 10))
+        let form = window.scrollViews.element(boundBy: window.scrollViews.count - 1)
+        for _ in 0..<40 where !five.isHittable { form.scroll(byDeltaX: 0, deltaY: -150) }
+        attachScreenshot(of: window, named: "Services' five categories")
+        XCTAssertGreaterThan(five.frame.height, one.frame.height * 1.5)
+    }
+
     /// A food item's station is chosen from the stations the menu lists.
     func testAFoodItemsStationIsChosenFromTheStations() throws {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")

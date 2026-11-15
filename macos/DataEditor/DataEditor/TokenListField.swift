@@ -62,7 +62,18 @@ private struct TokenField: NSViewRepresentable {
         field.tokenStyle = .rounded
         field.completionDelay = 0
         field.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        // tokens too many for one line wrap onto more, rather than scrolling out of sight
+        field.cell?.wraps = true
+        field.cell?.isScrollable = false
         return field
+    }
+
+    /// As tall as the tokens need at the width offered, as AppKit's field
+    /// reports only one line's height of its own.
+    func sizeThatFits(_ proposal: ProposedViewSize, nsView field: NSTokenField, context: Context) -> CGSize? {
+        guard let width = proposal.width, width.isFinite, let cell = field.cell else { return nil }
+        let fitting = cell.cellSize(forBounds: NSRect(x: 0, y: 0, width: width, height: .greatestFiniteMagnitude))
+        return CGSize(width: width, height: fitting.height)
     }
 
     func updateNSView(_ field: NSTokenField, context: Context) {
