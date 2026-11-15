@@ -374,7 +374,11 @@ private struct ItemGroup<Content: View>: View {
     @ViewBuilder let content: () -> Content
 
     var body: some View {
-        DisclosureGroup(isExpanded: $isExpanded, content: content) {
+        // its fields, lists and buttons from the left, as the form lays out its own; a group centres them otherwise
+        DisclosureGroup(isExpanded: $isExpanded) {
+            VStack(alignment: .leading) { content() }
+                .frame(maxWidth: .infinity, alignment: .leading)
+        } label: {
             Button(title) { withAnimation { isExpanded.toggle() } }
                 .buttonStyle(.plain)
                 .frame(maxWidth: .infinity, alignment: .leading)

@@ -83,6 +83,17 @@ final class RecordFormUITests: XCTestCase {
         group.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0.5)).withOffset(CGVector(dx: 40, dy: 0)).click()
     }
 
+    /// A nested list's Add button starts at the left, as the form's other buttons do, not in the middle.
+    func testANestedListsAddButtonStartsAtTheLeft() throws {
+        let app = try launchWithRepoData(opening: "building-directory:building-directory/bmc.yaml").app
+        let window = currentChanges(in: app)
+        let add = window.buttons["add-field-floors.#1.entries"]
+        let name = window.textFields["field-floors.#1.name"]
+        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        attachScreenshot(of: window, named: "A floor's entries and their Add button")
+        XCTAssertLessThan(add.frame.minX, name.frame.minX)
+    }
+
     func testAReadOnlySetCannotBeEdited() throws {
         let app = try launchWithRepoData(opening: "student-wages").app
         let window = currentChanges(in: app)
