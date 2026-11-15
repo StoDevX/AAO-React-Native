@@ -8,7 +8,7 @@ additionalProperties: false
 required: [faqs]
 properties:
   # Shown on the FAQ screen by app versions that predate `faqs`.
-  legacyText: {type: string, title: Legacy Text}
+  legacyText: {type: string, title: Legacy Text, editor: multiline}
   faqs:
     type: array
     items: {$ref: '#/definitions/faq'}

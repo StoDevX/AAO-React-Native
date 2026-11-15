@@ -29,8 +29,12 @@ properties:
         # section title -> a note shown on that section
         notes:
           type: object
-          additionalProperties: {type: string, minLength: 1}
+          additionalProperties: {type: string, minLength: 1, editor: multiline}
           title: Notes
         # why the run only reports this venue and never writes it
-        watch_only: {type: string, minLength: 1, title: 'Only Report It, Because'}
+        watch_only:
+          type: string
+          minLength: 1
+          title: 'Only Report It, Because'
+          editor: multiline
     title: Venues
