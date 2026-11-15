@@ -16,6 +16,8 @@ struct GradientSwatch {
         let swatch = RoundedRectangle(cornerRadius: 3)
             .fill(LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom))
             .frame(width: 14, height: 14)
+            // room after it, so a menu sets it as far from its name as an icon is from its own
+            .padding(.trailing, 4)
         let renderer = ImageRenderer(content: swatch)
         renderer.scale = NSScreen.main?.backingScaleFactor ?? 2
         return renderer.nsImage.map { Image(nsImage: $0) }

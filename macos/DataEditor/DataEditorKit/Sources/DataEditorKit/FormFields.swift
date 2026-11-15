@@ -107,7 +107,8 @@ private func kind(of schema: JSONValue, title: String) -> FieldKind {
             if let pointer = item["x-choices"]?.string { return .tokens(choices: pointer) }
             if schema["uniqueItems"]?.bool == true { return .tokens(choices: nil) }
         }
-        return .list(item: kind(of: item, title: title), itemTitle: item["title"]?.string ?? title)
+        // an item with no title of its own is one of the list's: a Station of Stations
+        return .list(item: kind(of: item, title: title), itemTitle: item["title"]?.string ?? singular(title))
     case "object":
         if schema["properties"] != nil { return .object(formFields(schema: schema)) }
         if let value = schema["additionalProperties"], case .object = value {

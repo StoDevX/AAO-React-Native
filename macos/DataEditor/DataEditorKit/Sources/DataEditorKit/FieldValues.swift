@@ -193,3 +193,13 @@ public func breakDates(start: String, end: String, locale: Locale = .current) ->
     return from == to ? from.formatted(Date.FormatStyle(date: .abbreviated, time: .omitted, locale: locale, timeZone: .gmt))
         : (from..<to).formatted(style)
 }
+
+/// One of the things `title` names, as a list's item is called: Station for
+/// Stations, Category for Categories, Campus for Campuses. A title that is not a plural in s, such as
+/// Skip, Address or Campus, is one already.
+public func singular(_ title: String) -> String {
+    if title.hasSuffix("ies") { return String(title.dropLast(3)) + "y" }
+    if title.hasSuffix("uses") { return String(title.dropLast(2)) }
+    guard title.hasSuffix("s"), !title.hasSuffix("ss"), !title.hasSuffix("us") else { return title }
+    return String(title.dropLast())
+}

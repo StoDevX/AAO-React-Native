@@ -44,9 +44,7 @@ struct ColorWell: View {
         if let value, let color = ColorValue(value) {
             LabeledContent(title) {
                 HStack {
-                    Text(value.string ?? color.components.map { String(Int($0)) }.joined(separator: ", "))
-                        .foregroundStyle(.secondary)
-                        .textSelection(.enabled)
+                    // the well first, as a swatch leads its name in a menu, then the colour as the file writes it
                     ColorPicker(title, selection: Binding(
                         get: { Color(nsColor: Self.nsColor(color)) },
                         set: { chosen in
@@ -56,6 +54,9 @@ struct ColorWell: View {
                         }), supportsOpacity: false)
                         .labelsHidden()
                         .accessibilityIdentifier(identifier ?? "")
+                    Text(value.string ?? color.components.map { String(Int($0)) }.joined(separator: ", "))
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
                     removeButton
                 }
             }

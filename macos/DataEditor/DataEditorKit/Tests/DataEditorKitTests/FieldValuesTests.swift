@@ -145,3 +145,22 @@ struct BreakDatesTests {
         #expect(breakDates(start: "soon", end: "2027-01-03", locale: us) == "soon – 2027-01-03")
     }
 }
+
+struct SingularTests {
+    /// A list's item is called by the singular of the list's title: Add Station, not Add Stations.
+    @Test func aListsTitleNamesOneOfItsItems() {
+        #expect(singular("Stations") == "Station")
+        #expect(singular("Food Items") == "Food Item")
+        #expect(singular("Categories") == "Category")
+        #expect(singular("Entries") == "Entry")
+        #expect(singular("Times") == "Time")
+        #expect(singular("Campuses") == "Campus")
+    }
+
+    /// A title already singular, or ending in a double s, is left as it is.
+    @Test func aSingularTitleStays() {
+        #expect(singular("Skip") == "Skip")
+        #expect(singular("Address") == "Address")
+        #expect(singular("Campus") == "Campus")
+    }
+}
