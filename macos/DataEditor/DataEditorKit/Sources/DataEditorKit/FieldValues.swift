@@ -156,3 +156,12 @@ public func itemName(_ item: JSONValue?) -> String? {
     }
     return nil
 }
+
+/// `text` as the app renders its markdown, paragraphs kept, or nil when it
+/// holds no markdown and would read the same as the field above it.
+public func markdownPreview(_ text: String) -> AttributedString? {
+    let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+    guard let rendered = try? AttributedString(markdown: text, options: options),
+          String(rendered.characters) != text || rendered.runs.count > 1 else { return nil }
+    return rendered
+}

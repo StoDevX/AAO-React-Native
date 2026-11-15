@@ -171,7 +171,8 @@ private struct ScalarField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             control
-            if kind == .markdown, let text = value?.fieldText, !text.isEmpty, let rendered = try? AttributedString(markdown: text) {
+            // as the app shows it, when that differs from what is typed
+            if kind == .markdown, let text = value?.fieldText, let rendered = markdownPreview(text) {
                 Text(rendered).font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
             }
             FieldProblems(path: path, recordPath: recordPath)

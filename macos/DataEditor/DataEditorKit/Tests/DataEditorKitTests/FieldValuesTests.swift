@@ -91,3 +91,14 @@ struct ItemNameTests {
         #expect(itemName(try item(#""just a name""#)) == nil)
     }
 }
+
+struct MarkdownPreviewTests {
+    @Test func plainTextHasNoPreview() {
+        #expect(markdownPreview("The Center supports advisors.\n\nAcademic Peer Advisors assist the Center.") == nil)
+    }
+
+    @Test func markdownIsPreviewedWithItsParagraphsKept() throws {
+        let preview = try #require(markdownPreview("Email [us](mailto:a@example.com).\n\nOr call."))
+        #expect(String(preview.characters) == "Email us.\n\nOr call.")
+    }
+}
