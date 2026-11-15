@@ -1,3 +1,4 @@
+import AppKit
 import XCTest
 
 /// The Cage's hours, as `launchWithRepoData(opening:)` takes a record.
@@ -114,10 +115,17 @@ extension XCTestCase {
         let list = window.coordinate(withNormalizedOffset: CGVector(dx: across, dy: 0.5))
         let visible = sight(of: window)
         var scrolls = 0
+        var down = true
         while scrolls < 45, !isInSight(element, in: window) {
-            // an element not laid out yet is further down a list that draws its rows as they come
             let frame = element.frame
-            list.scroll(byDeltaX: 0, deltaY: frame.isEmpty || frame.midY > visible.maxY ? -300 : 300)
+            if !frame.isEmpty {
+                down = frame.midY > visible.maxY
+            } else if scrolls == 15 {
+                // a list lays out only the rows in sight, so a row with no frame
+                // may be above as well as below; not found below, it is above
+                down = false
+            }
+            list.scroll(byDeltaX: 0, deltaY: down ? -300 : 300)
             scrolls += 1
         }
     }
@@ -132,11 +140,16 @@ extension XCTestCase {
         return !frame.isEmpty && sight(of: window).contains(CGPoint(x: frame.midX, y: frame.midY))
     }
 
-    /// The part of `window` below its title bar and toolbar, which scrolled content passes under.
+    /// The part of `window` below its title bar and toolbar, which scrolled
+    /// content passes under, and on the screen: CI's screen is 768 high, and a
+    /// window at its smallest runs past its foot.
     @MainActor
     private func sight(of window: XCUIElement) -> CGRect {
         let bounds = window.frame
-        return CGRect(x: bounds.minX, y: bounds.minY + 52, width: bounds.width, height: bounds.height - 52)
+        let below = CGRect(x: bounds.minX, y: bounds.minY + 52, width: bounds.width, height: bounds.height - 52)
+        // XCUITest's frames run down from the top of the main screen, as AppKit's run up from its foot
+        let screen = NSScreen.main.map { CGRect(origin: .zero, size: $0.frame.size) } ?? below
+        return below.intersection(screen)
     }
 
     /// The Current changes window, opened if it is not.
