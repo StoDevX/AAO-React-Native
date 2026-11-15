@@ -64,6 +64,8 @@ definitions:
     items: [{type: number}, {type: number}]
     minItems: 2
     maxItems: 2
+    title: Coordinate
+    editor: coordinate
 
   colors:
     type: object

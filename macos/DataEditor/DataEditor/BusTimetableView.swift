@@ -69,8 +69,10 @@ private struct BusTimetable: View {
             }
             ForEach(Array(timetable.stops.enumerated()), id: \.offset) { index, name in
                 HStack {
-                    StopNameField(name: name, identifier: "timetable-\(number)-stop-\(index)") { renamed in
+                    CommitField(label: "Stop", text: name, identifier: "timetable-\(number)-stop-\(index)") { renamed in
+                        guard !renamed.isEmpty else { return false }
                         apply(timetable.renameStop(at: index, to: renamed, at: base))
+                        return true
                     }
                     Group {
                         Button("Add a Stop After \(name)", systemImage: "plus.circle") {
@@ -198,30 +200,6 @@ private struct TimetableGrid: View {
             }
         }
         .frame(width: 96, alignment: .leading)
-    }
-}
-
-/// A stop's name, saved when the contributor presses Return or leaves the field.
-private struct StopNameField: View {
-    let name: String
-    let identifier: String
-    let rename: (String) -> Void
-    @State private var draft = ""
-    @FocusState private var focused: Bool
-
-    private func commit() {
-        let typed = draft.trimmingCharacters(in: .whitespaces)
-        if !typed.isEmpty, typed != name { rename(typed) } else { draft = name }
-    }
-
-    var body: some View {
-        TextField("Stop", text: $draft)
-            .focused($focused)
-            .onSubmit(commit)
-            .onChange(of: focused) { _, isFocused in if !isFocused { commit() } }
-            .onAppear { draft = name }
-            .onChange(of: name) { _, renamed in draft = renamed }
-            .accessibilityIdentifier(identifier)
     }
 }
 

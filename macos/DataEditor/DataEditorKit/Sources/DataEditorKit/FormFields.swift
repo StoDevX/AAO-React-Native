@@ -11,6 +11,8 @@ public indirect enum FieldKind: Hashable, Sendable {
     case gradient(names: [String])
     /// days of the week, any number of them
     case days
+    /// a place as latitude and longitude, written `[lat, long]`
+    case coordinate
     /// one of the values found at `pointer` in the same file (see `choices(_:in:at:)`)
     case reference(pointer: String)
     /// a set of short names, each chosen from the values at `choices` when given
@@ -58,7 +60,7 @@ public struct FormField: Hashable, Sendable, Identifiable {
 /// The control an `editor` hint names.
 private let hinted: [String: FieldKind] = [
     "markdown": .markdown, "multiline": .multiline, "symbol": .symbol, "days": .days, "time": .time,
-    "phone": .phone, "url": .url, "date": .date, "image": .image,
+    "phone": .phone, "url": .url, "date": .date, "image": .image, "coordinate": .coordinate,
 ]
 
 /// How `schema` draws, with `title` as the name of one list item when it names none of its own.

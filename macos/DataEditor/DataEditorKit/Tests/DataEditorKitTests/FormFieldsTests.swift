@@ -85,6 +85,10 @@ struct FormFieldsTests {
         #expect(try kind(#"{"type":"array","items":[{"type":"number"},{"type":"number"},{"type":"number"}],"editor":"color"}"#) == .color(triple: true))
     }
 
+    @Test func twoNumbersTaggedAsACoordinateAreOne() throws {
+        #expect(try kind(#"{"type":"array","items":[{"type":"number"},{"type":"number"}],"editor":"coordinate"}"#) == .coordinate)
+    }
+
     @Test func aColourWrittenAsTextIsOne() throws {
         #expect(try kind(#"{"type":"string","editor":"color"}"#) == .color(triple: false))
     }

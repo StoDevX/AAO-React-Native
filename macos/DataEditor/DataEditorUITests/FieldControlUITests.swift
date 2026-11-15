@@ -121,6 +121,21 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertGreaterThan(five.frame.height, one.frame.height * 1.5)
     }
 
+    /// A stop's coordinates are one row, its latitude and longitude side by side, written back on one line.
+    func testAStopsCoordinatesAreOneRowOfLatitudeAndLongitude() throws {
+        let (app, data) = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml")
+        let window = currentChanges(in: app)
+        let latitude = window.textFields["field-schedules.#1.coordinates.Library-latitude"]
+        XCTAssertTrue(latitude.waitForExistence(timeout: 10))
+        XCTAssertEqual(latitude.value as? String, "44.457643")
+        XCTAssertEqual(window.textFields["field-schedules.#1.coordinates.Library-longitude"].value as? String, "-93.158715")
+        attachScreenshot(of: window, named: "The Express's stop coordinates")
+        latitude.doubleClick()
+        latitude.typeKey("a", modifierFlags: .command)
+        latitude.typeText("44.5\r")
+        XCTAssertTrue(waitFor("Library: [44.5, -93.158715]", in: "bus-times/1-express.yaml", data: data))
+    }
+
     /// A food item's station is chosen from the stations the menu lists.
     func testAFoodItemsStationIsChosenFromTheStations() throws {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")

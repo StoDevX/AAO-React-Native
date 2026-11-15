@@ -104,6 +104,7 @@ const EDITOR_HINTS = new Set([
 	'hidden',
 	'time',
 	'days',
+	'coordinate',
 ])
 
 /** Every field below `schema` a form would show, as `[where, field schema]`. */

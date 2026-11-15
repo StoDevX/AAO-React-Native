@@ -66,6 +66,7 @@ private func starting(_ kind: FieldKind) -> JSONValue {
     case .map: .object([:])
     case .toggle: .bool(false)
     case .number: .number(0)
+    case .coordinate: .array([.number(0), .number(0)])
     case .choice(let values): .string(values.first ?? "")
     default: .string("")
     }
@@ -210,6 +211,8 @@ private struct ScalarField: View {
         case .time:
             TimeField(title: title, value: value) { apply(.string($0)) }
                 .accessibilityIdentifier(fieldID)
+        case .coordinate:
+            CoordinateField(title: title, value: value, identifier: fieldID) { apply($0) }
         case .symbol:
             SymbolField(title: title, value: value?.string, identifier: fieldID) { apply(.string($0)) }
         case .date, .dateTime:
