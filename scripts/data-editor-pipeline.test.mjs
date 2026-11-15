@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
-import {existsSync, readdirSync} from 'node:fs'
+import {existsSync, readdirSync, readFileSync} from 'node:fs'
 import {readFile, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {describe, it} from 'node:test'
+import {parse} from 'yaml'
 import {DATA_BASE} from './paths.mjs'
 import {
 	build,
@@ -213,8 +214,11 @@ describe('readCalendar', () => {
 	})
 
 	it('gives a one-day break its date as its start and end', () => {
-		let easter = readCalendar(DATA_BASE).breaks.find((b) => b.key === 'easter')
-		assert.deepEqual([easter?.start, easter?.end], ['2027-03-28', '2027-03-28'])
+		// whichever break the file gives a single date, so a new year's dates keep the test
+		let breaks = parse(readFileSync(path.join(DATA_BASE, 'breaks.yaml'), 'utf8')).breaks
+		let [key, entry] = Object.entries(breaks).find(([, b]) => b.date !== undefined)
+		let oneDay = readCalendar(DATA_BASE).breaks.find((b) => b.key === key)
+		assert.deepEqual([oneDay?.start, oneDay?.end], [entry.date, entry.date])
 	})
 })
 
