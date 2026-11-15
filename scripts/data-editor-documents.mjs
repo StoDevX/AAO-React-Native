@@ -1,4 +1,4 @@
-import {mkdir, readFile, rename, rm, writeFile} from 'node:fs/promises'
+import {link, mkdir, readFile, rename, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {isDeepStrictEqual} from 'node:util'
 import {format} from 'oxfmt'
@@ -222,7 +222,15 @@ export class DocumentStore {
 	async create(file, value) {
 		let filename = inside(this.#root, file)
 		await mkdir(path.dirname(filename), {recursive: true})
-		await writeFile(filename, await written(file, new Document(value)), {flag: 'wx'})
+		// written whole beside it, then linked into place: a reader or a crash never
+		// meets half a file, and the link, unlike a rename, fails on a name already taken
+		let staged = tempFileFor(filename)
+		try {
+			await writeFile(staged, await written(file, new Document(value)))
+			await link(staged, filename)
+		} finally {
+			await rm(staged, {force: true})
+		}
 	}
 
 	/** Removes `file`. */

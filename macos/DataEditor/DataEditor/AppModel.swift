@@ -603,8 +603,19 @@ final class AppModel {
                            checkProblems: problems + changedProblems, buildProblems: buildProblems, hasBuilt: hasBuilt)
     }
 
+    /// Returns once no edit is in flight, as the helper may be renaming files
+    /// that a revert or discard would otherwise copy over halfway.
+    private func editsFinished() async {
+        while editing {
+            if shuttingDown { return }
+            try? await Task.sleep(for: .milliseconds(30))
+        }
+    }
+
     func revert(_ file: String) async {
         guard !updating, !submitting else { return }
+        await editsFinished()
+        discards += 1
         try? workspace.revert(file)
         // text kept from the file, and the notices about it, are edits the revert drops too
         keptDocuments[file] = nil
@@ -616,6 +627,8 @@ final class AppModel {
     /// update or a submission, which read `data/` underneath it.
     func discardAll() async {
         guard !updating, !submitting else { return }
+        await editsFinished()
+        discards += 1
         try? workspace.discardAll()
         keptDocuments = [:]
         draftNotices = []
@@ -854,12 +867,17 @@ final class AppModel {
     /// Text typed into a document that would not save as its editor closed,
     /// by file, given back when the document opens again.
     private var keptDocuments: [String: KeptDocument] = [:]
+    /// How many reverts and discards have run, so text left as one ran is not kept after it.
+    private var discards = 0
 
     /// Saves a document's text as its editor closes. Text that will not save,
     /// as the file changed since it was read, is kept for the editor to give
     /// back, and a notice says so.
     func leaveDocument(_ file: String, text: String, expected: String) async {
-        guard text != expected, await !writeText(file, text, expected: expected) else { return }
+        let discarded = discards
+        guard text != expected, await !writeText(file, text, expected: expected),
+              // a revert or discard meanwhile dropped this text, so it is not kept
+              discards == discarded else { return }
         keptDocuments[file] = KeptDocument(text: text, readAs: expected)
         draftNotices.append(Problem(file: file, message: "Your changes to \(name(of: file)) weren't saved because it changed while you typed. They're back when you open it.", path: nil))
     }
