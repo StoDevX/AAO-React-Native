@@ -1,10 +1,13 @@
 import DataEditorKit
 import SwiftUI
 
-/// One building's hours file: its problems, the week at a glance, and every schedule in it.
+/// One building's hours file: its problems, its details, the week at a glance, and every schedule in it.
 struct HoursDetailView: View {
     @Environment(AppModel.self) private var model
     let document: HoursDocument
+
+    /// The fields this form draws itself, which the details leave out.
+    private static let hoursFields: Set<String> = ["schedule", "exceptions", "breakSchedule"]
 
     /// Why the file cannot be edited right now, if it cannot. `AppModel.apply` refuses these edits too.
     private var lockReason: String? {
@@ -55,6 +58,17 @@ struct HoursDetailView: View {
                 } header: { Text("Not saved") }
             }
 
+            // the building's own fields, its name, kind, category and the rest, drawn from
+            // the schema as any form's are; the schedules below have a form of their own
+            if let file = model.documentFile, let set = model.catalog?.set(for: file),
+               let schema = model.loadedSchema(for: set) {
+                Section("Details") {
+                    FieldRows(fields: formFields(schema: schema).filter { !Self.hoursFields.contains($0.key) },
+                              base: [], value: document.value, file: file, recordPath: [])
+                }
+                .disabled(locked)
+            }
+
             Section("This week") { WeekTimeline(services: document.services) }
 
             let hours = model.catalog?.sets["building-hours"]
@@ -92,6 +106,10 @@ struct HoursDetailView: View {
         .formStyle(.editor)
         .navigationTitle(document.name)
         .navigationSubtitle(document.category)
+        // the schema the details are drawn from, asked again once the files change and the model lets it go
+        .task(id: [model.documentFile ?? "", model.documentFile.flatMap { model.catalog?.set(for: $0) }.map { model.loadedSchema(for: $0) == nil ? "asking" : "loaded" } ?? ""]) {
+            if let file = model.documentFile, let set = model.catalog?.set(for: file) { _ = await model.schema(for: set) }
+        }
     }
 }
 

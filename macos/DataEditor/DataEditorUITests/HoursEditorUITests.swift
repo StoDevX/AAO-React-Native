@@ -49,6 +49,23 @@ final class HoursEditorUITests: XCTestCase {
         attachScreenshot(of: currentChanges(in: app), named: "Row added to the first schedule")
     }
 
+    /// A building's own fields, its kind among them, are set in the hours form, as a new building must set its kind.
+    func testABuildingsKindIsChosenInItsHours() throws {
+        let (app, data) = try launchWithRepoData(opening: "building-hours:building-hours/7-5-lions-pantry.yaml")
+        let window = currentChanges(in: app)
+        let kind = window.popUpButtons["field-kind"]
+        XCTAssertTrue(kind.waitForExistence(timeout: 10))
+        attachScreenshot(of: window, named: "Lion's Pantry's details")
+        kind.click()
+        app.menuItems["building"].click()
+        let file = data.appending(path: "building-hours/7-5-lions-pantry.yaml")
+        let deadline = Date().addingTimeInterval(10)
+        while (try? String(contentsOf: file, encoding: .utf8))?.contains("kind: building") != true, Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        XCTAssertTrue(try String(contentsOf: file, encoding: .utf8).contains("kind: building"))
+    }
+
     func testATitleTypedBeforeChoosingAnotherBuildingStaysWithItsOwn() throws {
         let app = try launch(opening: theCage)
         let title = currentChanges(in: app).textFields["service-title-0"]
