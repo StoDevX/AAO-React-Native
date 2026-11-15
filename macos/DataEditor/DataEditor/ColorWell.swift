@@ -3,14 +3,26 @@ import DataEditorKit
 import SwiftUI
 
 /// A colour chosen in the system's colour well, written back in the form the
-/// file gave it. A value no form reads is shown as text, marked, with no well;
-/// a missing one offers to add `seed`, a colour in the form the schema wants.
+/// file gave it. A value no form reads, such as `red`, is shown as text,
+/// marked, with a button to put a colour in its place; a missing one offers to
+/// add `seed`, a colour in the form the schema wants. An optional colour can
+/// be removed again, when `remove` is given.
 struct ColorWell: View {
     let title: String
     let value: JSONValue?
     let seed: JSONValue
     var identifier: String?
+    var remove: (() -> Void)? = nil
     let set: (JSONValue) -> Void
+
+    @ViewBuilder private var removeButton: some View {
+        if let remove {
+            Button("Remove \(title)", systemImage: "minus.circle", role: .destructive, action: remove)
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .accessibilityIdentifier("remove-colour-" + (identifier ?? ""))
+        }
+    }
 
     /// `value` as AppKit draws it, in the colour space its form is written in.
     static func nsColor(_ value: ColorValue) -> NSColor {
@@ -44,10 +56,17 @@ struct ColorWell: View {
                         }), supportsOpacity: false)
                         .labelsHidden()
                         .accessibilityIdentifier(identifier ?? "")
+                    removeButton
                 }
             }
         } else if let value {
-            LabeledContent(title) { Text(value.fieldText.isEmpty ? "Not a colour" : value.fieldText).foregroundStyle(.red) }
+            LabeledContent(title) {
+                HStack {
+                    Text(value.fieldText.isEmpty ? "Not a colour" : value.fieldText).foregroundStyle(.red)
+                    Button("Replace with a Colour") { set(seed) }
+                    removeButton
+                }
+            }
         } else {
             LabeledContent(title) {
                 Button("Add Colour") { set(seed) }

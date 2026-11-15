@@ -195,6 +195,20 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("label: Food Trucks", in: "map-categories.yaml", data: data))
     }
 
+    /// An optional colour can be taken away again, as its text field once allowed.
+    func testAnOptionalColourIsRemoved() throws {
+        let (app, data) = try launchWithRepoData(opening: "faqs")
+        let window = currentChanges(in: app)
+        let faq = window.outlines["record-list"].staticTexts["Why can't I log in and see my balances?"]
+        XCTAssertTrue(faq.waitForExistence(timeout: 10))
+        faq.click()
+        let remove = window.buttons["remove-colour-field-backgroundColor"]
+        XCTAssertTrue(remove.waitForExistence(timeout: 10))
+        remove.click()
+        // the line goes, the foreground colour after it now following the icon
+        XCTAssertTrue(waitFor("    icon: exclamationmark.circle\n    foregroundColor: '#b42318'", in: "faqs.yaml", data: data))
+    }
+
     /// A food item's station is chosen from the stations the menu lists.
     func testAFoodItemsStationIsChosenFromTheStations() throws {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")

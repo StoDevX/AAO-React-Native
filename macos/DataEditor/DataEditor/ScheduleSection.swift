@@ -137,13 +137,36 @@ struct DraftField: View {
     }
 
     var body: some View {
-        if !isEnabled {
-            // a value that can't be edited reads as text: a dimmed field looks empty
-            readOnly
-        } else {
-            // beside its name in the label column, a paragraph's box growing downward as it wraps
-            field
+        Group {
+            if !isEnabled {
+                // a value that can't be edited reads as text: a dimmed field looks empty
+                readOnly
+            } else {
+                // beside its name in the label column, a paragraph's box growing downward as it wraps
+                field
+            }
         }
+        // the draft lives as long as the field, whichever of the two shows it: a lock
+        // coming and going must neither save it early nor load the file over it
+        .onChange(of: draft) { old, _ in
+            if old == base { scheduleAtStart = schedule }
+        }
+        .onAppear {
+            load()
+            model.registerDraftSaver(id) { await save() }
+        }
+        .onDisappear {
+            commitIfChanged()
+            model.noteDraft(id, unsaved: false)
+            model.unregisterDraftSaver(id)
+        }
+        .onChange(of: file) {
+            commitIfChanged()
+            load()
+        }
+        // the same file changed, by this field's edit or another; unsaved text stays
+        .onChange(of: value) { if file == draftFile, !focused, draft == base { load() } }
+        .onChange(of: draft != base) { _, unsaved in model.noteDraft(id, unsaved: unsaved) }
     }
 
     /// The value as text beside its name.
@@ -160,31 +183,12 @@ struct DraftField: View {
         TextField(label, text: $draft, prompt: Text(label), axis: axis)
             .focused($focused)
             .onSubmit(commitIfChanged)
-            .onChange(of: draft) { old, _ in
-                if old == base { scheduleAtStart = schedule }
-            }
             .onChange(of: focused) { _, isFocused in
                 guard !isFocused else { return }
                 // with nothing typed, catch up with a file changed while focused (a revert)
                 if draft == base, value != draft { load() } else { commitIfChanged() }
             }
-            .onAppear {
-                load()
-                model.registerDraftSaver(id) { await save() }
-            }
             .focusedWhenAdded(at: place, $focused)
-            .onDisappear {
-                commitIfChanged()
-                model.noteDraft(id, unsaved: false)
-                model.unregisterDraftSaver(id)
-            }
-            .onChange(of: file) {
-                commitIfChanged()
-                load()
-            }
-            // the same file changed, by this field's edit or another; unsaved text stays
-            .onChange(of: value) { if file == draftFile, !focused, draft == base { load() } }
-            .onChange(of: draft != base) { _, unsaved in model.noteDraft(id, unsaved: unsaved) }
     }
 }
 

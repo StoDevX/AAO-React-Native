@@ -242,7 +242,7 @@ private struct ScalarField: View {
         case .color(let triple):
             // a grey to start from, in the form the schema wants
             ColorWell(title: title, value: value, seed: triple ? .array([.number(128), .number(128), .number(128)]) : .string("rgb(128, 128, 128)"),
-                      identifier: fieldID) { apply($0) }
+                      identifier: fieldID, remove: required ? nil : { apply(nil) }) { apply($0) }
         case .time:
             TimeField(title: title, value: value) { apply(.string($0)) }
                 .accessibilityIdentifier(fieldID)

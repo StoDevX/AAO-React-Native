@@ -135,6 +135,11 @@ struct BreakDatesTests {
         #expect(breakDates(start: "2027-03-28", end: "2027-03-28", locale: us) == "Mar 28, 2027")
     }
 
+    /// A break whose end is before its start, as a typo makes it, is written as the file holds it.
+    @Test func daysThatRunBackwardsAreWrittenAsTheyAre() {
+        #expect(breakDates(start: "2026-10-13", end: "2026-10-10", locale: us) == "2026-10-13 – 2026-10-10")
+    }
+
     @Test func datesItCannotReadAreWrittenAsTheyAre() {
         #expect(breakDates(start: "", end: "", locale: us) == "")
         #expect(breakDates(start: "soon", end: "2027-01-03", locale: us) == "soon – 2027-01-03")

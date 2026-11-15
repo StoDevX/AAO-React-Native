@@ -180,10 +180,12 @@ public func withArticle(_ noun: String) -> String {
 }
 
 /// A break's days as a reader says them: "Oct 10 – 13, 2026", or one day,
-/// "Mar 28, 2027". Days that are not `yyyy-mm-dd` are written as they are.
+/// "Mar 28, 2027". Days that are not `yyyy-mm-dd`, or end before they start,
+/// are written as they are.
 public func breakDates(start: String, end: String, locale: Locale = .current) -> String {
     let day = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
-    guard let from = try? day.parse(start), let to = try? day.parse(end) else {
+    // days that run backwards, as a typo makes them, are written as they are too
+    guard let from = try? day.parse(start), let to = try? day.parse(end), from <= to else {
         return start.isEmpty && end.isEmpty ? "" : start == end ? start : "\(start) – \(end)"
     }
     var style = Date.IntervalFormatStyle().month(.abbreviated).day().year().locale(locale)
