@@ -192,6 +192,22 @@ describe('DocumentStore.edit', () => {
 	})
 })
 
+describe('DocumentStore.create', () => {
+	it('writes the new file whole, leaving nothing staged beside it', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		await new DocumentStore(root).create('new.yaml', {name: 'The Cave'})
+		assert.equal(await readFile(path.join(root, 'new.yaml'), 'utf8'), 'name: The Cave\n')
+		assert.deepEqual(readdirSync(root), ['new.yaml'])
+	})
+
+	it('refuses a name already taken, leaving that file as it was', async () => {
+		let {root, store, read} = await storeWithFixture()
+		await assert.rejects(store.create('cage.yaml', {name: 'Another'}), {code: 'EEXIST'})
+		assert.equal(await read(), FIXTURE)
+		assert.deepEqual(readdirSync(root), ['cage.yaml'])
+	})
+})
+
 describe('inside', () => {
 	it('resolves a file in the root', () => {
 		assert.equal(inside('/ws/data', 'building-hours/x.yaml'), '/ws/data/building-hours/x.yaml')

@@ -163,6 +163,23 @@ struct HelperRuntimeTests {
         #expect(try await runtime(folder).call("rename", paramsJSON: "{}") == #"{"replaced":"new","code":"ENOENT","kept":"new"}"#)
     }
 
+    /// The scripts create a data file by linking a finished copy to its name, which must never replace another.
+    @Test func linksAFileToANewNameButNeverOverAnother() async throws {
+        let folder = try scripts(handlers: """
+            link: async () => {
+                let dir = __scriptDir + '/..'
+                __host.writeFile(dir + '/_b.yaml.next', 'new')
+                __host.link(dir + '/_b.yaml.next', dir + '/b.yaml')
+                let linked = __host.readFile(dir + '/b.yaml')
+                __host.writeFile(dir + '/_c.yaml.next', 'other')
+                let code = null
+                try { __host.link(dir + '/_c.yaml.next', dir + '/b.yaml') } catch (error) { code = error.code }
+                return {linked, code, kept: __host.readFile(dir + '/b.yaml')}
+            },
+            """)
+        #expect(try await runtime(folder).call("link", paramsJSON: "{}") == #"{"linked":"new","code":"EEXIST","kept":"new"}"#)
+    }
+
     /// Node reads a file that is not UTF-8 with U+FFFD in place of its bad bytes; it is not missing.
     @Test func readsAFileThatIsNotUTF8AsNodeDoes() async throws {
         let folder = try scripts(handlers: "read: async () => __host.readFile(__scriptDir + '/../latin1.yaml'),")
