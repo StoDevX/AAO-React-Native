@@ -55,11 +55,45 @@ struct RecordEditTests {
         let (model, data) = try await modelOnRepoData()
         // in the order a drag sends them, each started before the one before has finished
         let changes = [10, 20, 30].map { red in
-            Task { await model.applyLatest([.set(["accentColor", 0], .number(Double(red)))], to: eastQuad, key: "accent") }
+            Task { await model.applyLatest(to: eastQuad, at: ["accentColor", 0]) { _ in [.set(["accentColor", 0], .number(Double(red)))] } }
         }
         for change in changes { await change.value }
         let text = try String(contentsOf: data.appending(path: eastQuad), encoding: .utf8)
         #expect(text.contains("accentColor: [30, 87, 54]"), "\(text)")
+    }
+
+    /// A queued change is built from the file as it is when it runs: a token
+    /// removed while another removal is still being written removes only itself.
+    @Test func aQueuedChangeIsBuiltFromTheFileAsItIsWhenItRuns() async throws {
+        let (model, data) = try await modelOnRepoData()
+        let units: [PathKey] = [0, "units"]
+        // the contributor removes 22005, then 15203, the second before the first is written
+        let wanted: [[String]] = [["15203", "23040"], ["23040"]]
+        let changes = wanted.map { tokens in
+            Task {
+                await model.applyLatest(to: "student-work-areas.yaml", at: units) { file in
+                    TokenListField.ops(at: units, from: file[path: units]?.array?.compactMap(\.string) ?? [], to: tokens)
+                }
+            }
+        }
+        for change in changes { await change.value }
+        let text = try String(contentsOf: data.appending(path: "student-work-areas.yaml"), encoding: .utf8)
+        #expect(text.contains("  units:\n    - '23040' # Bon Appetit - Sto Cost Ctr Charg\n"), "\(text.prefix(1200))")
+    }
+
+    /// Two records' fields of one name are queued apart: neither change gives way to the other.
+    @Test func theSameFieldInTwoRecordsQueuesApart() async throws {
+        let (model, data) = try await modelOnRepoData()
+        let changes = [(0, "Hello"), (1, "Balances")].map { index, question in
+            Task {
+                await model.applyLatest(to: "faqs.yaml", at: ["faqs", .index(index), "question"]) { _ in
+                    [.set(["faqs", .index(index), "question"], .string(question))]
+                }
+            }
+        }
+        for change in changes { await change.value }
+        let text = try String(contentsOf: data.appending(path: "faqs.yaml"), encoding: .utf8)
+        #expect(text.contains("question: 'Hello'") && text.contains("question: 'Balances'"), "\(text.prefix(1500))")
     }
 
     /// Every FAQ is in faqs.yaml, so the new one's file is the file already open.

@@ -62,9 +62,19 @@ private struct BusTimetable: View {
         }
     }
 
-    /// Applies a change that may come many times in a row, as a stepper held does, after any edit in flight.
-    private func applyLatest(_ ops: [EditOp], key: String) {
-        Task { await model.applyLatest(ops, to: file, key: file + "#timetable-\(number)-" + key) }
+    /// Applies a change to `path` that may come many times in a row, as a
+    /// stepper held does, after any edit in flight. It is built from the
+    /// schedule as the file holds it then, and dropped if its stops or trips
+    /// have changed since, as its trip and stop numbers would land on other cells.
+    private func applyLatest(at path: [PathKey], _ build: @escaping (BusSchedule) -> [EditOp]) {
+        let (base, stops, trips) = (base, timetable.stops, timetable.trips.count)
+        Task {
+            await model.applyLatest(to: file, at: path) { held in
+                guard let schedule = held[path: base] else { return [] }
+                let now = BusSchedule(schedule)
+                return now.stops == stops && now.trips.count == trips ? build(now) : []
+            }
+        }
     }
 
     var body: some View {
@@ -73,7 +83,7 @@ private struct BusTimetable: View {
         Section {
             LabeledContent("Days") {
                 DayPicker(week: model.week, days: schedule["days"]?.array?.compactMap { $0.string.flatMap(Weekday.init(rawValue:)) } ?? []) { days in
-                    applyLatest([.set(base + ["days"], .array(days.map { .string($0.rawValue) }))], key: "days")
+                    applyLatest(at: base + ["days"]) { [base] _ in [.set(base + ["days"], .array(days.map { .string($0.rawValue) }))] }
                 }
                 .accessibilityIdentifier("timetable-\(number)-days")
             }
@@ -108,7 +118,7 @@ private struct BusTimetable: View {
             }
             .disabled(editing)
             TimetableGrid(number: number, timetable: timetable, editing: editing,
-                          apply: { apply($0(base)) }, applyLatest: { key, ops in applyLatest(ops(base), key: key) })
+                          apply: { apply($0(base)) }, applyLatest: { cell, build in applyLatest(at: base + cell) { build($0, base) } })
             Button("Add Trip", systemImage: "plus") { apply(timetable.addTrip(at: base)) }
                 .accessibilityIdentifier("timetable-\(number)-add-trip")
                 .disabled(editing)
@@ -135,8 +145,9 @@ private struct TimetableGrid: View {
     let editing: Bool
     /// applies the edits a change builds at the schedule's path
     let apply: (@escaping ([PathKey]) -> [EditOp]) -> Void
-    /// applies a cell's change after any edit in flight, the newest of a run of them standing
-    let applyLatest: (String, @escaping ([PathKey]) -> [EditOp]) -> Void
+    /// applies a change to a cell, at its path in the schedule, after any edit
+    /// in flight, built from the schedule as the file holds it then
+    let applyLatest: ([PathKey], @escaping (BusSchedule, [PathKey]) -> [EditOp]) -> Void
 
     var body: some View {
         let late = Set(timetable.outOfOrder().map { [$0.trip, $0.stop] })
@@ -181,9 +192,10 @@ private struct TimetableGrid: View {
         let id = { (what: String) in "timetable-\(number)-\(what)-\(trip)-\(stop)" }
         HStack(spacing: 2) {
             if let time {
+                let place: [PathKey] = ["times", .index(trip), .index(stop)]
                 TimeCell(time: time, identifier: id("cell"), label: "Trip \(trip + 1) at \(timetable.stops[stop])",
-                         set: { new in applyLatest(id("cell")) { timetable.setTime(trip: trip, stop: stop, new, at: $0) } },
-                         skip: { applyLatest(id("cell")) { timetable.setTime(trip: trip, stop: stop, nil, at: $0) } })
+                         set: { new in applyLatest(place) { $0.setTime(trip: trip, stop: stop, new, at: $1) } },
+                         skip: { applyLatest(place) { $0.setTime(trip: trip, stop: stop, nil, at: $1) } })
                 if late {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
@@ -197,6 +209,12 @@ private struct TimetableGrid: View {
                     .foregroundStyle(.red)
                     .help("Not a time the timetable reads. Write it as 3:08pm.")
                     .accessibilityIdentifier(id("unreadable"))
+                    .contextMenu {
+                        Button("Replace with a Time") {
+                            apply { timetable.setTime(trip: trip, stop: stop, timetable.startingTime(trip: trip, stop: stop), at: $0) }
+                        }
+                        Button("Doesn't Stop Here") { apply { timetable.setTime(trip: trip, stop: stop, nil, at: $0) } }
+                    }
             } else {
                 Text("—")
                     .foregroundStyle(.secondary)
@@ -205,8 +223,9 @@ private struct TimetableGrid: View {
                     .accessibilityIdentifier(id("skipped"))
                     .contextMenu {
                         // the stop before's time, or noon, as somewhere to start
-                        let before = timetable.trips[trip][..<stop].compactMap { $0 }.last ?? ClockTime(minutes: 720)
-                        Button("Stops Here") { apply { timetable.setTime(trip: trip, stop: stop, before, at: $0) } }
+                        Button("Stops Here") {
+                            apply { timetable.setTime(trip: trip, stop: stop, timetable.startingTime(trip: trip, stop: stop), at: $0) }
+                        }
                     }
             }
         }

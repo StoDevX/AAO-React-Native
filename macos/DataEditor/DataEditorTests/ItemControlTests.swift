@@ -26,10 +26,11 @@ struct ItemControlTests {
         guard case .list = ItemControl(row) else { Issue.record("a row of times is \(ItemControl(row))"); return }
     }
 
-    /// A stop's coordinates are two numbers, each its own field.
-    @Test func aStopsCoordinatesOpenToTheirNumbers() async throws {
+    /// A stop's coordinates are one field, its latitude and longitude side by side.
+    @Test func aStopsCoordinatesAreOneField() async throws {
         guard case .map(let pair) = try kind(of: "coordinates", in: try await scheduleFields()) else { throw Unexpected() }
-        guard case .list = ItemControl(pair) else { Issue.record("a coordinate pair is \(ItemControl(pair))"); return }
+        #expect(pair == .coordinate)
+        guard case .field = ItemControl(pair) else { Issue.record("a coordinate pair is \(ItemControl(pair))"); return }
     }
 
     /// Each stop is one of the schedule's coordinate names.

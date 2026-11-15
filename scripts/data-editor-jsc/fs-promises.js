@@ -19,6 +19,7 @@ export const stat = later(fs.statSync)
 export const mkdir = later(fs.mkdirSync)
 export const rm = later(fs.rmSync)
 export const rename = later(fs.renameSync)
+export const link = later(fs.linkSync)
 export const copyFile = later(fs.copyFileSync)
 export const mkdtemp = later(fs.mkdtempSync)
 export const realpath = later(fs.realpathSync)
@@ -35,6 +36,7 @@ export default {
 	mkdir,
 	rm,
 	rename,
+	link,
 	copyFile,
 	mkdtemp,
 	realpath,

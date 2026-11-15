@@ -26,6 +26,14 @@ struct ColorValueTests {
         #expect(ColorValue(json("[1, 2]")) == nil)
     }
 
+    /// A component past what its form allows, which the schema does not bound, is no colour to draw.
+    @Test func readsNoColourFromComponentsOutOfRange() {
+        #expect(ColorValue(json("[1e20, 0, 0]")) == nil)
+        #expect(ColorValue(json("[-1, 0, 0]")) == nil)
+        #expect(ColorValue(.string("rgb(300, 0, 0)")) == nil)
+        #expect(ColorValue(.string("color(display-p3 1.5 0 0)")) == nil)
+    }
+
     @Test func aChangedColourKeepsItsForm() throws {
         let bar = try #require(ColorValue(.string("rgb(134, 198, 124)")))
         #expect(bar.with(unit: [1, 0, 0.5]).json() == .string("rgb(255, 0, 128)"))

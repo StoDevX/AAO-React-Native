@@ -25,7 +25,8 @@ final class FieldControlUITests: XCTestCase {
         color.click()
         attachScreenshot(of: window, named: "A work area's colours, each with its swatch")
         app.menuItems["mint"].click()
-        XCTAssertTrue(waitFor("gradient: mint", in: "student-work-areas.yaml", data: data))
+        // in Dining's own entry: another area is mint already
+        XCTAssertTrue(waitFor("- name: Dining & BonApp\n  slug: dining\n  icon: fork.knife\n  gradient: mint\n", in: "student-work-areas.yaml", data: data))
     }
 
     /// A colour is chosen in a well, whatever form the file writes it in.
