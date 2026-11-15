@@ -81,6 +81,24 @@ struct RecordEditTests {
         #expect(text.contains("  units:\n    - '23040' # Bon Appetit - Sto Cost Ctr Charg\n"), "\(text.prefix(1200))")
     }
 
+    /// Removing an item moves the items after it but not the list itself, so a
+    /// change queued for the whole list while the removal is written still runs.
+    @Test func aChangeToAListOutlastsAnItemRemovedFromIt() async throws {
+        let (model, data) = try await modelOnRepoData()
+        let units: [PathKey] = [0, "units"]
+        let removal = Task { await model.apply([.delete(units + [0])], to: "student-work-areas.yaml") }
+        while !model.editing { await Task.yield() }
+        let change = Task {
+            await model.applyLatest(to: "student-work-areas.yaml", at: units) { file in
+                TokenListField.ops(at: units, from: file[path: units]?.array?.compactMap(\.string) ?? [], to: ["23040"])
+            }
+        }
+        await removal.value
+        await change.value
+        let text = try String(contentsOf: data.appending(path: "student-work-areas.yaml"), encoding: .utf8)
+        #expect(text.contains("  units:\n    - '23040' # Bon Appetit - Sto Cost Ctr Charg\n"), "\(text.prefix(1200))")
+    }
+
     /// Two records' fields of one name are queued apart: neither change gives way to the other.
     @Test func theSameFieldInTwoRecordsQueuesApart() async throws {
         let (model, data) = try await modelOnRepoData()
