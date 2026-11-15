@@ -182,6 +182,18 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertEqual(label.placeholderValue, "Label")
     }
 
+    /// A new group is ready to type into: its first field has focus.
+    func testANewGroupsFirstFieldTakesWhatIsTyped() throws {
+        let (app, data) = try launchWithRepoData(opening: "map-categories:map-categories.yaml")
+        let window = currentChanges(in: app)
+        let add = window.buttons["add-field-stolaf.groups"]
+        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        add.click()
+        XCTAssertTrue(window.textFields["field-stolaf.groups.#14.label"].waitForExistence(timeout: 10))
+        app.typeText("Food Trucks\r")
+        XCTAssertTrue(waitFor("label: Food Trucks", in: "map-categories.yaml", data: data))
+    }
+
     /// A food item's station is chosen from the stations the menu lists.
     func testAFoodItemsStationIsChosenFromTheStations() throws {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")

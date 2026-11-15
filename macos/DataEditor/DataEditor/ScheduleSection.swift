@@ -78,6 +78,8 @@ struct DraftField: View {
     /// what the field's schedule holds in that file
     let schedule: JSONValue?
     var axis: Axis = .horizontal
+    /// where the field's value is in the file, so it can take focus when something is added there
+    var place: [PathKey]? = nil
     /// saves `text` in `file`, in the schedule that held `schedule` when the draft began and `expected` in this field
     let commit: (_ file: String, _ text: String, _ expected: String, _ schedule: JSONValue?) async -> AppModel.DraftOutcome
     @State private var draft = ""
@@ -162,6 +164,7 @@ struct DraftField: View {
                 load()
                 model.registerDraftSaver(id) { await save() }
             }
+            .focusedWhenAdded(at: place, $focused)
             .onDisappear {
                 commitIfChanged()
                 model.noteDraft(id, unsaved: false)

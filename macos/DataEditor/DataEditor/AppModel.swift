@@ -89,6 +89,8 @@ final class AppModel {
     var cccStatus: CccRunner.Status = .stopped
     var cccLog: [String] = []
     var pagesOrigin: String?
+    /// Where an item or entry was just added: the first text field drawn there takes focus.
+    var focusRequest: [PathKey]?
     /// Every pull request submitted from this app, kept in `submissions.json`.
     private(set) var submissions = SubmissionHistory() { didSet { submissions.save(to: support.appending(path: "submissions.json")) } }
     /// The pull request a new submission adds a commit to, if there is one.

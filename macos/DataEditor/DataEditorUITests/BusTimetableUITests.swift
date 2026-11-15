@@ -123,6 +123,9 @@ final class BusTimetableUITests: XCTestCase {
         XCTAssertTrue(insert.waitForExistence(timeout: 10))
         insert.click()
         XCTAssertTrue(waitFor("      - St. Olaf College\n      - New Stop\n      - Library\n", in: data))
+        // the new stop's name is ready to type over
+        app.typeText("Northfield Depot\r")
+        XCTAssertTrue(waitFor("      - St. Olaf College\n      - Northfield Depot\n      - Library\n", in: data))
     }
 
     func testAGeneratedLinesTimetableIsLocked() throws {

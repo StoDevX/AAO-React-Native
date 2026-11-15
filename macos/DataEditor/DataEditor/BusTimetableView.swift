@@ -52,6 +52,16 @@ private struct BusTimetable: View {
 
     private func apply(_ ops: [EditOp]) { Task { await model.apply(ops, to: file) } }
 
+    /// Adds a stop called New Stop at `index`, and once it is there focuses its name to type over.
+    private func addStop(at index: Int, to timetable: BusSchedule) {
+        Task {
+            // asked only after the edit lands: the stop now at `index` would otherwise take it
+            if await model.apply(timetable.insertStop("New Stop", at: index, at: base), to: file) {
+                model.focusRequest = base + ["stops", .index(index)]
+            }
+        }
+    }
+
     /// Applies a change that may come many times in a row, as a stepper held does, after any edit in flight.
     private func applyLatest(_ ops: [EditOp], key: String) {
         Task { await model.applyLatest(ops, to: file, key: file + "#timetable-\(number)-" + key) }
@@ -69,14 +79,15 @@ private struct BusTimetable: View {
             }
             ForEach(Array(timetable.stops.enumerated()), id: \.offset) { index, name in
                 HStack {
-                    CommitField(label: "Stop", text: name, identifier: "timetable-\(number)-stop-\(index)") { renamed in
+                    CommitField(label: "Stop", text: name, identifier: "timetable-\(number)-stop-\(index)",
+                                place: base + ["stops", .index(index)]) { renamed in
                         guard !renamed.isEmpty else { return false }
                         apply(timetable.renameStop(at: index, to: renamed, at: base))
                         return true
                     }
                     Group {
                         Button("Add a Stop After \(name)", systemImage: "plus.circle") {
-                            apply(timetable.insertStop("New Stop", at: index + 1, at: base))
+                            addStop(at: index + 1, to: timetable)
                         }
                         .accessibilityIdentifier("timetable-\(number)-stop-insert-\(index)")
                         Button("Move \(name) Earlier", systemImage: "arrow.up") { apply(timetable.moveStop(from: index, to: index - 1, at: base)) }
@@ -93,7 +104,7 @@ private struct BusTimetable: View {
                 }
             }
             Button("Add Stop", systemImage: "plus") {
-                apply(timetable.insertStop("New Stop", at: timetable.stops.count, at: base))
+                addStop(at: timetable.stops.count, to: timetable)
             }
             .disabled(editing)
             TimetableGrid(number: number, timetable: timetable, editing: editing,

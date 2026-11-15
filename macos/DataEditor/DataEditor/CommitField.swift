@@ -8,6 +8,8 @@ struct CommitField: View {
     let label: String
     let text: String
     let identifier: String
+    /// where the field's value is in the file, so it can take focus when something is added there
+    var place: [PathKey]? = nil
     let save: (String) -> Bool
     @State private var draft = ""
     @FocusState private var focused: Bool
@@ -27,7 +29,35 @@ struct CommitField: View {
             .onChange(of: focused) { _, isFocused in if !isFocused { commit() } }
             .onAppear { draft = text }
             .onChange(of: text) { _, saved in draft = saved }
+            .focusedWhenAdded(at: place, $focused)
             .accessibilityIdentifier(identifier)
+    }
+}
+
+/// Focuses a field when it is the first drawn where something was just added.
+private struct FocusedWhenAdded: ViewModifier {
+    @Environment(AppModel.self) private var model
+    let place: [PathKey]?
+    let focused: FocusState<Bool>.Binding
+
+    private func claim() {
+        guard let place, let request = model.focusRequest, place.starts(with: request) else { return }
+        model.focusRequest = nil
+        // once the field is in the window, which it is not yet as it appears
+        Task { focused.wrappedValue = true }
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear(perform: claim)
+            .onChange(of: model.focusRequest) { claim() }
+    }
+}
+
+extension View {
+    /// Focuses this field, at `place` in the file, when it is the first drawn where something was just added.
+    func focusedWhenAdded(at place: [PathKey]?, _ focused: FocusState<Bool>.Binding) -> some View {
+        modifier(FocusedWhenAdded(place: place, focused: focused))
     }
 }
 

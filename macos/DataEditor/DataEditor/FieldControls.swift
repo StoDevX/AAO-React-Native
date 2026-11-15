@@ -267,7 +267,7 @@ private struct ScalarField: View {
     @ViewBuilder private var textField: some View {
             HStack {
                 DraftField(label: title, file: file, value: value?.fieldText ?? "", schedule: nil,
-                           axis: kind == .markdown || kind == .multiline ? .vertical : .horizontal) { file, typed, expected, _ in
+                           axis: kind == .markdown || kind == .multiline ? .vertical : .horizontal, place: path) { file, typed, expected, _ in
                     let new = saved(typed, as: kind)
                     let op: EditOp = if new == nil, !required, case .key? = path.last { .delete(path) } else { .set(path, new ?? .string("")) }
                     return await model.applyDraft(op, to: file, replacing: expected, schedule: nil)
@@ -443,7 +443,8 @@ private struct ListItems: View {
         Button("Add \(itemTitle)", systemImage: "plus") {
             // a new group opens, ready to fill in
             open.insert(items.count)
-            apply([.set(path + [.index(items.count)], starting(item))])
+            let place = path + [.index(items.count)]
+            Task { if await model.apply([.set(place, starting(item))], to: file) { model.focusRequest = place } }
         }
         .accessibilityIdentifier("add-" + identifier(path, below: recordPath))
         .disabled(editing)
@@ -525,7 +526,8 @@ private struct MapEntries: View {
                 guard !name.isEmpty, !keys.contains(name) else { return }
                 newName = ""
                 open.insert(name)
-                Task { await model.apply([.set(path + [.key(name)], starting(valueKind))], to: file) }
+                let place = path + [.key(name)]
+                Task { if await model.apply([.set(place, starting(valueKind))], to: file) { model.focusRequest = place } }
             }
             .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
