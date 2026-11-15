@@ -42,7 +42,8 @@ struct DataSetList: View {
                 }
             }
         }
-        .accessibilityIdentifier("data-set-list")
+        // tells Current changes' window from a pull request's, which lists sets too
+        .accessibilityIdentifier(changeset == .current ? "data-set-list" : "pull-request-data-set-list")
         .navigationSplitViewColumnWidth(min: 180, ideal: 210)
     }
 }
