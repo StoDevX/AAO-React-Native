@@ -2,7 +2,9 @@ import Foundation
 
 /// How a form draws one field, decided by its schema and its `editor` hint.
 public indirect enum FieldKind: Hashable, Sendable {
-    case text, multiline, markdown, symbol, phone, url, email, date, dateTime, time, color, image, toggle, number
+    case text, multiline, markdown, symbol, phone, url, email, date, dateTime, time, image, toggle, number
+    /// a colour, written as text or, when `triple`, as three numbers
+    case color(triple: Bool)
     /// one of a fixed set of values
     case choice([String])
     /// one of the app's named gradients, or a pair of colours
@@ -56,7 +58,7 @@ public struct FormField: Hashable, Sendable, Identifiable {
 /// The control an `editor` hint names.
 private let hinted: [String: FieldKind] = [
     "markdown": .markdown, "multiline": .multiline, "symbol": .symbol, "days": .days, "time": .time,
-    "phone": .phone, "url": .url, "date": .date, "color": .color, "image": .image,
+    "phone": .phone, "url": .url, "date": .date, "image": .image,
 ]
 
 /// How `schema` draws, with `title` as the name of one list item when it names none of its own.
@@ -66,6 +68,7 @@ private func kind(of schema: JSONValue, title: String) -> FieldKind {
         let names = schema["enum"] ?? (schema["oneOf"] ?? schema["anyOf"])?[0]?["enum"]
         return .gradient(names: names?.array?.compactMap(\.string) ?? [])
     }
+    if schema["editor"]?.string == "color" { return .color(triple: schema["type"]?.string == "array") }
     if let hint = schema["editor"]?.string, let kind = hinted[hint] { return kind }
     if let pointer = schema["x-choices"]?.string { return .reference(pointer: pointer) }
     if let values = schema["enum"]?.array { return .choice(values.compactMap(\.string)) }

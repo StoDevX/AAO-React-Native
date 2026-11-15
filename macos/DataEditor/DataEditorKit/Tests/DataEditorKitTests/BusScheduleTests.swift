@@ -55,6 +55,26 @@ struct BusScheduleTests {
         #expect(ops.contains(.set(base + ["times", 1], .array([.string("3:40pm"), .string("3:52pm"), .string("4:30pm")]))))
     }
 
+    /// A time the grid can't read, which the schema allows, is kept as written when every row is rewritten.
+    @Test func keepsATimeItCannotReadAsWritten() {
+        let odd = BusSchedule(.object(["stops": .array([.string("A"), .string("B")]),
+                                       "times": .array([.array([.string("3:8pm"), .string("3:10pm")])])]))
+        #expect(odd.unreadable == [[0, 0]])
+        #expect(odd.insertStop("C", at: 2, at: base).contains(.set(base + ["times", 0], .array([.string("3:8pm"), .string("3:10pm"), .bool(false)]))))
+    }
+
+    @Test func insertsAStopAfterAnother() {
+        let ops = schedule.insertStop("Food Co-op", at: 1, at: base)
+        #expect(ops.first == .set(base + ["stops"], .array(["St. Olaf College", "Food Co-op", "Library", "Carleton College", "St. Olaf College"].map(JSONValue.string))))
+    }
+
+    /// A stop moves with its column of times.
+    @Test func movesAStopWithItsTimes() {
+        let ops = schedule.moveStop(from: 1, to: 2, at: base)
+        #expect(ops.first == .set(base + ["stops"], .array(["St. Olaf College", "Carleton College", "Library", "St. Olaf College"].map(JSONValue.string))))
+        #expect(ops.contains(.set(base + ["times", 1], .array([.string("3:40pm"), .string("3:52pm"), .string("3:48pm"), .string("4:30pm")]))))
+    }
+
     @Test func renamingAStopRenamesItsCoordinates() {
         #expect(schedule.renameStop(at: 1, to: "Rolvaag Library", at: base) == [
             .set(base + ["stops", 1], .string("Rolvaag Library")),

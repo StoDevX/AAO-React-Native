@@ -11,6 +11,8 @@ public struct ColorValue: Equatable, Sendable {
         case displayP3(places: Int)
         /// `[r, g, b]`, 0–255
         case triple
+        /// `#E4A01B` or `#fff`, 0–255, its letters in the case the file used
+        case hex(lowercase: Bool, short: Bool)
     }
 
     /// The red, green and blue components in the form's own units.
@@ -28,6 +30,14 @@ public struct ColorValue: Equatable, Sendable {
             if let match = text.wholeMatch(of: /rgb\((\d+),( ?)(\d+), ?(\d+)\)/) {
                 components = [match.1, match.3, match.4].compactMap { Double($0) }
                 form = .rgb(spaced: !match.2.isEmpty)
+            } else if let match = text.wholeMatch(of: /#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})/) {
+                let digits = Array(match.1)
+                let short = digits.count == 3
+                components = (0..<3).compactMap { index in
+                    let pair = short ? String([digits[index], digits[index]]) : String(digits[index * 2...index * 2 + 1])
+                    return Int(pair, radix: 16).map(Double.init)
+                }
+                form = .hex(lowercase: digits.contains(where: \.isLowercase), short: short)
             } else if let match = text.wholeMatch(of: /color\(display-p3 ([0-9.]+) ([0-9.]+) ([0-9.]+)\)/) {
                 let parts = [match.1, match.2, match.3].map(String.init)
                 components = parts.compactMap(Double.init)
@@ -58,7 +68,7 @@ public struct ColorValue: Equatable, Sendable {
         case .displayP3(let places):
             let scale = pow(10, Double(max(places, 1)))
             return ColorValue(components: unit.map { ($0 * scale).rounded() / scale }, form: form)
-        case .rgb, .triple:
+        case .rgb, .triple, .hex:
             return ColorValue(components: unit.map { ($0 * 255).rounded() }, form: form)
         }
     }
@@ -71,6 +81,12 @@ public struct ColorValue: Equatable, Sendable {
             return .array(components.map(JSONValue.number))
         case .rgb(let spaced):
             return .string("rgb(\(whole.joined(separator: spaced ? ", " : ",")))")
+        case .hex(let lowercase, let short):
+            let values = components.map(Int.init)
+            // three digits while each pair repeats one, as `#fff` does; six once a colour needs them
+            let keepsShort = short && values.allSatisfy { $0 % 17 == 0 }
+            let text = values.map { keepsShort ? String($0 / 17, radix: 16) : String(format: "%02x", $0) }.joined()
+            return .string("#" + (lowercase ? text : text.uppercased()))
         case .displayP3:
             // each place as the file gave it, without trailing zeros: 0.902 stays 0.902
             let text = components.map { $0.formatted(.number.precision(.fractionLength(0...6)).grouping(.never).locale(Locale(identifier: "en_US_POSIX"))) }

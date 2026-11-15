@@ -5,6 +5,7 @@ import SwiftUI
 /// with the stops across and one row per trip. Its coordinates and closures
 /// keep the form's own fields.
 struct BusTimetables: View {
+    @Environment(AppModel.self) private var model
     let schedules: [JSONValue]
     /// where the schedules are in the file
     let base: [PathKey]
@@ -13,11 +14,26 @@ struct BusTimetables: View {
     let file: String
     let recordPath: [PathKey]
 
+    /// A schedule to fill in: weekdays, no stops yet, no trips.
+    private static let newSchedule: JSONValue = .object([
+        "days": .array(["Mo", "Tu", "We", "Th", "Fr"].map(JSONValue.string)), "stops": .array([]), "times": .array([]),
+    ])
+
     var body: some View {
         ForEach(Array(schedules.enumerated()), id: \.offset) { index, schedule in
             BusTimetable(number: index + 1, schedule: schedule, base: base + [.index(index)],
                          otherFields: scheduleFields.filter { ["coordinates", "closures"].contains($0.key) },
                          file: file, recordPath: recordPath)
+        }
+        Section {
+            Button("Add Schedule", systemImage: "plus") {
+                // a new line has no schedules at all, so the first is the whole list
+                let ops: [EditOp] = schedules.isEmpty ? [.set(base, .array([Self.newSchedule]))]
+                    : [.set(base + [.index(schedules.count)], Self.newSchedule)]
+                Task { await model.apply(ops, to: file) }
+            }
+            .accessibilityIdentifier("timetable-add-schedule")
+            .disabled(model.edits.isShown)
         }
     }
 }
@@ -36,24 +52,38 @@ private struct BusTimetable: View {
 
     private func apply(_ ops: [EditOp]) { Task { await model.apply(ops, to: file) } }
 
+    /// Applies a change that may come many times in a row, as a stepper held does, after any edit in flight.
+    private func applyLatest(_ ops: [EditOp], key: String) {
+        Task { await model.applyLatest(ops, to: file, key: file + "#timetable-\(number)-" + key) }
+    }
+
     var body: some View {
         let timetable = timetable
         let editing = model.edits.isShown
-        Section("Schedule \(number)") {
+        Section {
             LabeledContent("Days") {
                 DayPicker(week: model.week, days: schedule["days"]?.array?.compactMap { $0.string.flatMap(Weekday.init(rawValue:)) } ?? []) { days in
-                    apply([.set(base + ["days"], .array(days.map { .string($0.rawValue) }))])
+                    applyLatest([.set(base + ["days"], .array(days.map { .string($0.rawValue) }))], key: "days")
                 }
                 .accessibilityIdentifier("timetable-\(number)-days")
-                .disabled(editing)
             }
             ForEach(Array(timetable.stops.enumerated()), id: \.offset) { index, name in
                 HStack {
                     StopNameField(name: name, identifier: "timetable-\(number)-stop-\(index)") { renamed in
                         apply(timetable.renameStop(at: index, to: renamed, at: base))
                     }
-                    Button("Remove \(name)", systemImage: "minus.circle", role: .destructive) {
-                        if !isRepeatClick() { apply(timetable.removeStop(at: index, at: base)) }
+                    Group {
+                        Button("Add a Stop After \(name)", systemImage: "plus.circle") {
+                            apply(timetable.insertStop("New Stop", at: index + 1, at: base))
+                        }
+                        .accessibilityIdentifier("timetable-\(number)-stop-insert-\(index)")
+                        Button("Move \(name) Earlier", systemImage: "arrow.up") { apply(timetable.moveStop(from: index, to: index - 1, at: base)) }
+                            .disabled(index == 0)
+                        Button("Move \(name) Later", systemImage: "arrow.down") { apply(timetable.moveStop(from: index, to: index + 1, at: base)) }
+                            .disabled(index == timetable.stops.count - 1)
+                        Button("Remove \(name)", systemImage: "minus.circle", role: .destructive) {
+                            if !isRepeatClick() { apply(timetable.removeStop(at: index, at: base)) }
+                        }
                     }
                     .labelStyle(.iconOnly)
                     .buttonStyle(.borderless)
@@ -64,10 +94,22 @@ private struct BusTimetable: View {
                 apply(timetable.insertStop("New Stop", at: timetable.stops.count, at: base))
             }
             .disabled(editing)
-            TimetableGrid(number: number, timetable: timetable, editing: editing) { apply($0(base)) }
+            TimetableGrid(number: number, timetable: timetable, editing: editing,
+                          apply: { apply($0(base)) }, applyLatest: { key, ops in applyLatest(ops(base), key: key) })
             Button("Add Trip", systemImage: "plus") { apply(timetable.addTrip(at: base)) }
                 .accessibilityIdentifier("timetable-\(number)-add-trip")
                 .disabled(editing)
+        } header: {
+            HStack {
+                Text("Schedule \(number)")
+                Spacer()
+                Button("Remove Schedule \(number)", systemImage: "minus.circle", role: .destructive) {
+                    if !isRepeatClick() { apply([.delete(base)]) }
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .disabled(editing)
+            }
         }
         FieldRows(fields: otherFields, base: base, value: schedule, file: file, recordPath: recordPath)
     }
@@ -80,9 +122,12 @@ private struct TimetableGrid: View {
     let editing: Bool
     /// applies the edits a change builds at the schedule's path
     let apply: (@escaping ([PathKey]) -> [EditOp]) -> Void
+    /// applies a cell's change after any edit in flight, the newest of a run of them standing
+    let applyLatest: (String, @escaping ([PathKey]) -> [EditOp]) -> Void
 
     var body: some View {
         let late = Set(timetable.outOfOrder().map { [$0.trip, $0.stop] })
+        let odd = Set(timetable.unreadable)
         ScrollView(.horizontal) {
             Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 4) {
                 GridRow {
@@ -97,7 +142,8 @@ private struct TimetableGrid: View {
                         Text("\(trip + 1)").foregroundStyle(.secondary).monospacedDigit()
                         ForEach(Array(timetable.stops.indices), id: \.self) { stop in
                             cell(trip: trip, stop: stop, time: times.indices.contains(stop) ? times[stop] : nil,
-                                 late: late.contains([trip, stop]))
+                                 late: late.contains([trip, stop]), unreadable: odd.contains([trip, stop]),
+                                 written: writtenText(trip, stop))
                         }
                         Button("Remove Trip \(trip + 1)", systemImage: "minus.circle", role: .destructive) {
                             if !isRepeatClick() { apply { timetable.removeTrips([trip], at: $0) } }
@@ -114,14 +160,17 @@ private struct TimetableGrid: View {
 
     /// One trip's time at one stop: a time field, or a dash where the trip
     /// skips the stop; either one's menu switches between the two.
-    @ViewBuilder private func cell(trip: Int, stop: Int, time: ClockTime?, late: Bool) -> some View {
+    /// What the file holds at a cell, as text.
+    private func writtenText(_ trip: Int, _ stop: Int) -> String? { timetable.written(trip: trip, stop: stop) }
+
+    @ViewBuilder private func cell(trip: Int, stop: Int, time: ClockTime?, late: Bool, unreadable: Bool, written: String?) -> some View {
         // the cell's identifiers end in its trip and stop, from 0
         let id = { (what: String) in "timetable-\(number)-\(what)-\(trip)-\(stop)" }
         HStack(spacing: 2) {
             if let time {
                 TimeCell(time: time, identifier: id("cell"), label: "Trip \(trip + 1) at \(timetable.stops[stop])",
-                         set: { new in apply { timetable.setTime(trip: trip, stop: stop, new, at: $0) } },
-                         skip: { apply { timetable.setTime(trip: trip, stop: stop, nil, at: $0) } })
+                         set: { new in applyLatest(id("cell")) { timetable.setTime(trip: trip, stop: stop, new, at: $0) } },
+                         skip: { applyLatest(id("cell")) { timetable.setTime(trip: trip, stop: stop, nil, at: $0) } })
                 if late {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
@@ -129,6 +178,12 @@ private struct TimetableGrid: View {
                         .accessibilityLabel("Earlier than the stop before it")
                         .accessibilityIdentifier(id("flag"))
                 }
+            } else if unreadable {
+                // a time the schema allows but the grid can't read, such as 3:8pm: shown as written
+                Text(written ?? "")
+                    .foregroundStyle(.red)
+                    .help("Not a time the timetable reads. Write it as 3:08pm.")
+                    .accessibilityIdentifier(id("unreadable"))
             } else {
                 Text("—")
                     .foregroundStyle(.secondary)
@@ -143,7 +198,6 @@ private struct TimetableGrid: View {
             }
         }
         .frame(width: 96, alignment: .leading)
-        .disabled(editing)
     }
 }
 
@@ -183,6 +237,8 @@ private struct TimeCell: NSViewRepresentable {
     /// AppKit's time field takes a right-click for its own and shows no menu, so this one shows its `menu`.
     final class Picker: NSDatePicker {
         override func rightMouseDown(with event: NSEvent) {
+            // a locked line's cells take no edit, by menu either
+            guard isEnabled else { return }
             if let menu { NSMenu.popUpContextMenu(menu, with: event, for: self) } else { super.rightMouseDown(with: event) }
         }
     }

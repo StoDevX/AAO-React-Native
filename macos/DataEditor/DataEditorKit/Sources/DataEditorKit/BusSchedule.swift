@@ -8,16 +8,42 @@ public struct BusSchedule: Equatable, Sendable {
     public let trips: [[ClockTime?]]
     /// each stop's coordinates, by its name
     public let coordinates: [String: JSONValue]
+    /// each trip's times as the file holds them, which a whole row rewritten keeps
+    private let raw: [[JSONValue]]
 
     public init(_ schedule: JSONValue) {
         stops = schedule["stops"]?.array?.compactMap(\.string) ?? []
-        trips = (schedule["times"]?.array ?? []).map { row in (row.array ?? []).map { $0.string.flatMap(ClockTime.init) } }
+        raw = (schedule["times"]?.array ?? []).map { $0.array ?? [] }
+        trips = raw.map { row in row.map { $0.string.flatMap(ClockTime.init) } }
         if case .object(let object)? = schedule["coordinates"] { coordinates = object } else { coordinates = [:] }
     }
 
     private static func json(_ time: ClockTime?) -> JSONValue { time.map { .string($0.text) } ?? .bool(false) }
 
     private static func row(_ trip: [ClockTime?]) -> JSONValue { .array(trip.map(json)) }
+
+    /// What the file holds at trip `trip` and stop `stop`, as text.
+    public func written(trip: Int, stop: Int) -> String? {
+        guard raw.indices.contains(trip), raw[trip].indices.contains(stop) else { return nil }
+        return raw[trip][stop].fieldText
+    }
+
+    /// Each cell, as trip and stop, holding something other than a time the grid
+    /// reads or `false`, such as `3:8pm`, which the schema allows: shown as written.
+    public var unreadable: [[Int]] {
+        raw.enumerated().flatMap { trip, row in
+            row.enumerated().compactMap { stop, value in value == .bool(false) || value.string.flatMap(ClockTime.init) != nil ? nil : [trip, stop] }
+        }
+    }
+
+    /// Every trip with its row of times changed by `change`, each cell as the file holds it.
+    private func rows(at base: [PathKey], _ change: (inout [JSONValue]) -> Void) -> [EditOp] {
+        raw.enumerated().map { trip, times in
+            var row = times
+            change(&row)
+            return .set(base + ["times", .index(trip)], .array(row))
+        }
+    }
 
     /// Sets trip `trip`'s time at stop `stop`, or marks the stop skipped when `time` is nil.
     public func setTime(trip: Int, stop: Int, _ time: ClockTime?, at base: [PathKey]) -> [EditOp] {
@@ -49,11 +75,7 @@ public struct BusSchedule: Equatable, Sendable {
         var names = stops
         names.insert(name, at: index)
         return [.set(base + ["stops"], .array(names.map(JSONValue.string)))]
-            + trips.enumerated().map { trip, times in
-                var row = times
-                row.insert(nil, at: min(index, row.count))
-                return .set(base + ["times", .index(trip)], Self.row(row))
-            }
+            + rows(at: base) { $0.insert(.bool(false), at: min(index, $0.count)) }
     }
 
     /// The stops, and every trip, without the stop at `index`.
@@ -61,10 +83,17 @@ public struct BusSchedule: Equatable, Sendable {
         var names = stops
         names.remove(at: index)
         return [.set(base + ["stops"], .array(names.map(JSONValue.string)))]
-            + trips.enumerated().map { trip, times in
-                var row = times
-                if row.indices.contains(index) { row.remove(at: index) }
-                return .set(base + ["times", .index(trip)], Self.row(row))
+            + rows(at: base) { if $0.indices.contains(index) { $0.remove(at: index) } }
+    }
+
+    /// The stops, and every trip, with the stop at `from` and its times moved to `to`.
+    public func moveStop(from: Int, to: Int, at base: [PathKey]) -> [EditOp] {
+        var names = stops
+        names.insert(names.remove(at: from), at: to)
+        return [.set(base + ["stops"], .array(names.map(JSONValue.string)))]
+            + rows(at: base) { row in
+                guard row.indices.contains(from), to <= row.count - 1 else { return }
+                row.insert(row.remove(at: from), at: to)
             }
     }
 

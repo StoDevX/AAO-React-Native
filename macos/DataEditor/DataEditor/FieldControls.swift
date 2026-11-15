@@ -86,9 +86,9 @@ private struct FieldRow: View {
         case .tokens(let pointer):
             TokenListField(title: field.title, values: value?.array?.compactMap(\.string) ?? [],
                            choices: pointer.map { pointer in model.value.map { choices(pointer, in: $0, at: path + [.index(0)]) } ?? [] },
-                           editing: model.edits.isShown, identifier: identifier(path, below: recordPath)) { tokens in
+                           identifier: identifier(path, below: recordPath)) { tokens in
                 let old = value?.array?.compactMap(\.string) ?? []
-                Task { await model.apply(TokenListField.ops(at: path, from: old, to: tokens), to: file) }
+                Task { await model.applyLatest(TokenListField.ops(at: path, from: old, to: tokens), to: file, key: file + "#" + identifier(path, below: recordPath)) }
             }
             FieldProblems(path: path, recordPath: recordPath)
         case .list:
@@ -119,10 +119,10 @@ private struct DaysField: View {
         let days = value?.array?.compactMap { $0.string.flatMap(Weekday.init(rawValue:)) } ?? []
         LabeledContent(title) {
             DayPicker(week: model.week, days: days) { chosen in
-                Task { await model.apply([.set(path, .array(chosen.map { .string($0.rawValue) }))], to: file) }
+                let ops: [EditOp] = [.set(path, .array(chosen.map { .string($0.rawValue) }))]
+                Task { await model.applyLatest(ops, to: file, key: file + "#" + identifier(path, below: recordPath)) }
             }
             .accessibilityIdentifier(identifier(path, below: recordPath))
-            .disabled(model.edits.isShown)
         }
         FieldProblems(path: path, recordPath: recordPath)
     }
@@ -143,16 +143,19 @@ private struct ScalarField: View {
     /// The identifier of the field's own control, which a UI test finds it by.
     private var fieldID: String { identifier(path, below: recordPath) }
 
+    /// Sets the field to `new`, after any edit in flight: a picker, a well or a
+    /// stepper changes it at once, perhaps many times in a row, and the newest stands.
     private func apply(_ new: JSONValue?) {
         // a control may set what it already shows; that is no edit
         guard new != value else { return }
-        guard let key = path.last, case .key(let name) = key else {
+        let ops: [EditOp]
+        if let key = path.last, case .key(let name) = key {
+            ops = fieldOps(at: Array(path.dropLast()), key: name, old: value, new: new, required: required)
+        } else {
             // an item of a list, set in place
-            Task { await model.apply([.set(path, new ?? .string(""))], to: file) }
-            return
+            ops = [.set(path, new ?? .string(""))]
         }
-        let ops = fieldOps(at: Array(path.dropLast()), key: name, old: value, new: new, required: required)
-        Task { await model.apply(ops, to: file) }
+        Task { await model.applyLatest(ops, to: file, key: file + "#" + fieldID) }
     }
 
     var body: some View {
@@ -170,7 +173,6 @@ private struct ScalarField: View {
         switch kind {
         case .toggle:
             Toggle(title, isOn: Binding(get: { value?.bool ?? false }, set: { apply(.bool($0)) }))
-                .disabled(model.edits.isShown)
                 .accessibilityIdentifier(fieldID)
         case .choice(let values):
             choicePicker(values)
@@ -184,7 +186,7 @@ private struct ScalarField: View {
                 // a gradient of its own: a well for each of its two colours
                 if case .array(let stops)? = value {
                     ForEach(Array(stops.enumerated()), id: \.offset) { index, stop in
-                        ColorWell(title: index == 0 ? "From" : "To", value: stop, editing: model.edits.isShown) { chosen in
+                        ColorWell(title: index == 0 ? "From" : "To", value: stop, seed: stop) { chosen in
                             var changed = stops
                             changed[index] = chosen
                             apply(.array(changed))
@@ -192,16 +194,17 @@ private struct ScalarField: View {
                     }
                 }
             }
-        case .color:
-            ColorWell(title: title, value: value, editing: model.edits.isShown) { apply($0) }
-                .accessibilityIdentifier(fieldID)
+        case .color(let triple):
+            // a grey to start from, in the form the schema wants
+            ColorWell(title: title, value: value, seed: triple ? .array([.number(128), .number(128), .number(128)]) : .string("rgb(128, 128, 128)"),
+                      identifier: fieldID) { apply($0) }
         case .time:
-            TimeField(title: title, value: value, editing: model.edits.isShown) { apply(.string($0)) }
+            TimeField(title: title, value: value) { apply(.string($0)) }
                 .accessibilityIdentifier(fieldID)
         case .symbol:
-            SymbolField(title: title, value: value?.string, editing: model.edits.isShown, identifier: fieldID) { apply(.string($0)) }
+            SymbolField(title: title, value: value?.string, identifier: fieldID) { apply(.string($0)) }
         case .date, .dateTime:
-            DateField(title: title, kind: kind, value: value?.string, editing: model.edits.isShown) { apply($0.map(JSONValue.string)) }
+            DateField(title: title, kind: kind, value: value?.string) { apply($0.map(JSONValue.string)) }
                 .accessibilityIdentifier(fieldID)
         case .url:
             HStack {
@@ -230,10 +233,14 @@ private struct ScalarField: View {
     private func choicePicker(_ values: [String], image: @escaping (String) -> Image? = { _ in nil }) -> some View {
         let current = value?.string ?? ""
         let unlisted = !current.isEmpty && !values.contains(current)
-        return Picker(title, selection: Binding(get: { current }, set: { apply($0.isEmpty ? nil : .string($0)) })) {
-            // a value that isn't a name, such as a gradient's own pair of colours
-            if value != nil, value?.string == nil {
-                Text("Custom").tag("")
+        // a value that isn't a name, such as a gradient's own pair of colours, which choosing again keeps
+        let custom = "\u{0}custom"
+        let isCustom = value != nil && value?.string == nil
+        return Picker(title, selection: Binding(get: { isCustom ? custom : current }, set: { chosen in
+            if chosen != custom { apply(chosen.isEmpty ? nil : .string(chosen)) }
+        })) {
+            if isCustom {
+                Text("Custom").tag(custom)
             } else if !required || current.isEmpty {
                 Text("None").tag("")
             }
@@ -242,7 +249,6 @@ private struct ScalarField: View {
                 if let image = image(name) { Label { Text(name) } icon: { image }.tag(name) } else { Text(name).tag(name) }
             }
         }
-        .disabled(model.edits.isShown)
         .accessibilityIdentifier(fieldID)
     }
 

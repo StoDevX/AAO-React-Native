@@ -65,8 +65,6 @@ enum SymbolChooser {
 struct SymbolField: View {
     let title: String
     let value: String?
-    /// whether an edit is in flight, which a change would have to wait behind
-    let editing: Bool
     let identifier: String
     let set: (String) -> Void
     @State private var choosing = false
@@ -86,7 +84,6 @@ struct SymbolField: View {
                     }
                 }
                 .accessibilityIdentifier(identifier)
-                .disabled(editing)
                 .popover(isPresented: $choosing, arrowEdge: .leading) {
                     SymbolGrid(current: value) { name in
                         choosing = false

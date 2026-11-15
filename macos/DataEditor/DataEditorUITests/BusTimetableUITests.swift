@@ -82,6 +82,49 @@ final class BusTimetableUITests: XCTestCase {
         XCTAssertTrue(waitFor("- Su\n", in: data))
     }
 
+    /// A new line starts with neither colours nor schedules, and the form offers both.
+    func testANewLineGetsItsColoursAndASchedule() throws {
+        let (app, data) = try launchWithRepoData(opening: "bus-times")
+        let window = currentChanges(in: app)
+        let new = window.buttons["new-record"]
+        XCTAssertTrue(new.waitForExistence(timeout: 10))
+        new.click()
+        let title = app.textFields["new-record-title"]
+        XCTAssertTrue(title.waitForExistence(timeout: 5))
+        title.click()
+        title.typeText("Night Owl")
+        app.buttons["new-record-add"].click()
+        let schedule = window.buttons["timetable-add-schedule"]
+        XCTAssertTrue(schedule.waitForExistence(timeout: 10))
+        schedule.click()
+        let colour = window.buttons["add-colour-field-colors.bar"]
+        XCTAssertTrue(colour.waitForExistence(timeout: 10))
+        colour.click()
+        attachScreenshot(of: window, named: "A new bus line with a schedule and a colour")
+        let deadline = Date().addingTimeInterval(10)
+        var text = ""
+        while Date() < deadline {
+            let folder = data.appending(path: "bus-times")
+            let files = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
+            if let file = files.first(where: { $0.contains("night-owl") }) {
+                text = (try? String(contentsOf: folder.appending(path: file), encoding: .utf8)) ?? ""
+                if text.contains("schedules:"), text.contains("bar: rgb(") { break }
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        XCTAssertTrue(text.contains("schedules:") && text.contains("bar: rgb("), text)
+    }
+
+    /// A stop is added where it goes on the route, not only at the end.
+    func testAStopIsAddedAfterAnother() throws {
+        let (app, data) = try launchWithRepoData(opening: express)
+        let window = currentChanges(in: app)
+        let insert = window.buttons["timetable-1-stop-insert-0"]
+        XCTAssertTrue(insert.waitForExistence(timeout: 10))
+        insert.click()
+        XCTAssertTrue(waitFor("      - St. Olaf College\n      - New Stop\n      - Library\n", in: data))
+    }
+
     func testAGeneratedLinesTimetableIsLocked() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app
         let window = currentChanges(in: app)
@@ -89,5 +132,8 @@ final class BusTimetableUITests: XCTestCase {
         let add = window.buttons["timetable-1-add-trip"]
         XCTAssertTrue(add.waitForExistence(timeout: 10))
         XCTAssertFalse(add.isEnabled)
+        // nor does a cell's menu open
+        window.datePickers["timetable-1-cell-0-0"].rightClick()
+        XCTAssertFalse(app.menuItems["Doesn't Stop Here"].waitForExistence(timeout: 2))
     }
 }

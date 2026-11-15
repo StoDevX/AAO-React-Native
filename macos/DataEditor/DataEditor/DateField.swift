@@ -9,8 +9,6 @@ struct DateField: View {
     /// `.date` or `.dateTime`
     let kind: FieldKind
     let value: String?
-    /// whether an edit is in flight, which this one would have to wait behind
-    let editing: Bool
     let set: (String?) -> Void
 
     private static let day = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
@@ -28,12 +26,11 @@ struct DateField: View {
                        displayedComponents: kind == .dateTime ? [.date, .hourAndMinute] : [.date])
                 .datePickerStyle(.field)
                 .environment(\.timeZone, .gmt)
-                .disabled(editing)
         } else if let value {
             LabeledContent(title) { Text(value).foregroundStyle(.red) }
         } else {
             LabeledContent(title) {
-                Button("Add Date") { set(Date().formatted(style)) }.disabled(editing)
+                Button("Add Date") { set(Date().formatted(style)) }
             }
         }
     }

@@ -7,8 +7,6 @@ import SwiftUI
 struct TimeField: View {
     let title: String
     let value: JSONValue?
-    /// whether an edit is in flight, which a change would have to wait behind
-    let editing: Bool
     let set: (String) -> Void
 
     /// `time` on a fixed day in UTC, which the field shows in UTC too, so no clock change moves it.
@@ -27,7 +25,6 @@ struct TimeField: View {
             }), displayedComponents: .hourAndMinute)
                 .datePickerStyle(.stepperField)
                 .environment(\.timeZone, .gmt)
-                .disabled(editing)
         } else {
             LabeledContent(title) {
                 Text(value == .bool(false) ? "—" : value?.fieldText ?? "").foregroundStyle(.secondary)

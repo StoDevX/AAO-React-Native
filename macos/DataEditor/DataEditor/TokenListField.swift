@@ -11,8 +11,6 @@ struct TokenListField: View {
     let values: [String]
     /// the names the list may hold, or nil when any will do
     let choices: [String]?
-    /// whether an edit is in flight, which a change would have to wait behind
-    let editing: Bool
     let identifier: String
     let change: ([String]) -> Void
 
@@ -42,7 +40,6 @@ struct TokenListField: View {
                     if tokens != values { change(tokens) }
                 }
                 .accessibilityIdentifier(identifier)
-                .disabled(editing)
                 if !unlisted.isEmpty {
                     Text("Not listed in this file: \(unlisted.formatted(.list(type: .and).locale(Locale(identifier: "en_US"))))")
                         .font(.caption)
@@ -70,6 +67,8 @@ private struct TokenField: NSViewRepresentable {
 
     func updateNSView(_ field: NSTokenField, context: Context) {
         context.coordinator.parent = self
+        // AppKit's field follows SwiftUI's `.disabled`, as a locked or updating file's must
+        field.isEnabled = context.environment.isEnabled
         // the file's tokens, unless the contributor is typing
         if field.currentEditor() == nil { field.objectValue = tokens }
     }

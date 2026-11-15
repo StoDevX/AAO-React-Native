@@ -405,7 +405,7 @@ final class AppModel {
     /// replace, or while another edit waits for its reply. Returns whether the helper took the edit.
     @discardableResult
     func apply(_ ops: [EditOp], to file: String) async -> Bool {
-        guard !updating, !sending, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
+        guard !updating, !sending, !editing, let helper, !isConflicted(file), !isLocked(file), !ops.isEmpty else { return false }
         let ops = Self.stamped(ops, field: stampField(for: file), stamp: Self.saveStamp())
         let edited: Loaded
         do {
@@ -435,6 +435,29 @@ final class AppModel {
             await builds.schedule { await self.rebuild() }
         }
         return true
+    }
+
+    /// The newest change each control has waiting, by its key, counted so an older one knows it was overtaken.
+    private var latestChanges: [String: Int] = [:]
+
+    /// Applies a control's change once the edit in flight is done, rather than
+    /// having it refused: a colour well dragged or a stepper held sends a stream
+    /// of changes, and only the newest of those waiting is applied.
+    func applyLatest(_ ops: [EditOp], to file: String, key: String) async {
+        let change = (latestChanges[key] ?? 0) + 1
+        latestChanges[key] = change
+        while editing || updating {
+            if shuttingDown { return }
+            try? await Task.sleep(for: .milliseconds(30))
+        }
+        guard latestChanges[key] == change else { return }
+        await apply(ops, to: file)
+    }
+
+    /// Whether `file` is one no control may change: a read-only set's, or one a generator writes.
+    private func isLocked(_ file: String) -> Bool {
+        guard let name = catalog?.set(for: file), let set = catalog?.sets[name] else { return false }
+        return Self.lockReason(set: set, file: file, updating: false, conflicted: false) != nil
     }
 
     /// What became of a text field's draft.
@@ -915,7 +938,7 @@ final class AppModel {
     /// with their comments, as a form's Move Up and Move Down do.
     func moveItems(in file: String, path: [PathKey], order: [PathKey]) async {
         let stamp = Self.stamped([], field: stampField(for: file), stamp: Self.saveStamp())
-        guard mayChangeRecords, let helper, !isConflicted(file),
+        guard mayChangeRecords, let helper, !isConflicted(file), !isLocked(file),
               let moved = try? await edits.run({
                   let moved = try await helper.move(file, path: path, order: order)
                   return stamp.isEmpty ? moved : try await helper.edit(file, stamp)

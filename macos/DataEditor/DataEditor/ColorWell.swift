@@ -3,12 +3,13 @@ import DataEditorKit
 import SwiftUI
 
 /// A colour chosen in the system's colour well, written back in the form the
-/// file gave it. A value no form reads is shown as text, marked, with no well.
+/// file gave it. A value no form reads is shown as text, marked, with no well;
+/// a missing one offers to add `seed`, a colour in the form the schema wants.
 struct ColorWell: View {
     let title: String
     let value: JSONValue?
-    /// whether an edit is in flight, which a change would have to wait behind
-    let editing: Bool
+    let seed: JSONValue
+    var identifier: String?
     let set: (JSONValue) -> Void
 
     /// `value` as AppKit draws it, in the colour space its form is written in.
@@ -42,11 +43,16 @@ struct ColorWell: View {
                             if new != value { set(new) }
                         }), supportsOpacity: false)
                         .labelsHidden()
-                        .disabled(editing)
+                        .accessibilityIdentifier(identifier ?? "")
                 }
             }
+        } else if let value {
+            LabeledContent(title) { Text(value.fieldText.isEmpty ? "Not a colour" : value.fieldText).foregroundStyle(.red) }
         } else {
-            LabeledContent(title) { Text(value?.fieldText ?? "").foregroundStyle(.red) }
+            LabeledContent(title) {
+                Button("Add Colour") { set(seed) }
+                    .accessibilityIdentifier("add-colour-" + (identifier ?? ""))
+            }
         }
     }
 }

@@ -82,7 +82,11 @@ struct FormFieldsTests {
     }
 
     @Test func threeNumbersTaggedAsAColourAreAColour() throws {
-        #expect(try kind(#"{"type":"array","items":[{"type":"number"},{"type":"number"},{"type":"number"}],"editor":"color"}"#) == .color)
+        #expect(try kind(#"{"type":"array","items":[{"type":"number"},{"type":"number"},{"type":"number"}],"editor":"color"}"#) == .color(triple: true))
+    }
+
+    @Test func aColourWrittenAsTextIsOne() throws {
+        #expect(try kind(#"{"type":"string","editor":"color"}"#) == .color(triple: false))
     }
 
     @Test func aListOfGroupsStaysAList() throws {

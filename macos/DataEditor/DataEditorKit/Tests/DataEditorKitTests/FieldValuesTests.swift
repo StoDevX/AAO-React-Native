@@ -13,6 +13,8 @@ struct ColorValueTests {
         #""color(display-p3 0.9294 0.4863 0.5216)""#,
         #""color(display-p3 0.902 0.3882 0.4118)""#,
         "[82, 87, 54]",
+        ##""#E4A01B""##,
+        ##""#fff""##,
     ])
     func writesAColourBackAsTheFileHadIt(text: String) throws {
         let value = json(text)
@@ -21,7 +23,6 @@ struct ColorValueTests {
 
     @Test func readsNoColourFromANameOrHex() {
         #expect(ColorValue(.string("blue")) == nil)
-        #expect(ColorValue(.string("#fff")) == nil)
         #expect(ColorValue(json("[1, 2]")) == nil)
     }
 
@@ -32,6 +33,13 @@ struct ColorValueTests {
         #expect(accent.with(unit: [1, 0, 0]).json() == json("[255, 0, 0]"))
         let p3 = try #require(ColorValue(.string("color(display-p3 0.9294 0.4863 0.5216)")))
         #expect(p3.with(unit: [0.5, 0.25, 1]).json() == .string("color(display-p3 0.5 0.25 1)"))
+    }
+
+    /// Oles Go's bar is written in hex, which stays hex, its letters in the case the file used.
+    @Test func aChangedHexColourStaysHex() throws {
+        let bar = try #require(ColorValue(.string("#E4A01B")))
+        #expect(bar.with(unit: [1, 0, 0.5]).json() == .string("#FF0080"))
+        #expect(try #require(ColorValue(.string("#e4a01b"))).with(unit: [1, 0, 0.5]).json() == .string("#ff0080"))
     }
 
     @Test func givesItsComponentsBetweenZeroAndOne() throws {

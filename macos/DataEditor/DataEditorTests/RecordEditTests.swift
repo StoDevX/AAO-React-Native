@@ -41,6 +41,27 @@ struct RecordEditTests {
         #expect(model.draftNotices.map(\.message) == ["“Where?” wasn't saved because the field changed while you typed."])
     }
 
+    /// A generated file can't be edited, whatever control asks: a right-click's menu included.
+    @Test func aGeneratedFileRefusesAnEdit() async throws {
+        let (model, data) = try await modelOnRepoData()
+        let file = data.appending(path: "bus-times/3-red-line.yaml")
+        let before = try String(contentsOf: file, encoding: .utf8)
+        #expect(await !model.apply([.set(["notice"], .string("Changed"))], to: "bus-times/3-red-line.yaml"))
+        #expect(try String(contentsOf: file, encoding: .utf8) == before)
+    }
+
+    /// A colour well dragged sends a stream of colours; the file ends on the last, not one the helper refused.
+    @Test func aStreamOfChangesEndsOnTheLast() async throws {
+        let (model, data) = try await modelOnRepoData()
+        // in the order a drag sends them, each started before the one before has finished
+        let changes = [10, 20, 30].map { red in
+            Task { await model.applyLatest([.set(["accentColor", 0], .number(Double(red)))], to: eastQuad, key: "accent") }
+        }
+        for change in changes { await change.value }
+        let text = try String(contentsOf: data.appending(path: eastQuad), encoding: .utf8)
+        #expect(text.contains("accentColor: [30, 87, 54]"), "\(text)")
+    }
+
     /// Every FAQ is in faqs.yaml, so the new one's file is the file already open.
     @Test func aNewRecordInTheOpenFileShowsInItsForm() async throws {
         let (model, _) = try await modelOnRepoData()
