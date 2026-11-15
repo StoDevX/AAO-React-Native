@@ -118,6 +118,42 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("station: Pita", in: "pause-menu.yaml", data: data))
     }
 
+    /// Clicks the field `second` after `first`, both in Map Categories with every
+    /// list open, and says where `second` was before the click and after it.
+    private func clickAfter(_ first: String, _ second: String) throws -> (before: CGRect, after: CGRect) {
+        let app = try launchWithRepoData(opening: "map-categories:map-categories.yaml").app
+        let window = currentChanges(in: app)
+        for list in ["stolaf.groups", "stolaf.icons", "carleton.groups", "carleton.icons"] {
+            let expand = window.links["expand-all-field-\(list)"]
+            XCTAssertTrue(expand.waitForExistence(timeout: 10))
+            expand.click()
+        }
+        let earlier = window.textFields[first]
+        XCTAssertTrue(earlier.waitForExistence(timeout: 10))
+        earlier.click()
+        let field = window.textFields[second]
+        let form = window.scrollViews.element(boundBy: window.scrollViews.count - 1)
+        for _ in 0..<80 where !field.isHittable { form.scroll(byDeltaX: 0, deltaY: -150) }
+        XCTAssertTrue(field.isHittable)
+        let before = field.frame
+        field.click()
+        RunLoop.current.run(until: Date().addingTimeInterval(1))
+        attachScreenshot(of: window, named: "After clicking \(second)")
+        return (before, field.frame)
+    }
+
+    /// A field clicked stays where it is, though a field in another list at the same index had focus before it.
+    func testAFieldClickedStaysPutAfterOneAtItsIndexInAnotherList() throws {
+        let place = try clickAfter("field-stolaf.groups.#7.categories", "field-stolaf.icons.#7.categories")
+        XCTAssertEqual(place.after, place.before)
+    }
+
+    /// A field clicked stays where it is, though the same field of another campus had focus before it.
+    func testAFieldClickedStaysPutAfterTheSameFieldInAnotherObject() throws {
+        let place = try clickAfter("field-stolaf.groups.#7.categories", "field-carleton.groups.#7.categories")
+        XCTAssertEqual(place.after, place.before)
+    }
+
     /// A generated bus line can't be edited, its pickers included.
     func testALockedSetsPickersAreDisabled() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app

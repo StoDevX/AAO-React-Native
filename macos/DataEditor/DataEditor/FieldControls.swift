@@ -1,6 +1,14 @@
 import DataEditorKit
 import SwiftUI
 
+/// Something a form draws, with its place in the file. A form scrolls a focused
+/// field to the first row sharing its identity, so each row is known by its
+/// place: an index, a name or a field's key alone is shared with other lists.
+private struct Placed<Value> {
+    let path: [PathKey]
+    let value: Value
+}
+
 /// A form's fields for the object at `base` in `file`, each drawn by its kind.
 struct FieldRows: View {
     let fields: [FormField]
@@ -13,7 +21,8 @@ struct FieldRows: View {
     let recordPath: [PathKey]
 
     var body: some View {
-        ForEach(fields) { field in
+        ForEach(fields.map { Placed(path: base + [.key($0.key)], value: $0) }, id: \.path) { place in
+            let field = place.value
             FieldRow(field: field, base: base, value: value?[field.key], parent: value, file: file, recordPath: recordPath)
         }
     }
@@ -411,7 +420,8 @@ private struct ListItems: View {
             .buttonStyle(.link)
             .accessibilityIdentifier("expand-all-" + identifier(path, below: recordPath))
         }
-        ForEach(Array(items.enumerated()), id: \.offset) { index, value in
+        ForEach(items.indices.map { Placed(path: path + [.index($0)], value: $0) }, id: \.path) { place in
+            let (index, value) = (place.value, items[place.value])
             HStack(alignment: .top) {
                 ItemField(title: "\(itemTitle) \(index + 1)", isExpanded: isOpen(index), kind: item, path: path + [.index(index)], value: value,
                           file: file, recordPath: recordPath)
@@ -493,7 +503,8 @@ private struct MapEntries: View {
             .buttonStyle(.link)
             .accessibilityIdentifier("expand-all-" + identifier(path, below: recordPath))
         }
-        ForEach(keys, id: \.self) { key in
+        ForEach(keys.map { Placed(path: path + [.key($0)], value: $0) }, id: \.path) { place in
+            let key = place.value
             HStack(alignment: .top) {
                 ItemField(title: key, isExpanded: isOpen(key), kind: valueKind, path: path + [.key(key)], value: entries?[key],
                           file: file, recordPath: recordPath)
