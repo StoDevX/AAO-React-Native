@@ -82,7 +82,7 @@ struct BreaksEditorView: View {
                                                        services: services(in: calendar.value["templates"]?[template])))
             }
         }
-        .formStyle(.grouped)
+        .formStyle(.editor)
         .disabled(locked)
     }
 }

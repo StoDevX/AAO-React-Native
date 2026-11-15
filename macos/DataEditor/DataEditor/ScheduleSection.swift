@@ -28,9 +28,12 @@ struct ScheduleSection: View {
                 }
                 .accessibilityIdentifier("service-notes-\(s)")
                 Group {
-                    Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
-                                                  set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
-                        .accessibilityIdentifier("closed-\(s)")
+                    LabeledContent("Closed") {
+                        Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
+                                                      set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
+                            .labelsHidden()
+                            .accessibilityIdentifier("closed-\(s)")
+                    }
                     ForEach(Array(service.rows.enumerated()), id: \.offset) { r, row in
                         RowEditor(row: row, service: s, index: r, editor: editor)
                     }
@@ -145,11 +148,8 @@ struct DraftField: View {
     }
 
     private var field: some View {
-        // bordered and, while empty, naming what goes in it: a form's labels and values are otherwise one colour
+        // while empty, naming what goes in it; the form's style draws its box
         TextField(label, text: $draft, prompt: Text(label), axis: axis)
-            .textFieldStyle(.roundedBorder)
-            // text in a box reads from its left edge; the boxes line up, so their text does too
-            .multilineTextAlignment(.leading)
             .focused($focused)
             .onSubmit(commitIfChanged)
             .onChange(of: draft) { old, _ in

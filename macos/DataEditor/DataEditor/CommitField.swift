@@ -21,9 +21,7 @@ struct CommitField: View {
 
     var body: some View {
         TextField(label, text: $draft, prompt: Text(label))
-            .textFieldStyle(.roundedBorder)
             .labelsHidden()
-            .multilineTextAlignment(.leading)
             .focused($focused)
             .onSubmit(commit)
             .onChange(of: focused) { _, isFocused in if !isFocused { commit() } }

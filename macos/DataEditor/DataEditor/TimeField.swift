@@ -19,12 +19,15 @@ struct TimeField: View {
 
     var body: some View {
         if let text = value?.string, let time = ClockTime(text) {
-            DatePicker(title, selection: Binding(get: { Self.date(time) }, set: { chosen in
-                let new = Self.clockTime(chosen)
-                if new != time { set(new.text) }
-            }), displayedComponents: .hourAndMinute)
-                .datePickerStyle(.stepperField)
-                .environment(\.timeZone, .gmt)
+            LabeledContent(title) {
+                DatePicker(title, selection: Binding(get: { Self.date(time) }, set: { chosen in
+                    let new = Self.clockTime(chosen)
+                    if new != time { set(new.text) }
+                }), displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.stepperField)
+                    .labelsHidden()
+                    .environment(\.timeZone, .gmt)
+            }
         } else {
             LabeledContent(title) {
                 Text(value == .bool(false) ? "—" : value?.fieldText ?? "").foregroundStyle(.secondary)

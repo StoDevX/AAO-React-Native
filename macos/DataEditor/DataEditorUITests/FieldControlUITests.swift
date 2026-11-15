@@ -136,8 +136,8 @@ final class FieldControlUITests: XCTestCase {
         let five = window.textFields["field-stolaf.groups.#9.categories"]
         let one = window.textFields["field-stolaf.groups.#7.categories"]
         XCTAssertTrue(five.waitForExistence(timeout: 10))
-        let form = window.scrollViews.element(boundBy: window.scrollViews.count - 1)
-        for _ in 0..<40 where !five.isHittable { form.scroll(byDeltaX: 0, deltaY: -150) }
+        let form = window.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5))
+        for _ in 0..<40 where !five.isHittable { form.scroll(byDeltaX: 0, deltaY: -400) }
         attachScreenshot(of: window, named: "Services' five categories")
         XCTAssertGreaterThan(five.frame.height, one.frame.height * 1.5)
     }
@@ -222,8 +222,9 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(earlier.waitForExistence(timeout: 10))
         earlier.click()
         let field = window.textFields[second]
-        let form = window.scrollViews.element(boundBy: window.scrollViews.count - 1)
-        for _ in 0..<80 where !field.isHittable { form.scroll(byDeltaX: 0, deltaY: -150) }
+        // scrolled at a point in the form, which is the window's right-hand part
+        let form = window.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5))
+        for _ in 0..<40 where !field.isHittable { form.scroll(byDeltaX: 0, deltaY: -400) }
         XCTAssertTrue(field.isHittable)
         let before = field.frame
         field.click()

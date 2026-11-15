@@ -22,10 +22,13 @@ struct DateField: View {
 
     var body: some View {
         if let value, let date = Self.date(value, kind: kind) {
-            DatePicker(title, selection: Binding(get: { date }, set: { set($0.formatted(style)) }),
-                       displayedComponents: kind == .dateTime ? [.date, .hourAndMinute] : [.date])
-                .datePickerStyle(.field)
-                .environment(\.timeZone, .gmt)
+            LabeledContent(title) {
+                DatePicker(title, selection: Binding(get: { date }, set: { set($0.formatted(style)) }),
+                           displayedComponents: kind == .dateTime ? [.date, .hourAndMinute] : [.date])
+                    .datePickerStyle(.field)
+                    .labelsHidden()
+                    .environment(\.timeZone, .gmt)
+            }
         } else if let value {
             LabeledContent(title) { Text(value).foregroundStyle(.red) }
         } else {

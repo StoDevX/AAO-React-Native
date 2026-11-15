@@ -182,14 +182,17 @@ private struct ScalarField: View {
     @ViewBuilder private var control: some View {
         switch kind {
         case .toggle:
-            Toggle(title, isOn: Binding(get: { value?.bool ?? false }, set: { apply(.bool($0)) }))
-                .accessibilityIdentifier(fieldID)
+            LabeledContent(title) {
+                Toggle(title, isOn: Binding(get: { value?.bool ?? false }, set: { apply(.bool($0)) }))
+                    .labelsHidden()
+                    .accessibilityIdentifier(fieldID)
+            }
         case .choice(let values):
             choicePicker(values)
         case .reference(let pointer):
             choicePicker(model.value.map { choices(pointer, in: $0, at: path) } ?? [])
         case .gradient(let names):
-            VStack(alignment: .trailing) {
+            VStack(alignment: .leading) {
                 choicePicker(names) { name in
                     model.gradients[name].flatMap { GradientSwatch(stops: $0).image }
                 }
@@ -248,7 +251,7 @@ private struct ScalarField: View {
         // a value that isn't a name, such as a gradient's own pair of colours, which choosing again keeps
         let custom = "\u{0}custom"
         let isCustom = value != nil && value?.string == nil
-        return Picker(title, selection: Binding(get: { isCustom ? custom : current }, set: { chosen in
+        return LabeledContent(title) { Picker(title, selection: Binding(get: { isCustom ? custom : current }, set: { chosen in
             if chosen != custom { apply(chosen.isEmpty ? nil : .string(chosen)) }
         })) {
             if isCustom {
@@ -261,7 +264,9 @@ private struct ScalarField: View {
                 if let image = image(name) { Label { Text(name) } icon: { image }.tag(name) } else { Text(name).tag(name) }
             }
         }
-        .accessibilityIdentifier(fieldID)
+        .labelsHidden()
+        .fixedSize()
+        .accessibilityIdentifier(fieldID) }
     }
 
     @ViewBuilder private var textField: some View {

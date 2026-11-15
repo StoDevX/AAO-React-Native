@@ -89,7 +89,7 @@ struct HoursDetailView: View {
             BreaksSection(document: document)
                 .disabled(locked)
         }
-        .formStyle(.grouped)
+        .formStyle(.editor)
         .navigationTitle(document.name)
         .navigationSubtitle(document.category)
     }

@@ -69,7 +69,7 @@ struct RecordFormView: View {
                 ProgressView()
             }
         }
-        .formStyle(.grouped)
+        .formStyle(.editor)
         // asks again once the files change and the model lets the schema go
         .task(id: [setName, model.loadedSchema(for: setName) == nil ? "asking" : "loaded"]) {
             _ = await model.schema(for: setName)
