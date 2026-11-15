@@ -28,7 +28,9 @@ struct CommitField: View {
             .onSubmit(commit)
             .onChange(of: focused) { _, isFocused in if !isFocused { commit() } }
             .onAppear { draft = text }
-            .onChange(of: text) { _, saved in draft = saved }
+            // the file's text, unless typing since has moved past it: a save landing
+            // after more was typed must not take back what was typed
+            .onChange(of: text) { old, saved in if draft == old || draft == saved { draft = saved } }
             .focusedWhenAdded(at: place, $focused)
             .accessibilityIdentifier(identifier)
     }
@@ -66,7 +68,8 @@ struct CoordinateField: View {
     let title: String
     let value: JSONValue?
     let identifier: String
-    let set: (JSONValue) -> Void
+    /// sets the coordinate at an index, 0 for latitude and 1 for longitude
+    let set: (Int, Double) -> Void
 
     private var numbers: [JSONValue] {
         let held = value?.array ?? []
@@ -75,10 +78,8 @@ struct CoordinateField: View {
 
     /// Saves `typed` as the number at `index`, unless it isn't one.
     private func save(_ typed: String, at index: Int) -> Bool {
-        guard let number = Double(typed) else { return false }
-        var changed = numbers
-        changed[index] = .number(number)
-        set(.array(changed))
+        guard let number = Double(typed), number.isFinite else { return false }
+        set(index, number)
         return true
     }
 

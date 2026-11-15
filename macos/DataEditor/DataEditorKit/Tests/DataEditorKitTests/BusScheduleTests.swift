@@ -88,6 +88,33 @@ struct BusScheduleTests {
         #expect(schedule.renameStop(at: 3, to: "St. Olaf (return)", at: base) == [.set(base + ["stops", 3], .string("St. Olaf (return)"))])
     }
 
+    /// A trip row shorter than the stops, which the file may hold, moves its times with their stops all the same.
+    @Test func movesAStopWithItsTimesInAShortRow() {
+        let short = BusSchedule(.object(["stops": .array(["A", "B", "C"].map(JSONValue.string)),
+                                         "times": .array([.array([.string("9:00am"), .string("9:10am")])])]))
+        #expect(short.moveStop(from: 1, to: 2, at: base) == [
+            .set(base + ["stops"], .array(["A", "C", "B"].map(JSONValue.string))),
+            .set(base + ["times", 0], .array([.string("9:00am"), .bool(false), .string("9:10am")])),
+        ])
+    }
+
+    /// A time the grid can't read is copied as written into the next trip, not dropped to a skipped stop.
+    @Test func addingATripKeepsATimeItCannotRead() {
+        let odd = BusSchedule(.object(["stops": .array([.string("A"), .string("B")]),
+                                       "times": .array([.array([.string("9:00am"), .string("3:8pm")])])]))
+        #expect(odd.addTrip(at: base) == [.set(base + ["times", 1], .array([.string("9:00am"), .string("3:8pm")]))])
+    }
+
+    /// Where a stop the trip skips starts when it is given a time: the time at the stop before, or noon.
+    @Test func aSkippedStopStartsFromTheStopBefore() {
+        #expect(schedule.startingTime(trip: 0, stop: 2) == ClockTime("3:08pm"))
+        #expect(schedule.startingTime(trip: 0, stop: 0) == ClockTime("12:00pm"))
+        // past the end of a short row, the last time it has
+        let short = BusSchedule(.object(["stops": .array(["A", "B", "C"].map(JSONValue.string)),
+                                         "times": .array([.array([.string("9:00am")])])]))
+        #expect(short.startingTime(trip: 0, stop: 2) == ClockTime("9:00am"))
+    }
+
     @Test func findsATimeEarlierThanTheStopBeforeIt() {
         let late = BusSchedule(.object(["stops": .array([.string("A"), .string("B"), .string("C")]),
                                         "times": .array([.array([.string("3:00pm"), .bool(false), .string("2:50pm")])])]))

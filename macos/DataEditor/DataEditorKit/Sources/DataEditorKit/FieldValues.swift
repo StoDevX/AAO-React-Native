@@ -49,6 +49,9 @@ public struct ColorValue: Equatable, Sendable {
         default:
             return nil
         }
+        // a component past its form's range, which the schemas leave unbounded, is no colour
+        let most: Double = if case .displayP3 = form { 1 } else { 255 }
+        guard components.allSatisfy({ (0...most).contains($0) }) else { return nil }
     }
 
     private init(components: [Double], form: Form) {

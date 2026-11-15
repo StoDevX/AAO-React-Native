@@ -53,16 +53,24 @@ public struct BusSchedule: Equatable, Sendable {
     /// A trip after the last: the last again, as far after it as it is after
     /// the one before, which is another run of the same loop. After a single
     /// trip, a copy of it; in an empty timetable, a trip that skips every stop.
+    /// A time the grid can't read is copied as written.
     public func addTrip(at base: [PathKey]) -> [EditOp] {
-        let next: [ClockTime?]
-        if let last = trips.last {
-            let gap = trips.count < 2 ? 0 : zip(trips[trips.count - 2], last).lazy
-                .compactMap { before, after in before.flatMap { b in after.map { $0.minutes - b.minutes } } }.first ?? 0
-            next = last.map { $0.map { ClockTime(minutes: (($0.minutes + gap) % 1440 + 1440) % 1440) } }
-        } else {
-            next = Array(repeating: nil, count: stops.count)
+        guard let last = trips.last, let written = raw.last else {
+            return [.set(base + ["times", .index(trips.count)], Self.row(Array(repeating: nil, count: stops.count)))]
         }
-        return [.set(base + ["times", .index(trips.count)], Self.row(next))]
+        let gap = trips.count < 2 ? 0 : zip(trips[trips.count - 2], last).lazy
+            .compactMap { before, after in before.flatMap { b in after.map { $0.minutes - b.minutes } } }.first ?? 0
+        let next: [JSONValue] = zip(last, written).map { time, held in
+            time.map { Self.json(ClockTime(minutes: (($0.minutes + gap) % 1440 + 1440) % 1440)) } ?? held
+        }
+        return [.set(base + ["times", .index(trips.count)], .array(next))]
+    }
+
+    /// Where a stop trip `trip` skips starts when given a time: the time at the
+    /// stop before it, or noon, read only as far as the trip's row goes.
+    public func startingTime(trip: Int, stop: Int) -> ClockTime {
+        guard trips.indices.contains(trip) else { return ClockTime(minutes: 720) }
+        return trips[trip].prefix(stop).compactMap { $0 }.last ?? ClockTime(minutes: 720)
     }
 
     /// Removes the trips at `indices`, the last first, so each place still names its trip.
@@ -92,7 +100,8 @@ public struct BusSchedule: Equatable, Sendable {
         names.insert(names.remove(at: from), at: to)
         return [.set(base + ["stops"], .array(names.map(JSONValue.string)))]
             + rows(at: base) { row in
-                guard row.indices.contains(from), to <= row.count - 1 else { return }
+                // a row short of the stops skips those it lacks, so its times move with theirs
+                while row.count < stops.count { row.append(.bool(false)) }
                 row.insert(row.remove(at: from), at: to)
             }
     }

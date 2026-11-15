@@ -97,8 +97,12 @@ private struct FieldRow: View {
             TokenListField(title: field.title, values: value?.array?.compactMap(\.string) ?? [],
                            choices: pointer.map { pointer in model.value.map { choices(pointer, in: $0, at: path + [.index(0)]) } ?? [] },
                            identifier: identifier(path, below: recordPath)) { tokens in
-                let old = value?.array?.compactMap(\.string) ?? []
-                Task { await model.applyLatest(TokenListField.ops(at: path, from: old, to: tokens), to: file, key: file + "#" + identifier(path, below: recordPath)) }
+                // from the list as the file holds it when the change runs, which a change before it may have edited
+                Task {
+                    await model.applyLatest(to: file, at: path) { held in
+                        TokenListField.ops(at: path, from: held[path: path]?.array?.compactMap(\.string) ?? [], to: tokens)
+                    }
+                }
             }
             FieldProblems(path: path, recordPath: recordPath)
         case .list:
@@ -129,8 +133,8 @@ private struct DaysField: View {
         let days = value?.array?.compactMap { $0.string.flatMap(Weekday.init(rawValue:)) } ?? []
         LabeledContent(title) {
             DayPicker(week: model.week, days: days) { chosen in
-                let ops: [EditOp] = [.set(path, .array(chosen.map { .string($0.rawValue) }))]
-                Task { await model.applyLatest(ops, to: file, key: file + "#" + identifier(path, below: recordPath)) }
+                let new = JSONValue.array(chosen.map { .string($0.rawValue) })
+                Task { await model.applyLatest(to: file, at: path) { held in held[path: path] == new ? [] : [.set(path, new)] } }
             }
             .accessibilityIdentifier(identifier(path, below: recordPath))
         }
@@ -155,17 +159,26 @@ private struct ScalarField: View {
 
     /// Sets the field to `new`, after any edit in flight: a picker, a well or a
     /// stepper changes it at once, perhaps many times in a row, and the newest stands.
-    private func apply(_ new: JSONValue?) {
-        // a control may set what it already shows; that is no edit
-        guard new != value else { return }
-        let ops: [EditOp]
-        if let key = path.last, case .key(let name) = key {
-            ops = fieldOps(at: Array(path.dropLast()), key: name, old: value, new: new, required: required)
-        } else {
-            // an item of a list, set in place
-            ops = [.set(path, new ?? .string(""))]
+    private func apply(_ new: JSONValue?) { apply { _ in new } }
+
+    /// Sets the field to what `change` makes of its value as the file holds it
+    /// when the change runs, as one end of a gradient or one coordinate is set
+    /// while the other's change may still be on its way.
+    private func apply(_ change: @escaping (JSONValue?) -> JSONValue?) {
+        let (path, required) = (path, required)
+        Task {
+            await model.applyLatest(to: file, at: path) { held in
+                let old = held[path: path]
+                let new = change(old)
+                // a control may set what the file already holds; that is no edit
+                guard new != old else { return [] }
+                if let key = path.last, case .key(let name) = key {
+                    return fieldOps(at: Array(path.dropLast()), key: name, old: old, new: new, required: required)
+                }
+                // an item of a list, set in place
+                return [.set(path, new ?? .string(""))]
+            }
         }
-        Task { await model.applyLatest(ops, to: file, key: file + "#" + fieldID) }
     }
 
     var body: some View {
@@ -197,9 +210,12 @@ private struct ScalarField: View {
                 if case .array(let stops)? = value {
                     ForEach(Array(stops.enumerated()), id: \.offset) { index, stop in
                         ColorWell(title: index == 0 ? "From" : "To", value: stop, seed: stop) { chosen in
-                            var changed = stops
-                            changed[index] = chosen
-                            apply(.array(changed))
+                            // this end only, beside the other as the file holds it
+                            apply { held in
+                                guard var changed = held?.array, changed.indices.contains(index) else { return held }
+                                changed[index] = chosen
+                                return .array(changed)
+                            }
                         }
                     }
                 }
@@ -212,7 +228,15 @@ private struct ScalarField: View {
             TimeField(title: title, value: value) { apply(.string($0)) }
                 .accessibilityIdentifier(fieldID)
         case .coordinate:
-            CoordinateField(title: title, value: value, identifier: fieldID) { apply($0) }
+            CoordinateField(title: title, value: value, identifier: fieldID) { index, number in
+                // this coordinate only, beside the other as the file holds it
+                apply { held in
+                    var numbers = held?.array ?? []
+                    while numbers.count < 2 { numbers.append(.number(0)) }
+                    numbers[index] = .number(number)
+                    return .array(numbers)
+                }
+            }
         case .symbol:
             SymbolField(title: title, value: value?.string, identifier: fieldID) { apply(.string($0)) }
         case .date, .dateTime:

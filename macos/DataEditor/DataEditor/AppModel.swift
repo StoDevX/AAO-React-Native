@@ -442,18 +442,35 @@ final class AppModel {
     /// The newest change each control has waiting, by its key, counted so an older one knows it was overtaken.
     private var latestChanges: [String: Int] = [:]
 
-    /// Applies a control's change once the edit in flight is done, rather than
-    /// having it refused: a colour well dragged or a stepper held sends a stream
-    /// of changes, and only the newest of those waiting is applied.
-    func applyLatest(_ ops: [EditOp], to file: String, key: String) async {
+    /// Applies a control's change to the value at `path` in `file` once the
+    /// edit in flight, an update or a submission is done, rather than having it
+    /// refused: a colour well dragged or a stepper held sends a stream of
+    /// changes, and only the newest of those waiting for one place is applied.
+    /// `build` makes the edits from the file as it is when the change runs, not
+    /// as it was on screen, which an edit since may have changed.
+    func applyLatest(to file: String, at path: [PathKey], build: @escaping @MainActor (JSONValue) -> [EditOp]) async {
+        let key = file + "#" + path.map(\.description).joined(separator: ".")
         let change = (latestChanges[key] ?? 0) + 1
         latestChanges[key] = change
-        while editing || updating {
-            if shuttingDown { return }
-            try? await Task.sleep(for: .milliseconds(30))
+        while true {
+            while editing || updating || sending {
+                if shuttingDown { return }
+                try? await Task.sleep(for: .milliseconds(30))
+            }
+            guard latestChanges[key] == change, let current = await currentValue(of: file) else { return }
+            // another change may have begun its edit while the file was read; this one waits for it too
+            guard !editing, !updating, !sending else { continue }
+            let ops = build(current)
+            if !ops.isEmpty { await apply(ops, to: file) }
+            return
         }
-        guard latestChanges[key] == change else { return }
-        await apply(ops, to: file)
+    }
+
+    /// `file`'s value as the workspace holds it now: the one on screen, or else read afresh.
+    private func currentValue(of file: String) async -> JSONValue? {
+        if documentFile == file, let value { return value }
+        guard let helper, let text = try? await helper.readText(file) else { return nil }
+        return try? await helper.parse(text)
     }
 
     /// Whether `file` is one no control may change: a read-only set's, or one a generator writes.
