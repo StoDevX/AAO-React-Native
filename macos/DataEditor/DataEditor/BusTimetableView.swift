@@ -221,9 +221,12 @@ private struct TimetableGrid: View {
                     .contentShape(Rectangle())
                     .accessibilityIdentifier(id("skipped"))
                     .contextMenu {
-                        // the stop before's time, or noon, as somewhere to start
+                        // the stop before's time, or noon, as somewhere to start; a short trip's whole
+                        // row is written, so it is read from the file as it is then, not from this menu
                         Button("Stops Here") {
-                            apply { timetable.setTime(trip: trip, stop: stop, timetable.startingTime(trip: trip, stop: stop), at: $0) }
+                            applyLatest(["times", .index(trip), .index(stop)]) {
+                                $0.setTime(trip: trip, stop: stop, $0.startingTime(trip: trip, stop: stop), at: $1)
+                            }
                         }
                     }
             }
