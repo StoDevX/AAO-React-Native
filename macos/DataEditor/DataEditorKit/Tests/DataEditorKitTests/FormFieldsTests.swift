@@ -85,6 +85,23 @@ struct FormFieldsTests {
         #expect(try kind(#"{"type":"array","items":[{"type":"number"},{"type":"number"},{"type":"number"}],"editor":"color"}"#) == .color(triple: true))
     }
 
+    /// A help button is one of several kinds, told apart by its fixed `action`: each kind its own fields.
+    @Test func objectsToldApartByAFixedValueAreVariants() throws {
+        let kind = try kind(#"""
+            {"oneOf": [
+              {"type": "object", "title": "Open a Link", "properties": {"title": {"type": "string", "title": "Title"}, "action": {"const": "open-url"},
+               "params": {"type": "object", "title": "Params", "properties": {"url": {"type": "string", "title": "Link"}}}}},
+              {"type": "object", "title": "Send an Email", "properties": {"title": {"type": "string", "title": "Title"}, "action": {"const": "send-email"},
+               "params": {"type": "object", "title": "Params", "properties": {"subject": {"type": "string", "title": "Subject"}}}}}
+            ]}
+            """#)
+        guard case .variants(let key, let variants) = kind else { Issue.record("\(kind)"); return }
+        #expect(key == "action")
+        #expect(variants.map(\.value) == ["open-url", "send-email"])
+        #expect(variants.map(\.label) == ["Open a Link", "Send an Email"])
+        #expect(variants[1].fields.map(\.key) == ["params", "title"])
+    }
+
     @Test func twoNumbersTaggedAsACoordinateAreOne() throws {
         #expect(try kind(#"{"type":"array","items":[{"type":"number"},{"type":"number"}],"editor":"coordinate"}"#) == .coordinate)
     }

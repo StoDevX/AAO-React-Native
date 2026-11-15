@@ -25,6 +25,9 @@ public indirect enum FieldKind: Hashable, Sendable {
     case map(value: FieldKind)
     /// exactly one of several fields, as a contact has a phone number or a link
     case oneOf([Alternative])
+    /// one of several kinds of object, each fixing `key` to its own value, as a
+    /// help button's `action` says whether it opens a link or sends an email
+    case variants(key: String, [Variant])
 }
 
 /// One choice of a `oneOf` field: its label, and the fields it fills in.
@@ -32,6 +35,18 @@ public struct Alternative: Hashable, Sendable {
     public let label: String
     public let fields: [FormField]
     public init(label: String, fields: [FormField]) {
+        self.label = label
+        self.fields = fields
+    }
+}
+
+/// One kind of a `variants` field: the value its key holds, what it is called, and its fields.
+public struct Variant: Hashable, Sendable {
+    public let value: String
+    public let label: String
+    public let fields: [FormField]
+    public init(value: String, label: String, fields: [FormField]) {
+        self.value = value
         self.label = label
         self.fields = fields
     }
@@ -100,9 +115,27 @@ private func kind(of schema: JSONValue, title: String) -> FieldKind {
         }
         return .object([])
     default:
+        if let branches = schema["oneOf"]?.array, let (key, kinds) = variants(of: branches) { return .variants(key: key, kinds) }
         if let first = schema["oneOf"]?[0] ?? schema["anyOf"]?[0] { return kind(of: first, title: title) }
         return .text
     }
+}
+
+/// The kinds `branches` are when each is an object fixing one key, the same in
+/// all, to a value of its own, as a help button's `action`: that key, and each
+/// branch's value, title and fields. Nil for branches told apart some other way.
+private func variants(of branches: [JSONValue]) -> (String, [Variant])? {
+    guard branches.count > 1 else { return nil }
+    let fixed: [[String: String]] = branches.map { branch in
+        guard case .object(let properties)? = branch["properties"] else { return [:] }
+        return properties.compactMapValues { $0["const"]?.string }
+    }
+    guard let key = fixed[0].keys.sorted().first(where: { key in fixed.allSatisfy { $0[key] != nil } }) else { return nil }
+    let values = fixed.compactMap { $0[key] }
+    guard Set(values).count == values.count else { return nil }
+    return (key, zip(branches, values).map { branch, value in
+        Variant(value: value, label: branch["title"]?.string ?? value, fields: formFields(schema: branch))
+    })
 }
 
 /// Whether a form leaves the field off: hidden by its hint, or fixed by `const`.

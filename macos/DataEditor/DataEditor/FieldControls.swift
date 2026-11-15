@@ -81,6 +81,12 @@ private func starting(_ kind: FieldKind) -> JSONValue {
     case .number: .number(0)
     case .coordinate: .array([.number(0), .number(0)])
     case .choice(let values): .string(values.first ?? "")
+    // the first kind, with its groups empty to fill in
+    case .variants(let key, let kinds):
+        .object([key: .string(kinds.first?.value ?? "")].merging(
+            (kinds.first?.fields ?? []).compactMap { field in
+                if case .object = field.kind { (field.key, JSONValue.object([:])) } else { nil }
+            }, uniquingKeysWith: { first, _ in first }))
     default: .string("")
     }
 }
@@ -128,6 +134,10 @@ private struct FieldRow: View {
             MapField(title: field.title, valueKind: valueKind, path: path, entries: value, file: file, recordPath: recordPath)
         case .oneOf(let alternatives):
             OneOfField(field: field, alternatives: alternatives, base: base, parent: parent, file: file, recordPath: recordPath)
+        case .variants(let key, let kinds):
+            Section(field.title) {
+                VariantFields(key: key, variants: kinds, path: path, value: value, file: file, recordPath: recordPath)
+            }
         default:
             ScalarField(title: field.title, help: field.help, kind: field.kind, path: path, value: value,
                         required: field.required, file: file, recordPath: recordPath)
@@ -339,6 +349,7 @@ extension FieldKind {
 /// its own fields, and anything else is one field.
 enum ItemControl {
     case group([FormField])
+    case variants(key: String, [Variant])
     case list(item: FieldKind, itemTitle: String)
     case map(value: FieldKind)
     case field
@@ -346,6 +357,7 @@ enum ItemControl {
     init(_ kind: FieldKind) {
         switch kind {
         case .object(let fields): self = .group(fields)
+        case .variants(let key, let kinds): self = .variants(key: key, kinds)
         case .list, .tokens, .days:
             let (item, itemTitle) = kind.listed(title: "")!
             self = .list(item: item, itemTitle: itemTitle)
@@ -387,6 +399,10 @@ private struct ItemField: View {
         case .group(let fields):
             ItemGroup(title: title, isExpanded: $isExpanded) {
                 FieldRows(fields: fields, base: path, value: value, file: file, recordPath: recordPath)
+            }
+        case .variants(let key, let kinds):
+            ItemGroup(title: title, isExpanded: $isExpanded) {
+                VariantFields(key: key, variants: kinds, path: path, value: value, file: file, recordPath: recordPath)
             }
         case .list(let item, let itemTitle):
             ItemGroup(title: title, isExpanded: $isExpanded) {
@@ -591,6 +607,48 @@ private struct MapEntries: View {
             Button("Add", systemImage: "plus", action: addEntry)
                 .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
         }
+    }
+}
+
+/// One of several kinds of object, as a help button opens a link or sends an
+/// email: the kind chosen with a picker, by the value its key holds, and that
+/// kind's own fields.
+private struct VariantFields: View {
+    @Environment(AppModel.self) private var model
+    let key: String
+    let variants: [Variant]
+    let path: [PathKey]
+    let value: JSONValue?
+    let file: String
+    let recordPath: [PathKey]
+
+    /// The kind the object is, by the value its key holds, or the first.
+    private var chosen: Int { variants.firstIndex { $0.value == value?[key]?.string } ?? 0 }
+
+    /// Switches to kind `index`: fields only the old kind has go, a group of
+    /// fields the new kind has starts empty, as its fields differ, and the rest stay.
+    private func choose(_ index: Int) {
+        guard index != chosen else { return }
+        let (old, new) = (variants[chosen], variants[index])
+        let kept = Set(new.fields.map(\.key))
+        var ops: [EditOp] = old.fields.filter { !kept.contains($0.key) && value?[$0.key] != nil }.map { .delete(path + [.key($0.key)]) }
+        ops += new.fields.compactMap { field in
+            if case .object = field.kind { .set(path + [.key(field.key)], .object([:])) } else { nil }
+        }
+        ops.append(.set(path + [.key(key)], .string(new.value)))
+        Task { await model.apply(ops, to: file) }
+    }
+
+    var body: some View {
+        LabeledContent("Kind") {
+            Picker("Kind", selection: Binding(get: { chosen }, set: choose)) {
+                ForEach(Array(variants.enumerated()), id: \.offset) { index, variant in Text(variant.label).tag(index) }
+            }
+            .labelsHidden()
+            .fixedSize()
+            .accessibilityIdentifier(identifier(path + [.key(key)], below: recordPath))
+        }
+        FieldRows(fields: variants[chosen].fields, base: path, value: value, file: file, recordPath: recordPath)
     }
 }
 

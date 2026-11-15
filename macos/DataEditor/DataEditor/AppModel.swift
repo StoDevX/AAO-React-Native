@@ -632,6 +632,8 @@ final class AppModel {
     func revert(_ file: String) async {
         guard !updating, !submitting else { return }
         await editsFinished()
+        // an update or a submission may have begun while it waited
+        guard !updating, !submitting else { return }
         discards += 1
         try? workspace.revert(file)
         // text kept from the file, and the notices about it, are edits the revert drops too
@@ -645,6 +647,8 @@ final class AppModel {
     func discardAll() async {
         guard !updating, !submitting else { return }
         await editsFinished()
+        // an update or a submission may have begun while it waited
+        guard !updating, !submitting else { return }
         discards += 1
         try? workspace.discardAll()
         keptDocuments = [:]
@@ -868,7 +872,8 @@ final class AppModel {
 
     /// Replaces a document's text, then refreshes what follows from a changed file.
     func writeText(_ file: String, _ text: String, expected: String) async -> Bool {
-        guard !updating, !sending, let helper, !isConflicted(file) else { return false }
+        // refused beside an edit in flight, as an edit is: the two would share `editing`
+        guard !updating, !sending, !editing, let helper, !isConflicted(file) else { return false }
         do {
             // an update waits for edits, so it does not save data/ while this writes into it
             try await edits.run { try await helper.writeText(file, text, expected: expected) }

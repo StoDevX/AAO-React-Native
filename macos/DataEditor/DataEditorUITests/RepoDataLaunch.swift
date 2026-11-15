@@ -107,12 +107,13 @@ extension XCTestCase {
     }
 
     /// Scrolls `window`'s form, or what is at `across` of its width, such as
-    /// the sidebar, until `element` can be clicked. A window at its smallest,
-    /// as CI opens it, shows only the top of a long form or list.
+    /// the sidebar, down and then up until `element` can be clicked. A window at
+    /// its smallest, as CI opens it, shows only part of a long form or list.
     @MainActor
     func reveal(_ element: XCUIElement, in window: XCUIElement, across: CGFloat = 0.75) {
-        let form = window.coordinate(withNormalizedOffset: CGVector(dx: across, dy: 0.5))
-        for _ in 0..<30 where !element.isHittable { form.scroll(byDeltaX: 0, deltaY: -300) }
+        let list = window.coordinate(withNormalizedOffset: CGVector(dx: across, dy: 0.5))
+        for _ in 0..<15 where !element.isHittable { list.scroll(byDeltaX: 0, deltaY: -300) }
+        for _ in 0..<30 where !element.isHittable { list.scroll(byDeltaX: 0, deltaY: 300) }
     }
 
     /// The Current changes window, opened if it is not.
