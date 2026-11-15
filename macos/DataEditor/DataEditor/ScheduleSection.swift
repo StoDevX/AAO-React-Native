@@ -135,7 +135,7 @@ struct DraftField: View {
             // a paragraph sits under its name and reads from the left, across the whole row
             VStack(alignment: .leading, spacing: 4) {
                 Text(label)
-                field.labelsHidden().multilineTextAlignment(.leading)
+                field.labelsHidden()
             }
         } else {
             field
@@ -143,7 +143,11 @@ struct DraftField: View {
     }
 
     private var field: some View {
-        TextField(label, text: $draft, axis: axis)
+        // bordered and, while empty, naming what goes in it: a form's labels and values are otherwise one colour
+        TextField(label, text: $draft, prompt: Text(label), axis: axis)
+            .textFieldStyle(.roundedBorder)
+            // text in a box reads from its left edge; the boxes line up, so their text does too
+            .multilineTextAlignment(.leading)
             .focused($focused)
             .onSubmit(commitIfChanged)
             .onChange(of: draft) { old, _ in

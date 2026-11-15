@@ -18,7 +18,8 @@ struct CommitField: View {
     }
 
     var body: some View {
-        TextField(label, text: $draft)
+        TextField(label, text: $draft, prompt: Text(label))
+            .textFieldStyle(.roundedBorder)
             .labelsHidden()
             .multilineTextAlignment(.leading)
             .focused($focused)

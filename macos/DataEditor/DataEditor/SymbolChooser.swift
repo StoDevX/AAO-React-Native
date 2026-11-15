@@ -116,7 +116,8 @@ struct SymbolGrid: View {
                 .multilineTextAlignment(.leading)
                 .accessibilityIdentifier("symbol-search")
             ScrollView {
-                LazyVGrid(columns: Array(repeating: GridItem(.fixed(36)), count: 8)) {
+                // columns share the width the scroll bar leaves, rather than pushing past it
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(minimum: 32)), count: 8)) {
                     ForEach(SymbolChooser.offered(search), id: \.self) { name in
                         Button { choose(name) } label: {
                             Image(systemName: name).font(.title3).frame(width: 32, height: 32)
@@ -132,6 +133,8 @@ struct SymbolGrid: View {
             }
             .frame(height: 240)
         }
+        // each fills the popover's width, so a scroll bar coming and going as the grid fills moves nothing
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .frame(width: 8 * 36 + 7 * 8 + 24)
     }

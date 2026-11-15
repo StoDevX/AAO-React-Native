@@ -54,6 +54,27 @@ final class FieldControlUITests: XCTestCase {
         XCTAssertTrue(waitFor("icon: cup.and.saucer", in: "student-work-areas.yaml", data: data))
     }
 
+    /// The symbol search keeps its width as a search is typed into it.
+    func testTheSymbolSearchKeepsItsWidthAsItIsTyped() throws {
+        let app = try launchWithRepoData(opening: "student-work-areas").app
+        let window = currentChanges(in: app)
+        let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
+        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        dining.click()
+        let icon = window.buttons["field-icon"]
+        XCTAssertTrue(icon.waitForExistence(timeout: 10))
+        icon.click()
+        let search = app.textFields["symbol-search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        let popover = app.popovers.firstMatch
+        let empty = (search: search.frame, popover: popover.frame)
+        attachScreenshot(of: app.windows.firstMatch, named: "The symbol search, empty")
+        search.typeText("cup")
+        attachScreenshot(of: app.windows.firstMatch, named: "The symbol search, with cup typed")
+        XCTAssertEqual(search.frame, empty.search)
+        XCTAssertEqual(popover.frame, empty.popover)
+    }
+
     /// A symbol the grid doesn't list is offered once its whole name is typed.
     func testASymbolTheGridLacksIsOfferedByName() throws {
         let app = try launchWithRepoData(opening: "student-work-areas").app
@@ -146,6 +167,19 @@ final class FieldControlUITests: XCTestCase {
         attachScreenshot(of: window, named: "The Express's notice under its name")
         XCTAssertGreaterThanOrEqual(notice.frame.minY, name.frame.maxY)
         XCTAssertEqual(notice.frame.minX, name.frame.minX, accuracy: 8)
+    }
+
+    /// An empty field says what goes in it, so a new group shows where to type.
+    func testANewGroupsEmptyFieldsSayWhatGoesInThem() throws {
+        let app = try launchWithRepoData(opening: "map-categories:map-categories.yaml").app
+        let window = currentChanges(in: app)
+        let add = window.buttons["add-field-stolaf.groups"]
+        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        add.click()
+        let label = window.textFields["field-stolaf.groups.#14.label"]
+        XCTAssertTrue(label.waitForExistence(timeout: 10))
+        attachScreenshot(of: window, named: "A new group, empty")
+        XCTAssertEqual(label.placeholderValue, "Label")
     }
 
     /// A food item's station is chosen from the stations the menu lists.
