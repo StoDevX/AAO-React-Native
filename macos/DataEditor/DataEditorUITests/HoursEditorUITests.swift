@@ -17,7 +17,9 @@ final class HoursEditorUITests: XCTestCase {
         let app = try launchWithRepoData(keepsScrapes: true, opening: theCage).app
         let window = currentChanges(in: app)
         XCTAssertTrue(window.descendants(matching: .any)["scraped-lock"].firstMatch.waitForExistence(timeout: 10))
-        XCTAssertFalse(window.textFields["service-title-0"].isEnabled)
+        // the scrape's title is written as text, with no field to type in
+        XCTAssertTrue(window.staticTexts["Hours"].firstMatch.exists)
+        XCTAssertFalse(window.textFields["service-title-0"].exists)
         attachScreenshot(of: window, named: "The Cage's usual hours, kept by the scrape")
     }
 

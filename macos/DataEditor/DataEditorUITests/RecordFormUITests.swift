@@ -86,9 +86,9 @@ final class RecordFormUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "student-wages").app
         let window = currentChanges(in: app)
         XCTAssertTrue(window.staticTexts["Updated monthly from St. Olaf's student compensation page"].waitForExistence(timeout: 10))
-        let tier = window.textFields["field-ST.1"]
-        XCTAssertTrue(tier.waitForExistence(timeout: 5))
-        XCTAssertFalse(tier.isEnabled)
+        // a value that can't be edited is written as text, not as a dimmed field that reads as empty
+        XCTAssertTrue(window.staticTexts["12"].waitForExistence(timeout: 5))
+        XCTAssertFalse(window.textFields["field-ST.1"].exists)
         attachScreenshot(of: window, named: "Student Wages, read only")
     }
 }

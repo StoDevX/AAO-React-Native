@@ -73,6 +73,7 @@ struct ScheduleSection: View {
 /// again on Return or when focus leaves.
 struct DraftField: View {
     @Environment(AppModel.self) private var model
+    @Environment(\.isEnabled) private var isEnabled
     let label: String
     /// the file on screen
     let file: String
@@ -136,7 +137,10 @@ struct DraftField: View {
     }
 
     var body: some View {
-        if axis == .vertical {
+        if !isEnabled {
+            // a value that can't be edited reads as text: a dimmed field looks empty
+            readOnly
+        } else if axis == .vertical {
             // a paragraph sits under its name and reads from the left, across the whole row
             VStack(alignment: .leading, spacing: 4) {
                 Text(label)
@@ -144,6 +148,16 @@ struct DraftField: View {
             }
         } else {
             field
+        }
+    }
+
+    /// The value as text beside its name, or for a paragraph under it.
+    @ViewBuilder private var readOnly: some View {
+        let shown = Text(value.isEmpty ? "—" : value).textSelection(.enabled).foregroundStyle(value.isEmpty ? .secondary : .primary)
+        if axis == .vertical {
+            VStack(alignment: .leading, spacing: 4) { Text(label); shown }
+        } else {
+            LabeledContent { shown } label: { Text(label) }
         }
     }
 
