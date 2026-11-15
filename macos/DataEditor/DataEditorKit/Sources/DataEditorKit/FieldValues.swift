@@ -147,3 +147,12 @@ public func choices(_ pointer: String, in file: JSONValue, at fieldPath: [PathKe
         }
     }.filter { seen.insert($0).inserted }
 }
+
+/// What a list item calls itself: its own name, title or label, as a food
+/// item's `label: Pizza` or a show's `title`, or nil when it has none of them.
+public func itemName(_ item: JSONValue?) -> String? {
+    for key in ["name", "title", "label"] {
+        if let name = item?[key]?.string?.trimmingCharacters(in: .whitespaces), !name.isEmpty { return name }
+    }
+    return nil
+}

@@ -37,11 +37,11 @@ final class RecordFormUITests: XCTestCase {
         XCTAssertFalse(window.buttons["Submit for Review…"].isEnabled)
     }
 
-    /// A group opens from its title, not only from the chevron before it.
+    /// A group opens from its title, not only from the chevron before it, and is titled by its own label.
     func testAGroupOpensFromItsTitle() throws {
         let app = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml").app
         let window = currentChanges(in: app)
-        let item = window.disclosureTriangles["Food Items 1"]
+        let item = window.disclosureTriangles["Single Slice"]
         XCTAssertTrue(item.waitForExistence(timeout: 10))
         clickTitle(of: item)
         XCTAssertTrue(window.textFields["field-foodItems.#1.label"].waitForExistence(timeout: 5))

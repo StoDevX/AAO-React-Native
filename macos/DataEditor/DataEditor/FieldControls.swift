@@ -430,15 +430,17 @@ private struct ListItems: View {
         }
         ForEach(items.indices.map { Placed(path: path + [.index($0)], value: $0) }, id: \.path) { place in
             let (index, value) = (place.value, items[place.value])
+            // an item goes by its own name, label or title, as a food item's Pizza, else by its place
+            let name = itemName(value) ?? "\(itemTitle) \(index + 1)"
             HStack(alignment: .top) {
-                ItemField(title: "\(itemTitle) \(index + 1)", isExpanded: isOpen(index), kind: item, path: path + [.index(index)], value: value,
+                ItemField(title: name, isExpanded: isOpen(index), kind: item, path: path + [.index(index)], value: value,
                           file: file, recordPath: recordPath)
                 Spacer()
                 Button("Move Up", systemImage: "arrow.up") { move(index, by: -1) }
                     .labelStyle(.iconOnly).disabled(editing || index == 0)
                 Button("Move Down", systemImage: "arrow.down") { move(index, by: 1) }
                     .labelStyle(.iconOnly).disabled(editing || index == items.count - 1)
-                Button("Remove \(itemTitle) \(index + 1)", systemImage: "minus.circle", role: .destructive) {
+                Button("Remove \(name)", systemImage: "minus.circle", role: .destructive) {
                     if !isRepeatClick() { apply([.delete(path + [.index(index)])]) }
                 }
                 .labelStyle(.iconOnly).disabled(editing)

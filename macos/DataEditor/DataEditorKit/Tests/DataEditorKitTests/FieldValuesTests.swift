@@ -75,3 +75,19 @@ struct ChoicesTests {
         #expect(choices("/nowhere/*/label", in: pause, at: []) == [])
     }
 }
+
+struct ItemNameTests {
+    private func item(_ json: String) throws -> JSONValue { try JSONDecoder().decode(JSONValue.self, from: Data(json.utf8)) }
+
+    @Test func anItemIsCalledByItsNameTitleOrLabel() throws {
+        #expect(itemName(try item(#"{"label":"Pizza","station":"Pizza"}"#)) == "Pizza")
+        #expect(itemName(try item(#"{"day":"monday","title":"The Spotlight"}"#)) == "The Spotlight")
+        #expect(itemName(try item(#"{"name":"1st floor","entries":[]}"#)) == "1st floor")
+    }
+
+    @Test func anItemWithoutOneHasNone() throws {
+        #expect(itemName(try item(#"{"categories":["parking"],"icon":"parkingsign"}"#)) == nil)
+        #expect(itemName(try item(#"{"label":"  "}"#)) == nil)
+        #expect(itemName(try item(#""just a name""#)) == nil)
+    }
+}
