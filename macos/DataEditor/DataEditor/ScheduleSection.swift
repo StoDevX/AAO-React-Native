@@ -209,28 +209,46 @@ private struct RowEditor: View {
     }
 
     var body: some View {
-        HStack {
-            DayPicker(week: model.week, days: row.days) { days in
-                Task { await model.apply([editor.setDays(service: service, row: index, days)]) }
+        // days and times on one line where they fit, the times under the days where they don't
+        ViewThatFits(in: .horizontal) {
+            HStack {
+                days
+                Spacer()
+                times
             }
-            .accessibilityIdentifier("days-\(service)-\(index)")
-            Spacer()
-            TimePicker(label: "Opens", text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
-                Task { await model.apply([editor.setTime(service: service, row: index, end: .from, time)]) }
+            VStack(alignment: .leading) {
+                days
+                HStack {
+                    times
+                    Spacer()
+                }
             }
-            Text("to")
-            TimePicker(label: "Closes", text: row.toText, identifier: "row-time-to-\(service)-\(index)") { time in
-                Task { await model.apply([editor.setTime(service: service, row: index, end: .to, time)]) }
-            }
-            if closesNextDay {
-                Text("next day").font(.caption).foregroundStyle(.secondary)
-            }
-            Button("Remove \(daySummary(row.days, week: model.week)) \(row.fromText) to \(row.toText)", systemImage: "minus.circle") {
-                if !isRepeatClick() { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
-            }
-                .labelStyle(.iconOnly)
-                .accessibilityIdentifier("remove-row-\(service)-\(index)")
         }
+    }
+
+    private var days: some View {
+        DayPicker(week: model.week, days: row.days) { days in
+            Task { await model.apply([editor.setDays(service: service, row: index, days)]) }
+        }
+        .accessibilityIdentifier("days-\(service)-\(index)")
+    }
+
+    @ViewBuilder private var times: some View {
+        TimePicker(label: "Opens", text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
+            Task { await model.apply([editor.setTime(service: service, row: index, end: .from, time)]) }
+        }
+        Text("to")
+        TimePicker(label: "Closes", text: row.toText, identifier: "row-time-to-\(service)-\(index)") { time in
+            Task { await model.apply([editor.setTime(service: service, row: index, end: .to, time)]) }
+        }
+        if closesNextDay {
+            Text("next day").font(.caption).foregroundStyle(.secondary)
+        }
+        Button("Remove \(daySummary(row.days, week: model.week)) \(row.fromText) to \(row.toText)", systemImage: "minus.circle") {
+            if !isRepeatClick() { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
+        }
+            .labelStyle(.iconOnly)
+            .accessibilityIdentifier("remove-row-\(service)-\(index)")
     }
 }
 
