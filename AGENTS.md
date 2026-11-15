@@ -384,6 +384,11 @@ scrape (`data/_scrapes/bonapp-overrides.yaml`, the bus curation and repairs)
 are edited instead, and take effect at the scrape's next run, not in the
 editor's preview.
 
+Its UI tests wait with `waitUntilExists`, not `waitForExistence`, which checks
+only once a second. Before clicking anything a long form may have scrolled
+away, call `reveal`: XCUITest's `isHittable`, and its own scroll to an element
+out of sight, each spend 35 to 65 seconds in this app before answering.
+
 ### Dining Hours
 
 `data/building-hours/1-3-stav.yaml` and `1-1-cage.yaml` are maintained by a

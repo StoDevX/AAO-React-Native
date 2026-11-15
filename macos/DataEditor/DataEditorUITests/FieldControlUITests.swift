@@ -18,10 +18,10 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "student-work-areas")
         let window = currentChanges(in: app)
         let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
-        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        XCTAssertTrue(dining.waitUntilExists(timeout: 10))
         dining.click()
         let color = window.popUpButtons["field-gradient"]
-        XCTAssertTrue(color.waitForExistence(timeout: 10))
+        XCTAssertTrue(color.waitUntilExists(timeout: 10))
         color.click()
         attachScreenshot(of: window, named: "A work area's colours, each with its swatch")
         app.menuItems["mint"].click()
@@ -33,7 +33,7 @@ final class FieldControlUITests: XCTestCase {
     func testColoursAreChosenInWells() throws {
         let app = try launchWithRepoData(opening: "webcams:webcams/2-east-quad.yaml").app
         let window = currentChanges(in: app)
-        XCTAssertTrue(window.colorWells["field-accentColor"].waitForExistence(timeout: 10))
+        XCTAssertTrue(window.colorWells["field-accentColor"].waitUntilExists(timeout: 10))
         attachScreenshot(of: window, named: "East Quad's accent colour in a well")
     }
 
@@ -42,13 +42,13 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "student-work-areas")
         let window = currentChanges(in: app)
         let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
-        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        XCTAssertTrue(dining.waitUntilExists(timeout: 10))
         dining.click()
         let icon = window.buttons["field-icon"]
-        XCTAssertTrue(icon.waitForExistence(timeout: 10))
+        XCTAssertTrue(icon.waitUntilExists(timeout: 10))
         icon.click()
         let search = app.textFields["symbol-search"]
-        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        XCTAssertTrue(search.waitUntilExists(timeout: 5))
         search.typeText("cup")
         attachScreenshot(of: app.windows.firstMatch, named: "Symbols matching cup")
         app.buttons["symbol-cup.and.saucer"].click()
@@ -60,13 +60,13 @@ final class FieldControlUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "student-work-areas").app
         let window = currentChanges(in: app)
         let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
-        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        XCTAssertTrue(dining.waitUntilExists(timeout: 10))
         dining.click()
         let icon = window.buttons["field-icon"]
-        XCTAssertTrue(icon.waitForExistence(timeout: 10))
+        XCTAssertTrue(icon.waitUntilExists(timeout: 10))
         icon.click()
         let search = app.textFields["symbol-search"]
-        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        XCTAssertTrue(search.waitUntilExists(timeout: 5))
         let popover = app.popovers.firstMatch
         let empty = (search: search.frame, popover: popover.frame)
         attachScreenshot(of: app.windows.firstMatch, named: "The symbol search, empty")
@@ -81,15 +81,15 @@ final class FieldControlUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "student-work-areas").app
         let window = currentChanges(in: app)
         let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
-        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        XCTAssertTrue(dining.waitUntilExists(timeout: 10))
         dining.click()
         let icon = window.buttons["field-icon"]
-        XCTAssertTrue(icon.waitForExistence(timeout: 10))
+        XCTAssertTrue(icon.waitUntilExists(timeout: 10))
         icon.click()
         let search = app.textFields["symbol-search"]
-        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        XCTAssertTrue(search.waitUntilExists(timeout: 5))
         search.typeText("tortoise.fill")
-        XCTAssertTrue(app.buttons["symbol-tortoise.fill"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["symbol-tortoise.fill"].waitUntilExists(timeout: 5))
     }
 
     /// An icon the file names that no symbol has is shown, and said to be wrong.
@@ -100,10 +100,10 @@ final class FieldControlUITests: XCTestCase {
         try text.replacingOccurrences(of: "icon: fork.knife", with: "icon: not.a.symbol").write(to: file, atomically: true, encoding: .utf8)
         let window = currentChanges(in: app)
         let dining = window.outlines["record-list"].staticTexts["Dining & BonApp"]
-        XCTAssertTrue(dining.waitForExistence(timeout: 10))
+        XCTAssertTrue(dining.waitUntilExists(timeout: 10))
         dining.click()
         let flag = window.staticTexts["symbol-problem-field-icon"]
-        XCTAssertTrue(flag.waitForExistence(timeout: 10))
+        XCTAssertTrue(flag.waitUntilExists(timeout: 10))
         XCTAssertEqual(flag.value as? String, "“not.a.symbol” isn't an SF Symbol. Choose one from the list.")
         attachScreenshot(of: window, named: "An icon that is no symbol")
     }
@@ -113,10 +113,10 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "faqs")
         let window = currentChanges(in: app)
         let faq = window.outlines["record-list"].staticTexts["Why can't I log in and see my balances?"]
-        XCTAssertTrue(faq.waitForExistence(timeout: 10))
+        XCTAssertTrue(faq.waitUntilExists(timeout: 10))
         faq.click()
         let targets = window.textFields["field-targets"]
-        XCTAssertTrue(targets.waitForExistence(timeout: 10))
+        XCTAssertTrue(targets.waitUntilExists(timeout: 10))
         targets.click()
         targets.typeKey(.rightArrow, modifierFlags: .command)
         targets.typeText("Home\r")
@@ -131,14 +131,13 @@ final class FieldControlUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "map-categories:map-categories.yaml").app
         let window = currentChanges(in: app)
         let expand = window.links["expand-all-field-stolaf.groups"]
-        XCTAssertTrue(expand.waitForExistence(timeout: 10))
+        XCTAssertTrue(expand.waitUntilExists(timeout: 10))
         expand.click()
         // Services lists five categories; Bike Racks one
         let five = window.textFields["field-stolaf.groups.#9.categories"]
         let one = window.textFields["field-stolaf.groups.#7.categories"]
-        XCTAssertTrue(five.waitForExistence(timeout: 10))
-        let form = window.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5))
-        for _ in 0..<40 where !five.isHittable { form.scroll(byDeltaX: 0, deltaY: -400) }
+        XCTAssertTrue(five.waitUntilExists(timeout: 10))
+        reveal(five, in: window, across: 0.65)
         attachScreenshot(of: window, named: "Services' five categories")
         XCTAssertGreaterThan(five.frame.height, one.frame.height * 1.5)
     }
@@ -148,7 +147,7 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml")
         let window = currentChanges(in: app)
         let latitude = window.textFields["field-schedules.#1.coordinates.Library-latitude"]
-        XCTAssertTrue(latitude.waitForExistence(timeout: 10))
+        XCTAssertTrue(latitude.waitUntilExists(timeout: 10))
         XCTAssertEqual(latitude.value as? String, "44.457643")
         XCTAssertEqual(window.textFields["field-schedules.#1.coordinates.Library-longitude"].value as? String, "-93.158715")
         attachScreenshot(of: window, named: "The Express's stop coordinates")
@@ -163,7 +162,7 @@ final class FieldControlUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/1-express.yaml").app
         let window = currentChanges(in: app)
         let notice = window.textFields["field-notice"]
-        XCTAssertTrue(notice.waitForExistence(timeout: 10))
+        XCTAssertTrue(notice.waitUntilExists(timeout: 10))
         let name = window.staticTexts["Notice"]
         attachScreenshot(of: window, named: "The Express's notice beside its name")
         XCTAssertGreaterThan(notice.frame.minX, name.frame.maxX)
@@ -175,10 +174,11 @@ final class FieldControlUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "map-categories:map-categories.yaml").app
         let window = currentChanges(in: app)
         let add = window.buttons["add-field-stolaf.groups"]
-        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        XCTAssertTrue(add.waitUntilExists(timeout: 10))
+        reveal(add, in: window)
         add.click()
         let label = window.textFields["field-stolaf.groups.#14.label"]
-        XCTAssertTrue(label.waitForExistence(timeout: 10))
+        XCTAssertTrue(label.waitUntilExists(timeout: 10))
         attachScreenshot(of: window, named: "A new group, empty")
         XCTAssertEqual(label.placeholderValue, "Label")
     }
@@ -188,9 +188,10 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "map-categories:map-categories.yaml")
         let window = currentChanges(in: app)
         let add = window.buttons["add-field-stolaf.groups"]
-        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        XCTAssertTrue(add.waitUntilExists(timeout: 10))
+        reveal(add, in: window)
         add.click()
-        XCTAssertTrue(window.textFields["field-stolaf.groups.#14.label"].waitForExistence(timeout: 10))
+        XCTAssertTrue(window.textFields["field-stolaf.groups.#14.label"].waitUntilExists(timeout: 10))
         app.typeText("Food Trucks\r")
         XCTAssertTrue(waitFor("label: Food Trucks", in: "map-categories.yaml", data: data))
     }
@@ -200,10 +201,10 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "faqs")
         let window = currentChanges(in: app)
         let faq = window.outlines["record-list"].staticTexts["Why can't I log in and see my balances?"]
-        XCTAssertTrue(faq.waitForExistence(timeout: 10))
+        XCTAssertTrue(faq.waitUntilExists(timeout: 10))
         faq.click()
         let remove = window.buttons["remove-colour-field-backgroundColor"]
-        XCTAssertTrue(remove.waitForExistence(timeout: 10))
+        XCTAssertTrue(remove.waitUntilExists(timeout: 10))
         remove.click()
         // the line goes, the foreground colour after it now following the icon
         XCTAssertTrue(waitFor("    icon: exclamationmark.circle\n    foregroundColor: '#b42318'", in: "faqs.yaml", data: data))
@@ -214,7 +215,7 @@ final class FieldControlUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "help:help/0-app.yaml").app
         let window = currentChanges(in: app)
         let subject = window.textFields["field-buttons.#1.params.subject"]
-        XCTAssertTrue(subject.waitForExistence(timeout: 10))
+        XCTAssertTrue(subject.waitUntilExists(timeout: 10))
         XCTAssertEqual(subject.value as? String, "A Thing")
         XCTAssertFalse(window.textFields["field-buttons.#1.params.url"].exists)
         attachScreenshot(of: window, named: "The app card's Email Us button")
@@ -225,15 +226,15 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "bus-repairs:bus-times/_repairs.yaml")
         let window = currentChanges(in: app)
         let add = window.buttons["add-field-repairs"]
-        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        XCTAssertTrue(add.waitUntilExists(timeout: 10))
         add.click()
         let addDate = window.buttons["Add Date"]
-        XCTAssertTrue(addDate.waitForExistence(timeout: 10))
+        XCTAssertTrue(addDate.waitUntilExists(timeout: 10))
         addDate.click()
         let file = data.appending(path: "bus-times/_repairs.yaml")
         XCTAssertTrue(waitFor("expires:", in: "bus-times/_repairs.yaml", data: data))
         let remove = window.buttons["remove-date-field-repairs.#1.expires"]
-        XCTAssertTrue(remove.waitForExistence(timeout: 10))
+        XCTAssertTrue(remove.waitUntilExists(timeout: 10))
         remove.click()
         let deadline = Date().addingTimeInterval(10)
         while (try? String(contentsOf: file, encoding: .utf8))?.contains("expires:") == true, Date() < deadline {
@@ -247,10 +248,11 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml")
         let window = currentChanges(in: app)
         let expand = window.links["expand-all-field-foodItems"]
-        XCTAssertTrue(expand.waitForExistence(timeout: 10))
+        XCTAssertTrue(expand.waitUntilExists(timeout: 10))
+        reveal(expand, in: window)
         expand.click()
         let station = window.popUpButtons["field-foodItems.#1.station"]
-        XCTAssertTrue(station.waitForExistence(timeout: 10))
+        XCTAssertTrue(station.waitUntilExists(timeout: 10))
         station.click()
         app.menuItems["Pita"].click()
         XCTAssertTrue(waitFor("station: Pita", in: "pause-menu.yaml", data: data))
@@ -263,16 +265,15 @@ final class FieldControlUITests: XCTestCase {
         let window = currentChanges(in: app)
         for list in ["stolaf.groups", "stolaf.icons", "carleton.groups", "carleton.icons"] {
             let expand = window.links["expand-all-field-\(list)"]
-            XCTAssertTrue(expand.waitForExistence(timeout: 10))
+            XCTAssertTrue(expand.waitUntilExists(timeout: 10))
             expand.click()
         }
         let earlier = window.textFields[first]
-        XCTAssertTrue(earlier.waitForExistence(timeout: 10))
+        XCTAssertTrue(earlier.waitUntilExists(timeout: 10))
         earlier.click()
         let field = window.textFields[second]
         // scrolled at a point in the form, which is the window's right-hand part
-        let form = window.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5))
-        for _ in 0..<40 where !field.isHittable { form.scroll(byDeltaX: 0, deltaY: -400) }
+        reveal(field, in: window, across: 0.65)
         XCTAssertTrue(field.isHittable)
         let before = field.frame
         field.click()
@@ -298,7 +299,7 @@ final class FieldControlUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app
         let window = currentChanges(in: app)
         let day = window.groups["timetable-1-days"].checkBoxes.firstMatch
-        XCTAssertTrue(day.waitForExistence(timeout: 10))
+        XCTAssertTrue(day.waitUntilExists(timeout: 10))
         XCTAssertFalse(day.isEnabled)
     }
 
@@ -307,14 +308,14 @@ final class FieldControlUITests: XCTestCase {
         let (app, data) = try launchWithRepoData()
         let window = currentChanges(in: app)
         let sidebar = window.outlines.firstMatch
-        XCTAssertTrue(sidebar.waitForExistence(timeout: 10))
+        XCTAssertTrue(sidebar.waitUntilExists(timeout: 10))
         for set in ["Student Work Areas", "Webcams", "Bus Times", "Important Contacts", "FAQs & Notices", "Pause Menu",
                     "KSTO Schedule", "Org Categories", "Map Categories", "Sources", "Dictionary", "Color Printers"] {
             let item = sidebar.staticTexts[set]
             reveal(item, in: window, across: 0.08)
             item.click()
             let first = window.outlines["record-list"].cells.firstMatch
-            if first.waitForExistence(timeout: 5) { first.click() }
+            if first.waitUntilExists(timeout: 5) { first.click() }
             RunLoop.current.run(until: Date().addingTimeInterval(1))
         }
         let base = data.deletingLastPathComponent().appending(path: "base/data")

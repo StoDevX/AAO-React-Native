@@ -5,13 +5,13 @@ final class RecordFormUITests: XCTestCase {
     func testEditingAContactShowsInTheOverview() throws {
         let app = try launchWithRepoData(opening: "contact-info:contact-info/1-1-pubsafe.yaml").app
         let button = currentChanges(in: app).textFields["field-buttonText"]
-        XCTAssertTrue(button.waitForExistence(timeout: 10))
+        XCTAssertTrue(button.waitUntilExists(timeout: 10))
         attachScreenshot(of: currentChanges(in: app), named: "PubSafe's form")
         button.click()
         button.typeKey("a", modifierFlags: .command)
         button.typeText("Call PubSafe\r")
         openOverview(in: app)
-        XCTAssertTrue(currentChanges(in: app).staticTexts["contact-info/1-1-pubsafe.yaml"].waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChanges(in: app).staticTexts["contact-info/1-1-pubsafe.yaml"].waitUntilExists(timeout: 5))
         XCTAssertTrue(currentChanges(in: app).staticTexts["+ buttonText: Call PubSafe"].exists)
     }
 
@@ -20,16 +20,16 @@ final class RecordFormUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "contact-info").app
         let window = currentChanges(in: app)
         let new = window.buttons["new-record"]
-        XCTAssertTrue(new.waitForExistence(timeout: 10))
+        XCTAssertTrue(new.waitUntilExists(timeout: 10))
         new.click()
         let title = app.textFields["new-record-title"]
-        XCTAssertTrue(title.waitForExistence(timeout: 5))
+        XCTAssertTrue(title.waitUntilExists(timeout: 5))
         title.click()
         title.typeText("Title IX")
         app.buttons["new-record-add"].click()
-        XCTAssertTrue(window.outlines["record-list"].staticTexts["Title IX"].waitForExistence(timeout: 10))
+        XCTAssertTrue(window.outlines["record-list"].staticTexts["Title IX"].waitUntilExists(timeout: 10))
         let missing = NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", "Phone Number or Button Link is missing", "Phone Number or Button Link is missing")
-        XCTAssertTrue(window.descendants(matching: .any).matching(missing).firstMatch.waitForExistence(timeout: 10))
+        XCTAssertTrue(window.descendants(matching: .any).matching(missing).firstMatch.waitUntilExists(timeout: 10))
         attachScreenshot(of: window, named: "A new contact, with its problems")
         // leaving it for another record does not let it through
         window.outlines["record-list"].staticTexts["PubSafe"].click()
@@ -42,24 +42,25 @@ final class RecordFormUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml").app
         let window = currentChanges(in: app)
         let item = window.disclosureTriangles["Single Slice"]
-        XCTAssertTrue(item.waitForExistence(timeout: 10))
+        XCTAssertTrue(item.waitUntilExists(timeout: 10))
         reveal(item, in: window)
         clickTitle(of: item)
-        XCTAssertTrue(window.textFields["field-foodItems.#1.label"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.textFields["field-foodItems.#1.label"].waitUntilExists(timeout: 5))
         attachScreenshot(of: window, named: "A food item, opened from its title")
     }
 
     /// A building with one floor shows it open; a menu's many food items open together.
     func testAListOfOneOpensAndAListOfManyExpandsAtOnce() throws {
         let one = try launchWithRepoData(opening: "building-directory:building-directory/bmc.yaml").app
-        XCTAssertTrue(currentChanges(in: one).textFields["field-floors.#1.name"].waitForExistence(timeout: 10))
+        XCTAssertTrue(currentChanges(in: one).textFields["field-floors.#1.name"].waitUntilExists(timeout: 10))
         one.terminate()
         let app = try launchWithRepoData(opening: "pause-menu:pause-menu.yaml").app
         let window = currentChanges(in: app)
         let expand = window.links["expand-all-field-foodItems"]
-        XCTAssertTrue(expand.waitForExistence(timeout: 10))
+        XCTAssertTrue(expand.waitUntilExists(timeout: 10))
+        reveal(expand, in: window)
         expand.click()
-        XCTAssertTrue(window.textFields["field-foodItems.#2.label"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.textFields["field-foodItems.#2.label"].waitUntilExists(timeout: 5))
         attachScreenshot(of: window, named: "Every food item expanded")
     }
 
@@ -68,12 +69,12 @@ final class RecordFormUITests: XCTestCase {
         let app = try launchWithRepoData(opening: "contact-info:contact-info/1-1-pubsafe.yaml").app
         let window = currentChanges(in: app)
         let phone = window.textFields["field-phoneNumber"]
-        XCTAssertTrue(phone.waitForExistence(timeout: 10))
+        XCTAssertTrue(phone.waitUntilExists(timeout: 10))
         phone.click()
         phone.typeKey("a", modifierFlags: .command)
         phone.typeText("12\r")
         let problem = window.staticTexts["problem-field-phoneNumber"]
-        XCTAssertTrue(problem.waitForExistence(timeout: 10))
+        XCTAssertTrue(problem.waitUntilExists(timeout: 10))
         XCTAssertEqual(problem.value as? String, "Phone Number should be a 10-digit phone number")
         attachScreenshot(of: window, named: "PubSafe's phone number with its problem beside it")
     }
@@ -89,7 +90,7 @@ final class RecordFormUITests: XCTestCase {
         let window = currentChanges(in: app)
         let add = window.buttons["add-field-floors.#1.entries"]
         let name = window.textFields["field-floors.#1.name"]
-        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        XCTAssertTrue(add.waitUntilExists(timeout: 10))
         attachScreenshot(of: window, named: "A floor's entries and their Add button")
         XCTAssertLessThan(add.frame.minX, name.frame.minX)
     }
@@ -97,9 +98,9 @@ final class RecordFormUITests: XCTestCase {
     func testAReadOnlySetCannotBeEdited() throws {
         let app = try launchWithRepoData(opening: "student-wages").app
         let window = currentChanges(in: app)
-        XCTAssertTrue(window.staticTexts["Updated monthly from St. Olaf's student compensation page"].waitForExistence(timeout: 10))
+        XCTAssertTrue(window.staticTexts["Updated monthly from St. Olaf's student compensation page"].waitUntilExists(timeout: 10))
         // a value that can't be edited is written as text, not as a dimmed field that reads as empty
-        XCTAssertTrue(window.staticTexts["12"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.staticTexts["12"].waitUntilExists(timeout: 5))
         XCTAssertFalse(window.textFields["field-ST.1"].exists)
         attachScreenshot(of: window, named: "Student Wages, read only")
     }

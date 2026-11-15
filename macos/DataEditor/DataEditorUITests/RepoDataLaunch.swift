@@ -80,7 +80,7 @@ extension XCTestCase {
             + (opening.map { ["-UITestOpen", $0] } ?? []) + arguments
         app.launch()
         if opening != nil {
-            XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 20))
+            XCTAssertTrue(currentChangesWindow(in: app).waitUntilExists(timeout: 20))
         }
         return (app, workspace.appending(path: "data"))
     }
@@ -92,10 +92,10 @@ extension XCTestCase {
     @MainActor @discardableResult
     func openCurrentChanges(in app: XCUIApplication) -> XCUIElement {
         let current = app.windows["Changesets"].outlines["changeset-list"].staticTexts["Current changes"]
-        XCTAssertTrue(current.waitForExistence(timeout: 20))
+        XCTAssertTrue(current.waitUntilExists(timeout: 20))
         current.doubleClick()
         let window = currentChangesWindow(in: app)
-        XCTAssertTrue(window.waitForExistence(timeout: 5))
+        XCTAssertTrue(window.waitUntilExists(timeout: 5))
         return window
     }
 
@@ -107,13 +107,36 @@ extension XCTestCase {
     }
 
     /// Scrolls `window`'s form, or what is at `across` of its width, such as
-    /// the sidebar, down and then up until `element` can be clicked. A window at
-    /// its smallest, as CI opens it, shows only part of a long form or list.
+    /// the sidebar, toward `element` until it is in sight. A window at its
+    /// smallest, as CI opens it, shows only part of a long form or list.
     @MainActor
     func reveal(_ element: XCUIElement, in window: XCUIElement, across: CGFloat = 0.75) {
         let list = window.coordinate(withNormalizedOffset: CGVector(dx: across, dy: 0.5))
-        for _ in 0..<15 where !element.isHittable { list.scroll(byDeltaX: 0, deltaY: -300) }
-        for _ in 0..<30 where !element.isHittable { list.scroll(byDeltaX: 0, deltaY: 300) }
+        let visible = sight(of: window)
+        var scrolls = 0
+        while scrolls < 45, !isInSight(element, in: window) {
+            // an element not laid out yet is further down a list that draws its rows as they come
+            let frame = element.frame
+            list.scroll(byDeltaX: 0, deltaY: frame.isEmpty || frame.midY > visible.maxY ? -300 : 300)
+            scrolls += 1
+        }
+    }
+
+    /// Whether `element`'s middle is inside `window` below its toolbar, read
+    /// from frames. XCUITest's `isHittable`, and a click on an element out of
+    /// sight, search for a point to click for 35 to 65 seconds before scrolling
+    /// in this app, so a test reveals what it clicks first.
+    @MainActor
+    func isInSight(_ element: XCUIElement, in window: XCUIElement) -> Bool {
+        let frame = element.frame
+        return !frame.isEmpty && sight(of: window).contains(CGPoint(x: frame.midX, y: frame.midY))
+    }
+
+    /// The part of `window` below its title bar and toolbar, which scrolled content passes under.
+    @MainActor
+    private func sight(of window: XCUIElement) -> CGRect {
+        let bounds = window.frame
+        return CGRect(x: bounds.minX, y: bounds.minY + 52, width: bounds.width, height: bounds.height - 52)
     }
 
     /// The Current changes window, opened if it is not.
@@ -127,7 +150,7 @@ extension XCTestCase {
     @MainActor
     func selectTheCage(in app: XCUIApplication) {
         let cage = currentChanges(in: app).outlines["record-list"].staticTexts["The Cage"]
-        XCTAssertTrue(cage.waitForExistence(timeout: 20))
+        XCTAssertTrue(cage.waitUntilExists(timeout: 20))
         cage.click()
     }
 
@@ -136,9 +159,9 @@ extension XCTestCase {
     func openOverview(in app: XCUIApplication) {
         let window = currentChanges(in: app)
         let overview = window.outlines["data-set-list"].staticTexts["Overview"]
-        XCTAssertTrue(overview.waitForExistence(timeout: 5))
+        XCTAssertTrue(overview.waitUntilExists(timeout: 5))
         overview.click()
-        XCTAssertTrue(window.descendants(matching: .any)["overview-page"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(window.descendants(matching: .any)["overview-page"].firstMatch.waitUntilExists(timeout: 5))
     }
 
     /// Keeps a screenshot of one element with the run, for a person to check by eye.
@@ -175,7 +198,8 @@ private func newestChange(under folders: [URL]) -> (file: String, date: Date)? {
 
 extension XCUIElement {
     /// Waits for the element to match `predicate`, as one does once the app catches up.
+    @MainActor
     func wait(until predicate: NSPredicate, timeout: TimeInterval) -> Bool {
-        XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: self)], timeout: timeout) == .completed
+        waitUntil("Waiting \(timeout)s for \(self) to match \(predicate)", timeout: timeout) { predicate.evaluate(with: self) }
     }
 }

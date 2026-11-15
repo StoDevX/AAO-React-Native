@@ -27,15 +27,15 @@ final class PullRequestUITests: XCTestCase {
         let changesets = app.windows["Changesets"]
         let list = changesets.outlines["changeset-list"]
         let newer = list.descendants(matching: .any)["pull-request-9002"]
-        XCTAssertTrue(newer.waitForExistence(timeout: 20))
+        XCTAssertTrue(newer.waitUntilExists(timeout: 20))
         XCTAssertTrue(list.staticTexts["Submitted"].exists)
         newer.click()
-        XCTAssertTrue(changesets.staticTexts["Open Stav and the Cage later on Fridays"].waitForExistence(timeout: 5))
+        XCTAssertTrue(changesets.staticTexts["Open Stav and the Cage later on Fridays"].waitUntilExists(timeout: 5))
         attachScreenshot(of: changesets, named: "Changesets window on a past pull request")
         newer.doubleClick()
 
         let window = app.windows.containing(.outline, identifier: "pull-request-record-list").firstMatch
-        XCTAssertTrue(window.waitForExistence(timeout: 5))
+        XCTAssertTrue(window.waitUntilExists(timeout: 5))
         XCTAssertTrue(window.staticTexts["+       - {days: [Fr], from: '7:30am', to: '10:00pm'}"].exists)
         // its list holds only what it changed
         let buildings = window.outlines["pull-request-record-list"]
@@ -46,7 +46,7 @@ final class PullRequestUITests: XCTestCase {
 
         buildings.staticTexts["The Cage"].click()
         let file = window.descendants(matching: .any)["pull-request-file"]
-        XCTAssertTrue(file.waitForExistence(timeout: 5))
+        XCTAssertTrue(file.waitUntilExists(timeout: 5))
         XCTAssertTrue(file.staticTexts["-       - {days: [Fr], from: '7:30am', to: '8:00pm'}"].exists)
         // read only: no editor
         XCTAssertFalse(window.textFields["service-title-0"].exists)
@@ -55,7 +55,7 @@ final class PullRequestUITests: XCTestCase {
         // ⌘0 brings the Changesets window back in front of the one it opened
         app.typeKey("0", modifierFlags: .command)
         list.descendants(matching: .any)["pull-request-9001"].click()
-        XCTAssertTrue(changesets.staticTexts["Close the Pause kitchen over fall break"].waitForExistence(timeout: 5))
+        XCTAssertTrue(changesets.staticTexts["Close the Pause kitchen over fall break"].waitUntilExists(timeout: 5))
         attachScreenshot(of: changesets, named: "A merged pull request with no saved diffs")
     }
 }

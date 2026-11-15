@@ -19,7 +19,7 @@ final class BusTimetableUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: express)
         let window = currentChanges(in: app)
         let cell = window.datePickers["timetable-1-cell-0-1"]
-        XCTAssertTrue(cell.waitForExistence(timeout: 10))
+        XCTAssertTrue(cell.waitUntilExists(timeout: 10))
         reveal(cell, in: window)
         attachScreenshot(of: window, named: "The Express's timetable")
         cell.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).click()
@@ -32,12 +32,12 @@ final class BusTimetableUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: express)
         let window = currentChanges(in: app)
         let cell = window.datePickers["timetable-1-cell-0-1"]
-        XCTAssertTrue(cell.waitForExistence(timeout: 10))
+        XCTAssertTrue(cell.waitUntilExists(timeout: 10))
         reveal(cell, in: window)
         cell.rightClick()
         app.menuItems["Doesn't Stop Here"].click()
         XCTAssertTrue(waitFor("3:00pm, false,", in: data))
-        XCTAssertTrue(window.staticTexts["timetable-1-skipped-0-1"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.staticTexts["timetable-1-skipped-0-1"].waitUntilExists(timeout: 5))
     }
 
     /// Another run of the loop: the Express runs hourly, so the next trip leaves at 10pm.
@@ -45,7 +45,7 @@ final class BusTimetableUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: express)
         let window = currentChanges(in: app)
         let add = window.buttons["timetable-1-add-trip"]
-        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        XCTAssertTrue(add.waitUntilExists(timeout: 10))
         add.click()
         XCTAssertTrue(waitFor("- [10:00pm, 10:08pm", or: "- ['10:00pm', '10:08pm'", in: data))
     }
@@ -54,7 +54,7 @@ final class BusTimetableUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: express)
         let window = currentChanges(in: app)
         let stop = window.textFields["timetable-1-stop-1"]
-        XCTAssertTrue(stop.waitForExistence(timeout: 10))
+        XCTAssertTrue(stop.waitUntilExists(timeout: 10))
         stop.click()
         stop.typeKey("a", modifierFlags: .command)
         stop.typeText("Rolvaag Library\r")
@@ -70,7 +70,7 @@ final class BusTimetableUITests: XCTestCase {
         // the record was open before the file changed; choosing it again reads it afresh
         window.outlines["record-list"].staticTexts["Oles Go"].click()
         window.outlines["record-list"].staticTexts["Express Bus"].click()
-        XCTAssertTrue(window.images["timetable-1-flag-0-2"].waitForExistence(timeout: 10))
+        XCTAssertTrue(window.images["timetable-1-flag-0-2"].waitUntilExists(timeout: 10))
     }
 
     /// A schedule's days are one control, a segment a day.
@@ -79,7 +79,7 @@ final class BusTimetableUITests: XCTestCase {
         let window = currentChanges(in: app)
         // AppKit's select-any segmented control shows each segment as a checkbox
         let days = window.groups["timetable-1-days"]
-        XCTAssertTrue(days.waitForExistence(timeout: 10))
+        XCTAssertTrue(days.waitUntilExists(timeout: 10))
         days.checkBoxes["Sun"].click()
         XCTAssertTrue(waitFor("- Su\n", in: data))
     }
@@ -89,18 +89,18 @@ final class BusTimetableUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: "bus-times")
         let window = currentChanges(in: app)
         let new = window.buttons["new-record"]
-        XCTAssertTrue(new.waitForExistence(timeout: 10))
+        XCTAssertTrue(new.waitUntilExists(timeout: 10))
         new.click()
         let title = app.textFields["new-record-title"]
-        XCTAssertTrue(title.waitForExistence(timeout: 5))
+        XCTAssertTrue(title.waitUntilExists(timeout: 5))
         title.click()
         title.typeText("Night Owl")
         app.buttons["new-record-add"].click()
         let schedule = window.buttons["timetable-add-schedule"]
-        XCTAssertTrue(schedule.waitForExistence(timeout: 10))
+        XCTAssertTrue(schedule.waitUntilExists(timeout: 10))
         schedule.click()
         let colour = window.buttons["add-colour-field-colors.bar"]
-        XCTAssertTrue(colour.waitForExistence(timeout: 10))
+        XCTAssertTrue(colour.waitUntilExists(timeout: 10))
         colour.click()
         attachScreenshot(of: window, named: "A new bus line with a schedule and a colour")
         let deadline = Date().addingTimeInterval(10)
@@ -122,7 +122,7 @@ final class BusTimetableUITests: XCTestCase {
         let (app, data) = try launchWithRepoData(opening: express)
         let window = currentChanges(in: app)
         let insert = window.buttons["timetable-1-stop-insert-0"]
-        XCTAssertTrue(insert.waitForExistence(timeout: 10))
+        XCTAssertTrue(insert.waitUntilExists(timeout: 10))
         insert.click()
         XCTAssertTrue(waitFor("      - St. Olaf College\n      - New Stop\n      - Library\n", in: data))
         // the new stop's name is ready to type over, once it has focus
@@ -135,14 +135,14 @@ final class BusTimetableUITests: XCTestCase {
     func testAGeneratedLinesTimetableIsLocked() throws {
         let app = try launchWithRepoData(opening: "bus-times:bus-times/3-red-line.yaml").app
         let window = currentChanges(in: app)
-        XCTAssertTrue(window.staticTexts["Generated weekly from the Hiawathaland GTFS feed; Bus Curation sets their notice and colours"].waitForExistence(timeout: 10))
+        XCTAssertTrue(window.staticTexts["Generated weekly from the Hiawathaland GTFS feed; Bus Curation sets their notice and colours"].waitUntilExists(timeout: 10))
         let add = window.buttons["timetable-1-add-trip"]
-        XCTAssertTrue(add.waitForExistence(timeout: 10))
+        XCTAssertTrue(add.waitUntilExists(timeout: 10))
         XCTAssertFalse(add.isEnabled)
         // nor does a cell's menu open
         let cell = window.datePickers["timetable-1-cell-0-0"]
         reveal(cell, in: window)
         cell.rightClick()
-        XCTAssertFalse(app.menuItems["Doesn't Stop Here"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.menuItems["Doesn't Stop Here"].waitUntilExists(timeout: 2))
     }
 }
