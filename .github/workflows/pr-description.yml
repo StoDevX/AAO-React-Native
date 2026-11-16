@@ -11,6 +11,12 @@ permissions:
   contents: read
   pull-requests: write
 
+# The newest run has the newest description, so an older run that is still
+# going must not post a warning after it.
+concurrency:
+  group: pr-description-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   description:
     name: Has a description
@@ -31,7 +37,7 @@ jobs:
           text=$(printf '%s' "$PR_BODY" | perl -0pe 's/<!--.*?-->//gs; s/\s+//g')
 
           existing=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
-            --jq ".[] | select(.body | contains(\"$marker\")) | .id" | head -n 1)
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"$marker\"))) | .id" | head -n 1)
 
           if [ -n "$text" ]; then
             if [ -n "$existing" ]; then
