@@ -27,6 +27,12 @@ export const LINKS: CampusLink[] = [
 		icon: 'wrench.and.screwdriver',
 	},
 	{
+		title: 'Student Health And Counseling Services',
+		description: 'Find information about student health services at Carleton.',
+		url: 'https://www.carleton.edu/student-health/',
+		icon: 'heart',
+	},
+	{
 		title: 'Web Print',
 		description: 'Submit and print documents.',
 		url: 'http://go.carleton.edu/webprint',
@@ -73,11 +79,5 @@ export const LINKS: CampusLink[] = [
 		description: 'Browse resources and services offered by the Career Center.',
 		url: 'https://www.carleton.edu/career/',
 		icon: 'circle.grid.cross',
-	},
-	{
-		title: 'Student Health And Counseling Services',
-		description: 'Find information about student health services at Carleton.',
-		url: 'https://www.carleton.edu/student-health/',
-		icon: 'heart',
 	},
 ]
