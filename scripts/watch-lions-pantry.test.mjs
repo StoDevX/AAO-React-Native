@@ -3,10 +3,11 @@ import {spawnSync} from 'node:child_process'
 import {mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
+import {fileURLToPath} from 'node:url'
 import {test} from 'node:test'
 
-let SCRIPT = new URL('watch-lions-pantry.sh', import.meta.url).pathname
-let FIXTURE = new URL('fixtures/lions-pantry/pantry.html', import.meta.url).pathname
+let SCRIPT = fileURLToPath(new URL('watch-lions-pantry.sh', import.meta.url))
+let FIXTURE = fileURLToPath(new URL('fixtures/lions-pantry/pantry.html', import.meta.url))
 
 let hasHtmlq = spawnSync('htmlq', ['--version']).status === 0
 

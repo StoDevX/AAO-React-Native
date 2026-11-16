@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import moment from 'moment-timezone'
+import type {Moment} from 'moment-timezone'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
@@ -43,6 +44,18 @@ const DEFAULT_MENU = [
 // Module-level so the state below starts on one identity rather than a fresh
 // object per mount.
 const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null, closed: false}
+
+function formatMenuDayLabel(date: Moment, today: Moment): string {
+	if (date.isSame(today, 'day')) {
+		return 'Today'
+	}
+
+	if (date.isSame(today.clone().add(1, 'day'), 'day')) {
+		return 'Tomorrow'
+	}
+
+	return formatDate(date, 'medium').replace(',', '')
+}
 
 type Props = {
 	cafe: string | {id: string}
@@ -112,15 +125,14 @@ function prepareSingleMenu(
 function getMeals(
 	cafeMenu: MenuInfoType,
 	foodItems: MenuItemContainerType,
-	args: {ignoreProvidedMenus: boolean},
+	args: {ignoreProvidedMenus: boolean; date: string | null},
 ): Array<ProcessedMealType> {
-	let {ignoreProvidedMenus} = args
+	let {ignoreProvidedMenus, date} = args
 
-	// We hard-code to the first day returned because we're only requesting
-	// one day. `cafes` is a map of cafe ids to cafes, but we only request one
-	// cafe at a time, so we just grab the one we requested. A response with no
-	// day has no meals; the screen says so rather than drawing an empty menu.
-	let day = cafeMenu.days.at(0)
+	// `cafes` is a map of cafe ids to cafes, but we only request one cafe at a
+	// time, so we grab that cafe's selected day. A response with no day has no
+	// meals; the screen says so rather than drawing an empty menu.
+	let day = cafeMenu.days.find((candidate) => candidate.date === date) ?? cafeMenu.days.at(0)
 	if (!day) {
 		return []
 	}
@@ -155,10 +167,10 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// as the reader keeps coming back to it.
 	let {now} = useMomentTimer({intervalMs: 60_000, timezone: timezone()})
 
-	// The menu body's clock turns over with the day rather than the minute.
-	// Every cafe the reader has visited stays mounted and ticks, and only the
-	// header needs the minute; the body reads its clock for the meal it opens on
-	// and the day's message, both of which hold for the day.
+	// The request's clock turns over with the day rather than the minute. Every
+	// cafe the reader has visited stays mounted and ticks, and only the header
+	// needs the minute; the menu body reads its selected day's clock for the meal
+	// it opens on.
 	let [menuNow, setMenuNow] = React.useState(now)
 	if (!menuNow.isSame(now, 'day')) {
 		setMenuNow(now)
@@ -178,12 +190,16 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		setFiltersVisible((visible) => !visible)
 	}, [])
 
-	// The day the menu and the cafe's details are for. It turns over with
-	// `menuNow`, and the new day's are fetched in place of the last day's.
-	// Memoized on `menuNow` so that the item links built from it keep their
-	// identity: the React Compiler reads a moment's `format` as a read of an
-	// object that may change under it.
+	// The day the menu request is keyed to. It turns over with `menuNow`, and
+	// Carleton's response includes the five days starting there. Memoized on
+	// `menuNow` so the item links built from it keep their identity: the React
+	// Compiler reads a moment's `format` as a read of an object that may change
+	// under it.
 	let day = React.useMemo(() => menuNow.format('YYYY-MM-DD'), [menuNow])
+	let [daySelection, setDaySelection] = React.useState({anchor: day, selected: day})
+	if (daySelection.anchor !== day) {
+		setDaySelection({anchor: day, selected: day})
+	}
 
 	let menuQuery = useQuery(bonAppMenuOptions(props.server, props.cafe, day))
 	let {data: cafeMenu, refetch: menuReload} = menuQuery
@@ -207,7 +223,10 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// The day the menu in hand is for. Asked for today's shortly after
 	// midnight, the server can still answer with the day before's, so the
 	// header names the menu's own day rather than the clock's.
-	let menuDate = cafeMenu?.days.at(0)?.date ?? null
+	let menuDate =
+		cafeMenu?.days.find((candidate) => candidate.date === daySelection.selected)?.date ??
+		cafeMenu?.days.at(0)?.date ??
+		null
 	let isOtherDay = menuDate !== null && menuDate !== day
 	let otherDay = React.useMemo(
 		() => (isOtherDay && menuDate ? moment.tz(menuDate, 'YYYY-MM-DD', timezone()) : null),
@@ -225,7 +244,33 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// republish it only when the day itself changes.
 	let weekdayShort = formatWeekday(shownDay, 'short')
 	let weekdayLong = formatWeekday(shownDay, 'long')
-	let date = formatDate(shownDay, 'medium')
+	let date = formatMenuDayLabel(shownDay, menuNow)
+	let dayOptions = React.useMemo(
+		() =>
+			cafeMenu?.days
+				.filter((candidate) => candidate.date !== menuDate)
+				.map((candidate) => ({
+					date: candidate.date,
+					label: formatMenuDayLabel(moment.tz(candidate.date, 'YYYY-MM-DD', timezone()), menuNow),
+				})) ?? [],
+		[cafeMenu, menuDate, menuNow],
+	)
+	let selectDay = React.useCallback(
+		(selected: string) => setDaySelection({anchor: day, selected}),
+		[day],
+	)
+	let menuBodyNow = React.useMemo(() => {
+		if (!menuDate || menuDate === day) {
+			return menuNow
+		}
+
+		let selectedDay = moment.tz(menuDate, 'YYYY-MM-DD', timezone())
+		return selectedDay
+			.hour(menuNow.hour())
+			.minute(menuNow.minute())
+			.second(menuNow.second())
+			.millisecond(menuNow.millisecond())
+	}, [day, menuDate, menuNow])
 
 	// A cafe serving one daypart today says when it opens, then when it closes,
 	// off the hours it publishes; `null` keeps the meal's window for the rest.
@@ -250,6 +295,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			closed: shownMealHeader.closed || (hours?.closed ?? false),
 			reopening: hours?.reopening ?? null,
 			loading: isLoading,
+			days: showsMenu && dayOptions.length > 0 ? {options: dayOptions, select: selectDay} : null,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -264,8 +310,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let foodItems = React.useMemo(() => (cafeMenu ? prepareFood(cafeMenu) : {}), [cafeMenu])
 
 	let meals = React.useMemo(
-		() => (cafeMenu ? getMeals(cafeMenu, foodItems, {ignoreProvidedMenus}) : []),
-		[cafeMenu, foodItems, ignoreProvidedMenus],
+		() => (cafeMenu ? getMeals(cafeMenu, foodItems, {ignoreProvidedMenus, date: menuDate}) : []),
+		[cafeMenu, foodItems, ignoreProvidedMenus, menuDate],
 	)
 
 	// Stable so that a menu re-rendering for any other reason does not force
@@ -273,17 +319,30 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	//
 	// A cafe named by id goes over as `cafeId` rather than `cafe`, which the
 	// detail screen reads as a cafe's name.
+	let itemDay = menuDate ?? day
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) => {
 			router.navigate({
 				pathname: '/menu-item-detail',
 				params:
 					typeof props.cafe === 'string'
-						? {source: 'bonapp', server: props.server, cafe: props.cafe, day, itemId: item.id}
-						: {source: 'bonapp', server: props.server, cafeId: props.cafe.id, day, itemId: item.id},
+						? {
+								source: 'bonapp',
+								server: props.server,
+								cafe: props.cafe,
+								day: itemDay,
+								itemId: item.id,
+							}
+						: {
+								source: 'bonapp',
+								server: props.server,
+								cafeId: props.cafe.id,
+								day: itemDay,
+								itemId: item.id,
+							},
 			})
 		},
-		[router, props.server, props.cafe, day],
+		[router, props.server, props.cafe, itemDay],
 	)
 
 	let onRefresh = React.useCallback(
@@ -350,7 +409,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			meals={meals}
 			menuCorIcons={menu.data.cor_icons}
 			name={props.name}
-			now={menuNow}
+			now={menuBodyNow}
 			onItemPress={onItemPress}
 			filtersVisible={filtersVisible}
 			onMealHeaderChange={setMealHeader}

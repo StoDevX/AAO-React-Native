@@ -46,7 +46,7 @@ describe('BonApp queries by server', () => {
 		await newClient().query(bonAppMenuOptions('edu.carleton', 'burton', '2026-09-22'))
 
 		expect(mockClientFor).toHaveBeenLastCalledWith('edu.carleton')
-		expect(mockGet).toHaveBeenCalledWith('food/named/menu/burton', expect.anything())
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/burton?days=5', expect.anything())
 	})
 
 	test("keep each server's menus apart", () => {
