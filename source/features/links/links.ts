@@ -23,7 +23,7 @@ export const LINKS: CampusLink[] = [
 	{
 		title: 'Facilities Work Request',
 		description: 'Submit a work request for room maintenance.',
-		url: 'http://go.carleton.edu/workorder',
+		url: 'https://go.carleton.edu/workorder',
 		icon: 'wrench.and.screwdriver',
 	},
 	{
@@ -35,7 +35,7 @@ export const LINKS: CampusLink[] = [
 	{
 		title: 'Web Print',
 		description: 'Submit and print documents.',
-		url: 'http://go.carleton.edu/webprint',
+		url: 'https://go.carleton.edu/webprint',
 		icon: 'printer',
 	},
 	{
