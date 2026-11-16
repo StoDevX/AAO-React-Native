@@ -27,14 +27,17 @@ jobs:
       - name: Check the description, and comment when it is missing
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_BODY: ${{ github.event.pull_request.body }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
           marker='<!-- pr-description-check -->'
 
+          # Read the description now: runs can start out of order, so the event's
+          # copy may be older than what the author has since written.
+          body=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.body // ""')
+
           # Comments and whitespace are what a template leaves behind.
-          text=$(printf '%s' "$PR_BODY" | perl -0pe 's/<!--.*?-->//gs; s/\s+//g')
+          text=$(printf '%s' "$body" | perl -0pe 's/<!--.*?-->//gs; s/\s+//g')
 
           existing=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
             --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"$marker\"))) | .id" | head -n 1)
@@ -46,11 +49,11 @@ jobs:
             exit 0
           fi
 
-          body="$marker
+          warning="$marker
           This pull request has no description. Add one saying what changed and why; this check passes once it does."
 
           if [ -z "$existing" ]; then
-            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$body" >/dev/null
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$warning" >/dev/null
           fi
 
           echo '::error::The pull request has no description.'
