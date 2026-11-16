@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.10.0
+
+### Minor Changes
+
+- 62bcf06: Feature Requests lets you suggest, vote on and discuss ideas for the app anonymously. Find it under Feedback on Home, in Support and in Contributing.
+- a2dabfc: Tap the bell beside a KSTO or KRLX show to get a notification a minute before it starts, every week, with a Listen button that starts the station. Every show you follow is listed under Notifications in the player's ••• menu, and the player's schedule links to the station's full schedule.
+
+### Patch Changes
+
+- 1130866: The Course Catalog loads again, instead of saying the published course catalog was already rejected.
+
 ## 2.9.1
 
 ### Patch Changes
