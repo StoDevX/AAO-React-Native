@@ -1,4 +1,12 @@
+import AppKit
 import XCTest
+
+/// The Cage's hours, as `launchWithRepoData(opening:)` takes a record.
+let theCage = "building-hours:building-hours/1-1-cage.yaml"
+
+/// Where AppKit keeps the Current changes window's size, which a UI test
+/// launch overrides so a test sees the window CI sees.
+private let mainWindowFrameKey = "NSWindow Frame SwiftUI.WindowGroup<SwiftUI.PresentedWindowContent<DataEditor.Changeset, SwiftUI.ModifiedContent<DataEditor.ChangesetWindow, SwiftUI._EnvironmentKeyWritingModifier<Swift.Optional<DataEditor.AppModel>>>>>-1-AppWindow-1"
 
 extension XCTestCase {
     /// Launches the app on a workspace with the repo's data, as if downloaded,
@@ -6,9 +14,18 @@ extension XCTestCase {
     /// as an update leaves one, `submissions` is planted as the pull requests
     /// submitted before, and `arguments` follow the workspace's. Returns
     /// the app and its data folder, for a test that changes a file under it.
+    ///
+    /// The hours tests edit The Cage's and Stav Hall's usual hours, which a
+    /// scrape owns and the editor therefore locks. They test the hours editor,
+    /// not that lock, so the workspace's catalog drops the scrape's claim
+    /// unless `keepsScrapes` asks for it.
+    ///
+    /// `opening` is a data set, or a record as `set:file` (`theCage`), that
+    /// the app opens in Current changes once it is ready, so a test about a
+    /// record begins on it rather than clicking its way there.
     @MainActor
-    func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil,
-                            arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
+    func launchWithRepoData(conflicted: String? = nil, submissions: String? = nil, keepsScrapes: Bool = false,
+                            opening: String? = nil, arguments: [String] = []) throws -> (app: XCUIApplication, data: URL) {
         let repo = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let support = FileManager.default.temporaryDirectory.appending(path: "ui \(UUID().uuidString)")
         let workspace = support.appending(path: "workspace")
@@ -41,6 +58,14 @@ extension XCTestCase {
         if let submissions {
             try Data(submissions.utf8).write(to: support.appending(path: "submissions.json"))
         }
+        if !keepsScrapes {
+            // in the base too, so the change is not one of the contributor's
+            for data in [workspace.appending(path: "data"), workspace.appending(path: "base/data")] {
+                let catalog = data.appending(path: "_datasets.yaml")
+                let text = try String(contentsOf: catalog, encoding: .utf8)
+                try text.replacing(/\n    scraped:\n(      .*\n)+/, with: "\n").write(to: catalog, atomically: true, encoding: .utf8)
+            }
+        }
         let app = XCUIApplication()
         // the app quits first, so nothing writes into the folder as it goes
         addTeardownBlock { @MainActor in
@@ -49,8 +74,15 @@ extension XCTestCase {
         }
         // each test starts from the Changesets window alone, not the windows an earlier test left open
         app.launchArguments = ["-UITestWorkspace", support.path, "-UITestOxfmt", oxfmt.path,
-                               "-ApplePersistenceIgnoreState", "YES"] + arguments
+                               "-ApplePersistenceIgnoreState", "YES",
+                               // the window at its smallest, as CI opens it with nothing saved, rather than at
+                               // whatever size this Mac's own copy of the app last left it
+                               "-\(mainWindowFrameKey)", "120 120 1000 652 0 0 1440 900"]
+            + (opening.map { ["-UITestOpen", $0] } ?? []) + arguments
         app.launch()
+        if opening != nil {
+            XCTAssertTrue(currentChangesWindow(in: app).waitUntilExists(timeout: 20))
+        }
         return (app, workspace.appending(path: "data"))
     }
 
@@ -61,18 +93,63 @@ extension XCTestCase {
     @MainActor @discardableResult
     func openCurrentChanges(in app: XCUIApplication) -> XCUIElement {
         let current = app.windows["Changesets"].outlines["changeset-list"].staticTexts["Current changes"]
-        XCTAssertTrue(current.waitForExistence(timeout: 20))
+        XCTAssertTrue(current.waitUntilExists(timeout: 20))
         current.doubleClick()
         let window = currentChangesWindow(in: app)
-        XCTAssertTrue(window.waitForExistence(timeout: 5))
+        XCTAssertTrue(window.waitUntilExists(timeout: 5))
         return window
     }
 
-    /// The Current changes window, found by its list of every building: its
-    /// title follows the building chosen.
+    /// The Current changes window, found by its list of data sets: its
+    /// title follows the record chosen.
     @MainActor
     func currentChangesWindow(in app: XCUIApplication) -> XCUIElement {
-        app.windows.containing(.outline, identifier: "building-list").firstMatch
+        app.windows.containing(.outline, identifier: "data-set-list").firstMatch
+    }
+
+    /// Scrolls `window`'s form, or what is at `across` of its width, such as
+    /// the sidebar, toward `element` until it is in sight. A window at its
+    /// smallest, as CI opens it, shows only part of a long form or list.
+    @MainActor
+    func reveal(_ element: XCUIElement, in window: XCUIElement, across: CGFloat = 0.75) {
+        let list = window.coordinate(withNormalizedOffset: CGVector(dx: across, dy: 0.5))
+        let visible = sight(of: window)
+        var scrolls = 0
+        var down = true
+        while scrolls < 45, !isInSight(element, in: window) {
+            let frame = element.frame
+            if !frame.isEmpty {
+                down = frame.midY > visible.maxY
+            } else if scrolls == 15 {
+                // a list lays out only the rows in sight, so a row with no frame
+                // may be above as well as below; not found below, it is above
+                down = false
+            }
+            list.scroll(byDeltaX: 0, deltaY: down ? -300 : 300)
+            scrolls += 1
+        }
+    }
+
+    /// Whether `element`'s middle is inside `window` below its toolbar, read
+    /// from frames. XCUITest's `isHittable`, and a click on an element out of
+    /// sight, search for a point to click for 35 to 65 seconds before scrolling
+    /// in this app, so a test reveals what it clicks first.
+    @MainActor
+    func isInSight(_ element: XCUIElement, in window: XCUIElement) -> Bool {
+        let frame = element.frame
+        return !frame.isEmpty && sight(of: window).contains(CGPoint(x: frame.midX, y: frame.midY))
+    }
+
+    /// The part of `window` below its title bar and toolbar, which scrolled
+    /// content passes under, and on the screen: CI's screen is 768 high, and a
+    /// window at its smallest runs past its foot.
+    @MainActor
+    private func sight(of window: XCUIElement) -> CGRect {
+        let bounds = window.frame
+        let below = CGRect(x: bounds.minX, y: bounds.minY + 52, width: bounds.width, height: bounds.height - 52)
+        // XCUITest's frames run down from the top of the main screen, as AppKit's run up from its foot
+        let screen = NSScreen.main.map { CGRect(origin: .zero, size: $0.frame.size) } ?? below
+        return below.intersection(screen)
     }
 
     /// The Current changes window, opened if it is not.
@@ -85,8 +162,8 @@ extension XCTestCase {
     /// Opens The Cage's hours in the Current changes window.
     @MainActor
     func selectTheCage(in app: XCUIApplication) {
-        let cage = currentChanges(in: app).outlines["building-list"].staticTexts["The Cage"]
-        XCTAssertTrue(cage.waitForExistence(timeout: 20))
+        let cage = currentChanges(in: app).outlines["record-list"].staticTexts["The Cage"]
+        XCTAssertTrue(cage.waitUntilExists(timeout: 20))
         cage.click()
     }
 
@@ -94,10 +171,10 @@ extension XCTestCase {
     @MainActor
     func openOverview(in app: XCUIApplication) {
         let window = currentChanges(in: app)
-        let overview = window.outlines["building-list"].staticTexts["Overview"]
-        XCTAssertTrue(overview.waitForExistence(timeout: 5))
+        let overview = window.outlines["data-set-list"].staticTexts["Overview"]
+        XCTAssertTrue(overview.waitUntilExists(timeout: 5))
         overview.click()
-        XCTAssertTrue(window.descendants(matching: .any)["overview-page"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(window.descendants(matching: .any)["overview-page"].firstMatch.waitUntilExists(timeout: 5))
     }
 
     /// Keeps a screenshot of one element with the run, for a person to check by eye.
@@ -134,7 +211,8 @@ private func newestChange(under folders: [URL]) -> (file: String, date: Date)? {
 
 extension XCUIElement {
     /// Waits for the element to match `predicate`, as one does once the app catches up.
+    @MainActor
     func wait(until predicate: NSPredicate, timeout: TimeInterval) -> Bool {
-        XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: self)], timeout: timeout) == .completed
+        waitUntil("Waiting \(timeout)s for \(self) to match \(predicate)", timeout: timeout) { predicate.evaluate(with: self) }
     }
 }

@@ -240,15 +240,18 @@ public final class Workspace: Sendable {
     }
 
     /// The data files that differ from the base commit: changed, added or removed.
-    /// A name that starts with `.` or `_` is not data (the helper's `isDataEntry`):
-    /// Finder's `.DS_Store`, or a `_<file>.next` the helper left half written.
+    /// A file the editor edits may start with `_` (`bus-times/_curation.yaml`), so
+    /// only these are left out: a name starting with `.`, such as Finder's
+    /// `.DS_Store`, and the helper's own temporary files, a `_<file>.next` it
+    /// left half written or a `_<file>.moving` it set aside to rename.
     public func changedFiles() throws -> [String] {
         let current = relativeFiles(in: dataDirectory)
         let base = relativeFiles(in: baseDataDirectory)
         return current.union(base)
             .filter { file in
                 let name = file.split(separator: "/").last ?? ""
-                return !name.hasPrefix(".") && !name.hasPrefix("_")
+                let temporary = name.hasPrefix("_") && (name.hasSuffix(".next") || name.hasSuffix(".moving"))
+                return !name.hasPrefix(".") && !temporary
             }
             .filter { try! contents(of: $0) != baseContents(of: $0) }.sorted()
     }
@@ -415,10 +418,57 @@ public final class Workspace: Sendable {
         for file in try changedFiles() { try revert(file) }
     }
 
-    /// Puts a data file back as it was at the base commit.
+    /// Puts a data file back as it was at the base commit. A file a reorder
+    /// renamed takes every rename in its folder back with it, so no record is
+    /// left under two names; the other records keep their edits.
     public func revert(_ file: String) throws {
-        let target = dataDirectory.appending(path: file)
+        let renames = try renames(with: file)
+        for rename in renames {
+            try FileManager.default.moveItem(at: dataDirectory.appending(path: rename.now),
+                                             to: dataDirectory.appending(path: rename.base))
+        }
+        let original = renames.first { $0.now == file }?.base ?? file
+        let target = dataDirectory.appending(path: original)
         try? FileManager.default.removeItem(at: target)
-        if let base = try baseContents(of: file) { try base.write(to: target) }
+        if let base = try baseContents(of: original) { try base.write(to: target) }
+    }
+
+    /// Puts back each file the helper set aside to rename and never placed, as
+    /// when it was stopped partway through a reorder, so no record goes missing.
+    /// Its own name is still free: a reorder renames only the numeric prefix,
+    /// and no two records in a folder share the rest.
+    public func putBackSetAsideFiles() throws {
+        for file in relativeFiles(in: dataDirectory) {
+            let name = (file as NSString).lastPathComponent
+            guard name.hasPrefix("_"), name.hasSuffix(".moving") else { continue }
+            let original = (file as NSString).deletingLastPathComponent + "/" + name.dropFirst().dropLast(".moving".count)
+            try FileManager.default.moveItem(at: dataDirectory.appending(path: file), to: dataDirectory.appending(path: original))
+        }
+    }
+
+    /// A record a reorder renamed: its file at the base commit, and its file now.
+    struct Rename: Equatable {
+        let base: String
+        let now: String
+    }
+
+    /// The renames in `file`'s folder when `file` is one of their names, or
+    /// none: each a removed file and an added one there whose names differ
+    /// only in their numeric prefix, as a reorder renumbers them.
+    func renames(with file: String) throws -> [Rename] {
+        let folder = (file as NSString).deletingLastPathComponent
+        let changed = try changedFiles().filter { ($0 as NSString).deletingLastPathComponent == folder }
+        let removed = try changed.filter { try contents(of: $0) == nil }
+        let added = try changed.filter { try baseContents(of: $0) == nil }
+        let unnumbered = { (file: String) in
+            (file as NSString).lastPathComponent.replacing(/^\d+-(?:\d+-)?/, with: "")
+        }
+        let renames = removed.compactMap { base -> Rename? in
+            let name = unnumbered(base)
+            let now = added.filter { unnumbered($0) == name }
+            guard now.count == 1, removed.count(where: { unnumbered($0) == name }) == 1 else { return nil }
+            return Rename(base: base, now: now[0])
+        }
+        return renames.contains { $0.base == file || $0.now == file } ? renames : []
     }
 }

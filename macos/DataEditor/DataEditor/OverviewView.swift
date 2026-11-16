@@ -33,7 +33,7 @@ struct SubmitControl: Equatable {
 }
 
 /// Everything about Current changes in one place: the pull request, newer
-/// data, conflicts, the preview, problems, each changed building's diff, and Submit.
+/// data, conflicts, the preview, problems, each changed file's diff, and Submit.
 struct OverviewView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
@@ -45,7 +45,7 @@ struct OverviewView: View {
     @State private var reverting: String?
     @State private var discardingAll = false
 
-    /// The question that confirms a revert, naming the building where its file is known.
+    /// The question that confirms a revert, naming the record where its file is known.
     static func revertQuestion(file: String, name: String?) -> String {
         "Revert \(name ?? file)?"
     }
@@ -70,7 +70,7 @@ struct OverviewView: View {
                         Label("No changes", systemImage: "checkmark.circle")
                     } actions: {
                         if offersEditor {
-                            Button("Edit Building Hours") { openWindow(value: Changeset.current) }
+                            Button("Edit Data") { openWindow(value: Changeset.current) }
                         }
                     }
                     .frame(maxWidth: .infinity)
@@ -98,12 +98,12 @@ struct OverviewView: View {
                 } header: {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text(buildingName(of: file, in: model.buildings))
+                            Text(model.name(of: file))
                             Text(file).font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
                         Button("Revert", role: .destructive) { reverting = file }
-                            .accessibilityLabel("Revert \(buildingName(of: file, in: model.buildings))")
+                            .accessibilityLabel("Revert \(model.name(of: file))")
                             .accessibilityIdentifier("revert-\(file)")
                     }
                 }
@@ -128,7 +128,7 @@ struct OverviewView: View {
         }
         .accessibilityIdentifier("overview-page")
         .confirmationDialog(
-            reverting.map { file in Self.revertQuestion(file: file, name: model.buildings.first { $0.file == file }?.name) } ?? "",
+            reverting.map { file in Self.revertQuestion(file: file, name: model.name(of: file)) } ?? "",
             isPresented: Binding(get: { reverting != nil }, set: { if !$0 { reverting = nil } }),
             titleVisibility: .visible,
             presenting: reverting
@@ -143,8 +143,8 @@ struct OverviewView: View {
                 .accessibilityIdentifier("confirm-discard-all")
         } message: {
             Text(model.currentSubmission == nil
-                ? "Your changes to every building will be lost."
-                : "Your changes to every building will be lost. The pull request stays on GitHub.")
+                ? "Every change you made will be lost."
+                : "Every change you made will be lost. The pull request stays on GitHub.")
         }
         .sheet(isPresented: $submitting) { SubmitSheet() }
         .task {
@@ -189,11 +189,11 @@ struct OverviewView: View {
 
     @ViewBuilder private func previewLine(_ preview: PreviewLine) -> some View {
         HStack {
-            Label(preview.text(buildings: model.buildings),
+            Label(preview.text(name: model.name(of:)),
                   systemImage: preview == .upToDate ? "iphone" : "exclamationmark.triangle.fill")
             Spacer()
             if case .stopsAt(let file) = preview {
-                Button("Show \(buildingName(of: file, in: model.buildings))") { show(file) }
+                Button("Show \(model.name(of: file))") { show(file) }
             }
         }
     }
@@ -201,10 +201,10 @@ struct OverviewView: View {
     /// Opens `file` for editing in the Current changes window, from whichever window this page is in.
     private func show(_ file: String) {
         openWindow(value: Changeset.current)
-        Task { await model.choose(ChangesetItem.building(file: file)) }
+        Task { await model.choose(model.item(showing: file)) }
     }
 
-    /// A problem that names its building opens it; one that names none only reads.
+    /// A problem that names its file opens it; one that names none only reads.
     @ViewBuilder private func problemRow(_ problem: Problem) -> some View {
         let label = ProblemLabel(problem: problem, fileOnScreen: nil, systemImage: "exclamationmark.triangle.fill")
         if let file = problem.file {

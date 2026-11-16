@@ -16,7 +16,7 @@ public final class HelperRuntime: @unchecked Sendable {
 
     /// The version of the handlers' parameters and replies this app speaks.
     /// `PROTOCOL` in `scripts/data-editor-helper.mjs` changes with it.
-    public static let protocolVersion = 2
+    public static let protocolVersion = 4
 
     /// The loaded helper's `PROTOCOL`.
     public let helperProtocol: Int
@@ -149,6 +149,10 @@ public final class HelperRuntime: @unchecked Sendable {
         // rename(2) replaces the destination in one step, as Node's does
         define("rename", { (from: String, to: String) in
             if Darwin.rename(from, to) != 0 { throwInJavaScript(errno: errno, "rename", from) }
+        } as @convention(block) (String, String) -> Void)
+        // link(2) gives a file a second name and fails, EEXIST, on a name already taken
+        define("link", { (from: String, to: String) in
+            if Darwin.link(from, to) != 0 { throwInJavaScript(errno: errno, "link", from) }
         } as @convention(block) (String, String) -> Void)
         define("copyFile", { (from: String, to: String) in
             failing("copyfile", from) {

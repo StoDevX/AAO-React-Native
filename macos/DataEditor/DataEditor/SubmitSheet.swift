@@ -34,7 +34,8 @@ struct SubmitSheet: View {
             TextField("What changed?", text: $summary, prompt: Text("e.g. Close The Cage at 9 p.m. on Fridays"))
                 .accessibilityIdentifier("submit-summary")
             let offer = suggestionOffer
-            if offer != .hidden {
+            // Suggest describes changed hours, and nothing else yet
+            if offer != .hidden, !model.describableFiles.isEmpty {
                 Button(suggesting == nil ? "Suggest" : "Suggesting…", systemImage: "sparkles") { suggesting = Task { await suggest() } }
                     .disabled(offer != .offered || suggesting != nil || working)
                     .accessibilityIdentifier("submit-suggest")

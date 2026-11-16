@@ -94,6 +94,10 @@ export function renameSync(from, to) {
 	host().rename(String(from), String(to))
 }
 
+export function linkSync(from, to) {
+	host().link(String(from), String(to))
+}
+
 export function copyFileSync(from, to) {
 	host().copyFile(String(from), String(to))
 }
@@ -122,6 +126,7 @@ export default {
 	mkdirSync,
 	rmSync,
 	renameSync,
+	linkSync,
 	copyFileSync,
 	realpathSync,
 	mkdtempSync,

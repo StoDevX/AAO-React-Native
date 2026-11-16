@@ -9,7 +9,7 @@ struct ConflictRow: View {
     @State private var showingDifferences = false
 
     var body: some View {
-        let name = buildingName(of: file, in: model.buildings)
+        let name = model.name(of: file)
         let deleted = model.conflictCopy(of: file) == .deleted
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {

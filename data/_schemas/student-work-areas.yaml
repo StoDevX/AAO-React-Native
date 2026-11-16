@@ -12,15 +12,16 @@ items:
   additionalProperties: false
   required: [name, slug, icon, gradient, units]
   properties:
-    name: {type: string, minLength: 1}
+    name: {type: string, minLength: 1, title: Name}
     # The Area filter's value in a route, as /StudentWork/postings?area=dining.
-    slug: {type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'}
+    slug: {type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$', title: Slug}
     # An SF Symbol name; see data/_schemas/org-categories.yaml.
-    icon: {type: string, minLength: 1}
-    gradient: {$ref: '_defs.json#/definitions/gradient-name'}
+    icon: {type: string, minLength: 1, title: Icon, editor: symbol}
+    gradient: {$ref: '_defs.json#/definitions/gradient-name', title: Color, editor: gradient}
     units:
       type: array
       minItems: 1
       uniqueItems: true
       # `other` is what ccc-server publishes for a posting whose unit no area lists, or that has none.
       items: {type: string, pattern: '^([0-9]{5}|other)$'}
+      title: Units

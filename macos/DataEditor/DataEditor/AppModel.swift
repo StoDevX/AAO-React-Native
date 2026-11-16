@@ -43,10 +43,43 @@ final class AppModel {
     }
 
     var phase: Phase = .starting
-    var buildings: [BuildingSummary] = []
     var calendar: BreakCalendar?
     var selection: String? { didSet { if let selection, selection != oldValue { Task { await select(selection) } } } }
     var document: HoursDocument?
+    /// The selected file's value, which a record's form reads its record from.
+    private(set) var value: JSONValue?
+    /// The data sets the editor offers, from the workspace's `_datasets.yaml`.
+    private(set) var catalog: DataSetCatalog?
+    /// Each data set's records, by set, once the record column has listed it.
+    private(set) var records: [String: [RecordSummary]] = [:]
+    /// What is wrong in every changed file, not only the open one: a schema
+    /// set's check covers one file, and Submit waits for each of them.
+    private(set) var changedProblems: [Problem] = []
+    /// Each gradient the app draws, by its name in the data, as its two colour stops.
+    private(set) var gradients: [String: [String]] = [:]
+
+    /// Checks every changed file afresh.
+    func checkChangedFiles() async {
+        guard let helper else { return }
+        changedProblems = (try? await helper.check(files: changedFiles)) ?? changedProblems
+    }
+
+    /// The data set the record column lists: Hours until another is chosen.
+    private(set) var chosenSet = "building-hours"
+    /// What a UI test asked the launch to open in Current changes, until it is opened.
+    var uiTestOpen: ChangesetItem?
+
+    /// A UI test's `-UITestOpen`: a set by name, or one record as `set:file`,
+    /// which a UI test opens to begin where it tests rather than click its way there.
+    nonisolated static func uiTestItem(_ text: String?) -> ChangesetItem? {
+        guard let text, !text.isEmpty else { return nil }
+        let parts = text.split(separator: ":", maxSplits: 1).map(String.init)
+        guard parts.count == 2 else { return .set(text) }
+        return .record(set: parts[0], RecordRef(file: parts[1], path: []))
+    }
+
+    /// Each set's record schema, once asked for; let go when the files change, as an update may change a schema.
+    private var schemas: [String: JSONValue] = [:]
     /// The file `document` was read from. `selection` changes first, while the
     /// new file loads, so an edit drawn from the document on screen names this.
     private(set) var documentFile: String?
@@ -56,6 +89,8 @@ final class AppModel {
     var cccStatus: CccRunner.Status = .stopped
     var cccLog: [String] = []
     var pagesOrigin: String?
+    /// Where an item or entry was just added: the first text field drawn there takes focus.
+    var focusRequest: [PathKey]?
     /// Every pull request submitted from this app, kept in `submissions.json`.
     private(set) var submissions = SubmissionHistory() { didSet { submissions.save(to: support.appending(path: "submissions.json")) } }
     /// The pull request a new submission adds a commit to, if there is one.
@@ -131,13 +166,15 @@ final class AppModel {
     }
 
     /// - Parameter support: the folder for the workspace and the history, where unit tests give their own
-    init(runtime: Runtime = .bundled, support: URL? = nil) {
+    /// - Parameter oxfmt: the oxfmt a test formats with, which also keeps the app from reaching GitHub
+    init(runtime: Runtime = .bundled, support: URL? = nil, oxfmt: URL? = nil) {
         self.runtime = runtime
         let defaults = UserDefaults.standard
         self.support = support ?? defaults.string(forKey: "UITestWorkspace").map { URL(filePath: $0) }
             ?? Self.supportFolder(in: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0],
                                   bundleIdentifier: Bundle.main.bundleIdentifier)
-        testOxfmt = defaults.string(forKey: "UITestOxfmt").map { URL(filePath: $0) }
+        testOxfmt = oxfmt ?? defaults.string(forKey: "UITestOxfmt").map { URL(filePath: $0) }
+        uiTestOpen = Self.uiTestItem(defaults.string(forKey: "UITestOpen"))
         // Checking a branch whose helper no deploy has published: serve a folder
         // holding data-editor/ from `node scripts/build-data-editor-helper.mjs
         // --out <folder>/data-editor --commit <a pushed commit>`, and point
@@ -183,15 +220,19 @@ final class AppModel {
             if shuttingDown { return }
             // edits an update failed to put back are put back before anything reads data/
             _ = try workspace.resumeReplay()
+            // and a reorder the helper never finished leaves no record set aside out of sight
+            try workspace.putBackSetAsideFiles()
             // a helper that will not load, or that an older app downloaded, gives way to master's
             let helper = try await workspace.loadHelper(oxfmt: testOxfmt ?? runtime.oxfmt)
             self.helper = helper
             // the list appears with the phase that enables it, so no row shows unclickable
-            let listed = try await helper.buildings()
             calendar = try await helper.calendar()
+            gradients = (try? await helper.gradients()) ?? [:]
+            catalog = try await helper.datasets()
+            records[chosenSet] = try await helper.records(set: chosenSet).records
+            changedProblems = (try? await helper.check(files: try workspace.changedFiles())) ?? []
             changedFiles = try workspace.changedFiles()
             conflicts = workspace.conflicts
-            buildings = listed
             phase = .ready
             if let selection { await select(selection) }
             // the list is usable meanwhile, so the launch need not wait for GitHub
@@ -327,16 +368,26 @@ final class AppModel {
 
     func select(_ file: String) async {
         guard let helper else { return }
+        // a document's editor reads it as text; as YAML it would only be reported broken
+        guard Self.loadsAsData(file, catalog: catalog) else {
+            document = nil
+            value = nil
+            documentFile = file
+            problems = []
+            return
+        }
         do {
             let loaded = try await helper.load(file)
             // a later selection's load owns the document now
             guard selection == file else { return }
             document = HoursDocument(value: loaded.value)
+            value = loaded.value
             documentFile = file
             problems = loaded.problems
         } catch {
             guard selection == file else { return }
             document = nil
+            value = nil
             documentFile = nil
             problems = [Problem(file: file, message: error.localizedDescription, path: nil)]
         }
@@ -356,10 +407,14 @@ final class AppModel {
     /// replace, or while another edit waits for its reply. Returns whether the helper took the edit.
     @discardableResult
     func apply(_ ops: [EditOp], to file: String) async -> Bool {
-        guard !updating, !sending, !editing, let helper, !isConflicted(file), !ops.isEmpty else { return false }
+        guard !updating, !sending, !editing, let helper, !isConflicted(file), !isLocked(file), !ops.isEmpty else { return false }
+        // a list item removed moves the items after it to other places
+        let reshaped = ops.filter { $0.delete && $0.path.last.map { if case .index = $0 { true } else { false } } == true }
+            .map { Reshape(file: file, list: Array($0.path.dropLast())) }
+        let ops = Self.stamped(ops, field: stampField(for: file), stamp: Self.saveStamp())
         let edited: Loaded
         do {
-            edited = try await edits.run { try await helper.edit(file, ops) }
+            edited = try await reshaping(reshaped) { try await helper.edit(file, ops) }
         } catch {
             if file == selection { problems = [Problem(file: file, message: error.localizedDescription, path: nil)] }
             return false
@@ -367,13 +422,71 @@ final class AppModel {
         changedFiles = (try? workspace.changedFiles()) ?? changedFiles
         if file == selection {
             document = HoursDocument(value: edited.value)
+            value = edited.value
             documentFile = file
             problems = edited.problems
+        }
+        // an edit may rename a record, as a contact's title does
+        let set = catalog?.set(for: file)
+        let dataSet = set.flatMap { catalog?.sets[$0] }
+        if let set, let dataSet, records[set] != nil, Self.relists(after: ops, in: dataSet) { await loadRecords(set) }
+        // every building is checked against the break calendar; any other edit changes only its own file's problems
+        if dataSet?.form == .breaks {
+            await checkChangedFiles()
+        } else {
+            changedProblems = Self.problems(changedProblems, after: file, found: edited.problems, changed: changedFiles)
         }
         if edited.problems.isEmpty {
             await builds.schedule { await self.rebuild() }
         }
         return true
+    }
+
+    /// The newest change each control has waiting, by its key, counted so an older one knows it was overtaken.
+    private var latestChanges: [String: Int] = [:]
+
+    /// Applies a control's change to the value at `path` in `file` once the
+    /// edit in flight, an update or a submission is done, rather than having it
+    /// refused: a colour well dragged or a stepper held sends a stream of
+    /// changes, and only the newest of those waiting for one place is applied.
+    /// `build` makes the edits from the file as it is when the change runs, not
+    /// as it was on screen, which an edit since may have changed.
+    func applyLatest(to file: String, at path: [PathKey], build: @escaping @MainActor (JSONValue) -> [EditOp]) async {
+        let key = file + "#" + path.map(\.description).joined(separator: ".")
+        let change = (latestChanges[key] ?? 0) + 1
+        latestChanges[key] = change
+        let shape = reshapes.count
+        // overtaken by a newer change to the same place, or the file reshaped under it,
+        // as a move, a removal, a revert or an update does: its place may now be another's
+        let stale = { self.latestChanges[key] != change || self.reshapes[shape...].contains { $0.moves(path, in: file) } }
+        while true {
+            while editing || updating || sending {
+                if shuttingDown { return }
+                try? await Task.sleep(for: .milliseconds(30))
+            }
+            if stale() { return }
+            let runs = edits.runs
+            guard let current = await currentValue(of: file) else { return }
+            if stale() { return }
+            // another edit may have begun, or begun and ended, while the file was read; this one reads again
+            guard !editing, !updating, !sending, edits.runs == runs else { continue }
+            let ops = build(current)
+            if !ops.isEmpty { await apply(ops, to: file) }
+            return
+        }
+    }
+
+    /// `file`'s value as the workspace holds it now: the one on screen, or else read afresh.
+    private func currentValue(of file: String) async -> JSONValue? {
+        if documentFile == file, let value { return value }
+        guard let helper, let text = try? await helper.readText(file) else { return nil }
+        return try? await helper.parse(text)
+    }
+
+    /// Whether `file` is one no control may change: a read-only set's, or one a generator writes.
+    private func isLocked(_ file: String) -> Bool {
+        guard let name = catalog?.set(for: file), let set = catalog?.sets[name] else { return false }
+        return Self.lockReason(set: set, file: file, updating: false, conflicted: false) != nil
     }
 
     /// What became of a text field's draft.
@@ -428,14 +541,15 @@ final class AppModel {
             } catch {
                 return .notSaved
             }
-            let held = current[path: op.path]?.string ?? ""
+            let held = current[path: op.path]?.fieldText ?? ""
             // the file unchanged at the draft's place keeps it there, though
             // the contributor's own edits to the schedule since make it unlike `schedule`
             guard let target = schedule.flatMap({ Self.draftPath(op.path, schedule: $0, in: current) })
                 ?? (held == expected ? op.path : nil) else {
                 if file == selection { await select(file) }
-                let typed = op.value?.string ?? ""
-                draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because its schedule changed while you typed.", path: op.path))
+                let typed = op.value?.fieldText ?? ""
+                let changed = schedule == nil ? "the field" : "its schedule"
+                draftNotices.append(Problem(file: file, message: "“\(typed)” wasn't saved because \(changed) changed while you typed.", path: op.path))
                 return .letGo(current: held)
             }
             if await apply([op.moved(to: target)], to: file) {
@@ -491,6 +605,11 @@ final class AppModel {
     /// file's problems show on the Overview, not in this file's editor.
     var shownProblems: [Problem] { plainProblems(Self.editorProblems(of: documentFile, open: problems, build: buildProblems)) }
 
+    /// The problems at exactly `path`, which the field there shows beside itself.
+    static func fieldProblems(at path: [PathKey], among problems: [Problem]) -> [Problem] {
+        problems.filter { $0.path == path }
+    }
+
     /// The problems an editor of `file` shows: its own, from the last check
     /// and the last build, each once. A check walks the whole schedule graph,
     /// so it reports other files' problems too, which the Overview lists.
@@ -508,12 +627,28 @@ final class AppModel {
     /// What Current changes' Overview shows, and what its list and the Changesets window mark.
     var overviewParts: OverviewParts {
         OverviewParts.make(history: submissions, newerCommit: newerCommit, conflicts: conflicts, changedFiles: changedFiles,
-                           checkProblems: problems, buildProblems: buildProblems, hasBuilt: hasBuilt)
+                           checkProblems: problems + changedProblems, buildProblems: buildProblems, hasBuilt: hasBuilt)
+    }
+
+    /// Returns once no edit is in flight, as the helper may be renaming files
+    /// that a revert or discard would otherwise copy over halfway.
+    private func editsFinished() async {
+        while editing {
+            if shuttingDown { return }
+            try? await Task.sleep(for: .milliseconds(30))
+        }
     }
 
     func revert(_ file: String) async {
         guard !updating, !submitting else { return }
+        await editsFinished()
+        // an update or a submission may have begun while it waited
+        guard !updating, !submitting else { return }
+        discards += 1
         try? workspace.revert(file)
+        // text kept from the file, and the notices about it, are edits the revert drops too
+        keptDocuments[file] = nil
+        draftNotices.removeAll { $0.file == file }
         await afterFilesChanged()
     }
 
@@ -521,23 +656,38 @@ final class AppModel {
     /// update or a submission, which read `data/` underneath it.
     func discardAll() async {
         guard !updating, !submitting else { return }
+        await editsFinished()
+        // an update or a submission may have begun while it waited
+        guard !updating, !submitting else { return }
+        discards += 1
         try? workspace.discardAll()
+        keptDocuments = [:]
+        draftNotices = []
         conflicts = workspace.conflicts
         await afterFilesChanged()
     }
+
+    /// The files among `files` Suggest can describe: hours files, which its
+    /// wording and its model's instructions are made for.
+    static func describable(_ files: [String], catalog: DataSetCatalog?) -> [String] {
+        files.filter { file in catalog?.set(for: file).flatMap { catalog?.sets[$0]?.form } == .hours }
+    }
+
+    /// The changed files Suggest can describe.
+    var describableFiles: [String] { Self.describable(changedFiles, catalog: catalog) }
 
     /// Each changed building with what changed in it, in words, for Suggest.
     func changeDescriptions() async -> [ChangedFile] {
         guard let helper else { return [] }
         var files: [ChangedFile] = []
-        for file in changedFiles {
+        for file in describableFiles {
             // a file the contributor deleted has nothing to describe
             guard let now = try? await helper.load(file).value else { continue }
             var before: HoursDocument?
             if let base = try? workspace.baseContents(of: file) {
                 before = (try? await helper.parse(Self.text(base))).map(HoursDocument.init(value:))
             }
-            files.append(ChangedFile(building: buildingName(of: file, in: buildings),
+            files.append(ChangedFile(record: name(of: file),
                                      changes: describeChange(from: before, to: HoursDocument(value: now))))
         }
         return files
@@ -695,12 +845,208 @@ final class AppModel {
         return saved && choice == choices
     }
 
-    /// Shows `item` in the Current changes window. A building's file opens
-    /// for editing, unless it is already open.
+    /// Shows `item` in the Current changes window. A record's file opens for
+    /// editing, unless it is already open. A set lists its records, and a set
+    /// that is one record, as a whole file or a document is, opens it.
     func choose(_ item: ChangesetItem) async {
         guard await mayChoose() else { return }
+        let choice = choices
+        if let set = item.set {
+            chosenSet = set
+            if records[set] == nil { await loadRecords(set) }
+            // a choice made while the records loaded is the newer
+            guard choice == choices else { return }
+        }
+        var item = item
+        if case .set(let set) = item, let only = records[set], only.count == 1,
+           let shape = catalog?.sets[set]?.shape, shape != .folder, shape != .list {
+            item = .record(set: set, only[0].ref)
+        }
         self.item = item
-        if case .building(let file) = item { selection = file }
+        if case .record(_, let ref) = item { selection = ref.file }
+    }
+
+    /// The schema of one record of `set`, if it has been asked for since the files last changed.
+    func loadedSchema(for set: String) -> JSONValue? { schemas[set] }
+
+    /// The schema of one record of `set`, asked once.
+    func schema(for set: String) async -> JSONValue? {
+        if let known = schemas[set] { return known }
+        guard let schema = try? await helper?.schema(set: set) else { return nil }
+        schemas[set] = schema
+        return schema
+    }
+
+    /// A document's text, as the workspace holds it now.
+    func readText(_ file: String) async -> String? { try? await helper?.readText(file) }
+
+    /// Replaces a document's text, then refreshes what follows from a changed file.
+    func writeText(_ file: String, _ text: String, expected: String) async -> Bool {
+        // refused beside an edit in flight, as an edit is: the two would share `editing`
+        guard !updating, !sending, !editing, let helper, !isConflicted(file) else { return false }
+        do {
+            // an update waits for edits, so it does not save data/ while this writes into it
+            try await edits.run { try await helper.writeText(file, text, expected: expected) }
+        } catch {
+            return false
+        }
+        changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        await checkChangedFiles()
+        await builds.schedule { await self.rebuild() }
+        return true
+    }
+
+    /// Text typed into a document that would not save as its editor closed,
+    /// by file, given back when the document opens again.
+    private var keptDocuments: [String: KeptDocument] = [:]
+    /// How many reverts and discards have run, so text left as one ran is not kept after it.
+    private var discards = 0
+    /// Every place reshaped under a waiting change, in order: an item moved or
+    /// removed, a record reordered or removed, or the files reverted, discarded
+    /// or updated. A change to a place one of them moved is let go.
+    private var reshapes: [Reshape] = []
+
+    /// A list in `file` whose items may have moved, or with no file, every file.
+    private struct Reshape {
+        let file: String?
+        let list: [PathKey]
+
+        /// Whether the place at `path` in `file` may now hold another's value:
+        /// one inside an item of the list. The list itself stays where it is.
+        func moves(_ path: [PathKey], in file: String) -> Bool {
+            guard let reshaped = self.file else { return true }
+            return reshaped == file && path.count > list.count && path.starts(with: list)
+        }
+    }
+
+    /// Runs a structural edit, counting `places` as reshaped the moment it is
+    /// written, before a change waiting through it can wake and write to a
+    /// place that now holds another item.
+    private func reshaping<T>(_ places: [Reshape], _ work: () async throws -> T) async throws -> T {
+        defer { reshapes += places }
+        return try await edits.run(work)
+    }
+
+    /// Saves a document's text as its editor closes. Text that will not save,
+    /// as the file changed since it was read, is kept for the editor to give
+    /// back, and a notice says so.
+    func leaveDocument(_ file: String, text: String, expected: String) async {
+        let discarded = discards
+        guard text != expected, await !writeText(file, text, expected: expected),
+              // a revert or discard meanwhile dropped this text, so it is not kept
+              discards == discarded else { return }
+        keptDocuments[file] = KeptDocument(text: text, readAs: expected)
+        draftNotices.append(Problem(file: file, message: "Your changes to \(name(of: file)) weren't saved because it changed while you typed. They're back when you open it.", path: nil))
+    }
+
+    /// The text kept for `file` when its editor last closed, if any, which is then let go.
+    func takeKeptDocument(_ file: String) -> KeptDocument? { keptDocuments.removeValue(forKey: file) }
+
+    /// What a contributor calls `file`. See `recordName(of:catalog:records:)`.
+    func name(of file: String) -> String { recordName(of: file, catalog: catalog, records: records) }
+
+    /// Lists `set`'s records afresh.
+    func loadRecords(_ set: String) async {
+        guard let helper, let listed = try? await helper.records(set: set).records else { return }
+        records[set] = listed
+    }
+
+    /// Where the record at `ref` is in `after`, a set's records once one
+    /// before it was removed or they were reordered: the record in the same
+    /// file with the same title. Nil when there is none, and the item falls
+    /// back to the set.
+    static func follow(_ ref: RecordRef, before: [RecordSummary], after: [RecordSummary]) -> RecordRef? {
+        guard let title = before.first(where: { $0.ref == ref })?.title else { return nil }
+        if let same = after.first(where: { $0.ref.file == ref.file && $0.title == title }) { return same.ref }
+        // a reordered folder renames its files, so a title only it has finds it
+        let titled = after.filter { $0.title == title }
+        return titled.count == 1 ? titled[0].ref : nil
+    }
+
+    /// Whether records may be added, removed or moved now: not while the data
+    /// updates, a submission sends, or an edit waits for its reply. Asked again
+    /// once drafts are saved, since an update may have begun meanwhile; the
+    /// change itself then runs as an edit, which an update waits for.
+    var mayChangeRecords: Bool { !updating && !sending && !editing && helper != nil }
+
+    /// Takes a set's records after an add, remove or move, keeps the record on
+    /// screen in view wherever it went, and refreshes what follows from changed files.
+    private func took(_ reply: RecordsReply, in set: String, showing created: RecordRef? = nil) async {
+        let before = records[set] ?? []
+        records[set] = reply.records
+        changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        await checkChangedFiles()
+        if let created {
+            item = .record(set: set, created)
+            // a set listed in one file adds the record to the file already open
+            if selection != created.file { selection = created.file } else { await select(created.file) }
+        } else if case .record(set, let ref) = item {
+            if let followed = Self.follow(ref, before: before, after: reply.records) {
+                item = .record(set: set, followed)
+                if selection != followed.file { selection = followed.file } else { await select(followed.file) }
+            } else {
+                item = .set(set)
+                selection = nil
+            }
+        }
+        await builds.schedule { await self.rebuild() }
+    }
+
+    /// Adds a record titled `title` to `set`, in `section` when the set has sections, and opens it.
+    func createRecord(in set: String, title: String, section: String?) async {
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper,
+              let reply = try? await edits.run({ try await helper.create(set: set, title: title, section: section) }) else { return }
+        await took(reply, in: set, showing: reply.created?.ref)
+    }
+
+    /// Removes the record at `ref` from `set`.
+    func removeRecord(_ ref: RecordRef, from set: String) async {
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper else { return }
+        let place = Reshape(file: ref.file, list: Array(ref.path.dropLast()))
+        guard let reply = try? await reshaping([place], { try await helper.remove(set: set, record: ref) }) else { return }
+        await took(reply, in: set)
+    }
+
+    /// The field of `file` stamped on every save, when its set has one.
+    private func stampField(for file: String) -> String? {
+        catalog?.set(for: file).flatMap { catalog?.sets[$0]?.stampOnSave }
+    }
+
+    /// Puts the items of the list at `path` in `file` in `order`, moving them
+    /// with their comments, as a form's Move Up and Move Down do.
+    func moveItems(in file: String, path: [PathKey], order: [PathKey]) async {
+        let stamp = Self.stamped([], field: stampField(for: file), stamp: Self.saveStamp())
+        guard mayChangeRecords, let helper, !isConflicted(file), !isLocked(file) else { return }
+        guard let moved = try? await reshaping([Reshape(file: file, list: path)], {
+                  let moved = try await helper.move(file, path: path, order: order)
+                  return stamp.isEmpty ? moved : try await helper.edit(file, stamp)
+              }) else { return }
+        changedFiles = (try? workspace.changedFiles()) ?? changedFiles
+        if file == selection {
+            value = moved.value
+            document = HoursDocument(value: moved.value)
+            problems = moved.problems
+        }
+        await checkChangedFiles()
+        await builds.schedule { await self.rebuild() }
+    }
+
+    /// Puts `set`'s records in the order of `order`.
+    func reorderRecords(in set: String, order: [RecordRef]) async {
+        guard mayChangeRecords, await mayChoose(), mayChangeRecords, let helper else { return }
+        // a folder's records are renamed as they move, so any file may be another's
+        guard let reply = try? await reshaping([Reshape(file: nil, list: [])], { try await helper.reorder(set: set, order: order) }) else { return }
+        await took(reply, in: set)
+    }
+
+    /// What shows `file` for editing: its record, when its set lists it whole,
+    /// or else its set.
+    func item(showing file: String) -> ChangesetItem {
+        guard let set = catalog?.set(for: file) else { return .set(chosenSet) }
+        if catalog?.sets[set]?.shape == .folder || records[set]?.count == 1 {
+            return .record(set: set, records[set]?.first { $0.ref.file == file }?.ref ?? RecordRef(file: file, path: []))
+        }
+        return .set(set)
     }
 
     /// Asks Pages whether master's data deploy has moved past the data being edited, so
@@ -770,9 +1116,14 @@ final class AppModel {
 
     /// The helper reads files afresh for each request, so only the lists, the open file and the build need refreshing.
     private func afterFilesChanged() async {
+        reshapes.append(Reshape(file: nil, list: []))
         changedFiles = (try? workspace.changedFiles()) ?? []
-        buildings = (try? await helper?.buildings()) ?? buildings
         calendar = (try? await helper?.calendar()) ?? calendar
+        // master may have added a set or changed a schema
+        catalog = (try? await helper?.datasets()) ?? catalog
+        schemas = [:]
+        for set in records.keys { await loadRecords(set) }
+        await checkChangedFiles()
         if let selection { await select(selection) }
         await rebuild()
     }

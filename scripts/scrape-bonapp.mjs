@@ -8,7 +8,7 @@
 // report that venue closed.
 //
 // Which venue is written, how its meal periods map onto our section titles,
-// and why a venue is only watched all live in scripts/bonapp-overrides.yaml.
+// and why a venue is only watched all live in data/_scrapes/bonapp-overrides.yaml.
 
 import {readFileSync, writeFileSync} from 'node:fs'
 import {load} from 'js-yaml'
@@ -20,7 +20,7 @@ import {
 } from './bonapp-schedule.mjs'
 
 const CAFE_URL = (slug) => `https://stolaf.cafebonappetit.com/cafe/${slug}/`
-const OVERRIDES = new URL('bonapp-overrides.yaml', import.meta.url)
+const OVERRIDES = new URL('../data/_scrapes/bonapp-overrides.yaml', import.meta.url)
 
 let check = process.argv.includes('--check')
 let {venues} = load(readFileSync(OVERRIDES, 'utf8'))

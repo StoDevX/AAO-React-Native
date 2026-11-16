@@ -6,12 +6,12 @@ final class OverviewUITests: XCTestCase {
     private func changeTheCageAndOpenTheOverview(in app: XCUIApplication) {
         selectTheCage(in: app)
         let to = currentChanges(in: app).popUpButtons["row-time-to-0-0"]
-        XCTAssertTrue(to.waitForExistence(timeout: 10))
+        XCTAssertTrue(to.waitUntilExists(timeout: 10))
         to.click()
         app.menuItems["9:00pm"].click()
         XCTAssertTrue(to.wait(until: NSPredicate(format: "value == %@", "9:00pm"), timeout: 5))
         openOverview(in: app)
-        XCTAssertTrue(currentChanges(in: app).staticTexts["building-hours/1-1-cage.yaml"].waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChanges(in: app).staticTexts["building-hours/1-1-cage.yaml"].waitUntilExists(timeout: 5))
     }
 
     func testRevertingAChangeEmptiesTheList() throws {
@@ -24,12 +24,12 @@ final class OverviewUITests: XCTestCase {
 
         currentChanges(in: app).buttons["revert-building-hours/1-1-cage.yaml"].click()
         let confirm = currentChanges(in: app).buttons["confirm-revert"]
-        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        XCTAssertTrue(confirm.waitUntilExists(timeout: 5))
         XCTAssertTrue(currentChanges(in: app).staticTexts["Revert The Cage?"].exists)
         attachScreenshot(of: currentChanges(in: app), named: "Revert asks first")
         confirm.click()
 
-        XCTAssertTrue(currentChanges(in: app).staticTexts["No changes"].waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChanges(in: app).staticTexts["No changes"].waitUntilExists(timeout: 5))
         XCTAssertFalse(currentChanges(in: app).buttons["Submit for Review…"].isEnabled)
         attachScreenshot(of: currentChanges(in: app), named: "Overview with no changes after the revert")
     }
@@ -40,11 +40,11 @@ final class OverviewUITests: XCTestCase {
 
         currentChanges(in: app).buttons["Discard All Changes…"].click()
         let confirm = currentChanges(in: app).buttons["confirm-discard-all"]
-        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        XCTAssertTrue(confirm.waitUntilExists(timeout: 5))
         attachScreenshot(of: currentChanges(in: app), named: "Discard All asks first")
         confirm.click()
 
-        XCTAssertTrue(currentChanges(in: app).staticTexts["No changes"].waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChanges(in: app).staticTexts["No changes"].waitUntilExists(timeout: 5))
         XCTAssertFalse(currentChanges(in: app).buttons["Discard All Changes…"].exists)
     }
 
@@ -54,7 +54,7 @@ final class OverviewUITests: XCTestCase {
 
         currentChanges(in: app).buttons["Submit for Review…"].click()
         let summary = currentChanges(in: app).textFields["submit-summary"]
-        XCTAssertTrue(summary.waitForExistence(timeout: 5))
+        XCTAssertTrue(summary.waitUntilExists(timeout: 5))
         let refusal = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "can't submit changes", "can't submit changes")
         XCTAssertTrue(currentChanges(in: app).descendants(matching: .any).matching(refusal).firstMatch.exists)
         attachScreenshot(of: currentChanges(in: app), named: "Submit sheet as it opens, with no client ID")
@@ -68,16 +68,15 @@ final class OverviewUITests: XCTestCase {
     }
 
     func testANoticeOfTextNotSavedDoesNotStopSubmitting() throws {
-        let (app, data) = try launchWithRepoData()
-        selectTheCage(in: app)
+        let (app, data) = try launchWithRepoData(opening: theCage)
         // an edit through the app, so the Overview lists the file; the write below is not one
         let to = currentChanges(in: app).popUpButtons["row-time-to-0-0"]
-        XCTAssertTrue(to.waitForExistence(timeout: 10))
+        XCTAssertTrue(to.waitUntilExists(timeout: 10))
         to.click()
         app.menuItems["9:00pm"].click()
         XCTAssertTrue(to.wait(until: NSPredicate(format: "value == %@", "9:00pm"), timeout: 5))
         let title = currentChanges(in: app).textFields["service-title-0"]
-        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        XCTAssertTrue(title.waitUntilExists(timeout: 10))
         title.click()
         title.typeKey(.rightArrow, modifierFlags: .command)
         title.typeText(" today")
@@ -89,13 +88,13 @@ final class OverviewUITests: XCTestCase {
             .write(to: cage, atomically: true, encoding: .utf8)
         title.typeKey(.return, modifierFlags: [])
         let dismiss = currentChanges(in: app).buttons["dismiss-draft-notice-0"]
-        XCTAssertTrue(dismiss.waitForExistence(timeout: 5))
+        XCTAssertTrue(dismiss.waitUntilExists(timeout: 5))
 
         openOverview(in: app)
         XCTAssertTrue(currentChanges(in: app).buttons["Submit for Review…"].wait(until: NSPredicate(format: "isEnabled == true"), timeout: 5))
 
         selectTheCage(in: app)
-        XCTAssertTrue(dismiss.waitForExistence(timeout: 10))
+        XCTAssertTrue(dismiss.waitUntilExists(timeout: 10))
         dismiss.click()
         XCTAssertTrue(dismiss.wait(until: NSPredicate(format: "exists == false"), timeout: 5))
     }
@@ -112,20 +111,20 @@ final class OverviewUITests: XCTestCase {
             .write(to: kept, atomically: true, encoding: .utf8)
 
         let current = app.windows["Changesets"].outlines["changeset-list"].staticTexts["Current changes"]
-        XCTAssertTrue(current.waitForExistence(timeout: 20))
+        XCTAssertTrue(current.waitUntilExists(timeout: 20))
         attachScreenshot(of: app.windows["Changesets"], named: "Current changes counts the conflict and marks it")
         openOverview(in: app)
 
-        XCTAssertTrue(currentChanges(in: app).staticTexts["The Cage changed on GitHub too. Which version should stay?"].waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChanges(in: app).staticTexts["The Cage changed on GitHub too. Which version should stay?"].waitUntilExists(timeout: 5))
         // a conflict is a change, so the page never says there are none
         XCTAssertFalse(currentChanges(in: app).staticTexts["No changes"].exists)
         currentChanges(in: app).buttons["show-differences-\(file)"].click()
-        XCTAssertTrue(currentChanges(in: app).staticTexts["- \(weekdays)"].waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChanges(in: app).staticTexts["- \(weekdays)"].waitUntilExists(timeout: 5))
         XCTAssertTrue(currentChanges(in: app).staticTexts["+       - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '9:00pm'}"].exists)
         attachScreenshot(of: currentChanges(in: app), named: "Conflict with its differences shown")
 
         currentChanges(in: app).buttons["keep-mine-\(file)"].click()
-        XCTAssertTrue(currentChanges(in: app).buttons["revert-\(file)"].waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChanges(in: app).buttons["revert-\(file)"].waitUntilExists(timeout: 5))
         XCTAssertFalse(currentChanges(in: app).buttons["keep-mine-\(file)"].exists)
     }
 
@@ -140,9 +139,9 @@ final class OverviewUITests: XCTestCase {
     func testLaunchShowsTheChangesetsWindow() throws {
         let app = try launchWithRepoData().app
         let changesets = app.windows["Changesets"]
-        XCTAssertTrue(changesets.outlines["changeset-list"].staticTexts["Current changes"].waitForExistence(timeout: 20))
+        XCTAssertTrue(changesets.outlines["changeset-list"].staticTexts["Current changes"].waitUntilExists(timeout: 20))
         XCTAssertFalse(changesets.staticTexts["Submitted"].exists)
-        XCTAssertTrue(changesets.staticTexts["No changes"].waitForExistence(timeout: 5))
+        XCTAssertTrue(changesets.staticTexts["No changes"].waitUntilExists(timeout: 5))
         attachScreenshot(of: changesets, named: "Changesets window at launch")
     }
 
@@ -150,21 +149,20 @@ final class OverviewUITests: XCTestCase {
     func testNoChangesOffersTheEditor() throws {
         let app = try launchWithRepoData().app
         let changesets = app.windows["Changesets"]
-        let edit = changesets.buttons["Edit Building Hours"]
-        XCTAssertTrue(edit.waitForExistence(timeout: 20))
+        let edit = changesets.buttons["Edit Data"]
+        XCTAssertTrue(edit.waitUntilExists(timeout: 20))
         attachScreenshot(of: changesets, named: "No changes, with the way into the editor")
         edit.click()
-        XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChangesWindow(in: app).waitUntilExists(timeout: 5))
         // its own window lists the buildings beside the Overview, so it has no need of the button
-        XCTAssertFalse(currentChangesWindow(in: app).buttons["Edit Building Hours"].exists)
+        XCTAssertFalse(currentChangesWindow(in: app).buttons["Edit Data"].exists)
     }
 
     func testOpeningCurrentChangesBringsItsWindow() throws {
         let app = try launchWithRepoData().app
         let window = openCurrentChanges(in: app)
-        let buildings = window.outlines["building-list"]
-        XCTAssertTrue(buildings.staticTexts["Overview"].exists)
-        XCTAssertTrue(buildings.staticTexts["The Cage"].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.outlines["data-set-list"].staticTexts["Overview"].exists)
+        XCTAssertTrue(window.outlines["record-list"].staticTexts["The Cage"].waitUntilExists(timeout: 5))
         XCTAssertTrue(window.staticTexts["No changes"].exists)
         attachScreenshot(of: window, named: "Current changes window on its Overview")
     }
@@ -173,9 +171,9 @@ final class OverviewUITests: XCTestCase {
     func testTheChangesetsOverviewShowsTextBeingTyped() throws {
         let app = try launchWithRepoData().app
         let window = openCurrentChanges(in: app)
-        window.outlines["building-list"].staticTexts["The Cage"].click()
+        window.outlines["record-list"].staticTexts["The Cage"].click()
         let title = window.textFields["service-title-0"]
-        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        XCTAssertTrue(title.waitUntilExists(timeout: 10))
         title.click()
         title.typeKey(.rightArrow, modifierFlags: .command)
         // no Return
@@ -183,7 +181,7 @@ final class OverviewUITests: XCTestCase {
         app.typeKey("0", modifierFlags: .command)
         let changesets = app.windows["Changesets"]
         let typed = NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "title: Hours today", "title: Hours today")
-        XCTAssertTrue(changesets.descendants(matching: .any).matching(typed).firstMatch.waitForExistence(timeout: 10))
+        XCTAssertTrue(changesets.descendants(matching: .any).matching(typed).firstMatch.waitUntilExists(timeout: 10))
         attachScreenshot(of: changesets, named: "Changesets window showing text typed in Current changes")
     }
 
@@ -191,34 +189,34 @@ final class OverviewUITests: XCTestCase {
     func testReturnInTheChangesetsListOpensTheChangeset() throws {
         let app = try launchWithRepoData().app
         let current = app.windows["Changesets"].outlines["changeset-list"].staticTexts["Current changes"]
-        XCTAssertTrue(current.waitForExistence(timeout: 20))
+        XCTAssertTrue(current.waitUntilExists(timeout: 20))
         current.click()
         app.typeKey(.return, modifierFlags: [])
-        XCTAssertTrue(currentChangesWindow(in: app).waitForExistence(timeout: 5))
+        XCTAssertTrue(currentChangesWindow(in: app).waitUntilExists(timeout: 5))
     }
 
     /// A problem in The Cage, followed from the Changesets window, opens The Cage to edit.
     func testShowingABuildingFromTheChangesetsWindow() throws {
         let app = try launchWithRepoData().app
         let window = openCurrentChanges(in: app)
-        window.outlines["building-list"].staticTexts["The Cage"].click()
+        window.outlines["record-list"].staticTexts["The Cage"].click()
         let title = window.textFields["service-title-0"]
-        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        XCTAssertTrue(title.waitUntilExists(timeout: 10))
         title.click()
         title.typeKey("a", modifierFlags: .command)
         title.typeKey(.delete, modifierFlags: [])
         title.typeKey(.return, modifierFlags: [])
-        XCTAssertTrue(window.staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
-        window.outlines["building-list"].staticTexts["Stav Hall"].click()
+        XCTAssertTrue(window.staticTexts["The title can't be empty."].waitUntilExists(timeout: 5))
+        window.outlines["record-list"].staticTexts["Stav Hall"].click()
 
         let changesets = app.windows["Changesets"]
         // ⌘0 brings it back in front of Current changes, which opened over it
         app.typeKey("0", modifierFlags: .command)
         let show = changesets.buttons["Show The Cage"]
-        XCTAssertTrue(show.waitForExistence(timeout: 10))
+        XCTAssertTrue(show.waitUntilExists(timeout: 10))
         attachScreenshot(of: changesets, named: "Changesets window naming the building that stops the preview")
         show.click()
-        XCTAssertTrue(window.staticTexts["The title can't be empty."].waitForExistence(timeout: 5))
+        XCTAssertTrue(window.staticTexts["The title can't be empty."].waitUntilExists(timeout: 5))
     }
 
     func testTheDataBrowserAsksForThePreviewWhileItIsOff() throws {
@@ -228,7 +226,7 @@ final class OverviewUITests: XCTestCase {
         browse.click()
 
         let window = app.windows["Data Browser"]
-        XCTAssertTrue(window.waitForExistence(timeout: 5))
+        XCTAssertTrue(window.waitUntilExists(timeout: 5))
         let local = window.descendants(matching: .any)["local-pane"].firstMatch
         XCTAssertTrue(local.wait(until: NSPredicate(format: "value CONTAINS %@ OR label CONTAINS %@", "Start the preview", "Start the preview"), timeout: 5))
         // UI tests leave production alone

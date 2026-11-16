@@ -1,16 +1,25 @@
 import {spawn} from 'node:child_process'
-import {readFileSync, readdirSync} from 'node:fs'
+import {existsSync} from 'node:fs'
 import {mkdir, mkdtemp, readdir, rm} from 'node:fs/promises'
 import path from 'node:path'
-import {load} from 'js-yaml'
-import {isDataEntry} from './data-entries.mjs'
-import {hoursFileOrder, loadScheduleData} from './schedule-data.ts'
+import {
+	compiledSchema,
+	fileSchema,
+	loadCatalog,
+	readYaml,
+	setForFile,
+} from './data-editor-datasets.mjs'
+import {pointerKeys, wordProblems} from './data-editor-wording.mjs'
+import {loadScheduleData} from './schedule-data.ts'
 
 /** Something wrong with the data, at a path inside `file` when the message names one. */
-export type Problem = {file: string | null; message: string; path: (string | number)[] | null}
-
-/** An hours file as the editor's sidebar lists it. */
-export type Building = {file: string; name: string; category: string}
+export type Problem = {
+	file: string | null
+	message: string
+	path: (string | number)[] | null
+	/** the title of the field this problem says is missing, which is at `path` */
+	missing?: string
+}
 
 /** The break calendar as the break-schedule editor offers it. */
 export type Calendar = {
@@ -25,11 +34,7 @@ const keyOf = (text: string): Key => (/^\d+$/u.test(text) ? Number(text) : text)
 /** The keys in `/schedule/0/hours` (Ajv's pointers) or `.breakSchedule.fall[0]` (the schedule checks'). */
 export function keysOf(rest: string): Key[] {
 	if (rest.startsWith('/')) {
-		return rest
-			.slice(1)
-			.split('/')
-			.filter(Boolean)
-			.map((key) => keyOf(key.replaceAll('~1', '/').replaceAll('~0', '~')))
+		return pointerKeys(rest).map(keyOf)
 	}
 	return [...rest.matchAll(/\.([^.[\]]+)|\[(\d+)\]/gu)].map((match) =>
 		match[1] !== undefined ? match[1] : Number(match[2]),
@@ -61,41 +66,76 @@ export function problemsFrom(error: unknown, dataDir: string): Problem[] {
 	})
 }
 
-/** `file` checked as `mise run validate-data` checks it: its schema, then the whole schedule graph. */
+/**
+ * `file` checked as `mise run validate-data` checks it. A file of a set
+ * whose form is hours or breaks is checked against its schema and then the
+ * whole schedule graph; any other file against the schema of the set that holds it, its
+ * problems worded with the schema's field titles. A file no set holds, or one
+ * without a schema, has nothing to check, nor has a file that is gone.
+ */
 export function validate(dataDir: string, file: string): Problem[] {
-	let filename = path.join(dataDir, file)
-	const kind = file === 'breaks.yaml' ? 'calendar' : 'space'
-	try {
-		loadScheduleData(dataDir, {kind, filename})
-		return []
-	} catch (error) {
-		return problemsFrom(error, dataDir)
+	// a record the contributor removed has nothing left to check
+	if (!existsSync(path.join(dataDir, file))) return []
+	let catalog = loadCatalog(dataDir)
+	let name = setForFile(catalog, file)
+	if (name === undefined) return []
+	let {form, schema: schemaName} = catalog.sets[name]
+	if (form === 'hours' || form === 'breaks') {
+		try {
+			loadScheduleData(dataDir, {
+				kind: form === 'breaks' ? 'calendar' : 'space',
+				filename: path.join(dataDir, file),
+			})
+			return []
+		} catch (error) {
+			return problemsFrom(error, dataDir)
+		}
 	}
+	if (schemaName === undefined) return []
+	let check = compiledSchema(path.join(dataDir, '_schemas'), `${schemaName}.yaml`, {
+		allErrors: true,
+	})
+	let data = readYaml(path.join(dataDir, file))
+	if (check(data)) return []
+	return wordProblems(check.errors, fileSchema(dataDir, catalog, name)).map(
+		({
+			message,
+			instancePath,
+			missing,
+		}: {
+			message: string
+			instancePath: string
+			missing?: string
+		}) => ({
+			file,
+			message,
+			path: keysIn(data, instancePath),
+			...(missing === undefined ? {} : {missing}),
+		}),
+	)
 }
 
-const readYaml = (filename: string): unknown => load(readFileSync(filename, 'utf8'), {filename})
+/**
+ * The keys in an Ajv pointer such as `/routes/77627/line`, each an index only
+ * where `data` holds a list there: a map may be keyed by digits, as the bus
+ * routes are by GTFS id, and an index would point the editor into a list.
+ */
+export function keysIn(data: unknown, pointer: string): Key[] {
+	let keys: Key[] = []
+	let value = data
+	for (let key of pointerKeys(pointer)) {
+		let step = Array.isArray(value) ? Number(key) : key
+		keys.push(step)
+		value = (value as Record<string | number, unknown> | null)?.[step]
+	}
+	return keys
+}
 
 const text = (value: unknown, fallback: string): string =>
 	typeof value === 'string' ? value : fallback
 
 const asRecord = (value: unknown): Record<string, unknown> =>
 	typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {}
-
-/** Every hours file, in the order the data is published in. */
-export function listBuildings(dataDir: string): Building[] {
-	let dir = path.join(dataDir, 'building-hours')
-	return readdirSync(dir)
-		.filter(isDataEntry)
-		.sort(hoursFileOrder)
-		.map((entry) => {
-			let data = asRecord(readYaml(path.join(dir, entry)))
-			return {
-				file: path.join('building-hours', entry),
-				name: text(data['name'], entry),
-				category: text(data['category'], ''),
-			}
-		})
-}
 
 /** The breaks in `breaks.yaml` and the templates a building may name. */
 export function readCalendar(dataDir: string): Calendar {
@@ -105,8 +145,9 @@ export function readCalendar(dataDir: string): Calendar {
 		return {
 			key,
 			name: text(entry['name'], key),
-			start: text(entry['start'], ''),
-			end: text(entry['end'], ''),
+			// a one-day break, such as Easter, has a date and no range: that day is its start and end
+			start: text(entry['start'] ?? entry['date'], ''),
+			end: text(entry['end'] ?? entry['date'], ''),
 			templates: Object.keys(asRecord(entry['templates'])),
 		}
 	})

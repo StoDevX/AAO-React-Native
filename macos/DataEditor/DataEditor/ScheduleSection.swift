@@ -28,9 +28,12 @@ struct ScheduleSection: View {
                 }
                 .accessibilityIdentifier("service-notes-\(s)")
                 Group {
-                    Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
-                                                  set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
-                        .accessibilityIdentifier("closed-\(s)")
+                    LabeledContent("Closed") {
+                        Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
+                                                      set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
+                            .labelsHidden()
+                            .accessibilityIdentifier("closed-\(s)")
+                    }
                     ForEach(Array(service.rows.enumerated()), id: \.offset) { r, row in
                         RowEditor(row: row, service: s, index: r, editor: editor)
                     }
@@ -68,8 +71,9 @@ struct ScheduleSection: View {
 /// focus, and the draft must still land in its own file. Until the helper
 /// takes the text the field keeps it: nothing reloads over it, and it is sent
 /// again on Return or when focus leaves.
-private struct DraftField: View {
+struct DraftField: View {
     @Environment(AppModel.self) private var model
+    @Environment(\.isEnabled) private var isEnabled
     let label: String
     /// the file on screen
     let file: String
@@ -78,6 +82,8 @@ private struct DraftField: View {
     /// what the field's schedule holds in that file
     let schedule: JSONValue?
     var axis: Axis = .horizontal
+    /// where the field's value is in the file, so it can take focus when something is added there
+    var place: [PathKey]? = nil
     /// saves `text` in `file`, in the schedule that held `schedule` when the draft began and `expected` in this field
     let commit: (_ file: String, _ text: String, _ expected: String, _ schedule: JSONValue?) async -> AppModel.DraftOutcome
     @State private var draft = ""
@@ -131,33 +137,58 @@ private struct DraftField: View {
     }
 
     var body: some View {
-        TextField(label, text: $draft, axis: axis)
+        Group {
+            if !isEnabled {
+                // a value that can't be edited reads as text: a dimmed field looks empty
+                readOnly
+            } else {
+                // beside its name in the label column, a paragraph's box growing downward as it wraps
+                field
+            }
+        }
+        // the draft lives as long as the field, whichever of the two shows it: a lock
+        // coming and going must neither save it early nor load the file over it
+        .onChange(of: draft) { old, _ in
+            if old == base { scheduleAtStart = schedule }
+        }
+        .onAppear {
+            load()
+            model.registerDraftSaver(id) { await save() }
+        }
+        .onDisappear {
+            commitIfChanged()
+            model.noteDraft(id, unsaved: false)
+            model.unregisterDraftSaver(id)
+        }
+        .onChange(of: file) {
+            commitIfChanged()
+            load()
+        }
+        // the same file changed, by this field's edit or another; unsaved text stays
+        .onChange(of: value) { if file == draftFile, !focused, draft == base { load() } }
+        .onChange(of: draft != base) { _, unsaved in model.noteDraft(id, unsaved: unsaved) }
+    }
+
+    /// The value as text beside its name.
+    private var readOnly: some View {
+        LabeledContent {
+            Text(value.isEmpty ? "—" : value).textSelection(.enabled).foregroundStyle(value.isEmpty ? .secondary : .primary)
+        } label: {
+            Text(label)
+        }
+    }
+
+    private var field: some View {
+        // while empty, naming what goes in it; the form's style draws its box
+        TextField(label, text: $draft, prompt: Text(label), axis: axis)
             .focused($focused)
             .onSubmit(commitIfChanged)
-            .onChange(of: draft) { old, _ in
-                if old == base { scheduleAtStart = schedule }
-            }
             .onChange(of: focused) { _, isFocused in
                 guard !isFocused else { return }
                 // with nothing typed, catch up with a file changed while focused (a revert)
                 if draft == base, value != draft { load() } else { commitIfChanged() }
             }
-            .onAppear {
-                load()
-                model.registerDraftSaver(id) { await save() }
-            }
-            .onDisappear {
-                commitIfChanged()
-                model.noteDraft(id, unsaved: false)
-                model.unregisterDraftSaver(id)
-            }
-            .onChange(of: file) {
-                commitIfChanged()
-                load()
-            }
-            // the same file changed, by this field's edit or another; unsaved text stays
-            .onChange(of: value) { if file == draftFile, !focused, draft == base { load() } }
-            .onChange(of: draft != base) { _, unsaved in model.noteDraft(id, unsaved: unsaved) }
+            .focusedWhenAdded(at: place, $focused)
     }
 }
 
@@ -178,28 +209,46 @@ private struct RowEditor: View {
     }
 
     var body: some View {
-        HStack {
-            DayPicker(week: model.week, days: row.days) { days in
-                Task { await model.apply([editor.setDays(service: service, row: index, days)]) }
+        // days and times on one line where they fit, the times under the days where they don't
+        ViewThatFits(in: .horizontal) {
+            HStack {
+                days
+                Spacer()
+                times
             }
-            .accessibilityIdentifier("days-\(service)-\(index)")
-            Spacer()
-            TimePicker(label: "Opens", text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
-                Task { await model.apply([editor.setTime(service: service, row: index, end: .from, time)]) }
+            VStack(alignment: .leading) {
+                days
+                HStack {
+                    times
+                    Spacer()
+                }
             }
-            Text("to")
-            TimePicker(label: "Closes", text: row.toText, identifier: "row-time-to-\(service)-\(index)") { time in
-                Task { await model.apply([editor.setTime(service: service, row: index, end: .to, time)]) }
-            }
-            if closesNextDay {
-                Text("next day").font(.caption).foregroundStyle(.secondary)
-            }
-            Button("Remove \(daySummary(row.days, week: model.week)) \(row.fromText) to \(row.toText)", systemImage: "minus.circle") {
-                if !isRepeatClick() { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
-            }
-                .labelStyle(.iconOnly)
-                .accessibilityIdentifier("remove-row-\(service)-\(index)")
         }
+    }
+
+    private var days: some View {
+        DayPicker(week: model.week, days: row.days) { days in
+            Task { await model.apply([editor.setDays(service: service, row: index, days)]) }
+        }
+        .accessibilityIdentifier("days-\(service)-\(index)")
+    }
+
+    @ViewBuilder private var times: some View {
+        TimePicker(label: "Opens", text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
+            Task { await model.apply([editor.setTime(service: service, row: index, end: .from, time)]) }
+        }
+        Text("to")
+        TimePicker(label: "Closes", text: row.toText, identifier: "row-time-to-\(service)-\(index)") { time in
+            Task { await model.apply([editor.setTime(service: service, row: index, end: .to, time)]) }
+        }
+        if closesNextDay {
+            Text("next day").font(.caption).foregroundStyle(.secondary)
+        }
+        Button("Remove \(daySummary(row.days, week: model.week)) \(row.fromText) to \(row.toText)", systemImage: "minus.circle") {
+            if !isRepeatClick() { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
+        }
+            .labelStyle(.iconOnly)
+            .accessibilityIdentifier("remove-row-\(service)-\(index)")
     }
 }
 

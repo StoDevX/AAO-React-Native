@@ -4,15 +4,16 @@ type: object
 additionalProperties: false
 required: [line, timezone, schedules, colors]
 properties:
-  line: {type: string}
-  timezone: {type: string}
-  colors: {$ref: '#/definitions/colors'}
-  notice: {type: string}
-  hidden: {type: boolean}
+  line: {type: string, title: Line}
+  timezone: {type: string, title: Timezone}
+  colors: {$ref: '#/definitions/colors', title: Colors}
+  notice: {type: string, title: Notice, editor: multiline}
+  hidden: {type: boolean, title: Hidden}
   schedules:
     type: array
     items: {$ref: '#/definitions/schedule'}
     minItems: 1
+    title: Schedules
 
 definitions:
   schedule:
@@ -20,11 +21,11 @@ definitions:
     additionalProperties: false
     required: [days, stops, times]
     properties:
-      days: {$ref: '_defs.json#/definitions/days-of-week'}
-      coordinates: {$ref: '#/definitions/coordinates'}
-      stops: {$ref: '#/definitions/stops'}
-      times: {$ref: '#/definitions/times'}
-      closures: {$ref: '#/definitions/closures'}
+      days: {$ref: '_defs.json#/definitions/days-of-week', title: Days}
+      coordinates: {$ref: '#/definitions/coordinates', title: Coordinates}
+      stops: {$ref: '#/definitions/stops', title: Stops}
+      times: {$ref: '#/definitions/times', title: Times}
+      closures: {$ref: '#/definitions/closures', title: Closures}
 
   coordinates:
     type: object
@@ -32,7 +33,8 @@ definitions:
 
   stops:
     type: array
-    items: {type: string}
+    # each stop is one the schedule has coordinates for
+    items: {type: string, x-choices: 1/coordinates}
 
   times:
     type: array
@@ -54,19 +56,21 @@ definitions:
     additionalProperties: false
     required: [date, name]
     properties:
-      date: {type: string, format: date}
-      name: {type: string}
+      date: {type: string, format: date, title: Date}
+      name: {type: string, title: Name}
 
   coord-pair:
     type: array
     items: [{type: number}, {type: number}]
     minItems: 2
     maxItems: 2
+    title: Coordinate
+    editor: coordinate
 
   colors:
     type: object
     additionalProperties: false
     required: [bar, dot]
     properties:
-      bar: {type: string}
-      dot: {type: string}
+      bar: {type: string, title: Bar, editor: color}
+      dot: {type: string, title: Dot, editor: color}

@@ -120,7 +120,7 @@ export function composeSchedule(rows, venue) {
 		if (!title) {
 			throw new Error(
 				`bonapp: daypart "${row.daypart}" is neither mapped nor skipped; ` +
-					'add it to dayparts or skip in scripts/bonapp-overrides.yaml',
+					'add it to dayparts or skip in data/_scrapes/bonapp-overrides.yaml',
 			)
 		}
 		sections.get(title).push(row)

@@ -38,11 +38,10 @@ struct PullRequestDetailView: View {
                     Text(record.summary).font(.title2).textSelection(.enabled)
                 }
                 PullRequestLoadStatus(record: record)
-                // named as the list beside names them, a file the data no longer lists by its file name
-                ForEach(changesetBuildings(.pullRequest(number: number), all: model.buildings, history: model.submissions)
-                    .filter { record.diffs?[$0.file] != nil || record.tooLarge.contains($0.file) }) { building in
-                    Section(building.name) {
-                        PullRequestFileDiff(record: record, file: building.file)
+                // named as the list beside names them, a file the data no longer lists by its path
+                ForEach(record.changedFiles.filter { record.diffs?[$0] != nil || record.tooLarge.contains($0) }, id: \.self) { file in
+                    Section(model.name(of: file)) {
+                        PullRequestFileDiff(record: record, file: file)
                     }
                 }
             }
@@ -62,8 +61,7 @@ struct PullRequestFileView: View {
 
     var body: some View {
         if let record = model.submissions.records.first(where: { $0.id == number }) {
-            let name = changesetBuildings(.pullRequest(number: number), all: model.buildings, history: model.submissions)
-                .first { $0.file == file }?.name ?? file
+            let name = model.name(of: file)
             Form {
                 Section {
                     PullRequestFileDiff(record: record, file: file)

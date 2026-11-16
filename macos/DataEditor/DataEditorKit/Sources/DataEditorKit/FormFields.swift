@@ -1,0 +1,207 @@
+import Foundation
+
+/// How a form draws one field, decided by its schema and its `editor` hint.
+public indirect enum FieldKind: Hashable, Sendable {
+    case text, multiline, markdown, symbol, phone, url, email, date, dateTime, time, image, toggle, number
+    /// a colour, written as text or, when `triple`, as three numbers
+    case color(triple: Bool)
+    /// one of a fixed set of values
+    case choice([String])
+    /// one of the app's named gradients, or a pair of colours
+    case gradient(names: [String])
+    /// days of the week, any number of them
+    case days
+    /// a place as latitude and longitude, written `[lat, long]`
+    case coordinate
+    /// one of the values found at `pointer` in the same file (see `choices(_:in:at:)`)
+    case reference(pointer: String)
+    /// a set of short names, each chosen from the values at `choices` when given
+    case tokens(choices: String?)
+    /// a group of fields
+    case object([FormField])
+    /// a list of values or groups, each called `itemTitle`
+    case list(item: FieldKind, itemTitle: String)
+    /// entries keyed by a name the contributor writes, such as a meal's name
+    case map(value: FieldKind)
+    /// exactly one of several fields, as a contact has a phone number or a link
+    case oneOf([Alternative])
+    /// one of several kinds of object, each fixing `key` to its own value, as a
+    /// help button's `action` says whether it opens a link or sends an email
+    case variants(key: String, [Variant])
+}
+
+/// One choice of a `oneOf` field: its label, and the fields it fills in.
+public struct Alternative: Hashable, Sendable {
+    public let label: String
+    public let fields: [FormField]
+    public init(label: String, fields: [FormField]) {
+        self.label = label
+        self.fields = fields
+    }
+}
+
+/// One kind of a `variants` field: the value its key holds, what it is called, and its fields.
+public struct Variant: Hashable, Sendable {
+    public let value: String
+    public let label: String
+    public let fields: [FormField]
+    public init(value: String, label: String, fields: [FormField]) {
+        self.value = value
+        self.label = label
+        self.fields = fields
+    }
+}
+
+/// One field of a record's form.
+public struct FormField: Hashable, Sendable, Identifiable {
+    /// The field's key in the record; a `oneOf` field's keys joined with `|`.
+    public let key: String
+    public let title: String
+    /// The schema's `description`, shown under the field.
+    public let help: String?
+    public let kind: FieldKind
+    public let required: Bool
+    public var id: String { key }
+
+    public init(key: String, title: String, help: String?, kind: FieldKind, required: Bool) {
+        self.key = key
+        self.title = title
+        self.help = help
+        self.kind = kind
+        self.required = required
+    }
+}
+
+/// The control an `editor` hint names.
+private let hinted: [String: FieldKind] = [
+    "markdown": .markdown, "multiline": .multiline, "symbol": .symbol, "days": .days, "time": .time,
+    "phone": .phone, "url": .url, "date": .date, "image": .image, "coordinate": .coordinate,
+]
+
+/// How `schema` draws, with `title` as the name of one list item when it names none of its own.
+private func kind(of schema: JSONValue, title: String) -> FieldKind {
+    if schema["editor"]?.string == "gradient" {
+        // the names are the schema's own, or its first choice's when a pair of colours is the other
+        let names = schema["enum"] ?? (schema["oneOf"] ?? schema["anyOf"])?[0]?["enum"]
+        return .gradient(names: names?.array?.compactMap(\.string) ?? [])
+    }
+    if schema["editor"]?.string == "color" { return .color(triple: schema["type"]?.string == "array") }
+    if let hint = schema["editor"]?.string, let kind = hinted[hint] { return kind }
+    if let pointer = schema["x-choices"]?.string { return .reference(pointer: pointer) }
+    if let values = schema["enum"]?.array { return .choice(values.compactMap(\.string)) }
+    switch schema["format"]?.string {
+    case "date": return .date
+    case "date-time": return .dateTime
+    case "email": return .email
+    case "uri", "uri-reference": return .url
+    default: break
+    }
+    switch schema["type"]?.string {
+    case "boolean": return .toggle
+    case "number", "integer": return .number
+    case "array":
+        // a tuple gives each place its own schema, as an accent colour's three numbers; the first speaks for them
+        let item = schema["items"].map { $0.array?.first ?? $0 } ?? .object([:])
+        // plain names: a set of them, or each one chosen from elsewhere in the file
+        if item["type"]?.string == "string", item["enum"] == nil, item["editor"] == nil, item["format"] == nil {
+            if let pointer = item["x-choices"]?.string { return .tokens(choices: pointer) }
+            if schema["uniqueItems"]?.bool == true { return .tokens(choices: nil) }
+        }
+        // an item with no title of its own is one of the list's: a Station of Stations
+        return .list(item: kind(of: item, title: title), itemTitle: item["title"]?.string ?? singular(title))
+    case "object":
+        if schema["properties"] != nil { return .object(formFields(schema: schema)) }
+        if let value = schema["additionalProperties"], case .object = value {
+            return .map(value: kind(of: value, title: title))
+        }
+        return .object([])
+    default:
+        if let branches = schema["oneOf"]?.array, let (key, kinds) = variants(of: branches) { return .variants(key: key, kinds) }
+        if let first = schema["oneOf"]?[0] ?? schema["anyOf"]?[0] { return kind(of: first, title: title) }
+        return .text
+    }
+}
+
+/// The kinds `branches` are when each is an object fixing one key, the same in
+/// all, to a value of its own, as a help button's `action`: that key, and each
+/// branch's value, title and fields. Nil for branches told apart some other way.
+private func variants(of branches: [JSONValue]) -> (String, [Variant])? {
+    guard branches.count > 1 else { return nil }
+    let fixed: [[String: String]] = branches.map { branch in
+        guard case .object(let properties)? = branch["properties"] else { return [:] }
+        return properties.compactMapValues { $0["const"]?.string }
+    }
+    guard let key = fixed[0].keys.sorted().first(where: { key in fixed.allSatisfy { $0[key] != nil } }) else { return nil }
+    let values = fixed.compactMap { $0[key] }
+    guard Set(values).count == values.count else { return nil }
+    return (key, zip(branches, values).map { branch, value in
+        Variant(value: value, label: branch["title"]?.string ?? value, fields: formFields(schema: branch))
+    })
+}
+
+/// Whether a form leaves the field off: hidden by its hint, or fixed by `const`.
+private func isLeftOut(_ schema: JSONValue) -> Bool {
+    schema["editor"]?.string == "hidden" || schema["const"] != nil
+}
+
+/// The fields an object schema's form shows, in its `propertyOrder`. A
+/// top-level `oneOf` whose choices each require one field becomes one field
+/// that offers them, where the first of them would have been.
+public func formFields(schema: JSONValue) -> [FormField] {
+    guard case .object(let properties)? = schema["properties"] else { return [] }
+    let order = schema["propertyOrder"]?.array?.compactMap(\.string) ?? properties.keys.sorted()
+    let required = Set(schema["required"]?.array?.compactMap(\.string) ?? [])
+    let choices = (schema["oneOf"]?.array ?? []).compactMap { branch -> String? in
+        guard case .object(let object) = branch, object.count == 1,
+              let keys = branch["required"]?.array, keys.count == 1 else { return nil }
+        return keys[0].string
+    }
+    let offersChoice = !choices.isEmpty && choices.count == schema["oneOf"]?.array?.count
+
+    func field(_ key: String, _ property: JSONValue) -> FormField {
+        let title = property["title"]?.string ?? key
+        return FormField(key: key, title: title, help: property["description"]?.string,
+                         kind: kind(of: property, title: title), required: required.contains(key))
+    }
+
+    var fields: [FormField] = []
+    for key in order {
+        guard let property = properties[key], !isLeftOut(property) else { continue }
+        if offersChoice, choices.contains(key) {
+            guard key == choices.first(where: { order.contains($0) }) else { continue }
+            let alternatives = choices.compactMap { choice in
+                properties[choice].map { Alternative(label: $0["title"]?.string ?? choice, fields: [field(choice, $0)]) }
+            }
+            fields.append(FormField(key: choices.joined(separator: "|"), title: alternatives.map(\.label).joined(separator: " or "),
+                                    help: nil, kind: .oneOf(alternatives), required: true))
+        } else {
+            fields.append(field(key, property))
+        }
+    }
+    return fields
+}
+
+/// The edits that change the field `key` of the record at `base` from `old`
+/// to `new`: nothing when it did not change, and a delete when an optional
+/// field is cleared, so the file does not keep an empty value.
+public func fieldOps(at base: [PathKey], key: String, old: JSONValue?, new: JSONValue?, required: Bool) -> [EditOp] {
+    let path = base + [.key(key)]
+    let cleared = new == nil || new == .string("")
+    if cleared, !required { return old == nil ? [] : [.delete(path)] }
+    let value = new ?? .string("")
+    return value == old ? [] : [.set(path, value)]
+}
+
+extension JSONValue {
+    /// The text a form's text field shows for this value: a whole number
+    /// without a fraction, and nothing for a list, an object or null. An edit
+    /// compares what the file holds with what was typed in these terms.
+    public var fieldText: String {
+        switch self {
+        case .string(let text): text
+        case .number(let number): number == number.rounded() && abs(number) < 1e15 ? String(Int(number)) : String(number)
+        case .bool(let bool): bool ? "true" : "false"
+        default: ""
+        }
+    }
+}

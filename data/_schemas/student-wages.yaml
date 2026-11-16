@@ -10,14 +10,14 @@ definitions:
     additionalProperties: false
     required: ['1', '2', '3']
     properties:
-      '1': {type: number, exclusiveMinimum: 0}
-      '2': {type: number, exclusiveMinimum: 0}
-      '3': {type: number, exclusiveMinimum: 0}
+      '1': {type: number, exclusiveMinimum: 0, title: Tier 1}
+      '2': {type: number, exclusiveMinimum: 0, title: Tier 2}
+      '3': {type: number, exclusiveMinimum: 0, title: Tier 3}
 
 type: object
 additionalProperties: false
 required: [ST, NST, OSA]
 properties:
-  ST: {$ref: '#/definitions/tiers'}
-  NST: {$ref: '#/definitions/tiers'}
-  OSA: {$ref: '#/definitions/tiers'}
+  ST: {$ref: '#/definitions/tiers', title: ST}
+  NST: {$ref: '#/definitions/tiers', title: NST}
+  OSA: {$ref: '#/definitions/tiers', title: OSA}

@@ -5,25 +5,27 @@ type: object
 additionalProperties: false
 required: [name, category, kind, schedule]
 properties:
-  name: {$ref: 'schedules.json#/definitions/text'}
-  subtitle: {type: string}
-  abbreviation: {type: string}
-  category: {type: string}
-  kind: {enum: [building, office, space, service]}
-  listed: {type: boolean}
-  image: {type: string}
-  building: {type: string, pattern: '^[a-z0-9-]+$'}
-  isNotice: {type: boolean}
-  noticeMessage: {type: string}
+  name: {$ref: 'schedules.json#/definitions/text', title: Name}
+  subtitle: {type: string, title: Subtitle}
+  abbreviation: {type: string, title: Abbreviation}
+  category: {type: string, title: Category}
+  kind: {enum: [building, office, space, service], title: Kind}
+  listed: {type: boolean, title: Listed}
+  image: {type: string, title: Image, editor: image}
+  building: {type: string, pattern: '^[a-z0-9-]+$', title: Building}
+  isNotice: {type: boolean, title: Shows a Notice}
+  noticeMessage: {type: string, title: Notice, editor: multiline}
   links:
     type: array
+    title: Links
     items:
       type: object
       additionalProperties: false
       required: [title, url]
+      title: Link
       properties:
-        title: {type: string}
-        url: {type: string}
+        title: {type: string, title: Title}
+        url: {type: string, title: Link, editor: url}
   schedule: {$ref: 'schedules.json#/definitions/services'}
   exceptions: {$ref: 'schedules.json#/definitions/exceptions'}
   # The paired calendar validator checks these keys and all references.

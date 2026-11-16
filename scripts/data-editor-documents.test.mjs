@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os'
 import path from 'node:path'
 import {describe, it} from 'node:test'
 import {isDataEntry} from './data-entries.mjs'
+import {isNotJunk} from './junk.mjs'
 import {DATA_BASE} from './paths.mjs'
 import {
 	DocumentStore,
@@ -40,10 +41,13 @@ async function storeWithFixture() {
 }
 
 describe('roundTrip', () => {
-	let hours = readdirSync(path.join(DATA_BASE, 'building-hours'))
-		.filter(isDataEntry)
-		.map((file) => path.join('building-hours', file))
-	for (let file of [...hours, 'breaks.yaml']) {
+	// every file the editor may write and the formatter checks, the files steering
+	// a scrape among them; .prettierignore leaves the bus times unformatted
+	let files = readdirSync(DATA_BASE, {recursive: true}).filter(
+		(file) =>
+			file.endsWith('.yaml') && isNotJunk(path.basename(file)) && !file.startsWith('bus-times/'),
+	)
+	for (let file of files) {
 		it(`leaves ${file} as it is`, async () => {
 			let text = readFileSync(path.join(DATA_BASE, file), 'utf8')
 			assert.equal(await roundTrip(file, text), text)
@@ -73,12 +77,86 @@ describe('DocumentStore.edit', () => {
 		)
 	})
 
+	it('writes a list it replaces on one line, as the file had it', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		let text = `name: St. Olaf Avenue
+accentColor: [48, 63, 102]
+`
+		await writeFile(path.join(root, 'webcam.yaml'), text)
+		await new DocumentStore(root).edit('webcam.yaml', [
+			{path: ['accentColor'], value: [50, 60, 100]},
+		])
+		assert.equal(
+			await readFile(path.join(root, 'webcam.yaml'), 'utf8'),
+			text.replace('[48, 63, 102]', '[50, 60, 100]'),
+		)
+	})
+
+	it('leaves a folded paragraph it did not change wrapped as it was', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		let text = `venues:
+  the-kings-room:
+    watch_only: >-
+      Sushirito, Cage Express and Med-Express all serve this room's lunch.
+      They are not separate venues in AAO.
+    file: kings.yaml
+`
+		await writeFile(path.join(root, 'overrides.yaml'), text)
+		await new DocumentStore(root).edit('overrides.yaml', [
+			{path: ['venues', 'the-kings-room', 'file'], value: 'cage.yaml'},
+		])
+		assert.equal(
+			await readFile(path.join(root, 'overrides.yaml'), 'utf8'),
+			text.replace('kings.yaml', 'cage.yaml'),
+		)
+	})
+
 	it('adds a row in the style of its neighbours', async () => {
 		let {store, read} = await storeWithFixture()
 		await store.edit('cage.yaml', [
 			{path: ['schedule', 0, 'hours', 2], value: {days: ['Su'], from: '9:00am', to: '10:30am'}},
 		])
 		assert.equal(await read(), FIXTURE + "      - {days: [Su], from: '9:00am', to: '10:30am'}\n")
+	})
+
+	/// A bus timetable writes each trip on one line, its times unquoted, and each stop's coordinates beside its name.
+	const TIMETABLE = `schedules:
+  - coordinates:
+      Library: [44.45, -93.15]
+    stops: [Library, Carleton]
+    times:
+      - [3:00pm, 3:08pm]
+`
+
+	async function storeWithTimetable() {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		await writeFile(path.join(root, 'express.yaml'), TIMETABLE)
+		return {
+			store: new DocumentStore(root),
+			read: () => readFile(path.join(root, 'express.yaml'), 'utf8'),
+		}
+	}
+
+	it('adds a trip in the style of the trips beside it', async () => {
+		let {store, read} = await storeWithTimetable()
+		await store.edit('express.yaml', [
+			{path: ['schedules', 0, 'times', 1], value: ['4:00pm', '4:08pm']},
+		])
+		assert.equal(await read(), TIMETABLE + '      - [4:00pm, 4:08pm]\n')
+	})
+
+	it("changes a trip's time without quoting it", async () => {
+		let {store, read} = await storeWithTimetable()
+		await store.edit('express.yaml', [{path: ['schedules', 0, 'times', 0, 1], value: '4:08pm'}])
+		assert.equal(await read(), TIMETABLE.replace('3:08pm', '4:08pm'))
+	})
+
+	it("adds a stop's coordinates in the style of the others", async () => {
+		let {store, read} = await storeWithTimetable()
+		await store.edit('express.yaml', [
+			{path: ['schedules', 0, 'coordinates', 'Carleton'], value: [44.46, -93.15]},
+		])
+		assert.match(await read(), /\n {6}Carleton: \[44\.46, -93\.15\]\n/u)
 	})
 
 	/// Closing writes `hours: []`; reopening adds a row to that list.
@@ -169,6 +247,22 @@ describe('DocumentStore.edit', () => {
 	})
 })
 
+describe('DocumentStore.create', () => {
+	it('writes the new file whole, leaving nothing staged beside it', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		await new DocumentStore(root).create('new.yaml', {name: 'The Cave'})
+		assert.equal(await readFile(path.join(root, 'new.yaml'), 'utf8'), 'name: The Cave\n')
+		assert.deepEqual(readdirSync(root), ['new.yaml'])
+	})
+
+	it('refuses a name already taken, leaving that file as it was', async () => {
+		let {root, store, read} = await storeWithFixture()
+		await assert.rejects(store.create('cage.yaml', {name: 'Another'}), {code: 'EEXIST'})
+		assert.equal(await read(), FIXTURE)
+		assert.deepEqual(readdirSync(root), ['cage.yaml'])
+	})
+})
+
 describe('inside', () => {
 	it('resolves a file in the root', () => {
 		assert.equal(inside('/ws/data', 'building-hours/x.yaml'), '/ws/data/building-hours/x.yaml')
@@ -183,5 +277,20 @@ describe('tempFileFor', () => {
 		let temp = tempFileFor('/ws/data/building-hours/1-1-cage.yaml')
 		assert.equal(path.dirname(temp), '/ws/data/building-hours')
 		assert.equal(isDataEntry(path.basename(temp)), false)
+	})
+})
+
+describe('DocumentStore.rename', () => {
+	it('swaps two names in use, leaving nothing half moved', async () => {
+		let root = await mkdtemp(path.join(tmpdir(), 'data-editor-'))
+		await writeFile(path.join(root, 'a.yaml'), 'name: A\n')
+		await writeFile(path.join(root, 'b.yaml'), 'name: B\n')
+		await new DocumentStore(root).rename([
+			{from: 'a.yaml', to: 'b.yaml'},
+			{from: 'b.yaml', to: 'a.yaml'},
+		])
+		assert.equal(await readFile(path.join(root, 'a.yaml'), 'utf8'), 'name: B\n')
+		assert.equal(await readFile(path.join(root, 'b.yaml'), 'utf8'), 'name: A\n')
+		assert.deepEqual(readdirSync(root).toSorted(), ['a.yaml', 'b.yaml'])
 	})
 })

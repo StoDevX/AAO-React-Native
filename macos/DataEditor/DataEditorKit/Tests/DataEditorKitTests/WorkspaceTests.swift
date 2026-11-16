@@ -87,6 +87,82 @@ struct WorkspaceTests {
         #expect(try workspace.changedFiles() == [])
     }
 
+    /// Contacts whose base holds `base` and whose data holds `data`, each a file name and its text.
+    private func contacts(base: [String: String], data: [String: String]) async throws -> Workspace {
+        let root = temporaryRoot()
+        let (session, _) = stubRepo()
+        let workspace = Workspace(root: root, session: session)
+        _ = try await workspace.download(commit: "c1")
+        for (folder, files) in [("base/data/contact-info", base), ("data/contact-info", data)] {
+            let directory = root.appending(path: folder)
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            for (name, text) in files { try body(text).write(to: directory.appending(path: name)) }
+        }
+        return workspace
+    }
+
+    /// Lighthouse was dragged above Hope Center, then edited, and PubSafe edited where it was.
+    private func reordered() async throws -> Workspace {
+        try await contacts(
+            base: ["1-4-hope-center.yaml": "title: Hope\n", "1-5-lighthouse.yaml": "title: Lighthouse\n",
+                   "1-6-pubsafe.yaml": "title: PubSafe\n"],
+            data: ["1-5-hope-center.yaml": "title: Hope\n", "1-4-lighthouse.yaml": "title: The Lighthouse\n",
+                   "1-6-pubsafe.yaml": "title: Public Safety\n"])
+    }
+
+    @Test func revertingARenamedFilePutsTheFolderBackInOrderAndKeepsTheOtherEdits() async throws {
+        let workspace = try await reordered()
+        try workspace.revert("contact-info/1-4-hope-center.yaml")
+        #expect(try workspace.changedFiles() == ["contact-info/1-5-lighthouse.yaml", "contact-info/1-6-pubsafe.yaml"])
+        #expect(try workspace.contents(of: "contact-info/1-5-lighthouse.yaml") == body("title: The Lighthouse\n"))
+    }
+
+    @Test func revertingARecordsNewNameRevertsTheRecordUnderItsOldName() async throws {
+        let workspace = try await reordered()
+        try workspace.revert("contact-info/1-4-lighthouse.yaml")
+        #expect(try workspace.changedFiles() == ["contact-info/1-6-pubsafe.yaml"])
+        #expect(try workspace.contents(of: "contact-info/1-5-lighthouse.yaml") == body("title: Lighthouse\n"))
+    }
+
+    @Test func revertingAnEditedFileLeavesAReorderAlone() async throws {
+        let workspace = try await reordered()
+        try workspace.revert("contact-info/1-6-pubsafe.yaml")
+        #expect(try workspace.changedFiles() == ["contact-info/1-4-hope-center.yaml", "contact-info/1-4-lighthouse.yaml",
+                                                 "contact-info/1-5-hope-center.yaml", "contact-info/1-5-lighthouse.yaml"])
+    }
+
+    @Test func discardsAReorder() async throws {
+        let workspace = try await reordered()
+        try workspace.discardAll()
+        #expect(try workspace.changedFiles() == [])
+    }
+
+    /// A reorder the helper died during: Hope Center set aside, Lighthouse already at its new name.
+    private func interruptedReorder() async throws -> Workspace {
+        try await contacts(
+            base: ["1-4-hope-center.yaml": "title: Hope\n", "1-5-lighthouse.yaml": "title: Lighthouse\n"],
+            data: ["_1-4-hope-center.yaml.moving": "title: Hope\n", "1-4-lighthouse.yaml": "title: Lighthouse\n"])
+    }
+
+    @Test func putsBackAFileSetAsideToRename() async throws {
+        let workspace = try await interruptedReorder()
+        try workspace.putBackSetAsideFiles()
+        #expect(try workspace.changedFiles() == ["contact-info/1-4-lighthouse.yaml", "contact-info/1-5-lighthouse.yaml"])
+        #expect(try workspace.contents(of: "contact-info/1-4-hope-center.yaml") == body("title: Hope\n"))
+    }
+
+    @Test func countsAnEditedUnderscoreFileButNotTheHelpersTemporaryFiles() async throws {
+        let (session, _) = stubRepo()
+        let workspace = Workspace(root: temporaryRoot(), session: session)
+        _ = try await workspace.download(commit: "c1")
+        let busTimes = workspace.dataDirectory.appending(path: "bus-times")
+        try FileManager.default.createDirectory(at: busTimes, withIntermediateDirectories: true)
+        try body("routes: {}\n").write(to: busTimes.appending(path: "_curation.yaml"))
+        try body("half").write(to: busTimes.appending(path: "_curation.yaml.next"))
+        try body("aside").write(to: busTimes.appending(path: "_1-express.yaml.moving"))
+        #expect(try workspace.changedFiles() == ["bus-times/_curation.yaml"])
+    }
+
     @Test func leavesTheWorkspaceAloneWhenADownloadFailsPartway() async throws {
         let root = temporaryRoot()
         let (good, _) = stubRepo()

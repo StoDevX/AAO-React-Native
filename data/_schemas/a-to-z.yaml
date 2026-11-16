@@ -4,10 +4,11 @@ type: object
 additionalProperties: false
 required: [letter, values]
 properties:
-  letter: {type: string}
+  letter: {type: string, title: Letter}
   values:
     type: array
     items: {$ref: '#/definitions/item'}
+    title: Values
 
 definitions:
   item:
@@ -15,5 +16,5 @@ definitions:
     additionalProperties: false
     required: [label, url]
     properties:
-      label: {type: string}
-      url: {type: string}
+      label: {type: string, title: Label}
+      url: {type: string, title: Link, editor: url}

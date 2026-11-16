@@ -1,21 +1,21 @@
 import assert from 'node:assert/strict'
 import {existsSync, readdirSync} from 'node:fs'
-import {readFile, writeFile} from 'node:fs/promises'
+import {readFile, rm, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import {describe, it} from 'node:test'
+import {parseDocument} from 'yaml'
 import {DATA_BASE} from './paths.mjs'
 import {
 	build,
+	keysIn,
 	keysOf,
 	lastError,
-	listBuildings,
 	problemsFrom,
 	pruneBuilds,
 	readCalendar,
 	validate,
 } from './data-editor-pipeline.ts'
 import {scratchData} from './data-editor-test-support.mjs'
-import {loadScheduleData} from './schedule-data.ts'
 
 describe('keysOf', () => {
 	it('reads a JSON pointer', () => {
@@ -29,6 +29,31 @@ describe('keysOf', () => {
 			0,
 			'notes',
 		])
+	})
+})
+
+describe('keysIn', () => {
+	it('keeps a map key of digits as written', () => {
+		let data = {routes: {'001': {line: 5}}}
+		assert.deepEqual(keysIn(data, '/routes/001/line'), ['routes', '001', 'line'])
+	})
+
+	it('keeps a key of more digits than a number holds', () => {
+		let id = '123456789012345678901'
+		assert.deepEqual(keysIn({routes: {[id]: {}}}, `/routes/${id}`), ['routes', id])
+	})
+
+	it('reads an index into a list as a number', () => {
+		assert.deepEqual(keysIn({faqs: [{}, {title: 5}]}, '/faqs/1/title'), ['faqs', 1, 'title'])
+	})
+
+	it('keeps an empty map key', () => {
+		let data = {routes: {'': {line: 5}}}
+		assert.deepEqual(keysIn(data, '/routes//line'), ['routes', '', 'line'])
+	})
+
+	it('finds no keys in the pointer to the whole file', () => {
+		assert.deepEqual(keysIn({}, ''), [])
 	})
 })
 
@@ -110,33 +135,72 @@ describe('validate', () => {
 	})
 })
 
-describe('listBuildings', () => {
-	it('lists every hours file with its name and category', () => {
-		let buildings = listBuildings(DATA_BASE)
-		assert.ok(
-			buildings.some(
-				(b) =>
-					b.file === 'building-hours/1-1-cage.yaml' &&
-					b.name === 'The Cage' &&
-					b.category === 'Food',
-			),
+describe('validate, for a data set with a generated form', () => {
+	it('finds nothing wrong with a contact as published', async () => {
+		let {dataDir} = await scratchData()
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [])
+	})
+
+	it('says once that a contact needs a phone number or a link', async () => {
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, 'contact-info/1-1-pubsafe.yaml')
+		await writeFile(file, (await readFile(file, 'utf8')).replace("phoneNumber: '5077863666'\n", ''))
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [
+			{
+				file: 'contact-info/1-1-pubsafe.yaml',
+				message: 'Phone Number or Button Link is missing',
+				path: [],
+			},
+		])
+	})
+
+	it('checks against a schema edited since the last check', async () => {
+		let {dataDir} = await scratchData()
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [])
+		let schema = path.join(dataDir, '_schemas/contact-info.yaml')
+		await writeFile(
+			schema,
+			(await readFile(schema, 'utf8')).replace('required: [title,', 'required: [hours, title,'),
+		)
+		assert.deepEqual(
+			validate(dataDir, 'contact-info/1-1-pubsafe.yaml').map((problem) => problem.message),
+			['hours is missing'],
 		)
 	})
 
-	// the phone app lists the buildings in the order the published data holds them
-	it('lists them in the order bundle-data publishes them', () => {
-		let published = loadScheduleData(DATA_BASE).spaces.map(({label}) =>
-			path.relative(DATA_BASE, label),
+	it('places a problem in the scrape overrides', async () => {
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, '_scrapes/bonapp-overrides.yaml')
+		await writeFile(
+			file,
+			(await readFile(file, 'utf8')).replace('skip: [Continuous Dining]', 'skip: 5'),
 		)
+		let problems = validate(dataDir, '_scrapes/bonapp-overrides.yaml')
 		assert.deepEqual(
-			listBuildings(DATA_BASE).map((b) => b.file),
-			published,
+			problems.map((problem) => problem.path),
+			[['venues', 'stav-hall', 'skip']],
 		)
-		// numbered prefixes count, so 10- follows 8-
-		assert.ok(
-			published.indexOf('building-hours/10-osa.yaml') >
-				published.indexOf('building-hours/8-toh.yaml'),
+	})
+
+	it('checks a file a set is named for against that set, not its folder', async () => {
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, 'bus-times/_curation.yaml')
+		await writeFile(file, (await readFile(file, 'utf8')).replace('line: Blue Line', 'line: 5'))
+		assert.deepEqual(
+			validate(dataDir, 'bus-times/_curation.yaml').map((problem) => problem.path),
+			[['routes', '77627', 'line']],
 		)
+	})
+
+	it('finds nothing to check in a file the contributor removed', async () => {
+		let {dataDir} = await scratchData()
+		await rm(path.join(dataDir, 'contact-info/1-1-pubsafe.yaml'))
+		assert.deepEqual(validate(dataDir, 'contact-info/1-1-pubsafe.yaml'), [])
+	})
+
+	it('finds nothing to check in a file no set describes', async () => {
+		let {dataDir} = await scratchData()
+		assert.deepEqual(validate(dataDir, 'news-styles.css'), [])
 	})
 })
 
@@ -147,6 +211,17 @@ describe('readCalendar', () => {
 			calendar.breaks.some((b) => b.key === 'weekOne' && b.name === 'New Student Orientation'),
 		)
 		assert.ok(calendar.templates.includes('library-fall-closed'))
+	})
+
+	it('gives a one-day break its date as its start and end', async () => {
+		// a break of its own, so the test holds whether or not this year's calendar has a one-day break
+		let {dataDir} = await scratchData()
+		let file = path.join(dataDir, 'breaks.yaml')
+		let calendar = parseDocument(await readFile(file, 'utf8'))
+		calendar.setIn(['breaks', 'oneDay'], {name: 'One Day', date: '2027-03-28'})
+		await writeFile(file, calendar.toString())
+		let oneDay = readCalendar(dataDir).breaks.find((b) => b.key === 'oneDay')
+		assert.deepEqual([oneDay?.start, oneDay?.end], ['2027-03-28', '2027-03-28'])
 	})
 })
 

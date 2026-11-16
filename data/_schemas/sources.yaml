@@ -28,11 +28,12 @@ type: object
 additionalProperties: false
 required: [subject, links]
 properties:
-  subject: {type: string, format: uri}
+  subject: {type: string, format: uri, title: Subject}
   links:
     type: array
     minItems: 1
     items: {$ref: '#/definitions/link'}
+    title: Links
 
 definitions:
   link:
@@ -40,16 +41,18 @@ definitions:
     additionalProperties: false
     required: [rel, href, type, properties]
     properties:
-      rel: {type: string, format: uri}
-      href: {type: string, format: uri-reference}
-      type: {type: string, minLength: 1}
+      rel: {type: string, format: uri, title: Kind}
+      href: {type: string, format: uri-reference, title: Address, editor: url}
+      type: {type: string, minLength: 1, title: Format}
       titles:
         type: object
         additionalProperties: {type: string}
+        title: Titles
       properties:
         type: object
         additionalProperties: false
         required: ['https://frogpond.tech/ns/id']
         properties:
-          'https://frogpond.tech/ns/id': {type: string, minLength: 1}
-          'https://frogpond.tech/ns/campus': {enum: [stolaf, carleton]}
+          'https://frogpond.tech/ns/id': {type: string, minLength: 1, title: ID}
+          'https://frogpond.tech/ns/campus': {enum: [stolaf, carleton], title: Campus}
+        title: Properties

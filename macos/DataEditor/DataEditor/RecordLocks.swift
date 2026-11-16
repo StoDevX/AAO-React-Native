@@ -1,0 +1,81 @@
+import DataEditorKit
+import Foundation
+
+/// What may change a record, and what an edit to it does besides.
+extension AppModel {
+    /// Why `file` of `set` cannot be edited now, or nil if it can: the set is
+    /// read only, a generator writes the file, the data is updating, or the
+    /// file changed on GitHub too.
+    static func lockReason(set: DataSet, file: String, updating: Bool, conflicted: Bool) -> String? {
+        if let readOnly = set.readOnly { return readOnly }
+        if let generated = set.generated, generated.files.contains((file as NSString).lastPathComponent) { return generated.by }
+        if updating { return "Editing waits while the data updates." }
+        if conflicted { return "This file changed on GitHub too." }
+        return nil
+    }
+
+    /// The top-level fields of `file` a scrape writes, which its form shows but does not edit.
+    static func scrapedFields(set: DataSet, file: String) -> Set<String> {
+        guard let scraped = set.scraped, scraped.files.contains((file as NSString).lastPathComponent) else { return [] }
+        return Set(scraped.fields)
+    }
+
+    /// `ops` with `field` set to `stamp` as well, unless they set it already:
+    /// a set whose scrape keeps a hand edit dated after its source is stamped on every edit.
+    static func stamped(_ ops: [EditOp], field: String?, stamp: String) -> [EditOp] {
+        guard let field, !ops.contains(where: { $0.path == [.key(field)] }) else { return ops }
+        return ops + [.set([.key(field)], .string(stamp))]
+    }
+
+    /// The moment of a save, in UTC to the second, the form the KSTO schedule's
+    /// `updated` takes; it outdates any edit to the post made before the save.
+    static func saveStamp(_ now: Date = Date()) -> String {
+        now.formatted(.iso8601)
+    }
+
+    /// Whether `file` must keep its name: a scrape or generator writes it by
+    /// name, so renaming or removing it would bring back a second copy at the next run.
+    static func keepsItsName(set: DataSet, file: String) -> Bool {
+        let name = (file as NSString).lastPathComponent
+        return (set.scraped?.files ?? []).contains(name) || (set.generated?.files ?? []).contains(name)
+    }
+
+    /// Whether the contributor may put `set`'s records in another order: a set
+    /// ordered by its file names or list, none of whose files are named elsewhere.
+    static func reorders(_ set: DataSet) -> Bool {
+        guard set.scraped == nil, set.generated == nil else { return false }
+        return set.ordered && set.shape == .folder || set.shape == .list
+    }
+
+    /// Whether `ops` change what the record list shows of `set`: a record's
+    /// title, subtitle or section, or a whole record added or removed.
+    static func relists(after ops: [EditOp], in set: DataSet) -> Bool {
+        // where a record's own fields begin in its file
+        let depth = set.shape == .list ? (set.list?.count ?? 0) + 1 : 0
+        let shown = [set.titleField, set.subtitleField, set.sectionField].compactMap { $0?.split(separator: ".").first.map(String.init) }
+        return ops.contains { op in
+            guard op.path.count > depth, case .key(let field) = op.path[depth] else { return true }
+            return shown.contains(field)
+        }
+    }
+
+    /// The changed files' problems after an edit to `file` found `found` in it:
+    /// the others' as they were, and none for a file no longer changed.
+    static func problems(_ known: [Problem], after file: String, found: [Problem], changed: [String]) -> [Problem] {
+        var seen = Set<Problem>()
+        return (known.filter { $0.file != file } + found).filter { problem in
+            (problem.file.map(changed.contains) ?? true) && seen.insert(problem).inserted
+        }
+    }
+
+    /// Whether `file` is data the helper reads, rather than a prose document edited as text.
+    static func loadsAsData(_ file: String, catalog: DataSetCatalog?) -> Bool {
+        guard let set = catalog?.set(for: file) else { return true }
+        return catalog?.sets[set]?.shape != .document
+    }
+
+    /// What a set that steers a scrape or generator says above its records.
+    static func steersNotice(_ steers: DataSet.Steers) -> String {
+        "An edit here changes \(steers.what) the next time \(steers.run) runs. The preview won't show it."
+    }
+}

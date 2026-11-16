@@ -4,6 +4,7 @@ import Ajv from 'ajv'
 import type {ValidateFunction} from 'ajv'
 import addFormats from 'ajv-formats'
 import {load} from 'js-yaml'
+import {addEditorKeywords} from './validate.mjs'
 import type {
 	BreakCalendar,
 	CalendarBreak,
@@ -74,6 +75,7 @@ function readSchema(filename: string): Record<string, unknown> {
 function createValidators() {
 	let ajv = new Ajv({allErrors: true})
 	addFormats(ajv)
+	addEditorKeywords(ajv)
 	ajv.addSchema(readSchema('_defs.yaml'))
 	ajv.addSchema(readSchema('_schedules.yaml'))
 	return {
