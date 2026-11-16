@@ -95,6 +95,7 @@ describe('on Carleton', () => {
 			'Campus Map',
 			'Dictionary',
 			'Carleton News',
+			'Links',
 		])
 	})
 

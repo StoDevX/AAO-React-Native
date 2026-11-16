@@ -37,6 +37,7 @@ enum ChaosRoutes {
 		"hours/detail/link-editor",
 		"hours/detail/report",
 		"hours/detail/schedule-editor",
+		"links",
 		"map",
 		"menu-item-detail",
 		"menus",

@@ -171,6 +171,7 @@ describe("Carleton's Home tiles", () => {
 			['Moodle', 'https://moodle.carleton.edu/'],
 			['Carleton News', '/news'],
 			['Directory', 'https://www.carleton.edu/directory/'],
+			['Links', '/links'],
 			['Developer', '/developer'],
 		])
 	})
