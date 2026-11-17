@@ -88,6 +88,8 @@ type Props = {
 	 */
 	filtersVisible?: boolean
 	applyFilters?: FilterFunc
+	includeSubStations?: boolean
+	includeStationInSubStationTitle?: boolean
 }
 
 const areSpecialsFiltered = (filters: Array<Filter<MenuItemType>>): boolean =>
@@ -107,8 +109,17 @@ const groupMenuData = (args: {
 	stations: Array<StationMenuType>
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
+	includeSubStations?: boolean
+	includeStationInSubStationTitle?: boolean
 }): MenuSection[] => {
-	const {applyFilters, foodItems, stations, filters} = args
+	const {
+		applyFilters,
+		foodItems,
+		stations,
+		filters,
+		includeSubStations,
+		includeStationInSubStationTitle,
+	} = args
 
 	const dietsFilterEnabled = areDietsFiltered(filters)
 
@@ -129,7 +140,12 @@ const groupMenuData = (args: {
 			})
 
 	return stations.flatMap((menu: StationMenuType) =>
-		stationSections(menu.label, dereferenceMenuItems(menu)),
+		stationSections(
+			menu.label,
+			dereferenceMenuItems(menu),
+			includeSubStations,
+			includeStationInSubStationTitle,
+		),
 	)
 }
 
@@ -164,7 +180,16 @@ function sectionHeaderProps(
 }
 
 export function FancyMenu(props: Props): React.ReactNode {
-	const {now, meals, cafeMessage, foodItems, menuCorIcons, onItemPress} = props
+	const {
+		now,
+		meals,
+		cafeMessage,
+		foodItems,
+		menuCorIcons,
+		onItemPress,
+		includeSubStations = true,
+		includeStationInSubStationTitle = true,
+	} = props
 	const applyFilters = props.applyFilters ?? applyMenuFilters
 
 	// Built from the day's menu, then owned by the user. `now` picks the meal
@@ -213,13 +238,29 @@ export function FancyMenu(props: Props): React.ReactNode {
 	)
 
 	const appliedFilters = useMemo(
-		() => offerSpecials(scopeFilterOptions(filters, mealItems), mealHasSpecials),
-		[filters, mealItems, mealHasSpecials],
+		() =>
+			offerSpecials(scopeFilterOptions(filters, mealItems, includeSubStations), mealHasSpecials),
+		[filters, mealItems, mealHasSpecials, includeSubStations],
 	)
 
 	const groupedMenuData = useMemo(
-		() => groupMenuData({stations, filters: appliedFilters, applyFilters, foodItems}),
-		[stations, appliedFilters, applyFilters, foodItems],
+		() =>
+			groupMenuData({
+				stations,
+				filters: appliedFilters,
+				applyFilters,
+				foodItems,
+				includeSubStations,
+				includeStationInSubStationTitle,
+			}),
+		[
+			stations,
+			appliedFilters,
+			applyFilters,
+			foodItems,
+			includeSubStations,
+			includeStationInSubStationTitle,
+		],
 	)
 
 	// Resolving each section's note here rather than inside the `.map()` that

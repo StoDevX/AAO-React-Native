@@ -61,6 +61,8 @@ type Props = {
 	cafe: string | {id: string}
 	/** The menus server of the campus whose café this is. */
 	server: CampusId
+	includeSubStations?: boolean
+	includeStationInSubStationTitle?: boolean
 	ignoreProvidedMenus?: boolean
 	loadingMessage: string[]
 	name: string
@@ -301,7 +303,11 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		isFocused,
 	)
 
-	let {ignoreProvidedMenus = false} = props
+	let {
+		ignoreProvidedMenus = false,
+		includeSubStations = true,
+		includeStationInSubStationTitle = true,
+	} = props
 
 	// Derived above the early returns below, because hooks cannot be called
 	// after one. `prepareFood` rebuilds every item in the cafe -- 250 of them at
@@ -414,6 +420,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			filtersVisible={filtersVisible}
 			onMealHeaderChange={setMealHeader}
 			onRefresh={onRefresh}
+			includeSubStations={includeSubStations}
+			includeStationInSubStationTitle={includeStationInSubStationTitle}
 		/>
 	)
 }

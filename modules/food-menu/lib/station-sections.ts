@@ -22,35 +22,48 @@ export type MenuSection = {
  * Special • Burgers` -- since Stav files a `Cheese` at three stations, and a
  * list cannot nest one heading beneath another.
  */
-export function stationSections(station: string, items: MenuItemType[]): MenuSection[] {
+export function stationSections(
+	station: string,
+	items: MenuItemType[],
+	includeSubStations = true,
+	includeStationInSubStationTitle = true,
+): MenuSection[] {
 	let unfiled: MenuItemType[] = []
 	let bySubStation = new Map<string, MenuItemType[]>()
 
-	for (let item of items) {
-		if (!item.sub_station) {
-			unfiled.push(item)
-			continue
+	if (items.length === 0) {
+		return []
+	} else if (!includeSubStations) {
+		const mainStationItems = items.filter((item) => !item.sub_station)
+		return mainStationItems.length > 0 ? [{title: station, station, data: mainStationItems}] : []
+	} else {
+		for (let item of items) {
+			if (!item.sub_station) {
+				unfiled.push(item)
+				continue
+			}
+
+			let filed = bySubStation.get(item.sub_station)
+			if (filed) {
+				filed.push(item)
+			} else {
+				bySubStation.set(item.sub_station, [item])
+			}
 		}
 
-		let filed = bySubStation.get(item.sub_station)
-		if (filed) {
-			filed.push(item)
-		} else {
-			bySubStation.set(item.sub_station, [item])
+		let subStations = Array.from(bySubStation, ([name, data]) => ({name, data})).sort(
+			(a, b) => Number(a.data[0].sub_station_order) - Number(b.data[0].sub_station_order),
+		)
+
+		let sections: MenuSection[] = []
+		if (unfiled.length > 0) {
+			sections.push({title: station, station, data: unfiled})
 		}
-	}
+		for (let {name, data} of subStations) {
+			let title = includeStationInSubStationTitle ? `${station} • ${name}` : name
+			sections.push({title, station, data})
+		}
 
-	let subStations = Array.from(bySubStation, ([name, data]) => ({name, data})).sort(
-		(a, b) => Number(a.data[0].sub_station_order) - Number(b.data[0].sub_station_order),
-	)
-
-	let sections: MenuSection[] = []
-	if (unfiled.length > 0) {
-		sections.push({title: station, station, data: unfiled})
+		return sections
 	}
-	for (let {name, data} of subStations) {
-		sections.push({title: `${station} • ${name}`, station, data})
-	}
-
-	return sections
 }
