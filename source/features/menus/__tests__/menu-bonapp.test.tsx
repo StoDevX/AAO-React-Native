@@ -312,7 +312,7 @@ describe('BonAppHostedMenu', () => {
 		jest.setSystemTime(new Date('2026-09-23T13:00:00Z'))
 		await renderCage()
 
-		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage', expect.anything())
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage?days=5', expect.anything())
 		expect(mockFoodMenu).not.toHaveBeenCalled()
 	})
 
@@ -325,7 +325,7 @@ describe('BonAppHostedMenu', () => {
 			cafe: {...CAGE_CAFE.cafe, days: [{...CAGE_CAFE.cafe.days[0], date: '2026-09-23'}]},
 		}
 		mockGet.mockImplementation((path) => ({
-			json: () => Promise.resolve(path === 'food/named/menu/the-cage' ? nextDay : nextCafe),
+			json: () => Promise.resolve(path === 'food/named/menu/the-cage?days=5' ? nextDay : nextCafe),
 		}))
 		let mounts = 0
 		mockFoodMenu.mockImplementation(() => {
@@ -343,7 +343,7 @@ describe('BonAppHostedMenu', () => {
 			await jest.advanceTimersByTimeAsync(60_000)
 		})
 
-		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage', expect.anything())
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage?days=5', expect.anything())
 		// React Query hands the fetched menu over on a timer of its own.
 		await waitFor(() => expect(mounts).toBe(2))
 
