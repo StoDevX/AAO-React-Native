@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+reviews:
+  # Keep the summary in CodeRabbit's walkthrough comment, so the PR description
+  # stays what its author wrote.
+  high_level_summary: true
+  high_level_summary_in_walkthrough: true

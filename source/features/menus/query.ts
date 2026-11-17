@@ -43,7 +43,7 @@ export const cafeKeys = {
 // with a 400, `?cafeId is required`.
 
 function buildMenuPath(server: CampusId, cafeParam: string | {id: string}) {
-	let daysQuery = server === 'edu.carleton' ? 'days=5' : undefined
+	let daysQuery = server === 'edu.carleton' || server === 'edu.stolaf' ? 'days=5' : undefined
 
 	if (typeof cafeParam === 'string') {
 		return `food/named/menu/${cafeParam}${daysQuery ? `?${daysQuery}` : ''}`

@@ -25,7 +25,7 @@ describe('BonApp queries for a cafe named by id', () => {
 	test('asks for the menu with the id in the query string', async () => {
 		await newClient().query(bonAppMenuOptions('edu.stolaf', {id: '261'}, '2026-09-22'))
 
-		expect(mockGet).toHaveBeenCalledWith('food/menu/261?cafeId=261', expect.anything())
+		expect(mockGet).toHaveBeenCalledWith('food/menu/261?cafeId=261&days=5', expect.anything())
 	})
 
 	test('asks for the cafe with the id in the query string', async () => {
@@ -37,7 +37,7 @@ describe('BonApp queries for a cafe named by id', () => {
 	test('asks for a named cafe by its name', async () => {
 		await newClient().query(bonAppMenuOptions('edu.stolaf', 'stav-hall', '2026-09-22'))
 
-		expect(mockGet).toHaveBeenCalledWith('food/named/menu/stav-hall', expect.anything())
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/stav-hall?days=5', expect.anything())
 	})
 })
 

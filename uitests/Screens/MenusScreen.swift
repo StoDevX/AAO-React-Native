@@ -74,8 +74,11 @@ struct MenusScreen: Screen {
 		let previousTitle = picker.label
 		picker.tap()
 
-		let option = app.buttons.matching(
-			NSPredicate(format: "label MATCHES %@", ".*[0-9]{4}.*")
+		let option = app.descendants(matching: .any).matching(
+			NSPredicate(
+				format: "identifier BEGINSWITH %@",
+				TestIdentifiers.Menus.otherDayOptionPrefix
+			)
 		).firstMatch
 		XCTAssertTrue(option.waitUntilExists(timeout: 10), "the picker should list another date")
 		option.tap()

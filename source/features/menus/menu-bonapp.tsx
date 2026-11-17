@@ -139,6 +139,9 @@ function getMeals(
 		return []
 	}
 	let dayparts = day.cafe.dayparts
+	if (dayparts.length === 0) {
+		return []
+	}
 
 	// either use the meals as provided by bonapp, or make our own
 	let mealInfoItems = dayparts[0]?.length ? dayparts[0] : DEFAULT_MENU
@@ -250,7 +253,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let dayOptions = React.useMemo(
 		() =>
 			cafeMenu?.days
-				.filter((candidate) => candidate.date !== menuDate)
+				.filter((candidate) => candidate.date !== menuDate && candidate.cafe.dayparts.length > 0)
 				.map((candidate) => ({
 					date: candidate.date,
 					label: formatMenuDayLabel(moment.tz(candidate.date, 'YYYY-MM-DD', timezone()), menuNow),
@@ -258,8 +261,18 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		[cafeMenu, menuDate, menuNow],
 	)
 	let selectDay = React.useCallback(
-		(selected: string) => setDaySelection({anchor: day, selected}),
-		[day],
+		(selected: string) => {
+			if (
+				!cafeMenu?.days.some(
+					(candidate) => candidate.date === selected && candidate.cafe.dayparts.length > 0,
+				)
+			) {
+				return
+			}
+
+			setDaySelection({anchor: day, selected})
+		},
+		[cafeMenu, day],
 	)
 	let menuBodyNow = React.useMemo(() => {
 		if (!menuDate || menuDate === day) {

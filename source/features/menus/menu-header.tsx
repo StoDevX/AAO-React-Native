@@ -4,6 +4,7 @@ import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {Host, HStack, Image, Menu, Section, Text as UIText, Toggle, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	background,
 	font,
 	foregroundStyle,
@@ -20,6 +21,8 @@ import {
 } from '../../components/navigation-title'
 import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
 import filterListIcon from '@expo/material-symbols/filter_list.xml'
+
+const MENU_DAY_OPTION_ID_PREFIX = 'menu-day-option-'
 
 /**
  * What a menu screen puts in its navigation bar: the cafe it is showing, the
@@ -351,6 +354,7 @@ function MealMenu(props: {
 							key={option.date}
 							isOn={false}
 							label={option.label}
+							modifiers={[accessibilityIdentifier(`${MENU_DAY_OPTION_ID_PREFIX}${option.date}`)]}
 							onIsOnChange={(isOn) => {
 								if (isOn) {
 									days.select(option.date)
