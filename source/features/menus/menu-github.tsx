@@ -110,6 +110,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			closed: shownMealHeader.closed || hours.closed,
 			reopening: hours.reopening,
 			loading: menu.kind === 'loading' || isVenueLoading,
+			days: null,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,

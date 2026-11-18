@@ -4,7 +4,11 @@ import type {Filter, ListFilter} from '@frogpond/filter/types'
 import {scopeFilterOptions} from '../scope-filter-options'
 import type {MenuItemType} from '../../types'
 
-function item(station: string, corIcon: Record<string, string> = {}): MenuItemType {
+function item(
+	station: string,
+	corIcon: Record<string, string> = {},
+	subStation = '',
+): MenuItemType {
 	return {
 		connector: '',
 		cor_icon: corIcon,
@@ -19,7 +23,7 @@ function item(station: string, corIcon: Record<string, string> = {}): MenuItemTy
 		rating: '',
 		special: false,
 		station,
-		sub_station: '',
+		sub_station: subStation,
 		sub_station_id: '',
 		sub_station_order: '',
 		zero_entree: '',

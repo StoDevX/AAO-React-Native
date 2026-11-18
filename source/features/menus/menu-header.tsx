@@ -4,6 +4,7 @@ import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {Host, HStack, Image, Menu, Section, Text as UIText, Toggle, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	background,
 	font,
 	foregroundStyle,
@@ -20,6 +21,8 @@ import {
 } from '../../components/navigation-title'
 import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
 import filterListIcon from '@expo/material-symbols/filter_list.xml'
+
+const MENU_DAY_OPTION_ID_PREFIX = 'menu-day-option-'
 
 /**
  * What a menu screen puts in its navigation bar: the cafe it is showing, the
@@ -47,10 +50,13 @@ import filterListIcon from '@expo/material-symbols/filter_list.xml'
  *
  * The day is carried three times because it is drawn at three different
  * lengths: abbreviated under the cafe's name when a meal shares that line,
- * written out when nothing does, and the whole date over the meal picker,
- * which has room for all of it. A screen showing a menu that is not any
+ * written out when nothing does, and named Today, Tomorrow or with a
+ * concise date over the meal picker. A screen showing a menu that is not any
  * particular day's -- the Pause, whose menu is a file we keep rather than a
  * day's service -- publishes none of them.
+ *
+ * A cafe with menus for several days also publishes the dates it is not
+ * showing and how to select one; the host puts those after the meal choices.
  *
  * All arrive already formatted. The header is compared field by field, and a
  * `Moment` compares by identity, so the screens' ticking clock carried here
@@ -66,6 +72,11 @@ type MenuHeader = {
 	reopening: string | null
 	loading: boolean
 	meals: MealMenuSelection | null
+	days: {
+		selected: string | null
+		options: Array<{date: string; label: string}>
+		select: (date: string) => void
+	} | null
 	/** The filter row's own control, or `null` for a screen with no filters. */
 	filters: {visible: boolean; toggle: () => void} | null
 }
@@ -114,14 +125,28 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
  */
 export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
 	let publish = React.useContext(PublishMenuHeaderContext)
-	let {name, weekdayShort, weekdayLong, date, time, closed, reopening, loading, meals, filters} =
-		header
+	let {
+		name,
+		weekdayShort,
+		weekdayLong,
+		date,
+		time,
+		closed,
+		reopening,
+		loading,
+		meals,
+		days,
+		filters,
+	} = header
 
 	// `filters` is read apart too: a caller building it inline hands over a new
 	// object each render, and depending on that object would publish on each
 	// one.
 	let filtersVisible = filters?.visible ?? null
 	let toggleFilters = filters?.toggle ?? null
+	let dayOptions = days?.options ?? null
+	let selectedDay = days?.selected ?? null
+	let selectDay = days?.select ?? null
 
 	React.useEffect(() => {
 		if (focused) {
@@ -135,6 +160,10 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 				reopening,
 				loading,
 				meals,
+				days:
+					dayOptions && selectDay
+						? {selected: selectedDay, options: dayOptions, select: selectDay}
+						: null,
 				filters:
 					toggleFilters && filtersVisible !== null
 						? {visible: filtersVisible, toggle: toggleFilters}
@@ -152,6 +181,9 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 		reopening,
 		loading,
 		meals,
+		dayOptions,
+		selectedDay,
+		selectDay,
 		filtersVisible,
 		toggleFilters,
 		publish,
@@ -201,6 +233,7 @@ export function MenuHeaderHost(): React.ReactNode {
 	let spoken = [
 		header.name,
 		loading ? header.weekdayLong : detail && spokenDetail(detail, header.time),
+		header.days?.options.length ? 'Choose another day' : null,
 		loading ? 'Loading' : null,
 	]
 		.filter(Boolean)
@@ -219,8 +252,8 @@ export function MenuHeaderHost(): React.ReactNode {
 				    the longest line the bar holds, so it scales itself down past
 				    this width rather than crowd the buttons either side. */}
 				<Host alignment="center" style={TITLE_HOST_STYLE}>
-					{header.meals ? (
-						<MealMenu date={header.date} meals={header.meals} spoken={spoken}>
+					{header.meals || header.days?.options.length ? (
+						<MealMenu date={header.date} days={header.days} meals={header.meals} spoken={spoken}>
 							<TitleStack name={header.name} subtitle={subtitle} />
 						</MealMenu>
 					) : (
@@ -287,11 +320,12 @@ function LoadingSubtitle(props: {weekday: string | null}): React.ReactNode {
  */
 function MealMenu(props: {
 	date: string | null
-	meals: MealMenuSelection
+	days: MenuHeader['days']
+	meals: MealMenuSelection | null
 	spoken: string
 	children: React.ReactNode
 }): React.ReactNode {
-	let {date, meals, spoken, children} = props
+	let {date, days, meals, spoken, children} = props
 
 	return (
 		<Menu
@@ -307,19 +341,38 @@ function MealMenu(props: {
 				</HStack>
 			}
 		>
-			{/* The day named in full. The line under the cafe's name carries
-			    the weekday alone, so this is where the whole date fits; a
-			    screen naming no day falls back to the picker's own title. */}
-			<Section title={date ?? meals.title}>
-				{meals.options.map((option) => (
-					<MealOption
-						key={option.label}
-						onSelect={meals.select}
-						option={option}
-						selected={option.label === meals.selected}
-					/>
-				))}
-			</Section>
+			{meals ? (
+				/* The selected day. The weekday is already under the cafe's name,
+				   so this is where Today, Tomorrow or a concise date fits; a
+				   screen naming no day falls back to the picker's own title. */
+				<Section title={date ?? meals.title}>
+					{meals.options.map((option) => (
+						<MealOption
+							key={option.label}
+							onSelect={meals.select}
+							option={option}
+							selected={option.label === meals.selected}
+						/>
+					))}
+				</Section>
+			) : null}
+			{days?.options.length ? (
+				<Section title="Other days">
+					{days.options.map((option) => (
+						<Toggle
+							key={option.date}
+							isOn={option.date === days.selected}
+							label={option.label}
+							modifiers={[accessibilityIdentifier(`${MENU_DAY_OPTION_ID_PREFIX}${option.date}`)]}
+							onIsOnChange={(isOn) => {
+								if (isOn) {
+									days.select(option.date)
+								}
+							}}
+						/>
+					))}
+				</Section>
+			) : null}
 		</Menu>
 	)
 }

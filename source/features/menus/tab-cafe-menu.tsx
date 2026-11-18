@@ -5,7 +5,7 @@ import {menuTab} from './menu-tabs'
 
 /** A tab's Bon Appétit café, as its campus's definition describes it, wherever it is shown. */
 export function TabCafeMenu({name}: {name: string}): React.ReactNode {
-	let {server, tab} = menuTab(name)
+	let {campus, server, tab} = menuTab(name)
 	if (!tab.bonApp) {
 		throw new Error(`Menus' ${name} tab names no Bon Appétit café`)
 	}
@@ -15,6 +15,10 @@ export function TabCafeMenu({name}: {name: string}): React.ReactNode {
 			loadingMessage={tab.bonApp.loadingMessage}
 			name={tab.title}
 			server={server}
+			includeSubStations={
+				campus !== 'edu.carleton' || ['sayles', 'schulze', 'weitz'].includes(tab.name)
+			}
+			includeStationInSubStationTitle={campus !== 'edu.carleton'}
 		/>
 	)
 }

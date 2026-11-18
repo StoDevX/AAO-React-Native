@@ -35,13 +35,16 @@ function mealServes(
 export function scopeFilterOptions(
 	filters: Filter<MenuItemType>[],
 	items: MenuItemType[],
+	includeSubStations = true,
 ): Filter<MenuItemType>[] {
+	let visibleItems = includeSubStations ? items : items.filter((item) => !item.sub_station)
+
 	return filters.map((filter): Filter<MenuItemType> => {
 		if (filter.type !== 'list') {
 			return filter
 		}
 
-		let options = filter.spec.options.filter((option) => mealServes(filter, option, items))
+		let options = filter.spec.options.filter((option) => mealServes(filter, option, visibleItems))
 		let served = new Set(options.map((option) => option.title))
 		let selected = filter.spec.selected.filter((option) => served.has(option.title))
 

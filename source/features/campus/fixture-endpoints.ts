@@ -59,7 +59,7 @@ export const FIXTURE_ENDPOINTS: ReadonlyArray<FixtureEndpoint> = [
 	},
 	{pattern: 'GET {server}/faqs', schema: 'faqs'},
 	{pattern: 'GET {server}/food/named/cafe/:id', schema: 'food-cafe'},
-	{pattern: 'GET {server}/food/named/menu/:id', schema: 'food-menu'},
+	{pattern: 'GET {server}/food/named/menu/:id*', schema: 'food-menu'},
 	{pattern: 'GET {server}/map/categories', schema: 'map-categories'},
 	{pattern: 'GET {server}/map/geojson', schema: 'map-geojson'},
 	{
