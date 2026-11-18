@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native'
 import {Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
-import {DisclosureRow} from '../../components/rows'
+import {DisclosureRow} from '../../../components/rows'
 import {LINKS} from './links'
 
 export function LinksScreen(): React.ReactNode {
