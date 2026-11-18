@@ -410,11 +410,17 @@ describe('BonAppHostedMenu', () => {
 
 		expect(mockFoodMenu.mock.lastCall?.[0].meals[0]?.label).toBe('Breakfast')
 		expect(lastHeader()?.days?.options.map(({date: optionDate}) => optionDate)).toEqual([
+			'2026-09-22',
 			'2026-09-23',
 			'2026-09-24',
 		])
 		expect(lastHeader()?.date).toBe('Today')
-		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual(['Tomorrow', 'Thu Sep 24'])
+		expect(lastHeader()?.days?.selected).toBe('2026-09-22')
+		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual([
+			'Today',
+			'Tomorrow',
+			'Thu Sep 24',
+		])
 
 		await act(() => {
 			lastHeader()?.days?.select('2026-09-23')
@@ -423,7 +429,12 @@ describe('BonAppHostedMenu', () => {
 		expect(mockFoodMenu.mock.lastCall?.[0].meals[0]?.label).toBe('Lunch')
 		expect(mockFoodMenu.mock.lastCall?.[0].now.format('YYYY-MM-DD')).toBe('2026-09-23')
 		expect(lastHeader()?.date).toBe('Tomorrow')
-		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual(['Today', 'Thu Sep 24'])
+		expect(lastHeader()?.days?.selected).toBe('2026-09-23')
+		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual([
+			'Today',
+			'Tomorrow',
+			'Thu Sep 24',
+		])
 
 		await act(() => {
 			mockFoodMenu.mock.lastCall?.[0].onItemPress({id: '42'} as MenuItemType)
@@ -445,7 +456,11 @@ describe('BonAppHostedMenu', () => {
 		})
 
 		expect(lastHeader()?.date).toBe('Thu Sep 24')
-		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual(['Today', 'Tomorrow'])
+		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual([
+			'Today',
+			'Tomorrow',
+			'Thu Sep 24',
+		])
 	})
 
 	// Asked for today's menu shortly after midnight, the server can still answer

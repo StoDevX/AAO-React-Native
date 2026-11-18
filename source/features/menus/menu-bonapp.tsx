@@ -253,12 +253,12 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let dayOptions = React.useMemo(
 		() =>
 			cafeMenu?.days
-				.filter((candidate) => candidate.date !== menuDate && candidate.cafe.dayparts.length > 0)
+				.filter((candidate) => candidate.cafe.dayparts.length > 0)
 				.map((candidate) => ({
 					date: candidate.date,
 					label: formatMenuDayLabel(moment.tz(candidate.date, 'YYYY-MM-DD', timezone()), menuNow),
 				})) ?? [],
-		[cafeMenu, menuDate, menuNow],
+		[cafeMenu, menuNow],
 	)
 	let selectDay = React.useCallback(
 		(selected: string) => {
@@ -310,7 +310,10 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			closed: shownMealHeader.closed || (hours?.closed ?? false),
 			reopening: hours?.reopening ?? null,
 			loading: isLoading,
-			days: showsMenu && dayOptions.length > 0 ? {options: dayOptions, select: selectDay} : null,
+			days:
+				showsMenu && dayOptions.length > 0
+					? {selected: menuDate, options: dayOptions, select: selectDay}
+					: null,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,

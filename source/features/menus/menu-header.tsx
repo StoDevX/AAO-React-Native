@@ -72,7 +72,11 @@ type MenuHeader = {
 	reopening: string | null
 	loading: boolean
 	meals: MealMenuSelection | null
-	days: {options: Array<{date: string; label: string}>; select: (date: string) => void} | null
+	days: {
+		selected: string | null
+		options: Array<{date: string; label: string}>
+		select: (date: string) => void
+	} | null
 	/** The filter row's own control, or `null` for a screen with no filters. */
 	filters: {visible: boolean; toggle: () => void} | null
 }
@@ -141,6 +145,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 	let filtersVisible = filters?.visible ?? null
 	let toggleFilters = filters?.toggle ?? null
 	let dayOptions = days?.options ?? null
+	let selectedDay = days?.selected ?? null
 	let selectDay = days?.select ?? null
 
 	React.useEffect(() => {
@@ -155,7 +160,10 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 				reopening,
 				loading,
 				meals,
-				days: dayOptions && selectDay ? {options: dayOptions, select: selectDay} : null,
+				days:
+					dayOptions && selectDay
+						? {selected: selectedDay, options: dayOptions, select: selectDay}
+						: null,
 				filters:
 					toggleFilters && filtersVisible !== null
 						? {visible: filtersVisible, toggle: toggleFilters}
@@ -174,6 +182,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 		loading,
 		meals,
 		dayOptions,
+		selectedDay,
 		selectDay,
 		filtersVisible,
 		toggleFilters,
@@ -352,7 +361,7 @@ function MealMenu(props: {
 					{days.options.map((option) => (
 						<Toggle
 							key={option.date}
-							isOn={false}
+							isOn={option.date === days.selected}
 							label={option.label}
 							modifiers={[accessibilityIdentifier(`${MENU_DAY_OPTION_ID_PREFIX}${option.date}`)]}
 							onIsOnChange={(isOn) => {
