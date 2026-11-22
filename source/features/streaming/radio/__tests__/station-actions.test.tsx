@@ -24,12 +24,12 @@ describe('StationActionRow', () => {
 	})
 
 	test('shows Chat unavailable, and opens nothing, for a station without a chat room', async () => {
-		await render(<StationActionRow onShowSchedule={jest.fn()} station={STATIONS.ksto} />)
+		await render(<StationActionRow onShowSchedule={jest.fn()} station={STATIONS.kmnk} />)
 
 		await fireEvent.press(screen.getByLabelText('Chat unavailable'))
 
 		expect(openUrl).not.toHaveBeenCalled()
-		expect(screen.queryByLabelText(`Chat with ${STATIONS.ksto.stationName}`)).toBeNull()
+		expect(screen.queryByLabelText(`Chat with ${STATIONS.kmnk.stationName}`)).toBeNull()
 	})
 
 	test('offers AirPlay for every station, through the system route picker', async () => {
