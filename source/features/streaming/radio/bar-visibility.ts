@@ -7,8 +7,8 @@ import {useRadioStore} from './store'
  * Home's Now Playing bar shows while a station is loaded, or while the switch
  * asks for it. (Streaming Media's always shows: it is the radio's home.) Until
  * the saved switch has loaded it is unknown, so the idle bar waits rather than
- * showing and then vanishing. The radio mini-player is behind dev mode, so
- * nothing shows while it is off, nor while every station is switched off.
+ * showing and then vanishing. The bar shows once any station is switched
+ * on, and in dev mode whatever the switches say.
  */
 export function radioBarVisible(state: {
 	stationId: StationId | null
@@ -18,8 +18,7 @@ export function radioBarVisible(state: {
 	anyStationOn: boolean
 }): boolean {
 	return (
-		state.isDev &&
-		state.anyStationOn &&
+		(state.isDev || state.anyStationOn) &&
 		(state.stationId !== null || (state.hydrated && state.showOnHome))
 	)
 }

@@ -60,7 +60,7 @@ describe('radioBarVisible', () => {
 		).toBe(false)
 	})
 
-	test('hides the bar whatever else says while dev mode is off', () => {
+	test('shows the bar outside dev mode once a station is switched on', () => {
 		expect(
 			radioBarVisible({
 				stationId: 'krlx',
@@ -69,25 +69,28 @@ describe('radioBarVisible', () => {
 				isDev: false,
 				anyStationOn: true,
 			}),
-		).toBe(false)
+		).toBe(true)
+	})
+
+	test('shows the bar in dev mode even while every station is switched off', () => {
 		expect(
 			radioBarVisible({
 				stationId: null,
 				showOnHome: true,
 				hydrated: true,
-				isDev: false,
-				anyStationOn: true,
+				isDev: true,
+				anyStationOn: false,
 			}),
-		).toBe(false)
+		).toBe(true)
 	})
 
-	test('hides the bar whatever else says while every station is switched off', () => {
+	test('hides the bar outside dev mode while every station is switched off', () => {
 		expect(
 			radioBarVisible({
 				stationId: 'krlx',
 				showOnHome: true,
 				hydrated: true,
-				isDev: true,
+				isDev: false,
 				anyStationOn: false,
 			}),
 		).toBe(false)

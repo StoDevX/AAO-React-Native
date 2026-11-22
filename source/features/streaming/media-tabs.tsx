@@ -4,9 +4,12 @@ import {RadioTabAccessory} from './radio'
 import {useOfferedStations} from './radio/station-flags'
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
 
-/** Streams and webcams as native tabs, with the radio's mini-player beneath in dev mode. */
+/**
+ * Streams and webcams as native tabs, with the radio's mini-player beneath
+ * once a station is switched on, or in dev mode.
+ */
 export function StreamingMediaTabs(): React.ReactNode {
-	// The mini-player is behind dev mode, so the accessory is left out without it.
+	// Without dev mode or a station switched on, the accessory is left out.
 	let isDev = useIsDevMode()
 	let anyStationOn = useOfferedStations().length > 0
 	return (
@@ -15,7 +18,7 @@ export function StreamingMediaTabs(): React.ReactNode {
 		// Minimising on a scroll down, as Music does, moves it inline beside the
 		// shrunken tab bar.
 		<NativeTabs minimizeBehavior="onScrollDown">
-			{isDev && anyStationOn ? (
+			{isDev || anyStationOn ? (
 				<NativeTabs.BottomAccessory>
 					<RadioTabAccessory showWhenIdle={true} />
 				</NativeTabs.BottomAccessory>
