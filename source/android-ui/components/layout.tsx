@@ -51,6 +51,7 @@ import {
 } from '@expo/ui/jetpack-compose/modifiers'
 
 import {contentColor, inScheme, resolveColor, resolveGradient, usePalette} from '../colors'
+import {backgroundColorOf} from '../style-background'
 import {ListStyleContext, MenuContext, RowSlotContext} from '../context'
 import {
 	AxisContext,
@@ -197,7 +198,7 @@ function useHostStyle(
 	colorScheme: HostProps['colorScheme'],
 ): StyleProp<ViewStyle> {
 	let systemScheme = useColorScheme()
-	let background = StyleSheet.flatten(style)?.backgroundColor
+	let background = backgroundColorOf(style)
 	let dark = (colorScheme ?? systemScheme) === 'dark'
 	return React.useMemo(() => {
 		if (background === undefined || typeof background !== 'object') {
