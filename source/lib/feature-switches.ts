@@ -25,8 +25,12 @@ export function parseFeatureSwitches(body: unknown): FeatureSwitches {
 /**
  * Whether this build obeys the published switches. Debug and prerelease builds
  * (which go to TestFlight alone) show every feature and never fetch the file.
+ * Read when asked, not when this module loads: the version that marks a
+ * prerelease is set by `source/init/constants.ts`, which may load after it.
  */
-export const followsFeatureSwitches = !isDebugBuild()
+export function followsFeatureSwitches(): boolean {
+	return !isDebugBuild()
+}
 
 /**
  * The published switches. Kept through a failed refetch and persisted, so a
@@ -52,15 +56,19 @@ function noFeatureSwitches(): FeatureSwitches | undefined {
 	return undefined
 }
 
+let chosenHook: (() => FeatureSwitches | undefined) | undefined
+
 /**
- * The published switches, or undefined until they load. Chosen once at load,
+ * The published switches, or undefined until they load. The hook behind it is
+ * chosen on the first render, after launch has set the version, and kept,
  * since whether a build follows the switches never changes while it runs: a
  * build that ignores them mounts no query, so it never fetches the file and
  * needs no query client.
  */
-export const useFeatureSwitches: () => FeatureSwitches | undefined = followsFeatureSwitches
-	? usePublishedFeatureSwitches
-	: noFeatureSwitches
+export function useFeatureSwitches(): FeatureSwitches | undefined {
+	chosenHook ??= followsFeatureSwitches() ? usePublishedFeatureSwitches : noFeatureSwitches
+	return chosenHook()
+}
 
 /** The switches as last fetched, for code outside React. */
 export function featureSwitchesNow(): FeatureSwitches | undefined {
@@ -72,7 +80,7 @@ export function featureSwitchesNow(): FeatureSwitches | undefined {
  * which is what an offline listener should get.
  */
 export async function refreshFeatureSwitches(): Promise<void> {
-	if (!followsFeatureSwitches) {
+	if (!followsFeatureSwitches()) {
 		return
 	}
 	try {
