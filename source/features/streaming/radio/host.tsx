@@ -7,6 +7,7 @@ import {createPlaybackAttempt} from './playback-diagnostics'
 import {useNowPlaying} from './use-now-playing'
 import {shippedStreamUrl, useStationSources, type StationSources} from './sources'
 import {useStationSchedule} from './use-station-schedule'
+import {useStationOn} from './station-flags'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
@@ -137,6 +138,16 @@ export function RadioHost(): React.ReactNode {
 	let resume = useRadioStore((state) => state.resume)
 	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
+	let stop = useRadioStore((state) => state.stop)
+	let stationOn = useStationOn()
+	let switchedOff = stationId !== null && !stationOn(stationId)
+
+	// The one place a station stops for being switched off: after Play, after
+	// Control Center or the lock screen resumes it, or when a refetch turns it
+	// off while it plays.
+	React.useEffect(() => {
+		if (switchedOff) stop()
+	}, [switchedOff, stop])
 
 	// Only `waiting` marks a dry buffer: `stalled` is the fetch going quiet while
 	// the element plays on from its buffer, and nothing follows it to say audio
@@ -166,7 +177,7 @@ export function RadioHost(): React.ReactNode {
 		resume()
 	}, [resume, stationId])
 
-	if (!stationId) {
+	if (!stationId || switchedOff) {
 		return null
 	}
 

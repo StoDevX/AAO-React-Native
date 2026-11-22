@@ -4,6 +4,7 @@ import {createJSONStorage, persist} from 'zustand/middleware'
 import {currentCampus} from '../../campus/store'
 import type {ReminderPermission} from './reminders/notifications'
 import {sameShowTitle} from './show-titles'
+import {refreshFeatureSwitches} from '../../../lib/feature-switches'
 import {stationOnNow} from './station-flags'
 import {STATION_LIST, STATIONS, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
@@ -138,18 +139,25 @@ export const useRadioStore = create<RadioStore>()(
 				onTimeAsked: false,
 				hydrated: false,
 
-				play: (stationId) =>
+				// Each start checks the switches afresh; RadioHost stops a station
+				// that has been switched off.
+				play: (stationId) => {
 					set((state) => ({
 						stationId,
 						playState: 'starting',
 						error: null,
 						playerKey: state.playerKey + 1,
-					})),
+					}))
+					void refreshFeatureSwitches()
+				},
 				pause: () => {
 					if (isRunning(get().playState)) set({playState: 'paused'})
 				},
 				resume: () => {
-					if (get().playState === 'paused') set({playState: 'starting'})
+					if (get().playState === 'paused') {
+						set({playState: 'starting'})
+						void refreshFeatureSwitches()
+					}
 				},
 				stop: () => set({stationId: null, playState: 'stopped', error: null}),
 
