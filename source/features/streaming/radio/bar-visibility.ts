@@ -1,5 +1,6 @@
 import type {StationId} from './stations'
 import {useIsDevMode} from '../../../lib/use-is-dev-mode'
+import {useOfferedStations} from './station-flags'
 import {useRadioStore} from './store'
 
 /**
@@ -7,15 +8,20 @@ import {useRadioStore} from './store'
  * asks for it. (Streaming Media's always shows: it is the radio's home.) Until
  * the saved switch has loaded it is unknown, so the idle bar waits rather than
  * showing and then vanishing. The radio mini-player is behind dev mode, so
- * nothing shows while it is off.
+ * nothing shows while it is off, nor while every station is switched off.
  */
 export function radioBarVisible(state: {
 	stationId: StationId | null
 	showOnHome: boolean
 	hydrated: boolean
 	isDev: boolean
+	anyStationOn: boolean
 }): boolean {
-	return state.isDev && (state.stationId !== null || (state.hydrated && state.showOnHome))
+	return (
+		state.isDev &&
+		state.anyStationOn &&
+		(state.stationId !== null || (state.hydrated && state.showOnHome))
+	)
 }
 
 export function useRadioBarVisible(): boolean {
@@ -23,5 +29,6 @@ export function useRadioBarVisible(): boolean {
 	let stationId = useRadioStore((state) => state.stationId)
 	let showOnHome = useRadioStore((state) => state.showOnHome)
 	let isDev = useIsDevMode()
-	return radioBarVisible({stationId, showOnHome, hydrated, isDev})
+	let anyStationOn = useOfferedStations().length > 0
+	return radioBarVisible({stationId, showOnHome, hydrated, isDev, anyStationOn})
 }

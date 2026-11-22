@@ -65,6 +65,7 @@ import {
 	useRadioBarVisible,
 	useRadioStore,
 } from '../source/features/streaming/radio'
+import {useStationOn} from '../source/features/streaming/radio/station-flags'
 import brushIcon from '@expo/material-symbols/brush.xml'
 import moreVertIcon from '@expo/material-symbols/more_vert.xml'
 
@@ -240,7 +241,8 @@ export default function HomePage(): React.ReactNode {
 	let hydrated = layoutHydrated && campusHydrated && tileStyleHydrated
 	let {branding, home} = useCampus()
 	let barVisible = useRadioBarVisible()
-	let views = visibleViews(home.tiles, {isDev})
+	let stationOn = useStationOn()
+	let views = visibleViews(home.tiles, {isDev, stationOn})
 
 	return (
 		<>

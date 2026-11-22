@@ -1,9 +1,8 @@
 import * as React from 'react'
 import {Pressable, StyleSheet, Text, View} from 'react-native'
 
-import {useCampus} from '../../../campus/store'
 import {track} from '../../../telemetry/track'
-import {stationsOffered} from '../stations'
+import {useOfferedStations} from '../station-flags'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
 
@@ -15,7 +14,7 @@ import {palette} from './palette'
 export function StationPicker(): React.ReactNode {
 	let viewed = useRadioStore((state) => state.viewedStationId)
 	let browse = useRadioStore((state) => state.browse)
-	let stations = stationsOffered(useCampus())
+	let stations = useOfferedStations()
 	return (
 		<View accessibilityRole="tablist" style={styles.tabs}>
 			{stations.map(({id}) => {

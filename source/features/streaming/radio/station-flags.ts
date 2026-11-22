@@ -7,7 +7,8 @@ import {
 	useFeatureSwitches,
 	type FeatureSwitches,
 } from '../../../lib/feature-switches'
-import {STATIONS, type StationId} from './stations'
+import {useCampus} from '../../campus/store'
+import {STATIONS, stationsOffered, type Station, type StationId} from './stations'
 
 /** Each station's switch, as `data/features.yaml`'s `radio` publishes it. */
 export type StationFlags = Readonly<Partial<Record<StationId, {enabled: boolean}>>>
@@ -61,4 +62,11 @@ export function useStationOn(): (stationId: StationId) => boolean {
 /** Whether `stationId` is on as the switches were last fetched, for code outside React. */
 export function stationOnNow(stationId: StationId): boolean {
 	return isStationOn(stationId, stationFlagsFrom(featureSwitchesNow()), !followsFeatureSwitches)
+}
+
+/** The stations the player offers on the active campus, switched-off ones left out. */
+export function useOfferedStations(): ReadonlyArray<Station> {
+	let campus = useCampus()
+	let stationOn = useStationOn()
+	return React.useMemo(() => stationsOffered(campus, stationOn), [campus, stationOn])
 }

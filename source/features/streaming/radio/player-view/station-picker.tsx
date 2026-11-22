@@ -3,16 +3,16 @@ import {StyleSheet} from 'react-native'
 import {Host, Picker, Text} from '@expo/ui/swift-ui'
 import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 
-import {useCampus} from '../../../campus/store'
 import {track} from '../../../telemetry/track'
-import {stationsOffered, type StationId} from '../stations'
+import {useOfferedStations} from '../station-flags'
+import type {StationId} from '../stations'
 import {useRadioStore} from '../store'
 
 /** Which station the player shows. Browsing only: it never changes what plays. */
 export function StationPicker(): React.ReactNode {
 	let viewed = useRadioStore((state) => state.viewedStationId)
 	let browse = useRadioStore((state) => state.browse)
-	let stations = stationsOffered(useCampus())
+	let stations = useOfferedStations()
 	return (
 		// Sized by React Native across, and by the picker's own height down.
 		<Host matchContents={{vertical: true}} style={styles.host}>

@@ -76,10 +76,18 @@ export function viewTarget(view: ViewType): string {
 	}
 }
 
-/** The views to draw: not disabled, and not for dev mode alone unless it is on. */
+/**
+ * The views to draw: not disabled, not for dev mode alone unless it is on, and
+ * no station that is switched off.
+ */
 export function visibleViews<V extends ViewType>(
 	views: ReadonlyArray<V>,
-	{isDev}: {isDev: boolean},
+	{isDev, stationOn}: {isDev: boolean; stationOn: (stationId: StationId) => boolean},
 ): V[] {
-	return views.filter((view) => !view.disabled && (isDev || !view.devOnly))
+	return views.filter(
+		(view) =>
+			!view.disabled &&
+			(isDev || !view.devOnly) &&
+			(view.type !== 'radio' || stationOn(view.station)),
+	)
 }

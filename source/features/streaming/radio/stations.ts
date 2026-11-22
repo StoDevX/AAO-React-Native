@@ -16,17 +16,19 @@ export const STATION_LIST: ReadonlyArray<Station> = campuses.flatMap(
 )
 
 /**
- * The stations the player offers on `active`: every campus's, except those of
- * a dev-only campus, which only that campus offers. A dev-only campus offers
- * only its own, so nothing it plays reaches another campus's servers.
+ * The stations the player offers on `active`: every campus's that is switched
+ * on, except those of a dev-only campus, which only that campus offers. A
+ * dev-only campus offers only its own, so nothing it plays reaches another
+ * campus's servers.
  */
-export function stationsOffered(active: CampusDefinition): ReadonlyArray<Station> {
-	if (active.devOnly) {
-		return active.radio?.stations ?? []
-	}
-	return campuses
-		.filter((campus) => !campus.devOnly)
-		.flatMap((campus) => campus.radio?.stations ?? [])
+export function stationsOffered(
+	active: CampusDefinition,
+	stationOn: (stationId: StationId) => boolean,
+): ReadonlyArray<Station> {
+	let stations = active.devOnly
+		? (active.radio?.stations ?? [])
+		: campuses.filter((campus) => !campus.devOnly).flatMap((campus) => campus.radio?.stations ?? [])
+	return stations.filter((station) => stationOn(station.id))
 }
 
 /** The campus that runs `stationId`. */

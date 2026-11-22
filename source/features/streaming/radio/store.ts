@@ -4,6 +4,7 @@ import {createJSONStorage, persist} from 'zustand/middleware'
 import {currentCampus} from '../../campus/store'
 import type {ReminderPermission} from './reminders/notifications'
 import {sameShowTitle} from './show-titles'
+import {stationOnNow} from './station-flags'
 import {STATION_LIST, STATIONS, stationsOffered, type StationId} from './stations'
 import type {HtmlAudioError, RadioPlayState} from './types'
 
@@ -108,7 +109,7 @@ function isRunning(playState: RadioPlayState): boolean {
  */
 /** `stationId` if the active campus offers it, or else that campus's first station. */
 function offeredOrFirst(stationId: StationId): StationId {
-	let offered = stationsOffered(currentCampus())
+	let offered = stationsOffered(currentCampus(), stationOnNow)
 	if (offered.some((station) => station.id === stationId)) return stationId
 	return offered[0]?.id ?? stationId
 }
