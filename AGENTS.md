@@ -502,7 +502,12 @@ To see a switch work on a simulator, without a Release build:
 5. Turn dev mode on, pick the local server under Developer → Server URL, save,
    and turn dev mode off again.
 6. Edit `data/features.yaml`, run `mise run bundle-data`, and press Play in
-   the player to fetch it. A relaunch keeps the last answer for an hour.
+   the player to fetch it. A relaunch keeps the last answer for an hour, and
+   with every station off there is no Play to press until dev mode brings the
+   bar back.
+
+A commit runs `bundle-data` against the committed files, so an uncommitted
+switch has to be bundled again afterwards.
 
 ### UI Test Fixtures
 
