@@ -1,8 +1,6 @@
-# Which features App Store builds may show, published so a switch reaches them
-# without a release. Debug and prerelease builds ignore it. A station the file
-# does not list is off. See source/lib/feature-switches.ts.
+# Feature flags for production builds in the store.
+# This is published and fetched in the app from the server.
+# Debug and prerelease builds ignore it. See source/lib/feature-switches.ts.
 radio:
-  # On once KSTO's agreement starts in January; KSTO may withdraw it at will.
   ksto: {enabled: false}
-  # Off until KRLX agrees to the app playing its station.
   krlx: {enabled: false}
