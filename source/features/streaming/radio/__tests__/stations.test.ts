@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 
 import {campusById} from '../../../../campuses'
-import {STATION_LIST, STATIONS, stationsOffered} from '../stations'
+import {STATION_LIST, STATIONS, stationsOffered, stationToShow} from '../stations'
 
 const allOn = () => true
 
@@ -36,5 +36,19 @@ describe('the stations the player offers', () => {
 	test('are each found by id', () => {
 		expect(STATIONS.ksto.stationName).toBe('KSTO 93.1 FM')
 		expect(STATIONS.krlx.stationName).toBe('88.1 KRLX-FM')
+	})
+})
+
+describe('the station the player shows', () => {
+	test('is the one being viewed while it is offered', () => {
+		expect(stationToShow('krlx', [STATIONS.ksto, STATIONS.krlx])).toBe('krlx')
+	})
+
+	test('moves to the first offered station once the viewed one is switched off', () => {
+		expect(stationToShow('ksto', [STATIONS.krlx])).toBe('krlx')
+	})
+
+	test('stays on the viewed station when none is offered', () => {
+		expect(stationToShow('ksto', [])).toBe('ksto')
 	})
 })

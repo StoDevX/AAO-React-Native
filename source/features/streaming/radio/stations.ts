@@ -31,6 +31,18 @@ export function stationsOffered(
 	return stations.filter((station) => stationOn(station.id))
 }
 
+/**
+ * The station the player shows: the one being viewed while it is offered, or
+ * else the first that is, so a station switched off while its page is open
+ * gives way to one that can play. With none offered, the viewed one stays.
+ */
+export function stationToShow(viewed: StationId, offered: ReadonlyArray<Station>): StationId {
+	if (offered.length === 0 || offered.some((station) => station.id === viewed)) {
+		return viewed
+	}
+	return offered[0].id
+}
+
 /** The campus that runs `stationId`. */
 export function stationCampus(stationId: StationId): CampusId {
 	let campus = campuses.find((each) =>

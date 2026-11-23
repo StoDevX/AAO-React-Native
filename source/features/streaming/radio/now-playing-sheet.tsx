@@ -13,6 +13,7 @@ import {FullScheduleSheet} from './full-schedule-sheet'
 import {ShowRemindersSheet} from './reminders/show-reminders-sheet'
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
+import {useShownStationId} from './use-shown-station'
 import {useRadioStore} from './store'
 
 /**
@@ -30,7 +31,7 @@ const SHEET_CORNER_RADIUS = 38
  */
 export function RadioNowPlayingSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.sheetOpen)
-	let viewed = useRadioStore((state) => state.viewedStationId)
+	let viewed = useShownStationId()
 	let closeSheet = useRadioStore((state) => state.closeSheet)
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	let station = STATIONS[viewed]

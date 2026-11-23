@@ -3,6 +3,7 @@ import {Pressable, StyleSheet, Text, View} from 'react-native'
 
 import {track} from '../../../telemetry/track'
 import {useOfferedStations} from '../station-flags'
+import {useShownStationId} from '../use-shown-station'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
 
@@ -12,9 +13,13 @@ import {palette} from './palette'
  * segmented control.
  */
 export function StationPicker(): React.ReactNode {
-	let viewed = useRadioStore((state) => state.viewedStationId)
+	let viewed = useShownStationId()
 	let browse = useRadioStore((state) => state.browse)
 	let stations = useOfferedStations()
+	// One station leaves nothing to choose between.
+	if (stations.length < 2) {
+		return null
+	}
 	return (
 		<View accessibilityRole="tablist" style={styles.tabs}>
 			{stations.map(({id}) => {

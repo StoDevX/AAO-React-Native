@@ -28,6 +28,7 @@ import {FollowBell, ReminderPermissionSheet, useFollowToggle} from './reminders'
 import {ScheduleEventSheet} from './schedule-event-sheet'
 import {SheetHost} from './sheet-host'
 import {STATIONS} from './stations'
+import {useShownStationId} from './use-shown-station'
 import {useRadioStore} from './store'
 import {stationScheduleOptions} from './use-station-schedule'
 
@@ -42,7 +43,7 @@ const TITLE_INSET = 20
 export function FullScheduleSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.fullScheduleOpen)
 	let closeFullSchedule = useRadioStore((state) => state.closeFullSchedule)
-	let station = STATIONS[useRadioStore((state) => state.viewedStationId)]
+	let station = STATIONS[useShownStationId()]
 	let options = stationScheduleOptions(station.schedule)
 	let query = useQuery({...options, enabled: open && options.enabled})
 	// The event is kept past its sheet's closing, so it does not empty while sliding away.

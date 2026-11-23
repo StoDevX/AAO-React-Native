@@ -9,6 +9,7 @@ import {ShowRemindersSheet} from './reminders/show-reminders-sheet'
 import {FullLayout, StationMenu, useLogoCycle} from './player-view'
 import {palette} from './player-view/palette'
 import {STATIONS} from './stations'
+import {useShownStationId} from './use-shown-station'
 import {useRadioStore} from './store'
 import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
 
@@ -24,7 +25,7 @@ const FOOT_DARKENING = 12
  */
 export function RadioNowPlayingSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.sheetOpen)
-	let viewed = useRadioStore((state) => state.viewedStationId)
+	let viewed = useShownStationId()
 	let closeSheet = useRadioStore((state) => state.closeSheet)
 	let openFullSchedule = useRadioStore((state) => state.openFullSchedule)
 	let station = STATIONS[viewed]
