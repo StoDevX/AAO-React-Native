@@ -24,3 +24,7 @@ breakSchedule:
       hours:
         - {days: [We], from: '8:00am', to: '5:00pm'}
         - {days: [Su], from: '4:00pm', to: '10:00pm'}
+  dayBeforeThanksgiving:
+    - title: Hours
+      hours:
+        - {days: [Tu], from: '7:45am', to: '5:00pm'}
