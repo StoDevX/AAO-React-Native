@@ -17,9 +17,14 @@ export type FeatureSwitches = Readonly<Record<string, unknown>>
 
 const PublishedSwitchesSchema = z.object({data: z.record(z.string(), z.unknown())})
 
-/** The switches in a fetched body; throws unless it is `{data: {...}}`. */
+/**
+ * The switches in a fetched body, or none when it is not `{data: {...}}`, so a
+ * malformed publish turns every feature off. Only a failed request keeps the
+ * last answer.
+ */
 export function parseFeatureSwitches(body: unknown): FeatureSwitches {
-	return PublishedSwitchesSchema.parse(body).data
+	let parsed = PublishedSwitchesSchema.safeParse(body)
+	return parsed.success ? parsed.data.data : {}
 }
 
 /**

@@ -10,9 +10,9 @@ describe('parseFeatureSwitches', () => {
 		})
 	})
 
-	test('rejects a body with no data object', () => {
-		expect(() => parseFeatureSwitches({})).toThrow()
-		expect(() => parseFeatureSwitches({data: []})).toThrow()
+	test('reads a body with no data object as no switches, so every feature is off', () => {
+		expect(parseFeatureSwitches({})).toEqual({})
+		expect(parseFeatureSwitches({data: []})).toEqual({})
 	})
 })
 
