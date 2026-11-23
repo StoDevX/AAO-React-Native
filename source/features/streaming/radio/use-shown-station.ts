@@ -11,18 +11,30 @@ export function useShownStationId(): StationId {
 }
 
 /**
- * Closes a station's open schedule when the station it shows changes, which
- * only a switch-off does while it is open: the schedule, and any show open in
- * it, would otherwise turn into the next station's.
+ * The station an open schedule shows: the one it opened on, kept while it is
+ * open even if the player moves to another, so a show open in it never pairs
+ * with the next station. It closes once that station is switched off. While
+ * closed it follows the player, so it opens on the station shown.
  */
-export function useClosesOnStationChange(
-	open: boolean,
-	stationId: StationId,
-	close: () => void,
-): void {
-	let previous = React.useRef(stationId)
+export function useScheduleStation({
+	open,
+	shownStationId,
+	stationOn,
+	close,
+}: {
+	open: boolean
+	shownStationId: StationId
+	stationOn: (stationId: StationId) => boolean
+	close: () => void
+}): StationId {
+	let [held, setHeld] = React.useState(shownStationId)
+	if (!open && held !== shownStationId) {
+		setHeld(shownStationId)
+	}
+	let stationId = open ? held : shownStationId
+	let switchedOff = open && !stationOn(stationId)
 	React.useEffect(() => {
-		if (open && previous.current !== stationId) close()
-		previous.current = stationId
-	}, [open, stationId, close])
+		if (switchedOff) close()
+	}, [switchedOff, close])
+	return stationId
 }
