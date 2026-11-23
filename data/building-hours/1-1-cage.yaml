@@ -18,4 +18,10 @@ schedule:
     hours:
       - {days: [Su], from: '9:00am', to: '10:30am'}
 
-breakSchedule: {}
+# https://wp.stolaf.edu/current-students/breaks/ (Thanksgiving 2026)
+breakSchedule:
+  thanksgiving:
+    - title: Hours
+      hours:
+        - {days: [We], from: '8:00am', to: '3:00pm'}
+        - {days: [Su], from: '11:00am', to: '8:00pm'}
