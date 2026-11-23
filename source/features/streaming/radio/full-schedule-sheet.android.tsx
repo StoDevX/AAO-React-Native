@@ -15,7 +15,7 @@ import {track} from '../../telemetry/track'
 import {KRLX_POWERED_BY, KSTO_POWERED_BY} from './constants'
 import {FollowBell, HostedReminderPermissionSheet, useFollowToggle} from './reminders'
 import {STATIONS, type Station} from './stations'
-import {useShownStationId} from './use-shown-station'
+import {useClosesOnStationChange, useShownStationId} from './use-shown-station'
 import {useRadioStore} from './store'
 import {stationScheduleOptions} from './use-station-schedule'
 import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
@@ -37,10 +37,11 @@ export function FullScheduleSheet(): React.ReactNode {
 	let query = useQuery({...options, enabled: open && options.enabled})
 	let [event, setEvent] = React.useState<EventType | null>(null)
 
-	let close = () => {
+	let close = React.useCallback(() => {
 		setEvent(null)
 		closeFullSchedule()
-	}
+	}, [closeFullSchedule])
+	useClosesOnStationChange(open, station.id, close)
 	let back = () => (event ? setEvent(null) : close())
 	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('full_schedule')
 	let bell = React.useCallback(
