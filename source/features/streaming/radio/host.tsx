@@ -1,6 +1,7 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {Alert, StyleSheet, View} from 'react-native'
 import {track} from '../../telemetry/track'
+import {switchedOffNotice} from './describe-playback'
 import {MutedStationPage} from './muted-station-page'
 import {NativeStreamPlayer} from './native-player'
 import {createPlaybackAttempt} from './playback-diagnostics'
@@ -144,10 +145,13 @@ export function RadioHost(): React.ReactNode {
 
 	// The one place a station stops for being switched off: after Play, after
 	// Control Center or the lock screen resumes it, or when a refetch turns it
-	// off while it plays.
+	// off while it plays. The listener had it loaded, so they are told why it
+	// went quiet, once; nothing stays on screen to say so.
 	React.useEffect(() => {
-		if (switchedOff) stop()
-	}, [switchedOff, stop])
+		if (!switchedOff || stationId === null) return
+		stop()
+		Alert.alert(switchedOffNotice(stationId))
+	}, [switchedOff, stationId, stop])
 
 	// Only `waiting` marks a dry buffer: `stalled` is the fetch going quiet while
 	// the element plays on from its buffer, and nothing follows it to say audio
