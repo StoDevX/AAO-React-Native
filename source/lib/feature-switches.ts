@@ -18,11 +18,17 @@ export type FeatureSwitches = Readonly<Record<string, unknown>>
 const PublishedSwitchesSchema = z.object({data: z.record(z.string(), z.unknown())})
 
 /**
- * The switches in a fetched body, or none when it is not `{data: {...}}`, so a
- * malformed publish turns every feature off. Only a failed request keeps the
- * last answer.
+ * The switches in a fetched body, or none when it is not JSON shaped
+ * `{data: {...}}`, so a malformed publish turns every feature off. Only a
+ * failed request keeps the last answer.
  */
-export function parseFeatureSwitches(body: unknown): FeatureSwitches {
+export function parseFeatureSwitches(text: string): FeatureSwitches {
+	let body: unknown
+	try {
+		body = JSON.parse(text)
+	} catch {
+		return {}
+	}
 	let parsed = PublishedSwitchesSchema.safeParse(body)
 	return parsed.success ? parsed.data.data : {}
 }
@@ -46,8 +52,10 @@ export const featureSwitchesOptions = queryOptions({
 	queryFn: async ({signal}): Promise<FeatureSwitches> => {
 		let manifest = await fetchManifest(queryClient)
 		let source = resolveSource(manifest, REL_FEATURES, FEATURES_ID, [FEATURES_TYPE])
-		let body = await fetchSourceBody(source.href, signal, 'Features', 'json', source.campus)
-		return parseFeatureSwitches(body)
+		// Read as text, so a body that is not JSON reads as no switches rather
+		// than failing the request, which would keep the last answer.
+		let text = await fetchSourceBody(source.href, signal, 'Features', 'text', source.campus)
+		return parseFeatureSwitches(String(text))
 	},
 	staleTime: ONE_HOUR_IN_MS,
 	meta: {persistAfterFailure: true},

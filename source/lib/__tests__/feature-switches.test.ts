@@ -4,15 +4,17 @@ import {parseFeatureSwitches} from '../feature-switches'
 
 describe('parseFeatureSwitches', () => {
 	test('keeps every feature section as published', () => {
-		expect(parseFeatureSwitches({data: {radio: {ksto: {enabled: true}}, chat: {}}})).toEqual({
-			radio: {ksto: {enabled: true}},
-			chat: {},
-		})
+		let body = JSON.stringify({data: {radio: {ksto: {enabled: true}}, chat: {}}})
+		expect(parseFeatureSwitches(body)).toEqual({radio: {ksto: {enabled: true}}, chat: {}})
 	})
 
 	test('reads a body with no data object as no switches, so every feature is off', () => {
-		expect(parseFeatureSwitches({})).toEqual({})
-		expect(parseFeatureSwitches({data: []})).toEqual({})
+		expect(parseFeatureSwitches('{}')).toEqual({})
+		expect(parseFeatureSwitches('{"data": []}')).toEqual({})
+	})
+
+	test('reads a body that is not JSON as no switches, so every feature is off', () => {
+		expect(parseFeatureSwitches('{')).toEqual({})
 	})
 })
 
