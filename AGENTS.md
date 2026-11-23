@@ -469,6 +469,41 @@ image on Instagram), write it into the file by hand, with `updated` the day it
 came out. The scrape leaves a file dated after the post alone, listing how the
 two differ, and takes over again once KSTO edits the post.
 
+### Feature Switches
+
+`data/features.yaml` turns a feature on or off in App Store builds without a
+release. Today it holds one switch per radio station, which follows each
+station's agreement to be played in the app. Every app reads the same file,
+from St. Olaf's server (`/v1/features`, a redirect to Pages).
+
+A station is on only when the file says `enabled: true`. Until a fetch
+succeeds, or for a station the file leaves out, it is off; a failed fetch keeps
+the last answer. Debug builds and prerelease versions (`-alpha`, `-beta`,
+`-rc`, `-pre`) ignore the file and show every station, so a switch can only be
+seen working in a build that follows it. Dev mode does not override a switch,
+though it does show the Now Playing bar.
+
+Play and resume fetch the file afresh; otherwise it is fetched when the app
+comes back after an hour. Pages caches it for ten minutes, so a merged change
+takes that long to reach phones. `source/lib/feature-switches.ts` fetches it,
+and a feature reads its own key (the radio's is `station-flags.ts`).
+
+To see a switch work on a simulator, without a Release build:
+
+1. `mise run bundle-data`, then serve `docs/` with caching off:
+   `npx --yes http-server@14.1.1 docs -p 8611 -c-1`. Without `-c-1` iOS
+   caches the file and a change never arrives.
+2. In ccc-server: `PAGES_ORIGIN_OVERRIDE=http://127.0.0.1:8611/ mise run dev`.
+3. `APP_VARIANT=aao-dev mise run start -- --port 8121`.
+4. Launch the Debug app on a production bundle, which follows the switches:
+   `xcrun simctl launch <udid> NFMTHAZVS9.com.drewvolz.stolaf.dev -RCT_jsLocation localhost:8121 -RCT_enableDev NO`.
+   The Debug app asks Metro for a dev bundle itself; `-RCT_enableDev NO` is
+   what stops it. LogBox's "Open debugger" toast means it did not work.
+5. Turn dev mode on, pick the local server under Developer → Server URL, save,
+   and turn dev mode off again.
+6. Edit `data/features.yaml`, run `mise run bundle-data`, and press Play in
+   the player to fetch it. A relaunch keeps the last answer for an hour.
+
 ### UI Test Fixtures
 
 A UI test class can name a campus: `override class var campus: Campus? { .carleton }`,
