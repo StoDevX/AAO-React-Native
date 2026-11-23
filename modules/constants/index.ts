@@ -25,9 +25,11 @@ let IS_ALPHA = false
 let IS_PRE = false
 let IS_RC = false
 
-// Whether this is a development or prerelease build, which only decides what
-// Sentry attaches to reports. Debugging tools follow the dev mode toggle
-// instead -- useIsDevMode() from source/lib -- which starts off everywhere.
+// Whether this is a development or prerelease build, which decides what Sentry
+// attaches to reports, and whether the app ignores the published feature
+// switches (source/lib/feature-switches.ts). Debugging tools follow the dev
+// mode toggle instead -- useIsDevMode() from source/lib -- which starts off
+// everywhere.
 export const isDebugBuild: () => boolean = () =>
 	!IS_PRODUCTION || IS_ALPHA || IS_BETA || IS_PRE || IS_RC
 

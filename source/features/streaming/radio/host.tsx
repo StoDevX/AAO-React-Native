@@ -1,12 +1,15 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {Alert, StyleSheet, View} from 'react-native'
+import {useIsRestoring} from '@tanstack/react-query'
 import {track} from '../../telemetry/track'
+import {switchedOffNotice} from './describe-playback'
 import {MutedStationPage} from './muted-station-page'
 import {NativeStreamPlayer} from './native-player'
 import {createPlaybackAttempt} from './playback-diagnostics'
 import {useNowPlaying} from './use-now-playing'
 import {shippedStreamUrl, useStationSources, type StationSources} from './sources'
 import {useStationSchedule} from './use-station-schedule'
+import {mustStopStation, useStationOn} from './station-flags'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
@@ -137,6 +140,20 @@ export function RadioHost(): React.ReactNode {
 	let resume = useRadioStore((state) => state.resume)
 	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
+	let stop = useRadioStore((state) => state.stop)
+	let stationOn = useStationOn()
+	let restoring = useIsRestoring()
+	let switchedOff = mustStopStation({stationId, stationOn, restoring})
+
+	// The one place a station stops for being switched off: after Play, after
+	// Control Center or the lock screen resumes it, or when a refetch turns it
+	// off while it plays. The listener had it loaded, so they are told why it
+	// went quiet, once; nothing stays on screen to say so.
+	React.useEffect(() => {
+		if (!switchedOff || stationId === null) return
+		stop()
+		Alert.alert(switchedOffNotice(stationId))
+	}, [switchedOff, stationId, stop])
 
 	// Only `waiting` marks a dry buffer: `stalled` is the fetch going quiet while
 	// the element plays on from its buffer, and nothing follows it to say audio
@@ -166,7 +183,7 @@ export function RadioHost(): React.ReactNode {
 		resume()
 	}, [resume, stationId])
 
-	if (!stationId) {
+	if (!stationId || switchedOff) {
 		return null
 	}
 

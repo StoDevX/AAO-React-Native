@@ -1,18 +1,28 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {Host, Picker, Text} from '@expo/ui/swift-ui'
 import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 
-import {useCampus} from '../../../campus/store'
 import {track} from '../../../telemetry/track'
-import {stationsOffered, type StationId} from '../stations'
+import {useOfferedStations} from '../station-flags'
+import {useShownStationId} from '../use-shown-station'
+import type {StationId} from '../stations'
 import {useRadioStore} from '../store'
+
+/** The height iOS gives a segmented control. */
+const SEGMENTED_CONTROL_HEIGHT = 32
 
 /** Which station the player shows. Browsing only: it never changes what plays. */
 export function StationPicker(): React.ReactNode {
-	let viewed = useRadioStore((state) => state.viewedStationId)
+	let viewed = useShownStationId()
 	let browse = useRadioStore((state) => state.browse)
-	let stations = stationsOffered(useCampus())
+	let stations = useOfferedStations()
+	// One station leaves nothing to choose between. Its row stays, empty: the
+	// record grows into whatever height it is given, and without the row it
+	// would reach the sheet's grabber.
+	if (stations.length < 2) {
+		return <View style={styles.absent} />
+	}
 	return (
 		// Sized by React Native across, and by the picker's own height down.
 		<Host matchContents={{vertical: true}} style={styles.host}>
@@ -38,5 +48,8 @@ export function StationPicker(): React.ReactNode {
 const styles = StyleSheet.create({
 	host: {
 		alignSelf: 'stretch',
+	},
+	absent: {
+		height: SEGMENTED_CONTROL_HEIGHT,
 	},
 })

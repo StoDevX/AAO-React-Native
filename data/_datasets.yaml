@@ -35,7 +35,7 @@ groups:
   - title: Organisations
     sets: [org-categories]
   - title: App
-    sets: [sources, privacy]
+    sets: [sources, privacy, features]
 
 sets:
   building-hours:
@@ -244,3 +244,10 @@ sets:
     record: Privacy Policy
     shape: document
     path: privacy.md
+
+  features:
+    title: Features
+    record: Features
+    shape: file
+    path: features.yaml
+    schema: features

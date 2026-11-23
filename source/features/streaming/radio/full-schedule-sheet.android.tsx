@@ -15,6 +15,8 @@ import {track} from '../../telemetry/track'
 import {KRLX_POWERED_BY, KSTO_POWERED_BY} from './constants'
 import {FollowBell, HostedReminderPermissionSheet, useFollowToggle} from './reminders'
 import {STATIONS, type Station} from './stations'
+import {useStationOn} from './station-flags'
+import {useScheduleStation, useShownStationId} from './use-shown-station'
 import {useRadioStore} from './store'
 import {stationScheduleOptions} from './use-station-schedule'
 import arrowBackIcon from '@expo/material-symbols/arrow_back.xml'
@@ -31,15 +33,17 @@ import shareIcon from '@expo/material-symbols/share.xml'
 export function FullScheduleSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.fullScheduleOpen)
 	let closeFullSchedule = useRadioStore((state) => state.closeFullSchedule)
-	let station = STATIONS[useRadioStore((state) => state.viewedStationId)]
-	let options = stationScheduleOptions(station.schedule)
-	let query = useQuery({...options, enabled: open && options.enabled})
+	let shownStationId = useShownStationId()
+	let stationOn = useStationOn()
 	let [event, setEvent] = React.useState<EventType | null>(null)
 
-	let close = () => {
+	let close = React.useCallback(() => {
 		setEvent(null)
 		closeFullSchedule()
-	}
+	}, [closeFullSchedule])
+	let station = STATIONS[useScheduleStation({open, shownStationId, stationOn, close})]
+	let options = stationScheduleOptions(station.schedule)
+	let query = useQuery({...options, enabled: open && options.enabled})
 	let back = () => (event ? setEvent(null) : close())
 	let {toggle, prompt, confirmPrompt, dismissPrompt} = useFollowToggle('full_schedule')
 	let bell = React.useCallback(

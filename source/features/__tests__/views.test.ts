@@ -12,6 +12,8 @@ import {
 } from '../views'
 import {campusById} from '../../campuses'
 
+/** Every station switched on. */
+const allOn = () => true
 /** St. Olaf's Home tiles, as its definition lists them. */
 const stolafTiles = () => campusById('edu.stolaf').home.tiles
 /** Carleton's Home tiles, as its definition lists them. */
@@ -176,7 +178,9 @@ describe("Carleton's Home tiles", () => {
 	})
 
 	test('show every tile but Developer outside dev mode', () => {
-		let titles = visibleViews(carleton(), {isDev: false}).map((view) => view.title)
+		let titles = visibleViews(carleton(), {isDev: false, stationOn: allOn}).map(
+			(view) => view.title,
+		)
 
 		expect(titles).toHaveLength(carleton().length - 1)
 		expect(titles).not.toContain('Developer')
@@ -228,8 +232,24 @@ function carletonView(matches: (view: ViewType) => boolean): ViewType {
 }
 
 describe('visibleViews', () => {
+	test('leaves out a radio tile whose station is switched off', () => {
+		let shown = visibleViews(carletonTiles(), {isDev: false, stationOn: () => false})
+
+		expect(shown.filter((view) => view.type === 'radio')).toEqual([])
+	})
+
+	test('keeps a radio tile whose station is on', () => {
+		let shown = visibleViews(carletonTiles(), {isDev: false, stationOn: (id) => id === 'krlx'})
+
+		expect(shown.filter((view) => view.type === 'radio').map((view) => view.title)).toEqual([
+			'KRLX',
+		])
+	})
+
 	test('leaves out disabled and dev-only views outside dev mode', () => {
-		let titles = visibleViews(stolafTiles(), {isDev: false}).map((view) => view.title)
+		let titles = visibleViews(stolafTiles(), {isDev: false, stationOn: allOn}).map(
+			(view) => view.title,
+		)
 
 		expect(titles).not.toContain('Athletics')
 		expect(titles).not.toContain('Developer')
@@ -237,7 +257,9 @@ describe('visibleViews', () => {
 	})
 
 	test('adds the dev-only views in dev mode, after the rest', () => {
-		let titles = visibleViews(stolafTiles(), {isDev: true}).map((view) => view.title)
+		let titles = visibleViews(stolafTiles(), {isDev: true, stationOn: allOn}).map(
+			(view) => view.title,
+		)
 
 		expect(titles.slice(-2)).toEqual(['Athletics', 'Developer'])
 	})

@@ -2,9 +2,10 @@ import * as React from 'react'
 import {AppState} from 'react-native'
 import * as Sentry from '@sentry/react-native'
 import * as Notifications from 'expo-notifications'
-import {hashKey} from '@tanstack/react-query'
+import {hashKey, type QueryCacheNotifyEvent} from '@tanstack/react-query'
 
 import {queryClient} from '../../../../init/tanstack-query'
+import {featureSwitchesOptions} from '../../../../lib/feature-switches'
 import {track} from '../../../telemetry/track'
 import {STATIONS} from '../stations'
 import {useRadioStore} from '../store'
@@ -12,6 +13,24 @@ import {stationScheduleOptions} from '../use-station-schedule'
 import {registerReminderActions} from './notifications'
 import {reminderResponse, shouldPresentReminder} from './present'
 import {isSyncFetching, syncShowReminders} from './sync'
+
+/** The switches' query, whose every fetch may turn a station's reminders on or off. */
+const FEATURE_SWITCHES_HASH = hashKey(featureSwitchesOptions.queryKey)
+
+/**
+ * Whether `event` brought the switches: a fetch, or launch restoring the saved
+ * ones, which adds the query or sets its state rather than fetching it.
+ */
+function switchesArrived(event: QueryCacheNotifyEvent): boolean {
+	if (event.query.queryHash !== FEATURE_SWITCHES_HASH || event.query.state.data === undefined) {
+		return false
+	}
+	return (
+		event.type === 'added' ||
+		(event.type === 'updated' &&
+			(event.action.type === 'success' || event.action.type === 'setState'))
+	)
+}
 
 /** Whether the query hashed `queryHash` is the schedule of a station with a followed show. */
 function isFollowedSchedule(queryHash: string): boolean {
@@ -100,6 +119,9 @@ export function ShowRemindersHost(): null {
 				isFollowedSchedule(event.query.queryHash) &&
 				!isSyncFetching(event.query.queryHash)
 			) {
+				void syncShowReminders()
+			}
+			if (switchesArrived(event)) {
 				void syncShowReminders()
 			}
 		})

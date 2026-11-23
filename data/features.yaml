@@ -1,0 +1,6 @@
+# Feature flags for production builds in the store.
+# This is published and fetched in the app from the server.
+# Debug and prerelease builds ignore it. See source/lib/feature-switches.ts.
+radio:
+  ksto: {enabled: false}
+  krlx: {enabled: false}

@@ -16,17 +16,31 @@ export const STATION_LIST: ReadonlyArray<Station> = campuses.flatMap(
 )
 
 /**
- * The stations the player offers on `active`: every campus's, except those of
- * a dev-only campus, which only that campus offers. A dev-only campus offers
- * only its own, so nothing it plays reaches another campus's servers.
+ * The stations the player offers on `active`: every campus's that is switched
+ * on, except those of a dev-only campus, which only that campus offers. A
+ * dev-only campus offers only its own, so nothing it plays reaches another
+ * campus's servers.
  */
-export function stationsOffered(active: CampusDefinition): ReadonlyArray<Station> {
-	if (active.devOnly) {
-		return active.radio?.stations ?? []
+export function stationsOffered(
+	active: CampusDefinition,
+	stationOn: (stationId: StationId) => boolean,
+): ReadonlyArray<Station> {
+	let stations = active.devOnly
+		? (active.radio?.stations ?? [])
+		: campuses.filter((campus) => !campus.devOnly).flatMap((campus) => campus.radio?.stations ?? [])
+	return stations.filter((station) => stationOn(station.id))
+}
+
+/**
+ * The station the player shows: the one being viewed while it is offered, or
+ * else the first that is, so a station switched off while its page is open
+ * gives way to one that can play. With none offered, the viewed one stays.
+ */
+export function stationToShow(viewed: StationId, offered: ReadonlyArray<Station>): StationId {
+	if (offered.length === 0 || offered.some((station) => station.id === viewed)) {
+		return viewed
 	}
-	return campuses
-		.filter((campus) => !campus.devOnly)
-		.flatMap((campus) => campus.radio?.stations ?? [])
+	return offered[0].id
 }
 
 /** The campus that runs `stationId`. */

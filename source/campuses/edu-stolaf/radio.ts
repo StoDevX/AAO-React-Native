@@ -54,6 +54,7 @@ export const KSTO: Station = {
 	],
 	websiteUrl: 'https://www.kstoradio.org/',
 	schedule: 'ksto',
+	chatUrl: 'https://organizations.minnit.chat/617435137709804/Main?mobile=1',
 	stationName: 'KSTO 93.1 FM',
 	stationNumber: '+15077863602',
 	title: 'St. Olaf College Radio',
