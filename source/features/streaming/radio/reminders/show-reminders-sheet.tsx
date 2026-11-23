@@ -29,6 +29,7 @@ import {showTitle} from '../../../telemetry/catalog'
 import {track} from '../../../telemetry/track'
 import {SHEET_BACKGROUND} from '../sheet-background'
 import {SheetHost} from '../sheet-host'
+import {useStationOn} from '../station-flags'
 import {useRadioStore, type FollowedShow} from '../store'
 import {remindersByStation} from './by-station'
 import {BellGlyph, bellLabel} from './follow-controls'
@@ -93,7 +94,8 @@ export function ShowRemindersSheet(): React.ReactNode {
 	let closeReminders = useRadioStore((state) => state.closeReminders)
 	let follows = useRadioStore((state) => state.followedShows)
 	let permission = useRadioStore((state) => state.reminderPermission)
-	let groups = remindersByStation(follows)
+	let stationOn = useStationOn()
+	let groups = remindersByStation(follows, stationOn)
 	let prompt = permission === null ? null : promptFor(permission)
 
 	return (

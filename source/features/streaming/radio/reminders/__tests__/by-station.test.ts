@@ -1,13 +1,16 @@
 import {expect, test} from '@jest/globals'
 
-import {remindersByStation} from '../by-station'
+import {followsToRemind, remindersByStation} from '../by-station'
 
 test("groups followed shows under their stations, in the player's station order", () => {
-	let groups = remindersByStation([
-		{stationId: 'krlx', title: 'HOZ'},
-		{stationId: 'ksto', title: 'Cafecito Hour'},
-		{stationId: 'krlx', title: 'Joe'},
-	])
+	let groups = remindersByStation(
+		[
+			{stationId: 'krlx', title: 'HOZ'},
+			{stationId: 'ksto', title: 'Cafecito Hour'},
+			{stationId: 'krlx', title: 'Joe'},
+		],
+		() => true,
+	)
 
 	expect(
 		groups.map(({station, shows}) => [station.id, shows.map((show) => show.title)]),
@@ -18,5 +21,29 @@ test("groups followed shows under their stations, in the player's station order"
 })
 
 test('leaves out a station with nothing followed', () => {
-	expect(remindersByStation([])).toStrictEqual([])
+	expect(remindersByStation([], () => true)).toStrictEqual([])
+})
+
+test('leaves out a station that is switched off', () => {
+	let groups = remindersByStation(
+		[
+			{stationId: 'krlx', title: 'HOZ'},
+			{stationId: 'ksto', title: 'Cafecito Hour'},
+		],
+		(id) => id === 'krlx',
+	)
+
+	expect(groups.map(({station}) => station.id)).toStrictEqual(['krlx'])
+})
+
+test("reminds only of shows on stations that are on, keeping the rest's follows", () => {
+	let follows = [
+		{stationId: 'krlx' as const, title: 'HOZ'},
+		{stationId: 'ksto' as const, title: 'Cafecito Hour'},
+	]
+
+	expect(followsToRemind(follows, (id) => id === 'ksto')).toStrictEqual([
+		{stationId: 'ksto', title: 'Cafecito Hour'},
+	])
+	expect(follows).toHaveLength(2)
 })

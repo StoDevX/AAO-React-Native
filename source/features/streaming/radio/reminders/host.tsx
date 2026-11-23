@@ -5,6 +5,7 @@ import * as Notifications from 'expo-notifications'
 import {hashKey} from '@tanstack/react-query'
 
 import {queryClient} from '../../../../init/tanstack-query'
+import {featureSwitchesOptions} from '../../../../lib/feature-switches'
 import {track} from '../../../telemetry/track'
 import {STATIONS} from '../stations'
 import {useRadioStore} from '../store'
@@ -12,6 +13,9 @@ import {stationScheduleOptions} from '../use-station-schedule'
 import {registerReminderActions} from './notifications'
 import {reminderResponse, shouldPresentReminder} from './present'
 import {isSyncFetching, syncShowReminders} from './sync'
+
+/** The switches' query, whose every fetch may turn a station's reminders on or off. */
+const FEATURE_SWITCHES_HASH = hashKey(featureSwitchesOptions.queryKey)
 
 /** Whether the query hashed `queryHash` is the schedule of a station with a followed show. */
 function isFollowedSchedule(queryHash: string): boolean {
@@ -97,8 +101,8 @@ export function ShowRemindersHost(): null {
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'success' &&
-				isFollowedSchedule(event.query.queryHash) &&
-				!isSyncFetching(event.query.queryHash)
+				((isFollowedSchedule(event.query.queryHash) && !isSyncFetching(event.query.queryHash)) ||
+					event.query.queryHash === FEATURE_SWITCHES_HASH)
 			) {
 				void syncShowReminders()
 			}
