@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {isStationOn, stationFlagsFrom} from '../station-flags'
+import {isStationOn, mustStopStation, stationFlagsFrom} from '../station-flags'
 
 describe('stationFlagsFrom', () => {
 	test('reads each station', () => {
@@ -43,5 +43,26 @@ describe('isStationOn', () => {
 	test('is on for every station in a build that ignores the switches', () => {
 		expect(isStationOn('krlx', undefined, true)).toBe(true)
 		expect(isStationOn('krlx', {krlx: {enabled: false}}, true)).toBe(true)
+	})
+})
+
+describe('mustStopStation', () => {
+	test('stops a loaded station that is switched off', () => {
+		expect(mustStopStation({stationId: 'ksto', stationOn: () => false, restoring: false})).toBe(
+			true,
+		)
+	})
+
+	test('waits while the saved switches are still being restored at launch', () => {
+		expect(mustStopStation({stationId: 'ksto', stationOn: () => false, restoring: true})).toBe(
+			false,
+		)
+	})
+
+	test('leaves a station that is on, or none loaded', () => {
+		expect(mustStopStation({stationId: 'ksto', stationOn: () => true, restoring: false})).toBe(
+			false,
+		)
+		expect(mustStopStation({stationId: null, stationOn: () => false, restoring: false})).toBe(false)
 	})
 })

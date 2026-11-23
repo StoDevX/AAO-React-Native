@@ -3,7 +3,7 @@ import type {EventType} from '@frogpond/event-type'
 import {hashKey} from '@tanstack/react-query'
 
 import {queryClient} from '../../../../init/tanstack-query'
-import {stationOnNow} from '../station-flags'
+import {stationSwitchesNow} from '../station-flags'
 import {STATIONS, type StationId} from '../stations'
 import {useRadioStore} from '../store'
 import {stationScheduleOptions} from '../use-station-schedule'
@@ -67,7 +67,9 @@ async function stationFeed(stationId: StationId): Promise<StationFeed | null> {
 let rescheduling = false
 
 async function syncOnce(): Promise<void> {
-	if (rescheduling) {
+	let stationOn = stationSwitchesNow()
+	// A reschedule waits for the switches too, rather than cancel what it cannot set again.
+	if (rescheduling && stationOn !== undefined) {
 		rescheduling = false
 		await cancelAllReminders()
 	}
@@ -78,8 +80,12 @@ async function syncOnce(): Promise<void> {
 	useRadioStore.getState().setReminderPermission(permission)
 
 	// A switched-off station's shows read as unfollowed here, so their
-	// reminders are cancelled, while the follows themselves are kept.
-	let follows = followsToRemind(useRadioStore.getState().followedShows, stationOnNow)
+	// reminders are cancelled, while the follows themselves are kept. Until the
+	// switches are known, the reminders stay as they are; their arrival syncs again.
+	let follows = followsToRemind(useRadioStore.getState().followedShows, stationOn)
+	if (follows === undefined) {
+		return
+	}
 	// The zone is guessed afresh, as a phone that crossed one while the app
 	// stayed alive must move its reminders with it.
 	let zone = Intl.DateTimeFormat().resolvedOptions().timeZone

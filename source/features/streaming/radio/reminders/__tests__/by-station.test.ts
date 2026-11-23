@@ -47,3 +47,7 @@ test("reminds only of shows on stations that are on, keeping the rest's follows"
 	])
 	expect(follows).toHaveLength(2)
 })
+
+test('reminds of nothing new, and cancels nothing, while the switches are unknown', () => {
+	expect(followsToRemind([{stationId: 'ksto', title: 'Cafecito Hour'}], undefined)).toBeUndefined()
+})

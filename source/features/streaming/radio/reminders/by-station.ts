@@ -18,10 +18,14 @@ export function remindersByStation(
 /**
  * The followed shows to remind of: those on stations that are switched on. A
  * switched-off station's shows stay followed, so their reminders return with it.
+ * Undefined while the switches are unknown, when no reminder should change.
  */
 export function followsToRemind(
 	follows: readonly FollowedShow[],
-	stationOn: (stationId: StationId) => boolean,
-): FollowedShow[] {
+	stationOn: ((stationId: StationId) => boolean) | undefined,
+): FollowedShow[] | undefined {
+	if (stationOn === undefined) {
+		return undefined
+	}
 	return follows.filter((show) => stationOn(show.stationId))
 }

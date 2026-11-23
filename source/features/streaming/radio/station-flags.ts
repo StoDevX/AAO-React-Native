@@ -70,3 +70,27 @@ export function useOfferedStations(): ReadonlyArray<Station> {
 	let stationOn = useStationOn()
 	return React.useMemo(() => stationsOffered(campus, stationOn), [campus, stationOn])
 }
+
+/**
+ * Whether each station is on as the switches were last fetched, or undefined
+ * while they are unknown: launch is still restoring them, or none has loaded.
+ */
+export function stationSwitchesNow(): ((stationId: StationId) => boolean) | undefined {
+	if (followsFeatureSwitches() && featureSwitchesNow() === undefined) {
+		return undefined
+	}
+	return stationOnNow
+}
+
+/**
+ * Whether the loaded station has to stop for being switched off. Not while
+ * launch restores the saved switches: until then every station reads as off,
+ * and a station a reminder started would stop for no reason.
+ */
+export function mustStopStation(state: {
+	stationId: StationId | null
+	stationOn: (stationId: StationId) => boolean
+	restoring: boolean
+}): boolean {
+	return state.stationId !== null && !state.restoring && !state.stationOn(state.stationId)
+}

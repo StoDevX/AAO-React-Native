@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Alert, StyleSheet, View} from 'react-native'
+import {useIsRestoring} from '@tanstack/react-query'
 import {track} from '../../telemetry/track'
 import {switchedOffNotice} from './describe-playback'
 import {MutedStationPage} from './muted-station-page'
@@ -8,7 +9,7 @@ import {createPlaybackAttempt} from './playback-diagnostics'
 import {useNowPlaying} from './use-now-playing'
 import {shippedStreamUrl, useStationSources, type StationSources} from './sources'
 import {useStationSchedule} from './use-station-schedule'
-import {useStationOn} from './station-flags'
+import {mustStopStation, useStationOn} from './station-flags'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
@@ -141,7 +142,8 @@ export function RadioHost(): React.ReactNode {
 	let reportError = useRadioStore((state) => state.reportError)
 	let stop = useRadioStore((state) => state.stop)
 	let stationOn = useStationOn()
-	let switchedOff = stationId !== null && !stationOn(stationId)
+	let restoring = useIsRestoring()
+	let switchedOff = mustStopStation({stationId, stationOn, restoring})
 
 	// The one place a station stops for being switched off: after Play, after
 	// Control Center or the lock screen resumes it, or when a refetch turns it
