@@ -86,7 +86,8 @@ struct HoursDetailView: View {
                 ForEach(Array(document.exceptions.enumerated()), id: \.offset) { index, exception in
                     DisclosureGroup(exception.date) {
                         Group {
-                            ScheduleSection(title: nil, document: document, editor: ScheduleEditor(base: ["exceptions", .index(index), "schedule"], services: exception.services))
+                            ScheduleSection(title: nil, document: document, editor: ScheduleEditor(base: ["exceptions", .index(index), "schedule"], services: exception.services),
+                                            idPrefix: "exception-\(index)-")
                             Button("Remove this exception", role: .destructive) {
                                 if !isRepeatClick() { Task { await model.apply([.delete(["exceptions", .index(index)])]) } }
                             }
@@ -192,7 +193,8 @@ private struct BreaksSection: View {
                         }
                     }
                     if case .custom(let services)? = entry {
-                        ScheduleSection(title: nil, document: document, editor: ScheduleEditor(base: path, services: services))
+                        ScheduleSection(title: nil, document: document, editor: ScheduleEditor(base: path, services: services),
+                                        idPrefix: "break-\(item.key)-")
                     }
                 }
             }

@@ -197,7 +197,10 @@ function useHostStyle(
 	colorScheme: HostProps['colorScheme'],
 ): StyleProp<ViewStyle> {
 	let systemScheme = useColorScheme()
-	let background = StyleSheet.flatten(style)?.backgroundColor
+	// Expo's web typings add properties to ViewStyle that flatten's parameter
+	// refuses, and only the background is read here
+	let backgroundStyle: StyleProp<Pick<ViewStyle, 'backgroundColor'>> = style
+	let background = StyleSheet.flatten(backgroundStyle)?.backgroundColor
 	let dark = (colorScheme ?? systemScheme) === 'dark'
 	return React.useMemo(() => {
 		if (background === undefined || typeof background !== 'object') {

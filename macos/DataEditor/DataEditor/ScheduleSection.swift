@@ -9,6 +9,9 @@ struct ScheduleSection: View {
     /// the file on screen, as its parent read it, so the section never pairs one file with another's services
     let document: HoursDocument
     let editor: ScheduleEditor
+    /// Begins each control's identifier, so the services of usual hours, an
+    /// exception and a break are told apart. Usual hours have none.
+    var idPrefix = ""
 
     private func apply(_ ops: EditOp...) { Task { await model.apply(ops) } }
 
@@ -22,31 +25,31 @@ struct ScheduleSection: View {
                 DraftField(label: "Title", file: file, value: service.title, schedule: schedule(s)) { file, text, expected, schedule in
                     await model.applyDraft(editor.setTitle(service: s, text), to: file, replacing: expected, schedule: schedule)
                 }
-                    .accessibilityIdentifier("service-title-\(s)")
+                    .accessibilityIdentifier("\(idPrefix)service-title-\(s)")
                 DraftField(label: "Notes", file: file, value: service.notes ?? "", schedule: schedule(s), axis: .vertical) { file, text, expected, schedule in
                     await model.applyDraft(editor.setNotes(service: s, text), to: file, replacing: expected, schedule: schedule)
                 }
-                .accessibilityIdentifier("service-notes-\(s)")
+                .accessibilityIdentifier("\(idPrefix)service-notes-\(s)")
                 Group {
                     LabeledContent("Closed") {
                         Toggle("Closed", isOn: Binding(get: { service.isPhysicallyOpen == false && service.rows.isEmpty },
                                                       set: { closed in Task { await model.apply(editor.setClosed(service: s, closed)) } }))
                             .labelsHidden()
-                            .accessibilityIdentifier("closed-\(s)")
+                            .accessibilityIdentifier("\(idPrefix)closed-\(s)")
                     }
                     ForEach(Array(service.rows.enumerated()), id: \.offset) { r, row in
-                        RowEditor(row: row, service: s, index: r, editor: editor)
+                        RowEditor(row: row, service: s, index: r, editor: editor, idPrefix: idPrefix)
                     }
                     HStack {
                         Button("Add hours", systemImage: "plus") { apply(editor.addRow(service: s)) }
-                            .accessibilityIdentifier("add-row-\(s)")
+                            .accessibilityIdentifier("\(idPrefix)add-row-\(s)")
                         Spacer()
                         if let remove = editor.removeService(s) {
                             Button("Remove This Schedule", role: .destructive) { if !isRepeatClick() { apply(remove) } }
                                 // removing a service moves the place a later service's draft is saved to
                                 .disabled(!model.unsavedDrafts.isEmpty)
                                 .help(model.unsavedDrafts.isEmpty ? "" : "Press Return to save what you typed first.")
-                                .accessibilityIdentifier("remove-service-\(s)")
+                                .accessibilityIdentifier("\(idPrefix)remove-service-\(s)")
                         }
                     }
                 }
@@ -199,6 +202,8 @@ private struct RowEditor: View {
     let service: Int
     let index: Int
     let editor: ScheduleEditor
+    /// Begins each control's identifier, as its section's does
+    let idPrefix: String
 
     /// A close before the open runs into the next day, as `HoursRow.segments()`
     /// reads it. A close of midnight ends the day, and a close equal to the open
@@ -230,15 +235,15 @@ private struct RowEditor: View {
         DayPicker(week: model.week, days: row.days) { days in
             Task { await model.apply([editor.setDays(service: service, row: index, days)]) }
         }
-        .accessibilityIdentifier("days-\(service)-\(index)")
+        .accessibilityIdentifier("\(idPrefix)days-\(service)-\(index)")
     }
 
     @ViewBuilder private var times: some View {
-        TimePicker(label: "Opens", text: row.fromText, identifier: "row-time-from-\(service)-\(index)") { time in
+        TimePicker(label: "Opens", text: row.fromText, identifier: "\(idPrefix)row-time-from-\(service)-\(index)") { time in
             Task { await model.apply([editor.setTime(service: service, row: index, end: .from, time)]) }
         }
         Text("to")
-        TimePicker(label: "Closes", text: row.toText, identifier: "row-time-to-\(service)-\(index)") { time in
+        TimePicker(label: "Closes", text: row.toText, identifier: "\(idPrefix)row-time-to-\(service)-\(index)") { time in
             Task { await model.apply([editor.setTime(service: service, row: index, end: .to, time)]) }
         }
         if closesNextDay {
@@ -248,7 +253,7 @@ private struct RowEditor: View {
             if !isRepeatClick() { Task { await model.apply([editor.removeRow(service: service, row: index)]) } }
         }
             .labelStyle(.iconOnly)
-            .accessibilityIdentifier("remove-row-\(service)-\(index)")
+            .accessibilityIdentifier("\(idPrefix)remove-row-\(service)-\(index)")
     }
 }
 
