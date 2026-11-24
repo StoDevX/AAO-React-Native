@@ -22,6 +22,9 @@ breaks:
     name: Fall Break
     start: '2026-10-10'
     end: '2026-10-13'
+  dayBeforeThanksgiving:
+    name: Day before Thanksgiving break
+    date: '2026-11-24'
   thanksgiving:
     name: Thanksgiving Break
     start: '2026-11-25'

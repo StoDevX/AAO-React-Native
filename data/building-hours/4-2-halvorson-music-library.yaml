@@ -21,3 +21,7 @@ breakSchedule:
   fall: library-fall-closed
   thanksgiving:
     - {title: Hours, isPhysicallyOpen: false, hours: []}
+  dayBeforeThanksgiving:
+    - title: Hours
+      hours:
+        - {days: [Tu], from: '8:00am', to: '5:00pm'}
