@@ -42,11 +42,13 @@ export const cafeKeys = {
 // the path. ccc-server reads it only from the query, and answers without it
 // with a 400, `?cafeId is required`.
 
-function buildMenuPath(cafeParam: string | {id: string}) {
+function buildMenuPath(server: CampusId, cafeParam: string | {id: string}) {
+	let daysQuery = server === 'edu.carleton' || server === 'edu.stolaf' ? 'days=5' : undefined
+
 	if (typeof cafeParam === 'string') {
-		return `food/named/menu/${cafeParam}`
+		return `food/named/menu/${cafeParam}${daysQuery ? `?${daysQuery}` : ''}`
 	} else if ('id' in cafeParam) {
-		return `food/menu/${cafeParam.id}?cafeId=${cafeParam.id}`
+		return `food/menu/${cafeParam.id}?cafeId=${cafeParam.id}${daysQuery ? `&${daysQuery}` : ''}`
 	} else {
 		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
 	}
@@ -88,7 +90,7 @@ async function fetchBonAppMenu(
 	cafeParam: string | {id: string},
 	signal?: AbortSignal,
 ): Promise<EditedBonAppMenuInfoType> {
-	let path = buildMenuPath(cafeParam)
+	let path = buildMenuPath(server, cafeParam)
 
 	let response = await clientFor(server).get(path, {signal}).json()
 	return response as EditedBonAppMenuInfoType
@@ -120,7 +122,7 @@ export const bonAppMenuOptions = (
 	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(server, buildMenuPath(cafeParam), day),
+		queryKey: menuKeys.bonAppCcc(server, buildMenuPath(server, cafeParam), day),
 		queryFn: ({signal}) => fetchBonAppMenu(server, cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
@@ -133,7 +135,7 @@ export const bonAppMenuItemOptions = (
 	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(server, buildMenuPath(cafeParam), day),
+		queryKey: menuKeys.bonAppCcc(server, buildMenuPath(server, cafeParam), day),
 		queryFn: ({signal}) => fetchBonAppMenu(server, cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 		select: (data) => ({

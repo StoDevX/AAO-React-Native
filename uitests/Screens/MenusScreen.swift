@@ -58,6 +58,45 @@ struct MenusScreen: Screen {
 		return self
 	}
 
+	/// Select the first additional date offered by a multi-day cafe menu.
+	@discardableResult
+	func chooseAnotherDay(at cafe: String) -> Self {
+		let picker = app.navigationBars.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "label CONTAINS %@ AND label CONTAINS %@",
+					cafe,
+					"Choose another day"
+				)
+			)
+			.firstMatch
+		XCTAssertTrue(picker.waitUntilExists(timeout: 30), "the menu should offer other days")
+		let previousTitle = picker.label
+		picker.tap()
+
+		let option = app.descendants(matching: .any).matching(
+			NSPredicate(
+				format: "identifier BEGINSWITH %@",
+				TestIdentifiers.Menus.otherDayOptionPrefix
+			)
+		).firstMatch
+		XCTAssertTrue(option.waitUntilExists(timeout: 10), "the picker should list another date")
+		option.tap()
+		let updatedPicker = app.navigationBars.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "label CONTAINS %@ AND label != %@",
+					cafe,
+					previousTitle
+				)
+			)
+			.firstMatch
+		XCTAssertTrue(
+			updatedPicker.waitUntilExists(timeout: 10),
+			"the menu title should name the selected day")
+		return self
+	}
+
 	/// The title names `meal`, as it does whichever meal is on screen.
 	@discardableResult
 	func verifyTitleNames(_ meal: String, at cafe: String) -> Self {

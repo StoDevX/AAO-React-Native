@@ -85,6 +85,17 @@ describe('stationSections', () => {
 		expect(deli.title).toBe('Deli • Cheese')
 	})
 
+	test('names a Carleton sub-station without repeating its station', () => {
+		let [section] = stationSections(
+			'Sayles',
+			[item('Grilled Cheese', 'Sandwiches', '1')],
+			true,
+			false,
+		)
+
+		expect(section.title).toBe('Sandwiches')
+	})
+
 	test('says which station each section came from', () => {
 		let sections = stationSections('Daily Special', [
 			item('Poutine'),

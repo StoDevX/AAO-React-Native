@@ -34736,6 +34736,6 @@
 			}
 		}
 	},
-	"key": "GET {server:edu.carleton}/food/named/menu/burton",
+	"key": "GET {server:edu.carleton}/food/named/menu/burton?days=5",
 	"status": 200
 }

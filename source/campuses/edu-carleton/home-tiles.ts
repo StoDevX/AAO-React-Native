@@ -126,5 +126,12 @@ export const carletonHomeTiles: ReadonlyArray<ViewType> = [
 		icon: 'person.fill',
 		gradient: c.redGradient,
 	},
+	{
+		type: 'view',
+		view: '/edu.carleton/links',
+		title: 'Links',
+		icon: 'link.circle.fill',
+		gradient: c.blueGradient,
+	},
 	developerTile,
 ]

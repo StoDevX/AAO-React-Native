@@ -27,7 +27,7 @@ local checks = new Mapping<String, Step> {
     depends = List("bundle-data")
   }
   ["jest"] {
-    check = "mise run --skip-deps test:jest ::: test:node"
+    check = "mise run --skip-deps test:jest && mise run --skip-deps test:node"
     depends = List("bundle-data")
   }
 }

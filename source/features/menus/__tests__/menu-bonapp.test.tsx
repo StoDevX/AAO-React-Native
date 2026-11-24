@@ -8,7 +8,7 @@ import {clientFor} from '@frogpond/api'
 import {timezone} from '@frogpond/constants'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {MealHeaderState, MenuItemType} from '@frogpond/food-menu'
-import {formatDate, formatWeekday} from '@frogpond/time-format'
+import {formatWeekday} from '@frogpond/time-format'
 
 import {BonAppHostedMenu} from '../menu-bonapp'
 import {usePublishMenuHeader} from '../menu-header'
@@ -49,7 +49,8 @@ jest.mock('expo-router', () => ({
 const mockPublish = usePublishMenuHeader as jest.MockedFunction<typeof usePublishMenuHeader>
 const mockFoodMenu = FoodMenu as unknown as jest.Mock<
 	(props: {
-		now: unknown
+		now: moment.Moment
+		meals: Array<{label: string}>
 		onItemPress: (item: MenuItemType) => void
 		onMealHeaderChange: (header: MealHeaderState) => void
 	}) => null
@@ -311,7 +312,7 @@ describe('BonAppHostedMenu', () => {
 		jest.setSystemTime(new Date('2026-09-23T13:00:00Z'))
 		await renderCage()
 
-		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage', expect.anything())
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage?days=5', expect.anything())
 		expect(mockFoodMenu).not.toHaveBeenCalled()
 	})
 
@@ -324,7 +325,7 @@ describe('BonAppHostedMenu', () => {
 			cafe: {...CAGE_CAFE.cafe, days: [{...CAGE_CAFE.cafe.days[0], date: '2026-09-23'}]},
 		}
 		mockGet.mockImplementation((path) => ({
-			json: () => Promise.resolve(path === 'food/named/menu/the-cage' ? nextDay : nextCafe),
+			json: () => Promise.resolve(path === 'food/named/menu/the-cage?days=5' ? nextDay : nextCafe),
 		}))
 		let mounts = 0
 		mockFoodMenu.mockImplementation(() => {
@@ -342,7 +343,7 @@ describe('BonAppHostedMenu', () => {
 			await jest.advanceTimersByTimeAsync(60_000)
 		})
 
-		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage', expect.anything())
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage?days=5', expect.anything())
 		// React Query hands the fetched menu over on a timer of its own.
 		await waitFor(() => expect(mounts).toBe(2))
 
@@ -371,6 +372,97 @@ describe('BonAppHostedMenu', () => {
 		})
 	})
 
+	test('switches between the days returned for a Carleton cafe', async () => {
+		let dayWithMeal = (date: string, label: string) => ({
+			date,
+			cafe: {
+				...CAGE_MENU.days[0].cafe,
+				dayparts: [[{...CAGE_DAYPART, label, abbreviation: label, stations: []}]],
+			},
+		})
+		let carletonMenu = {
+			...CAGE_MENU,
+			days: [
+				dayWithMeal('2026-09-22', 'Breakfast'),
+				dayWithMeal('2026-09-23', 'Lunch'),
+				dayWithMeal('2026-09-24', 'Dinner'),
+			],
+		}
+		queryClient.setQueryData(
+			bonAppMenuOptions('edu.carleton', 'burton', '2026-09-22').queryKey,
+			carletonMenu,
+		)
+		queryClient.setQueryData(
+			bonAppCafeOptions('edu.carleton', 'burton', '2026-09-22').queryKey,
+			CAGE_CAFE,
+		)
+
+		await render(
+			<QueryClientProvider client={queryClient}>
+				<BonAppHostedMenu
+					server="edu.carleton"
+					cafe="burton"
+					loadingMessage={['Loading…']}
+					name="Burton"
+				/>
+			</QueryClientProvider>,
+		)
+
+		expect(mockFoodMenu.mock.lastCall?.[0].meals[0]?.label).toBe('Breakfast')
+		expect(lastHeader()?.days?.options.map(({date: optionDate}) => optionDate)).toEqual([
+			'2026-09-22',
+			'2026-09-23',
+			'2026-09-24',
+		])
+		expect(lastHeader()?.date).toBe('Today')
+		expect(lastHeader()?.days?.selected).toBe('2026-09-22')
+		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual([
+			'Today',
+			'Tomorrow',
+			'Thu Sep 24',
+		])
+
+		await act(() => {
+			lastHeader()?.days?.select('2026-09-23')
+		})
+
+		expect(mockFoodMenu.mock.lastCall?.[0].meals[0]?.label).toBe('Lunch')
+		expect(mockFoodMenu.mock.lastCall?.[0].now.format('YYYY-MM-DD')).toBe('2026-09-23')
+		expect(lastHeader()?.date).toBe('Tomorrow')
+		expect(lastHeader()?.days?.selected).toBe('2026-09-23')
+		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual([
+			'Today',
+			'Tomorrow',
+			'Thu Sep 24',
+		])
+
+		await act(() => {
+			mockFoodMenu.mock.lastCall?.[0].onItemPress({id: '42'} as MenuItemType)
+		})
+
+		expect(mockRouter.navigate).toHaveBeenCalledWith({
+			pathname: '/menu-item-detail',
+			params: {
+				source: 'bonapp',
+				server: 'edu.carleton',
+				cafe: 'burton',
+				day: '2026-09-23',
+				itemId: '42',
+			},
+		})
+
+		await act(() => {
+			lastHeader()?.days?.select('2026-09-24')
+		})
+
+		expect(lastHeader()?.date).toBe('Thu Sep 24')
+		expect(lastHeader()?.days?.options.map(({label}) => label)).toEqual([
+			'Today',
+			'Tomorrow',
+			'Thu Sep 24',
+		])
+	})
+
 	// Asked for today's menu shortly after midnight, the server can still answer
 	// with the day before's, as Weitz's did at half past twelve.
 	test('labels a menu the server answers for an earlier day with that day', async () => {
@@ -393,7 +485,7 @@ describe('BonAppHostedMenu', () => {
 		expect(lastHeader()).toMatchObject({
 			weekdayLong: formatWeekday(menuDay, 'long'),
 			weekdayShort: formatWeekday(menuDay, 'short'),
-			date: formatDate(menuDay, 'medium'),
+			date: 'Tue Sep 22',
 			reopening: null,
 		})
 		expect(mockFoodMenu).toHaveBeenCalled()

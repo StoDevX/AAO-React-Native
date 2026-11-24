@@ -197,7 +197,7 @@ function useHostStyle(
 	colorScheme: HostProps['colorScheme'],
 ): StyleProp<ViewStyle> {
 	let systemScheme = useColorScheme()
-	let background = StyleSheet.flatten(style)?.backgroundColor
+	let background = hostBackgroundColor(style).value
 	let dark = (colorScheme ?? systemScheme) === 'dark'
 	return React.useMemo(() => {
 		if (background === undefined || typeof background !== 'object') {
@@ -207,6 +207,35 @@ function useHostStyle(
 		let resolved = resolveColor(background, {colors, dark})
 		return [style, {backgroundColor: resolved ?? 'transparent'}]
 	}, [style, background, seed, dark])
+}
+
+function hostBackgroundColor(style: StyleProp<ViewStyle>): {
+	found: boolean
+	value: ViewStyle['backgroundColor']
+} {
+	if (isStyleArray(style)) {
+		let background: ViewStyle['backgroundColor']
+		let found = false
+		for (let item of style) {
+			let next = hostBackgroundColor(item)
+			if (next.found) {
+				background = next.value
+				found = true
+			}
+		}
+		return {found, value: background}
+	}
+	if (style && typeof style === 'object') {
+		return {
+			found: Object.prototype.hasOwnProperty.call(style, 'backgroundColor'),
+			value: style.backgroundColor,
+		}
+	}
+	return {found: false, value: undefined}
+}
+
+function isStyleArray(style: StyleProp<ViewStyle>): style is readonly StyleProp<ViewStyle>[] {
+	return Array.isArray(style)
 }
 
 /** SwiftUI's vertical alignments, as Row's. */

@@ -6,11 +6,13 @@
 	<string>All About Olaf Data Editor</string>
 	<key>DataEditorGitHubClientID</key>
 	<string>$(DATA_EDITOR_GITHUB_CLIENT_ID)</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>The Data Editor shares your edits with All About Olaf on your phone over your local network.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_ccc-server._tcp.</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>The Data Editor shares your edits with All About Olaf on your phone over your local network.</string>
+	<key>RCTNewArchEnabled</key>
+	<true/>
 </dict>
 </plist>

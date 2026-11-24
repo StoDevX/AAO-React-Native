@@ -322,6 +322,9 @@ struct TestIdentifiers {
 		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
 		static let foodRowPrefix = "food-row-"
 
+		/// Matches MENU_DAY_OPTION_ID_PREFIX in source/features/menus/menu-header.tsx.
+		static let otherDayOptionPrefix = "menu-day-option-"
+
 		/// Two of Treeline Commons' Lunch stations, and one item from the first.
 		/// The Stations filter asks for a menu outright, so its shape does not
 		/// depend on how many stations a cafe happens to serve. Its fixture is

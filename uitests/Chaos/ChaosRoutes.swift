@@ -30,6 +30,7 @@ enum ChaosRoutes {
 		"directory/named/[title]",
 		"edu.carleton/convocations",
 		"edu.carleton/convocations/archived",
+		"edu.carleton/links",
 		"faq",
 		"hours",
 		"hours/all-spaces",
