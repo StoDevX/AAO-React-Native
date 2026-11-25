@@ -18,9 +18,9 @@
     "moment": "2.31.0"
   },
   "peerDependencies": {
-    "@sentry/react-native": "^8.30.0",
+    "@sentry/react-native": "^8.36.0",
     "delay": "^7.0.0",
-    "expo-calendar": "~58.0.6",
+    "expo-calendar": "~58.0.8",
     "react": "catalog:",
     "react-native": "catalog:"
   }
